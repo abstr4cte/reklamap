@@ -245,10 +245,14 @@ const sortedAndFilteredAdvertisements = computed(() => {
 const handleSearch = (searchFilters: Filters) => {
   filters.value = searchFilters
 
-  const adsSection = document.querySelector('.ads-section')
-  if (adsSection) {
-    adsSection.scrollIntoView({ behavior: 'smooth' })
+  const mapSection = document.querySelector('.map-section')
+  if (mapSection) {
+    mapSection.scrollIntoView({ behavior: 'smooth' })
   }
+}
+
+const handleReset = (resetFilters: Filters) => {
+  filters.value = resetFilters
 }
 
 const loadAdvertisements = async () => {
@@ -277,8 +281,12 @@ onMounted(() => {
 <template>
   <div>
     <EmailModal :is-open="isModalOpen" @close="isModalOpen = false" />
-    <HeroBanner @search="handleSearch" />
-    <PolandMap :advertisements="sortedAndFilteredAdvertisements" />
+    <HeroBanner @search="handleSearch" @reset="handleReset" />
+    <PolandMap 
+      :advertisements="sortedAndFilteredAdvertisements" 
+      :selected-region="filters.region"
+      :selected-city="filters.city"
+    />
     <AdGrid
       :advertisements="sortedAndFilteredAdvertisements"
       :is-loading="isLoading"

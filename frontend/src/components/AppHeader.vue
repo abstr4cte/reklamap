@@ -92,11 +92,11 @@ const handleComparisonClick = () => {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1100;
 }
 
 .container {
-  max-width: 1400px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 2rem;
   display: flex;

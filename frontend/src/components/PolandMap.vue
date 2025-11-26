@@ -6,6 +6,8 @@ import type { Advertisement } from '../lib/supabase'
 
 const props = defineProps<{
   advertisements: Advertisement[]
+  selectedRegion?: string
+  selectedCity?: string
 }>()
 
 const mapContainer = ref<HTMLElement | null>(null)
@@ -19,6 +21,25 @@ const typeColors: Record<string, string> = {
   digital: '#3B82F6',
   banner: '#8B5CF6',
   poster: '#EC4899'
+}
+
+const regionCoordinates: Record<string, { lat: number; lng: number; zoom: number }> = {
+  'dolnośląskie': { lat: 51.1079, lng: 17.0385, zoom: 8 },
+  'kujawsko-pomorskie': { lat: 53.1235, lng: 18.0084, zoom: 8 },
+  'lubelskie': { lat: 51.2465, lng: 22.5684, zoom: 8 },
+  'lubuskie': { lat: 52.2297, lng: 15.2365, zoom: 8 },
+  'łódzkie': { lat: 51.7592, lng: 19.4560, zoom: 8 },
+  'małopolskie': { lat: 49.85, lng: 20.2, zoom: 8 }, // Adjusted center
+  'mazowieckie': { lat: 52.2297, lng: 21.0122, zoom: 8 },
+  'opolskie': { lat: 50.6751, lng: 17.9213, zoom: 9 },
+  'podkarpackie': { lat: 50.0412, lng: 21.9991, zoom: 8 },
+  'podlaskie': { lat: 53.1325, lng: 23.1688, zoom: 8 },
+  'pomorskie': { lat: 54.3520, lng: 18.6466, zoom: 8 },
+  'śląskie': { lat: 50.2649, lng: 19.0238, zoom: 9 },
+  'świętokrzyskie': { lat: 50.8661, lng: 20.6286, zoom: 9 },
+  'warmińsko-mazurskie': { lat: 53.7784, lng: 20.4801, zoom: 8 },
+  'wielkopolskie': { lat: 52.4064, lng: 16.9252, zoom: 8 },
+  'zachodniopomorskie': { lat: 53.4285, lng: 14.5528, zoom: 8 }
 }
 
 const createCustomIcon = (type: string) => {
@@ -126,6 +147,23 @@ const updateMarkers = () => {
     marker.addTo(map!)
     markers.push(marker)
   })
+
+  if (props.selectedCity && markers.length > 0) {
+    // If city is selected, fit bounds to markers (likely clustered in that city)
+    const group = new L.FeatureGroup(markers)
+    map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 12 })
+  } else if (props.selectedRegion && regionCoordinates[props.selectedRegion]) {
+    // If region is selected (and no city), zoom to region center
+    const region = regionCoordinates[props.selectedRegion]
+    map.setView([region.lat, region.lng], region.zoom)
+  } else if (markers.length > 0) {
+    // Default behavior: fit all markers
+    const group = new L.FeatureGroup(markers)
+    map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 12 })
+  } else {
+    // No markers, no filters: show Poland
+    map.setView([52.0, 19.0], 6)
+  }
 }
 
 watch(() => props.advertisements, () => {
@@ -139,28 +177,23 @@ onMounted(() => {
 
 <template>
   <section class="map-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Mapa dostępnych powierzchni</h2>
-        <p class="section-subtitle">Kliknij na pinezki, aby zobaczyć szczegóły ogłoszeń</p>
-      </div>
 
-      <div class="map-wrapper">
-        <div ref="mapContainer" class="map-container"></div>
 
-        <div class="map-legend">
-          <h3 class="legend-title">Legenda</h3>
-          <div class="legend-items">
-            <div v-for="(color, type) in typeColors" :key="type" class="legend-item">
-              <div class="legend-marker" :style="{ background: color }"></div>
-              <span class="legend-label">
-                {{ type === 'billboard' ? 'Billboard' :
-                   type === 'citylight' ? 'Citylight' :
-                   type === 'led_screen' ? 'Ekran LED' :
-                   type === 'digital' ? 'Digital' :
-                   type === 'banner' ? 'Banner' : 'Plakat' }}
-              </span>
-            </div>
+    <div class="map-wrapper">
+      <div ref="mapContainer" class="map-container"></div>
+
+      <div class="map-legend">
+        <h3 class="legend-title">Legenda</h3>
+        <div class="legend-items">
+          <div v-for="(color, type) in typeColors" :key="type" class="legend-item">
+            <div class="legend-marker" :style="{ background: color }"></div>
+            <span class="legend-label">
+              {{ type === 'billboard' ? 'Billboard' :
+                  type === 'citylight' ? 'Citylight' :
+                  type === 'led_screen' ? 'Ekran LED' :
+                  type === 'digital' ? 'Digital' :
+                  type === 'banner' ? 'Banner' : 'Plakat' }}
+            </span>
           </div>
         </div>
       </div>
@@ -170,8 +203,9 @@ onMounted(() => {
 
 <style scoped>
 .map-section {
-  padding: 8rem 0 4rem;
+  padding: 0;
   background: linear-gradient(to bottom, #F9FAFB 0%, white 100%);
+  scroll-margin-top: 100px;
 }
 
 .container {
@@ -200,9 +234,7 @@ onMounted(() => {
 
 .map-wrapper {
   position: relative;
-  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 }
 
 .map-container {
@@ -267,6 +299,10 @@ onMounted(() => {
 
 :deep(.leaflet-popup-content) {
   margin: 1rem;
+}
+
+:deep(.leaflet-control-attribution) {
+  display: none !important;
 }
 
 @media (max-width: 768px) {

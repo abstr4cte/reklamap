@@ -28,6 +28,7 @@ interface Filters {
 
 const emit = defineEmits<{
   search: [filters: Filters]
+  reset: [filters: Filters]
 }>()
 
 const showAdvanced = ref(false)
@@ -138,7 +139,7 @@ const resetFilters = () => {
     offerType: '',
     hasVatInvoice: false,
   }
-  emit('search', { ...filters.value })
+  emit('reset', { ...filters.value })
 }
 
 onMounted(() => {
@@ -460,7 +461,7 @@ onMounted(() => {
   z-index: 2;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 4rem 2rem 0;
+  padding: 4rem 2rem 4rem;
   min-height: 580px;
   display: flex;
   flex-direction: column;
@@ -498,7 +499,7 @@ onMounted(() => {
   width: 100%;
   max-width: 1100px;
   transform: translateY(60px);
-  margin-bottom: 100px;
+  margin-bottom: 60px;
 }
 
 .search-form {
