@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../lib/supabase'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
+import { point } from '@turf/helpers'
+import polandGeoJson from '../assets/poland_highres.json'
 
 const router = useRouter()
 
@@ -23,8 +26,8 @@ const formData = ref({
   location: '',
   city: '',
   region: '',
-  latitude: 52.2297,
-  longitude: 21.0122,
+  latitude: 52.0,
+  longitude: 19.0,
   phone: '',
   contactPreference: 'email' as 'email' | 'phone' | 'both',
   hasLighting: false,
@@ -44,8 +47,55 @@ const isSubmitting = ref(false)
 const addressSuggestions = ref<any[]>([])
 const showAddressSuggestions = ref(false)
 const mapContainer = ref<HTMLElement | null>(null)
+const showToast = ref(false)
+const toastMessage = ref('')
 let map: L.Map | null = null
 let marker: L.Marker | null = null
+
+const displayToast = (message: string) => {
+  toastMessage.value = message
+  showToast.value = true
+  window.setTimeout(() => {
+    showToast.value = false
+  }, 3000)
+}
+
+const clearLocation = () => {
+  formData.value.location = ''
+  formData.value.city = ''
+  formData.value.region = ''
+  formData.value.latitude = 52.0
+  formData.value.longitude = 19.0
+  
+  if (map && marker) {
+    map.setView([52.0, 19.0], 6)
+    marker.setLatLng([52.0, 19.0])
+  }
+}
+
+const handleClickOutside = (event: MouseEvent) => {
+  const target = event.target as HTMLElement
+  if (!target.closest('.address-input-wrapper')) {
+    showAddressSuggestions.value = false
+  }
+}
+
+const handleBlur = () => {
+  setTimeout(() => {
+    showAddressSuggestions.value = false
+  }, 300)
+}
+
+onMounted(() => {
+  if (currentStep.value === 3) {
+    initMap()
+  }
+  document.addEventListener('click', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 
 const surface = computed(() => {
   if (formData.value.width && formData.value.height) {
@@ -96,10 +146,23 @@ const calculatePrice = (unit: 'day' | 'week' | 'month' | 'year') => {
   }
 }
 
+const isInPoland = (lat: number, lng: number): boolean => {
+  const pt = point([lng, lat])
+  // Iterate over all features (voivodeships) to check if point is in Poland
+  // @ts-ignore
+  for (const feature of polandGeoJson.features) {
+    if (booleanPointInPolygon(pt, feature.geometry as any)) {
+      return true
+    }
+  }
+  return false
+}
+
 const initMap = () => {
   if (!mapContainer.value || map) return
 
-  map = L.map(mapContainer.value).setView([formData.value.latitude, formData.value.longitude], 13)
+  // Center on Poland (approximate geographic center)
+  map = L.map(mapContainer.value).setView([52.0, 19.0], 6)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
@@ -111,20 +174,46 @@ const initMap = () => {
 
   marker.on('dragend', async () => {
     const position = marker!.getLatLng()
+    // First check client-side GeoJSON
+    if (!isInPoland(position.lat, position.lng)) {
+      displayToast('Lokalizacja musi być w Polsce')
+      marker!.setLatLng([formData.value.latitude, formData.value.longitude])
+      return
+    }
+    
+    // Then verify with Nominatim
+    const isValid = await reverseGeocode(position.lat, position.lng)
+    if (!isValid) {
+      displayToast('Lokalizacja musi być w Polsce')
+      marker!.setLatLng([formData.value.latitude, formData.value.longitude])
+      return
+    }
+
     formData.value.latitude = position.lat
     formData.value.longitude = position.lng
-    await reverseGeocode(position.lat, position.lng)
   })
 
   map.on('click', async (e: L.LeafletMouseEvent) => {
+    // First check client-side GeoJSON
+    if (!isInPoland(e.latlng.lat, e.latlng.lng)) {
+      displayToast('Lokalizacja musi być w Polsce')
+      return
+    }
+
+    // Then verify with Nominatim
+    const isValid = await reverseGeocode(e.latlng.lat, e.latlng.lng)
+    if (!isValid) {
+      displayToast('Lokalizacja musi być w Polsce')
+      return
+    }
+
     formData.value.latitude = e.latlng.lat
     formData.value.longitude = e.latlng.lng
     marker!.setLatLng(e.latlng)
-    await reverseGeocode(e.latlng.lat, e.latlng.lng)
   })
 }
 
-const reverseGeocode = async (lat: number, lng: number) => {
+const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
   try {
     const response = await fetch(
       `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
@@ -132,16 +221,21 @@ const reverseGeocode = async (lat: number, lng: number) => {
     const data = await response.json()
 
     if (data.address) {
+      if (data.address.country_code !== 'pl') {
+        return false
+      }
+
       const address = data.address
       formData.value.city = address.city || address.town || address.village || ''
       formData.value.region = address.state || ''
-
-      const street = address.road || ''
-      const houseNumber = address.house_number || ''
-      formData.value.location = `${street} ${houseNumber}`.trim()
+      // Use full display_name for location field
+      formData.value.location = data.display_name || ''
+      return true
     }
+    return false
   } catch (error) {
     console.error('Error reverse geocoding:', error)
+    return false
   }
 }
 
@@ -154,11 +248,11 @@ const searchAddress = async (query: string) => {
 
   try {
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)},Poland&limit=5&addressdetails=1`
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=5&addressdetails=1`
     )
     const data = await response.json()
     addressSuggestions.value = data
-    showAddressSuggestions.value = true
+    showAddressSuggestions.value = data.length > 0
   } catch (error) {
     console.error('Error searching address:', error)
   }
@@ -166,11 +260,21 @@ const searchAddress = async (query: string) => {
 
 const selectAddress = (suggestion: any) => {
   const address = suggestion.address
+  const lat = parseFloat(suggestion.lat)
+  const lng = parseFloat(suggestion.lon)
+
+  // Check if location is in Poland
+  if (!isInPoland(lat, lng)) {
+    displayToast('Lokalizacja musi być w Polsce')
+    showAddressSuggestions.value = false
+    return
+  }
+
   formData.value.location = suggestion.display_name
   formData.value.city = address.city || address.town || address.village || ''
   formData.value.region = address.state || ''
-  formData.value.latitude = parseFloat(suggestion.lat)
-  formData.value.longitude = parseFloat(suggestion.lon)
+  formData.value.latitude = lat
+  formData.value.longitude = lng
 
   if (map && marker) {
     map.setView([formData.value.latitude, formData.value.longitude], 16)
@@ -388,24 +492,6 @@ const handleSubmit = async () => {
   }
 }
 
-const polishRegions = [
-  'dolnośląskie',
-  'kujawsko-pomorskie',
-  'lubelskie',
-  'lubuskie',
-  'łódzkie',
-  'małopolskie',
-  'mazowieckie',
-  'opolskie',
-  'podkarpackie',
-  'podlaskie',
-  'pomorskie',
-  'śląskie',
-  'świętokrzyskie',
-  'warmińsko-mazurskie',
-  'wielkopolskie',
-  'zachodniopomorskie'
-]
 
 const surfaceTypes = [
   { value: 'billboard', label: 'Billboard' },
@@ -425,6 +511,11 @@ onMounted(() => {
 
 <template>
   <div class="add-ad-page">
+    <!-- Toast Notification -->
+    <div v-if="showToast" class="toast-notification">
+      {{ toastMessage }}
+    </div>
+
     <div class="page-container">
       <div class="page-header">
         <button @click="router.push('/')" class="back-button">
@@ -433,8 +524,10 @@ onMounted(() => {
           </svg>
           Powrót
         </button>
-        <h1>Dodaj ogłoszenie</h1>
-        <p class="subtitle">Wypełnij formularz, aby dodać swoją powierzchnię reklamową</p>
+        <div class="header-content">
+          <h1>Dodaj ogłoszenie</h1>
+          <p class="subtitle">Wypełnij formularz, aby dodać swoją powierzchnię reklamową</p>
+        </div>
       </div>
 
       <div class="progress-bar">
@@ -610,7 +703,7 @@ onMounted(() => {
           </div>
 
           <div class="form-group">
-            <label class="form-label">Adres <span class="required">*</span></label>
+            <label class="form-label">Lokalizacja <span class="required">*</span></label>
             <div class="address-input-wrapper">
               <input
                 v-model="formData.location"
@@ -619,8 +712,20 @@ onMounted(() => {
                 :class="{ 'error': errors.location }"
                 placeholder="Wpisz adres (np. ul. Marszałkowska 1, Warszawa)"
                 @input="searchAddress(formData.location)"
-                @blur="() => window.setTimeout(() => showAddressSuggestions = false, 200)"
+                @blur="handleBlur"
+                style="padding-right: 2.5rem;"
               />
+              <button 
+                v-if="formData.location" 
+                type="button" 
+                @click="clearLocation" 
+                class="clear-input-btn"
+                title="Wyczyść lokalizację"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
               <div v-if="showAddressSuggestions && addressSuggestions.length > 0" class="address-suggestions">
                 <div
                   v-for="suggestion in addressSuggestions"
@@ -637,31 +742,6 @@ onMounted(() => {
 
           <div class="map-container" ref="mapContainer"></div>
           <p class="map-hint">Kliknij na mapie lub przeciągnij marker, aby ustawić lokalizację</p>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Miasto <span class="required">*</span></label>
-              <input
-                v-model="formData.city"
-                type="text"
-                class="form-input"
-                :class="{ 'error': errors.city }"
-                placeholder="Warszawa"
-              />
-              <span v-if="errors.city" class="error-text">{{ errors.city }}</span>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Województwo <span class="required">*</span></label>
-              <select v-model="formData.region" class="form-select" :class="{ 'error': errors.region }">
-                <option value="">Wybierz województwo</option>
-                <option v-for="region in polishRegions" :key="region" :value="region">
-                  {{ region }}
-                </option>
-              </select>
-              <span v-if="errors.region" class="error-text">{{ errors.region }}</span>
-            </div>
-          </div>
 
           <div class="form-group">
             <label class="form-label">Opcje kontaktu</label>
@@ -845,7 +925,7 @@ onMounted(() => {
 .add-ad-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem 0 4rem;
+  padding: 2rem 0 3rem;
 }
 
 .page-container {
@@ -855,9 +935,17 @@ onMounted(() => {
 }
 
 .page-header {
-  text-align: center;
   color: white;
   margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.header-content {
+  width: 100%;
+  text-align: center;
 }
 
 .back-button {
@@ -872,7 +960,6 @@ onMounted(() => {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  margin-bottom: 2rem;
 }
 
 .back-button:hover {
@@ -888,6 +975,33 @@ onMounted(() => {
 .subtitle {
   font-size: 1.1rem;
   opacity: 0.9;
+}
+
+.toast-notification-map {
+  position: absolute;
+  top: 4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
+  z-index: 1000;
+  font-weight: 600;
+  font-size: 1rem;
+  animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
 }
 
 .progress-bar {
@@ -973,12 +1087,70 @@ onMounted(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.step-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
 .step-section h2 {
+  margin: 0 0 1.5rem 0;
   font-size: 1.75rem;
+  font-weight: 700;
   color: #1f2937;
-  margin: 0 0 2rem 0;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #f3f4f6;
+}
+
+.clear-input-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  border-radius: 4px;
+  z-index: 10;
+}
+
+.clear-input-btn:hover {
+  color: #EF4444;
+  background: #fee2e2;
+}
+
+.toast-notification {
+  position: fixed;
+  top: 6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
+  z-index: 9999;
+  font-weight: 600;
+  font-size: 1rem;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 .form-group {
@@ -1007,6 +1179,7 @@ onMounted(() => {
   font-size: 1rem;
   transition: all 0.2s;
   font-family: inherit;
+  background: white;
 }
 
 .form-input:focus,
@@ -1152,16 +1325,15 @@ onMounted(() => {
   border-radius: 0 0 8px 8px;
   max-height: 300px;
   overflow-y: auto;
-  z-index: 10;
+  z-index: 1000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .suggestion-item {
-  padding: 0.875rem 1rem;
+  padding: 0.75rem 1rem;
   cursor: pointer;
   transition: background 0.2s;
   border-bottom: 1px solid #f3f4f6;
-  font-size: 0.95rem;
 }
 
 .suggestion-item:hover {
@@ -1177,7 +1349,12 @@ onMounted(() => {
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 0.5rem;
-  border: 2px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Hide Leaflet attribution */
+.map-container :deep(.leaflet-control-attribution) {
+  display: none;
 }
 
 .map-hint {

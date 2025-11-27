@@ -99,7 +99,6 @@ const currentYear = new Date().getFullYear()
   background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
   color: #e5e7eb;
   padding: 4rem 0 2rem;
-  margin-top: 4rem;
 }
 
 .footer-container {
