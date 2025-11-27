@@ -7,6 +7,7 @@ import type { Advertisement } from '../lib/supabase'
 const router = useRouter()
 const comparisonAds = ref<Advertisement[]>([])
 const isLoading = ref(true)
+const priceUnit = ref<'day' | 'week' | 'month' | 'year'>('month')
 
 const loadComparison = async () => {
   const comparisonIds = JSON.parse(localStorage.getItem('comparison') || '[]')
@@ -60,6 +61,30 @@ const getPricePerSqm = (ad: Advertisement) => {
   }
   return '0'
 }
+
+const getPrice = (ad: Advertisement) => {
+  const basePrice = ad.price
+  // Assuming base price is always monthly as per app logic
+  switch (priceUnit.value) {
+    case 'day':
+      return (basePrice / 30).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    case 'week':
+      return (basePrice / 4).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    case 'month':
+      return basePrice.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    case 'year':
+      return (basePrice * 12).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  }
+}
+
+const priceUnitLabel = computed(() => {
+  switch (priceUnit.value) {
+    case 'day': return '/ dzień'
+    case 'week': return '/ tydzień'
+    case 'month': return '/ miesiąc'
+    case 'year': return '/ rok'
+  }
+})
 
 const getStatusLabel = (status: string) => {
   switch (status) {
@@ -130,6 +155,23 @@ onMounted(() => {
         </div>
 
         <div v-else class="comparison-table-wrapper">
+          <div class="controls-bar">
+            <div class="price-toggle">
+              <span class="toggle-label">Jednostka ceny:</span>
+              <div class="toggle-buttons">
+                <button 
+                  v-for="unit in ['day', 'week', 'month', 'year'] as const" 
+                  :key="unit"
+                  @click="priceUnit = unit"
+                  class="toggle-btn"
+                  :class="{ active: priceUnit === unit }"
+                >
+                  {{ unit === 'day' ? 'Dzień' : unit === 'week' ? 'Tydzień' : unit === 'month' ? 'Miesiąc' : 'Rok' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
           <table class="comparison-table">
             <thead>
               <tr>
@@ -167,19 +209,13 @@ onMounted(() => {
               <tr>
                 <td class="feature-name">Cena</td>
                 <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value highlight">
-                  <strong>{{ ad.price.toLocaleString('pl-PL') }} PLN</strong>
+                  <strong>{{ getPrice(ad) }} PLN {{ priceUnitLabel }}</strong>
                 </td>
               </tr>
               <tr>
                 <td class="feature-name">Cena za m²</td>
                 <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
                   {{ getPricePerSqm(ad) }} PLN/m²
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Jednostka cenowa</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  {{ ad.price_unit === 'day' ? 'za dzień' : ad.price_unit === 'week' ? 'za tydzień' : ad.price_unit === 'month' ? 'za miesiąc' : 'za rok' }}
                 </td>
               </tr>
               <tr>
@@ -600,5 +636,56 @@ onMounted(() => {
   .ad-image-link {
     height: 120px;
   }
+}
+
+.controls-bar {
+  padding: 1rem;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.price-toggle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.toggle-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.toggle-buttons {
+  display: flex;
+  background: #f3f4f6;
+  padding: 0.25rem;
+  border-radius: 8px;
+  gap: 0.25rem;
+}
+
+.toggle-btn {
+  padding: 0.375rem 0.75rem;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  color: #374151;
+}
+
+.toggle-btn.active {
+  background: white;
+  color: #4f46e5;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-weight: 600;
 }
 </style>

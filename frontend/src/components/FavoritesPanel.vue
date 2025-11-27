@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onUnmounted } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import { supabase } from '../lib/supabase'
 import type { Advertisement } from '../lib/supabase'
 
@@ -44,9 +44,7 @@ const removeFavorite = (id: string) => {
   favoriteAds.value = favoriteAds.value.filter(ad => ad.id !== id)
 }
 
-const totalValue = computed(() => {
-  return favoriteAds.value.reduce((sum, ad) => sum + ad.price, 0)
-})
+
 
 const handleStorageChange = () => {
   if (props.isOpen) {
@@ -156,12 +154,7 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div v-if="favoriteAds.length > 0" class="panel-footer">
-        <div class="total-value">
-          <span class="total-label">Łączna wartość:</span>
-          <span class="total-amount">{{ totalValue.toLocaleString('pl-PL') }} PLN</span>
-        </div>
-      </div>
+
     </div>
   </div>
 </template>
@@ -395,29 +388,7 @@ onUnmounted(() => {
   transform: scale(1.05);
 }
 
-.panel-footer {
-  padding: 1.5rem 2rem;
-  border-top: 2px solid #f3f4f6;
-  background: #f9fafb;
-}
 
-.total-value {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.total-label {
-  font-size: 1rem;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.total-amount {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #667eea;
-}
 
 @media (max-width: 640px) {
   .favorites-panel {
