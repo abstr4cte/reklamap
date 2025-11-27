@@ -41,6 +41,7 @@ interface Filters {
   graphicDesignHelp: boolean
   offerType: string
   hasVatInvoice: boolean
+  selectedLocationCoords?: { lat: number; lng: number } | null
 }
 
 const filters = ref<Filters>({
@@ -65,6 +66,7 @@ const filters = ref<Filters>({
   graphicDesignHelp: false,
   offerType: '',
   hasVatInvoice: false,
+  selectedLocationCoords: null,
 })
 
 const sortedAndFilteredAdvertisements = computed(() => {
@@ -286,6 +288,7 @@ onMounted(() => {
       :advertisements="sortedAndFilteredAdvertisements" 
       :selected-region="filters.region"
       :selected-city="filters.city"
+      :selected-location-coords="filters.selectedLocationCoords"
     />
     <AdGrid
       :advertisements="sortedAndFilteredAdvertisements"

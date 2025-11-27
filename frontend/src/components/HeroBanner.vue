@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { supabase } from '../lib/supabase'
+import { ref, computed } from 'vue'
+import polishLocations from '../data/polishLocations.json'
+import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 
 interface Filters {
   keyword: string
@@ -24,6 +25,7 @@ interface Filters {
   graphicDesignHelp: boolean
   offerType: string
   hasVatInvoice: boolean
+  selectedLocationCoords?: { lat: number; lng: number } | null
 }
 
 const emit = defineEmits<{
@@ -66,49 +68,170 @@ const adTypes = [
 
 const regions = [
   { value: '', label: 'Wszystkie' },
-  { value: 'mazowieckie', label: 'Mazowieckie' },
-  { value: 'małopolskie', label: 'Małopolskie' },
-  { value: 'pomorskie', label: 'Pomorskie' },
-  { value: 'dolnośląskie', label: 'Dolnośląskie' },
-  { value: 'wielkopolskie', label: 'Wielkopolskie' },
-  { value: 'łódzkie', label: 'Łódzkie' },
+  ...polishLocations.voivodeships.map(v => ({
+    value: v.id,
+    label: v.name
+  }))
 ]
 
-const cities = ref<string[]>([])
-const showCitySuggestions = ref(false)
+const locationQuery = ref('')
+const isLocationMenuOpen = ref(false)
+const apiLocationResults = ref<LocationResult[]>([])
+const isLoadingLocations = ref(false)
 
-const filteredCities = computed(() => {
-  if (!filters.value.city) return cities.value.slice(0, 5)
-  const query = filters.value.city.toLowerCase()
-  return cities.value
-    .filter(city => city.toLowerCase().includes(query))
-    .slice(0, 5)
+const popularLocations: LocationSuggestion[] = [
+  { type: 'city', value: 'Warszawa', label: 'Warszawa' },
+  { type: 'city', value: 'Kraków', label: 'Kraków' },
+  { type: 'city', value: 'Wrocław', label: 'Wrocław' },
+  { type: 'city', value: 'Poznań', label: 'Poznań' },
+  { type: 'city', value: 'Gdańsk', label: 'Gdańsk' },
+]
+
+interface LocationSuggestion {
+  type: 'region' | 'city'
+  value: string
+  label: string
+  subtitle?: string
+  coords?: { lat: number; lng: number }
+  addresstype?: string
+  osmType?: string
+  osmClass?: string
+}
+
+const locationSuggestions = computed(() => {
+  if (!locationQuery.value) {
+    return popularLocations
+  }
+
+  const query = locationQuery.value.toLowerCase()
+  const suggestions: LocationSuggestion[] = []
+
+  // Filter regions from JSON (instant)
+  const matchingRegions = regions
+    .filter(r => r.value && r.label.toLowerCase().includes(query))
+    .map(r => ({ type: 'region' as const, value: r.value, label: r.label }))
+
+  // Add API results (cities, towns, villages)
+  const apiSuggestions = apiLocationResults.value
+    // Filter out administrative boundaries unless they are the city itself
+    .filter(loc => {
+      // Allow boundary if it's the city itself
+      if (loc.osmClass === 'boundary' && loc.addresstype === 'city') {
+        return true
+      }
+      // Otherwise exclude boundary class
+      return loc.osmClass !== 'boundary'
+    })
+    .map(loc => {
+    // Use state from Nominatim address
+    const voivodeship = loc.state || ''
+    
+    // Extract detailed location from displayName
+    // displayName format: "Jelitkowo, Gdańsk, Pomorskie, Polska"
+    const parts = loc.displayName.split(', ')
+    let detailedLocation = ''
+    
+    if (parts.length >= 2) {
+      // If first part is different from city name, it's a district/suburb
+      if (parts[0] !== loc.name && parts[1] === loc.name) {
+        detailedLocation = `${parts[0]}, ${loc.name}`
+      } else {
+        detailedLocation = loc.name
+      }
+    } else {
+      detailedLocation = loc.name
+    }
+    
+    return {
+      type: 'city' as const,
+      value: loc.name,
+      label: detailedLocation,
+      subtitle: voivodeship ? `${voivodeship}, Polska` : 'Polska',
+      coords: { lat: loc.lat, lng: loc.lng },
+      addresstype: loc.addresstype,
+      osmType: loc.osmType,
+      osmClass: loc.osmClass
+    }
+  })
+
+  // Deduplicate by city name, preferring place/city over boundary
+  const uniqueCities = new Map<string, LocationSuggestion>()
+  apiSuggestions.forEach(suggestion => {
+    const existing = uniqueCities.get(suggestion.value)
+    if (!existing) {
+      uniqueCities.set(suggestion.value, suggestion)
+    } else {
+      // Calculate priority for current and existing
+      // Priority: place/city > place/town > addresstype=city > others
+      const getPriority = (s: LocationSuggestion) => {
+        if (s.osmClass === 'place' && s.osmType === 'city') return 4
+        if (s.osmClass === 'place' && s.osmType === 'town') return 3
+        if (s.addresstype === 'city') return 2
+        if (s.type === 'city') return 1
+        return 0
+      }
+      
+      const currentPriority = getPriority(suggestion)
+      const existingPriority = getPriority(existing)
+      
+      if (currentPriority > existingPriority) {
+        uniqueCities.set(suggestion.value, suggestion)
+      }
+    }
+  })
+  const deduplicatedSuggestions = Array.from(uniqueCities.values())
+
+  suggestions.push(...matchingRegions, ...deduplicatedSuggestions)
+  return suggestions.slice(0, 10)
 })
 
-const loadCities = async () => {
-  try {
-    const { data, error } = await supabase
-      .from('advertisements')
-      .select('city')
-
-    if (error) throw error
-
-    const uniqueCities = [...new Set(data?.map(ad => ad.city) || [])]
-    cities.value = uniqueCities.sort()
-  } catch (error) {
-    console.error('Error loading cities:', error)
+const selectLocation = (suggestion: LocationSuggestion) => {
+  locationQuery.value = suggestion.label
+  
+  if (suggestion.type === 'region') {
+    // Find the matching region ID from polishLocations
+    const matchingRegion = polishLocations.voivodeships.find(
+      v => v.name === suggestion.label
+    )
+    filters.value.region = matchingRegion?.id || suggestion.value
+    filters.value.city = ''
+    filters.value.selectedLocationCoords = null
+  } else {
+    filters.value.city = suggestion.value
+    filters.value.region = ''
+    // Store coordinates if available from API
+    filters.value.selectedLocationCoords = suggestion.coords || null
   }
+  
+  isLocationMenuOpen.value = false
 }
 
-const selectCity = (city: string) => {
-  filters.value.city = city
-  showCitySuggestions.value = false
+const handleLocationFocus = () => {
+  isLocationMenuOpen.value = true
 }
 
-const handleCityBlur = () => {
+const handleLocationBlur = () => {
   window.setTimeout(() => {
-    showCitySuggestions.value = false
+    isLocationMenuOpen.value = false
   }, 200)
+}
+
+const handleLocationInput = () => {
+  // Trigger API search when user types
+  if (locationQuery.value.length >= 2) {
+    isLoadingLocations.value = true
+    debouncedSearchLocations(locationQuery.value, (results) => {
+      apiLocationResults.value = results
+      isLoadingLocations.value = false
+    })
+  } else {
+    apiLocationResults.value = []
+  }
+  
+  // If user types custom text without selecting, treat as city search
+  filters.value.city = locationQuery.value
+  filters.value.region = ''
+  filters.value.selectedLocationCoords = null
 }
 
 const handleSearch = () => {
@@ -138,13 +261,12 @@ const resetFilters = () => {
     graphicDesignHelp: false,
     offerType: '',
     hasVatInvoice: false,
+    selectedLocationCoords: null,
   }
+  locationQuery.value = ''
+  apiLocationResults.value = []
   emit('reset', { ...filters.value })
 }
-
-onMounted(() => {
-  loadCities()
-})
 </script>
 
 <template>
@@ -200,46 +322,71 @@ onMounted(() => {
                 </select>
               </div>
 
-              <div class="input-group">
-                <label for="search-region" class="input-label">
+              <div class="input-group location-autocomplete">
+                <label for="search-location" class="input-label">
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9 9C10.1046 9 11 8.10457 11 7C11 5.89543 10.1046 5 9 5C7.89543 5 7 5.89543 7 7C7 8.10457 7.89543 9 9 9Z" stroke="#4F46E5" stroke-width="1.5"/>
                     <path d="M9 16C9 16 14 11.5 14 7C14 4.23858 11.7614 2 9 2C6.23858 2 4 4.23858 4 7C4 11.5 9 16 9 16Z" stroke="#4F46E5" stroke-width="1.5"/>
                   </svg>
-                  Województwo
+                  Lokalizacja
                 </label>
-                <select id="search-region" v-model="filters.region" class="search-select">
-                  <option v-for="region in regions" :key="region.value" :value="region.value">
-                    {{ region.label }}
-                  </option>
-                </select>
+                <input
+                  id="search-location"
+                  v-model="locationQuery"
+                  type="text"
+                  placeholder="Wpisz region, miasto lub ulicę"
+                  class="search-input"
+                  @focus="handleLocationFocus"
+                  @blur="handleLocationBlur"
+                  @input="handleLocationInput"
+                />
+                <div v-if="isLocationMenuOpen" class="location-suggestions">
+                  <div v-if="isLoadingLocations" class="suggestion-section loading-state">
+                    <div class="loading-spinner"></div>
+                    <span>Szukam...</span>
+                  </div>
+                  <div v-else-if="!locationQuery" class="suggestion-section">
+                    <div class="suggestion-header">Popularne lokalizacje</div>
+                    <div
+                      v-for="suggestion in locationSuggestions"
+                      :key="suggestion.value"
+                      class="location-suggestion"
+                      @click="selectLocation(suggestion)"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 8C8.82843 8 9.5 7.32843 9.5 6.5C9.5 5.67157 8.82843 5 8 5C7.17157 5 6.5 5.67157 6.5 6.5C6.5 7.32843 7.17157 8 8 8Z" stroke="#6B7280" stroke-width="1.2"/>
+                        <path d="M8 14C8 14 12 10.5 12 6.5C12 4.01472 10.2091 2 8 2C5.79086 2 4 4.01472 4 6.5C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.2"/>
+                      </svg>
+                      {{ suggestion.label }}
+                    </div>
+                  </div>
+                  <div v-else>
+                    <div
+                      v-for="suggestion in locationSuggestions"
+                      :key="suggestion.value + suggestion.type"
+                      class="location-suggestion"
+                      @click="selectLocation(suggestion)"
+                    >
+                      <svg v-if="suggestion.type === 'region'" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="2" width="12" height="12" rx="1.5" stroke="#6B7280" stroke-width="1.2"/>
+                        <path d="M2 6H14M6 2V14" stroke="#6B7280" stroke-width="1.2"/>
+                      </svg>
+                      <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 8C8.82843 8 9.5 7.32843 9.5 6.5C9.5 5.67157 8.82843 5 8 5C7.17157 5 6.5 5.67157 6.5 6.5C6.5 7.32843 7.17157 8 8 8Z" stroke="#6B7280" stroke-width="1.2"/>
+                        <path d="M8 14C8 14 12 10.5 12 6.5C12 4.01472 10.2091 2 8 2C5.79086 2 4 4.01472 4 6.5C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.2"/>
+                      </svg>
+                      <span class="suggestion-text">
+                        <span class="suggestion-name">{{ suggestion.label }}</span>
+                        <span v-if="suggestion.type === 'region'" class="suggestion-type">Województwo</span>
+                        <span v-else-if="suggestion.subtitle" class="suggestion-type">{{ suggestion.subtitle }}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="search-row">
-              <div class="input-group city-autocomplete">
-                <label for="search-city" class="input-label">Miasto</label>
-                <input
-                  id="search-city"
-                  v-model="filters.city"
-                  type="text"
-                  placeholder="np. Warszawa"
-                  class="search-input"
-                  @focus="showCitySuggestions = true"
-                  @blur="handleCityBlur"
-                />
-                <div v-if="showCitySuggestions && filteredCities.length > 0" class="city-suggestions">
-                  <div
-                    v-for="city in filteredCities"
-                    :key="city"
-                    class="city-suggestion"
-                    @click="selectCity(city)"
-                  >
-                    {{ city }}
-                  </div>
-                </div>
-              </div>
-
               <div class="input-group price-group">
                 <label class="input-label">Cena</label>
                 <div class="price-filter">
@@ -627,6 +774,76 @@ onMounted(() => {
   border-radius: 0 0 8px 8px;
 }
 
+.location-autocomplete {
+  position: relative;
+}
+
+.location-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #E5E7EB;
+  border-radius: 10px;
+  margin-top: 0.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.suggestion-section {
+  padding: 0.5rem 0;
+}
+
+.suggestion-header {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6B7280;
+  letter-spacing: 0.05em;
+}
+
+.location-suggestion {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.95rem;
+  color: #1F2937;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.location-suggestion:hover {
+  background-color: #F3F4F6;
+}
+
+.location-suggestion svg {
+  flex-shrink: 0;
+}
+
+.suggestion-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  flex: 1;
+}
+
+.suggestion-name {
+  font-size: 0.95rem;
+  color: #1F2937;
+  font-weight: 500;
+}
+
+.suggestion-type {
+  font-size: 0.75rem;
+  color: #9CA3AF;
+  font-weight: 500;
+}
+
 .toggle-advanced {
   padding: 0.875rem 1.5rem;
   background: #F3F4F6;
@@ -661,6 +878,29 @@ onMounted(() => {
   flex-direction: column;
   gap: 1.5rem;
   padding-top: 1rem;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  color: #6B7280;
+  font-size: 0.95rem;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #E5E7EB;
+  border-top-color: #4F46E5;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .filter-section {

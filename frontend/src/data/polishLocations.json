@@ -1,0 +1,694 @@
+{
+    "voivodeships": [
+        {
+            "id": "dolnoslaskie",
+            "name": "Dolnośląskie",
+            "capital": "Wrocław"
+        },
+        {
+            "id": "kujawsko-pomorskie",
+            "name": "Kujawsko-Pomorskie",
+            "capital": "Bydgoszcz"
+        },
+        {
+            "id": "lubelskie",
+            "name": "Lubelskie",
+            "capital": "Lublin"
+        },
+        {
+            "id": "lubuskie",
+            "name": "Lubuskie",
+            "capital": "Gorzów Wielkopolski"
+        },
+        {
+            "id": "lodzkie",
+            "name": "Łódzkie",
+            "capital": "Łódź"
+        },
+        {
+            "id": "malopolskie",
+            "name": "Małopolskie",
+            "capital": "Kraków"
+        },
+        {
+            "id": "mazowieckie",
+            "name": "Mazowieckie",
+            "capital": "Warszawa"
+        },
+        {
+            "id": "opolskie",
+            "name": "Opolskie",
+            "capital": "Opole"
+        },
+        {
+            "id": "podkarpackie",
+            "name": "Podkarpackie",
+            "capital": "Rzeszów"
+        },
+        {
+            "id": "podlaskie",
+            "name": "Podlaskie",
+            "capital": "Białystok"
+        },
+        {
+            "id": "pomorskie",
+            "name": "Pomorskie",
+            "capital": "Gdańsk"
+        },
+        {
+            "id": "slaskie",
+            "name": "Śląskie",
+            "capital": "Katowice"
+        },
+        {
+            "id": "swietokrzyskie",
+            "name": "Świętokrzyskie",
+            "capital": "Kielce"
+        },
+        {
+            "id": "warminsko-mazurskie",
+            "name": "Warmińsko-Mazurskie",
+            "capital": "Olsztyn"
+        },
+        {
+            "id": "wielkopolskie",
+            "name": "Wielkopolskie",
+            "capital": "Poznań"
+        },
+        {
+            "id": "zachodniopomorskie",
+            "name": "Zachodniopomorskie",
+            "capital": "Szczecin"
+        }
+    ],
+    "cities": [
+        {
+            "name": "Warszawa",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Kraków",
+            "voivodeship": "malopolskie"
+        },
+        {
+            "name": "Łódź",
+            "voivodeship": "lodzkie"
+        },
+        {
+            "name": "Wrocław",
+            "voivodeship": "dolnoslaskie"
+        },
+        {
+            "name": "Poznań",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Gdańsk",
+            "voivodeship": "pomorskie"
+        },
+        {
+            "name": "Szczecin",
+            "voivodeship": "zachodniopomorskie"
+        },
+        {
+            "name": "Bydgoszcz",
+            "voivodeship": "kujawsko-pomorskie"
+        },
+        {
+            "name": "Lublin",
+            "voivodeship": "lubelskie"
+        },
+        {
+            "name": "Białystok",
+            "voivodeship": "podlaskie"
+        },
+        {
+            "name": "Katowice",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Gdynia",
+            "voivodeship": "pomorskie"
+        },
+        {
+            "name": "Częstochowa",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Radom",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Sosnowiec",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Toruń",
+            "voivodeship": "kujawsko-pomorskie"
+        },
+        {
+            "name": "Kielce",
+            "voivodeship": "swietokrzyskie"
+        },
+        {
+            "name": "Gliwice",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Zabrze",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Bytom",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Olsztyn",
+            "voivodeship": "warminsko-mazurskie"
+        },
+        {
+            "name": "Bielsko-Biała",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Rzeszów",
+            "voivodeship": "podkarpackie"
+        },
+        {
+            "name": "Ruda Śląska",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Rybnik",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Tychy",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Dąbrowa Górnicza",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Płock",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Elbląg",
+            "voivodeship": "warminsko-mazurskie"
+        },
+        {
+            "name": "Opole",
+            "voivodeship": "opolskie"
+        },
+        {
+            "name": "Gorzów Wielkopolski",
+            "voivodeship": "lubuskie"
+        },
+        {
+            "name": "Wałbrzych",
+            "voivodeship": "dolnoslaskie"
+        },
+        {
+            "name": "Włocławek",
+            "voivodeship": "kujawsko-pomorskie"
+        },
+        {
+            "name": "Tarnów",
+            "voivodeship": "malopolskie"
+        },
+        {
+            "name": "Chorzów",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Koszalin",
+            "voivodeship": "zachodniopomorskie"
+        },
+        {
+            "name": "Kalisz",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Legnica",
+            "voivodeship": "dolnoslaskie"
+        },
+        {
+            "name": "Grudziądz",
+            "voivodeship": "kujawsko-pomorskie"
+        },
+        {
+            "name": "Jaworzno",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Słupsk",
+            "voivodeship": "pomorskie"
+        },
+        {
+            "name": "Jastrzębie-Zdrój",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Nowy Sącz",
+            "voivodeship": "malopolskie"
+        },
+        {
+            "name": "Jelenia Góra",
+            "voivodeship": "dolnoslaskie"
+        },
+        {
+            "name": "Siedlce",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Mysłowice",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Konin",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Piła",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Piotrków Trybunalski",
+            "voivodeship": "lodzkie"
+        },
+        {
+            "name": "Inowrocław",
+            "voivodeship": "kujawsko-pomorskie"
+        },
+        {
+            "name": "Lubin",
+            "voivodeship": "dolnoslaskie"
+        },
+        {
+            "name": "Ostrów Wielkopolski",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Suwałki",
+            "voivodeship": "podlaskie"
+        },
+        {
+            "name": "Stargard",
+            "voivodeship": "zachodniopomorskie"
+        },
+        {
+            "name": "Gniezno",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Głogów",
+            "voivodeship": "dolnoslaskie"
+        },
+        {
+            "name": "Chełm",
+            "voivodeship": "lubelskie"
+        },
+        {
+            "name": "Tomaszów Mazowiecki",
+            "voivodeship": "lodzkie"
+        },
+        {
+            "name": "Przemyśl",
+            "voivodeship": "podkarpackie"
+        },
+        {
+            "name": "Zamość",
+            "voivodeship": "lubelskie"
+        },
+        {
+            "name": "Stalowa Wola",
+            "voivodeship": "podkarpackie"
+        },
+        {
+            "name": "Kędzierzyn-Koźle",
+            "voivodeship": "opolskie"
+        },
+        {
+            "name": "Leszno",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Łomża",
+            "voivodeship": "podlaskie"
+        },
+        {
+            "name": "Żory",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Mielec",
+            "voivodeship": "podkarpackie"
+        },
+        {
+            "name": "Tarnowskie Góry",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Tczew",
+            "voivodeship": "pomorskie"
+        },
+        {
+            "name": "Ełk",
+            "voivodeship": "warminsko-mazurskie"
+        },
+        {
+            "name": "Pabianice",
+            "voivodeship": "lodzkie"
+        },
+        {
+            "name": "Będzin",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Biała Podlaska",
+            "voivodeship": "lubelskie"
+        },
+        {
+            "name": "Ostrołęka",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Zgierz",
+            "voivodeship": "lodzkie"
+        },
+        {
+            "name": "Racibórz",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Puławy",
+            "voivodeship": "lubelskie"
+        },
+        {
+            "name": "Świętochłowice",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Starachowice",
+            "voivodeship": "swietokrzyskie"
+        },
+        {
+            "name": "Zawiercie",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Wejherowo",
+            "voivodeship": "pomorskie"
+        },
+        {
+            "name": "Sopot",
+            "voivodeship": "pomorskie"
+        },
+        {
+            "name": "Oświęcim",
+            "voivodeship": "malopolskie"
+        },
+        {
+            "name": "Siemianowice Śląskie",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Świdnica",
+            "voivodeship": "dolnoslaskie"
+        },
+        {
+            "name": "Starogard Gdański",
+            "voivodeship": "pomorskie"
+        },
+        {
+            "name": "Piekary Śląskie",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Ostrowiec Świętokrzyski",
+            "voivodeship": "swietokrzyskie"
+        },
+        {
+            "name": "Krosno",
+            "voivodeship": "podkarpackie"
+        },
+        {
+            "name": "Radomsko",
+            "voivodeship": "lodzkie"
+        },
+        {
+            "name": "Kutno",
+            "voivodeship": "lodzkie"
+        },
+        {
+            "name": "Skierniewice",
+            "voivodeship": "lodzkie"
+        },
+        {
+            "name": "Nysa",
+            "voivodeship": "opolskie"
+        },
+        {
+            "name": "Ciechanów",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Skarżysko-Kamienna",
+            "voivodeship": "swietokrzyskie"
+        },
+        {
+            "name": "Mińsk Mazowiecki",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Pruszków",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Zielona Góra",
+            "voivodeship": "lubuskie"
+        },
+        {
+            "name": "Chrzanów",
+            "voivodeship": "malopolskie"
+        },
+        {
+            "name": "Wodzisław Śląski",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Sanok",
+            "voivodeship": "podkarpackie"
+        },
+        {
+            "name": "Kwidzyn",
+            "voivodeship": "pomorskie"
+        },
+        {
+            "name": "Legionowo",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Otwock",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Sieradz",
+            "voivodeship": "lodzkie"
+        },
+        {
+            "name": "Nowa Sól",
+            "voivodeship": "lubuskie"
+        },
+        {
+            "name": "Bolesławiec",
+            "voivodeship": "dolnoslaskie"
+        },
+        {
+            "name": "Szczecinek",
+            "voivodeship": "zachodniopomorskie"
+        },
+        {
+            "name": "Mikołów",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Świnoujście",
+            "voivodeship": "zachodniopomorskie"
+        },
+        {
+            "name": "Jarosław",
+            "voivodeship": "podkarpackie"
+        },
+        {
+            "name": "Kołobrzeg",
+            "voivodeship": "zachodniopomorskie"
+        },
+        {
+            "name": "Dzierżoniów",
+            "voivodeship": "dolnoslaskie"
+        },
+        {
+            "name": "Żyrardów",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Wołomin",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Piaseczno",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Oława",
+            "voivodeship": "dolnoslaskie"
+        },
+        {
+            "name": "Dębica",
+            "voivodeship": "podkarpackie"
+        },
+        {
+            "name": "Świdnik",
+            "voivodeship": "lubelskie"
+        },
+        {
+            "name": "Łuków",
+            "voivodeship": "lubelskie"
+        },
+        {
+            "name": "Brodnica",
+            "voivodeship": "kujawsko-pomorskie"
+        },
+        {
+            "name": "Kęty",
+            "voivodeship": "malopolskie"
+        },
+        {
+            "name": "Rumia",
+            "voivodeship": "pomorskie"
+        },
+        {
+            "name": "Czerwionka-Leszczyny",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Knurów",
+            "voivodeship": "slaskie"
+        },
+        {
+            "name": "Malbork",
+            "voivodeship": "pomorskie"
+        },
+        {
+            "name": "Augustów",
+            "voivodeship": "podlaskie"
+        },
+        {
+            "name": "Kraśnik",
+            "voivodeship": "lubelskie"
+        },
+        {
+            "name": "Biłgoraj",
+            "voivodeship": "lubelskie"
+        },
+        {
+            "name": "Olkusz",
+            "voivodeship": "malopolskie"
+        },
+        {
+            "name": "Gorlice",
+            "voivodeship": "malopolskie"
+        },
+        {
+            "name": "Wieluń",
+            "voivodeship": "lodzkie"
+        },
+        {
+            "name": "Turek",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Wałcz",
+            "voivodeship": "zachodniopomorskie"
+        },
+        {
+            "name": "Kłodzko",
+            "voivodeship": "dolnoslaskie"
+        },
+        {
+            "name": "Świecie",
+            "voivodeship": "kujawsko-pomorskie"
+        },
+        {
+            "name": "Brzeg",
+            "voivodeship": "opolskie"
+        },
+        {
+            "name": "Pruszcz Gdański",
+            "voivodeship": "pomorskie"
+        },
+        {
+            "name": "Tarnobrzeg",
+            "voivodeship": "podkarpackie"
+        },
+        {
+            "name": "Jasło",
+            "voivodeship": "podkarpackie"
+        },
+        {
+            "name": "Grodzisk Mazowiecki",
+            "voivodeship": "mazowieckie"
+        },
+        {
+            "name": "Sucha Beskidzka",
+            "voivodeship": "malopolskie"
+        },
+        {
+            "name": "Wadowice",
+            "voivodeship": "malopolskie"
+        },
+        {
+            "name": "Andrychów",
+            "voivodeship": "malopolskie"
+        },
+        {
+            "name": "Libiąż",
+            "voivodeship": "malopolskie"
+        },
+        {
+            "name": "Oborniki",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Środa Wielkopolska",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Swarzędz",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Luboń",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Mosina",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Kórnik",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Murowana Goślina",
+            "voivodeship": "wielkopolskie"
+        },
+        {
+            "name": "Puszczykowo",
+            "voivodeship": "wielkopolskie"
+        }
+    ]
+}

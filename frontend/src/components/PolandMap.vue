@@ -8,6 +8,7 @@ const props = defineProps<{
   advertisements: Advertisement[]
   selectedRegion?: string
   selectedCity?: string
+  selectedLocationCoords?: { lat: number; lng: number } | null
 }>()
 
 const mapContainer = ref<HTMLElement | null>(null)
@@ -24,20 +25,20 @@ const typeColors: Record<string, string> = {
 }
 
 const regionCoordinates: Record<string, { lat: number; lng: number; zoom: number }> = {
-  'dolnośląskie': { lat: 51.1079, lng: 17.0385, zoom: 8 },
+  'dolnoslaskie': { lat: 51.1079, lng: 17.0385, zoom: 8 },
   'kujawsko-pomorskie': { lat: 53.1235, lng: 18.0084, zoom: 8 },
   'lubelskie': { lat: 51.2465, lng: 22.5684, zoom: 8 },
   'lubuskie': { lat: 52.2297, lng: 15.2365, zoom: 8 },
-  'łódzkie': { lat: 51.7592, lng: 19.4560, zoom: 8 },
-  'małopolskie': { lat: 49.85, lng: 20.2, zoom: 8 }, // Adjusted center
+  'lodzkie': { lat: 51.7592, lng: 19.4560, zoom: 8 },
+  'malopolskie': { lat: 49.85, lng: 20.2, zoom: 8 },
   'mazowieckie': { lat: 52.2297, lng: 21.0122, zoom: 8 },
   'opolskie': { lat: 50.6751, lng: 17.9213, zoom: 9 },
   'podkarpackie': { lat: 50.0412, lng: 21.9991, zoom: 8 },
   'podlaskie': { lat: 53.1325, lng: 23.1688, zoom: 8 },
   'pomorskie': { lat: 54.3520, lng: 18.6466, zoom: 8 },
-  'śląskie': { lat: 50.2649, lng: 19.0238, zoom: 9 },
-  'świętokrzyskie': { lat: 50.8661, lng: 20.6286, zoom: 9 },
-  'warmińsko-mazurskie': { lat: 53.7784, lng: 20.4801, zoom: 8 },
+  'slaskie': { lat: 50.2649, lng: 19.0238, zoom: 9 },
+  'swietokrzyskie': { lat: 50.8661, lng: 20.6286, zoom: 9 },
+  'warminsko-mazurskie': { lat: 53.7784, lng: 20.4801, zoom: 8 },
   'wielkopolskie': { lat: 52.4064, lng: 16.9252, zoom: 8 },
   'zachodniopomorskie': { lat: 53.4285, lng: 14.5528, zoom: 8 }
 }
@@ -148,16 +149,19 @@ const updateMarkers = () => {
     markers.push(marker)
   })
 
-  if (props.selectedCity && markers.length > 0) {
-    // If city is selected, fit bounds to markers (likely clustered in that city)
+  if (props.selectedLocationCoords) {
+    // Priority 1: If exact coordinates are provided, zoom to them
+    map.setView([props.selectedLocationCoords.lat, props.selectedLocationCoords.lng], 13)
+  } else if (props.selectedCity && markers.length > 0) {
+    // Priority 2: If city is selected, fit bounds to markers (likely clustered in that city)
     const group = new L.FeatureGroup(markers)
     map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 12 })
   } else if (props.selectedRegion && regionCoordinates[props.selectedRegion]) {
-    // If region is selected (and no city), zoom to region center
+    // Priority 3: If region is selected (and no city), zoom to region center
     const region = regionCoordinates[props.selectedRegion]
     map.setView([region.lat, region.lng], region.zoom)
   } else if (markers.length > 0) {
-    // Default behavior: fit all markers
+    // Priority 4: Default behavior: fit all markers
     const group = new L.FeatureGroup(markers)
     map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 12 })
   } else {
@@ -167,6 +171,18 @@ const updateMarkers = () => {
 }
 
 watch(() => props.advertisements, () => {
+  updateMarkers()
+}, { deep: true })
+
+watch(() => props.selectedRegion, () => {
+  updateMarkers()
+})
+
+watch(() => props.selectedCity, () => {
+  updateMarkers()
+})
+
+watch(() => props.selectedLocationCoords, () => {
   updateMarkers()
 }, { deep: true })
 
