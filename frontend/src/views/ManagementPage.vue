@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../lib/supabase'
 import type { Advertisement } from '../lib/supabase'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
+import ToastNotification from '../components/ToastNotification.vue'
 
 const router = useRouter()
 const advertisements = ref<Advertisement[]>([])
@@ -11,7 +12,9 @@ const isLoading = ref(true)
 const expandedRows = ref<Set<string>>(new Set())
 const editingAd = ref<Advertisement | null>(null)
 const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
+const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 const adToDelete = ref<string>('')
+const pendingStatusChanges = ref<Record<string, string>>({})
 
 const loadAdvertisements = async () => {
   try {
@@ -43,6 +46,34 @@ const toggleRow = (id: string) => {
   }
 }
 
+const handleStatusChange = (id: string, newStatus: string) => {
+  const ad = advertisements.value.find(a => a.id === id)
+  if (ad && ad.status === newStatus) {
+    const newPending = { ...pendingStatusChanges.value }
+    delete newPending[id]
+    pendingStatusChanges.value = newPending
+    return
+  }
+  pendingStatusChanges.value = { ...pendingStatusChanges.value, [id]: newStatus }
+}
+
+const confirmStatusChange = async (id: string) => {
+  const newStatus = pendingStatusChanges.value[id]
+  if (!newStatus) return
+  
+  await updateStatus(id, newStatus)
+  
+  const newPending = { ...pendingStatusChanges.value }
+  delete newPending[id]
+  pendingStatusChanges.value = newPending
+}
+
+const cancelStatusChange = (id: string) => {
+  const newPending = { ...pendingStatusChanges.value }
+  delete newPending[id]
+  pendingStatusChanges.value = newPending
+}
+
 const updateStatus = async (id: string, newStatus: string) => {
   try {
     const { error } = await supabase
@@ -54,9 +85,10 @@ const updateStatus = async (id: string, newStatus: string) => {
 
     const ad = advertisements.value.find(a => a.id === id)
     if (ad) ad.status = newStatus
-  } catch (error) {
+    toast.value?.add('Status został zaktualizowany', 'success')
+  } catch (error: any) {
     console.error('Error updating status:', error)
-    alert('Błąd podczas aktualizacji statusu')
+    toast.value?.add(`Błąd podczas aktualizacji statusu: ${error.message || error}`, 'error')
   }
 }
 
@@ -75,9 +107,10 @@ const toggleActive = async (id: string) => {
     if (error) throw error
 
     ad.is_active = newActiveState
+    toast.value?.add(newActiveState ? 'Ogłoszenie zostało aktywowane' : 'Ogłoszenie zostało dezaktywowane', 'success')
   } catch (error) {
     console.error('Error toggling active state:', error)
-    alert('Błąd podczas zmiany stanu aktywności')
+    toast.value?.add('Błąd podczas zmiany stanu aktywności', 'error')
   }
 }
 
@@ -117,10 +150,16 @@ const saveChanges = async (id: string) => {
     }
 
     toggleRow(id)
-    alert('Zmiany zostały zapisane')
+    nextTick(() => {
+      const row = document.getElementById(`ad-row-${id}`)
+      if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
+    })
+    toast.value?.add('Zmiany zostały zapisane', 'success')
   } catch (error) {
     console.error('Error saving changes:', error)
-    alert('Błąd podczas zapisywania zmian')
+    toast.value?.add('Błąd podczas zapisywania zmian', 'error')
   }
 }
 
@@ -143,9 +182,10 @@ const handleConfirmDelete = async () => {
     advertisements.value = advertisements.value.filter(a => a.id !== adToDelete.value)
     expandedRows.value.delete(adToDelete.value)
     adToDelete.value = ''
+    toast.value?.add('Ogłoszenie zostało usunięte', 'success')
   } catch (error) {
     console.error('Error deleting advertisement:', error)
-    alert('Błąd podczas usuwania ogłoszenia')
+    toast.value?.add('Błąd podczas usuwania ogłoszenia', 'error')
   }
 }
 
@@ -168,6 +208,11 @@ const getTypeLabel = (type: string) => {
     poster: 'Plakat'
   }
   return labels[type] || type
+}
+
+const openPreview = (id: string) => {
+  const { href } = router.resolve({ path: `/ogloszenie/${id}` })
+  window.open(href, '_blank')
 }
 
 onMounted(() => {
@@ -227,7 +272,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <div v-for="ad in advertisements" :key="ad.id" class="ad-row" :class="{ expanded: expandedRows.has(ad.id) }">
+          <div v-for="ad in advertisements" :key="ad.id" :id="'ad-row-' + ad.id" class="ad-row" :class="{ expanded: expandedRows.has(ad.id) }">
             <div class="ad-summary" @click="toggleRow(ad.id)">
               <div class="ad-thumbnail">
                 <img v-if="ad.image_url" :src="ad.image_url" :alt="ad.title" />
@@ -247,11 +292,29 @@ onMounted(() => {
 
               <div class="ad-controls" @click.stop>
                 <div class="status-dropdown">
-                  <select :value="ad.status" @change="updateStatus(ad.id, ($event.target as HTMLSelectElement).value)" class="status-select">
+                  <select 
+                    :value="pendingStatusChanges[ad.id] || ad.status" 
+                    @change="handleStatusChange(ad.id, ($event.target as HTMLSelectElement).value)" 
+                    class="status-select"
+                    :class="{ 'has-pending': pendingStatusChanges[ad.id] }"
+                  >
                     <option value="active">Wolne</option>
                     <option value="reserved">Zarezerwowane</option>
                     <option value="soon_available">Wkrótce dostępne</option>
                   </select>
+                  
+                  <div v-if="pendingStatusChanges[ad.id]" class="status-actions">
+                    <button @click.stop="confirmStatusChange(ad.id)" class="status-btn confirm" title="Zapisz">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                    <button @click.stop="cancelStatusChange(ad.id)" class="status-btn cancel" title="Anuluj">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
 
                 <label class="switch">
@@ -266,6 +329,13 @@ onMounted(() => {
                   </svg>
                   <span>{{ ad.views || 0 }}</span>
                 </div>
+
+                <button @click.stop="openPreview(ad.id)" class="preview-btn" title="Zobacz ogłoszenie">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
 
                 <button @click.stop="deleteAd(ad.id)" class="delete-btn" title="Usuń ogłoszenie">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -414,12 +484,13 @@ onMounted(() => {
   <ConfirmDialog
     ref="confirmDialog"
     title="Usuń ogłoszenie"
-    message="Czy na pewno chcesz usunąć to ogłoszenie? Ta operacja jest nieodwracalna."
+    message="Czy na pewno chcesz usunąć to ogłoszenie? Tej operacji nie można cofnąć."
     type="danger"
     confirm-text="Usuń"
     cancel-text="Anuluj"
     @confirm="handleConfirmDelete"
   />
+  <ToastNotification ref="toast" />
 </template>
 
 <style scoped>
@@ -665,6 +736,13 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
+.status-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .status-select {
   padding: 0.5rem 1rem;
   border: 2px solid #e5e7eb;
@@ -677,6 +755,11 @@ onMounted(() => {
   color: #374151;
 }
 
+.status-select.has-pending {
+  border-color: #F59E0B;
+  background-color: #FFFBEB;
+}
+
 .status-select:hover {
   border-color: #667eea;
 }
@@ -685,6 +768,51 @@ onMounted(() => {
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.status-actions {
+  display: flex;
+  gap: 0.25rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.status-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.status-btn.confirm {
+  background: #ECFDF5;
+  border: 1px solid #10B981;
+  color: #10B981;
+}
+
+.status-btn.confirm:hover {
+  background: #D1FAE5;
+  transform: scale(1.1);
+}
+
+.status-btn.cancel {
+  background: #FEF2F2;
+  border: 1px solid #EF4444;
+  color: #EF4444;
+}
+
+.status-btn.cancel:hover {
+  background: #FEE2E2;
+  transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .switch {
@@ -747,6 +875,26 @@ onMounted(() => {
   color: #6b7280;
   font-weight: 600;
   font-size: 0.9rem;
+}
+
+.preview-btn {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.preview-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+  transform: scale(1.1);
 }
 
 .delete-btn {
