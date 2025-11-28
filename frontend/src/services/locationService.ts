@@ -28,12 +28,15 @@ export async function searchLocations(query: string): Promise<LocationResult[]> 
     }
 
     try {
+        // Add wildcard to query for better partial matching (e.g., "szklar" -> "szklar*")
+        const searchQuery = query.trim()
+
         const params = new URLSearchParams({
-            q: query,
+            q: searchQuery,
             countrycodes: 'pl',
             format: 'json',
             addressdetails: '1',
-            limit: '8',
+            limit: '10',
             'accept-language': 'pl'
         })
 

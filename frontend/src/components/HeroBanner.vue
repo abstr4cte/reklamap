@@ -113,15 +113,6 @@ const locationSuggestions = computed(() => {
 
   // Add API results (cities, towns, villages)
   const apiSuggestions = apiLocationResults.value
-    // Filter out administrative boundaries unless they are the city itself
-    .filter(loc => {
-      // Allow boundary if it's the city itself
-      if (loc.osmClass === 'boundary' && loc.addresstype === 'city') {
-        return true
-      }
-      // Otherwise exclude boundary class
-      return loc.osmClass !== 'boundary'
-    })
     .map(loc => {
     // Use state from Nominatim address
     const voivodeship = loc.state || ''
