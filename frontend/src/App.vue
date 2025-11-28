@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
 import FavoritesPanel from './components/FavoritesPanel.vue'
 import ComparisonPanel from './components/ComparisonPanel.vue'
 import EmailModal from './components/EmailModal.vue'
+import FeedbackButton from './components/FeedbackButton.vue'
 
 const router = useRouter()
 const isModalOpen = ref(false)
@@ -114,6 +115,7 @@ onUnmounted(() => {
       :is-open="isModalOpen"
       @close="isModalOpen = false"
     />
+    <FeedbackButton />
   </div>
 </template>
 
