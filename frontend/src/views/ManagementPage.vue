@@ -3,12 +3,15 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../lib/supabase'
 import type { Advertisement } from '../lib/supabase'
+import ConfirmDialog from '../components/ConfirmDialog.vue'
 
 const router = useRouter()
 const advertisements = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const expandedRows = ref<Set<string>>(new Set())
 const editingAd = ref<Advertisement | null>(null)
+const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
+const adToDelete = ref<string>('')
 
 const loadAdvertisements = async () => {
   try {
@@ -121,19 +124,25 @@ const saveChanges = async (id: string) => {
   }
 }
 
-const deleteAd = async (id: string) => {
-  if (!confirm('Czy na pewno chcesz usunąć to ogłoszenie?')) return
+const deleteAd = (id: string) => {
+  adToDelete.value = id
+  confirmDialog.value?.open()
+}
+
+const handleConfirmDelete = async () => {
+  if (!adToDelete.value) return
 
   try {
     const { error } = await supabase
       .from('advertisements')
       .delete()
-      .eq('id', id)
+      .eq('id', adToDelete.value)
 
     if (error) throw error
 
-    advertisements.value = advertisements.value.filter(a => a.id !== id)
-    expandedRows.value.delete(id)
+    advertisements.value = advertisements.value.filter(a => a.id !== adToDelete.value)
+    expandedRows.value.delete(adToDelete.value)
+    adToDelete.value = ''
   } catch (error) {
     console.error('Error deleting advertisement:', error)
     alert('Błąd podczas usuwania ogłoszenia')
@@ -401,6 +410,16 @@ onMounted(() => {
       </div>
     </div>
   </div>
+
+  <ConfirmDialog
+    ref="confirmDialog"
+    title="Usuń ogłoszenie"
+    message="Czy na pewno chcesz usunąć to ogłoszenie? Ta operacja jest nieodwracalna."
+    type="danger"
+    confirm-text="Usuń"
+    cancel-text="Anuluj"
+    @confirm="handleConfirmDelete"
+  />
 </template>
 
 <style scoped>

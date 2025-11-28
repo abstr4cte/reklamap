@@ -3,11 +3,13 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../lib/supabase'
 import type { Advertisement } from '../lib/supabase'
+import ConfirmDialog from '../components/ConfirmDialog.vue'
 
 const router = useRouter()
 const comparisonAds = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const priceUnit = ref<'day' | 'week' | 'month' | 'year'>('month')
+const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
 
 const loadComparison = async () => {
   const comparisonIds = JSON.parse(localStorage.getItem('comparison') || '[]')
@@ -41,10 +43,12 @@ const removeFromComparison = (id: string) => {
 }
 
 const clearAll = () => {
-  if (confirm('Czy na pewno chcesz usunąć wszystkie ogłoszenia z porównania?')) {
-    localStorage.setItem('comparison', JSON.stringify([]))
-    comparisonAds.value = []
-  }
+  confirmDialog.value?.open()
+}
+
+const handleConfirmClear = () => {
+  localStorage.setItem('comparison', JSON.stringify([]))
+  comparisonAds.value = []
 }
 
 const getSurfaceArea = (ad: Advertisement) => {
@@ -310,6 +314,16 @@ onMounted(() => {
       </div>
     </div>
   </div>
+
+  <ConfirmDialog
+    ref="confirmDialog"
+    title="Wyczyść porównanie"
+    message="Czy na pewno chcesz wyczyścić wszystkie ogłoszenia z porównania?"
+    type="warning"
+    confirm-text="Wyczyść"
+    cancel-text="Anuluj"
+    @confirm="handleConfirmClear"
+  />
 </template>
 
 <style scoped>
