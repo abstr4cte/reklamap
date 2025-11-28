@@ -40,6 +40,8 @@ const removeFromComparison = (id: string) => {
   const filtered = comparison.filter((adId: string) => adId !== id)
   localStorage.setItem('comparison', JSON.stringify(filtered))
   comparisonAds.value = comparisonAds.value.filter(ad => ad.id !== id)
+  // Trigger storage event to update header counter
+  window.dispatchEvent(new Event('storage'))
 }
 
 const clearAll = () => {
@@ -49,6 +51,8 @@ const clearAll = () => {
 const handleConfirmClear = () => {
   localStorage.setItem('comparison', JSON.stringify([]))
   comparisonAds.value = []
+  // Trigger storage event to update header counter
+  window.dispatchEvent(new Event('storage'))
 }
 
 const getSurfaceArea = (ad: Advertisement) => {
