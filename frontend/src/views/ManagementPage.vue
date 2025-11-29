@@ -15,6 +15,9 @@ const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
 const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 const adToDelete = ref<string>('')
 const pendingStatusChanges = ref<Record<string, string>>({})
+const selectedImageFile = ref<File | null>(null) // Deprecated
+const newImageFiles = ref<{ file: File, preview: string }[]>([])
+const isDragging = ref(false)
 
 const loadAdvertisements = async () => {
   try {
@@ -37,13 +40,102 @@ const toggleRow = (id: string) => {
   if (expandedRows.value.has(id)) {
     expandedRows.value.delete(id)
     editingAd.value = null
+    newImageFiles.value = []
+    isDragging.value = false
   } else {
     expandedRows.value.add(id)
     const ad = advertisements.value.find(a => a.id === id)
     if (ad) {
-      editingAd.value = { ...ad }
+      const images = ad.images || (ad.image_url ? [ad.image_url] : [])
+      editingAd.value = { ...ad, images }
+      newImageFiles.value = []
     }
   }
+}
+
+const getTotalImagesCount = () => {
+  if (!editingAd.value) return 0
+  return (editingAd.value.images?.length || 0) + newImageFiles.value.length
+}
+
+const handleImageSelect = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const files = target.files
+  processFiles(files)
+  target.value = ''
+}
+
+const handleDrop = (event: DragEvent) => {
+  isDragging.value = false
+  const files = event.dataTransfer?.files
+  processFiles(files)
+}
+
+const processFiles = (files: FileList | null | undefined) => {
+  if (!files) return
+
+  const currentCount = getTotalImagesCount()
+  const remainingSlots = 5 - currentCount
+
+  if (remainingSlots <= 0) {
+    toast.value?.add('Osiągnięto limit 5 zdjęć', 'error')
+    return
+  }
+
+  if (files.length > remainingSlots) {
+    toast.value?.add(`Możesz dodać jeszcze tylko ${remainingSlots} zdjęć`, 'info')
+  }
+
+  const filesToProcess = Array.from(files).slice(0, remainingSlots)
+
+  for (const file of filesToProcess) {
+    if (file.size > 5 * 1024 * 1024) {
+      toast.value?.add(`Plik ${file.name} jest za duży (max 5MB)`, 'error')
+      continue
+    }
+
+    if (!file.type.startsWith('image/')) {
+      toast.value?.add(`Plik ${file.name} nie jest obrazem`, 'error')
+      continue
+    }
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      newImageFiles.value.push({ file, preview: e.target?.result as string })
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+const removeExistingImage = (index: number) => {
+  if (editingAd.value && editingAd.value.images) {
+    editingAd.value.images.splice(index, 1)
+  }
+}
+
+const removeNewImage = (index: number) => {
+  newImageFiles.value.splice(index, 1)
+}
+
+const uploadImage = async (file: File): Promise<string> => {
+  const fileExt = file.name.split('.').pop()
+  const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
+  const filePath = `advertisements/${fileName}`
+
+  const { error: uploadError } = await supabase.storage
+    .from('images')
+    .upload(filePath, file)
+
+  if (uploadError) {
+    console.error('Error uploading image:', uploadError)
+    throw uploadError
+  }
+
+  const { data } = supabase.storage
+    .from('images')
+    .getPublicUrl(filePath)
+
+  return data.publicUrl
 }
 
 const handleStatusChange = (id: string, newStatus: string) => {
@@ -118,6 +210,17 @@ const saveChanges = async (id: string) => {
   if (!editingAd.value) return
 
   try {
+    // Upload new images
+    const newImageUrls = await Promise.all(
+      newImageFiles.value.map(item => uploadImage(item.file))
+    )
+
+    // Combine existing and new images
+    const allImages = [...(editingAd.value.images || []), ...newImageUrls]
+    
+    // Fallback for main image_url (use first image or empty)
+    const mainImageUrl = allImages.length > 0 ? allImages[0] : ''
+
     const { error } = await supabase
       .from('advertisements')
       .update({
@@ -138,7 +241,10 @@ const saveChanges = async (id: string) => {
         graphic_design_help: editingAd.value.graphic_design_help,
         offer_type: editingAd.value.offer_type,
         has_vat_invoice: editingAd.value.has_vat_invoice,
-        status: editingAd.value.status
+        status: editingAd.value.status,
+        images: allImages,
+        image_url: mainImageUrl,
+        has_image: allImages.length > 0
       })
       .eq('id', id)
 
@@ -147,6 +253,9 @@ const saveChanges = async (id: string) => {
     const ad = advertisements.value.find(a => a.id === id)
     if (ad && editingAd.value) {
       Object.assign(ad, editingAd.value)
+      ad.images = allImages
+      ad.image_url = mainImageUrl
+      ad.has_image = allImages.length > 0
     }
 
     toggleRow(id)
@@ -354,6 +463,57 @@ onMounted(() => {
             <div v-if="expandedRows.has(ad.id) && editingAd" class="ad-details">
               <form @submit.prevent="saveChanges(ad.id)" class="edit-form">
                 <div class="form-grid">
+                  <div class="form-group full-width">
+                    <label>Zdjęcia (max 5)</label>
+                    <div 
+                      class="images-grid"
+                      :class="{ 'dragging': isDragging }"
+                      @dragover.prevent="isDragging = true"
+                      @dragleave.prevent="isDragging = false"
+                      @drop.prevent="handleDrop"
+                    >
+                      <!-- Existing Images -->
+                      <div v-for="(img, index) in editingAd.images" :key="'existing-' + index" class="image-item">
+                        <img :src="img" alt="Zdjęcie" />
+                        <button type="button" @click="removeExistingImage(index)" class="remove-btn" title="Usuń">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </button>
+                      </div>
+
+                      <!-- New Images -->
+                      <div v-for="(img, index) in newImageFiles" :key="'new-' + index" class="image-item new">
+                        <img :src="img.preview" alt="Nowe zdjęcie" />
+                        <button type="button" @click="removeNewImage(index)" class="remove-btn" title="Usuń">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </button>
+                      </div>
+
+                      <!-- Upload Button -->
+                      <div v-if="getTotalImagesCount() < 5" class="upload-btn-wrapper">
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          multiple
+                          @change="handleImageSelect" 
+                          :id="'image-upload-' + ad.id"
+                          class="file-input"
+                          style="display: none"
+                        />
+                        <label :for="'image-upload-' + ad.id" class="upload-btn" title="Kliknij lub upuść tutaj">
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 4v16m-8-8h16" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+                          </svg>
+                          <span class="upload-text">Dodaj</span>
+                        </label>
+                      </div>
+                    </div>
+                    <p class="help-text">Przeciągnij i upuść zdjęcia tutaj lub kliknij "Dodaj"</p>
+                  </div>
+
                   <div class="form-group">
                     <label>Tytuł</label>
                     <input v-model="editingAd.title" type="text" required />
@@ -973,6 +1133,7 @@ onMounted(() => {
   font-size: 0.95rem;
   transition: all 0.2s;
   font-family: inherit;
+  background-color: white;
 }
 
 .form-group input:focus,
@@ -1096,5 +1257,110 @@ onMounted(() => {
     flex-direction: column;
     gap: 1rem;
   }
+}
+
+.images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  border: 2px dashed transparent;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.images-grid.dragging {
+  border-color: #667eea;
+  background: #f5f3ff;
+}
+
+.image-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #e5e7eb;
+  background: white;
+}
+
+.image-item.new {
+  border-color: #667eea;
+  border-style: dashed;
+}
+
+.image-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ef4444;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.remove-btn:hover {
+  background: #fee2e2;
+  transform: scale(1.1);
+}
+
+.upload-btn-wrapper {
+  aspect-ratio: 1;
+}
+
+.upload-btn {
+  width: 100%;
+  height: 100%;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.2s;
+  background: #f9fafb;
+}
+
+.upload-btn:hover {
+  border-color: #10B981;
+  background: #f0fdf4;
+  color: #10B981;
+}
+
+.upload-btn svg path {
+  transition: stroke 0.2s;
+}
+
+.upload-btn:hover svg path {
+  stroke: #10B981;
+}
+
+.upload-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.help-text {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+  text-align: center;
 }
 </style>

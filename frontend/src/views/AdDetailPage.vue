@@ -26,6 +26,58 @@ const contactSuccess = ref(false)
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 
+const currentImageIndex = ref(0)
+const images = computed(() => {
+  if (!ad.value) return []
+  
+  const allImages: string[] = []
+  
+  // Add main image
+  if (ad.value.image_url) {
+    allImages.push(ad.value.image_url)
+  }
+  
+  // Extract additional images from description
+  if (ad.value.description) {
+    const match = ad.value.description.match(/\[IMAGES\](.*?)\[\/IMAGES\]/s)
+    if (match && match[1]) {
+      try {
+        const additionalImages = JSON.parse(match[1])
+        if (Array.isArray(additionalImages)) {
+          allImages.push(...additionalImages)
+        }
+      } catch (e) {
+        console.error('Error parsing images:', e)
+      }
+    }
+  }
+  
+  // Fallback to old images array if exists
+  if (allImages.length === 0 && ad.value.images && ad.value.images.length > 0) {
+    return ad.value.images
+  }
+  
+  console.log('Images array:', allImages)
+  console.log('Description:', ad.value.description)
+  return allImages
+})
+
+// Clean description without image data
+const cleanDescription = computed(() => {
+  if (!ad.value?.description) return ''
+  return ad.value.description.replace(/\n\n\[IMAGES\].*?\[\/IMAGES\]/s, '')
+})
+
+const nextImage = () => {
+  if (images.value.length === 0) return
+  currentImageIndex.value = (currentImageIndex.value + 1) % images.value.length
+}
+
+const prevImage = () => {
+  if (images.value.length === 0) return
+  currentImageIndex.value = (currentImageIndex.value - 1 + images.value.length) % images.value.length
+}
+
 const checkFavoriteStatus = () => {
   if (!ad.value) return
   const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
@@ -267,20 +319,45 @@ onMounted(() => {
 
       <div class="content-layout">
         <div class="main-content">
-          <div class="image-container">
-            <img
-              v-if="ad.image_url"
-              :src="ad.image_url"
-              :alt="ad.title"
-              class="main-image"
-            />
-            <div v-else class="no-image">
-              <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
-                <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-              <p>Brak zdjęcia</p>
+          <div class="image-gallery">
+            <div class="main-image-wrapper">
+              <img
+                v-if="images.length > 0"
+                :src="images[currentImageIndex]"
+                :alt="ad.title"
+                class="main-image"
+              />
+              <div v-else class="no-image">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                  <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <p>Brak zdjęcia</p>
+              </div>
+
+              <button v-if="images.length > 1" @click="prevImage" class="nav-btn prev">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <button v-if="images.length > 1" @click="nextImage" class="nav-btn next">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <div v-if="images.length > 0" class="thumbnails">
+              <div 
+                v-for="(img, index) in images" 
+                :key="index" 
+                class="thumbnail" 
+                :class="{ active: index === currentImageIndex }"
+                @click="currentImageIndex = index"
+              >
+                <img :src="img" :alt="`Miniatura ${index + 1}`" />
+              </div>
             </div>
           </div>
 
@@ -362,7 +439,7 @@ onMounted(() => {
 
           <div class="description-section">
             <h2>Opis</h2>
-            <p class="description-text">{{ ad.description }}</p>
+            <p class="description-text">{{ cleanDescription }}</p>
           </div>
 
           <div v-if="ad.contact_preference !== 'phone'" class="contact-form-section">
@@ -431,7 +508,7 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="phone-section">
+            <div v-if="ad.phone && ad.phone.trim()" class="phone-section">
               <button v-if="!showPhone" @click="showPhone = true" class="btn btn-phone">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/>
@@ -565,7 +642,14 @@ onMounted(() => {
   gap: 2rem;
 }
 
-.image-container {
+.image-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.main-image-wrapper {
+  position: relative;
   width: 100%;
   height: 500px;
   background: white;
@@ -578,6 +662,70 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #374151;
+  transition: all 0.2s;
+  backdrop-filter: blur(4px);
+}
+
+.nav-btn:hover {
+  background: white;
+  color: #10B981;
+}
+
+.nav-btn.prev {
+  left: 1rem;
+}
+
+.nav-btn.next {
+  right: 1rem;
+}
+
+.thumbnails {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.thumbnail {
+  width: 100px;
+  height: 75px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnail.active {
+  border-color: #10B981;
+  transform: scale(1.05);
+}
+
+.thumbnail:hover {
+  opacity: 0.9;
 }
 
 .no-image {
@@ -1042,5 +1190,10 @@ onMounted(() => {
   .map-container {
     height: 300px;
   }
+}
+
+/* Hide Leaflet attribution */
+.leaflet-control-attribution {
+  display: none !important;
 }
 </style>

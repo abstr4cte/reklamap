@@ -38,4 +38,5 @@ export interface Advertisement {
   is_active: boolean
   phone?: string
   contact_preference?: string
+  images?: string[]
 }

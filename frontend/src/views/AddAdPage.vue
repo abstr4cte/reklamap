@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../lib/supabase'
+import ToastNotification from '../components/ToastNotification.vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
@@ -37,8 +38,7 @@ const formData = ref({
   status: 'available' as 'available' | 'reserved' | 'soon_available',
   availableFrom: '',
   trafficIntensity: 'medium' as 'low' | 'medium' | 'high',
-  imageFile: null as File | null,
-  imagePreview: '',
+  imageFiles: [] as { file: File, preview: string }[],
   acceptTerms: false
 })
 
@@ -49,6 +49,8 @@ const showAddressSuggestions = ref(false)
 const mapContainer = ref<HTMLElement | null>(null)
 const showToast = ref(false)
 const toastMessage = ref('')
+const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
+const isDragging = ref(false)
 let map: L.Map | null = null
 let marker: L.Marker | null = null
 
@@ -286,52 +288,56 @@ const selectAddress = (suggestion: any) => {
 
 const handleImageUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
+  const files = target.files
+  processFiles(files)
+  target.value = ''
+}
 
-  if (file) {
+const handleDrop = (event: DragEvent) => {
+  event.preventDefault()
+  isDragging.value = false
+  const files = event.dataTransfer?.files
+  processFiles(files)
+}
+
+const processFiles = (files: FileList | null | undefined) => {
+  if (!files) return
+
+  const remainingSlots = 5 - formData.value.imageFiles.length
+
+  if (remainingSlots <= 0) {
+    errors.value.image = 'Osiągnięto limit 5 zdjęć'
+    return
+  }
+
+  if (files.length > remainingSlots) {
+    errors.value.image = `Możesz dodać jeszcze tylko ${remainingSlots} zdjęć`
+  }
+
+  const filesToProcess = Array.from(files).slice(0, remainingSlots)
+
+  for (const file of filesToProcess) {
     if (file.size > 5 * 1024 * 1024) {
-      errors.value.image = 'Maksymalny rozmiar pliku to 5MB'
-      return
+      errors.value.image = `Plik ${file.name} jest za duży (max 5MB)`
+      continue
     }
 
     if (!file.type.startsWith('image/')) {
-      errors.value.image = 'Plik musi być obrazem'
-      return
+      errors.value.image = `Plik ${file.name} nie jest obrazem`
+      continue
     }
 
-    formData.value.imageFile = file
     const reader = new FileReader()
     reader.onload = (e) => {
-      formData.value.imagePreview = e.target?.result as string
+      formData.value.imageFiles.push({ file, preview: e.target?.result as string })
     }
     reader.readAsDataURL(file)
     delete errors.value.image
   }
 }
 
-const handleDrop = (event: DragEvent) => {
-  event.preventDefault()
-  const file = event.dataTransfer?.files?.[0]
-
-  if (file) {
-    if (file.size > 5 * 1024 * 1024) {
-      errors.value.image = 'Maksymalny rozmiar pliku to 5MB'
-      return
-    }
-
-    if (!file.type.startsWith('image/')) {
-      errors.value.image = 'Plik musi być obrazem'
-      return
-    }
-
-    formData.value.imageFile = file
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      formData.value.imagePreview = e.target?.result as string
-    }
-    reader.readAsDataURL(file)
-    delete errors.value.image
-  }
+const removeImage = (index: number) => {
+  formData.value.imageFiles.splice(index, 1)
 }
 
 const validateStep = (step: number): boolean => {
@@ -414,27 +420,32 @@ const prevStep = () => {
   }
 }
 
-const uploadImage = async (): Promise<string> => {
-  if (!formData.value.imageFile) return ''
+const uploadImages = async (): Promise<string[]> => {
+  if (formData.value.imageFiles.length === 0) return []
 
-  const fileExt = formData.value.imageFile.name.split('.').pop()
-  const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
-  const filePath = `advertisements/${fileName}`
+  const uploadPromises = formData.value.imageFiles.map(async (item) => {
+    const fileExt = item.file.name.split('.').pop()
+    const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
+    const filePath = `advertisements/${fileName}`
 
-  const { error: uploadError } = await supabase.storage
-    .from('images')
-    .upload(filePath, formData.value.imageFile)
+    const { error: uploadError } = await supabase.storage
+      .from('images')
+      .upload(filePath, item.file)
 
-  if (uploadError) {
-    console.error('Error uploading image:', uploadError)
-    return ''
-  }
+    if (uploadError) {
+      console.error('Error uploading image:', uploadError)
+      return ''
+    }
 
-  const { data } = supabase.storage
-    .from('images')
-    .getPublicUrl(filePath)
+    const { data } = supabase.storage
+      .from('images')
+      .getPublicUrl(filePath)
 
-  return data.publicUrl
+    return data.publicUrl
+  })
+
+  const results = await Promise.all(uploadPromises)
+  return results.filter(url => url !== '')
 }
 
 const handleSubmit = async () => {
@@ -443,17 +454,21 @@ const handleSubmit = async () => {
   try {
     isSubmitting.value = true
 
-    let imageUrl = ''
-    if (formData.value.imageFile) {
-      imageUrl = await uploadImage()
+    const imageUrls = await uploadImages()
+    const mainImageUrl = imageUrls.length > 0 ? imageUrls[0] : ''
+    
+    // Save all image URLs in description with special marker
+    let descriptionWithImages = formData.value.description
+    if (imageUrls.length > 1) {
+      descriptionWithImages += '\n\n[IMAGES]' + JSON.stringify(imageUrls.slice(1)) + '[/IMAGES]'
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('advertisements')
       .insert({
         owner_email: formData.value.email,
         title: formData.value.title,
-        description: formData.value.description,
+        description: descriptionWithImages,
         type: formData.value.type,
         price: formData.value.price,
         base_price_per_day: pricePerDay.value,
@@ -475,18 +490,27 @@ const handleSubmit = async () => {
         status: formData.value.status === 'available' ? 'active' : formData.value.status,
         available_from: formData.value.availableFrom || new Date().toISOString(),
         traffic_intensity: formData.value.trafficIntensity,
-        image_url: imageUrl,
+        image_url: mainImageUrl,
         dimensions: `${formData.value.width}m x ${formData.value.height}m`,
-        has_image: !!imageUrl,
+        has_image: imageUrls.length > 0,
         rental_period: 'long_term'
       })
+      .select()
 
     if (error) throw error
 
-    router.push('/')
+    if (data && data[0]) {
+      toast.value?.add('Ogłoszenie zostało dodane pomyślnie!', 'success')
+      setTimeout(() => {
+        router.push(`/ogloszenie/${data[0].id}`)
+      }, 1000)
+    } else {
+      router.push('/')
+    }
   } catch (error) {
     console.error('Error creating advertisement:', error)
     errors.value.submit = 'Wystąpił błąd podczas dodawania ogłoszenia'
+    toast.value?.add('Wystąpił błąd podczas dodawania ogłoszenia', 'error')
   } finally {
     isSubmitting.value = false
   }
@@ -512,6 +536,9 @@ onMounted(() => {
 <template>
   <div class="add-ad-page">
     <!-- Toast Notification -->
+    <ToastNotification ref="toast" />
+    
+    <!-- Legacy Toast (for map errors) -->
     <div v-if="showToast" class="toast-notification">
       {{ toastMessage }}
     </div>
@@ -819,19 +846,23 @@ onMounted(() => {
         </div>
 
         <div v-show="currentStep === 5" class="step-section">
-          <h2>Zdjęcie powierzchni</h2>
+          <h2>Zdjęcia powierzchni</h2>
 
           <div class="form-group">
-            <label class="form-label">Dodaj zdjęcie (opcjonalne, max 5MB)</label>
-            <div
+            <label class="form-label">Dodaj zdjęcia (opcjonalne, max 5MB każde)</label>
+            
+            <div v-if="formData.imageFiles.length < 5"
               class="file-dropzone"
+              :class="{ 'dragging': isDragging }"
               @drop="handleDrop"
-              @dragover.prevent
-              @dragenter.prevent
+              @dragover.prevent="isDragging = true"
+              @dragleave.prevent="isDragging = false"
+              @dragenter.prevent="isDragging = true"
             >
               <input
                 type="file"
                 accept="image/*"
+                multiple
                 @change="handleImageUpload"
                 class="file-input"
                 id="image-upload"
@@ -840,18 +871,24 @@ onMounted(() => {
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span class="file-text">Kliknij aby wybrać lub przeciągnij plik tutaj</span>
-                <span class="file-hint">PNG, JPG, GIF do 5MB</span>
+                <span class="file-text">Kliknij aby wybrać lub przeciągnij pliki tutaj</span>
+                <span class="file-hint">PNG, JPG, GIF do 5MB • Możesz dodać do 5 zdjęć ({{ formData.imageFiles.length }}/5)</span>
               </label>
             </div>
             <span v-if="errors.image" class="error-text">{{ errors.image }}</span>
           </div>
 
-          <div v-if="formData.imagePreview" class="image-preview">
-            <img :src="formData.imagePreview" alt="Podgląd" />
-            <button type="button" @click="formData.imagePreview = ''; formData.imageFile = null" class="remove-image">
-              Usuń zdjęcie
-            </button>
+          <div v-if="formData.imageFiles.length > 0" class="images-preview">
+            <div class="images-grid">
+              <div v-for="(img, index) in formData.imageFiles" :key="'img-' + index" class="image-item">
+                <img :src="img.preview" alt="Podgląd" />
+                <button type="button" @click="removeImage(index)" class="remove-btn" title="Usuń">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1366,6 +1403,16 @@ onMounted(() => {
 
 .file-dropzone {
   position: relative;
+  transition: all 0.2s;
+}
+
+.file-dropzone.dragging {
+  transform: scale(1.02);
+}
+
+.file-dropzone.dragging .file-label {
+  border-color: #10B981;
+  background: #f0fdf4;
 }
 
 .file-input {
@@ -1406,32 +1453,52 @@ onMounted(() => {
   color: #6b7280;
 }
 
-.image-preview {
+.images-preview {
   margin-top: 1.5rem;
-  text-align: center;
 }
 
-.image-preview img {
-  max-width: 100%;
-  max-height: 400px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
 }
 
-.remove-image {
-  margin-top: 1rem;
-  padding: 0.75rem 1.5rem;
-  background: #EF4444;
-  color: white;
-  border: none;
+.image-item {
+  position: relative;
+  aspect-ratio: 1;
   border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
+  overflow: hidden;
+  border: 2px solid #e5e7eb;
+  background: white;
 }
 
-.remove-image:hover {
-  background: #DC2626;
+.image-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ef4444;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.remove-btn:hover {
+  background: #fee2e2;
+  transform: scale(1.1);
 }
 
 .terms-content {
@@ -1486,47 +1553,50 @@ onMounted(() => {
 .btn {
   padding: 1rem 2rem;
   border: none;
-  border-radius: 8px;
-  font-weight: 700;
+  border-radius: 12px;
+  font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
 .btn-secondary {
-  background: #f3f4f6;
-  color: #374151;
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
 }
 
 .btn-secondary:hover {
-  background: #e5e7eb;
+  background: #f5f3ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 .btn-primary {
-  background: #3B82F6;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   margin-left: auto;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .btn-primary:hover {
-  background: #2563EB;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
 .btn-success {
-  background: #10B981;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
   color: white;
   margin-left: auto;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .btn-success:hover {
-  background: #059669;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
 }
 
 .btn:disabled {
