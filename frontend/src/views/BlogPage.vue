@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 interface BlogPost {
   id: number
@@ -161,6 +164,8 @@ const filteredPosts = computed(() => {
             v-for="post in filteredPosts"
             :key="post.id"
             class="blog-card"
+            @click="router.push(`/blog/${post.id}`)"
+            style="cursor: pointer"
           >
             <div class="card-image">
               <img :src="post.image" :alt="post.title" />
