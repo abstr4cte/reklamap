@@ -38,7 +38,7 @@ const formData = ref({
   status: 'available' as 'available' | 'reserved' | 'soon_available',
   availableFrom: '',
   trafficIntensity: 'medium' as 'low' | 'medium' | 'high',
-  imageFiles: [] as { file: File, preview: string }[],
+  imageFiles: [] as { file: File, preview: string, id: string }[],
   acceptTerms: false
 })
 
@@ -51,6 +51,8 @@ const showToast = ref(false)
 const toastMessage = ref('')
 const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 const isDragging = ref(false)
+const draggedImageIndex = ref<number | null>(null)
+const dragOverTarget = ref<number | null>(null)
 let map: L.Map | null = null
 let marker: L.Marker | null = null
 
@@ -329,11 +331,67 @@ const processFiles = (files: FileList | null | undefined) => {
 
     const reader = new FileReader()
     reader.onload = (e) => {
-      formData.value.imageFiles.push({ file, preview: e.target?.result as string })
+      formData.value.imageFiles.push({ 
+        file, 
+        preview: e.target?.result as string,
+        id: `img-${Date.now()}-${Math.random()}`
+      })
     }
     reader.readAsDataURL(file)
     delete errors.value.image
   }
+}
+
+const handleImageDragStart = (event: DragEvent, index: number) => {
+  draggedImageIndex.value = index
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', index.toString())
+  }
+}
+
+const handleImageDragOver = (event: DragEvent, index: number) => {
+  event.preventDefault()
+  event.stopPropagation()
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = 'move'
+  }
+  
+  if (draggedImageIndex.value !== null) {
+    if (draggedImageIndex.value === index) return
+    
+    if (dragOverTarget.value !== index) {
+      dragOverTarget.value = index
+    }
+  }
+}
+
+const handleDragEnd = () => {
+  draggedImageIndex.value = null
+  dragOverTarget.value = null
+}
+
+const handleImageDrop = (event: DragEvent, targetIndex: number) => {
+  event.preventDefault()
+  event.stopPropagation()
+  
+  dragOverTarget.value = null
+  
+  if (draggedImageIndex.value === null) return
+
+  const sourceIndex = draggedImageIndex.value
+
+  if (sourceIndex === targetIndex) {
+    draggedImageIndex.value = null
+    return
+  }
+
+  const items = [...formData.value.imageFiles]
+  const [movedItem] = items.splice(sourceIndex, 1)
+  items.splice(targetIndex, 0, movedItem)
+  
+  formData.value.imageFiles = items
+  draggedImageIndex.value = null
 }
 
 const removeImage = (index: number) => {
@@ -879,9 +937,24 @@ onMounted(() => {
           </div>
 
           <div v-if="formData.imageFiles.length > 0" class="images-preview">
+            <p class="help-text">Pierwsze zdjęcie będzie zdjęciem głównym. Przeciągnij, aby zmienić kolejność.</p>
             <div class="images-grid">
-              <div v-for="(img, index) in formData.imageFiles" :key="'img-' + index" class="image-item">
+              <div 
+                v-for="(img, index) in formData.imageFiles" 
+                :key="img.id" 
+                class="image-item"
+                :class="{ 
+                  'drag-over': dragOverTarget === index,
+                  'dragging': draggedImageIndex === index
+                }"
+                draggable="true"
+                @dragstart="handleImageDragStart($event, index)"
+                @dragover.prevent="handleImageDragOver($event, index)"
+                @dragend="handleDragEnd"
+                @drop.prevent="handleImageDrop($event, index)"
+              >
                 <img :src="img.preview" alt="Podgląd" />
+                <span v-if="index === 0" class="main-badge">Główne</span>
                 <button type="button" @click="removeImage(index)" class="remove-btn" title="Usuń">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1661,5 +1734,46 @@ onMounted(() => {
   .btn-success {
     margin-left: 0;
   }
+}
+
+.image-item {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.image-item.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+  border: 2px dashed #667eea;
+  filter: grayscale(0.5);
+}
+
+.image-item.drag-over {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 2px #667eea, 0 8px 16px rgba(102, 126, 234, 0.2);
+  border-color: #667eea;
+  z-index: 1;
+}
+
+.main-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(16, 185, 129, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 2;
+}
+
+.help-text {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 </style>

@@ -22,6 +22,7 @@ const isDragging = ref(false)
 const draggedImageIndex = ref<number | null>(null)
 const draggedImageType = ref<'existing' | 'new' | null>(null)
 const dragOverTarget = ref<{ index: number, type: 'existing' | 'new' } | null>(null)
+const isSaving = ref(false)
 
 const loadAdvertisements = async () => {
   try {
@@ -275,9 +276,10 @@ const toggleActive = async (id: string) => {
 }
 
 const saveChanges = async (id: string) => {
-  if (!editingAd.value) return
+  if (!editingAd.value || isSaving.value) return
 
   try {
+    isSaving.value = true
     // Process all images in order
     const finalImageUrls: string[] = []
     
@@ -341,6 +343,8 @@ const saveChanges = async (id: string) => {
   } catch (error) {
     console.error('Error saving changes:', error)
     toast.value?.add('Błąd podczas zapisywania zmian', 'error')
+  } finally {
+    isSaving.value = false
   }
 }
 
@@ -698,18 +702,27 @@ onMounted(() => {
                   </div>
                 </div>
 
-                <div class="form-actions">
-                  <button type="button" @click="toggleRow(ad.id)" class="btn-cancel">
-                    Anuluj
-                  </button>
-                  <button type="submit" class="btn-save">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-width="2"/>
-                      <path d="M17 21v-8H7v8M7 3v5h8" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    Zapisz zmiany
-                  </button>
-                </div>
+                  <div class="form-actions">
+                    <button type="button" @click="toggleRow(ad.id)" class="btn-cancel" :disabled="isSaving">
+                      Anuluj
+                    </button>
+                    <button type="submit" class="btn-save" :disabled="isSaving">
+                      <template v-if="isSaving">
+                        <svg class="spinner-icon" viewBox="0 0 24 24" fill="none">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Zapisywanie...
+                      </template>
+                      <template v-else>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-width="2"/>
+                          <path d="M17 21v-8H7v8M7 3v5h8" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Zapisz zmiany
+                      </template>
+                    </button>
+                  </div>
               </form>
             </div>
           </div>
@@ -1295,6 +1308,36 @@ onMounted(() => {
 .btn-save:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.spinner-icon {
+  animation: spin 1s linear infinite;
+  height: 20px;
+  width: 20px;
+}
+
+.opacity-25 {
+  opacity: 0.25;
+}
+
+.opacity-75 {
+  opacity: 0.75;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 1200px) {
