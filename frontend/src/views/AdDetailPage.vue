@@ -170,7 +170,9 @@ const toggleComparison = () => {
 const initMap = () => {
   if (!mapContainer.value || !ad.value || map) return
 
-  map = L.map(mapContainer.value).setView([ad.value.latitude, ad.value.longitude], 15)
+  map = L.map(mapContainer.value, {
+    attributionControl: false
+  }).setView([ad.value.latitude, ad.value.longitude], 15)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
@@ -1190,10 +1192,5 @@ onMounted(() => {
   .map-container {
     height: 300px;
   }
-}
-
-/* Hide Leaflet attribution */
-.leaflet-control-attribution {
-  display: none !important;
 }
 </style>

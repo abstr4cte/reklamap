@@ -160,12 +160,8 @@ const updateMarkers = () => {
     // Priority 3: If region is selected (and no city), zoom to region center
     const region = regionCoordinates[props.selectedRegion]
     map.setView([region.lat, region.lng], region.zoom)
-  } else if (markers.length > 0) {
-    // Priority 4: Default behavior: fit all markers
-    const group = new L.FeatureGroup(markers)
-    map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 12 })
   } else {
-    // No markers, no filters: show Poland
+    // Default: Always show full Poland when no specific filters are active
     map.setView([52.0, 19.0], 6)
   }
 }
@@ -193,7 +189,12 @@ onMounted(() => {
 
 <template>
   <section class="map-section">
-
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Mapa dostępnych powierzchni</h2>
+        <p class="section-subtitle">Kliknij na pinezki, aby zobaczyć szczegóły ogłoszeń</p>
+      </div>
+    </div>
 
     <div class="map-wrapper">
       <div ref="mapContainer" class="map-container"></div>
@@ -219,7 +220,7 @@ onMounted(() => {
 
 <style scoped>
 .map-section {
-  padding: 0;
+  padding: 4rem 0 0 0;
   background: linear-gradient(to bottom, #F9FAFB 0%, white 100%);
   scroll-margin-top: 100px;
 }

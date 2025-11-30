@@ -51,19 +51,25 @@ const displayPrice = computed(() => {
 
   switch (display) {
     case 'day':
-      return (basePrice / 30).toFixed(2)
+      return `${Math.round(basePrice / 30).toLocaleString('pl-PL')} zł/dzień`
     case 'week':
-      return (basePrice / 4).toFixed(2)
+      return `${Math.round(basePrice / 4).toLocaleString('pl-PL')} zł/tydzień`
     case 'month':
-      return basePrice.toFixed(2)
+      return `${basePrice.toLocaleString('pl-PL')} zł/mies.`
     case 'year':
-      return (basePrice * 12).toFixed(2)
+      return `${(basePrice * 12).toLocaleString('pl-PL')} zł/rok`
     case 'sqm':
-      const area = props.ad.width * props.ad.height
-      return area > 0 ? (basePrice / area).toFixed(2) : '0.00'
+      const area = props.ad.width && props.ad.height ? props.ad.width * props.ad.height : 1
+      return `${Math.round(basePrice / area).toLocaleString('pl-PL')} zł/m²`
     default:
-      return basePrice.toFixed(2)
+      return `${basePrice.toLocaleString('pl-PL')} zł/mies.`
   }
+})
+
+// Clean description without image data
+const cleanDescription = computed(() => {
+  if (!props.ad.description) return ''
+  return props.ad.description.replace(/\n\n\[IMAGES\].*?\[\/IMAGES\]/s, '')
 })
 
 const priceLabel = computed(() => {
@@ -142,8 +148,8 @@ const priceLabel = computed(() => {
         <span>{{ ad.dimensions }}</span>
       </div>
 
-      <div v-if="ad.description" class="card-description">
-        {{ ad.description }}
+      <div v-if="cleanDescription" class="card-description">
+        {{ cleanDescription }}
       </div>
 
       <div class="card-footer">
