@@ -16,8 +16,12 @@ const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 const adToDelete = ref<string>('')
 const pendingStatusChanges = ref<Record<string, string>>({})
 const selectedImageFile = ref<File | null>(null) // Deprecated
-const newImageFiles = ref<{ file: File, preview: string }[]>([])
+const newImageFiles = ref<{ file: File, preview: string }[]>([]) // Deprecated but kept for type safety if needed
+const unifiedImages = ref<{ type: 'existing' | 'new', url?: string, file?: File, preview?: string, id: string }[]>([])
 const isDragging = ref(false)
+const draggedImageIndex = ref<number | null>(null)
+const draggedImageType = ref<'existing' | 'new' | null>(null)
+const dragOverTarget = ref<{ index: number, type: 'existing' | 'new' } | null>(null)
 
 const loadAdvertisements = async () => {
   try {
@@ -40,7 +44,7 @@ const toggleRow = (id: string) => {
   if (expandedRows.value.has(id)) {
     expandedRows.value.delete(id)
     editingAd.value = null
-    newImageFiles.value = []
+    unifiedImages.value = []
     isDragging.value = false
   } else {
     expandedRows.value.add(id)
@@ -48,14 +52,18 @@ const toggleRow = (id: string) => {
     if (ad) {
       const images = ad.images || (ad.image_url ? [ad.image_url] : [])
       editingAd.value = { ...ad, images }
-      newImageFiles.value = []
+      // Initialize unified images
+      unifiedImages.value = images.map((url, index) => ({
+        type: 'existing',
+        url,
+        id: `existing-${index}-${Date.now()}`
+      }))
     }
   }
 }
 
 const getTotalImagesCount = () => {
-  if (!editingAd.value) return 0
-  return (editingAd.value.images?.length || 0) + newImageFiles.value.length
+  return unifiedImages.value.length
 }
 
 const handleImageSelect = (event: Event) => {
@@ -101,21 +109,81 @@ const processFiles = (files: FileList | null | undefined) => {
 
     const reader = new FileReader()
     reader.onload = (e) => {
-      newImageFiles.value.push({ file, preview: e.target?.result as string })
+      unifiedImages.value.push({
+        type: 'new',
+        file,
+        preview: e.target?.result as string,
+        id: `new-${Date.now()}-${Math.random()}`
+      })
     }
     reader.readAsDataURL(file)
   }
 }
 
-const removeExistingImage = (index: number) => {
-  if (editingAd.value && editingAd.value.images) {
-    editingAd.value.images.splice(index, 1)
+// Drag and drop reordering functions
+const handleImageDragStart = (event: DragEvent, index: number) => {
+  draggedImageIndex.value = index
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', index.toString())
   }
 }
 
-const removeNewImage = (index: number) => {
-  newImageFiles.value.splice(index, 1)
+const handleImageDragOver = (event: DragEvent, index: number) => {
+  event.preventDefault()
+  event.stopPropagation()
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = 'move'
+  }
+  
+  if (draggedImageIndex.value !== null) {
+    if (draggedImageIndex.value === index) return
+    
+    if (dragOverTarget.value?.index !== index) {
+      dragOverTarget.value = { index, type: 'existing' } // type doesn't matter much now
+    }
+  }
 }
+
+const handleDragEnd = () => {
+  draggedImageIndex.value = null
+  draggedImageType.value = null
+  dragOverTarget.value = null
+  isDragging.value = false
+}
+
+const handleImageDrop = (event: DragEvent, targetIndex: number) => {
+  event.preventDefault()
+  event.stopPropagation()
+  
+  dragOverTarget.value = null
+  
+  if (draggedImageIndex.value === null) return
+
+  const sourceIndex = draggedImageIndex.value
+
+  // Don't do anything if dropping on itself
+  if (sourceIndex === targetIndex) {
+    draggedImageIndex.value = null
+    return
+  }
+
+  // Reorder unifiedImages
+  const items = [...unifiedImages.value]
+  const [movedItem] = items.splice(sourceIndex, 1)
+  items.splice(targetIndex, 0, movedItem)
+  
+  unifiedImages.value = items
+  draggedImageIndex.value = null
+}
+
+const removeImage = (index: number) => {
+  unifiedImages.value.splice(index, 1)
+}
+
+// Keep these for backward compatibility if referenced elsewhere, but they are not used in new logic
+const removeExistingImage = (index: number) => {}
+const removeNewImage = (index: number) => {}
 
 const uploadImage = async (file: File): Promise<string> => {
   const fileExt = file.name.split('.').pop()
@@ -210,16 +278,20 @@ const saveChanges = async (id: string) => {
   if (!editingAd.value) return
 
   try {
-    // Upload new images
-    const newImageUrls = await Promise.all(
-      newImageFiles.value.map(item => uploadImage(item.file))
-    )
-
-    // Combine existing and new images
-    const allImages = [...(editingAd.value.images || []), ...newImageUrls]
+    // Process all images in order
+    const finalImageUrls: string[] = []
+    
+    for (const img of unifiedImages.value) {
+      if (img.type === 'existing' && img.url) {
+        finalImageUrls.push(img.url)
+      } else if (img.type === 'new' && img.file) {
+        const url = await uploadImage(img.file)
+        finalImageUrls.push(url)
+      }
+    }
     
     // Fallback for main image_url (use first image or empty)
-    const mainImageUrl = allImages.length > 0 ? allImages[0] : ''
+    const mainImageUrl = finalImageUrls.length > 0 ? finalImageUrls[0] : ''
 
     const { error } = await supabase
       .from('advertisements')
@@ -242,9 +314,9 @@ const saveChanges = async (id: string) => {
         offer_type: editingAd.value.offer_type,
         has_vat_invoice: editingAd.value.has_vat_invoice,
         status: editingAd.value.status,
-        images: allImages,
+        images: finalImageUrls,
         image_url: mainImageUrl,
-        has_image: allImages.length > 0
+        has_image: finalImageUrls.length > 0
       })
       .eq('id', id)
 
@@ -253,9 +325,9 @@ const saveChanges = async (id: string) => {
     const ad = advertisements.value.find(a => a.id === id)
     if (ad && editingAd.value) {
       Object.assign(ad, editingAd.value)
-      ad.images = allImages
+      ad.images = finalImageUrls
       ad.image_url = mainImageUrl
-      ad.has_image = allImages.length > 0
+      ad.has_image = finalImageUrls.length > 0
     }
 
     toggleRow(id)
@@ -463,8 +535,9 @@ onMounted(() => {
             <div v-if="expandedRows.has(ad.id) && editingAd" class="ad-details">
               <form @submit.prevent="saveChanges(ad.id)" class="edit-form">
                 <div class="form-grid">
-                  <div class="form-group full-width">
+                <div class="form-group full-width">
                     <label>Zdjęcia (max 5)</label>
+                    <p class="help-text">Pierwsze zdjęcie będzie zdjęciem głównym. Przeciągnij, aby zmienić kolejność.</p>
                     <div 
                       class="images-grid"
                       :class="{ 'dragging': isDragging }"
@@ -472,20 +545,24 @@ onMounted(() => {
                       @dragleave.prevent="isDragging = false"
                       @drop.prevent="handleDrop"
                     >
-                      <!-- Existing Images -->
-                      <div v-for="(img, index) in editingAd.images" :key="'existing-' + index" class="image-item">
-                        <img :src="img" alt="Zdjęcie" />
-                        <button type="button" @click="removeExistingImage(index)" class="remove-btn" title="Usuń">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                          </svg>
-                        </button>
-                      </div>
-
-                      <!-- New Images -->
-                      <div v-for="(img, index) in newImageFiles" :key="'new-' + index" class="image-item new">
-                        <img :src="img.preview" alt="Nowe zdjęcie" />
-                        <button type="button" @click="removeNewImage(index)" class="remove-btn" title="Usuń">
+                      <div 
+                        v-for="(img, index) in unifiedImages" 
+                        :key="img.id" 
+                        class="image-item"
+                        :class="{ 
+                          'drag-over': dragOverTarget?.index === index,
+                          'dragging': draggedImageIndex === index,
+                          'new': img.type === 'new'
+                        }"
+                        draggable="true"
+                        @dragstart="handleImageDragStart($event, index)"
+                        @dragover.prevent="handleImageDragOver($event, index)"
+                        @dragend="handleDragEnd"
+                        @drop.prevent="handleImageDrop($event, index)"
+                      >
+                        <img :src="img.type === 'existing' ? img.url : img.preview" alt="Zdjęcie" />
+                        <span v-if="index === 0" class="main-badge">Główne</span>
+                        <button type="button" @click="removeImage(index)" class="remove-btn" title="Usuń">
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                             <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                           </svg>
@@ -1282,6 +1359,31 @@ onMounted(() => {
   overflow: hidden;
   border: 2px solid #e5e7eb;
   background: white;
+  cursor: grab;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.image-item.drag-over {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.5);
+  z-index: 10;
+  border-color: #667eea;
+}
+
+.image-item.dragging {
+  opacity: 0.4;
+  transform: scale(0.95);
+  border: 2px dashed #9ca3af;
+  filter: grayscale(0.5);
+}
+
+.image-item:active {
+  cursor: grabbing;
+}
+
+.image-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .image-item.new {
@@ -1293,6 +1395,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  pointer-events: none;
 }
 
 .remove-btn {
@@ -1302,8 +1405,8 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.9);
   border: none;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1311,11 +1414,27 @@ onMounted(() => {
   color: #ef4444;
   transition: all 0.2s;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 2;
 }
 
 .remove-btn:hover {
   background: #fee2e2;
   transform: scale(1.1);
+}
+
+.main-badge {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 2;
+  pointer-events: none;
 }
 
 .upload-btn-wrapper {
