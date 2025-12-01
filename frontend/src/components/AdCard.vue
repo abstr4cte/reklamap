@@ -114,6 +114,32 @@ const formatLocation = (location: string, city: string) => {
   return `${streetWithNumber}, ${city}`
 }
 
+const statusLabel = computed(() => {
+  switch (props.ad.status) {
+    case 'active':
+      return 'Wolne'
+    case 'reserved':
+      return 'Zarezerwowane'
+    case 'soon_available':
+      return 'Wkrótce dostępne'
+    default:
+      return 'Nieznany'
+  }
+})
+
+const statusColor = computed(() => {
+  switch (props.ad.status) {
+    case 'active':
+      return '#10B981'
+    case 'reserved':
+      return '#F59E0B'
+    case 'soon_available':
+      return '#3B82F6'
+    default:
+      return '#6B7280'
+  }
+})
+
 </script>
 
 <template>
@@ -125,6 +151,9 @@ const formatLocation = (location: string, city: string) => {
       />
       <div class="card-badge" :style="{ background: typeColors[ad.type] || '#6B7280' }">
         {{ typeLabels[ad.type] || ad.type }}
+      </div>
+      <div class="status-badge" :style="{ background: statusColor }">
+        {{ statusLabel }}
       </div>
       <div class="card-actions">
         <button
@@ -240,6 +269,30 @@ const formatLocation = (location: string, city: string) => {
   font-size: 0.75rem;
   font-weight: 600;
   backdrop-filter: blur(8px);
+}
+
+.status-badge {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  color: white;
+  padding: 0.375rem 0.875rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.status-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: white;
+  display: inline-block;
 }
 
 .card-actions {
