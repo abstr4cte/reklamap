@@ -299,6 +299,81 @@ const getFullPhone = (phone: string | undefined) => {
   return `+48 ${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6)}`
 }
 
+const showReportModal = ref(false)
+const reportForm = ref({
+  reason: '',
+  details: ''
+})
+const isSubmittingReport = ref(false)
+
+// Toast state
+const toast = ref<{
+  show: boolean
+  message: string
+  title: string
+  type: 'success' | 'error'
+}>({
+  show: false,
+  message: '',
+  title: '',
+  type: 'success'
+})
+
+const showToast = (title: string, message: string, type: 'success' | 'error' = 'success') => {
+  toast.value = {
+    show: true,
+    title,
+    message,
+    type
+  }
+  setTimeout(() => {
+    toast.value.show = false
+  }, 5000)
+}
+
+const reportReasons = [
+  { value: 'spam', label: 'Spam lub oszustwo' },
+  { value: 'inappropriate', label: 'Treści nieodpowiednie' },
+  { value: 'incorrect_info', label: 'Nieprawdziwe informacje' },
+  { value: 'duplicate', label: 'Duplikat ogłoszenia' },
+  { value: 'other', label: 'Inne' }
+]
+
+const openReportModal = () => {
+  showReportModal.value = true
+}
+
+const closeReportModal = () => {
+  showReportModal.value = false
+  reportForm.value = { reason: '', details: '' }
+}
+
+const submitReport = async () => {
+  if (!reportForm.value.reason || !ad.value) return
+
+  try {
+    isSubmittingReport.value = true
+    
+    const { error } = await supabase
+      .from('reports')
+      .insert({
+        advertisement_id: ad.value.id,
+        reason: reportForm.value.reason,
+        details: reportForm.value.details
+      })
+
+    if (error) throw error
+
+    closeReportModal()
+    showToast('Zgłoszenie wysłane', 'Dziękujemy za zgłoszenie. Przyjrzymy się tej sprawie.', 'success')
+  } catch (error) {
+    console.error('Error submitting report:', error)
+    showToast('Błąd', 'Wystąpił błąd podczas wysyłania zgłoszenia. Spróbuj ponownie później.', 'error')
+  } finally {
+    isSubmittingReport.value = false
+  }
+}
+
 onMounted(() => {
   loadAd()
 })
@@ -541,6 +616,13 @@ onMounted(() => {
               </svg>
               {{ isInComparison ? 'Usuń z porównania' : 'Dodaj do porównania' }}
             </button>
+
+            <button @click="openReportModal" class="action-btn report-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Zgłoś naruszenie
+            </button>
           </div>
 
           <div v-if="similarAds.length > 0" class="similar-ads">
@@ -571,6 +653,80 @@ onMounted(() => {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container">
+      <div v-if="toast.show" class="toast" :class="`toast-${toast.type}`">
+        <div class="toast-icon">
+          <svg v-if="toast.type === 'success'" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 4L12 14.01l-3-3" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="#EF4444" stroke-width="2"/>
+            <path d="M12 8v4M12 16h.01" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="toast-content">
+          <div class="toast-title">{{ toast.title }}</div>
+          <div class="toast-message">{{ toast.message }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div v-if="showReportModal" class="modal-overlay" @click.self="closeReportModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Zgłoś naruszenie</h3>
+          <button @click="closeReportModal" class="close-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <form @submit.prevent="submitReport" class="report-form">
+          <div class="form-group">
+            <label class="form-label">Powód zgłoszenia</label>
+            <div class="radio-group">
+              <label v-for="reason in reportReasons" :key="reason.value" class="radio-option">
+                <input 
+                  type="radio" 
+                  v-model="reportForm.reason" 
+                  :value="reason.value"
+                  name="reportReason"
+                />
+                <span>{{ reason.label }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Szczegóły (opcjonalnie)</label>
+            <textarea
+              v-model="reportForm.details"
+              rows="4"
+              class="form-textarea"
+              placeholder="Opisz problem..."
+            ></textarea>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" @click="closeReportModal" class="btn btn-secondary">
+              Anuluj
+            </button>
+            <button 
+              type="submit" 
+              class="btn btn-danger"
+              :disabled="!reportForm.reason || isSubmittingReport"
+            >
+              {{ isSubmittingReport ? 'Wysyłanie...' : 'Wyślij zgłoszenie' }}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -1191,6 +1347,254 @@ onMounted(() => {
 
   .map-container {
     height: 300px;
+  }
+}
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  top: 90px;
+  right: 2rem;
+  left: auto;
+  transform: none;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  pointer-events: none;
+  align-items: flex-end;
+}
+
+.toast {
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 300px;
+  animation: slideDown 0.3s ease-out;
+  pointer-events: auto;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.toast-success {
+  border-left: 4px solid #10B981;
+}
+
+.toast-error {
+  border-left: 4px solid #EF4444;
+}
+
+.toast-icon {
+  flex-shrink: 0;
+}
+
+.toast-content {
+  flex: 1;
+}
+
+.toast-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.toast-message {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Report Button */
+.report-btn {
+  color: #EF4444;
+  border-color: #EF4444;
+}
+
+.report-btn:hover {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #111827;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: white;
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.close-btn:hover {
+  background: #EF4444;
+  color: white;
+  border-color: #EF4444;
+}
+
+.report-form {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: 1rem;
+  border: 2px solid #f3f4f6;
+  border-radius: 12px;
+  transition: all 0.2s;
+  background: #f9fafb;
+}
+
+.radio-option:hover {
+  border-color: #EF4444;
+  background: #fef2f2;
+  transform: translateX(4px);
+}
+
+.radio-option input[type="radio"] {
+  accent-color: #EF4444;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+}
+
+.radio-option span {
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.btn-secondary {
+  background: white;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+}
+
+.btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.4);
+}
+
+.btn-danger:disabled {
+  background: #fca5a5;
+  transform: none;
+  box-shadow: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
   }
 }
 </style>
