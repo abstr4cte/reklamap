@@ -90,6 +90,30 @@ const priceLabel = computed(() => {
       return '/miesiąc'
   }
 })
+
+const formatLocation = (location: string, city: string) => {
+  // Extract street and number from full address
+  const parts = location.split(',').map(p => p.trim())
+  
+  let streetWithNumber = ''
+  
+  if (parts.length >= 2) {
+    const firstPart = parts[0]
+    const secondPart = parts[1]
+    
+    // Check if first part is a number
+    if (/^\d+/.test(firstPart)) {
+      streetWithNumber = `${secondPart} ${firstPart}`
+    } else {
+      streetWithNumber = firstPart
+    }
+  } else {
+    streetWithNumber = parts[0] || location
+  }
+  
+  return `${streetWithNumber}, ${city}`
+}
+
 </script>
 
 <template>
@@ -137,7 +161,7 @@ const priceLabel = computed(() => {
           <path d="M8 8C9.1 8 10 7.1 10 6C10 4.9 9.1 4 8 4C6.9 4 6 4.9 6 6C6 7.1 6.9 8 8 8Z" stroke="#6B7280" stroke-width="1.3"/>
           <path d="M8 14C8 14 12 10.5 12 6C12 3.79 10.21 2 8 2C5.79 2 4 3.79 4 6C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.3"/>
         </svg>
-        <span>{{ ad.location }}, {{ ad.city }}</span>
+        <span>{{ formatLocation(ad.location, ad.city) }}</span>
       </div>
 
       <div v-if="ad.dimensions" class="card-dimensions">

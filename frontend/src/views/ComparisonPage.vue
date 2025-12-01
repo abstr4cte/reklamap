@@ -119,6 +119,29 @@ const getTypeLabel = (type: string) => {
   return labels[type] || type
 }
 
+const formatLocation = (location: string, city: string) => {
+  // Extract street and number from full address
+  const parts = location.split(',').map(p => p.trim())
+  
+  let streetWithNumber = ''
+  
+  if (parts.length >= 2) {
+    const firstPart = parts[0]
+    const secondPart = parts[1]
+    
+    // Check if first part is a number
+    if (/^\d+/.test(firstPart)) {
+      streetWithNumber = `${secondPart} ${firstPart}`
+    } else {
+      streetWithNumber = firstPart
+    }
+  } else {
+    streetWithNumber = parts[0] || location
+  }
+  
+  return `${streetWithNumber}, ${city}`
+}
+
 onMounted(() => {
   loadComparison()
 })
@@ -253,7 +276,7 @@ onMounted(() => {
               <tr>
                 <td class="feature-name">Lokalizacja</td>
                 <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  {{ ad.location }}, {{ ad.city }}
+                  {{ formatLocation(ad.location, ad.city) }}
                 </td>
               </tr>
               <tr>

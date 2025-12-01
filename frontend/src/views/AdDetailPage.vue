@@ -278,6 +278,33 @@ const currentUrl = computed(() => {
   return ''
 })
 
+const formatLocation = (location: string, city: string) => {
+  // Extract street and number from full address
+  // Format: "35, Łąkowa, Klucze, gmina Głogów, powiat głogowski..."
+  // We want: "Łąkowa 35, Klucze"
+  
+  const parts = location.split(',').map(p => p.trim())
+  
+  // Try to find street name (usually second part) and number (first part if it's a number)
+  let streetWithNumber = ''
+  
+  if (parts.length >= 2) {
+    const firstPart = parts[0]
+    const secondPart = parts[1]
+    
+    // Check if first part is a number
+    if (/^\d+/.test(firstPart)) {
+      streetWithNumber = `${secondPart} ${firstPart}`
+    } else {
+      streetWithNumber = firstPart
+    }
+  } else {
+    streetWithNumber = parts[0] || location
+  }
+  
+  return `${streetWithNumber}, ${city}`
+}
+
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('pl-PL', {
     year: 'numeric',
@@ -568,7 +595,7 @@ onMounted(() => {
 
               <div class="spec-item">
                 <div class="spec-label">Lokalizacja</div>
-                <div class="spec-value">{{ ad.location }}, {{ ad.city }}</div>
+                <div class="spec-value">{{ formatLocation(ad.location, ad.city) }}</div>
               </div>
 
               <div class="spec-item">
