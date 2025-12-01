@@ -745,6 +745,8 @@ onMounted(() => {
               {{ isInComparison ? 'Usuń z porównania' : 'Dodaj do porównania' }}
             </button>
 
+            <div class="actions-divider"></div>
+
             <button @click="handlePrint" class="action-btn">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1902,6 +1904,30 @@ onMounted(() => {
   background: #f9fafb;
   border-color: #d1d5db;
   color: #111827;
+}
+
+.action-btn.active {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.actions-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #e5e7eb 20%, #e5e7eb 80%, transparent 100%);
+  margin: 0.75rem 0;
+  position: relative;
+}
+
+.actions-divider::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 1px;
+  background: #d1d5db;
 }
 
 .btn-danger {
