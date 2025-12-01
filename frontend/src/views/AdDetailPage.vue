@@ -299,6 +299,8 @@ const getFullPhone = (phone: string | undefined) => {
   return `+48 ${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6)}`
 }
 
+import html2pdf from 'html2pdf.js'
+
 const showReportModal = ref(false)
 const reportForm = ref({
   reason: '',
@@ -329,6 +331,42 @@ const showToast = (title: string, message: string, type: 'success' | 'error' = '
   setTimeout(() => {
     toast.value.show = false
   }, 5000)
+}
+
+const handlePrint = () => {
+  window.print()
+}
+
+const isGeneratingPDF = ref(false)
+
+const handleDownloadPDF = async () => {
+  if (!ad.value) return
+  
+  isGeneratingPDF.value = true
+  const element = document.querySelector('.main-content') as HTMLElement
+  
+  if (!element) {
+    isGeneratingPDF.value = false
+    return
+  }
+
+  const opt = {
+    margin: [10, 10] as [number, number],
+    filename: `ogloszenie-${ad.value.id}.pdf`,
+    image: { type: 'jpeg' as const, quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const }
+  }
+
+  try {
+    await html2pdf().set(opt).from(element).save()
+    showToast('Sukces', 'PDF został pobrany', 'success')
+  } catch (error) {
+    console.error('Error generating PDF:', error)
+    showToast('Błąd', 'Nie udało się wygenerować PDF', 'error')
+  } finally {
+    isGeneratingPDF.value = false
+  }
 }
 
 const reportReasons = [
@@ -615,6 +653,26 @@ onMounted(() => {
                 <rect x="14" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
               </svg>
               {{ isInComparison ? 'Usuń z porównania' : 'Dodaj do porównania' }}
+            </button>
+
+            <button @click="handlePrint" class="action-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 14h12v8H6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Drukuj
+            </button>
+
+            <button @click="handleDownloadPDF" class="action-btn" :disabled="isGeneratingPDF">
+              <svg v-if="isGeneratingPDF" class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              {{ isGeneratingPDF ? 'Generowanie...' : 'Pobierz PDF' }}
             </button>
 
             <button @click="openReportModal" class="action-btn report-btn">
@@ -1595,6 +1653,62 @@ onMounted(() => {
   to { 
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@media print {
+  .app-header,
+  .app-footer,
+  .sidebar,
+  .back-nav,
+  .toast-container,
+  .image-gallery-thumbnails,
+  .gallery-nav-btn,
+  .contact-form-section,
+  .map-section,
+  .favorites-panel,
+  .comparison-panel,
+  .email-modal,
+  .feedback-button {
+    display: none !important;
+  }
+
+  .ad-detail-page {
+    padding: 0;
+    background: white;
+  }
+
+  .ad-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .main-content {
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .image-gallery-main {
+    height: 400px;
+    page-break-inside: avoid;
+  }
+
+  .image-gallery-main img {
+    object-fit: contain;
+  }
+
+  .specs-grid {
+    grid-template-columns: 1fr 1fr;
+    page-break-inside: avoid;
+  }
+
+  .description-section {
+    page-break-inside: avoid;
+  }
+
+  body {
+    background: white;
+    color: black;
   }
 }
 </style>
