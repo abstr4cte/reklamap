@@ -39,4 +39,5 @@ export interface Advertisement {
   phone?: string
   contact_preference?: string
   images?: string[]
+  available_from?: string
 }

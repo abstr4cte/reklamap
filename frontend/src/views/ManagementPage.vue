@@ -15,6 +15,9 @@ const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
 const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 const adToDelete = ref<string>('')
 const pendingStatusChanges = ref<Record<string, string>>({})
+const showDateModal = ref(false)
+const pendingAdId = ref<string>('')
+const availableFromDate = ref('')
 const selectedImageFile = ref<File | null>(null) // Deprecated
 const newImageFiles = ref<{ file: File, preview: string }[]>([]) // Deprecated but kept for type safety if needed
 const unifiedImages = ref<{ type: 'existing' | 'new', url?: string, file?: File, preview?: string, id: string }[]>([])
@@ -221,12 +224,43 @@ const handleStatusChange = (id: string, newStatus: string) => {
 const confirmStatusChange = async (id: string) => {
   const newStatus = pendingStatusChanges.value[id]
   if (!newStatus) return
-  
+
+  // If status is soon_available, show date modal
+  if (newStatus === 'soon_available') {
+    pendingAdId.value = id
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    availableFromDate.value = tomorrow.toISOString().split('T')[0]
+    showDateModal.value = true
+    return
+  }
+
+  // Otherwise update directly
   await updateStatus(id, newStatus)
-  
+
   const newPending = { ...pendingStatusChanges.value }
   delete newPending[id]
   pendingStatusChanges.value = newPending
+}
+
+const confirmDateAndStatus = async () => {
+  if (!pendingAdId.value) return
+  
+  await updateStatus(pendingAdId.value, 'soon_available', availableFromDate.value)
+  
+  const newPending = { ...pendingStatusChanges.value }
+  delete newPending[pendingAdId.value]
+  pendingStatusChanges.value = newPending
+  
+  showDateModal.value = false
+  pendingAdId.value = ''
+  availableFromDate.value = ''
+}
+
+const cancelDateModal = () => {
+  showDateModal.value = false
+  pendingAdId.value = ''
+  availableFromDate.value = ''
 }
 
 const cancelStatusChange = (id: string) => {
@@ -235,17 +269,27 @@ const cancelStatusChange = (id: string) => {
   pendingStatusChanges.value = newPending
 }
 
-const updateStatus = async (id: string, newStatus: string) => {
+const updateStatus = async (id: string, newStatus: string, availableFrom?: string) => {
   try {
+    const updateData: any = { status: newStatus }
+    if (newStatus === 'soon_available' && availableFrom) {
+      updateData.available_from = availableFrom
+    }
+    
     const { error } = await supabase
       .from('advertisements')
-      .update({ status: newStatus })
+      .update(updateData)
       .eq('id', id)
 
     if (error) throw error
 
     const ad = advertisements.value.find(a => a.id === id)
-    if (ad) ad.status = newStatus
+    if (ad) {
+      ad.status = newStatus
+      if (availableFrom) {
+        ad.available_from = availableFrom
+      }
+    }
     toast.value?.add('Status został zaktualizowany', 'success')
   } catch (error: any) {
     console.error('Error updating status:', error)
@@ -731,6 +775,32 @@ onMounted(() => {
     </div>
   </div>
 
+  <!-- Date Modal for Soon Available Status -->
+  <div v-if="showDateModal" class="modal-overlay" @click="cancelDateModal">
+    <div class="modal-content" @click.stop>
+      <h3>Data dostępności</h3>
+      <p>Wybierz datę, od kiedy powierzchnia będzie dostępna:</p>
+      
+      <div class="form-group">
+        <label class="form-label">Data dostępności</label>
+        <input
+          v-model="availableFromDate"
+          type="date"
+          class="form-input"
+        />
+      </div>
+
+      <div class="modal-actions">
+        <button @click="cancelDateModal" class="btn btn-secondary">
+          Anuluj
+        </button>
+        <button @click="confirmDateAndStatus" class="btn btn-primary">
+          Zapisz
+        </button>
+      </div>
+    </div>
+  </div>
+
   <ConfirmDialog
     ref="confirmDialog"
     title="Usuń ogłoszenie"
@@ -1056,8 +1126,81 @@ onMounted(() => {
 }
 
 .status-btn.cancel:hover {
-  background: #FEE2E2;
-  transform: scale(1.1);
+  background: #dc2626;
+  transform: scale(1.05);
+}
+
+/* Date Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.modal-content p {
+  margin: 0 0 1.5rem 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.btn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
 @keyframes fadeIn {
