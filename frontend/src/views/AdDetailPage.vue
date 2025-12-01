@@ -271,8 +271,15 @@ const submitContactForm = async () => {
   }
 }
 
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString('pl-PL', {
+const currentUrl = computed(() => {
+  if (typeof window !== 'undefined') {
+    return window.location.href
+  }
+  return ''
+})
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('pl-PL', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -367,6 +374,62 @@ const handleDownloadPDF = async () => {
   } finally {
     isGeneratingPDF.value = false
   }
+}
+
+// Share Logic
+const showShareModal = ref(false)
+
+const handleShare = async () => {
+  if (!ad.value) return
+
+  const shareData = {
+    title: ad.value.title,
+    text: `Zobacz to ogłoszenie: ${ad.value.title}`,
+    url: window.location.href
+  }
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData)
+    } catch (err) {
+      console.error('Error sharing:', err)
+    }
+  } else {
+    showShareModal.value = true
+  }
+}
+
+const copyLink = async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.href)
+    showToast('Skopiowano', 'Link został skopiowany do schowka', 'success')
+  } catch (err) {
+    console.error('Failed to copy:', err)
+    showToast('Błąd', 'Nie udało się skopiować linku', 'error')
+  }
+}
+
+const shareToSocial = (platform: 'facebook' | 'twitter' | 'whatsapp' | 'linkedin') => {
+  const url = encodeURIComponent(window.location.href)
+  const text = encodeURIComponent(`Zobacz to ogłoszenie: ${ad.value?.title}`)
+  
+  let shareUrl = ''
+  switch (platform) {
+    case 'facebook':
+      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`
+      break
+    case 'twitter':
+      shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`
+      break
+    case 'whatsapp':
+      shareUrl = `https://wa.me/?text=${text}%20${url}`
+      break
+    case 'linkedin':
+      shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`
+      break
+  }
+  
+  window.open(shareUrl, '_blank', 'width=600,height=400')
 }
 
 const reportReasons = [
@@ -675,6 +738,17 @@ onMounted(() => {
               {{ isGeneratingPDF ? 'Generowanie...' : 'Pobierz PDF' }}
             </button>
 
+            <button @click="handleShare" class="action-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle cx="18" cy="5" r="3" stroke="currentColor" stroke-width="2"/>
+                <circle cx="6" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                <circle cx="18" cy="19" r="3" stroke="currentColor" stroke-width="2"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="currentColor" stroke-width="2"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Udostępnij
+            </button>
+
             <button @click="openReportModal" class="action-btn report-btn">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -730,6 +804,62 @@ onMounted(() => {
         <div class="toast-content">
           <div class="toast-title">{{ toast.title }}</div>
           <div class="toast-message">{{ toast.message }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div v-if="showShareModal" class="modal-overlay" @click.self="showShareModal = false">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Udostępnij ogłoszenie</h3>
+          <button @click="showShareModal = false" class="close-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="share-content">
+          <div class="share-link-group">
+            <input type="text" :value="currentUrl" readonly class="share-input" />
+            <button @click="copyLink" class="btn-copy">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Kopiuj
+            </button>
+          </div>
+
+          <div class="social-share-grid">
+            <button @click="shareToSocial('facebook')" class="social-btn facebook">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+              Facebook
+            </button>
+            <button @click="shareToSocial('twitter')" class="social-btn twitter">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+              X
+            </button>
+            <button @click="shareToSocial('whatsapp')" class="social-btn whatsapp">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+              </svg>
+              WhatsApp
+            </button>
+            <button @click="shareToSocial('linkedin')" class="social-btn linkedin">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                <rect x="2" y="9" width="4" height="12"/>
+                <circle cx="4" cy="4" r="2"/>
+              </svg>
+              LinkedIn
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -791,6 +921,131 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* Share Modal Styles */
+.share-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.share-link-group {
+  display: flex;
+  gap: 0.75rem;
+  background: #f9fafb;
+  padding: 0.5rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.share-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  background: transparent;
+  color: #374151;
+  font-size: 0.9rem;
+  font-family: inherit;
+  width: 100%;
+}
+
+.share-input:focus {
+  outline: none;
+}
+
+.btn-copy {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #374151;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-copy:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  transform: translateY(-1px);
+}
+
+.btn-copy:active {
+  transform: translateY(0);
+}
+
+.social-share-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.social-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.social-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.2);
+}
+
+.social-btn:hover::after {
+  opacity: 1;
+}
+
+.social-btn:active {
+  transform: translateY(-1px);
+}
+
+.social-btn.facebook { 
+  background: linear-gradient(135deg, #1877F2 0%, #0C63D4 100%);
+  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+}
+
+.social-btn.twitter { 
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.social-btn.whatsapp { 
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.social-btn.linkedin { 
+  background: linear-gradient(135deg, #0A66C2 0%, #004182 100%);
+  box-shadow: 0 4px 12px rgba(10, 102, 194, 0.3);
+}
+
+/* ... existing styles ... */
 .ad-detail-page {
   min-height: calc(100vh - 200px);
   background: #f9fafb;
