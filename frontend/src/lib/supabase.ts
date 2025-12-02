@@ -40,4 +40,5 @@ export interface Advertisement {
   contact_preference?: string
   images?: string[]
   available_from?: string
+  price_negotiable?: boolean
 }

@@ -21,6 +21,7 @@ const formData = ref({
   type: '',
   price: null as number | null,
   priceUnit: 'day' as 'day' | 'week' | 'month' | 'year',
+  priceNegotiable: false,
   width: null as number | null,
   height: null as number | null,
   orientation: 'horizontal' as 'horizontal' | 'vertical',
@@ -536,6 +537,7 @@ const handleSubmit = async () => {
         price: formData.value.price,
         base_price_per_day: pricePerDay.value,
         price_unit: formData.value.priceUnit,
+        price_negotiable: formData.value.priceNegotiable,
         width: formData.value.width,
         height: formData.value.height,
         orientation: formData.value.orientation,
@@ -715,6 +717,13 @@ onMounted(() => {
                 <option value="year">za rok</option>
               </select>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-option">
+              <input type="checkbox" v-model="formData.priceNegotiable" />
+              <span>Cena do negocjacji</span>
+            </label>
           </div>
 
           <div class="price-info-box">

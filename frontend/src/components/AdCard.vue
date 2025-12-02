@@ -209,6 +209,7 @@ const statusColor = computed(() => {
         <div class="card-price">
           <span class="price-amount">{{ parseFloat(displayPrice).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} zł</span>
           <span class="price-period">{{ priceLabel }}</span>
+          <span v-if="ad.price_negotiable" class="negotiable-badge">do negocjacji</span>
         </div>
 
         <div class="card-button">
@@ -398,6 +399,14 @@ const statusColor = computed(() => {
 .price-period {
   font-size: 0.8rem;
   color: #9CA3AF;
+}
+
+.negotiable-badge {
+  font-size: 0.75rem;
+  color: #10B981;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  display: inline-block;
 }
 
 .card-button {

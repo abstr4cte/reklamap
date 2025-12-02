@@ -365,6 +365,7 @@ const saveChanges = async (id: string) => {
         description: editingAd.value.description,
         price: editingAd.value.price,
         price_unit: editingAd.value.price_unit,
+        price_negotiable: editingAd.value.price_negotiable,
         location: editingAd.value.location,
         city: editingAd.value.city,
         region: editingAd.value.region,
@@ -685,6 +686,13 @@ onMounted(() => {
                       <option value="month">za miesiąc</option>
                       <option value="year">za rok</option>
                     </select>
+                  </div>
+
+                  <div class="form-group checkbox-group full-width">
+                    <label>
+                      <input v-model="editingAd.price_negotiable" type="checkbox" />
+                      <span>Cena do negocjacji</span>
+                    </label>
                   </div>
 
                   <div class="form-group">
