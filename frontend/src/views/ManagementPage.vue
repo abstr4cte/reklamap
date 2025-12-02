@@ -27,6 +27,8 @@ const draggedImageType = ref<'existing' | 'new' | null>(null)
 const dragOverTarget = ref<{ index: number, type: 'existing' | 'new' } | null>(null)
 const isSaving = ref(false)
 
+
+
 const loadAdvertisements = async () => {
   try {
     isLoading.value = true
@@ -54,8 +56,25 @@ const toggleRow = (id: string) => {
     expandedRows.value.add(id)
     const ad = advertisements.value.find(a => a.id === id)
     if (ad) {
-      const images = ad.images || (ad.image_url ? [ad.image_url] : [])
-      editingAd.value = { ...ad, images }
+      const images = ad.images || []
+      
+      // Parse phone number - always use +48 prefix
+      let phoneNumber = ad.phone || ''
+      
+      if (ad.phone) {
+        // Remove any country code prefix if present
+        const phoneMatch = ad.phone.match(/^(?:\+\d+\s+)?(.+)$/)
+        if (phoneMatch) {
+          phoneNumber = phoneMatch[1]
+        }
+      }
+      
+      editingAd.value = { 
+        ...ad, 
+        images,
+        phone: phoneNumber,
+        contact_preference: ad.contact_preference || 'email' as any
+      }
       // Initialize unified images
       unifiedImages.value = images.map((url, index) => ({
         type: 'existing',
@@ -362,7 +381,9 @@ const saveChanges = async (id: string) => {
         status: editingAd.value.status,
         images: finalImageUrls,
         image_url: mainImageUrl,
-        has_image: finalImageUrls.length > 0
+        has_image: finalImageUrls.length > 0,
+        phone: (editingAd.value as any).phone ? `+48 ${(editingAd.value as any).phone}` : '',
+        contact_preference: (editingAd.value as any).contact_preference || 'email',
       })
       .eq('id', id)
 
@@ -374,6 +395,8 @@ const saveChanges = async (id: string) => {
       ad.images = finalImageUrls
       ad.image_url = mainImageUrl
       ad.has_image = finalImageUrls.length > 0
+      ad.phone = (editingAd.value as any).phone ? `+48 ${(editingAd.value as any).phone}` : ''
+      ad.contact_preference = (editingAd.value as any).contact_preference || 'email'
     }
 
     toggleRow(id)
@@ -743,6 +766,34 @@ onMounted(() => {
                       <input v-model="editingAd.has_vat_invoice" type="checkbox" />
                       <span>Faktura VAT</span>
                     </label>
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label>Preferowana forma kontaktu</label>
+                    <select v-model="(editingAd as any).contact_preference" required>
+                      <option value="email">Tylko formularz kontaktowy</option>
+                      <option value="phone">Tylko telefon</option>
+                      <option value="both">Formularz i telefon</option>
+                    </select>
+                  </div>
+
+                  <div v-if="(editingAd as any).contact_preference === 'phone' || (editingAd as any).contact_preference === 'both'" class="form-group full-width">
+                    <label>Numer telefonu</label>
+                    <div class="phone-input-with-prefix">
+                      <div class="phone-prefix">
+                        <svg class="flag-icon" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                          <rect width="640" height="240" fill="#fff"/>
+                          <rect y="240" width="640" height="240" fill="#dc143c"/>
+                        </svg>
+                        <span>+48</span>
+                      </div>
+                      <input
+                        v-model="(editingAd as any).phone"
+                        type="tel"
+                        class="phone-input-field"
+                        placeholder="123 456 789"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -1375,6 +1426,57 @@ onMounted(() => {
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.phone-input-with-prefix {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.phone-input-with-prefix:hover {
+  border-color: #d1d5db;
+}
+
+.phone-input-with-prefix:focus-within {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.phone-prefix {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  background: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.flag-icon {
+  width: 24px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.phone-input-field {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  font-size: 0.95rem;
+  color: #374151;
+  background: white;
+}
+
+.phone-input-field:focus {
+  outline: none;
 }
 
 .form-group textarea {

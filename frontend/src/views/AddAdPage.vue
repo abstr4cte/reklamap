@@ -30,6 +30,7 @@ const formData = ref({
   latitude: 52.0,
   longitude: 19.0,
   phone: '',
+  countryCode: '+48',
   contactPreference: 'email' as 'email' | 'phone' | 'both',
   hasLighting: false,
   graphicDesignHelp: false,
@@ -49,6 +50,10 @@ const showAddressSuggestions = ref(false)
 const mapContainer = ref<HTMLElement | null>(null)
 const showToast = ref(false)
 const toastMessage = ref('')
+const toastType = ref<'success' | 'error'>('success')
+
+
+
 const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 const isDragging = ref(false)
 const draggedImageIndex = ref<number | null>(null)
@@ -539,7 +544,7 @@ const handleSubmit = async () => {
         region: formData.value.region,
         latitude: formData.value.latitude,
         longitude: formData.value.longitude,
-        phone: formData.value.phone,
+        phone: formData.value.phone ? `${formData.value.countryCode} ${formData.value.phone}` : '',
         contact_preference: formData.value.contactPreference,
         has_lighting: formData.value.hasLighting,
         graphic_design_help: formData.value.graphicDesignHelp,
@@ -839,13 +844,22 @@ onMounted(() => {
 
           <div v-if="formData.contactPreference === 'phone' || formData.contactPreference === 'both'" class="form-group">
             <label class="form-label">Numer telefonu <span class="required">*</span></label>
-            <input
-              v-model="formData.phone"
-              type="tel"
-              class="form-input"
-              :class="{ 'error': errors.phone }"
-              placeholder="+48 123 456 789"
-            />
+            <div class="phone-input-with-prefix">
+              <div class="phone-prefix">
+                <svg class="flag-icon" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                  <rect width="640" height="240" fill="#fff"/>
+                  <rect y="240" width="640" height="240" fill="#dc143c"/>
+                </svg>
+                <span>+48</span>
+              </div>
+              <input
+                v-model="formData.phone"
+                type="tel"
+                class="form-input phone-input-field"
+                :class="{ 'error': errors.phone }"
+                placeholder="123 456 789"
+              />
+            </div>
             <span v-if="errors.phone" class="error-text">{{ errors.phone }}</span>
           </div>
         </div>
@@ -1296,8 +1310,59 @@ onMounted(() => {
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #10B981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.phone-input-with-prefix {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.phone-input-with-prefix:hover {
+  border-color: #d1d5db;
+}
+
+.phone-input-with-prefix:focus-within {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.phone-prefix {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  background: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.flag-icon {
+  width: 24px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.phone-input-field {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  font-size: 0.95rem;
+  color: #374151;
+  background: white;
+}
+
+.phone-input-field:focus {
+  outline: none;
 }
 
 .form-input.error,
