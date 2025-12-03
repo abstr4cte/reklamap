@@ -8,6 +8,7 @@ import 'leaflet/dist/leaflet.css'
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
 import { point } from '@turf/helpers'
 import polandGeoJson from '../assets/poland_highres.json'
+import { nsfwService } from '../services/nsfwService'
 
 const router = useRouter()
 
@@ -51,7 +52,6 @@ const showAddressSuggestions = ref(false)
 const mapContainer = ref<HTMLElement | null>(null)
 const showToast = ref(false)
 const toastMessage = ref('')
-const toastType = ref<'success' | 'error'>('success')
 
 
 
@@ -308,7 +308,7 @@ const handleDrop = (event: DragEvent) => {
   processFiles(files)
 }
 
-const processFiles = (files: FileList | null | undefined) => {
+const processFiles = async (files: FileList | null | undefined) => {
   if (!files) return
 
   const remainingSlots = 5 - formData.value.imageFiles.length
@@ -333,6 +333,18 @@ const processFiles = (files: FileList | null | undefined) => {
     if (!file.type.startsWith('image/')) {
       errors.value.image = `Plik ${file.name} nie jest obrazem`
       continue
+    }
+
+    // NSFW Check
+    try {
+      const nsfwResult = await nsfwService.checkImage(file)
+      if (!nsfwResult.isSafe) {
+        errors.value.image = `Zdjęcie ${file.name} zawiera niedozwolone treści`
+        toast.value?.add(`Zdjęcie ${file.name} zostało odrzucone: wykryto treści niedozwolone`, 'error')
+        continue
+      }
+    } catch (error) {
+      console.error('NSFW check error:', error)
     }
 
     const reader = new FileReader()

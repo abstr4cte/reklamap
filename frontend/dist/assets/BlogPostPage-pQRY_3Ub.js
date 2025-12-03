@@ -1,0 +1,29 @@
+import{d as z,c as y,u,a as p,b as a,t as i,n as w,e as k,f as m,g as h,h as b,o as j,_ as g}from"./index-j98Hq6IH.js";const v={class:"blog-post-page"},_={class:"container"},f={class:"post-meta-header"},T={class:"category-badge"},x={class:"post-date"},P={class:"author-info"},N={class:"author-avatar"},R={class:"author-name"},B={class:"content-section"},C={class:"container"},D={class:"post-content"},L={class:"lead"},M=["innerHTML"],W=z({__name:"BlogPostPage",setup(A){const r=u(),c=h(),n=[{id:1,title:"Jak wybrać idealne miejsce na billboard reklamowy",excerpt:"Poznaj kluczowe czynniki, które decydują o skuteczności reklamy outdoorowej. Lokalizacja to podstawa sukcesu każdej kampanii.",content:`
+      <p>Wybór odpowiedniej lokalizacji dla billboardu reklamowego to jeden z najważniejszych czynników decydujących o sukcesie kampanii outdoorowej. Nawet najlepiej zaprojektowana reklama nie przyniesie oczekiwanych rezultatów, jeśli zostanie umieszczona w miejscu o niskim natężeniu ruchu lub słabej widoczności.</p>
+      
+      <h3>1. Analiza grupy docelowej</h3>
+      <p>Przed wyborem lokalizacji zastanów się, kim są Twoi potencjalni klienci. Czy są to osoby dojeżdżające do pracy w centrum miasta, studenci, czy może rodziny z dziećmi? Lokalizacja powinna być dopasowana do tras, którymi porusza się Twoja grupa docelowa.</p>
+
+      <h3>2. Natężenie ruchu</h3>
+      <p>Im więcej osób zobaczy Twoją reklamę, tym lepiej. Szukaj miejsc przy głównych arteriach komunikacyjnych, skrzyżowaniach oraz w pobliżu centrów handlowych. Pamiętaj jednak, że sam ruch to nie wszystko – liczy się też czas kontaktu z reklamą. Miejsca, gdzie tworzą się korki, mogą być bardziej efektywne niż autostrady, gdzie kierowcy przemieszczają się z dużą prędkością.</p>
+
+      <h3>3. Widoczność i otoczenie</h3>
+      <p>Upewnij się, że billboard nie jest zasłonięty przez drzewa, budynki czy inne konstrukcje. Zwróć uwagę na otoczenie – czy w pobliżu nie ma zbyt wielu innych reklam, które mogłyby odwrócić uwagę od Twojego przekazu? "Szum reklamowy" to realny problem w dużych miastach.</p>
+
+      <h3>4. Oświetlenie</h3>
+      <p>Reklama powinna być widoczna przez całą dobę. Wybieraj nośniki z oświetleniem lub zainwestuj w nowoczesne ekrany LED, które przyciągają wzrok również po zmroku.</p>
+
+      <h3>Podsumowanie</h3>
+      <p>Wybór lokalizacji to proces, który wymaga analizy wielu czynników. Warto skorzystać z narzędzi analitycznych oraz wiedzy ekspertów, aby zmaksymalizować zwrot z inwestycji (ROI) w reklamę zewnętrzną.</p>
+    `,category:"poradniki",image:"https://images.pexels.com/photos/417273/pexels-photo-417273.jpeg?auto=compress&cs=tinysrgb&w=800",date:"15 listopada 2025",readTime:"5 min",author:"Anna Kowalska"},{id:2,title:"Trendy w reklamie zewnętrznej na 2025 rok",excerpt:"Digital out-of-home, programmatic buying i personalizacja - sprawdź, co będzie kształtować branżę outdoor w najbliższych miesiącach.",content:`
+      <p>Rok 2025 przynosi rewolucyjne zmiany w świecie reklamy zewnętrznej. Tradycyjne billboardy ustępują miejsca cyfrowym nośnikom, a dane stają się nową walutą w planowaniu kampanii.</p>
+
+      <h3>Digital Out-of-Home (DOOH)</h3>
+      <p>Cyfryzacja przestrzeni miejskiej postępuje w zawrotnym tempie. Ekrany LED oferują nie tylko lepszą jakość obrazu, ale przede wszystkim elastyczność. Możliwość zmiany treści w czasie rzeczywistym pozwala na dopasowanie komunikatu do pory dnia, pogody czy aktualnych wydarzeń.</p>
+
+      <h3>Programmatic Buying</h3>
+      <p>Automatyzacja zakupu mediów wkracza do świata outdooru. Dzięki programmatic buying reklamodawcy mogą kupować czas antenowy na ekranach cyfrowych w modelu aukcyjnym, precyzyjnie docierając do wybranych grup odbiorców w określonym czasie.</p>
+
+      <h3>Interaktywność i AR</h3>
+      <p>Reklama przestaje być jednostronnym komunikatem. Wykorzystanie rozszerzonej rzeczywistości (AR) i kodów QR pozwala na interakcję z odbiorcą, przenosząc go ze świata offline do online. To doskonały sposób na zwiększenie zaangażowania i mierzenie efektywności kampanii.</p>
+    `,category:"trendy",image:"https://images.pexels.com/photos/3761504/pexels-photo-3761504.jpeg?auto=compress&cs=tinysrgb&w=800",date:"10 listopada 2025",readTime:"7 min",author:"Michał Nowak"}],o=y(()=>{const t=Number(r.params.id);return n.find(e=>e.id===t)||n[0]}),d=[{id:"poradniki",name:"Poradniki"},{id:"trendy",name:"Trendy"},{id:"case-study",name:"Case Study"},{id:"nowosci",name:"Nowości"}],l=t=>{var e;return((e=d.find(s=>s.id===t))==null?void 0:e.name)||t};return(t,e)=>(j(),p("div",v,[a("div",{class:"hero-section",style:w({backgroundImage:`linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${o.value.image})`})},[a("div",_,[a("div",f,[a("span",T,i(l(o.value.category)),1),a("span",x,i(o.value.date)+" • "+i(o.value.readTime)+" czytania",1)]),a("h1",null,i(o.value.title),1),a("div",P,[a("div",N,i(o.value.author.charAt(0)),1),a("span",R,i(o.value.author),1)])])],4),a("div",B,[a("div",C,[a("button",{onClick:e[0]||(e[0]=s=>m(c).push("/blog")),class:"back-btn"},[...e[1]||(e[1]=[a("svg",{width:"20",height:"20",viewBox:"0 0 24 24",fill:"none"},[a("path",{d:"M19 12H5M12 19l-7-7 7-7",stroke:"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"})],-1),b(" Wróć do bloga ",-1)])]),a("article",D,[a("p",L,i(o.value.excerpt),1),a("div",{innerHTML:o.value.content||"<p>Treść artykułu w przygotowaniu...</p>"},null,8,M)]),e[2]||(e[2]=k('<div class="share-section" data-v-0867b587><h3 data-v-0867b587>Udostępnij ten artykuł</h3><div class="share-buttons" data-v-0867b587><button class="share-btn facebook" data-v-0867b587>Facebook</button><button class="share-btn twitter" data-v-0867b587>Twitter</button><button class="share-btn linkedin" data-v-0867b587>LinkedIn</button></div></div>',1))])])]))}}),S=g(W,[["__scopeId","data-v-0867b587"]]);export{S as default};

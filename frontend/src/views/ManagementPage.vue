@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import type { Advertisement } from '../lib/supabase'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import ToastNotification from '../components/ToastNotification.vue'
+import { nsfwService } from '../services/nsfwService'
 
 const router = useRouter()
 const advertisements = ref<Advertisement[]>([])
@@ -102,7 +103,7 @@ const handleDrop = (event: DragEvent) => {
   processFiles(files)
 }
 
-const processFiles = (files: FileList | null | undefined) => {
+const processFiles = async (files: FileList | null | undefined) => {
   if (!files) return
 
   const currentCount = getTotalImagesCount()
@@ -128,6 +129,17 @@ const processFiles = (files: FileList | null | undefined) => {
     if (!file.type.startsWith('image/')) {
       toast.value?.add(`Plik ${file.name} nie jest obrazem`, 'error')
       continue
+    }
+
+    // NSFW Check
+    try {
+      const nsfwResult = await nsfwService.checkImage(file)
+      if (!nsfwResult.isSafe) {
+        toast.value?.add(`Zdjęcie ${file.name} zostało odrzucone: wykryto treści niedozwolone`, 'error')
+        continue
+      }
+    } catch (error) {
+      console.error('NSFW check error:', error)
     }
 
     const reader = new FileReader()
