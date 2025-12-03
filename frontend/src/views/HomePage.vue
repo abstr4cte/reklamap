@@ -34,7 +34,7 @@ interface Filters {
   heightFrom: number | null
   heightTo: number | null
   trafficIntensity: string
-  status: string
+  status: string[]
   hasLighting: boolean
   onlyWithImage: boolean
   priceIncludesPrint: boolean
@@ -59,7 +59,7 @@ const filters = ref<Filters>({
   heightFrom: null,
   heightTo: null,
   trafficIntensity: '',
-  status: '',
+  status: [],
   hasLighting: false,
   onlyWithImage: false,
   priceIncludesPrint: false,
@@ -133,8 +133,8 @@ const sortedAndFilteredAdvertisements = computed(() => {
     filtered = filtered.filter(ad => ad.traffic_intensity === filters.value.trafficIntensity)
   }
 
-  if (filters.value.status) {
-    filtered = filtered.filter(ad => ad.status === filters.value.status)
+  if (filters.value.status && filters.value.status.length > 0) {
+    filtered = filtered.filter(ad => filters.value.status.includes(ad.status))
   }
 
   if (filters.value.hasLighting) {

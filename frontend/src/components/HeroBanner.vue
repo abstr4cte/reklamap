@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 
@@ -18,7 +18,7 @@ interface Filters {
   heightFrom: number | null
   heightTo: number | null
   trafficIntensity: string
-  status: string
+  status: string[]
   hasLighting: boolean
   onlyWithImage: boolean
   priceIncludesPrint: boolean
@@ -50,7 +50,7 @@ const filters = ref<Filters>({
   heightFrom: null,
   heightTo: null,
   trafficIntensity: '',
-  status: '',
+  status: [],
   hasLighting: false,
   onlyWithImage: false,
   priceIncludesPrint: false,
@@ -64,6 +64,9 @@ const adTypes = [
   { value: 'billboard', label: 'Billboard' },
   { value: 'citylight', label: 'Citylight' },
   { value: 'led_screen', label: 'Ekran LED' },
+  { value: 'banner', label: 'Baner' },
+  { value: 'wall', label: 'Ściana' },
+  { value: 'other', label: 'Inne' }
 ]
 
 const regions = [
@@ -245,7 +248,7 @@ const resetFilters = () => {
     heightFrom: null,
     heightTo: null,
     trafficIntensity: '',
-    status: '',
+    status: [],
     hasLighting: false,
     onlyWithImage: false,
     priceIncludesPrint: false,
@@ -258,6 +261,42 @@ const resetFilters = () => {
   apiLocationResults.value = []
   emit('reset', { ...filters.value })
 }
+
+const isStatusMenuOpen = ref(false)
+const statusMultiselect = ref<HTMLElement | null>(null)
+
+const statusLabel = computed(() => {
+  if (filters.value.status.length === 0) return 'Wszystkie'
+  if (filters.value.status.length === 3) return 'Wszystkie'
+  
+  const labels: string[] = []
+  const map: Record<string, string> = { 
+    active: 'Wolne', 
+    reserved: 'Zarezerwowane', 
+    soon: 'Wkrótce dostępne' 
+  }
+  
+  for (const s of filters.value.status) {
+    if (map[s]) labels.push(map[s])
+  }
+  
+  if (labels.length <= 1) return labels.join(', ')
+  return `Wybrano (${labels.length})`
+})
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (statusMultiselect.value && !statusMultiselect.value.contains(event.target as Node)) {
+    isStatusMenuOpen.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>
 
 <template>
@@ -330,6 +369,7 @@ const resetFilters = () => {
                   @focus="handleLocationFocus"
                   @blur="handleLocationBlur"
                   @input="handleLocationInput"
+                  autocomplete="off"
                 />
                 <div v-if="isLocationMenuOpen" class="location-suggestions">
                   <div v-if="isLoadingLocations" class="suggestion-section loading-state">
@@ -490,12 +530,28 @@ const resetFilters = () => {
                   </div>
                   <div class="input-group">
                     <label for="status" class="input-label">Status</label>
-                    <select id="status" v-model="filters.status" class="search-select">
-                      <option value="">Wszystkie</option>
-                      <option value="active">Wolne</option>
-                      <option value="reserved">Zarezerwowane</option>
-                      <option value="soon">Wkrótce dostępne</option>
-                    </select>
+                    <div class="multiselect-wrapper" ref="statusMultiselect">
+                      <div class="search-select multiselect-trigger" @click="isStatusMenuOpen = !isStatusMenuOpen">
+                        <span class="selected-text">{{ statusLabel }}</span>
+                        <svg class="arrow" :class="{ open: isStatusMenuOpen }" width="10" height="6" viewBox="0 0 10 6" fill="none">
+                          <path d="M1 1L5 5L9 1" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                      <div v-if="isStatusMenuOpen" class="multiselect-dropdown">
+                        <label class="checkbox-option">
+                          <input type="checkbox" value="active" v-model="filters.status">
+                          <span>Wolne</span>
+                        </label>
+                        <label class="checkbox-option">
+                          <input type="checkbox" value="reserved" v-model="filters.status">
+                          <span>Zarezerwowane</span>
+                        </label>
+                        <label class="checkbox-option">
+                          <input type="checkbox" value="soon" v-model="filters.status">
+                          <span>Wkrótce dostępne</span>
+                        </label>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -503,19 +559,19 @@ const resetFilters = () => {
               <div class="filter-section">
                 <h4 class="section-title">Wyposażenie i dodatki</h4>
                 <div class="checkbox-grid">
-                  <label class="checkbox-label">
-                    <input type="checkbox" v-model="filters.hasLighting" />
-                    <span>Podświetlenie</span>
-                  </label>
-                  <label class="checkbox-label">
+                  <label class="checkbox-label search-select" style="justify-content: flex-start;">
                     <input type="checkbox" v-model="filters.onlyWithImage" />
                     <span>Tylko ze zdjęciem</span>
                   </label>
-                  <label class="checkbox-label">
+                  <label class="checkbox-label search-select" style="justify-content: flex-start;">
+                    <input type="checkbox" v-model="filters.hasLighting" />
+                    <span>Podświetlenie</span>
+                  </label>
+                  <label class="checkbox-label search-select" style="justify-content: flex-start;">
                     <input type="checkbox" v-model="filters.priceIncludesPrint" />
                     <span>Cena zawiera druk i montaż</span>
                   </label>
-                  <label class="checkbox-label">
+                  <label class="checkbox-label search-select" style="justify-content: flex-start;">
                     <input type="checkbox" v-model="filters.graphicDesignHelp" />
                     <span>Pomoc przy projekcie graficznym</span>
                   </label>
@@ -534,7 +590,8 @@ const resetFilters = () => {
                     </select>
                   </div>
                   <div class="input-group">
-                    <label class="checkbox-label vat-checkbox">
+                    <span class="input-label" style="visibility: hidden">Opcje</span>
+                    <label class="checkbox-label search-select" style="justify-content: flex-start;">
                       <input type="checkbox" v-model="filters.hasVatInvoice" />
                       <span>Faktura VAT</span>
                     </label>
@@ -1047,5 +1104,66 @@ const resetFilters = () => {
   .checkbox-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.multiselect-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.multiselect-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1rem;
+  border: 2px solid #E5E7EB;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #1F2937;
+  transition: all 0.2s ease;
+}
+
+.multiselect-trigger:hover {
+  border-color: #9CA3AF;
+}
+
+.multiselect-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #E5E7EB;
+  border-radius: 10px;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.checkbox-option:hover {
+  background-color: #F3F4F6;
+}
+
+.checkbox-option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #4F46E5;
 }
 </style>
