@@ -9,6 +9,8 @@ import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
 import { point } from '@turf/helpers'
 import polandGeoJson from '../assets/poland_highres.json'
 import { nsfwService } from '../services/nsfwService'
+import { VueDatePicker } from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 
 const router = useRouter()
 
@@ -39,11 +41,23 @@ const formData = ref({
   priceIncludesPrint: false,
   hasVatInvoice: false,
   status: 'available' as 'available' | 'reserved' | 'soon_available',
-  availableFrom: '',
+  availableFrom: null as Date | null,
   trafficIntensity: 'medium' as 'low' | 'medium' | 'high',
   imageFiles: [] as { file: File, preview: string, id: string }[],
   acceptTerms: false
 })
+
+const minDate = new Date()
+minDate.setHours(0, 0, 0, 0)
+
+const formatDate = (date: Date | null): string => {
+  if (!date) return ''
+  const d = new Date(date)
+  const day = String(d.getDate()).padStart(2, '0')
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const year = d.getFullYear()
+  return `${day}.${month}.${year}`
+}
 
 const errors = ref<Record<string, string>>({})
 const isSubmitting = ref(false)
@@ -52,6 +66,7 @@ const showAddressSuggestions = ref(false)
 const mapContainer = ref<HTMLElement | null>(null)
 const showToast = ref(false)
 const toastMessage = ref('')
+const isResolvingAddress = ref(false)
 
 
 
@@ -90,10 +105,43 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 
-const handleBlur = () => {
+const handleBlur = async () => {
+  // Delay hiding suggestions to allow click event on suggestion item
   setTimeout(() => {
     showAddressSuggestions.value = false
   }, 300)
+
+  // If location is filled but city/region missing, try to resolve
+  if (formData.value.location && (!formData.value.city || !formData.value.region)) {
+    await resolveAddressFromInput(formData.value.location)
+  }
+}
+
+const resolveAddressFromInput = async (query: string) => {
+  if (query.length < 3) return
+
+  isResolvingAddress.value = true
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=1&addressdetails=1`
+    )
+    const data = await response.json()
+    
+    if (data && data.length > 0) {
+      const suggestion = data[0]
+      selectAddress(suggestion)
+      // Update location field with the formatted name from API to be sure
+      // formData.value.location = suggestion.display_name 
+      // (Optional: might annoy user if it changes what they typed too much, but ensures consistency)
+    } else {
+      // No result found
+      displayToast('Nie znaleziono adresu. Sprawdź pisownię lub zaznacz na mapie.')
+    }
+  } catch (error) {
+    console.error('Error resolving address:', error)
+  } finally {
+    isResolvingAddress.value = false
+  }
 }
 
 onMounted(() => {
@@ -253,9 +301,11 @@ const searchAddress = async (query: string) => {
   if (query.length < 3) {
     addressSuggestions.value = []
     showAddressSuggestions.value = false
+    isResolvingAddress.value = false
     return
   }
 
+  isResolvingAddress.value = true
   try {
     const response = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=5&addressdetails=1`
@@ -265,6 +315,8 @@ const searchAddress = async (query: string) => {
     showAddressSuggestions.value = data.length > 0
   } catch (error) {
     console.error('Error searching address:', error)
+  } finally {
+    isResolvingAddress.value = false
   }
 }
 
@@ -453,12 +505,6 @@ const validateStep = (step: number): boolean => {
       if (!formData.value.location) {
         errors.value.location = 'Lokalizacja jest wymagana'
       }
-      if (!formData.value.city) {
-        errors.value.city = 'Miasto jest wymagane'
-      }
-      if (!formData.value.region) {
-        errors.value.region = 'Województwo jest wymagane'
-      }
       if (formData.value.contactPreference === 'phone' || formData.value.contactPreference === 'both') {
         if (!formData.value.phone) {
           errors.value.phone = 'Numer telefonu jest wymagany dla wybranej opcji kontaktu'
@@ -565,7 +611,13 @@ const handleSubmit = async () => {
         price_includes_print: formData.value.priceIncludesPrint,
         has_vat_invoice: formData.value.hasVatInvoice,
         status: formData.value.status === 'available' ? 'active' : formData.value.status,
-        available_from: formData.value.availableFrom || new Date().toISOString(),
+        available_from: formData.value.availableFrom 
+          ? (() => {
+              const date = new Date(formData.value.availableFrom)
+              date.setHours(0, 0, 0, 0)
+              return date.toISOString().split('T')[0]
+            })()
+          : new Date().toISOString().split('T')[0],
         traffic_intensity: formData.value.trafficIntensity,
         image_url: mainImageUrl,
         dimensions: `${formData.value.width}m x ${formData.value.height}m`,
@@ -826,8 +878,14 @@ onMounted(() => {
                 @blur="handleBlur"
                 style="padding-right: 2.5rem;"
               />
+              <div v-if="isResolvingAddress" class="input-spinner">
+                <svg class="spinner-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </div>
               <button 
-                v-if="formData.location" 
+                v-if="formData.location && !isResolvingAddress" 
                 type="button" 
                 @click="clearLocation" 
                 class="clear-input-btn"
@@ -850,6 +908,8 @@ onMounted(() => {
             </div>
             <span v-if="errors.location" class="error-text">{{ errors.location }}</span>
           </div>
+
+
 
           <div class="map-container" ref="mapContainer"></div>
           <p class="map-hint">Kliknij na mapie lub przeciągnij marker, aby ustawić lokalizację</p>
@@ -921,11 +981,34 @@ onMounted(() => {
 
           <div v-if="formData.status === 'soon_available'" class="form-group">
             <label class="form-label">Data dostępności</label>
-            <input
+            <VueDatePicker
               v-model="formData.availableFrom"
-              type="date"
-              class="form-input"
-            />
+              :enable-time-picker="false"
+              auto-apply
+              :min-date="minDate"
+              :clearable="false"
+              class="w-full"
+            >
+              <template #trigger>
+                <div class="date-picker-wrapper">
+                  <input
+                    type="text"
+                    readonly
+                    :value="formatDate(formData.availableFrom)"
+                    placeholder="dd.mm.rrrr"
+                    class="dp__input date-input"
+                  />
+                  <div class="date-picker-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </div>
+                </div>
+              </template>
+            </VueDatePicker>
           </div>
 
           <div class="form-group">
@@ -1861,5 +1944,55 @@ onMounted(() => {
   font-size: 0.9rem;
   margin-bottom: 1rem;
   text-align: center;
+}
+
+.input-spinner {
+  position: absolute;
+  right: 2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.spinner-icon {
+  animation: spin 1s linear infinite;
+  color: #667eea;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.date-picker-wrapper {
+  position: relative;
+  width: 100%;
+  display: block;
+}
+
+.date-input {
+  width: 100%;
+  cursor: pointer;
+  display: block;
+}
+
+.date-picker-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 0.75rem;
+  pointer-events: none;
+  z-index: 10;
+  color: #9ca3af;
 }
 </style>

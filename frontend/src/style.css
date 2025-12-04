@@ -30,7 +30,12 @@ body {
   min-height: 100vh;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 700;
   line-height: 1.2;
 }
@@ -45,7 +50,9 @@ button {
   cursor: pointer;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   font-family: inherit;
 }
 
@@ -70,4 +77,78 @@ img {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #6B7280;
+}
+
+/* VueDatePicker Custom Styling */
+.dp__input {
+  padding: 0.875rem 1rem 0.875rem 2.5rem !important;
+  border: 2px solid #e5e7eb !important;
+  border-radius: 10px !important;
+  font-size: 0.95rem !important;
+  transition: all 0.2s ease !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+.dp__input:hover {
+  border-color: #9ca3af !important;
+}
+
+.dp__input:focus {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
+.dp__menu {
+  border: 2px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+.dp__calendar_header_item {
+  font-weight: 600 !important;
+  color: #667eea !important;
+}
+
+.dp__cell_inner {
+  border-radius: 8px !important;
+}
+
+.dp__cell_inner:hover {
+  background: rgba(102, 126, 234, 0.1) !important;
+  color: #667eea !important;
+}
+
+.dp__today {
+  border: 2px solid #667eea !important;
+}
+
+.dp__active_date,
+.dp__range_start,
+.dp__range_end {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+}
+
+.dp__month_year_select:hover {
+  background: rgba(102, 126, 234, 0.1) !important;
+  color: #667eea !important;
+}
+
+/* Hide Time Picker Forcefully */
+.dp__time_picker_overlay,
+.dp__time_picker,
+.dp__action_row,
+.dp--tp-wrap {
+  display: none !important;
+}
+
+/* Ensure input container allows absolute positioning */
+.dp__main {
+  width: 100% !important;
+}
+
+.dp__input_wrap {
+  position: relative !important;
+  width: 100% !important;
 }

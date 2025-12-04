@@ -6,6 +6,8 @@ import type { Advertisement } from '../lib/supabase'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import ToastNotification from '../components/ToastNotification.vue'
 import { nsfwService } from '../services/nsfwService'
+import { VueDatePicker } from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 
 const router = useRouter()
 const advertisements = ref<Advertisement[]>([])
@@ -18,13 +20,26 @@ const adToDelete = ref<string>('')
 const pendingStatusChanges = ref<Record<string, string>>({})
 const showDateModal = ref(false)
 const pendingAdId = ref<string>('')
-const availableFromDate = ref('')
+const availableFromDate = ref<Date | null>(null)
 const selectedImageFile = ref<File | null>(null) // Deprecated
 const newImageFiles = ref<{ file: File, preview: string }[]>([]) // Deprecated but kept for type safety if needed
 const unifiedImages = ref<{ type: 'existing' | 'new', url?: string, file?: File, preview?: string, id: string }[]>([])
 const isDragging = ref(false)
 const draggedImageIndex = ref<number | null>(null)
 const draggedImageType = ref<'existing' | 'new' | null>(null)
+
+const minDate = new Date()
+minDate.setHours(0, 0, 0, 0)
+
+const formatDate = (date: Date | null): string => {
+  if (!date) return ''
+  const d = new Date(date)
+  const day = String(d.getDate()).padStart(2, '0')
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const year = d.getFullYear()
+  return `${day}.${month}.${year}`
+}
+
 const dragOverTarget = ref<{ index: number, type: 'existing' | 'new' } | null>(null)
 const isSaving = ref(false)
 
@@ -261,7 +276,8 @@ const confirmStatusChange = async (id: string) => {
     pendingAdId.value = id
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
-    availableFromDate.value = tomorrow.toISOString().split('T')[0]
+    tomorrow.setHours(0, 0, 0, 0)
+    availableFromDate.value = tomorrow
     showDateModal.value = true
     return
   }
@@ -285,13 +301,13 @@ const confirmDateAndStatus = async () => {
   
   showDateModal.value = false
   pendingAdId.value = ''
-  availableFromDate.value = ''
+  availableFromDate.value = null
 }
 
 const cancelDateModal = () => {
   showDateModal.value = false
   pendingAdId.value = ''
-  availableFromDate.value = ''
+  availableFromDate.value = null
 }
 
 const cancelStatusChange = (id: string) => {
@@ -300,11 +316,13 @@ const cancelStatusChange = (id: string) => {
   pendingStatusChanges.value = newPending
 }
 
-const updateStatus = async (id: string, newStatus: string, availableFrom?: string) => {
+const updateStatus = async (id: string, newStatus: string, availableFrom?: Date | null) => {
   try {
     const updateData: any = { status: newStatus }
     if (newStatus === 'soon_available' && availableFrom) {
-      updateData.available_from = availableFrom
+      const date = new Date(availableFrom)
+      date.setHours(0, 0, 0, 0)
+      updateData.available_from = date.toISOString().split('T')[0]
     }
     
     const { error } = await supabase
@@ -318,7 +336,9 @@ const updateStatus = async (id: string, newStatus: string, availableFrom?: strin
     if (ad) {
       ad.status = newStatus
       if (availableFrom) {
-        ad.available_from = availableFrom
+        const date = new Date(availableFrom)
+        date.setHours(0, 0, 0, 0)
+        ad.available_from = date.toISOString().split('T')[0]
       }
     }
     toast.value?.add('Status został zaktualizowany', 'success')
@@ -854,11 +874,34 @@ onMounted(() => {
       
       <div class="form-group">
         <label class="form-label">Data dostępności</label>
-        <input
+        <VueDatePicker
           v-model="availableFromDate"
-          type="date"
-          class="form-input"
-        />
+          :enable-time-picker="false"
+          auto-apply
+          :min-date="minDate"
+          :clearable="false"
+          class="w-full"
+        >
+          <template #trigger>
+            <div class="date-picker-wrapper">
+              <input
+                type="text"
+                readonly
+                :value="formatDate(availableFromDate)"
+                placeholder="dd.mm.rrrr"
+                class="dp__input date-input"
+              />
+              <div class="date-picker-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
+            </div>
+          </template>
+        </VueDatePicker>
       </div>
 
       <div class="modal-actions">
@@ -1789,5 +1832,32 @@ onMounted(() => {
   color: #6b7280;
   margin-top: 0.5rem;
   text-align: center;
+}
+</style>
+
+<style scoped>
+.date-picker-wrapper {
+  position: relative;
+  width: 100%;
+  display: block;
+}
+
+.date-input {
+  width: 100%;
+  cursor: pointer;
+  display: block;
+}
+
+.date-picker-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 0.75rem;
+  pointer-events: none;
+  z-index: 10;
+  color: #9ca3af;
 }
 </style>
