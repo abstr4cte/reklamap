@@ -64,6 +64,7 @@ const handleComparisonClick = () => {
         <router-link to="/blog" class="nav-link">Blog</router-link>
         <router-link to="/faq" class="nav-link">FAQ</router-link>
         <router-link to="/regulamin" class="nav-link">Regulamin</router-link>
+        <router-link to="/polityka-prywatnosci" class="nav-link">Polityka prywatności</router-link>
         <router-link to="/kontakt" class="nav-link">Kontakt</router-link>
       </nav>
 
@@ -152,6 +153,12 @@ const handleComparisonClick = () => {
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
             </svg>
             Regulamin
+          </router-link>
+          <router-link to="/polityka-prywatnosci" class="mobile-nav-link" @click="closeMobileMenu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Polityka prywatności
           </router-link>
           <router-link to="/kontakt" class="mobile-nav-link" @click="closeMobileMenu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -249,6 +256,7 @@ const handleComparisonClick = () => {
   transition: all 0.2s ease;
   position: relative;
   padding: 0.5rem 0;
+  white-space: nowrap;
 }
 
 .nav-link:hover {

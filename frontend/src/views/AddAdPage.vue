@@ -1100,7 +1100,7 @@ onMounted(() => {
           <div class="form-group">
             <label class="checkbox-option large">
               <input type="checkbox" v-model="formData.acceptTerms" :class="{ 'error': errors.acceptTerms }" />
-              <span>Akceptuję regulamin i politykę prywatności <span class="required">*</span></span>
+              <span>Akceptuję <a href="/regulamin" target="_blank" class="link">regulamin</a> i <a href="/polityka-prywatnosci" target="_blank" class="link">politykę prywatności</a> <span class="required">*</span></span>
             </label>
             <span v-if="errors.acceptTerms" class="error-text">{{ errors.acceptTerms }}</span>
           </div>
@@ -1533,6 +1533,17 @@ onMounted(() => {
 
 .checkbox-option input[type="checkbox"].error {
   outline: 2px solid #EF4444;
+}
+
+.link {
+  color: #667eea;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: #764ba2;
 }
 
 .price-info-box {

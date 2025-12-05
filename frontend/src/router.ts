@@ -61,6 +61,11 @@ const router = createRouter({
       path: '/kontakt',
       name: 'contact',
       component: ContactPage
+    },
+    {
+      path: '/polityka-prywatnosci',
+      name: 'privacy-policy',
+      component: () => import('./views/PrivacyPolicyPage.vue')
     }
   ],
   scrollBehavior(to, from, savedPosition) {
