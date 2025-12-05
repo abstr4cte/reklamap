@@ -33,6 +33,11 @@ const router = createRouter({
       component: ComparisonPage
     },
     {
+      path: '/zarzadzaj/:token',
+      name: 'management-token',
+      component: () => import('./views/ManagementTokenPage.vue')
+    },
+    {
       path: '/zarzadzaj',
       name: 'management',
       component: ManagementPage
@@ -66,6 +71,11 @@ const router = createRouter({
       path: '/polityka-prywatnosci',
       name: 'privacy-policy',
       component: () => import('./views/PrivacyPolicyPage.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('./views/NotFoundPage.vue')
     }
   ],
   scrollBehavior(to, from, savedPosition) {

@@ -7,6 +7,7 @@ import FavoritesPanel from './components/FavoritesPanel.vue'
 import ComparisonPanel from './components/ComparisonPanel.vue'
 import EmailModal from './components/EmailModal.vue'
 import FeedbackButton from './components/FeedbackButton.vue'
+import CookieConsent from './components/CookieConsent.vue'
 
 const router = useRouter()
 const isModalOpen = ref(false)
@@ -116,6 +117,7 @@ onUnmounted(() => {
       @close="isModalOpen = false"
     />
     <FeedbackButton />
+    <CookieConsent />
   </div>
 </template>
 

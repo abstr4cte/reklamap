@@ -66,7 +66,6 @@ const navigateToManagement = () => {
           <h2 class="modal-title">Panel zarządzania ogłoszeniami</h2>
           <p class="modal-description">
             Podaj swój adres e-mail, a wyślemy Ci link do Twojego panelu zarządzania.
-            Sprawdź skrzynkę odbiorczą!
           </p>
 
           <form @submit.prevent="handleSubmit" class="email-form">
