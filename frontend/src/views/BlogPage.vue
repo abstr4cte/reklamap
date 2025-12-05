@@ -190,12 +190,7 @@ const filteredPosts = computed(() => {
               <h2 class="card-title">{{ post.title }}</h2>
               <p class="card-excerpt">{{ post.excerpt }}</p>
               <div class="card-footer">
-                <div class="author">
-                  <div class="author-avatar">
-                    {{ post.author.charAt(0) }}
-                  </div>
-                  <span class="author-name">{{ post.author }}</span>
-                </div>
+
                 <button class="read-more">
                   Czytaj więcej
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
