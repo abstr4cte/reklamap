@@ -1794,6 +1794,9 @@ onMounted(() => {
   border-radius: 20px;
   width: 100%;
   max-width: 500px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1801,11 +1804,12 @@ onMounted(() => {
 
 .modal-header {
   background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
 }
 
 .modal-header h3 {
@@ -1837,51 +1841,57 @@ onMounted(() => {
 }
 
 .report-form {
-  padding: 2rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
+  overflow-y: auto;
 }
 
 .radio-group {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .radio-option {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   cursor: pointer;
-  padding: 1rem;
-  border: 2px solid #f3f4f6;
-  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
   transition: all 0.2s;
-  background: #f9fafb;
+  background: white;
 }
 
 .radio-option:hover {
   border-color: #EF4444;
   background: #fef2f2;
-  transform: translateX(4px);
+}
+
+.radio-option:has(input:checked) {
+  border-color: #EF4444;
+  background: #fef2f2;
 }
 
 .radio-option input[type="radio"] {
   accent-color: #EF4444;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.125rem;
+  height: 1.125rem;
   margin: 0;
 }
 
 .radio-option span {
   font-weight: 500;
   color: #374151;
+  font-size: 0.9rem;
 }
 
 .form-textarea {
   width: 100%;
-  min-height: 100px;
+  min-height: 80px;
   resize: vertical;
 }
 
