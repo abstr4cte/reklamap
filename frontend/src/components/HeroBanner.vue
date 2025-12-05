@@ -136,11 +136,26 @@ const locationSuggestions = computed(() => {
       detailedLocation = loc.name
     }
     
+    // Construct subtitle with city if available and different from name
+    let subtitleParts: string[] = []
+    
+    // Add city to subtitle if it exists, is different from the main name, 
+    // and isn't already part of the detailed location label
+    if (loc.city && loc.city !== loc.name && !detailedLocation.includes(loc.city)) {
+      subtitleParts.push(loc.city)
+    }
+    
+    if (voivodeship) {
+      subtitleParts.push(voivodeship)
+    }
+    
+    subtitleParts.push('Polska')
+    
     return {
       type: 'city' as const,
       value: loc.name,
       label: detailedLocation,
-      subtitle: voivodeship ? `${voivodeship}, Polska` : 'Polska',
+      subtitle: subtitleParts.join(', '),
       coords: { lat: loc.lat, lng: loc.lng },
       addresstype: loc.addresstype,
       osmType: loc.osmType,
