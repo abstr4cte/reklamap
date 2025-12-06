@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import AdCard from './AdCard.vue'
-import type { Advertisement } from '../lib/supabase'
+import type { Advertisement } from '../types'
 
 const props = defineProps<{
   advertisements: Advertisement[]

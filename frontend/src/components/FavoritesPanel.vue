@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onUnmounted } from 'vue'
-import { supabase } from '../lib/supabase'
-import type { Advertisement } from '../lib/supabase'
+import { api } from '../services/api'
+import type { Advertisement } from '../types'
 
 const props = defineProps<{
   isOpen: boolean
@@ -25,12 +25,7 @@ const loadFavorites = async () => {
 
   try {
     isLoading.value = true
-    const { data, error } = await supabase
-      .from('advertisements')
-      .select('*')
-      .in('id', favoriteIds)
-
-    if (error) throw error
+    const data = await api.getAdvertisementsByIds(favoriteIds)
     favoriteAds.value = data || []
   } catch (error) {
     console.error('Error loading favorites:', error)

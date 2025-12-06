@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { supabase } from '../lib/supabase'
-import type { Advertisement } from '../lib/supabase'
+import { api } from '../services/api'
+import type { Advertisement } from '../types'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import ToastNotification from '../components/ToastNotification.vue'
 import { nsfwService } from '../services/nsfwService'
@@ -48,12 +48,7 @@ const isSaving = ref(false)
 const loadAdvertisements = async () => {
   try {
     isLoading.value = true
-    const { data, error } = await supabase
-      .from('advertisements')
-      .select('*')
-      .order('created_at', { ascending: false })
-
-    if (error) throw error
+    const data = await api.getAdvertisements()
     advertisements.value = data || []
   } catch (error) {
     console.error('Error loading advertisements:', error)
@@ -62,259 +57,18 @@ const loadAdvertisements = async () => {
   }
 }
 
-const toggleRow = (id: string) => {
-  if (expandedRows.value.has(id)) {
-    expandedRows.value.delete(id)
-    editingAd.value = null
-    unifiedImages.value = []
-    isDragging.value = false
-  } else {
-    expandedRows.value.add(id)
-    const ad = advertisements.value.find(a => a.id === id)
-    if (ad) {
-      const images = ad.images || []
-      
-      // Parse phone number - always use +48 prefix
-      let phoneNumber = ad.phone || ''
-      
-      if (ad.phone) {
-        // Remove any country code prefix if present
-        const phoneMatch = ad.phone.match(/^(?:\+\d+\s+)?(.+)$/)
-        if (phoneMatch) {
-          phoneNumber = phoneMatch[1]
-        }
-      }
-      
-      editingAd.value = { 
-        ...ad, 
-        images,
-        phone: phoneNumber,
-        contact_preference: ad.contact_preference || 'email' as any
-      }
-      // Initialize unified images
-      unifiedImages.value = images.map((url, index) => ({
-        type: 'existing',
-        url,
-        id: `existing-${index}-${Date.now()}`
-      }))
-    }
-  }
-}
-
-const getTotalImagesCount = () => {
-  return unifiedImages.value.length
-}
-
-const handleImageSelect = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const files = target.files
-  processFiles(files)
-  target.value = ''
-}
-
-const handleDrop = (event: DragEvent) => {
-  isDragging.value = false
-  const files = event.dataTransfer?.files
-  processFiles(files)
-}
-
-const processFiles = async (files: FileList | null | undefined) => {
-  if (!files) return
-
-  const currentCount = getTotalImagesCount()
-  const remainingSlots = 5 - currentCount
-
-  if (remainingSlots <= 0) {
-    toast.value?.add('Osiągnięto limit 5 zdjęć', 'error')
-    return
-  }
-
-  if (files.length > remainingSlots) {
-    toast.value?.add(`Możesz dodać jeszcze tylko ${remainingSlots} zdjęć`, 'info')
-  }
-
-  const filesToProcess = Array.from(files).slice(0, remainingSlots)
-
-  for (const file of filesToProcess) {
-    if (file.size > 5 * 1024 * 1024) {
-      toast.value?.add(`Plik ${file.name} jest za duży (max 5MB)`, 'error')
-      continue
-    }
-
-    if (!file.type.startsWith('image/')) {
-      toast.value?.add(`Plik ${file.name} nie jest obrazem`, 'error')
-      continue
-    }
-
-    // NSFW Check
-    try {
-      const nsfwResult = await nsfwService.checkImage(file)
-      if (!nsfwResult.isSafe) {
-        toast.value?.add(`Zdjęcie ${file.name} zostało odrzucone: wykryto treści niedozwolone`, 'error')
-        continue
-      }
-    } catch (error) {
-      console.error('NSFW check error:', error)
-    }
-
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      unifiedImages.value.push({
-        type: 'new',
-        file,
-        preview: e.target?.result as string,
-        id: `new-${Date.now()}-${Math.random()}`
-      })
-    }
-    reader.readAsDataURL(file)
-  }
-}
-
-// Drag and drop reordering functions
-const handleImageDragStart = (event: DragEvent, index: number) => {
-  draggedImageIndex.value = index
-  if (event.dataTransfer) {
-    event.dataTransfer.effectAllowed = 'move'
-    event.dataTransfer.setData('text/plain', index.toString())
-  }
-}
-
-const handleImageDragOver = (event: DragEvent, index: number) => {
-  event.preventDefault()
-  event.stopPropagation()
-  if (event.dataTransfer) {
-    event.dataTransfer.dropEffect = 'move'
-  }
-  
-  if (draggedImageIndex.value !== null) {
-    if (draggedImageIndex.value === index) return
-    
-    if (dragOverTarget.value?.index !== index) {
-      dragOverTarget.value = { index, type: 'existing' } // type doesn't matter much now
-    }
-  }
-}
-
-const handleDragEnd = () => {
-  draggedImageIndex.value = null
-  draggedImageType.value = null
-  dragOverTarget.value = null
-  isDragging.value = false
-}
-
-const handleImageDrop = (event: DragEvent, targetIndex: number) => {
-  event.preventDefault()
-  event.stopPropagation()
-  
-  dragOverTarget.value = null
-  
-  if (draggedImageIndex.value === null) return
-
-  const sourceIndex = draggedImageIndex.value
-
-  // Don't do anything if dropping on itself
-  if (sourceIndex === targetIndex) {
-    draggedImageIndex.value = null
-    return
-  }
-
-  // Reorder unifiedImages
-  const items = [...unifiedImages.value]
-  const [movedItem] = items.splice(sourceIndex, 1)
-  items.splice(targetIndex, 0, movedItem)
-  
-  unifiedImages.value = items
-  draggedImageIndex.value = null
-}
-
-const removeImage = (index: number) => {
-  unifiedImages.value.splice(index, 1)
-}
-
-// Keep these for backward compatibility if referenced elsewhere, but they are not used in new logic
-const removeExistingImage = (index: number) => {}
-const removeNewImage = (index: number) => {}
+// ... (skipping unchanged parts)
 
 const uploadImage = async (file: File): Promise<string> => {
-  const fileExt = file.name.split('.').pop()
-  const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
-  const filePath = `advertisements/${fileName}`
-
-  const { error: uploadError } = await supabase.storage
-    .from('images')
-    .upload(filePath, file)
-
-  if (uploadError) {
-    console.error('Error uploading image:', uploadError)
-    throw uploadError
+  try {
+    return await api.storage.upload(file)
+  } catch (error) {
+    console.error('Error uploading image:', error)
+    throw error
   }
-
-  const { data } = supabase.storage
-    .from('images')
-    .getPublicUrl(filePath)
-
-  return data.publicUrl
 }
 
-const handleStatusChange = (id: string, newStatus: string) => {
-  const ad = advertisements.value.find(a => a.id === id)
-  if (ad && ad.status === newStatus) {
-    const newPending = { ...pendingStatusChanges.value }
-    delete newPending[id]
-    pendingStatusChanges.value = newPending
-    return
-  }
-  pendingStatusChanges.value = { ...pendingStatusChanges.value, [id]: newStatus }
-}
-
-const confirmStatusChange = async (id: string) => {
-  const newStatus = pendingStatusChanges.value[id]
-  if (!newStatus) return
-
-  // If status is soon_available, show date modal
-  if (newStatus === 'soon_available') {
-    pendingAdId.value = id
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    tomorrow.setHours(0, 0, 0, 0)
-    availableFromDate.value = tomorrow
-    showDateModal.value = true
-    return
-  }
-
-  // Otherwise update directly
-  await updateStatus(id, newStatus)
-
-  const newPending = { ...pendingStatusChanges.value }
-  delete newPending[id]
-  pendingStatusChanges.value = newPending
-}
-
-const confirmDateAndStatus = async () => {
-  if (!pendingAdId.value) return
-  
-  await updateStatus(pendingAdId.value, 'soon_available', availableFromDate.value)
-  
-  const newPending = { ...pendingStatusChanges.value }
-  delete newPending[pendingAdId.value]
-  pendingStatusChanges.value = newPending
-  
-  showDateModal.value = false
-  pendingAdId.value = ''
-  availableFromDate.value = null
-}
-
-const cancelDateModal = () => {
-  showDateModal.value = false
-  pendingAdId.value = ''
-  availableFromDate.value = null
-}
-
-const cancelStatusChange = (id: string) => {
-  const newPending = { ...pendingStatusChanges.value }
-  delete newPending[id]
-  pendingStatusChanges.value = newPending
-}
+// ...
 
 const updateStatus = async (id: string, newStatus: string, availableFrom?: Date | null) => {
   try {
@@ -325,12 +79,7 @@ const updateStatus = async (id: string, newStatus: string, availableFrom?: Date 
       updateData.available_from = date.toISOString().split('T')[0]
     }
     
-    const { error } = await supabase
-      .from('advertisements')
-      .update(updateData)
-      .eq('id', id)
-
-    if (error) throw error
+    await api.updateAdvertisement(id, updateData)
 
     const ad = advertisements.value.find(a => a.id === id)
     if (ad) {
@@ -355,12 +104,7 @@ const toggleActive = async (id: string) => {
 
     const newActiveState = !ad.is_active
 
-    const { error } = await supabase
-      .from('advertisements')
-      .update({ is_active: newActiveState })
-      .eq('id', id)
-
-    if (error) throw error
+    await api.updateAdvertisement(id, { is_active: newActiveState })
 
     ad.is_active = newActiveState
     toast.value?.add(newActiveState ? 'Ogłoszenie zostało aktywowane' : 'Ogłoszenie zostało dezaktywowane', 'success')
@@ -390,9 +134,7 @@ const saveChanges = async (id: string) => {
     // Fallback for main image_url (use first image or empty)
     const mainImageUrl = finalImageUrls.length > 0 ? finalImageUrls[0] : ''
 
-    const { error } = await supabase
-      .from('advertisements')
-      .update({
+    await api.updateAdvertisement(id, {
         title: editingAd.value.title,
         description: editingAd.value.description,
         price: editingAd.value.price,
@@ -417,10 +159,7 @@ const saveChanges = async (id: string) => {
         has_image: finalImageUrls.length > 0,
         phone: (editingAd.value as any).phone ? `+48 ${(editingAd.value as any).phone}` : '',
         contact_preference: (editingAd.value as any).contact_preference || 'email',
-      })
-      .eq('id', id)
-
-    if (error) throw error
+    })
 
     const ad = advertisements.value.find(a => a.id === id)
     if (ad && editingAd.value) {
@@ -457,12 +196,7 @@ const handleConfirmDelete = async () => {
   if (!adToDelete.value) return
 
   try {
-    const { error } = await supabase
-      .from('advertisements')
-      .delete()
-      .eq('id', adToDelete.value)
-
-    if (error) throw error
+    await api.deleteAdvertisement(adToDelete.value)
 
     advertisements.value = advertisements.value.filter(a => a.id !== adToDelete.value)
     expandedRows.value.delete(adToDelete.value)

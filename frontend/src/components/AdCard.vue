@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { Advertisement } from '../lib/supabase'
+import type { Advertisement } from '../types'
 
 const props = defineProps<{
   ad: Advertisement

@@ -2,7 +2,7 @@
 import { ref, onMounted, watch } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import type { Advertisement } from '../lib/supabase'
+import type { Advertisement } from '../types'
 
 const props = defineProps<{
   advertisements: Advertisement[]

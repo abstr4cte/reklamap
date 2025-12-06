@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { supabase } from '../lib/supabase'
-import type { Advertisement } from '../lib/supabase'
+import { api } from '../services/api'
+import type { Advertisement } from '../types'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
@@ -186,13 +186,8 @@ const loadAd = async () => {
     isLoading.value = true
     const adId = route.params.id as string
 
-    const { data, error } = await supabase
-      .from('advertisements')
-      .select('*')
-      .eq('id', adId)
-      .maybeSingle()
+    const data = await api.getAdvertisement(adId)
 
-    if (error) throw error
     if (!data) {
       router.push('/')
       return
@@ -203,6 +198,9 @@ const loadAd = async () => {
     checkComparisonStatus()
     setTimeout(() => initMap(), 100)
     loadSimilarAds()
+    
+    // Increment views
+    api.incrementViews(adId)
   } catch (error) {
     console.error('Error loading ad:', error)
     router.push('/')
@@ -215,15 +213,7 @@ const loadSimilarAds = async () => {
   if (!ad.value) return
 
   try {
-    const { data, error } = await supabase
-      .from('advertisements')
-      .select('*')
-      .eq('status', 'active')
-      .neq('id', ad.value.id)
-      .or(`type.eq.${ad.value.type},region.eq.${ad.value.region}`)
-      .limit(4)
-
-    if (error) throw error
+    const data = await api.getSimilarAdvertisements(ad.value)
     similarAds.value = data || []
   } catch (error) {
     console.error('Error loading similar ads:', error)
@@ -482,15 +472,11 @@ const submitReport = async () => {
   try {
     isSubmittingReport.value = true
     
-    const { error } = await supabase
-      .from('reports')
-      .insert({
-        advertisement_id: ad.value.id,
-        reason: reportForm.value.reason,
-        details: reportForm.value.details
-      })
-
-    if (error) throw error
+    await api.submitReport({
+      advertisement_id: ad.value.id,
+      reason: reportForm.value.reason,
+      details: reportForm.value.details
+    })
 
     closeReportModal()
     showToast('Zgłoszenie wysłane', 'Dziękujemy za zgłoszenie. Przyjrzymy się tej sprawie.', 'success')

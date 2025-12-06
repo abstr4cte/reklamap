@@ -4,8 +4,8 @@ import EmailModal from '../components/EmailModal.vue'
 import HeroBanner from '../components/HeroBanner.vue'
 import PolandMap from '../components/PolandMap.vue'
 import AdGrid from '../components/AdGrid.vue'
-import { supabase } from '../lib/supabase'
-import type { Advertisement } from '../lib/supabase'
+import { api } from '../services/api'
+import type { Advertisement } from '../types'
 
 const emit = defineEmits<{
   toggleFavorite: [id: string]
@@ -260,14 +260,10 @@ const handleReset = (resetFilters: Filters) => {
 const loadAdvertisements = async () => {
   try {
     isLoading.value = true
-    const { data, error } = await supabase
-      .from('advertisements')
-      .select('*')
-      .eq('status', 'active')
-      .order('created_at', { ascending: false })
-
-    if (error) throw error
-    advertisements.value = data || []
+    const data = await api.getAdvertisements()
+    // Filter active ads client-side for now, or assume API returns only active
+    advertisements.value = data.filter(ad => ad.status === 'active')
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   } catch (error) {
     console.error('Error loading advertisements:', error)
   } finally {

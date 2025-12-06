@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { supabase } from '../lib/supabase'
-import type { Advertisement } from '../lib/supabase'
+import { api } from '../services/api'
+import type { Advertisement } from '../types'
 
 const props = defineProps<{
   isOpen: boolean
@@ -27,12 +27,7 @@ const loadComparison = async () => {
 
   try {
     isLoading.value = true
-    const { data, error } = await supabase
-      .from('advertisements')
-      .select('*')
-      .in('id', comparisonIds)
-
-    if (error) throw error
+    const data = await api.getAdvertisementsByIds(comparisonIds)
     comparisonAds.value = data || []
   } catch (error) {
     console.error('Error loading comparison:', error)
