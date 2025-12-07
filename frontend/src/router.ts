@@ -23,7 +23,7 @@ const router = createRouter({
       component: AddAdPage
     },
     {
-      path: '/ogloszenie/:id',
+      path: '/ogloszenie/:city/:slug/:id',
       name: 'ad-detail',
       component: AdDetailPage
     },
@@ -58,7 +58,7 @@ const router = createRouter({
       component: BlogPage
     },
     {
-      path: '/blog/:id',
+      path: '/blog/:slug',
       name: 'blog-post',
       component: () => import('./views/BlogPostPage.vue')
     },

@@ -7,6 +7,7 @@ const router = useRouter()
 interface BlogPost {
   id: number
   title: string
+  slug: string
   excerpt: string
   content: string
   category: string
@@ -30,6 +31,7 @@ const blogPosts: BlogPost[] = [
   {
     id: 1,
     title: 'Jak wybrać idealne miejsce na billboard reklamowy',
+    slug: 'jak-wybrac-idealne-miejsce-na-billboard-reklamowy',
     excerpt: 'Poznaj kluczowe czynniki, które decydują o skuteczności reklamy outdoorowej. Lokalizacja to podstawa sukcesu każdej kampanii.',
     content: '',
     category: 'poradniki',
@@ -41,6 +43,7 @@ const blogPosts: BlogPost[] = [
   {
     id: 2,
     title: 'Trendy w reklamie zewnętrznej na 2025 rok',
+    slug: 'trendy-w-reklamie-zewnetrznej-na-2025-rok',
     excerpt: 'Digital out-of-home, programmatic buying i personalizacja - sprawdź, co będzie kształtować branżę outdoor w najbliższych miesiącach.',
     content: '',
     category: 'trendy',
@@ -52,6 +55,7 @@ const blogPosts: BlogPost[] = [
   {
     id: 3,
     title: 'ROI kampanii outdoor - jak mierzyć efektywność',
+    slug: 'roi-kampanii-outdoor-jak-mierzyc-efektywnosc',
     excerpt: 'Kompleksowy przewodnik po metodach pomiaru skuteczności kampanii reklamowych w przestrzeni miejskiej i na drogach.',
     content: '',
     category: 'poradniki',
@@ -63,6 +67,7 @@ const blogPosts: BlogPost[] = [
   {
     id: 4,
     title: 'Kampania marki XYZ - 300% wzrost rozpoznawalności',
+    slug: 'kampania-marki-xyz-300-wzrost-rozpoznawalnosci',
     excerpt: 'Sprawdź, jak marka XYZ wykorzystała strategicznie rozmieszczone billboardy do zwiększenia świadomości marki w kluczowych regionach.',
     content: '',
     category: 'case-study',
@@ -74,6 +79,7 @@ const blogPosts: BlogPost[] = [
   {
     id: 5,
     title: 'Ekrany LED vs tradycyjne billboardy - co wybrać',
+    slug: 'ekrany-led-vs-tradycyjne-billboardy-co-wybrac',
     excerpt: 'Porównanie kosztów, zasięgu i skuteczności nowoczesnych ekranów LED z klasycznymi nośnikami reklamowymi.',
     content: '',
     category: 'poradniki',
@@ -85,6 +91,7 @@ const blogPosts: BlogPost[] = [
   {
     id: 6,
     title: 'Nowa funkcja - porównywanie powierzchni reklamowych',
+    slug: 'nowa-funkcja-porownywanie-powierzchni-reklamowych',
     excerpt: 'Wprowadziliśmy nowe narzędzie umożliwiające zestawienie do 5 ogłoszeń obok siebie. Zobacz, jak z niego korzystać.',
     content: '',
     category: 'nowosci',
@@ -96,6 +103,7 @@ const blogPosts: BlogPost[] = [
   {
     id: 7,
     title: 'Sezonowość w reklamie outdoor - kompletny przewodnik',
+    slug: 'sezonowosc-w-reklamie-outdoor-kompletny-przewodnik',
     excerpt: 'Dowiedz się, kiedy najlepiej zaplanować kampanię reklamową, aby zmaksymalizować jej skuteczność i zoptymalizować koszty.',
     content: '',
     category: 'poradniki',
@@ -107,6 +115,7 @@ const blogPosts: BlogPost[] = [
   {
     id: 8,
     title: 'Przyszłość reklamy zewnętrznej w erze cyfrowej',
+    slug: 'przyszlosc-reklamy-zewnetrznej-w-erze-cyfrowej',
     excerpt: 'Jak technologie AR, IoT i AI zmieniają tradycyjną reklamę outdoor? Analiza najnowszych innowacji w branży.',
     content: '',
     category: 'trendy',
@@ -118,6 +127,7 @@ const blogPosts: BlogPost[] = [
   {
     id: 9,
     title: 'Startup osiągnął 10 000 leadów dzięki citylightom',
+    slug: 'startup-osiagnal-10-000-leadow-dzieki-citylightom',
     excerpt: 'Historia sukcesu technologicznego startupu, który dzięki przemyślanej kampanii citylightowej zdobył tysiące potencjalnych klientów.',
     content: '',
     category: 'case-study',
@@ -164,7 +174,7 @@ const filteredPosts = computed(() => {
             v-for="post in filteredPosts"
             :key="post.id"
             class="blog-card"
-            @click="router.push(`/blog/${post.id}`)"
+            @click="router.push(`/blog/${post.slug}`)"
             style="cursor: pointer"
           >
             <div class="card-image">

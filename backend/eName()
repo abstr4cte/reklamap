@@ -1,0 +1,12 @@
+[90m= [39m[
+    "[34mdriver[39m" => "[32msqlite[39m",
+    "[34murl[39m" => [36mnull[39m,
+    "[34mdatabase[39m" => "[32m/var/www/html/reklamap/backend/database/database.sqlite[39m",
+    "[34mprefix[39m" => "",
+    "[34mforeign_key_constraints[39m" => [36mtrue[39m,
+    "[34mbusy_timeout[39m" => [36mnull[39m,
+    "[34mjournal_mode[39m" => [36mnull[39m,
+    "[34msynchronous[39m" => [36mnull[39m,
+    "[34mtransaction_mode[39m" => "[32mDEFERRED[39m",
+  ]
+

@@ -3,6 +3,7 @@ import { ref, onMounted, watch } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { Advertisement } from '../types'
+import { slugify } from '../utils/slugify'
 
 const props = defineProps<{
   advertisements: Advertisement[]
@@ -107,40 +108,46 @@ const updateMarkers = () => {
       poster: 'Plakat'
     }
 
+    const citySlug = slugify(ad.city)
+    const titleSlug = slugify(ad.title)
+    const adUrl = `/ogloszenie/${citySlug}/${titleSlug}/${ad.id}`
+
     const popupContent = `
       <div style="min-width: 200px;">
-        <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: #1F2937;">
-          ${ad.title}
-        </h3>
-        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem;">
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <span style="
-              background: ${typeColors[ad.type] || '#6B7280'};
-              color: white;
-              padding: 2px 8px;
-              border-radius: 4px;
-              font-size: 0.75rem;
-              font-weight: 600;
-            ">
-              ${typeLabels[ad.type] || ad.type}
-            </span>
-          </div>
-          <div style="color: #6B7280;">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display: inline; margin-right: 4px; vertical-align: middle;">
-              <path d="M7 7C7.825 7 8.5 6.325 8.5 5.5C8.5 4.675 7.825 4 7 4C6.175 4 5.5 4.675 5.5 5.5C5.5 6.325 6.175 7 7 7Z" stroke="#6B7280" stroke-width="1.2"/>
-              <path d="M7 12C7 12 10.5 9 10.5 5.5C10.5 3.567 8.933 2 7 2C5.067 2 3.5 3.567 3.5 5.5C3.5 9 7 12 7 12Z" stroke="#6B7280" stroke-width="1.2"/>
-            </svg>
-            ${ad.location}, ${ad.city}
-          </div>
-          ${ad.dimensions ? `
-            <div style="color: #6B7280;">
-              📐 ${ad.dimensions}
+        <a href="${adUrl}" style="text-decoration: none; color: inherit; display: block;">
+          <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: #1F2937;">
+            ${ad.title}
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="
+                background: ${typeColors[ad.type] || '#6B7280'};
+                color: white;
+                padding: 2px 8px;
+                border-radius: 4px;
+                font-size: 0.75rem;
+                font-weight: 600;
+              ">
+                ${typeLabels[ad.type] || ad.type}
+              </span>
             </div>
-          ` : ''}
-          <div style="font-weight: 700; color: #4F46E5; font-size: 1.1rem; margin-top: 4px;">
-            ${ad.price.toLocaleString('pl-PL')} zł/mies.
+            <div style="color: #6B7280;">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display: inline; margin-right: 4px; vertical-align: middle;">
+                <path d="M7 7C7.825 7 8.5 6.325 8.5 5.5C8.5 4.675 7.825 4 7 4C6.175 4 5.5 4.675 5.5 5.5C5.5 6.325 6.175 7 7 7Z" stroke="#6B7280" stroke-width="1.2"/>
+                <path d="M7 12C7 12 10.5 9 10.5 5.5C10.5 3.567 8.933 2 7 2C5.067 2 3.5 3.567 3.5 5.5C3.5 9 7 12 7 12Z" stroke="#6B7280" stroke-width="1.2"/>
+              </svg>
+              ${ad.location}, ${ad.city}
+            </div>
+            ${ad.dimensions ? `
+              <div style="color: #6B7280;">
+                📐 ${ad.dimensions}
+              </div>
+            ` : ''}
+            <div style="font-weight: 700; color: #4F46E5; font-size: 1.1rem; margin-top: 4px;">
+              ${ad.price.toLocaleString('pl-PL')} zł/mies.
+            </div>
           </div>
-        </div>
+        </a>
       </div>
     `
 

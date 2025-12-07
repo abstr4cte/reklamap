@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Advertisement } from '../types'
+import { slugify } from '../utils/slugify'
 
 const props = defineProps<{
   ad: Advertisement
@@ -14,6 +15,12 @@ const emit = defineEmits<{
   toggleFavorite: [id: string]
   toggleComparison: [id: string]
 }>()
+
+const adLink = computed(() => {
+  const city = slugify(props.ad.city)
+  const title = slugify(props.ad.title)
+  return `/ogloszenie/${city}/${title}/${props.ad.id}`
+})
 
 const typeColors: Record<string, string> = {
   billboard: '#EF4444',
@@ -143,7 +150,7 @@ const statusColor = computed(() => {
 </script>
 
 <template>
-  <router-link :to="`/ogloszenie/${ad.id}`" class="ad-card" :class="{ 'list-view': viewMode === 'list' }">
+  <router-link :to="adLink" class="ad-card" :class="{ 'list-view': viewMode === 'list' }">
     <div class="card-image">
       <img
         :src="ad.image_url || 'https://images.pexels.com/photos/417273/pexels-photo-417273.jpeg?auto=compress&cs=tinysrgb&w=800'"

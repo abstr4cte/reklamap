@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../services/api'
 import type { Advertisement } from '../types'
+import { slugify } from '../utils/slugify'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
@@ -778,7 +779,7 @@ onMounted(() => {
               <router-link
                 v-for="similarAd in similarAds"
                 :key="similarAd.id"
-                :to="`/ogloszenie/${similarAd.id}`"
+                :to="`/ogloszenie/${slugify(similarAd.city)}/${slugify(similarAd.title)}/${similarAd.id}`"
                 class="similar-ad-card"
               >
                 <div class="similar-ad-image">

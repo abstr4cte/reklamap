@@ -2,6 +2,7 @@
 import { ref, watch, onUnmounted } from 'vue'
 import { api } from '../services/api'
 import type { Advertisement } from '../types'
+import { slugify } from '../utils/slugify'
 
 const props = defineProps<{
   isOpen: boolean
@@ -105,7 +106,7 @@ onUnmounted(() => {
           <router-link
             v-for="ad in favoriteAds"
             :key="ad.id"
-            :to="`/ogloszenie/${ad.id}`"
+            :to="`/ogloszenie/${slugify(ad.city)}/${slugify(ad.title)}/${ad.id}`"
             class="favorite-item"
             @click="emit('close')"
           >

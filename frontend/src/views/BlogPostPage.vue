@@ -8,6 +8,7 @@ const router = useRouter()
 interface BlogPost {
   id: number
   title: string
+  slug: string
   excerpt: string
   content: string
   category: string
@@ -22,6 +23,7 @@ const blogPosts: BlogPost[] = [
   {
     id: 1,
     title: 'Jak wybrać idealne miejsce na billboard reklamowy',
+    slug: 'jak-wybrac-idealne-miejsce-na-billboard-reklamowy',
     excerpt: 'Poznaj kluczowe czynniki, które decydują o skuteczności reklamy outdoorowej. Lokalizacja to podstawa sukcesu każdej kampanii.',
     content: `
       <p>Wybór odpowiedniej lokalizacji dla billboardu reklamowego to jeden z najważniejszych czynników decydujących o sukcesie kampanii outdoorowej. Nawet najlepiej zaprojektowana reklama nie przyniesie oczekiwanych rezultatów, jeśli zostanie umieszczona w miejscu o niskim natężeniu ruchu lub słabej widoczności.</p>
@@ -50,6 +52,7 @@ const blogPosts: BlogPost[] = [
   {
     id: 2,
     title: 'Trendy w reklamie zewnętrznej na 2025 rok',
+    slug: 'trendy-w-reklamie-zewnetrznej-na-2025-rok',
     excerpt: 'Digital out-of-home, programmatic buying i personalizacja - sprawdź, co będzie kształtować branżę outdoor w najbliższych miesiącach.',
     content: `
       <p>Rok 2025 przynosi rewolucyjne zmiany w świecie reklamy zewnętrznej. Tradycyjne billboardy ustępują miejsca cyfrowym nośnikom, a dane stają się nową walutą w planowaniu kampanii.</p>
@@ -69,12 +72,96 @@ const blogPosts: BlogPost[] = [
     readTime: '7 min',
     author: 'Michał Nowak'
   },
-  // ... (I'll add generic content for other IDs if needed, or just handle the missing ones gracefully)
+  // Add other posts with slugs...
+  {
+    id: 3,
+    title: 'ROI kampanii outdoor - jak mierzyć efektywność',
+    slug: 'roi-kampanii-outdoor-jak-mierzyc-efektywnosc',
+    excerpt: 'Kompleksowy przewodnik po metodach pomiaru skuteczności kampanii reklamowych w przestrzeni miejskiej i na drogach.',
+    content: '',
+    category: 'poradniki',
+    image: 'https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=800',
+    date: '5 listopada 2025',
+    readTime: '8 min',
+    author: 'Katarzyna Wiśniewska'
+  },
+  {
+    id: 4,
+    title: 'Kampania marki XYZ - 300% wzrost rozpoznawalności',
+    slug: 'kampania-marki-xyz-300-wzrost-rozpoznawalnosci',
+    excerpt: 'Sprawdź, jak marka XYZ wykorzystała strategicznie rozmieszczone billboardy do zwiększenia świadomości marki w kluczowych regionach.',
+    content: '',
+    category: 'case-study',
+    image: 'https://images.pexels.com/photos/3683056/pexels-photo-3683056.jpeg?auto=compress&cs=tinysrgb&w=800',
+    date: '1 listopada 2025',
+    readTime: '6 min',
+    author: 'Piotr Zieliński'
+  },
+  {
+    id: 5,
+    title: 'Ekrany LED vs tradycyjne billboardy - co wybrać',
+    slug: 'ekrany-led-vs-tradycyjne-billboardy-co-wybrac',
+    excerpt: 'Porównanie kosztów, zasięgu i skuteczności nowoczesnych ekranów LED z klasycznymi nośnikami reklamowymi.',
+    content: '',
+    category: 'poradniki',
+    image: 'https://images.pexels.com/photos/936137/pexels-photo-936137.jpeg?auto=compress&cs=tinysrgb&w=800',
+    date: '28 października 2025',
+    readTime: '6 min',
+    author: 'Anna Kowalska'
+  },
+  {
+    id: 6,
+    title: 'Nowa funkcja - porównywanie powierzchni reklamowych',
+    slug: 'nowa-funkcja-porownywanie-powierzchni-reklamowych',
+    excerpt: 'Wprowadziliśmy nowe narzędzie umożliwiające zestawienie do 5 ogłoszeń obok siebie. Zobacz, jak z niego korzystać.',
+    content: '',
+    category: 'nowosci',
+    image: 'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=800',
+    date: '25 października 2025',
+    readTime: '3 min',
+    author: 'Michał Nowak'
+  },
+  {
+    id: 7,
+    title: 'Sezonowość w reklamie outdoor - kompletny przewodnik',
+    slug: 'sezonowosc-w-reklamie-outdoor-kompletny-przewodnik',
+    excerpt: 'Dowiedz się, kiedy najlepiej zaplanować kampanię reklamową, aby zmaksymalizować jej skuteczność i zoptymalizować koszty.',
+    content: '',
+    category: 'poradniki',
+    image: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=800',
+    date: '20 października 2025',
+    readTime: '9 min',
+    author: 'Katarzyna Wiśniewska'
+  },
+  {
+    id: 8,
+    title: 'Przyszłość reklamy zewnętrznej w erze cyfrowej',
+    slug: 'przyszlosc-reklamy-zewnetrznej-w-erze-cyfrowej',
+    excerpt: 'Jak technologie AR, IoT i AI zmieniają tradycyjną reklamę outdoor? Analiza najnowszych innowacji w branży.',
+    content: '',
+    category: 'trendy',
+    image: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800',
+    date: '15 października 2025',
+    readTime: '10 min',
+    author: 'Piotr Zieliński'
+  },
+  {
+    id: 9,
+    title: 'Startup osiągnął 10 000 leadów dzięki citylightom',
+    slug: 'startup-osiagnal-10-000-leadow-dzieki-citylightom',
+    excerpt: 'Historia sukcesu technologicznego startupu, który dzięki przemyślanej kampanii citylightowej zdobył tysiące potencjalnych klientów.',
+    content: '',
+    category: 'case-study',
+    image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800',
+    date: '10 października 2025',
+    readTime: '7 min',
+    author: 'Anna Kowalska'
+  }
 ]
 
 const post = computed(() => {
-  const id = Number(route.params.id)
-  return blogPosts.find(p => p.id === id) || blogPosts[0] // Fallback to first post if not found
+  const slug = route.params.slug as string
+  return blogPosts.find(p => p.slug === slug) || blogPosts[0]
 })
 
 const categories = [
