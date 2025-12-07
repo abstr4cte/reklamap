@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import EmailModal from '../components/EmailModal.vue'
 import HeroBanner from '../components/HeroBanner.vue'
 import PolandMap from '../components/PolandMap.vue'
 import AdGrid from '../components/AdGrid.vue'
+import Pagination from '../components/Pagination.vue'
 import { api } from '../services/api'
 import type { Advertisement } from '../types'
 
@@ -12,12 +14,17 @@ const emit = defineEmits<{
   toggleComparison: [id: string]
 }>()
 
+const route = useRoute()
+const router = useRouter()
+
 const isModalOpen = ref(false)
 const advertisements = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const viewMode = ref<'grid' | 'list'>('grid')
 const sortBy = ref('newest')
 const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm'>('month')
+const currentPage = ref(1)
+const itemsPerPage = 20
 
 interface Filters {
   keyword: string
@@ -244,8 +251,31 @@ const sortedAndFilteredAdvertisements = computed(() => {
   return sorted
 })
 
+const totalPages = computed(() => {
+  return Math.ceil(sortedAndFilteredAdvertisements.value.length / itemsPerPage)
+})
+
+const paginatedAdvertisements = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  return sortedAndFilteredAdvertisements.value.slice(start, end)
+})
+
+const handlePageChange = (page: number) => {
+  currentPage.value = page
+  router.push({ query: { ...route.query, page: page.toString() } })
+  
+  // Scroll to top of ads section
+  const adsSection = document.querySelector('.ads-section')
+  if (adsSection) {
+    adsSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
 const handleSearch = (searchFilters: Filters) => {
   filters.value = searchFilters
+  currentPage.value = 1 // Reset to first page on search
+  router.push({ query: { page: '1' } })
 
   const mapSection = document.querySelector('.map-section')
   if (mapSection) {
@@ -255,6 +285,8 @@ const handleSearch = (searchFilters: Filters) => {
 
 const handleReset = (resetFilters: Filters) => {
   filters.value = resetFilters
+  currentPage.value = 1 // Reset to first page
+  router.push({ query: {} })
 }
 
 const loadAdvertisements = async () => {
@@ -270,6 +302,14 @@ const loadAdvertisements = async () => {
     isLoading.value = false
   }
 }
+
+// Watch for URL query parameter changes
+watch(() => route.query.page, (newPage) => {
+  const page = parseInt(newPage as string) || 1
+  if (page !== currentPage.value && page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
+  }
+}, { immediate: true })
 
 onMounted(() => {
   loadAdvertisements()
@@ -287,7 +327,7 @@ onMounted(() => {
       :selected-location-coords="filters.selectedLocationCoords"
     />
     <AdGrid
-      :advertisements="sortedAndFilteredAdvertisements"
+      :advertisements="paginatedAdvertisements"
       :is-loading="isLoading"
       :view-mode="viewMode"
       :sort-by="sortBy"
@@ -296,6 +336,14 @@ onMounted(() => {
       @toggle-comparison="$emit('toggleComparison', $event)"
       @update:view-mode="viewMode = $event"
       @update:sort-by="sortBy = $event"
+    />
+    <Pagination
+      v-if="!isLoading && paginatedAdvertisements.length > 0"
+      :current-page="currentPage"
+      :total-pages="totalPages"
+      :total-items="sortedAndFilteredAdvertisements.length"
+      :items-per-page="itemsPerPage"
+      @update:current-page="handlePageChange"
     />
   </div>
 </template>

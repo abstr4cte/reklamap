@@ -43,6 +43,12 @@ const isInComparison = (id: string) => {
           </p>
         </div>
         <div class="header-right">
+          <router-link to="/ogloszenia" class="see-all-btn">
+            Zobacz wszystkie ogłoszenia
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </router-link>
           <div class="view-switcher">
             <button
               @click="emit('update:viewMode', 'grid')"
@@ -51,10 +57,10 @@ const isInComparison = (id: string) => {
               title="Widok kafelków"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="7" height="7" :stroke="viewMode === 'grid' ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
-                <rect x="14" y="3" width="7" height="7" :stroke="viewMode === 'grid' ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
-                <rect x="3" y="14" width="7" height="7" :stroke="viewMode === 'grid' ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
-                <rect x="14" y="14" width="7" height="7" :stroke="viewMode === 'grid' ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
               </svg>
             </button>
             <button
@@ -64,7 +70,9 @@ const isInComparison = (id: string) => {
               title="Widok listy"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" :stroke="viewMode === 'list' ? '#667eea' : 'currentColor'" stroke-width="2" stroke-linecap="round"/>
+                <rect x="3" y="5" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="3" y="11" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="3" y="17" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
               </svg>
             </button>
           </div>
@@ -159,6 +167,30 @@ const isInComparison = (id: string) => {
   gap: 1rem;
 }
 
+.see-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.see-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.see-all-btn svg {
+  flex-shrink: 0;
+}
+
 .section-title {
   font-size: 2.5rem;
   font-weight: 800;
@@ -174,9 +206,9 @@ const isInComparison = (id: string) => {
 
 .view-switcher {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.25rem;
   border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 0.25rem;
   background: white;
 }
@@ -196,11 +228,16 @@ const isInComparison = (id: string) => {
 
 .view-btn:hover {
   background: #f3f4f6;
+  color: #374151;
 }
 
 .view-btn.active {
-  background: #f0f3ff;
-  color: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.view-btn.active:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #65408b 100%);
 }
 
 .sort-select {

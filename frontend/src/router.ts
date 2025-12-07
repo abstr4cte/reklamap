@@ -23,6 +23,11 @@ const router = createRouter({
       component: AddAdPage
     },
     {
+      path: '/ogloszenia',
+      name: 'advertisements',
+      component: () => import('./views/AdvertisementsPage.vue')
+    },
+    {
       path: '/ogloszenie/:city/:slug/:id',
       name: 'ad-detail',
       component: AdDetailPage
