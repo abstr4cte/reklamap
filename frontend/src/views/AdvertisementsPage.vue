@@ -4,10 +4,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { slugify } from '../utils/slugify'
 import type { Advertisement } from '../types'
-import Pagination from '../components/Pagination.vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { filtersToQueryParams, queryParamsToFilters } from '../utils/filterUtils'
+import polishLocations from '../data/polishLocations.json'
+import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
+import Pagination from '../components/Pagination.vue'
 
 const advertisements = ref<Advertisement[]>([])
 const isLoading = ref(true)
@@ -60,8 +62,183 @@ const filters = ref({
   priceIncludesPrint: false,
   graphicDesignHelp: false,
   offerType: '',
-  hasVatInvoice: false
+  hasVatInvoice: false,
+  selectedLocationCoords: null as { lat: number; lng: number } | null
 })
+
+// Lokalizacja - podobnie jak na stronie głównej
+const locationQuery = ref('')
+const isLocationMenuOpen = ref(false)
+const apiLocationResults = ref<LocationResult[]>([])
+const isLoadingLocations = ref(false)
+
+interface LocationSuggestion {
+  type: 'region' | 'city'
+  value: string
+  label: string
+  subtitle?: string
+  coords?: { lat: number; lng: number }
+  addresstype?: string
+  osmType?: string
+  osmClass?: string
+}
+
+const popularLocations: LocationSuggestion[] = [
+  { type: 'city', value: 'Warszawa', label: 'Warszawa' },
+  { type: 'city', value: 'Kraków', label: 'Kraków' },
+  { type: 'city', value: 'Wrocław', label: 'Wrocław' },
+  { type: 'city', value: 'Poznań', label: 'Poznań' },
+  { type: 'city', value: 'Gdańsk', label: 'Gdańsk' },
+]
+
+const locationSuggestions = computed(() => {
+  if (!locationQuery.value) {
+    return popularLocations
+  }
+
+  const query = locationQuery.value.toLowerCase()
+  const suggestions: LocationSuggestion[] = []
+
+  // Filter regions from JSON (instant)
+  const matchingRegions = polishLocations.voivodeships
+    .filter(r => r.name.toLowerCase().includes(query))
+    .map(r => ({ type: 'region' as const, value: r.id, label: r.name }))
+
+  // Add API results (cities, towns, villages)
+  const apiSuggestions = apiLocationResults.value
+    .map(loc => {
+      // Use state from Nominatim address
+      const voivodeship = loc.state || ''
+      
+      // Extract detailed location from displayName
+      const parts = loc.displayName.split(', ')
+      let detailedLocation = ''
+      
+      if (parts.length >= 2) {
+        // If first part is different from city name, it's a district/suburb
+        if (parts[0] !== loc.name && parts[1] === loc.name) {
+          detailedLocation = `${parts[0]}, ${loc.name}`
+        } else {
+          detailedLocation = loc.name
+        }
+      } else {
+        detailedLocation = loc.name
+      }
+      
+      // Construct subtitle with city if available and different from name
+      let subtitleParts: string[] = []
+      
+      // Add city to subtitle if it exists, is different from the main name, 
+      // and isn't already part of the detailed location label
+      if (loc.city && loc.city !== loc.name && !detailedLocation.includes(loc.city)) {
+        subtitleParts.push(loc.city)
+      }
+      
+      if (voivodeship) {
+        subtitleParts.push(voivodeship)
+      }
+      
+      subtitleParts.push('Polska')
+      
+      return {
+        type: 'city' as const,
+        value: loc.name,
+        label: detailedLocation,
+        subtitle: subtitleParts.join(', '),
+        coords: { lat: loc.lat, lng: loc.lng },
+        addresstype: loc.addresstype,
+        osmType: loc.osmType,
+        osmClass: loc.osmClass
+      }
+    })
+
+  // Deduplicate by city name, preferring place/city over boundary
+  const uniqueCities = new Map<string, LocationSuggestion>()
+  apiSuggestions.forEach(suggestion => {
+    const existing = uniqueCities.get(suggestion.value)
+    if (!existing) {
+      uniqueCities.set(suggestion.value, suggestion)
+    } else {
+      // Calculate priority for current and existing
+      // Priority: place/city > place/town > addresstype=city > others
+      const getPriority = (s: LocationSuggestion) => {
+        if (s.osmClass === 'place' && s.osmType === 'city') return 4
+        if (s.osmClass === 'place' && s.osmType === 'town') return 3
+        if (s.addresstype === 'city') return 2
+        if (s.type === 'city') return 1
+        return 0
+      }
+      
+      const currentPriority = getPriority(suggestion)
+      const existingPriority = getPriority(existing)
+      
+      if (currentPriority > existingPriority) {
+        uniqueCities.set(suggestion.value, suggestion)
+      }
+    }
+  })
+  const deduplicatedSuggestions = Array.from(uniqueCities.values())
+
+  suggestions.push(...matchingRegions, ...deduplicatedSuggestions)
+  return suggestions.slice(0, 10)
+})
+
+const selectLocation = (suggestion: LocationSuggestion) => {
+  locationQuery.value = suggestion.label
+  
+  if (suggestion.type === 'region') {
+    // Find the matching region ID from polishLocations
+    const matchingRegion = polishLocations.voivodeships.find(
+      v => v.name === suggestion.label
+    )
+    filters.value.region = matchingRegion?.id || suggestion.value
+    filters.value.city = ''
+    filters.value.selectedLocationCoords = null
+  } else {
+    filters.value.city = suggestion.value
+    filters.value.region = ''
+    // Store coordinates if available from API
+    filters.value.selectedLocationCoords = suggestion.coords || null
+  }
+  
+  isLocationMenuOpen.value = false
+}
+
+const handleLocationFocus = () => {
+  isLocationMenuOpen.value = true
+}
+
+const handleLocationBlur = () => {
+  window.setTimeout(() => {
+    isLocationMenuOpen.value = false
+  }, 200)
+}
+
+const handleLocationInput = () => {
+  // Trigger API search when user types
+  if (locationQuery.value.length >= 2) {
+    isLoadingLocations.value = true
+    debouncedSearchLocations(locationQuery.value, (results) => {
+      apiLocationResults.value = results
+      isLoadingLocations.value = false
+    })
+  } else {
+    apiLocationResults.value = []
+  }
+  
+  // If user types custom text without selecting, treat as city search
+  filters.value.city = locationQuery.value
+  filters.value.region = ''
+  filters.value.selectedLocationCoords = null
+}
+
+const clearLocation = () => {
+  locationQuery.value = ''
+  filters.value.city = ''
+  filters.value.region = ''
+  filters.value.selectedLocationCoords = null
+  apiLocationResults.value = []
+}
 
 const typeColors: Record<string, string> = {
   billboard: '#EF4444',
@@ -90,8 +267,7 @@ const activeFiltersCount = computed(() => {
   if (filters.value.widthTo !== null) count++
   if (filters.value.heightFrom !== null) count++
   if (filters.value.heightTo !== null) count++
-  if (filters.value.city) count++
-  if (filters.value.region) count++
+  if (filters.value.city || filters.value.region || locationQuery.value) count++
   if (filters.value.rentalPeriod) count++
   if (filters.value.orientation) count++
   if (filters.value.trafficIntensity) count++
@@ -285,13 +461,15 @@ const totalPages = computed(() => {
   return Math.ceil(filteredAdvertisements.value.length / itemsPerPage)
 })
 
-const paginatedAdvertisements = computed(() => {
+// Pobierz ogłoszenia dla aktualnej strony
+const getCurrentPageAds = () => {
   const start = (currentPage.value - 1) * itemsPerPage
   const end = start + itemsPerPage
   return filteredAdvertisements.value.slice(start, end)
-})
+}
 
-const handlePageChange = (page: number) => {
+// Obsługa zmiany strony
+const onPageChange = (page: number) => {
   currentPage.value = page
   router.push({ query: { ...route.query, page: page.toString() } })
   
@@ -348,11 +526,13 @@ const clearFilters = () => {
     priceIncludesPrint: false,
     graphicDesignHelp: false,
     offerType: '',
-    hasVatInvoice: false
+    hasVatInvoice: false,
+    selectedLocationCoords: null
   }
   
-  // Wyczyść wyszukiwane słowo kluczowe
+  // Wyczyść wyszukiwane słowo kluczowe i lokalizację
   searchQuery.value = ''
+  locationQuery.value = ''
   
   // Resetuj sortowanie
   sortBy.value = 'newest'
@@ -594,6 +774,16 @@ onMounted(() => {
       sortBy.value = route.query.sort as string
     }
     
+    // Ustaw lokalizację jeśli jest city lub region
+    if (queryFilters.city) {
+      locationQuery.value = queryFilters.city
+    } else if (queryFilters.region) {
+      const region = polishLocations.voivodeships.find(v => v.id === queryFilters.region)
+      if (region) {
+        locationQuery.value = region.name
+      }
+    }
+    
     // Połącz z domyślnymi filtrami
     filters.value = { ...filters.value, ...queryFilters }
   }
@@ -709,7 +899,7 @@ onBeforeUnmount(() => {
 
         <div v-else class="ads-list" :class="viewMode">
           <div
-            v-for="ad in filteredAdvertisements"
+            v-for="ad in getCurrentPageAds()"
             :key="ad.id"
             :id="`ad-${ad.id}`"
             class="ad-list-item"
@@ -760,6 +950,16 @@ onBeforeUnmount(() => {
             </router-link>
           </div>
         </div>
+        
+        <!-- Pagination -->
+        <Pagination
+          v-if="filteredAdvertisements.length > 0"
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          :total-items="filteredAdvertisements.length"
+          :items-per-page="itemsPerPage"
+          @update:current-page="onPageChange"
+        />
       </div>
 
       <div class="map-container-wrapper">
@@ -882,38 +1082,77 @@ onBeforeUnmount(() => {
             </select>
           </div>
 
-          <!-- Location Filters -->
+          <!-- Location Filter -->
           <div class="filter-group">
-            <label class="filter-label">Miasto</label>
-            <input 
-              v-model="filters.city" 
-              type="text" 
-              placeholder="Wpisz miasto..."
-              class="filter-input"
-            />
-          </div>
-
-          <div class="filter-group">
-            <label class="filter-label">Województwo</label>
-            <select v-model="filters.region" class="filter-select">
-              <option value="">Wszystkie</option>
-              <option value="dolnoslaskie">Dolnośląskie</option>
-              <option value="kujawsko-pomorskie">Kujawsko-pomorskie</option>
-              <option value="lubelskie">Lubelskie</option>
-              <option value="lubuskie">Lubuskie</option>
-              <option value="lodzkie">Łódzkie</option>
-              <option value="malopolskie">Małopolskie</option>
-              <option value="mazowieckie">Mazowieckie</option>
-              <option value="opolskie">Opolskie</option>
-              <option value="podkarpackie">Podkarpackie</option>
-              <option value="podlaskie">Podlaskie</option>
-              <option value="pomorskie">Pomorskie</option>
-              <option value="slaskie">Śląskie</option>
-              <option value="swietokrzyskie">Świętokrzyskie</option>
-              <option value="warminsko-mazurskie">Warmińsko-mazurskie</option>
-              <option value="wielkopolskie">Wielkopolskie</option>
-              <option value="zachodniopomorskie">Zachodniopomorskie</option>
-            </select>
+            <label class="filter-label">Lokalizacja</label>
+            <div class="location-autocomplete">
+              <div class="input-with-clear">
+                <input
+                  v-model="locationQuery"
+                  type="text"
+                  placeholder="Wpisz region, miasto lub ulicę"
+                  class="filter-input"
+                  @focus="handleLocationFocus"
+                  @blur="handleLocationBlur"
+                  @input="handleLocationInput"
+                  autocomplete="off"
+                />
+                <button 
+                  v-if="locationQuery" 
+                  type="button" 
+                  class="clear-button" 
+                  @click.stop="clearLocation"
+                  @mousedown.prevent
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              <div v-if="isLocationMenuOpen" class="location-suggestions">
+                <div v-if="isLoadingLocations" class="loading-state compact">
+                  <div class="loading-spinner"></div>
+                  <span>Szukam...</span>
+                </div>
+                <div v-else-if="!locationQuery" class="suggestion-section">
+                  <div class="suggestion-header">Popularne lokalizacje</div>
+                  <div
+                    v-for="suggestion in locationSuggestions"
+                    :key="suggestion.value"
+                    class="location-suggestion"
+                    @click="selectLocation(suggestion)"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M8 8C8.82843 8 9.5 7.32843 9.5 6.5C9.5 5.67157 8.82843 5 8 5C7.17157 5 6.5 5.67157 6.5 6.5C6.5 7.32843 7.17157 8 8 8Z" stroke="#6B7280" stroke-width="1.2"/>
+                      <path d="M8 14C8 14 12 10.5 12 6.5C12 4.01472 10.2091 2 8 2C5.79086 2 4 4.01472 4 6.5C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.2"/>
+                    </svg>
+                    {{ suggestion.label }}
+                  </div>
+                </div>
+                <div v-else>
+                  <div
+                    v-for="suggestion in locationSuggestions"
+                    :key="suggestion.value + suggestion.type"
+                    class="location-suggestion"
+                    @click="selectLocation(suggestion)"
+                  >
+                    <svg v-if="suggestion.type === 'region'" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <rect x="2" y="2" width="12" height="12" rx="1.5" stroke="#6B7280" stroke-width="1.2"/>
+                      <path d="M2 6H14M6 2V14" stroke="#6B7280" stroke-width="1.2"/>
+                    </svg>
+                    <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M8 8C8.82843 8 9.5 7.32843 9.5 6.5C9.5 5.67157 8.82843 5 8 5C7.17157 5 6.5 5.67157 6.5 6.5C6.5 7.32843 7.17157 8 8 8Z" stroke="#6B7280" stroke-width="1.2"/>
+                      <path d="M8 14C8 14 12 10.5 12 6.5C12 4.01472 10.2091 2 8 2C5.79086 2 4 4.01472 4 6.5C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.2"/>
+                    </svg>
+                    <span class="suggestion-text">
+                      <span class="suggestion-name">{{ suggestion.label }}</span>
+                      <span v-if="suggestion.type === 'region'" class="suggestion-type">Województwo</span>
+                      <span v-else-if="suggestion.subtitle" class="suggestion-type">{{ suggestion.subtitle }}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Traffic Intensity -->
@@ -966,36 +1205,36 @@ onBeforeUnmount(() => {
 
           <!-- Feature Filters -->
           <div class="filter-group">
-            <label class="checkbox-label">
-              <input v-model="filters.onlyWithImage" type="checkbox" class="filter-checkbox" />
+            <label class="checkbox-label search-select" style="justify-content: flex-start;">
+              <input v-model="filters.onlyWithImage" type="checkbox" />
               <span>Tylko ze zdjęciem</span>
             </label>
           </div>
 
           <div class="filter-group">
-            <label class="checkbox-label">
-              <input v-model="filters.hasLighting" type="checkbox" class="filter-checkbox" />
+            <label class="checkbox-label search-select" style="justify-content: flex-start;">
+              <input v-model="filters.hasLighting" type="checkbox" />
               <span>Z podświetleniem</span>
             </label>
           </div>
 
           <div class="filter-group">
-            <label class="checkbox-label">
-              <input v-model="filters.priceIncludesPrint" type="checkbox" class="filter-checkbox" />
+            <label class="checkbox-label search-select" style="justify-content: flex-start;">
+              <input v-model="filters.priceIncludesPrint" type="checkbox" />
               <span>Druk i montaż w cenie</span>
             </label>
           </div>
 
           <div class="filter-group">
-            <label class="checkbox-label">
-              <input v-model="filters.graphicDesignHelp" type="checkbox" class="filter-checkbox" />
+            <label class="checkbox-label search-select" style="justify-content: flex-start;">
+              <input v-model="filters.graphicDesignHelp" type="checkbox" />
               <span>Pomoc przy projekcie graficznym</span>
             </label>
           </div>
 
           <div class="filter-group">
-            <label class="checkbox-label">
-              <input v-model="filters.hasVatInvoice" type="checkbox" class="filter-checkbox" />
+            <label class="checkbox-label search-select" style="justify-content: flex-start;">
+              <input v-model="filters.hasVatInvoice" type="checkbox" />
               <span>Faktura VAT</span>
             </label>
           </div>
@@ -1611,6 +1850,137 @@ onBeforeUnmount(() => {
 .checkbox-label span {
   color: #374151;
   font-weight: 500;
+}
+
+/* Styles for location autocomplete */
+.location-autocomplete {
+  position: relative;
+  width: 100%;
+}
+
+.input-with-clear {
+  position: relative;
+  width: 100%;
+}
+
+.clear-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.clear-button:hover {
+  color: #4b5563;
+  background-color: #f3f4f6;
+}
+
+.location-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  max-height: 300px;
+  overflow-y: auto;
+  min-width: 250px;
+}
+
+.suggestion-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Upewnij się, że loading-state ma row jako kierunek i jest wyśrodkowany */
+.loading-state {
+  flex-direction: row !important;
+  justify-content: center !important;
+  width: 100%;
+}
+
+.suggestion-header {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  padding: 0.5rem;
+}
+
+.location-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.location-suggestion:hover {
+  background-color: #f3f4f6;
+}
+
+.suggestion-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.suggestion-name {
+  font-size: 0.95rem;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.suggestion-type {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1rem;
+  gap: 0.5rem;
+  color: #6b7280;
+}
+
+.loading-state.compact {
+  padding: 0.5rem 1rem;
+  min-height: 40px;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f4f6;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .modal-footer {

@@ -243,6 +243,14 @@ const handleLocationInput = () => {
   filters.value.selectedLocationCoords = null
 }
 
+const clearLocation = () => {
+  locationQuery.value = ''
+  filters.value.city = ''
+  filters.value.region = ''
+  filters.value.selectedLocationCoords = null
+  apiLocationResults.value = []
+}
+
 const handleSearch = () => {
   emit('search', { ...filters.value })
 }
@@ -375,19 +383,32 @@ onBeforeUnmount(() => {
                   </svg>
                   Lokalizacja
                 </label>
-                <input
-                  id="search-location"
-                  v-model="locationQuery"
-                  type="text"
-                  placeholder="Wpisz region, miasto lub ulicę"
-                  class="search-input"
-                  @focus="handleLocationFocus"
-                  @blur="handleLocationBlur"
-                  @input="handleLocationInput"
-                  autocomplete="off"
-                />
+                <div class="input-with-clear">
+                  <input
+                    id="search-location"
+                    v-model="locationQuery"
+                    type="text"
+                    placeholder="Wpisz region, miasto lub ulicę"
+                    class="search-input"
+                    @focus="handleLocationFocus"
+                    @blur="handleLocationBlur"
+                    @input="handleLocationInput"
+                    autocomplete="off"
+                  />
+                  <button 
+                    v-if="locationQuery" 
+                    type="button" 
+                    class="clear-button" 
+                    @click.stop="clearLocation"
+                    @mousedown.prevent
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
                 <div v-if="isLocationMenuOpen" class="location-suggestions">
-                  <div v-if="isLoadingLocations" class="suggestion-section loading-state">
+                  <div v-if="isLoadingLocations" class="loading-state">
                     <div class="loading-spinner"></div>
                     <span>Szukam...</span>
                   </div>
@@ -841,6 +862,34 @@ onBeforeUnmount(() => {
   position: relative;
 }
 
+.input-with-clear {
+  position: relative;
+  width: 100%;
+}
+
+.clear-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.clear-button:hover {
+  color: #4b5563;
+  background-color: #f3f4f6;
+}
+
 .location-suggestions {
   position: absolute;
   top: 100%;
@@ -946,11 +995,13 @@ onBeforeUnmount(() => {
 .loading-state {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center !important;
   gap: 0.75rem;
-  padding: 1.5rem;
+  padding: 1rem;
   color: #6B7280;
   font-size: 0.95rem;
+  flex-direction: row !important;
+  width: 100%;
 }
 
 .loading-spinner {
