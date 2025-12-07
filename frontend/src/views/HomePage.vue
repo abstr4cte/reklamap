@@ -8,6 +8,7 @@ import AdGrid from '../components/AdGrid.vue'
 import Pagination from '../components/Pagination.vue'
 import { api } from '../services/api'
 import type { Advertisement } from '../types'
+import { filtersToQueryParams, queryParamsToFilters } from '../utils/filterUtils'
 
 const emit = defineEmits<{
   toggleFavorite: [id: string]
@@ -275,7 +276,15 @@ const handlePageChange = (page: number) => {
 const handleSearch = (searchFilters: Filters) => {
   filters.value = searchFilters
   currentPage.value = 1 // Reset to first page on search
-  router.push({ query: { page: '1' } })
+  
+  // Konwertuj filtry na query params
+  const queryParams = filtersToQueryParams(searchFilters)
+  
+  // Dodaj parametr strony
+  queryParams.page = '1'
+  
+  // Aktualizuj URL z nowymi parametrami
+  router.push({ query: queryParams })
 
   const mapSection = document.querySelector('.map-section')
   if (mapSection) {
@@ -286,7 +295,7 @@ const handleSearch = (searchFilters: Filters) => {
 const handleReset = (resetFilters: Filters) => {
   filters.value = resetFilters
   currentPage.value = 1 // Reset to first page
-  router.push({ query: {} })
+  router.push({ query: {} }) // Usuń wszystkie parametry z URL
 }
 
 const loadAdvertisements = async () => {
@@ -304,15 +313,38 @@ const loadAdvertisements = async () => {
 }
 
 // Watch for URL query parameter changes
-watch(() => route.query.page, (newPage) => {
-  const page = parseInt(newPage as string) || 1
+watch(() => route.query, (newQuery) => {
+  // Aktualizuj numer strony
+  const page = parseInt(newQuery.page as string) || 1
   if (page !== currentPage.value && page >= 1 && page <= totalPages.value) {
     currentPage.value = page
   }
-}, { immediate: true })
+  
+  // Aktualizuj filtry na podstawie query params
+  const queryFilters = queryParamsToFilters(newQuery as Record<string, string>)
+  
+  // Aktualizuj tylko jeśli są różnice w filtrach
+  if (JSON.stringify(queryFilters) !== JSON.stringify(filters.value)) {
+    // Ustaw tylko niepuste wartości, aby nie nadpisywać domyślnych
+    Object.entries(queryFilters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '' && 
+          (Array.isArray(value) ? value.length > 0 : true)) {
+        // @ts-ignore - dynamiczny dostęp do właściwości
+        filters.value[key] = value
+      }
+    })
+  }
+}, { immediate: true, deep: true })
 
 onMounted(() => {
   loadAdvertisements()
+  
+  // Jeśli są parametry w URL, zastosuj je jako filtry
+  if (Object.keys(route.query).length > 0) {
+    const queryFilters = queryParamsToFilters(route.query as Record<string, string>)
+    // Połącz z domyślnymi filtrami
+    filters.value = { ...filters.value, ...queryFilters }
+  }
 })
 </script>
 

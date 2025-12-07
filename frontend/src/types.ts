@@ -1,3 +1,8 @@
+export interface LocationCoords {
+    lat: number
+    lng: number
+}
+
 export interface Advertisement {
     id: string
     title: string

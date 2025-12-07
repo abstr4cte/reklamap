@@ -7,6 +7,7 @@ import type { Advertisement } from '../types'
 import Pagination from '../components/Pagination.vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { filtersToQueryParams, queryParamsToFilters } from '../utils/filterUtils'
 
 const advertisements = ref<Advertisement[]>([])
 const isLoading = ref(true)
@@ -349,6 +350,15 @@ const clearFilters = () => {
     offerType: '',
     hasVatInvoice: false
   }
+  
+  // Wyczyść wyszukiwane słowo kluczowe
+  searchQuery.value = ''
+  
+  // Resetuj sortowanie
+  sortBy.value = 'newest'
+  
+  // Wyczyść URL
+  router.push({ query: {} })
 }
 const createCustomIcon = (type: string, isHovered: boolean = false, isSelected: boolean = false) => {
   const color = typeColors[type] || '#6B7280'
@@ -503,19 +513,61 @@ const loadAdvertisements = async () => {
 }
 
 // Watch for URL query parameter changes
-watch(() => route.query.page, (newPage) => {
-  const page = parseInt(newPage as string) || 1
+watch(() => route.query, (newQuery) => {
+  // Aktualizuj numer strony
+  const page = parseInt(newQuery.page as string) || 1
   if (page !== currentPage.value && page >= 1 && page <= totalPages.value) {
     currentPage.value = page
   }
-}, { immediate: true })
-
-// Watch for filter and sort changes - reset to page 1
-watch([() => filters.value, () => sortBy.value, () => searchQuery.value], () => {
-  if (currentPage.value !== 1) {
-    currentPage.value = 1
-    router.push({ query: { page: '1' } })
+  
+  // Aktualizuj sortowanie
+  if (newQuery.sort && newQuery.sort !== sortBy.value) {
+    sortBy.value = newQuery.sort as string
   }
+  
+  // Aktualizuj wyszukiwane słowo kluczowe
+  if (newQuery.q && newQuery.q !== searchQuery.value) {
+    searchQuery.value = newQuery.q as string
+  }
+  
+  // Aktualizuj filtry na podstawie query params
+  const queryFilters = queryParamsToFilters(newQuery as Record<string, string>)
+  
+  // Aktualizuj tylko jeśli są różnice w filtrach
+  if (JSON.stringify(queryFilters) !== JSON.stringify(filters.value)) {
+    // Ustaw tylko niepuste wartości, aby nie nadpisywać domyślnych
+    Object.entries(queryFilters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '' && 
+          (Array.isArray(value) ? value.length > 0 : true) &&
+          key !== 'keyword') { // Pomijamy keyword, bo jest obsługiwane przez searchQuery
+        // @ts-ignore - dynamiczny dostęp do właściwości
+        filters.value[key] = value
+      }
+    })
+  }
+}, { immediate: true, deep: true })
+
+// Watch for filter and sort changes - reset to page 1 and update URL
+watch([() => filters.value, () => sortBy.value, () => searchQuery.value], () => {
+  // Reset to page 1
+  currentPage.value = 1
+  
+  // Konwertuj filtry na query params
+  const queryParams = filtersToQueryParams({
+    ...filters.value,
+    keyword: searchQuery.value // Dodaj wyszukiwane słowo kluczowe
+  })
+  
+  // Dodaj parametr sortowania
+  if (sortBy.value !== 'newest') {
+    queryParams.sort = sortBy.value
+  }
+  
+  // Dodaj parametr strony
+  queryParams.page = '1'
+  
+  // Aktualizuj URL z nowymi parametrami
+  router.push({ query: queryParams })
 }, { deep: true })
 
 watch(() => filteredAdvertisements.value, () => {
@@ -526,6 +578,25 @@ onMounted(() => {
   loadAdvertisements()
   setTimeout(() => initMap(), 100)
   document.addEventListener('click', handleClickOutside)
+  
+  // Jeśli są parametry w URL, zastosuj je jako filtry
+  if (Object.keys(route.query).length > 0) {
+    const queryFilters = queryParamsToFilters(route.query as Record<string, string>)
+    
+    // Ustaw searchQuery jeśli jest keyword
+    if (queryFilters.keyword) {
+      searchQuery.value = queryFilters.keyword
+      delete queryFilters.keyword // Usuń, żeby nie dodać do filters
+    }
+    
+    // Ustaw sortBy jeśli jest sort
+    if (route.query.sort) {
+      sortBy.value = route.query.sort as string
+    }
+    
+    // Połącz z domyślnymi filtrami
+    filters.value = { ...filters.value, ...queryFilters }
+  }
 })
 
 onBeforeUnmount(() => {
