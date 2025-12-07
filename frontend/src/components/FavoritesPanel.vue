@@ -27,7 +27,18 @@ const loadFavorites = async () => {
   try {
     isLoading.value = true
     const data = await api.getAdvertisementsByIds(favoriteIds)
-    favoriteAds.value = data || []
+    
+    // Filter to only include active advertisements
+    const activeAds = data.filter(ad => ad.is_active && ad.status === 'active')
+    favoriteAds.value = activeAds || []
+    
+    // Update localStorage if there are inactive/deleted ads
+    if (activeAds.length < favoriteIds.length) {
+      const activeIds = activeAds.map(ad => ad.id)
+      localStorage.setItem('favorites', JSON.stringify(activeIds))
+      // Trigger a storage event to update the counter
+      window.dispatchEvent(new Event('storage'))
+    }
   } catch (error) {
     console.error('Error loading favorites:', error)
   } finally {

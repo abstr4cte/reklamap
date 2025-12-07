@@ -28,7 +28,18 @@ const loadComparison = async () => {
   try {
     isLoading.value = true
     const data = await api.getAdvertisementsByIds(comparisonIds)
-    comparisonAds.value = data || []
+    
+    // Filter to only include active advertisements
+    const activeAds = data.filter(ad => ad.is_active && ad.status === 'active')
+    comparisonAds.value = activeAds || []
+    
+    // Update localStorage if there are inactive/deleted ads
+    if (activeAds.length < comparisonIds.length) {
+      const activeIds = activeAds.map(ad => ad.id)
+      localStorage.setItem('comparison', JSON.stringify(activeIds))
+      // Trigger a storage event to update the counter
+      window.dispatchEvent(new Event('storage'))
+    }
   } catch (error) {
     console.error('Error loading comparison:', error)
   } finally {
