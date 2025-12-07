@@ -17,7 +17,17 @@ const showFiltersModal = ref(false)
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 const markers: Map<string, L.Marker> = new Map()
-const viewMode = ref<'grid' | 'list'>('list')
+// Get saved view mode from localStorage or default to grid
+const savedViewMode = typeof window !== 'undefined' ? window.localStorage.getItem('adsViewMode') : null
+const viewMode = ref<'grid' | 'list'>(savedViewMode === 'list' ? 'list' : 'grid')
+
+// Function to change view mode and save to localStorage
+const changeViewMode = (mode: 'grid' | 'list') => {
+  viewMode.value = mode
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem('adsViewMode', mode)
+  }
+}
 const sortBy = ref('newest')
 const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm'>('month')
 const isStatusMenuOpen = ref(false)
@@ -550,19 +560,7 @@ onBeforeUnmount(() => {
 
       <div class="view-toggle">
         <button 
-          @click="viewMode = 'list'" 
-          class="view-btn"
-          :class="{ active: viewMode === 'list' }"
-          title="Widok listy"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="5" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-            <rect x="3" y="11" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-            <rect x="3" y="17" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-          </svg>
-        </button>
-        <button 
-          @click="viewMode = 'grid'" 
+          @click="changeViewMode('grid')" 
           class="view-btn"
           :class="{ active: viewMode === 'grid' }"
           title="Widok kafelków"
@@ -574,6 +572,18 @@ onBeforeUnmount(() => {
             <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
           </svg>
         </button>
+        <button 
+          @click="changeViewMode('list')" 
+          class="view-btn"
+          :class="{ active: viewMode === 'list' }"
+          title="Widok listy"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="5" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+            <rect x="3" y="11" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+            <rect x="3" y="17" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
       </div>
 
       <select v-model="sortBy" class="sort-select">
@@ -581,16 +591,26 @@ onBeforeUnmount(() => {
         <option value="oldest">Najstarsze</option>
         <option value="name-asc">Nazwa A-Z</option>
         <option value="name-desc">Nazwa Z-A</option>
-        <option value="price-day-asc">Cena/dzień ↑</option>
-        <option value="price-day-desc">Cena/dzień ↓</option>
-        <option value="price-week-asc">Cena/tydzień ↑</option>
-        <option value="price-week-desc">Cena/tydzień ↓</option>
-        <option value="price-month-asc">Cena/miesiąc ↑</option>
-        <option value="price-month-desc">Cena/miesiąc ↓</option>
-        <option value="price-year-asc">Cena/rok ↑</option>
-        <option value="price-year-desc">Cena/rok ↓</option>
-        <option value="price-sqm-asc">Cena/m² ↑</option>
-        <option value="price-sqm-desc">Cena/m² ↓</option>
+        <optgroup label="Cena za dzień">
+          <option value="price-day-asc">Cena za dzień rosnąco</option>
+          <option value="price-day-desc">Cena za dzień malejąco</option>
+        </optgroup>
+        <optgroup label="Cena za tydzień">
+          <option value="price-week-asc">Cena za tydzień rosnąco</option>
+          <option value="price-week-desc">Cena za tydzień malejąco</option>
+        </optgroup>
+        <optgroup label="Cena za miesiąc">
+          <option value="price-month-asc">Cena za miesiąc rosnąco</option>
+          <option value="price-month-desc">Cena za miesiąc malejąco</option>
+        </optgroup>
+        <optgroup label="Cena za rok">
+          <option value="price-year-asc">Cena za rok rosnąco</option>
+          <option value="price-year-desc">Cena za rok malejąco</option>
+        </optgroup>
+        <optgroup label="Cena za m²">
+          <option value="price-sqm-asc">Cena za m² rosnąco</option>
+          <option value="price-sqm-desc">Cena za m² malejąco</option>
+        </optgroup>
       </select>
 
       <div class="results-count">
