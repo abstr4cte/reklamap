@@ -18,19 +18,48 @@ const router = createRouter({
       component: HomePage
     },
     {
-      path: '/dodaj-ogloszenie',
+      path: '/dodaj-powierzchnie-reklamowa',
       name: 'add-ad',
       component: AddAdPage
     },
+    // Zachowaj starą ścieżkę dla kompatybilności wstecznej
     {
-      path: '/ogloszenia',
+      path: '/dodaj-ogloszenie',
+      redirect: '/dodaj-powierzchnie-reklamowa'
+    },
+    {
+      path: '/powierzchnie-reklamowe',
       name: 'advertisements',
       component: () => import('./views/AdvertisementsPage.vue')
     },
     {
-      path: '/ogloszenie/:city/:slug/:id',
+      path: '/powierzchnie-reklamowe/:type',
+      name: 'advertisements-by-type',
+      component: () => import('./views/AdvertisementsPage.vue')
+    },
+    {
+      path: '/powierzchnie-reklamowe/:type/:city',
+      name: 'advertisements-by-type-city',
+      component: () => import('./views/AdvertisementsPage.vue')
+    },
+    // Zachowaj stare ścieżki dla kompatybilności wstecznej
+    {
+      path: '/ogloszenia',
+      redirect: '/powierzchnie-reklamowe'
+    },
+    {
+      path: '/powierzchnia-reklamowa/:type/:city/:slug-:id',
       name: 'ad-detail',
       component: AdDetailPage
+    },
+    // Zachowaj starą ścieżkę dla kompatybilności wstecznej
+    {
+      path: '/ogloszenie/:city/:slug/:id',
+      redirect: to => {
+        // Przekierowanie ze starej ścieżki na nową
+        const { city, slug, id } = to.params
+        return `/powierzchnia-reklamowa/inne/${city}/${slug}-${id}`
+      }
     },
     {
       path: '/porownaj',
@@ -83,7 +112,7 @@ const router = createRouter({
       component: () => import('./views/NotFoundPage.vue')
     }
   ],
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(to, _from, savedPosition) {
     if (savedPosition) {
       return savedPosition
     } else if (to.hash) {

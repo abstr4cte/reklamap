@@ -759,7 +759,32 @@ onMounted(() => {
   setTimeout(() => initMap(), 100)
   document.addEventListener('click', handleClickOutside)
   
-  // Jeśli są parametry w URL, zastosuj je jako filtry
+  // Sprawdź parametry z URL path
+  if (route.params.type) {
+    // Mapowanie typów z URL na wartości w filtrach
+    const typeMapping: Record<string, string> = {
+      'billboard': 'billboard',
+      'citylight': 'citylight',
+      'ekran-led': 'led_screen',
+      'digital': 'digital',
+      'baner': 'banner',
+      'plakat': 'poster'
+    }
+    
+    const type = typeMapping[route.params.type as string] || ''
+    if (type) {
+      filters.value.type = type
+    }
+  }
+  
+  if (route.params.city) {
+    // Dekoduj miasto z URL
+    const city = (route.params.city as string).replace(/-/g, ' ')
+    filters.value.city = city
+    locationQuery.value = city
+  }
+  
+  // Jeśli są parametry w URL query, zastosuj je jako filtry
   if (Object.keys(route.query).length > 0) {
     const queryFilters = queryParamsToFilters(route.query as Record<string, string>)
     
@@ -774,18 +799,28 @@ onMounted(() => {
       sortBy.value = route.query.sort as string
     }
     
-    // Ustaw lokalizację jeśli jest city lub region
-    if (queryFilters.city) {
-      locationQuery.value = queryFilters.city
-    } else if (queryFilters.region) {
-      const region = polishLocations.voivodeships.find(v => v.id === queryFilters.region)
-      if (region) {
-        locationQuery.value = region.name
+    // Ustaw lokalizację jeśli jest city lub region (tylko jeśli nie ma już z parametrów ścieżki)
+    if (!route.params.city) {
+      if (queryFilters.city) {
+        locationQuery.value = queryFilters.city
+      } else if (queryFilters.region) {
+        const region = polishLocations.voivodeships.find(v => v.id === queryFilters.region)
+        if (region) {
+          locationQuery.value = region.name
+        }
       }
     }
     
-    // Połącz z domyślnymi filtrami
-    filters.value = { ...filters.value, ...queryFilters }
+    // Połącz z domyślnymi filtrami (ale nie nadpisuj typ i miasto jeśli są już ustawione z parametrów ścieżki)
+    const mergedFilters = { ...queryFilters }
+    if (route.params.type && filters.value.type) {
+      delete mergedFilters.type
+    }
+    if (route.params.city && filters.value.city) {
+      delete mergedFilters.city
+    }
+    
+    filters.value = { ...filters.value, ...mergedFilters }
   }
 })
 
@@ -912,7 +947,7 @@ onBeforeUnmount(() => {
             @click="handleAdClick(ad.id)"
           >
             <router-link 
-              :to="`/ogloszenie/${slugify(ad.city)}/${slugify(ad.title)}/${ad.id}`"
+              :to="`/powierzchnia-reklamowa/${ad.type}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`"
               class="ad-link"
             >
               <div class="ad-image">

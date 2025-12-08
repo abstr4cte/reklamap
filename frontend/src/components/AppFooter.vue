@@ -7,18 +7,18 @@ const currentYear = new Date().getFullYear()
     <div class="footer-container">
       <div class="footer-content">
         <div class="footer-section brand-section">
-          <h3>AdSpace</h3>
+          <h3>ReklaMap</h3>
           <p class="footer-description">
             Platforma do wynajmu powierzchni reklamowych w całej Polsce.
             Szybko, wygodnie i bezpiecznie.
           </p>
           <div class="footer-contact">
-            <a href="mailto:kontakt@adspace.pl" class="email-link">
+            <a href="mailto:kontakt@reklamap.pl" class="email-link">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/>
                 <path d="m22 6-10 7L2 6" stroke="currentColor" stroke-width="2"/>
               </svg>
-              kontakt@adspace.pl
+              kontakt@reklamap.pl
             </a>
           </div>
         </div>
@@ -27,7 +27,7 @@ const currentYear = new Date().getFullYear()
           <h4>Nawigacja</h4>
           <ul class="footer-links">
             <li><router-link to="/">Strona główna</router-link></li>
-            <li><router-link to="/dodaj-ogloszenie">Dodaj ogłoszenie</router-link></li>
+            <li><router-link to="/dodaj-powierzchnie-reklamowa">Dodaj ogłoszenie</router-link></li>
             <li><router-link to="/blog">Blog</router-link></li>
             <li><router-link to="/faq">FAQ</router-link></li>
           </ul>
@@ -44,7 +44,7 @@ const currentYear = new Date().getFullYear()
       </div>
 
       <div class="footer-bottom">
-        <p>&copy; {{ currentYear }} AdSpace. Wszelkie prawa zastrzeżone.</p>
+        <p>&copy; {{ currentYear }} ReklaMap. Wszelkie prawa zastrzeżone.</p>
       </div>
     </div>
   </footer>

@@ -270,7 +270,7 @@ onMounted(() => {
           </svg>
           <h2>Brak ogłoszeń</h2>
           <p>Nie masz jeszcze żadnych ogłoszeń do zarządzania</p>
-          <button @click="router.push('/dodaj-ogloszenie')" class="btn-primary">
+          <button @click="router.push('/dodaj-powierzchnie-reklamowa')" class="btn-primary">
             Dodaj pierwsze ogłoszenie
           </button>
         </div>

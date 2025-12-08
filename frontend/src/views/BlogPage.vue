@@ -150,7 +150,7 @@ const filteredPosts = computed(() => {
   <div class="blog-page">
     <div class="hero-section">
       <div class="container">
-        <h1>Blog AdSpace</h1>
+        <h1>Blog ReklaMap</h1>
         <p class="hero-subtitle">Porady, trendy i inspiracje ze świata reklamy outdoor</p>
       </div>
     </div>

@@ -5,7 +5,7 @@
   <div class="regulamin-page">
     <div class="hero-section">
       <div class="container">
-        <h1>Regulamin platformy AdSpace</h1>
+        <h1>Regulamin platformy ReklaMap</h1>
         <p class="hero-subtitle">Zasady korzystania z serwisu ogłoszeń reklamowych</p>
       </div>
     </div>
@@ -32,7 +32,7 @@
           <main class="main-content">
             <section id="postanowienia-ogolne" class="section">
               <h2>1. Postanowienia ogólne</h2>
-              <p>Niniejszy Regulamin określa zasady korzystania z platformy AdSpace, serwisu internetowego umożliwiającego publikację i przeglądanie ogłoszeń dotyczących powierzchni reklamowych.</p>
+              <p>Niniejszy Regulamin określa zasady korzystania z platformy ReklaMap, serwisu internetowego umożliwiającego publikację i przeglądanie ogłoszeń dotyczących powierzchni reklamowych.</p>
               <p>Korzystanie z serwisu oznacza akceptację postanowień niniejszego Regulaminu.</p>
               <p>Regulamin dostępny jest nieodpłatnie na stronie internetowej serwisu w formie umożliwiającej jego pobranie, utrwalenie i wydrukowanie.</p>
             </section>
@@ -41,7 +41,7 @@
               <h2>2. Definicje</h2>
               <dl class="definitions">
                 <dt>Serwis</dt>
-                <dd>Platforma internetowa AdSpace dostępna pod adresem domenowym, umożliwiająca publikację i przeglądanie ogłoszeń reklamowych.</dd>
+                <dd>Platforma internetowa ReklaMap dostępna pod adresem domenowym, umożliwiająca publikację i przeglądanie ogłoszeń reklamowych.</dd>
 
                 <dt>Użytkownik</dt>
                 <dd>Każda osoba fizyczna, prawna lub jednostka organizacyjna nieposiadająca osobowości prawnej, korzystająca z Serwisu.</dd>

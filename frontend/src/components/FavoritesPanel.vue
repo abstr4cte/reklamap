@@ -117,7 +117,7 @@ onUnmounted(() => {
           <router-link
             v-for="ad in favoriteAds"
             :key="ad.id"
-            :to="`/ogloszenie/${slugify(ad.city)}/${slugify(ad.title)}/${ad.id}`"
+            :to="`/powierzchnia-reklamowa/${ad.type}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`"
             class="favorite-item"
             @click="emit('close')"
           >

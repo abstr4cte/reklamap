@@ -23,8 +23,8 @@ const faqItems: FaqItem[] = [
   {
     id: 1,
     category: 'podstawy',
-    question: 'Czym jest AdSpace?',
-    answer: 'AdSpace to platforma łącząca właścicieli powierzchni reklamowych z firmami poszukującymi miejsc na reklamę. Oferujemy kompleksową bazę billboardów, citylightów, ekranów LED i innych nośników reklamowych w całej Polsce.'
+    question: 'Czym jest ReklaMap?',
+    answer: 'ReklaMap to platforma łącząca właścicieli powierzchni reklamowych z firmami poszukującymi miejsc na reklamę. Oferujemy kompleksową bazę billboardów, citylightów, ekranów LED i innych nośników reklamowych w całej Polsce.'
   },
   {
     id: 2,
@@ -36,7 +36,7 @@ const faqItems: FaqItem[] = [
     id: 3,
     category: 'podstawy',
     question: 'Jak rozpocząć korzystanie z platformy?',
-    answer: 'Wystarczy wejść na stronę AdSpace i rozpocząć przeglądanie dostępnych powierzchni reklamowych. Możesz używać filtrów, aby zawęzić wyniki do swoich potrzeb. Jeśli chcesz dodać własne ogłoszenie, kliknij przycisk "Dodaj ogłoszenie" i wypełnij formularz.'
+    answer: 'Wystarczy wejść na stronę ReklaMap i rozpocząć przeglądanie dostępnych powierzchni reklamowych. Możesz używać filtrów, aby zawęzić wyniki do swoich potrzeb. Jeśli chcesz dodać własne ogłoszenie, kliknij przycisk "Dodaj ogłoszenie" i wypełnij formularz.'
   },
   {
     id: 4,
@@ -78,7 +78,7 @@ const faqItems: FaqItem[] = [
     id: 10,
     category: 'platnosci',
     question: 'Jak działa system płatności?',
-    answer: 'AdSpace nie pośredniczy w płatnościach. Po znalezieniu odpowiedniej powierzchni kontaktujesz się bezpośrednio z właścicielem i uzgadniacie szczegóły współpracy oraz płatności. Możesz negocjować warunki i formę płatności.'
+    answer: 'ReklaMap nie pośredniczy w płatnościach. Po znalezieniu odpowiedniej powierzchni kontaktujesz się bezpośrednio z właścicielem i uzgadniacie szczegóły współpracy oraz płatności. Możesz negocjować warunki i formę płatności.'
   },
   {
     id: 11,
@@ -160,7 +160,7 @@ const isOpen = (id: number) => {
     <div class="hero-section">
       <div class="container">
         <h1>Często zadawane pytania</h1>
-        <p class="hero-subtitle">Znajdź odpowiedzi na najczęstsze pytania dotyczące korzystania z AdSpace</p>
+        <p class="hero-subtitle">Znajdź odpowiedzi na najczęstsze pytania dotyczące korzystania z ReklaMap</p>
       </div>
     </div>
 

@@ -3,6 +3,7 @@ import { ref, computed, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 import type { Advertisement } from '../types'
+import { slugify } from '../utils/slugify'
 
 const props = defineProps<{
   isOpen: boolean
@@ -132,18 +133,20 @@ onUnmounted(() => {
             class="comparison-item"
           >
             <div class="comparison-image">
-              <img
-                v-if="ad.image_url"
-                :src="ad.image_url"
-                :alt="ad.title"
-              />
-              <div v-else class="no-image">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
-                  <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/>
-                </svg>
-              </div>
+              <router-link :to="`/powierzchnia-reklamowa/${ad.type}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="ad-image-link">
+                <img
+                  v-if="ad.image_url"
+                  :src="ad.image_url"
+                  :alt="ad.title"
+                />
+                <div v-else class="no-image">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                    <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                </div>
+              </router-link>
             </div>
 
             <div class="comparison-content">

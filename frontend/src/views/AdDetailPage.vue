@@ -185,7 +185,9 @@ const initMap = () => {
 const loadAd = async () => {
   try {
     isLoading.value = true
-    const adId = route.params.id as string
+    // Pobierz ID z parametru URL - może być w formacie slug-id
+    const idParam = route.params.id as string
+    const adId = idParam.includes('-') ? idParam.split('-').pop() || idParam : idParam
 
     const data = await api.getAdvertisement(adId)
 
@@ -195,6 +197,16 @@ const loadAd = async () => {
     }
 
     ad.value = data
+    
+    // Sprawdź czy URL jest poprawny, jeśli nie - przekieruj na poprawny
+    const correctPath = `/powierzchnia-reklamowa/${data.type}/${slugify(data.city)}/${slugify(data.title)}-${data.id}`
+    const currentPath = router.currentRoute.value.path
+    
+    if (currentPath !== correctPath && !currentPath.includes('/ogloszenie/')) {
+      router.replace(correctPath)
+      return
+    }
+    
     checkFavoriteStatus()
     checkComparisonStatus()
     setTimeout(() => initMap(), 100)
@@ -779,7 +791,7 @@ onMounted(() => {
               <router-link
                 v-for="similarAd in similarAds"
                 :key="similarAd.id"
-                :to="`/ogloszenie/${slugify(similarAd.city)}/${slugify(similarAd.title)}/${similarAd.id}`"
+                :to="`/powierzchnia-reklamowa/${similarAd.type}/${slugify(similarAd.city)}/${slugify(similarAd.title)}-${similarAd.id}`"
                 class="similar-ad-card"
               >
                 <div class="similar-ad-image">

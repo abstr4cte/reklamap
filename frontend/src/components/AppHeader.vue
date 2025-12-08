@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps<{
   favoritesCount: number
@@ -54,7 +54,7 @@ const handleComparisonClick = () => {
             <path d="M12 15L20 10L28 15V25L20 30L12 25V15Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="20" cy="20" r="3" fill="white"/>
           </svg>
-          <span class="logo-text">AdSpace</span>
+          <span class="logo-text">ReklaMap</span>
         </router-link>
       </div>
 

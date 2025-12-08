@@ -9,12 +9,12 @@
       <div class="content">
         <section>
           <h2>1. Informacje ogólne</h2>
-          <p>Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazanych przez Użytkowników w związku z korzystaniem przez nich z serwisu AdSpace.</p>
+          <p>Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazanych przez Użytkowników w związku z korzystaniem przez nich z serwisu ReklaMap.</p>
         </section>
 
         <section>
           <h2>2. Administrator Danych Osobowych</h2>
-          <p>Administratorem danych osobowych zawartych w serwisie jest AdSpace z siedzibą w Warszawie.</p>
+          <p>Administratorem danych osobowych zawartych w serwisie jest ReklaMap z siedzibą w Warszawie.</p>
         </section>
 
         <section>

@@ -55,7 +55,7 @@ const handleSubmit = async () => {
               </div>
               <h3>Email</h3>
               <p>Napisz do nas</p>
-              <a href="mailto:kontakt@adspace.pl">kontakt@adspace.pl</a>
+              <a href="mailto:kontakt@reklamap.pl">kontakt@reklamap.pl</a>
             </div>
 
             <div class="info-card">

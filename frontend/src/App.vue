@@ -82,7 +82,7 @@ const comparisonCount = computed(() => {
 })
 
 const handleNavigateToAddAd = () => {
-  router.push('/dodaj-ogloszenie')
+  router.push('/dodaj-powierzchnie-reklamowa')
 }
 
 const handleToggleFavorite = async (id: string) => {
