@@ -6,7 +6,10 @@ const props = defineProps<{
   totalPages: number
   totalItems: number
   itemsPerPage: number
+  showInfo?: boolean
 }>()
+
+const showInfoValue = props.showInfo !== undefined ? props.showInfo : true
 
 const emit = defineEmits<{
   'update:currentPage': [page: number]
@@ -65,7 +68,7 @@ const goToPage = (page: number) => {
 
 <template>
   <div class="pagination-container">
-    <div class="pagination-info">
+    <div v-if="showInfoValue" class="pagination-info">
       Wyświetlanie {{ startItem }}-{{ endItem }} z {{ totalItems }} ogłoszeń
     </div>
     

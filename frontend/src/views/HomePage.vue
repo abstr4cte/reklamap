@@ -26,6 +26,7 @@ const sortBy = ref('newest')
 const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm'>('month')
 const currentPage = ref(1)
 const itemsPerPage = 20
+const hoveredAdId = ref<string | null>(null)
 
 interface Filters {
   keyword: string
@@ -357,6 +358,7 @@ onMounted(() => {
       :selected-region="filters.region"
       :selected-city="filters.city"
       :selected-location-coords="filters.selectedLocationCoords"
+      :hovered-ad-id="hoveredAdId"
     />
     <AdGrid
       :advertisements="paginatedAdvertisements"
@@ -368,6 +370,7 @@ onMounted(() => {
       @toggle-comparison="$emit('toggleComparison', $event)"
       @update:view-mode="viewMode = $event"
       @update:sort-by="sortBy = $event"
+      @update:hovered-ad-id="hoveredAdId = $event"
     />
     <Pagination
       v-if="!isLoading && paginatedAdvertisements.length > 0"
@@ -375,7 +378,9 @@ onMounted(() => {
       :total-pages="totalPages"
       :total-items="sortedAndFilteredAdvertisements.length"
       :items-per-page="itemsPerPage"
+      :show-info="true"
       @update:current-page="handlePageChange"
     />
   </div>
 </template>
+

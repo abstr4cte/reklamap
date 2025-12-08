@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
+import { getFullImageUrl } from '../services/api'
 
 const props = defineProps<{
   ad: Advertisement
@@ -14,6 +15,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   toggleFavorite: [id: string]
   toggleComparison: [id: string]
+  hoverStart: [id: string]
+  hoverEnd: [id: null]
 }>()
 
 const adLink = computed(() => {
@@ -150,10 +153,10 @@ const statusColor = computed(() => {
 </script>
 
 <template>
-  <router-link :to="adLink" class="ad-card" :class="{ 'list-view': viewMode === 'list' }">
+  <router-link :to="adLink" class="ad-card" :class="{ 'list-view': viewMode === 'list' }" @mouseenter="emit('hoverStart', ad.id)" @mouseleave="emit('hoverEnd', null)">
     <div class="card-image">
       <img
-        :src="ad.image_url || 'https://images.pexels.com/photos/417273/pexels-photo-417273.jpeg?auto=compress&cs=tinysrgb&w=800'"
+        :src="ad.image_url ? getFullImageUrl(ad.image_url) : 'https://images.pexels.com/photos/417273/pexels-photo-417273.jpeg?auto=compress&cs=tinysrgb&w=800'"
         :alt="ad.title"
       />
       <div class="card-badge" :style="{ background: typeColors[ad.type] || '#6B7280' }">

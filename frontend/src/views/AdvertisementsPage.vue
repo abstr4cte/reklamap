@@ -11,6 +11,30 @@ import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 import Pagination from '../components/Pagination.vue'
 
+// Funkcja formatująca adres i miasto, taka sama jak w AdCard
+const formatLocation = (location: string, city: string) => {
+  // Extract street and number from full address
+  const parts = location.split(',').map(p => p.trim())
+  
+  let streetWithNumber = ''
+  
+  if (parts.length >= 2) {
+    const firstPart = parts[0]
+    const secondPart = parts[1]
+    
+    // Check if first part is a number
+    if (/^\d+/.test(firstPart)) {
+      streetWithNumber = `${secondPart} ${firstPart}`
+    } else {
+      streetWithNumber = firstPart
+    }
+  } else {
+    streetWithNumber = parts[0] || location
+  }
+  
+  return `${streetWithNumber}, ${city}`
+}
+
 const advertisements = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const hoveredAdId = ref<string | null>(null)
@@ -32,6 +56,26 @@ const changeViewMode = (mode: 'grid' | 'list') => {
   }
 }
 const sortBy = ref('newest')
+// Funkcja do pobierania ceny w zależności od wybranego okresu
+const getPrice = (ad: Advertisement, period: 'day' | 'week' | 'month' | 'year' | 'sqm') => {
+  const basePrice = ad.price
+
+  switch (period) {
+    case 'day':
+      return basePrice / 30
+    case 'week':
+      return basePrice / 4
+    case 'month':
+      return basePrice
+    case 'year':
+      return basePrice * 12
+    case 'sqm':
+      const area = ad.width * ad.height
+      return area > 0 ? basePrice / area : 0
+    default:
+      return basePrice
+  }
+}
 const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm'>('month')
 const isStatusMenuOpen = ref(false)
 const statusMultiselect = ref<HTMLElement | null>(null)
@@ -377,26 +421,6 @@ const filteredAdvertisements = computed(() => {
   // Sortowanie
   const sorted = [...filtered]
 
-  const getPrice = (ad: Advertisement, period: 'day' | 'week' | 'month' | 'year' | 'sqm') => {
-    const basePrice = ad.price
-
-    switch (period) {
-      case 'day':
-        return basePrice / 30
-      case 'week':
-        return basePrice / 4
-      case 'month':
-        return basePrice
-      case 'year':
-        return basePrice * 12
-      case 'sqm':
-        const area = ad.width * ad.height
-        return area > 0 ? basePrice / area : 0
-      default:
-        return basePrice
-    }
-  }
-
   switch (sortBy.value) {
     case 'newest':
       sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
@@ -499,6 +523,32 @@ const statusLabel = computed(() => {
   return `Wybrano (${labels.length})`
 })
 
+// Funkcja do formatowania ceny w zależności od wybranego sortowania
+const getFormattedPrice = (ad: Advertisement) => {
+  const price = getPrice(ad, priceDisplay.value)
+  let suffix = ''
+  
+  switch (priceDisplay.value) {
+    case 'day':
+      suffix = ' zł/dzień'
+      break
+    case 'week':
+      suffix = ' zł/tydzień'
+      break
+    case 'month':
+      suffix = ' zł/mies.'
+      break
+    case 'year':
+      suffix = ' zł/rok'
+      break
+    case 'sqm':
+      suffix = ' zł/m²'
+      break
+  }
+  
+  return price.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + suffix
+}
+
 const handleClickOutside = (event: MouseEvent) => {
   if (statusMultiselect.value && !statusMultiselect.value.contains(event.target as Node)) {
     isStatusMenuOpen.value = false
@@ -580,11 +630,24 @@ const createCustomIcon = (type: string, isHovered: boolean = false, isSelected: 
 const initMap = () => {
   if (!mapContainer.value) return
 
-  map = L.map(mapContainer.value).setView([52.0, 19.0], 6)
+  // Współrzędne centrum Polski
+  const polandCenter = [52.0, 19.0]
+  
+  // Tworzymy mapę z widokiem na całą Polskę
+  map = L.map(mapContainer.value).setView(polandCenter, 6)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map)
+  
+  // Granice Polski (przybliżone)
+  const polandBounds = L.latLngBounds(
+    [49.0, 14.12], // południowo-zachodni róg
+    [55.0, 24.15]  // północno-wschodni róg
+  )
+  
+  // Ustaw widok na całą Polskę
+  map.fitBounds(polandBounds)
 
   updateMarkers()
 }
@@ -612,7 +675,7 @@ const updateMarkers = () => {
             ${ad.title}
           </h3>
           <div style="color: #6B7280; font-size: 0.9rem; margin-bottom: 8px;">
-            📍 ${ad.city}
+            📍 ${formatLocation(ad.location, ad.city)}
           </div>
           <div style="font-weight: 700; color: #4F46E5; font-size: 1.1rem;">
             ${ad.price.toLocaleString('pl-PL')} zł/mies.
@@ -630,10 +693,13 @@ const updateMarkers = () => {
     markers.set(ad.id, marker)
   })
 
-  // Fit bounds if there are markers
-  if (markers.size > 0) {
+  // Fit bounds if there are markers and active filters
+  if (markers.size > 0 && activeFiltersCount.value > 0) {
     const group = new L.FeatureGroup(Array.from(markers.values()))
     map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 12 })
+  } else if (markers.size > 0 && !map.getBounds().equals(L.latLngBounds([[0,0],[0,0]]))) {
+    // Jeśli nie ma filtrów i mapa już ma ustawione granice, nie zmieniaj widoku
+    // Pozwala to zachować widok całej Polski przy pierwszym ładowaniu
   }
 }
 
@@ -672,8 +738,19 @@ const handleAdClick = (adId: string) => {
 
 const scrollToAd = (adId: string) => {
   const element = document.getElementById(`ad-${adId}`)
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  const container = document.querySelector('.ads-list-container')
+  if (element && container) {
+    // Przewijamy tylko kontener z ogłoszeniami, a nie całą stronę
+    // Obliczamy pozycję elementu względem kontenera
+    const containerRect = container.getBoundingClientRect()
+    const elementRect = element.getBoundingClientRect()
+    const relativeTop = elementRect.top - containerRect.top
+    
+    // Przewijamy kontener, aby element był widoczny na środku
+    container.scrollBy({
+      top: relativeTop - (containerRect.height / 2) + (elementRect.height / 2),
+      behavior: 'smooth'
+    })
   }
 }
 
@@ -949,6 +1026,7 @@ onBeforeUnmount(() => {
             <router-link 
               :to="`/powierzchnia-reklamowa/${ad.type}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`"
               class="ad-link"
+              :price-display="priceDisplay"
             >
               <div class="ad-image">
                 <img 
@@ -975,25 +1053,29 @@ onBeforeUnmount(() => {
                     <path d="M8 8C9.1 8 10 7.1 10 6C10 4.9 9.1 4 8 4C6.9 4 6 4.9 6 6C6 7.1 6.9 8 8 8Z" stroke="currentColor" stroke-width="1.3"/>
                     <path d="M8 14C8 14 12 10.5 12 6C12 3.79 10.21 2 8 2C5.79 2 4 3.79 4 6C4 10.5 8 14 8 14Z" stroke="currentColor" stroke-width="1.3"/>
                   </svg>
-                  {{ ad.city }}
+                  {{ formatLocation(ad.location, ad.city) }}
                 </div>
                 <div class="ad-details">
                   <span class="ad-size">{{ ad.width }}m × {{ ad.height }}m</span>
-                  <span class="ad-price">{{ ad.price.toLocaleString('pl-PL') }} zł/mies.</span>
+                  <span class="ad-price">
+                    {{ getFormattedPrice(ad) }}
+                  </span>
                 </div>
               </div>
             </router-link>
           </div>
         </div>
         
-        <!-- Pagination -->
+        <!-- Pagination (na samym dole) -->
         <Pagination
           v-if="filteredAdvertisements.length > 0"
           :current-page="currentPage"
           :total-pages="totalPages"
           :total-items="filteredAdvertisements.length"
           :items-per-page="itemsPerPage"
+          :show-info="true"
           @update:current-page="onPageChange"
+          class="pagination-bottom"
         />
       </div>
 
@@ -1286,10 +1368,11 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .advertisements-page {
-  min-height: 100vh;
+  height: 100vh;
   background: #f9fafb;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* Search Bar */
@@ -1301,6 +1384,8 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 70px;
+  flex-shrink: 0;
 }
 
 .search-container {
@@ -1440,13 +1525,17 @@ onBeforeUnmount(() => {
   grid-template-columns: 1fr 1fr;
   flex: 1;
   overflow: hidden;
+  height: calc(100vh - 70px); /* Odejmujemy wysokość paska wyszukiwania */
 }
 
 .ads-list-container {
   background: white;
   border-right: 2px solid #e5e7eb;
   overflow-y: auto;
-  height: calc(100vh - 80px);
+  height: 100%;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .loading-state,
@@ -1492,15 +1581,38 @@ onBeforeUnmount(() => {
 
 .ads-list {
   padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.ads-list.grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Widok listy */
+.ads-list.list {
+  grid-template-columns: 1fr;
+}
+
+.ads-list.list .ad-link {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.ads-list.list .ad-image {
+  width: 150px;
+  height: 120px;
+  flex-shrink: 0;
+  margin-right: 1.5rem;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ads-list.list .ad-content {
+  flex: 1;
 }
 
 .ads-list.grid .ad-list-item {
@@ -1645,6 +1757,7 @@ onBeforeUnmount(() => {
 .map-container-wrapper {
   position: relative;
   background: #e5e7eb;
+  height: 100%;
 }
 
 .map-container {
@@ -2081,20 +2194,33 @@ onBeforeUnmount(() => {
   .content-wrapper {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 400px;
+    height: calc(100vh - 70px);
   }
 
   .ads-list-container {
     border-right: none;
     border-bottom: 2px solid #e5e7eb;
     height: auto;
+    max-height: calc(100vh - 470px); /* 70px nagłówek + 400px mapa */
+  }
+  
+  .map-container-wrapper {
+    height: 400px;
   }
 }
 
 @media (max-width: 640px) {
+  .advertisements-page {
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
+  }
+  
   .search-bar {
     flex-direction: column;
     align-items: stretch;
     padding: 1rem;
+    height: auto;
   }
 
   .search-container {
@@ -2106,7 +2232,16 @@ onBeforeUnmount(() => {
   }
 
   .content-wrapper {
-    grid-template-rows: 1fr 300px;
+    grid-template-rows: auto 300px;
+    height: auto;
+  }
+  
+  .ads-list-container {
+    max-height: none;
+  }
+
+  .map-container-wrapper {
+    height: 300px;
   }
 
   .ad-image {
@@ -2128,5 +2263,15 @@ onBeforeUnmount(() => {
   .modal-footer {
     padding: 1rem;
   }
+}
+.pagination-bottom {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.pagination-bottom .pagination-container {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 </style>

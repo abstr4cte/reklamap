@@ -8,6 +8,7 @@ import ComparisonPanel from './components/ComparisonPanel.vue'
 import EmailModal from './components/EmailModal.vue'
 import FeedbackButton from './components/FeedbackButton.vue'
 import CookieConsent from './components/CookieConsent.vue'
+import ToastNotification from './components/ToastNotification.vue'
 import { api } from './services/api'
 
 const router = useRouter()
@@ -18,6 +19,7 @@ const favoritesKey = ref(0)
 const comparisonKey = ref(0)
 const activeFavoriteIds = ref<string[]>([])
 const activeComparisonIds = ref<string[]>([])
+const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 
 // Synchronize favorites with active advertisements
 const syncFavorites = async () => {
@@ -123,7 +125,7 @@ const handleToggleComparison = async (id: string) => {
     activeComparisonIds.value = activeComparisonIds.value.filter(cId => cId !== id)
   } else {
     if (comparison.length >= 5) {
-      alert('Możesz porównać maksymalnie 5 ogłoszeń')
+      toast.value?.add('Możesz porównać maksymalnie 5 ogłoszeń', 'error')
       return
     }
     // Verify the ad exists and is active before adding
@@ -209,6 +211,7 @@ onUnmounted(() => {
     />
     <FeedbackButton />
     <CookieConsent />
+    <ToastNotification ref="toast" />
   </div>
 </template>
 

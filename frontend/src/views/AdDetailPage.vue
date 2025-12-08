@@ -6,6 +6,7 @@ import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import ToastNotification from '../components/ToastNotification.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -23,6 +24,7 @@ const contactForm = ref({
 const contactErrors = ref<Record<string, string>>({})
 const isSubmittingContact = ref(false)
 const contactSuccess = ref(false)
+const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
@@ -158,7 +160,7 @@ const toggleComparison = () => {
     comparison.splice(index, 1)
   } else {
     if (comparison.length >= 5) {
-      alert('Możesz porównać maksymalnie 5 ogłoszeń')
+      toast.value?.add('Możesz porównać maksymalnie 5 ogłoszeń', 'error')
       return
     }
     comparison.push(ad.value.id)
@@ -347,29 +349,10 @@ const reportForm = ref({
 })
 const isSubmittingReport = ref(false)
 
-// Toast state
-const toast = ref<{
-  show: boolean
-  message: string
-  title: string
-  type: 'success' | 'error'
-}>({
-  show: false,
-  message: '',
-  title: '',
-  type: 'success'
-})
+// Używamy komponentu ToastNotification zamiast własnego obiektu toast
 
 const showToast = (title: string, message: string, type: 'success' | 'error' = 'success') => {
-  toast.value = {
-    show: true,
-    title,
-    message,
-    type
-  }
-  setTimeout(() => {
-    toast.value.show = false
-  }, 5000)
+  toast.value?.add(message, type)
 }
 
 const handlePrint = () => {
@@ -982,6 +965,7 @@ onUnmounted(() => {
       </div>
     </div>
   </div>
+  <ToastNotification ref="toast" />
 </template>
 
 <style scoped>

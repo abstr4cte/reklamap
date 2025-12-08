@@ -5,16 +5,45 @@ import 'leaflet/dist/leaflet.css'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 
+// Funkcja formatująca adres i miasto, taka sama jak w AdCard
+const formatLocation = (location: string, city: string) => {
+  // Extract street and number from full address
+  const parts = location.split(',').map(p => p.trim())
+  
+  let streetWithNumber = ''
+  
+  if (parts.length >= 2) {
+    const firstPart = parts[0]
+    const secondPart = parts[1]
+    
+    // Check if first part is a number
+    if (/^\d+/.test(firstPart)) {
+      streetWithNumber = `${secondPart} ${firstPart}`
+    } else {
+      streetWithNumber = firstPart
+    }
+  } else {
+    streetWithNumber = parts[0] || location
+  }
+  
+  return `${streetWithNumber}, ${city}`
+}
+
 const props = defineProps<{
   advertisements: Advertisement[]
   selectedRegion?: string
   selectedCity?: string
   selectedLocationCoords?: { lat: number; lng: number } | null
+  hoveredAdId?: string | null
+}>()
+
+const emit = defineEmits<{
+  'update:hoveredAdId': [id: string | null]
 }>()
 
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
-const markers: L.Marker[] = []
+const markers: Map<string, L.Marker> = new Map()
 
 const typeColors: Record<string, string> = {
   billboard: '#EF4444',
@@ -44,35 +73,40 @@ const regionCoordinates: Record<string, { lat: number; lng: number; zoom: number
   'zachodniopomorskie': { lat: 53.4285, lng: 14.5528, zoom: 8 }
 }
 
-const createCustomIcon = (type: string) => {
+const createCustomIcon = (type: string, isHovered: boolean = false) => {
   const color = typeColors[type] || '#6B7280'
+  const scale = isHovered ? 1.3 : 1
+  const zIndex = isHovered ? 1000 : 500
+  
   return L.divIcon({
     className: 'custom-marker',
     html: `
       <div style="
         background: ${color};
-        width: 32px;
-        height: 32px;
+        width: ${32 * scale}px;
+        height: ${32 * scale}px;
         border-radius: 50% 50% 50% 0;
         transform: rotate(-45deg);
         border: 3px solid white;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        box-shadow: 0 ${3 * scale}px ${10 * scale}px rgba(0,0,0,0.3);
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: all 0.2s;
+        z-index: ${zIndex};
       ">
         <div style="
-          width: 12px;
-          height: 12px;
+          width: ${12 * scale}px;
+          height: ${12 * scale}px;
           background: white;
           border-radius: 50%;
           transform: rotate(45deg);
         "></div>
       </div>
     `,
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32]
+    iconSize: [32 * scale, 32 * scale],
+    iconAnchor: [16 * scale, 32 * scale],
+    popupAnchor: [0, -32 * scale]
   })
 }
 
@@ -91,13 +125,27 @@ const initMap = () => {
 const updateMarkers = () => {
   if (!map) return
 
-  markers.forEach(marker => marker.remove())
-  markers.length = 0
+  // Usuń markery, których nie ma już w danych
+  markers.forEach((marker, id) => {
+    if (!props.advertisements.find(ad => ad.id === id)) {
+      marker.remove()
+      markers.delete(id)
+    }
+  })
 
+  // Dodaj lub aktualizuj markery
   props.advertisements.forEach((ad) => {
-    const marker = L.marker([ad.latitude, ad.longitude], {
-      icon: createCustomIcon(ad.type)
-    })
+    const isHovered = props.hoveredAdId === ad.id
+    
+    // Jeśli marker już istnieje, aktualizuj jego ikonę
+    if (markers.has(ad.id)) {
+      const marker = markers.get(ad.id)!
+      marker.setIcon(createCustomIcon(ad.type, isHovered))
+    } else {
+      // Utwórz nowy marker
+      const marker = L.marker([ad.latitude, ad.longitude], {
+        icon: createCustomIcon(ad.type, isHovered)
+      })
 
     const typeLabels: Record<string, string> = {
       billboard: 'Billboard',
@@ -136,7 +184,7 @@ const updateMarkers = () => {
                 <path d="M7 7C7.825 7 8.5 6.325 8.5 5.5C8.5 4.675 7.825 4 7 4C6.175 4 5.5 4.675 5.5 5.5C5.5 6.325 6.175 7 7 7Z" stroke="#6B7280" stroke-width="1.2"/>
                 <path d="M7 12C7 12 10.5 9 10.5 5.5C10.5 3.567 8.933 2 7 2C5.067 2 3.5 3.567 3.5 5.5C3.5 9 7 12 7 12Z" stroke="#6B7280" stroke-width="1.2"/>
               </svg>
-              ${ad.location}, ${ad.city}
+              ${formatLocation(ad.location, ad.city)}
             </div>
             ${ad.dimensions ? `
               <div style="color: #6B7280;">
@@ -151,17 +199,18 @@ const updateMarkers = () => {
       </div>
     `
 
-    marker.bindPopup(popupContent)
-    marker.addTo(map!)
-    markers.push(marker)
+      marker.bindPopup(popupContent)
+      marker.addTo(map!)
+      markers.set(ad.id, marker)
+    }
   })
 
   if (props.selectedLocationCoords) {
     // Priority 1: If exact coordinates are provided, zoom to them
     map.setView([props.selectedLocationCoords.lat, props.selectedLocationCoords.lng], 13)
-  } else if (props.selectedCity && markers.length > 0) {
+  } else if (props.selectedCity && markers.size > 0) {
     // Priority 2: If city is selected, fit bounds to markers (likely clustered in that city)
-    const group = new L.FeatureGroup(markers)
+    const group = new L.FeatureGroup(Array.from(markers.values()))
     map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 12 })
   } else if (props.selectedRegion && regionCoordinates[props.selectedRegion]) {
     // Priority 3: If region is selected (and no city), zoom to region center
@@ -188,6 +237,19 @@ watch(() => props.selectedCity, () => {
 watch(() => props.selectedLocationCoords, () => {
   updateMarkers()
 }, { deep: true })
+
+watch(() => props.hoveredAdId, (newId) => {
+  if (!map) return
+  
+  // Aktualizuj tylko ikony markerów, bez zmiany pozycji mapy
+  props.advertisements.forEach((ad) => {
+    if (markers.has(ad.id)) {
+      const marker = markers.get(ad.id)!
+      const isHovered = newId === ad.id
+      marker.setIcon(createCustomIcon(ad.type, isHovered))
+    }
+  })
+})
 
 onMounted(() => {
   initMap()

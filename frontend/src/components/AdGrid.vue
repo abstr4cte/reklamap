@@ -16,6 +16,7 @@ const emit = defineEmits<{
   toggleComparison: [id: string]
   'update:viewMode': [mode: 'grid' | 'list']
   'update:sortBy': [sort: string]
+  'update:hoveredAdId': [id: string | null]
 }>()
 
 const sortBy = ref(props.sortBy || 'newest')
@@ -131,6 +132,8 @@ const isInComparison = (id: string) => {
           :price-display="priceDisplay || 'month'"
           @toggle-favorite="emit('toggleFavorite', $event)"
           @toggle-comparison="emit('toggleComparison', $event)"
+          @hover-start="emit('update:hoveredAdId', $event)"
+          @hover-end="emit('update:hoveredAdId', $event)"
         />
       </div>
     </div>
