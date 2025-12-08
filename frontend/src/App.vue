@@ -106,6 +106,7 @@ const handleToggleFavorite = async (id: string) => {
   }
 
   localStorage.setItem('favorites', JSON.stringify(favorites))
+  // Increment the key to force recomputation of the favorites count
   favoritesKey.value++
 }
 
@@ -138,6 +139,7 @@ const handleToggleComparison = async (id: string) => {
   }
 
   localStorage.setItem('comparison', JSON.stringify(comparison))
+  // Increment the key to force recomputation of the comparison count
   comparisonKey.value++
 }
 
@@ -146,12 +148,24 @@ const handleRemoveComparison = (id: string) => {
 }
 
 const handleStorageChange = () => {
+  // Synchronizuj activeFavoriteIds z localStorage
+  const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]')
+  activeFavoriteIds.value = storedFavorites
+  
+  // Synchronizuj activeComparisonIds z localStorage
+  const storedComparison = JSON.parse(localStorage.getItem('comparison') || '[]')
+  activeComparisonIds.value = storedComparison
+  
+  // Aktualizuj liczniki
   favoritesKey.value++
   comparisonKey.value++
 }
 
 onMounted(() => {
   if (typeof window !== 'undefined') {
+    // Nasłuchuj niestandardowego zdarzenia zamiast 'storage'
+    window.addEventListener('localStorageChange', handleStorageChange)
+    // Zachowaj również nasłuchiwanie standardowego zdarzenia 'storage' dla kompatybilności
     window.addEventListener('storage', handleStorageChange)
   }
   // Sync favorites and comparison on mount
@@ -161,6 +175,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (typeof window !== 'undefined') {
+    window.removeEventListener('localStorageChange', handleStorageChange)
     window.removeEventListener('storage', handleStorageChange)
   }
 })

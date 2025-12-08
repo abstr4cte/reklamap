@@ -1,7 +1,27 @@
 import type { Advertisement } from '../types'
+import { API_URL, STORAGE_URL } from '../config'
 
-// Placeholder for API URL - eventually will point to Laravel backend
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+// Funkcja pomocnicza do konwersji względnych ścieżek na pełne URL-e
+export const getFullImageUrl = (path: string): string => {
+    // Jeśli ścieżka jest null lub undefined, zwróć pusty string
+    if (!path) {
+        console.log('getFullImageUrl: path is null or undefined')
+        return ''
+    }
+    
+    console.log('getFullImageUrl input:', path)
+    
+    // Jeśli ścieżka jest już pełnym URL-em, zwróć ją bez zmian
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+        console.log('getFullImageUrl output (already full URL):', path)
+        return path
+    }
+    
+    // W przeciwnym razie dodaj prefiks STORAGE_URL
+    const fullUrl = `${STORAGE_URL}/${path}`
+    console.log('getFullImageUrl output (with prefix):', fullUrl)
+    return fullUrl
+}
 
 export const api = {
     async getAdvertisements(): Promise<Advertisement[]> {
@@ -87,21 +107,37 @@ export const api = {
 
     storage: {
         async upload(file: File): Promise<string> {
+            console.log('Uploading file:', file.name, file.type, file.size)
+            
             const formData = new FormData()
             formData.append('file', file)
 
+            console.log('Sending request to:', `${API_URL}/upload`)
             const response = await fetch(`${API_URL}/upload`, {
                 method: 'POST',
                 body: formData,
             })
 
-            if (!response.ok) throw new Error('Failed to upload file')
+            if (!response.ok) {
+                console.error('Upload failed:', response.status, response.statusText)
+                throw new Error('Failed to upload file')
+            }
 
-            // Backend returns JSON string of URL or object?
-            // StorageController returns response()->json($url);
-            // If $url is string, json response is "http://..."
-            // So response.json() will be that string.
-            return response.json()
+            console.log('Upload response status:', response.status)
+            
+            // Pobierz tekst odpowiedzi do debugowania
+            const responseText = await response.text()
+            console.log('Upload response text:', responseText)
+            
+            // Konwertuj tekst z powrotem na JSON
+            try {
+                const path = JSON.parse(responseText)
+                console.log('Parsed response:', path)
+                return path
+            } catch (e) {
+                console.error('Failed to parse response:', e)
+                return responseText
+            }
         }
     }
 }

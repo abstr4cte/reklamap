@@ -10,6 +10,8 @@ class StorageController extends Controller
 {
     public function upload(Request $request)
     {
+        \Log::info('Upload request received');
+        
         $request->validate([
             'file' => 'required|image|max:10240', // 10MB max
         ]);
@@ -17,21 +19,20 @@ class StorageController extends Controller
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $filename = Str::random(40) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('public/advertisements', $filename);
+            
+            \Log::info('File received: ' . $file->getClientOriginalName());
+            \Log::info('Generated filename: ' . $filename);
+            
+            // Jawnie używamy dysku 'public'
+            $path = $file->storeAs('advertisements', $filename, 'public');
+            \Log::info('File stored at path: ' . $path);
 
-            // Return public URL
-            // Assuming storage:link is run, public/storage maps to storage/app/public
-            $url = asset('storage/advertisements/' . $filename);
-
-            // If running on localhost:8000 via artisan serve, asset() might point to localhost
-            // We might need to adjust based on environment
-
-            return response()->json($url); // Return just the string as expected by frontend? Or JSON object?
-            // Frontend expects string? Let's check api.ts usage.
-            // api.ts: return await api.storage.upload(item.file) -> returns string
-            // But usually API returns JSON.
-            // I'll return JSON and update frontend to extract it, OR return string directly (less standard but works).
-            // Let's return JSON ['url' => $url] and update frontend.
+            // Zapisz tylko względną ścieżkę do zdjęcia zamiast pełnego URL
+            // Dzięki temu aplikacja będzie działać poprawnie nawet po zmianie domeny
+            $relativePath = 'advertisements/' . $filename;
+            \Log::info('Returning relative path: ' . $relativePath);
+            
+            return response()->json($relativePath);
         }
 
         return response()->json(['error' => 'No file uploaded'], 400);

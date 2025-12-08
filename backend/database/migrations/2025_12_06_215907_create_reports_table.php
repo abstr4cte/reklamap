@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->uuid('advertisement_id');
+            $table->foreignId('advertisement_id');
             $table->string('reason');
             $table->text('details');
             $table->timestamps();

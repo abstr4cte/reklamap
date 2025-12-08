@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { api } from '../services/api'
+import { api, getFullImageUrl } from '../services/api'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 import L from 'leaflet'
@@ -145,7 +145,8 @@ const toggleFavorite = () => {
 
   localStorage.setItem('favorites', JSON.stringify(favorites))
   checkFavoriteStatus()
-  window.dispatchEvent(new Event('storage'))
+  // Użyj niestandardowego zdarzenia, które działa w ramach tej samej karty
+  window.dispatchEvent(new CustomEvent('localStorageChange'))
 }
 
 const toggleComparison = () => {
@@ -165,7 +166,8 @@ const toggleComparison = () => {
 
   localStorage.setItem('comparison', JSON.stringify(comparison))
   checkComparisonStatus()
-  window.dispatchEvent(new Event('storage'))
+  // Użyj niestandardowego zdarzenia, które działa w ramach tej samej karty
+  window.dispatchEvent(new CustomEvent('localStorageChange'))
 }
 
 const initMap = () => {
@@ -501,8 +503,42 @@ const submitReport = async () => {
   }
 }
 
+// Funkcja do aktualizacji stanu przycisków na podstawie localStorage
+const handleStorageChange = () => {
+  if (ad.value) {
+    checkFavoriteStatus()
+    checkComparisonStatus()
+  }
+}
+
+// Nasłuchuj zmian parametru id w URL
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    loadAd()
+  }
+}, { immediate: true })
+
 onMounted(() => {
-  loadAd()
+  // Dodatkowe sprawdzenie stanu po zamontowaniu komponentu
+  setTimeout(() => {
+    if (ad.value) {
+      checkFavoriteStatus()
+      checkComparisonStatus()
+    }
+  }, 100)
+  
+  // Nasłuchuj zmian w localStorage
+  if (typeof window !== 'undefined') {
+    window.addEventListener('localStorageChange', handleStorageChange)
+    window.addEventListener('storage', handleStorageChange)
+  }
+})
+
+onUnmounted(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('localStorageChange', handleStorageChange)
+    window.removeEventListener('storage', handleStorageChange)
+  }
 })
 </script>
 
@@ -527,7 +563,7 @@ onMounted(() => {
             <div class="main-image-wrapper">
               <img
                 v-if="images.length > 0"
-                :src="images[currentImageIndex]"
+                :src="getFullImageUrl(images[currentImageIndex])"
                 :alt="ad.title"
                 class="main-image"
               />
@@ -560,7 +596,7 @@ onMounted(() => {
                 :class="{ active: index === currentImageIndex }"
                 @click="currentImageIndex = index"
               >
-                <img :src="img" :alt="`Miniatura ${index + 1}`" />
+                <img :src="getFullImageUrl(img)" :alt="`Miniatura ${index + 1}`" />
               </div>
             </div>
           </div>
@@ -795,7 +831,7 @@ onMounted(() => {
                 class="similar-ad-card"
               >
                 <div class="similar-ad-image">
-                  <img v-if="similarAd.image_url" :src="similarAd.image_url" :alt="similarAd.title" />
+                  <img v-if="similarAd.image_url" :src="getFullImageUrl(similarAd.image_url)" :alt="similarAd.title" />
                   <div v-else class="similar-ad-no-image">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
                       <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>

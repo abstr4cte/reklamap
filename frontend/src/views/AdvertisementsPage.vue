@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { api } from '../services/api'
+import { api, getFullImageUrl } from '../services/api'
 import { slugify } from '../utils/slugify'
 import type { Advertisement } from '../types'
 import L from 'leaflet'
@@ -953,7 +953,7 @@ onBeforeUnmount(() => {
               <div class="ad-image">
                 <img 
                   v-if="ad.image_url" 
-                  :src="ad.image_url" 
+                  :src="getFullImageUrl(ad.image_url)" 
                   :alt="ad.title"
                 />
                 <div v-else class="no-image">

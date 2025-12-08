@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { api } from '../services/api'
+import { api, getFullImageUrl } from '../services/api'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 
@@ -38,8 +38,8 @@ const loadComparison = async () => {
     if (activeAds.length < comparisonIds.length) {
       const activeIds = activeAds.map(ad => ad.id)
       localStorage.setItem('comparison', JSON.stringify(activeIds))
-      // Trigger a storage event to update the counter
-      window.dispatchEvent(new Event('storage'))
+      // Trigger a custom event to update the counter
+      window.dispatchEvent(new CustomEvent('localStorageChange'))
     }
   } catch (error) {
     console.error('Error loading comparison:', error)
@@ -73,11 +73,15 @@ watch(() => props.isOpen, (newValue) => {
 })
 
 if (typeof window !== 'undefined') {
+  // Nasłuchuj niestandardowego zdarzenia
+  window.addEventListener('localStorageChange', handleStorageChange)
+  // Zachowaj również nasłuchiwanie standardowego zdarzenia 'storage' dla kompatybilności
   window.addEventListener('storage', handleStorageChange)
 }
 
 onUnmounted(() => {
   if (typeof window !== 'undefined') {
+    window.removeEventListener('localStorageChange', handleStorageChange)
     window.removeEventListener('storage', handleStorageChange)
   }
 })
@@ -136,7 +140,7 @@ onUnmounted(() => {
               <router-link :to="`/powierzchnia-reklamowa/${ad.type}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="ad-image-link">
                 <img
                   v-if="ad.image_url"
-                  :src="ad.image_url"
+                  :src="getFullImageUrl(ad.image_url)"
                   :alt="ad.title"
                 />
                 <div v-else class="no-image">

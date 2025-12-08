@@ -11,6 +11,7 @@ import polandGeoJson from '../assets/poland_highres.json'
 import { nsfwService } from '../services/nsfwService'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import { slugify } from '../utils/slugify'
 
 const router = useRouter()
 
@@ -617,7 +618,11 @@ const handleSubmit = async () => {
     if (newAd && newAd.id) {
       toast.value?.add('Ogłoszenie zostało dodane pomyślnie!', 'success')
       setTimeout(() => {
-        router.push(`/ogloszenie/${newAd.id}`)
+        // Generowanie linku w nowym formacie SEO-friendly
+        const type = mapTypeToUrlFormat(formData.value.type)
+        const city = slugify(formData.value.city)
+        const title = slugify(formData.value.title)
+        router.push(`/powierzchnia-reklamowa/${type}/${city}/${title}-${newAd.id}`)
       }, 1000)
     } else {
       router.push('/')
@@ -640,6 +645,20 @@ const surfaceTypes = [
   { value: 'wall', label: 'Ściana' },
   { value: 'other', label: 'Inne' }
 ]
+
+// Mapowanie typów powierzchni reklamowych do formatu URL
+const mapTypeToUrlFormat = (type: string): string => {
+  const typeMapping: Record<string, string> = {
+    'billboard': 'billboard',
+    'citylight': 'citylight',
+    'led_screen': 'ekran-led',
+    'banner': 'baner',
+    'wall': 'sciana',
+    'other': 'inne'
+  }
+  
+  return typeMapping[type] || 'inne'
+}
 
 onMounted(() => {
   if (currentStep.value === 3) {
