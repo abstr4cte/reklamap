@@ -257,7 +257,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="map-section">
+  <section id="map-section" class="map-section">
     <div class="container">
       <div class="section-header">
         <h2 class="section-title">Mapa dostępnych powierzchni</h2>
@@ -291,7 +291,9 @@ onMounted(() => {
 .map-section {
   padding: 4rem 0 0 0;
   background: linear-gradient(to bottom, #F9FAFB 0%, white 100%);
-  scroll-margin-top: 100px;
+  scroll-margin-top: 120px; /* Increased to ensure header visibility */
+  scroll-behavior: smooth;
+  display: block; /* Ensure the section is treated as a block element */
 }
 
 .container {

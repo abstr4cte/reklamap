@@ -284,19 +284,25 @@ const handleSearch = (searchFilters: Filters) => {
   // Dodaj parametr strony
   queryParams.page = '1'
   
-  // Aktualizuj URL z nowymi parametrami
-  router.push({ query: queryParams })
-
-  const mapSection = document.querySelector('.map-section')
-  if (mapSection) {
-    mapSection.scrollIntoView({ behavior: 'smooth' })
-  }
+  // Use history.replaceState to update URL without triggering navigation
+  const newUrl = window.location.pathname + '?' + new URLSearchParams(queryParams).toString()
+  window.history.replaceState({}, document.title, newUrl)
+  
+  // No need to scroll here as HeroBanner component will handle scrolling
 }
 
 const handleReset = (resetFilters: Filters) => {
   filters.value = resetFilters
   currentPage.value = 1 // Reset to first page
-  router.push({ query: {} }) // Usuń wszystkie parametry z URL
+  
+  // Prevent scrolling by using replaceState instead of router.push
+  const currentPosition = window.scrollY
+  window.history.replaceState({}, document.title, window.location.pathname)
+  
+  // Ensure we stay at the current scroll position
+  setTimeout(() => {
+    window.scrollTo(0, currentPosition)
+  }, 0)
 }
 
 const loadAdvertisements = async () => {

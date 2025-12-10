@@ -252,7 +252,14 @@ const clearLocation = () => {
 }
 
 const handleSearch = () => {
+  // First emit the search event
   emit('search', { ...filters.value })
+  
+  // Then directly scroll to map section without any URL changes
+  const mapSection = document.getElementById('map-section')
+  if (mapSection) {
+    mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 }
 
 const resetFilters = () => {
