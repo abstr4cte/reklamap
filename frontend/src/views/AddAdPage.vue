@@ -743,7 +743,11 @@ onMounted(() => {
               class="form-input"
               :class="{ 'error': errors.title }"
               placeholder="np. Billboard przy autostradzie A1"
+              maxlength="100"
             />
+            <div class="char-counter" :class="{ 'near-limit': formData.title.length > 80 }">
+              {{ formData.title.length }}/100 znaków
+            </div>
             <span v-if="errors.title" class="error-text">{{ errors.title }}</span>
           </div>
 
@@ -755,7 +759,11 @@ onMounted(() => {
               class="form-textarea"
               :class="{ 'error': errors.description }"
               placeholder="Szczegółowy opis powierzchni reklamowej..."
+              maxlength="2000"
             ></textarea>
+            <div class="char-counter" :class="{ 'near-limit': formData.description.length > 1800 }">
+              {{ formData.description.length }}/2000 znaków
+            </div>
             <span v-if="errors.description" class="error-text">{{ errors.description }}</span>
           </div>
         </div>
@@ -953,28 +961,7 @@ onMounted(() => {
         <div v-show="currentStep === 4" class="step-section">
           <h2>Wyposażenie i opcje dodatkowe</h2>
 
-          <div class="checkbox-group">
-            <label class="checkbox-option">
-              <input type="checkbox" v-model="formData.hasLighting" />
-              <span>Podświetlenie</span>
-            </label>
-
-            <label class="checkbox-option">
-              <input type="checkbox" v-model="formData.graphicDesignHelp" />
-              <span>Pomoc przy projekcie graficznym</span>
-            </label>
-
-            <label class="checkbox-option">
-              <input type="checkbox" v-model="formData.priceIncludesPrint" />
-              <span>Cena zawiera druk i montaż</span>
-            </label>
-
-            <label class="checkbox-option">
-              <input type="checkbox" v-model="formData.hasVatInvoice" />
-              <span>Faktura VAT</span>
-            </label>
-          </div>
-
+          <!-- Selecty na górze -->          
           <div class="form-group">
             <label class="form-label">Status dostępności</label>
             <select v-model="formData.status" class="form-select">
@@ -1023,6 +1010,29 @@ onMounted(() => {
               <option value="medium">Średnie</option>
               <option value="high">Wysokie</option>
             </select>
+          </div>
+
+          <!-- Checkboxy na dole -->          
+          <div class="checkbox-group">
+            <label class="checkbox-option">
+              <input type="checkbox" v-model="formData.hasLighting" />
+              <span>Podświetlenie</span>
+            </label>
+
+            <label class="checkbox-option">
+              <input type="checkbox" v-model="formData.graphicDesignHelp" />
+              <span>Pomoc przy projekcie graficznym</span>
+            </label>
+
+            <label class="checkbox-option">
+              <input type="checkbox" v-model="formData.priceIncludesPrint" />
+              <span>Cena zawiera druk i montaż</span>
+            </label>
+
+            <label class="checkbox-option">
+              <input type="checkbox" v-model="formData.hasVatInvoice" />
+              <span>Faktura VAT</span>
+            </label>
           </div>
         </div>
 
@@ -1985,6 +1995,18 @@ onMounted(() => {
   to {
     transform: rotate(360deg);
   }
+}
+
+.char-counter {
+  text-align: right;
+  color: #6b7280;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.char-counter.near-limit {
+  color: #f59e0b;
+  font-weight: 600;
 }
 
 .date-picker-wrapper {
