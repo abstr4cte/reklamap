@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from '../api/axios'
 
 defineProps<{
   isOpen: boolean
@@ -15,30 +16,45 @@ const router = useRouter()
 const email = ref('')
 const isSubmitting = ref(false)
 const isSuccess = ref(false)
+const errorMessage = ref('')
 
 const handleSubmit = async () => {
   if (!email.value || !email.value.includes('@')) {
+    errorMessage.value = 'Proszę podać poprawny adres email'
     return
   }
 
+  errorMessage.value = ''
   isSubmitting.value = true
 
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  try {
+    // Send request to backend API
+    await axios.post('/api/management/send-link', {
+      email: email.value
+    })
 
-  isSuccess.value = true
-  isSubmitting.value = false
-
-  setTimeout(() => {
-    handleClose()
-  }, 3000)
+    isSuccess.value = true
+    
+    // Close modal after 3 seconds on success
+    setTimeout(() => {
+      handleClose()
+    }, 3000)
+  } catch (error) {
+    console.error('Error sending management link:', error)
+    errorMessage.value = 'Wystąpił błąd podczas wysyłania linku. Spróbuj ponownie.'
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 const handleClose = () => {
   email.value = ''
   isSuccess.value = false
+  errorMessage.value = ''
   emit('close')
 }
 
+// This is only for testing purposes
 const navigateToManagement = () => {
   handleClose()
   router.push('/zarzadzaj')
@@ -81,6 +97,10 @@ const navigateToManagement = () => {
                 required
                 class="email-input"
               />
+            </div>
+            
+            <div v-if="errorMessage" class="error-message">
+              {{ errorMessage }}
             </div>
 
             <button type="submit" :disabled="isSubmitting" class="submit-btn">
@@ -303,6 +323,16 @@ const navigateToManagement = () => {
   color: #667eea;
   background: #f5f3ff;
   transform: translateY(-1px);
+}
+
+.error-message {
+  color: #EF4444;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background-color: #FEF2F2;
+  border-radius: 6px;
+  border-left: 3px solid #EF4444;
 }
 
 .success-body {

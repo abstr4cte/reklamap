@@ -44,7 +44,7 @@ const formData = ref({
   status: 'available' as 'available' | 'reserved' | 'soon_available',
   availableFrom: null as Date | null,
   trafficIntensity: 'medium' as 'low' | 'medium' | 'high',
-  imageFiles: [] as { file: File, preview: string, id: string }[],
+  imageFiles: [] as { file: File, preview: string, id: string, loading?: boolean }[],
   acceptTerms: false
 })
 
@@ -75,6 +75,7 @@ const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 const isDragging = ref(false)
 const draggedImageIndex = ref<number | null>(null)
 const dragOverTarget = ref<number | null>(null)
+const isLoadingImages = ref(false)
 let map: L.Map | null = null
 let marker: L.Marker | null = null
 
@@ -376,6 +377,7 @@ const processFiles = async (files: FileList | null | undefined) => {
   }
 
   const filesToProcess = Array.from(files).slice(0, remainingSlots)
+  isLoadingImages.value = true
 
   for (const file of filesToProcess) {
     if (file.size > 5 * 1024 * 1024) {
@@ -387,11 +389,25 @@ const processFiles = async (files: FileList | null | undefined) => {
       errors.value.image = `Plik ${file.name} nie jest obrazem`
       continue
     }
+    
+    // Dodaj placeholder z loaderem
+    const tempId = `img-${Date.now()}-${Math.random()}`
+    formData.value.imageFiles.push({ 
+      file, 
+      preview: '',
+      id: tempId,
+      loading: true
+    })
 
     // NSFW Check
     try {
       const nsfwResult = await nsfwService.checkImage(file)
       if (!nsfwResult.isSafe) {
+        // Usuń placeholder jeśli zdjęcie nie przeszło weryfikacji
+        const index = formData.value.imageFiles.findIndex(img => img.id === tempId)
+        if (index !== -1) {
+          formData.value.imageFiles.splice(index, 1)
+        }
         errors.value.image = `Zdjęcie ${file.name} zawiera niedozwolone treści`
         toast.value?.add(`Zdjęcie ${file.name} zostało odrzucone: wykryto treści niedozwolone`, 'error')
         continue
@@ -400,16 +416,29 @@ const processFiles = async (files: FileList | null | undefined) => {
       console.error('NSFW check error:', error)
     }
 
+    // Wczytaj podgląd zdjęcia
     const reader = new FileReader()
     reader.onload = (e) => {
-      formData.value.imageFiles.push({ 
-        file, 
-        preview: e.target?.result as string,
-        id: `img-${Date.now()}-${Math.random()}`
-      })
+      const index = formData.value.imageFiles.findIndex(img => img.id === tempId)
+      if (index !== -1) {
+        // Aktualizuj istniejący placeholder
+        formData.value.imageFiles[index].preview = e.target?.result as string
+        formData.value.imageFiles[index].loading = false
+      }
+      
+      // Sprawdź czy wszystkie zdjęcia zostały wczytane
+      const stillLoading = formData.value.imageFiles.some(img => img.loading === true)
+      if (!stillLoading) {
+        isLoadingImages.value = false
+      }
     }
     reader.readAsDataURL(file)
     delete errors.value.image
+  }
+  
+  // Jeśli nie ma żadnych zdjęć do wczytania, wyłącz loader
+  if (filesToProcess.length === 0) {
+    isLoadingImages.value = false
   }
 }
 
@@ -1078,7 +1107,8 @@ onMounted(() => {
                 class="image-item"
                 :class="{ 
                   'drag-over': dragOverTarget === index,
-                  'dragging': draggedImageIndex === index
+                  'dragging': draggedImageIndex === index,
+                  'loading': img.loading
                 }"
                 draggable="true"
                 @dragstart="handleImageDragStart($event, index)"
@@ -1086,7 +1116,18 @@ onMounted(() => {
                 @dragend="handleDragEnd"
                 @drop.prevent="handleImageDrop($event, index)"
               >
-                <img :src="img.preview" alt="Podgląd" />
+                <!-- Loader podczas ładowania zdjęcia -->
+                <div v-if="img.loading" class="image-loader">
+                  <svg class="spinner-icon" width="40" height="40" viewBox="0 0 24 24" fill="none">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span class="loading-text">Wczytywanie...</span>
+                </div>
+                
+                <!-- Podgląd zdjęcia -->
+                <img v-else :src="img.preview" alt="Podgląd" />
+                
                 <span v-if="index === 0" class="main-badge">Główne</span>
                 <button type="button" @click="removeImage(index)" class="remove-btn" title="Usuń">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -1963,6 +2004,28 @@ onMounted(() => {
   backdrop-filter: blur(4px);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   z-index: 2;
+}
+
+.image-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  z-index: 1;
+}
+
+.loading-text {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #4B5563;
+  font-weight: 500;
 }
 
 .help-text {

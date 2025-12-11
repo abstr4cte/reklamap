@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\StorageController;
+use App\Http\Controllers\ManagementController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -14,3 +15,7 @@ Route::post('advertisements/{id}/increment-views', [AdvertisementController::cla
 Route::get('advertisements/{id}/similar', [AdvertisementController::class, 'similar']);
 Route::post('reports', [AdvertisementController::class, 'report']);
 Route::post('upload', [StorageController::class, 'upload']);
+
+// Management token routes
+Route::post('management/send-link', [ManagementController::class, 'sendManagementLink']);
+Route::get('management/validate/{token}', [ManagementController::class, 'validateToken']);
