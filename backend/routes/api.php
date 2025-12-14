@@ -14,6 +14,7 @@ Route::apiResource('advertisements', AdvertisementController::class);
 Route::post('advertisements/{id}/increment-views', [AdvertisementController::class, 'incrementViews']);
 Route::get('advertisements/{id}/similar', [AdvertisementController::class, 'similar']);
 Route::post('reports', [AdvertisementController::class, 'report']);
+Route::get('advertisements/{id}/pdf', [AdvertisementController::class, 'generatePdf']);
 Route::post('upload', [StorageController::class, 'upload']);
 
 // Management token routes

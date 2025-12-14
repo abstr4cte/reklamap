@@ -355,7 +355,7 @@ const getFullPhone = (phone: string | undefined) => {
   return `+48 ${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6)}`
 }
 
-import html2pdf from 'html2pdf.js'
+import axios from '../api/axios'
 
 const showReportModal = ref(false)
 const reportForm = ref({
@@ -370,8 +370,51 @@ const showToast = (title: string, message: string, type: 'success' | 'error' = '
   toast.value?.add(message, type)
 }
 
-const handlePrint = () => {
-  window.print()
+const handlePrint = async () => {
+  if (!ad.value) return
+  
+  isGeneratingPDF.value = true
+
+  try {
+    const response = await axios.get(`/api/advertisements/${ad.value.id}/pdf`, {
+        responseType: 'blob'
+    })
+    
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const url = window.URL.createObjectURL(blob)
+    
+    // Remove existing print iframe if any
+    const existingIframe = document.getElementById('print-iframe')
+    if (existingIframe) {
+      document.body.removeChild(existingIframe)
+    }
+
+    // Create invisible iframe
+    const iframe = document.createElement('iframe')
+    iframe.id = 'print-iframe'
+    // Use visibility hidden instead of display none for better browser support
+    iframe.style.position = 'fixed'
+    iframe.style.right = '0'
+    iframe.style.bottom = '0'
+    iframe.style.width = '0'
+    iframe.style.height = '0'
+    iframe.style.border = '0'
+    iframe.style.visibility = 'hidden'
+    iframe.src = url
+    document.body.appendChild(iframe)
+    
+    iframe.onload = () => {
+      if (iframe.contentWindow) {
+        iframe.contentWindow.focus()
+        iframe.contentWindow.print()
+      }
+    }
+  } catch (error) {
+    console.error('Error printing PDF:', error)
+    showToast('Błąd', 'Nie udało się przygotować pliku do druku', 'error')
+  } finally {
+    isGeneratingPDF.value = false
+  }
 }
 
 const isGeneratingPDF = ref(false)
@@ -380,23 +423,20 @@ const handleDownloadPDF = async () => {
   if (!ad.value) return
   
   isGeneratingPDF.value = true
-  const element = document.querySelector('.main-content') as HTMLElement
-  
-  if (!element) {
-    isGeneratingPDF.value = false
-    return
-  }
-
-  const opt = {
-    margin: [10, 10] as [number, number],
-    filename: `ogloszenie-${ad.value.id}.pdf`,
-    image: { type: 'jpeg' as const, quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const }
-  }
 
   try {
-    await html2pdf().set(opt).from(element).save()
+    const response = await axios.get(`/api/advertisements/${ad.value.id}/pdf`, {
+        responseType: 'blob'
+    })
+    
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `ogloszenie-${ad.value.id}.pdf`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
     showToast('Sukces', 'PDF został pobrany', 'success')
   } catch (error) {
     console.error('Error generating PDF:', error)
@@ -1649,6 +1689,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  min-width: 0;
 }
 
 .similar-ad-content h4 {

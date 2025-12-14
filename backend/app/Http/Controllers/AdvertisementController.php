@@ -115,4 +115,10 @@ class AdvertisementController extends Controller
 
         return response()->json(['message' => 'Report submitted']);
     }
+    public function generatePdf(string $id)
+    {
+        $ad = Advertisement::findOrFail($id);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.advertisement', ['advertisement' => $ad]);
+        return $pdf->download('ogloszenie-' . $ad->id . '.pdf');
+    }
 }
