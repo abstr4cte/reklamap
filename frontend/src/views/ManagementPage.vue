@@ -288,17 +288,17 @@ const toggleRow = (id: string) => {
 }
 
 const handleStatusChange = (id: string, newStatus: string) => {
-  if (newStatus === 'soon_available') {
-    pendingAdId.value = id
-    showDateModal.value = true
-    return
-  }
   pendingStatusChanges.value[id] = newStatus
 }
 
 const confirmStatusChange = async (id: string) => {
   const status = pendingStatusChanges.value[id]
   if (status) {
+    if (status === 'soon_available') {
+      pendingAdId.value = id
+      showDateModal.value = true
+      return
+    }
     await updateStatus(id, status)
     delete pendingStatusChanges.value[id]
   }
@@ -318,6 +318,7 @@ const confirmDateAndStatus = async () => {
   if (pendingAdId.value && availableFromDate.value) {
     await updateStatus(pendingAdId.value, 'soon_available', availableFromDate.value)
     showDateModal.value = false
+    delete pendingStatusChanges.value[pendingAdId.value]
     pendingAdId.value = ''
     availableFromDate.value = null
   }
