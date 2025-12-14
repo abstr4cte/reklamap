@@ -185,15 +185,24 @@ const toggleComparison = () => {
 const initMap = () => {
   if (!mapContainer.value || !ad.value || map) return
 
-  map = L.map(mapContainer.value, {
-    attributionControl: false
-  }).setView([ad.value.latitude, ad.value.longitude], 15)
+  try {
+    map = L.map(mapContainer.value, {
+      attributionControl: false
+    }).setView([ad.value.latitude, ad.value.longitude], 15)
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map)
 
-  L.marker([ad.value.latitude, ad.value.longitude]).addTo(map)
+    L.marker([ad.value.latitude, ad.value.longitude]).addTo(map)
+    
+    // Invalidate size after a short delay to ensure proper rendering
+    setTimeout(() => {
+      if (map) map.invalidateSize()
+    }, 100)
+  } catch (error) {
+    console.error('Error initializing map:', error)
+  }
 }
 
 const loadAd = async () => {
@@ -238,7 +247,10 @@ const loadAd = async () => {
     
     checkFavoriteStatus()
     checkComparisonStatus()
-    setTimeout(() => initMap(), 100)
+    
+    // Initialize map with longer delay to ensure DOM is ready
+    setTimeout(() => initMap(), 500)
+    
     loadSimilarAds()
     
     // Increment views
@@ -584,6 +596,16 @@ onUnmounted(() => {
   if (typeof window !== 'undefined') {
     window.removeEventListener('localStorageChange', handleStorageChange)
     window.removeEventListener('storage', handleStorageChange)
+  }
+  
+  // Clean up map instance to prevent memory leaks and conflicts
+  if (map) {
+    try {
+      map.remove()
+      map = null
+    } catch (error) {
+      console.error('Error cleaning up map:', error)
+    }
   }
 })
 </script>

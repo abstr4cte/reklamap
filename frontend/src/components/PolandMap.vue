@@ -156,9 +156,24 @@ const updateMarkers = () => {
       poster: 'Plakat'
     }
 
+    const mapTypeToUrlFormat = (type: string): string => {
+      const typeMapping: Record<string, string> = {
+        'billboard': 'billboard',
+        'citylight': 'citylight',
+        'led_screen': 'ekran-led',
+        'digital': 'digital',
+        'banner': 'baner',
+        'poster': 'plakat',
+        'wall': 'sciana',
+        'other': 'inne'
+      }
+      return typeMapping[type] || 'inne'
+    }
+    
     const citySlug = slugify(ad.city)
     const titleSlug = slugify(ad.title)
-    const adUrl = `/ogloszenie/${citySlug}/${titleSlug}/${ad.id}`
+    const typeSlug = mapTypeToUrlFormat(ad.type)
+    const adUrl = `/powierzchnia-reklamowa/${typeSlug}/${citySlug}/${titleSlug}-${ad.id}`
 
     const popupContent = `
       <div style="min-width: 200px;">
