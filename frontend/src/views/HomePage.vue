@@ -309,8 +309,8 @@ const loadAdvertisements = async () => {
   try {
     isLoading.value = true
     const data = await api.getAdvertisements()
-    // Filter active ads client-side for now, or assume API returns only active
-    advertisements.value = data.filter(ad => ad.status === 'active')
+    // Show all advertisements regardless of status
+    advertisements.value = data
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   } catch (error) {
     console.error('Error loading advertisements:', error)

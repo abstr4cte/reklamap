@@ -758,7 +758,8 @@ const loadAdvertisements = async () => {
   try {
     isLoading.value = true
     const data = await api.getAdvertisements()
-    advertisements.value = data.filter(ad => ad.status === 'active')
+    // Show all advertisements regardless of status
+    advertisements.value = data
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     
     setTimeout(() => updateMarkers(), 100)
@@ -1322,35 +1323,35 @@ onBeforeUnmount(() => {
 
           <!-- Feature Filters -->
           <div class="filter-group">
-            <label class="checkbox-label search-select" style="justify-content: flex-start;">
+            <label class="checkbox-option">
               <input v-model="filters.onlyWithImage" type="checkbox" />
               <span>Tylko ze zdjęciem</span>
             </label>
           </div>
 
           <div class="filter-group">
-            <label class="checkbox-label search-select" style="justify-content: flex-start;">
+            <label class="checkbox-option">
               <input v-model="filters.hasLighting" type="checkbox" />
               <span>Z podświetleniem</span>
             </label>
           </div>
 
           <div class="filter-group">
-            <label class="checkbox-label search-select" style="justify-content: flex-start;">
+            <label class="checkbox-option">
               <input v-model="filters.priceIncludesPrint" type="checkbox" />
               <span>Druk i montaż w cenie</span>
             </label>
           </div>
 
           <div class="filter-group">
-            <label class="checkbox-label search-select" style="justify-content: flex-start;">
+            <label class="checkbox-option">
               <input v-model="filters.graphicDesignHelp" type="checkbox" />
               <span>Pomoc przy projekcie graficznym</span>
             </label>
           </div>
 
           <div class="filter-group">
-            <label class="checkbox-label search-select" style="justify-content: flex-start;">
+            <label class="checkbox-option">
               <input v-model="filters.hasVatInvoice" type="checkbox" />
               <span>Faktura VAT</span>
             </label>
@@ -1954,18 +1955,21 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  padding: 1rem;
   cursor: pointer;
-  transition: background 0.2s;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.2s;
 }
 
 .checkbox-option:hover {
-  background: #f9fafb;
+  border-color: #10B981;
+  background: #f0fdf4;
 }
 
 .checkbox-option input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
 }
 

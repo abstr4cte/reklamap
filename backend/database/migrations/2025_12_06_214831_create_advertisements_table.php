@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -26,7 +25,7 @@ return new class extends Migration
             $table->string('image_url')->nullable();
             $table->string('owner_email');
             $table->string('status')->default('active');
-            $table->string('region');
+            $table->string('region')->nullable();
             $table->string('orientation');
             $table->string('traffic_intensity');
             $table->string('price_unit');
