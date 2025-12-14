@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Address;
+use Illuminate\Queue\SerializesModels;
+
+class ContactAdvertisementOwner extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public $advertisementTitle;
+    public $advertisementId;
+    public $senderEmail;
+    public $senderMessage;
+    public $advertisementUrl;
+
+    /**
+     * Create a new message instance.
+     */
+    public function __construct($advertisementTitle, $advertisementId, $senderEmail, $senderMessage, $advertisementUrl)
+    {
+        $this->advertisementTitle = $advertisementTitle;
+        $this->advertisementId = $advertisementId;
+        $this->senderEmail = $senderEmail;
+        $this->senderMessage = $senderMessage;
+        $this->advertisementUrl = $advertisementUrl;
+    }
+
+    /**
+     * Get the message envelope.
+     */
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            subject: 'Nowa wiadomość dotycząca Twojego ogłoszenia - ' . $this->advertisementTitle,
+            replyTo: [
+                new Address($this->senderEmail),
+            ],
+        );
+    }
+
+    /**
+     * Get the message content definition.
+     */
+    public function content(): Content
+    {
+        return new Content(
+            view: 'emails.contact-advertisement-owner',
+        );
+    }
+
+    /**
+     * Get the attachments for the message.
+     *
+     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     */
+    public function attachments(): array
+    {
+        return [];
+    }
+}

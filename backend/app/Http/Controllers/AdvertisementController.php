@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Advertisement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactAdvertisementOwner;
 
 class AdvertisementController extends Controller
 {
@@ -134,5 +136,59 @@ class AdvertisementController extends Controller
         ])->setPaper('a4', 'landscape');
 
         return $pdf->download('porownanie-ogloszen.pdf');
+    }
+
+    public function contactOwner(Request $request, string $id)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'message' => 'required|string|max:5000',
+        ]);
+
+        $ad = Advertisement::findOrFail($id);
+
+        // Build advertisement URL
+        $advertisementUrl = config('app.frontend_url', config('app.url')) . '/powierzchnia-reklamowa/' . 
+            $this->mapTypeToUrlFormat($ad->type) . '/' . 
+            \Illuminate\Support\Str::slug($ad->city) . '/' . 
+            \Illuminate\Support\Str::slug($ad->title) . '-' . $ad->id;
+
+        try {
+            Mail::to($ad->owner_email)->send(
+                new ContactAdvertisementOwner(
+                    $ad->title,
+                    $ad->id,
+                    $validated['email'],
+                    $validated['message'],
+                    $advertisementUrl
+                )
+            );
+
+            return response()->json([
+                'message' => 'Wiadomość została wysłana pomyślnie'
+            ], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error sending contact email: ' . $e->getMessage());
+            
+            return response()->json([
+                'message' => 'Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie później.'
+            ], 500);
+        }
+    }
+
+    private function mapTypeToUrlFormat($type)
+    {
+        $typeMapping = [
+            'billboard' => 'billboard',
+            'citylight' => 'citylight',
+            'led_screen' => 'ekran-led',
+            'digital' => 'digital',
+            'banner' => 'baner',
+            'poster' => 'plakat',
+            'wall' => 'sciana',
+            'other' => 'inne'
+        ];
+        
+        return $typeMapping[$type] ?? 'inne';
     }
 }

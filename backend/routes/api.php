@@ -13,6 +13,7 @@ Route::get('/user', function (Request $request) {
 Route::apiResource('advertisements', AdvertisementController::class);
 Route::post('advertisements/{id}/increment-views', [AdvertisementController::class, 'incrementViews']);
 Route::get('advertisements/{id}/similar', [AdvertisementController::class, 'similar']);
+Route::post('advertisements/{id}/contact', [AdvertisementController::class, 'contactOwner']);
 Route::post('reports', [AdvertisementController::class, 'report']);
 Route::get('advertisements/{id}/pdf', [AdvertisementController::class, 'generatePdf']);
 Route::get('advertisements/pdf/comparison', [AdvertisementController::class, 'generateComparisonPdf']);

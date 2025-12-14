@@ -296,7 +296,10 @@ const submitContactForm = async () => {
   try {
     isSubmittingContact.value = true
 
-
+    await api.contactAdvertisementOwner(ad.value.id, {
+      email: contactForm.value.email,
+      message: contactForm.value.message
+    })
 
     contactSuccess.value = true
     contactForm.value.email = ''

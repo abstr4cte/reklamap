@@ -100,6 +100,22 @@ export const api = {
         if (!response.ok) throw new Error('Failed to submit report')
     },
 
+    async contactAdvertisementOwner(id: string, contact: { email: string; message: string }): Promise<{ message: string }> {
+        const response = await fetch(`${API_URL}/advertisements/${id}/contact`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(contact),
+        })
+        if (!response.ok) {
+            const error = await response.json()
+            throw new Error(error.message || 'Failed to send contact message')
+        }
+        return response.json()
+    },
+
     storage: {
         async upload(file: File): Promise<string> {
             const formData = new FormData()
