@@ -49,7 +49,7 @@
 
         <section>
           <h2>6. Kontakt</h2>
-          <p>W sprawach związanych z ochroną danych osobowych prosimy o kontakt pod adresem e-mail: kontakt@adspace.pl</p>
+          <p>W sprawach związanych z ochroną danych osobowych prosimy o kontakt pod adresem e-mail: kontakt@reklamap.pl</p>
         </section>
       </div>
     </div>

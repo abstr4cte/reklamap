@@ -71,8 +71,7 @@ const images = computed(() => {
     return ad.value.images
   }
   
-  console.log('Images array:', allImages)
-  console.log('Description:', ad.value.description)
+
   return allImages
 })
 
@@ -285,9 +284,7 @@ const submitContactForm = async () => {
   try {
     isSubmittingContact.value = true
 
-    console.log('Wysyłanie wiadomości do:', ad.value.owner_email)
-    console.log('Od:', contactForm.value.email)
-    console.log('Treść:', contactForm.value.message)
+
 
     contactSuccess.value = true
     contactForm.value.email = ''

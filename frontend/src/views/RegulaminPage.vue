@@ -140,7 +140,7 @@
                 <li>Użytkownik ma prawo do złożenia reklamacji dotyczącej funkcjonowania Serwisu.</li>
                 <li>Reklamację można złożyć:
                   <ul>
-                    <li>Drogą elektroniczną na adres: kontakt@adspace.pl</li>
+                    <li>Drogą elektroniczną na adres: kontakt@reklamap.pl</li>
                     <li>Za pomocą formularza kontaktowego dostępnego w Serwisie</li>
                   </ul>
                 </li>
@@ -172,7 +172,7 @@
               <h3>Masz pytania?</h3>
               <p>Jeśli masz pytania dotyczące Regulaminu, skontaktuj się z nami:</p>
               <ul>
-                <li>Email: kontakt@adspace.pl</li>
+                <li>Email: kontakt@reklamap.pl</li>
                 <li>Telefon: +48 123 456 789</li>
               </ul>
             </div>

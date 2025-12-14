@@ -73,10 +73,8 @@ const loadAdvertisements = async () => {
           tokenExpiresAt.value = new Date(response.data.expires_at).toLocaleString()
           hasToken.value = true
           isTokenInvalid.value = false
-          console.log('Token valid, setting hasToken to true')
         } else {
           // Token jest nieprawidłowy
-          console.log('Token invalid')
           hasToken.value = false
           isTokenInvalid.value = true
         }

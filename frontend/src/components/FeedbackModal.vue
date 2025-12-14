@@ -38,7 +38,7 @@ const handleSubmit = async () => {
     url: window.location.href
   }
 
-  console.log('Feedback data to send:', feedbackData)
+
 
   // Symulacja wysyłki
   await new Promise(resolve => setTimeout(resolve, 500))

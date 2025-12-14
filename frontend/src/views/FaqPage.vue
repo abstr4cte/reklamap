@@ -219,11 +219,11 @@ const isOpen = (id: number) => {
               </svg>
               Formularz kontaktowy
             </router-link>
-            <a href="mailto:kontakt@adspace.pl" class="help-btn secondary">
+            <a href="mailto:kontakt@reklamap.pl" class="help-btn secondary">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              kontakt@adspace.pl
+              kontakt@reklamap.pl
             </a>
           </div>
         </div>

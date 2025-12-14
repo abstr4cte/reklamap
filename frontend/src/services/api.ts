@@ -5,21 +5,16 @@ import { API_URL, STORAGE_URL } from '../config'
 export const getFullImageUrl = (path: string): string => {
     // Jeśli ścieżka jest null lub undefined, zwróć pusty string
     if (!path) {
-        console.log('getFullImageUrl: path is null or undefined')
         return ''
     }
-    
-    console.log('getFullImageUrl input:', path)
-    
+
     // Jeśli ścieżka jest już pełnym URL-em, zwróć ją bez zmian
     if (path.startsWith('http://') || path.startsWith('https://')) {
-        console.log('getFullImageUrl output (already full URL):', path)
         return path
     }
-    
+
     // W przeciwnym razie dodaj prefiks STORAGE_URL
     const fullUrl = `${STORAGE_URL}/${path}`
-    console.log('getFullImageUrl output (with prefix):', fullUrl)
     return fullUrl
 }
 
@@ -107,35 +102,24 @@ export const api = {
 
     storage: {
         async upload(file: File): Promise<string> {
-            console.log('Uploading file:', file.name, file.type, file.size)
-            
             const formData = new FormData()
             formData.append('file', file)
 
-            console.log('Sending request to:', `${API_URL}/upload`)
             const response = await fetch(`${API_URL}/upload`, {
                 method: 'POST',
                 body: formData,
             })
 
             if (!response.ok) {
-                console.error('Upload failed:', response.status, response.statusText)
                 throw new Error('Failed to upload file')
             }
 
-            console.log('Upload response status:', response.status)
-            
-            // Pobierz tekst odpowiedzi do debugowania
             const responseText = await response.text()
-            console.log('Upload response text:', responseText)
-            
-            // Konwertuj tekst z powrotem na JSON
+
             try {
                 const path = JSON.parse(responseText)
-                console.log('Parsed response:', path)
                 return path
             } catch (e) {
-                console.error('Failed to parse response:', e)
                 return responseText
             }
         }

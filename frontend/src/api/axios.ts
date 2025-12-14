@@ -6,6 +6,6 @@ import { API_URL } from '../config';
 const baseURL = API_URL.replace(/\/api$/, '');
 axios.defaults.baseURL = baseURL;
 
-console.log('Axios baseURL set to:', axios.defaults.baseURL);
+
 
 export default axios;
