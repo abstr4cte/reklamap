@@ -31,7 +31,7 @@ const loadComparison = async () => {
     const data = await api.getAdvertisementsByIds(comparisonIds)
     
     // Filter to only include active advertisements
-    const activeAds = data.filter(ad => ad.is_active && ad.status === 'active')
+    const activeAds = data.filter(ad => ad.is_active)
     comparisonAds.value = activeAds || []
     
     // Update localStorage if there are inactive/deleted ads

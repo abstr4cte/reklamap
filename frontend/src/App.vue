@@ -33,7 +33,7 @@ const syncFavorites = async () => {
   try {
     const data = await api.getAdvertisementsByIds(favoriteIds)
     // Filter to only include active advertisements
-    const activeAds = data.filter(ad => ad.is_active && ad.status === 'active')
+    const activeAds = data.filter(ad => ad.is_active)
     activeFavoriteIds.value = activeAds.map(ad => ad.id)
     
     // Update localStorage if there are inactive/deleted ads
@@ -58,7 +58,7 @@ const syncComparison = async () => {
   try {
     const data = await api.getAdvertisementsByIds(comparisonIds)
     // Filter to only include active advertisements
-    const activeAds = data.filter(ad => ad.is_active && ad.status === 'active')
+    const activeAds = data.filter(ad => ad.is_active)
     activeComparisonIds.value = activeAds.map(ad => ad.id)
     
     // Update localStorage if there are inactive/deleted ads
@@ -98,7 +98,7 @@ const handleToggleFavorite = async (id: string) => {
     // Verify the ad exists and is active before adding
     try {
       const ad = await api.getAdvertisement(id)
-      if (ad && ad.is_active && ad.status === 'active') {
+      if (ad && ad.is_active) {
         favorites.push(id)
         activeFavoriteIds.value.push(id)
       }
@@ -131,7 +131,7 @@ const handleToggleComparison = async (id: string) => {
     // Verify the ad exists and is active before adding
     try {
       const ad = await api.getAdvertisement(id)
-      if (ad && ad.is_active && ad.status === 'active') {
+      if (ad && ad.is_active) {
         comparison.push(id)
         activeComparisonIds.value.push(id)
       }

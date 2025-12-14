@@ -29,7 +29,7 @@ const loadFavorites = async () => {
     const data = await api.getAdvertisementsByIds(favoriteIds)
     
     // Filter to only include active advertisements
-    const activeAds = data.filter(ad => ad.is_active && ad.status === 'active')
+    const activeAds = data.filter(ad => ad.is_active)
     favoriteAds.value = activeAds || []
     
     // Update localStorage if there are inactive/deleted ads
