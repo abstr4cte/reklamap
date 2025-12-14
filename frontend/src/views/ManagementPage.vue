@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
-import { api } from '../services/api'
+import { useRouter, useRoute } from 'vue-router'
+import { api, getFullImageUrl } from '../services/api'
+import axios from '../api/axios'
 import type { Advertisement } from '../types'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import ToastNotification from '../components/ToastNotification.vue'
@@ -10,8 +11,18 @@ import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 const router = useRouter()
+const route = useRoute()
 const advertisements = ref<Advertisement[]>([])
 const isLoading = ref(true)
+const tokenEmail = ref('')
+const tokenExpiresAt = ref('')
+const hasToken = ref(false)
+
+// Zmienne dla formularza email
+const email = ref('')
+const isSubmitting = ref(false)
+const isSuccess = ref(false)
+const errorMessage = ref('')
 const expandedRows = ref<Set<string>>(new Set())
 const editingAd = ref<Advertisement | null>(null)
 const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
@@ -21,12 +32,9 @@ const pendingStatusChanges = ref<Record<string, string>>({})
 const showDateModal = ref(false)
 const pendingAdId = ref<string>('')
 const availableFromDate = ref<Date | null>(null)
-const selectedImageFile = ref<File | null>(null) // Deprecated
-const newImageFiles = ref<{ file: File, preview: string }[]>([]) // Deprecated but kept for type safety if needed
-const unifiedImages = ref<{ type: 'existing' | 'new', url?: string, file?: File, preview?: string, id: string }[]>([])
+const unifiedImages = ref<{ type: 'existing' | 'new', url?: string, file?: File, preview?: string, id: string, loading?: boolean }[]>([])
 const isDragging = ref(false)
 const draggedImageIndex = ref<number | null>(null)
-const draggedImageType = ref<'existing' | 'new' | null>(null)
 
 const minDate = new Date()
 minDate.setHours(0, 0, 0, 0)
@@ -45,11 +53,45 @@ const isSaving = ref(false)
 
 
 
+const isTokenInvalid = ref(false)
+
 const loadAdvertisements = async () => {
   try {
     isLoading.value = true
-    const data = await api.getAdvertisements()
-    advertisements.value = data || []
+    isTokenInvalid.value = false
+    
+    // Sprawdź, czy mamy token w parametrach ścieżki (priorytet) lub URL query
+    const token = (route.params.token as string) || (route.query.token as string)
+    
+    if (token) {
+      // Jeśli mamy token, pobierz ogłoszenia dla tego tokena
+      try {
+        const response = await axios.get(`/api/management/validate/${token}`)
+        if (response.data.valid) {
+          advertisements.value = response.data.advertisements || []
+          tokenEmail.value = response.data.email
+          tokenExpiresAt.value = new Date(response.data.expires_at).toLocaleString()
+          hasToken.value = true
+          isTokenInvalid.value = false
+          console.log('Token valid, setting hasToken to true')
+        } else {
+          // Token jest nieprawidłowy
+          console.log('Token invalid')
+          hasToken.value = false
+          isTokenInvalid.value = true
+        }
+      } catch (error) {
+        console.error('Error validating token:', error)
+        // W przypadku błędu walidacji
+        hasToken.value = false
+        isTokenInvalid.value = true
+      }
+    } else {
+      // Brak tokena, pokaż formularz email
+      hasToken.value = false
+      isTokenInvalid.value = false
+      // Nie pobieramy ogłoszeń, gdy nie ma tokena
+    }
   } catch (error) {
     console.error('Error loading advertisements:', error)
   } finally {
@@ -208,14 +250,7 @@ const handleConfirmDelete = async () => {
   }
 }
 
-const getStatusLabel = (status: string) => {
-  const labels: Record<string, string> = {
-    active: 'Wolne',
-    reserved: 'Zarezerwowane',
-    soon_available: 'Wkrótce dostępne'
-  }
-  return labels[status] || status
-}
+
 
 const getTypeLabel = (type: string) => {
   const labels: Record<string, string> = {
@@ -234,14 +269,191 @@ const openPreview = (id: string) => {
   window.open(href, '_blank')
 }
 
-onMounted(() => {
-  loadAdvertisements()
+const toggleRow = (id: string) => {
+  if (expandedRows.value.has(id)) {
+    expandedRows.value.delete(id)
+  } else {
+    expandedRows.value.add(id)
+    const ad = advertisements.value.find(a => a.id === id)
+    if (ad) {
+      editingAd.value = { ...ad }
+      // Initialize unifiedImages for the edited ad
+      unifiedImages.value = (editingAd.value.images || []).map(url => ({
+        type: 'existing',
+        url,
+        id: Math.random().toString(36).substr(2, 9)
+      }))
+    }
+  }
+}
+
+const handleStatusChange = (id: string, newStatus: string) => {
+  if (newStatus === 'soon_available') {
+    pendingAdId.value = id
+    showDateModal.value = true
+    return
+  }
+  pendingStatusChanges.value[id] = newStatus
+}
+
+const confirmStatusChange = async (id: string) => {
+  const status = pendingStatusChanges.value[id]
+  if (status) {
+    await updateStatus(id, status)
+    delete pendingStatusChanges.value[id]
+  }
+}
+
+const cancelStatusChange = (id: string) => {
+  delete pendingStatusChanges.value[id]
+}
+
+const cancelDateModal = () => {
+  showDateModal.value = false
+  pendingAdId.value = ''
+  availableFromDate.value = null
+}
+
+const confirmDateAndStatus = async () => {
+  if (pendingAdId.value && availableFromDate.value) {
+    await updateStatus(pendingAdId.value, 'soon_available', availableFromDate.value)
+    showDateModal.value = false
+    pendingAdId.value = ''
+    availableFromDate.value = null
+  }
+}
+
+const getTotalImagesCount = () => unifiedImages.value.length
+
+const processFiles = async (files: FileList | null) => {
+  if (!files) return
+
+  for (let i = 0; i < files.length; i++) {
+    if (unifiedImages.value.length >= 5) break
+    const file = files[i]
+    if (!file.type.startsWith('image/')) continue
+
+    const tempId = Math.random().toString(36).substr(2, 9)
+    
+    // Add placeholder with loading state
+    unifiedImages.value.push({
+      type: 'new',
+      file,
+      preview: '',
+      id: tempId,
+      loading: true
+    })
+
+    // NSFW Check
+    try {
+      const nsfwResult = await nsfwService.checkImage(file)
+      if (!nsfwResult.isSafe) {
+        // Remove placeholder if image failed verification
+        const index = unifiedImages.value.findIndex(img => img.id === tempId)
+        if (index !== -1) {
+          unifiedImages.value.splice(index, 1)
+        }
+        toast.value?.add(`Zdjęcie ${file.name} zostało odrzucone: wykryto treści niedozwolone`, 'error')
+        continue
+      }
+    } catch (error) {
+      console.error('NSFW check error:', error)
+    }
+
+    // Read file
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const index = unifiedImages.value.findIndex(img => img.id === tempId)
+      if (index !== -1) {
+        unifiedImages.value[index].preview = e.target?.result as string
+        unifiedImages.value[index].loading = false
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+const handleImageSelect = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  processFiles(input.files)
+  input.value = '' // Reset input
+}
+
+const removeImage = (index: number) => {
+  unifiedImages.value.splice(index, 1)
+}
+
+const handleImageDragStart = (event: DragEvent, index: number) => {
+  draggedImageIndex.value = index
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.dropEffect = 'move'
+  }
+}
+
+const handleImageDragOver = (index: number) => {
+  dragOverTarget.value = { index, type: unifiedImages.value[index].type }
+}
+
+const handleDragEnd = () => {
+  draggedImageIndex.value = null
+  dragOverTarget.value = null
+  isDragging.value = false
+}
+
+const handleImageDrop = (index: number) => {
+  if (draggedImageIndex.value !== null && draggedImageIndex.value !== index) {
+    const item = unifiedImages.value.splice(draggedImageIndex.value, 1)[0]
+    unifiedImages.value.splice(index, 0, item)
+  }
+  handleDragEnd()
+}
+
+const handleDrop = (event: DragEvent) => {
+  // Handle file drop from OS
+  const files = event.dataTransfer?.files
+  if (files && files.length > 0) {
+    processFiles(files)
+  }
+  isDragging.value = false
+}
+const handleSubmit = async () => {
+  if (!email.value || !email.value.includes('@')) {
+    errorMessage.value = 'Proszę podać poprawny adres email'
+    return
+  }
+
+  errorMessage.value = ''
+  isSubmitting.value = true
+
+  try {
+    // Send request to backend API
+    await axios.post('/api/management/send-link', {
+      email: email.value
+    })
+
+    isSuccess.value = true
+    
+    // Redirect after 5 seconds
+    setTimeout(() => {
+      router.push('/')
+    }, 5000)
+  } catch (error) {
+    console.error('Error sending management link:', error)
+    errorMessage.value = 'Wystąpił błąd podczas wysyłania linku. Spróbuj ponownie.'
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+onMounted(async () => {
+  await loadAdvertisements()
 })
 </script>
 
 <template>
   <div class="management-page">
-    <div class="page-header">
+    <div class="page-header" v-if="hasToken">
       <div class="container">
         <button @click="router.push('/')" class="back-button">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -251,7 +463,11 @@ onMounted(() => {
         </button>
         <div class="header-content">
           <h1>Panel zarządzania ogłoszeniami</h1>
-          <p class="header-subtitle">Zarządzaj swoimi ogłoszeniami w jednym miejscu</p>
+          <p class="header-subtitle" v-if="!hasToken">Zarządzaj swoimi ogłoszeniami w jednym miejscu</p>
+          <div v-else class="token-info-header">
+            <p>Email: <strong>{{ tokenEmail }}</strong></p>
+            <p>Link ważny do: <strong>{{ tokenExpiresAt }}</strong></p>
+          </div>
         </div>
       </div>
     </div>
@@ -262,338 +478,416 @@ onMounted(() => {
           <div class="spinner"></div>
           <p>Ładowanie ogłoszeń...</p>
         </div>
-
-        <div v-else-if="advertisements.length === 0" class="empty-state">
-          <svg width="120" height="120" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="3" width="18" height="18" rx="2" stroke="#d1d5db" stroke-width="2"/>
-            <path d="M3 9h18M9 3v18" stroke="#d1d5db" stroke-width="2"/>
+        
+        <div v-else-if="isTokenInvalid" class="empty-state">
+          <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 8v4M12 16h.01" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
           </svg>
-          <h2>Brak ogłoszeń</h2>
-          <p>Nie masz jeszcze żadnych ogłoszeń do zarządzania</p>
-          <button @click="router.push('/dodaj-powierzchnie-reklamowa')" class="btn-primary">
-            Dodaj pierwsze ogłoszenie
+          <h2>Ups...</h2>
+          <p>Widocznie Twój link stracił ważność lub jest nieprawidłowy.</p>
+          <button @click="isTokenInvalid = false; hasToken = false" class="btn-primary">
+            Wyślij nowy link
           </button>
         </div>
-
-        <div v-else class="ads-list">
-          <div class="stats-bar">
-            <div class="stat">
-              <span class="stat-label">Wszystkie ogłoszenia</span>
-              <span class="stat-value">{{ advertisements.length }}</span>
-            </div>
-            <div class="stat">
-              <span class="stat-label">Aktywne</span>
-              <span class="stat-value">{{ advertisements.filter(ad => ad.is_active).length }}</span>
-            </div>
-            <div class="stat">
-              <span class="stat-label">Nieaktywne</span>
-              <span class="stat-value">{{ advertisements.filter(ad => !ad.is_active).length }}</span>
-            </div>
+        
+        <div v-else-if="hasToken">
+          <div v-if="advertisements.length === 0" class="empty-state">
+            <svg width="120" height="120" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="3" width="18" height="18" rx="2" stroke="#d1d5db" stroke-width="2"/>
+              <path d="M3 9h18M9 3v18" stroke="#d1d5db" stroke-width="2"/>
+            </svg>
+            <h2>Brak ogłoszeń</h2>
+            <p>Nie masz jeszcze żadnych ogłoszeń do zarządzania</p>
+            <button @click="router.push('/dodaj-powierzchnie-reklamowa')" class="btn-primary">
+              Dodaj pierwsze ogłoszenie
+            </button>
           </div>
 
-          <div v-for="ad in advertisements" :key="ad.id" :id="'ad-row-' + ad.id" class="ad-row" :class="{ expanded: expandedRows.has(ad.id) }">
-            <div class="ad-summary" @click="toggleRow(ad.id)">
-              <div class="ad-thumbnail">
-                <img v-if="ad.image_url" :src="ad.image_url" :alt="ad.title" />
-                <div v-else class="no-image">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-                    <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
-                    <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                </div>
+          <div v-else class="ads-list">
+            <div class="stats-bar">
+              <div class="stat">
+                <span class="stat-label">Wszystkie ogłoszenia</span>
+                <span class="stat-value">{{ advertisements.length }}</span>
               </div>
-
-              <div class="ad-info">
-                <h3 class="ad-title">{{ ad.title }}</h3>
-                <p class="ad-meta">{{ ad.city }} • {{ getTypeLabel(ad.type) }} • {{ ad.width }}m × {{ ad.height }}m</p>
+              <div class="stat">
+                <span class="stat-label">Aktywne</span>
+                <span class="stat-value">{{ advertisements.filter(ad => ad.is_active).length }}</span>
               </div>
-
-              <div class="ad-controls" @click.stop>
-                <div class="status-dropdown">
-                  <select 
-                    :value="pendingStatusChanges[ad.id] || ad.status" 
-                    @change="handleStatusChange(ad.id, ($event.target as HTMLSelectElement).value)" 
-                    class="status-select"
-                    :class="{ 'has-pending': pendingStatusChanges[ad.id] }"
-                  >
-                    <option value="active">Wolne</option>
-                    <option value="reserved">Zarezerwowane</option>
-                    <option value="soon_available">Wkrótce dostępne</option>
-                  </select>
-                  
-                  <div v-if="pendingStatusChanges[ad.id]" class="status-actions">
-                    <button @click.stop="confirmStatusChange(ad.id)" class="status-btn confirm" title="Zapisz">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>
-                    </button>
-                    <button @click.stop="cancelStatusChange(ad.id)" class="status-btn cancel" title="Anuluj">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <label class="switch">
-                  <input type="checkbox" :checked="ad.is_active" @change="toggleActive(ad.id)" />
-                  <span class="slider"></span>
-                  <span class="switch-label">{{ ad.is_active ? 'Aktywne' : 'Nieaktywne' }}</span>
-                </label>
-
-                <div class="views-counter">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 5C7 5 2.73 8.11 1 12.5 2.73 16.89 7 20 12 20s9.27-3.11 11-7.5C21.27 8.11 17 5 12 5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor"/>
-                  </svg>
-                  <span>{{ ad.views || 0 }}</span>
-                </div>
-
-                <button @click.stop="openPreview(ad.id)" class="preview-btn" title="Zobacz ogłoszenie">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
-
-                <button @click.stop="deleteAd(ad.id)" class="delete-btn" title="Usuń ogłoszenie">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
-                </button>
-              </div>
-
-              <div class="expand-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+              <div class="stat">
+                <span class="stat-label">Nieaktywne</span>
+                <span class="stat-value">{{ advertisements.filter(ad => !ad.is_active).length }}</span>
               </div>
             </div>
 
-            <div v-if="expandedRows.has(ad.id) && editingAd" class="ad-details">
-              <form @submit.prevent="saveChanges(ad.id)" class="edit-form">
-                <div class="form-grid">
-                <div class="form-group full-width">
-                    <label>Zdjęcia (max 5)</label>
-                    <p class="help-text">Pierwsze zdjęcie będzie zdjęciem głównym. Przeciągnij, aby zmienić kolejność.</p>
-                    <div 
-                      class="images-grid"
-                      :class="{ 'dragging': isDragging }"
-                      @dragover.prevent="isDragging = true"
-                      @dragleave.prevent="isDragging = false"
-                      @drop.prevent="handleDrop"
+            <div v-for="ad in advertisements" :key="ad.id" :id="'ad-row-' + ad.id" class="ad-row" :class="{ expanded: expandedRows.has(ad.id) }">
+              <div class="ad-summary" @click="toggleRow(ad.id)">
+                <div class="ad-thumbnail">
+                  <img v-if="ad.image_url" :src="getFullImageUrl(ad.image_url)" :alt="ad.title" />
+                  <div v-else class="no-image">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                      <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                      <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="ad-info">
+                  <h3 class="ad-title">{{ ad.title }}</h3>
+                  <p class="ad-meta">{{ ad.city }} • {{ getTypeLabel(ad.type) }} • {{ ad.width }}m × {{ ad.height }}m</p>
+                </div>
+
+                <div class="ad-controls" @click.stop>
+                  <div class="status-dropdown">
+                    <select 
+                      :value="pendingStatusChanges[ad.id] || ad.status" 
+                      @change="handleStatusChange(ad.id, ($event.target as HTMLSelectElement).value)" 
+                      class="status-select"
+                      :class="{ 'has-pending': pendingStatusChanges[ad.id] }"
                     >
-                      <div 
-                        v-for="(img, index) in unifiedImages" 
-                        :key="img.id" 
-                        class="image-item"
-                        :class="{ 
-                          'drag-over': dragOverTarget?.index === index,
-                          'dragging': draggedImageIndex === index,
-                          'new': img.type === 'new'
-                        }"
-                        draggable="true"
-                        @dragstart="handleImageDragStart($event, index)"
-                        @dragover.prevent="handleImageDragOver($event, index)"
-                        @dragend="handleDragEnd"
-                        @drop.prevent="handleImageDrop($event, index)"
-                      >
-                        <img :src="img.type === 'existing' ? img.url : img.preview" alt="Zdjęcie" />
-                        <span v-if="index === 0" class="main-badge">Główne</span>
-                        <button type="button" @click="removeImage(index)" class="remove-btn" title="Usuń">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                          </svg>
-                        </button>
-                      </div>
-
-                      <!-- Upload Button -->
-                      <div v-if="getTotalImagesCount() < 5" class="upload-btn-wrapper">
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          multiple
-                          @change="handleImageSelect" 
-                          :id="'image-upload-' + ad.id"
-                          class="file-input"
-                          style="display: none"
-                        />
-                        <label :for="'image-upload-' + ad.id" class="upload-btn" title="Kliknij lub upuść tutaj">
-                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 4v16m-8-8h16" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
-                          </svg>
-                          <span class="upload-text">Dodaj</span>
-                        </label>
-                      </div>
-                    </div>
-                    <p class="help-text">Przeciągnij i upuść zdjęcia tutaj lub kliknij "Dodaj"</p>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Tytuł</label>
-                    <input v-model="editingAd.title" type="text" required />
-                  </div>
-
-                  <div class="form-group full-width">
-                    <label>Opis</label>
-                    <textarea v-model="editingAd.description" rows="4" required></textarea>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Cena</label>
-                    <input v-model.number="editingAd.price" type="number" required />
-                  </div>
-
-                  <div class="form-group">
-                    <label>Jednostka cenowa</label>
-                    <select v-model="editingAd.price_unit" required>
-                      <option value="day">za dzień</option>
-                      <option value="week">za tydzień</option>
-                      <option value="month">za miesiąc</option>
-                      <option value="year">za rok</option>
+                      <option value="active">Wolne</option>
+                      <option value="reserved">Zarezerwowane</option>
+                      <option value="soon_available">Wkrótce dostępne</option>
                     </select>
-                  </div>
-
-                  <div class="form-group checkbox-group full-width">
-                    <label>
-                      <input v-model="editingAd.price_negotiable" type="checkbox" />
-                      <span>Cena do negocjacji</span>
-                    </label>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Miasto</label>
-                    <input v-model="editingAd.city" type="text" required />
-                  </div>
-
-                  <div class="form-group">
-                    <label>Lokalizacja</label>
-                    <input v-model="editingAd.location" type="text" required />
-                  </div>
-
-                  <div class="form-group">
-                    <label>Województwo</label>
-                    <input v-model="editingAd.region" type="text" required />
-                  </div>
-
-                  <div class="form-group">
-                    <label>Typ powierzchni</label>
-                    <select v-model="editingAd.type" required>
-                      <option value="billboard">Billboard</option>
-                      <option value="citylight">Citylight</option>
-                      <option value="led_screen">Ekran LED</option>
-                      <option value="digital">Digital</option>
-                      <option value="banner">Banner</option>
-                      <option value="poster">Plakat</option>
-                    </select>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Szerokość (m)</label>
-                    <input v-model.number="editingAd.width" type="number" step="0.1" required />
-                  </div>
-
-                  <div class="form-group">
-                    <label>Wysokość (m)</label>
-                    <input v-model.number="editingAd.height" type="number" step="0.1" required />
-                  </div>
-
-                  <div class="form-group">
-                    <label>Orientacja</label>
-                    <select v-model="editingAd.orientation" required>
-                      <option value="horizontal">Poziom</option>
-                      <option value="vertical">Pion</option>
-                    </select>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Natężenie ruchu</label>
-                    <select v-model="editingAd.traffic_intensity" required>
-                      <option value="low">Niskie</option>
-                      <option value="medium">Średnie</option>
-                      <option value="high">Wysokie</option>
-                    </select>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Rodzaj oferty</label>
-                    <select v-model="editingAd.offer_type" required>
-                      <option value="owner">Właściciel</option>
-                      <option value="agency">Agencja</option>
-                    </select>
-                  </div>
-
-                  <div class="form-group checkbox-group full-width">
-                    <label>
-                      <input v-model="editingAd.has_lighting" type="checkbox" />
-                      <span>Podświetlenie</span>
-                    </label>
-                    <label>
-                      <input v-model="editingAd.price_includes_print" type="checkbox" />
-                      <span>Druk i montaż w cenie</span>
-                    </label>
-                    <label>
-                      <input v-model="editingAd.graphic_design_help" type="checkbox" />
-                      <span>Pomoc graficzna</span>
-                    </label>
-                    <label>
-                      <input v-model="editingAd.has_vat_invoice" type="checkbox" />
-                      <span>Faktura VAT</span>
-                    </label>
-                  </div>
-
-                  <div class="form-group full-width">
-                    <label>Preferowana forma kontaktu</label>
-                    <select v-model="(editingAd as any).contact_preference" required>
-                      <option value="email">Tylko formularz kontaktowy</option>
-                      <option value="phone">Tylko telefon</option>
-                      <option value="both">Formularz i telefon</option>
-                    </select>
-                  </div>
-
-                  <div v-if="(editingAd as any).contact_preference === 'phone' || (editingAd as any).contact_preference === 'both'" class="form-group full-width">
-                    <label>Numer telefonu</label>
-                    <div class="phone-input-with-prefix">
-                      <div class="phone-prefix">
-                        <svg class="flag-icon" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-                          <rect width="640" height="240" fill="#fff"/>
-                          <rect y="240" width="640" height="240" fill="#dc143c"/>
+                    
+                    <div v-if="pendingStatusChanges[ad.id]" class="status-actions">
+                      <button @click.stop="confirmStatusChange(ad.id)" class="status-btn confirm" title="Zapisz">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        <span>+48</span>
-                      </div>
-                      <input
-                        v-model="(editingAd as any).phone"
-                        type="tel"
-                        class="phone-input-field"
-                        placeholder="123 456 789"
-                      />
+                      </button>
+                      <button @click.stop="cancelStatusChange(ad.id)" class="status-btn cancel" title="Anuluj">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </button>
                     </div>
                   </div>
+
+                  <label class="switch">
+                    <input type="checkbox" :checked="ad.is_active" @change="toggleActive(ad.id)" />
+                    <span class="slider"></span>
+                    <span class="switch-label">{{ ad.is_active ? 'Aktywne' : 'Nieaktywne' }}</span>
+                  </label>
+
+                  <div class="views-counter">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 5C7 5 2.73 8.11 1 12.5 2.73 16.89 7 20 12 20s9.27-3.11 11-7.5C21.27 8.11 17 5 12 5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor"/>
+                    </svg>
+                    <span>{{ ad.views || 0 }}</span>
+                  </div>
+
+                  <button @click.stop="openPreview(ad.id)" class="preview-btn" title="Zobacz ogłoszenie">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+
+                  <button @click.stop="deleteAd(ad.id)" class="delete-btn" title="Usuń ogłoszenie">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </button>
                 </div>
 
-                  <div class="form-actions">
-                    <button type="button" @click="toggleRow(ad.id)" class="btn-cancel" :disabled="isSaving">
-                      Anuluj
-                    </button>
-                    <button type="submit" class="btn-save" :disabled="isSaving">
-                      <template v-if="isSaving">
-                        <svg class="spinner-icon" viewBox="0 0 24 24" fill="none">
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Zapisywanie...
-                      </template>
-                      <template v-else>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-width="2"/>
-                          <path d="M17 21v-8H7v8M7 3v5h8" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                        Zapisz zmiany
-                      </template>
-                    </button>
+                <div class="expand-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div v-if="expandedRows.has(ad.id) && editingAd" class="ad-details">
+                <form @submit.prevent="saveChanges(ad.id)" class="edit-form">
+                  <div class="form-grid">
+                  <div class="form-group full-width">
+                      <label>Zdjęcia (max 5)</label>
+                      <p class="help-text">Pierwsze zdjęcie będzie zdjęciem głównym. Przeciągnij, aby zmienić kolejność.</p>
+                      <div 
+                        class="images-grid"
+                        :class="{ 'dragging': isDragging }"
+                        @dragover.prevent="isDragging = true"
+                        @dragleave.prevent="isDragging = false"
+                        @drop.prevent="handleDrop"
+                      >
+                        <div 
+                          v-for="(img, index) in unifiedImages" 
+                          :key="img.id" 
+                          class="image-item"
+                          :class="{ 
+                            'drag-over': dragOverTarget?.index === index,
+                            'dragging': draggedImageIndex === index,
+                            'new': img.type === 'new'
+                          }"
+                          draggable="true"
+                          @dragstart="handleImageDragStart($event, index)"
+                          @dragover.prevent="handleImageDragOver(index)"
+                          @dragend="handleDragEnd"
+                          @drop.prevent="handleImageDrop(index)"
+                        >
+                          <div v-if="img.loading" class="image-loader">
+                            <div class="spinner-small"></div>
+                          </div>
+                          <img v-else :src="img.type === 'existing' ? getFullImageUrl(img.url || '') : img.preview" alt="Zdjęcie" />
+                          <span v-if="index === 0" class="main-badge">Główne</span>
+                          <button type="button" @click="removeImage(index)" class="remove-btn" title="Usuń">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                          </button>
+                        </div>
+
+                        <!-- Upload Button -->
+                        <div v-if="getTotalImagesCount() < 5" class="upload-btn-wrapper">
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            multiple
+                            @change="handleImageSelect" 
+                            :id="'image-upload-' + ad.id"
+                            class="file-input"
+                            style="display: none"
+                          />
+                          <label :for="'image-upload-' + ad.id" class="upload-btn" title="Kliknij lub upuść tutaj">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                              <path d="M12 4v16m-8-8h16" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <span class="upload-text">Dodaj</span>
+                          </label>
+                        </div>
+                      </div>
+                      <p class="help-text">Przeciągnij i upuść zdjęcia tutaj lub kliknij "Dodaj"</p>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Tytuł</label>
+                      <input v-model="editingAd.title" type="text" required />
+                    </div>
+
+                    <div class="form-group full-width">
+                      <label>Opis</label>
+                      <textarea v-model="editingAd.description" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Cena</label>
+                      <input v-model.number="editingAd.price" type="number" required />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Jednostka cenowa</label>
+                      <select v-model="editingAd.price_unit" required>
+                        <option value="day">za dzień</option>
+                        <option value="week">za tydzień</option>
+                        <option value="month">za miesiąc</option>
+                        <option value="year">za rok</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group checkbox-group full-width">
+                      <label>
+                        <input v-model="editingAd.price_negotiable" type="checkbox" />
+                        <span>Cena do negocjacji</span>
+                      </label>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Miasto</label>
+                      <input v-model="editingAd.city" type="text" required />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Lokalizacja</label>
+                      <input v-model="editingAd.location" type="text" required />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Województwo</label>
+                      <input v-model="editingAd.region" type="text" required />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Typ powierzchni</label>
+                      <select v-model="editingAd.type" required>
+                        <option value="billboard">Billboard</option>
+                        <option value="citylight">Citylight</option>
+                        <option value="led_screen">Ekran LED</option>
+                        <option value="digital">Digital</option>
+                        <option value="banner">Banner</option>
+                        <option value="poster">Plakat</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Szerokość (m)</label>
+                      <input v-model.number="editingAd.width" type="number" step="0.1" required />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Wysokość (m)</label>
+                      <input v-model.number="editingAd.height" type="number" step="0.1" required />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Orientacja</label>
+                      <select v-model="editingAd.orientation" required>
+                        <option value="horizontal">Poziom</option>
+                        <option value="vertical">Pion</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Natężenie ruchu</label>
+                      <select v-model="editingAd.traffic_intensity" required>
+                        <option value="low">Niskie</option>
+                        <option value="medium">Średnie</option>
+                        <option value="high">Wysokie</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Rodzaj oferty</label>
+                      <select v-model="editingAd.offer_type" required>
+                        <option value="owner">Właściciel</option>
+                        <option value="agency">Agencja</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group checkbox-group full-width">
+                      <label>
+                        <input v-model="editingAd.has_lighting" type="checkbox" />
+                        <span>Podświetlenie</span>
+                      </label>
+                      <label>
+                        <input v-model="editingAd.price_includes_print" type="checkbox" />
+                        <span>Druk i montaż w cenie</span>
+                      </label>
+                      <label>
+                        <input v-model="editingAd.graphic_design_help" type="checkbox" />
+                        <span>Pomoc graficzna</span>
+                      </label>
+                      <label>
+                        <input v-model="editingAd.has_vat_invoice" type="checkbox" />
+                        <span>Faktura VAT</span>
+                      </label>
+                    </div>
+
+                    <div class="form-group full-width">
+                      <label>Preferowana forma kontaktu</label>
+                      <select v-model="(editingAd as any).contact_preference" required>
+                        <option value="email">Tylko formularz kontaktowy</option>
+                        <option value="phone">Tylko telefon</option>
+                        <option value="both">Formularz i telefon</option>
+                      </select>
+                    </div>
+
+                    <div v-if="(editingAd as any).contact_preference === 'phone' || (editingAd as any).contact_preference === 'both'" class="form-group full-width">
+                      <label>Numer telefonu</label>
+                      <div class="phone-input-with-prefix">
+                        <div class="phone-prefix">
+                          <svg class="flag-icon" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                            <rect width="640" height="240" fill="#fff"/>
+                            <rect y="240" width="640" height="240" fill="#dc143c"/>
+                          </svg>
+                          <span>+48</span>
+                        </div>
+                        <input
+                          v-model="(editingAd as any).phone"
+                          type="tel"
+                          class="phone-input-field"
+                          placeholder="123 456 789"
+                        />
+                      </div>
+                    </div>
                   </div>
-              </form>
+
+                    <div class="form-actions">
+                      <button type="button" @click="toggleRow(ad.id)" class="btn-cancel" :disabled="isSaving">
+                        Anuluj
+                      </button>
+                      <button type="submit" class="btn-save" :disabled="isSaving">
+                        <template v-if="isSaving">
+                          <svg class="spinner-icon" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Zapisywanie...
+                        </template>
+                        <template v-else>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M17 21v-8H7v8M7 3v5h8" stroke="currentColor" stroke-width="2"/>
+                          </svg>
+                          Zapisz zmiany
+                        </template>
+                      </button>
+                    </div>
+                </form>
+              </div>
             </div>
+          </div>
+        </div>
+        
+        <div v-else class="content-card">
+          <div v-if="!isSuccess" class="card-body">
+            <div class="icon-wrapper">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#667eea" stroke-width="2"/>
+                <path d="M3 9h18M9 3v18" stroke="#667eea" stroke-width="2"/>
+              </svg>
+            </div>
+
+            <h1>Panel zarządzania ogłoszeniami</h1>
+            <p class="description">
+              Podaj swój adres e-mail, aby otrzymać link do panelu zarządzania Twoimi ogłoszeniami.
+            </p>
+
+            <form @submit.prevent="handleSubmit" class="email-form">
+              <div class="input-wrapper">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 4H17C17.55 4 18 4.45 18 5V15C18 15.55 17.55 16 17 16H3C2.45 16 2 15.55 2 15V5C2 4.45 2.45 4 3 4Z" stroke="#4F46E5" stroke-width="1.5"/>
+                  <path d="M18 5L10 11L2 5" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <input
+                  v-model="email"
+                  type="email"
+                  placeholder="twoj@email.com"
+                  required
+                  class="email-input"
+                />
+              </div>
+              
+              <div v-if="errorMessage" class="error-message">
+                {{ errorMessage }}
+              </div>
+
+              <button type="submit" :disabled="isSubmitting" class="submit-btn">
+                <span v-if="!isSubmitting">Wyślij link do panelu</span>
+                <span v-else class="loading">Wysyłam...</span>
+              </button>
+              
+              <p class="info-text">
+                Link będzie ważny przez 24 godziny
+              </p>
+            </form>
+          </div>
+
+          <div v-else class="success-body">
+            <div class="success-icon">
+              <svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="32" fill="#10B981" opacity="0.1"/>
+                <circle cx="32" cy="32" r="24" fill="#10B981"/>
+                <path d="M22 32L28 38L42 24" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h2 class="success-title">Link został wysłany!</h2>
+            <p class="success-description">
+              Sprawdź swoją skrzynkę odbiorczą na adresie <strong>{{ email }}</strong>
+              <br>
+              <span class="redirect-info">Za chwilę nastąpi przekierowanie na stronę główną...</span>
+            </p>
           </div>
         </div>
       </div>
@@ -659,6 +953,7 @@ onMounted(() => {
     @confirm="handleConfirmDelete"
   />
   <ToastNotification ref="toast" />
+
 </template>
 
 <style scoped>
@@ -719,6 +1014,18 @@ onMounted(() => {
   margin: 0;
   color: #6b7280;
   font-size: 1rem;
+}
+
+.token-info-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.token-info-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.9rem;
 }
 
 .page-content {
@@ -1593,5 +1900,164 @@ onMounted(() => {
   pointer-events: none;
   z-index: 10;
   color: #9ca3af;
+}
+
+/* Style dla formularza email */
+.content-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.description {
+  color: #6b7280;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper svg {
+  position: absolute;
+  left: 1rem;
+  pointer-events: none;
+}
+
+.email-input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 2px solid #E5E7EB;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.email-input:focus {
+  outline: none;
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.error-message {
+  color: #EF4444;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background-color: #FEF2F2;
+  border-radius: 6px;
+  border-left: 3px solid #EF4444;
+  text-align: left;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loading {
+  display: inline-block;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.success-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.success-icon {
+  margin-bottom: 1.5rem;
+  animation: scaleIn 0.5s ease-out;
+}
+
+.success-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1F2937;
+  margin: 0 0 1rem 0;
+}
+
+.success-description {
+  font-size: 1rem;
+  color: #6B7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.info-text {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #9CA3AF;
+}
+
+.redirect-info {
+  display: block;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #6B7280;
+  font-style: italic;
+}
+
+.image-loader {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  border-radius: 0.5rem;
+}
+
+.spinner-small {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 </style>

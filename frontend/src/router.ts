@@ -68,8 +68,8 @@ const router = createRouter({
     },
     {
       path: '/zarzadzaj/:token',
-      name: 'management-token',
-      component: () => import('./views/ManagementTokenPage.vue')
+      name: 'management-with-token',
+      component: ManagementPage
     },
     {
       path: '/zarzadzaj',
@@ -116,7 +116,7 @@ const router = createRouter({
     // If the user is navigating back/forward and has a saved position, use it
     if (savedPosition) {
       return savedPosition
-    } 
+    }
     // If there's a hash in the URL, scroll to it with offset
     else if (to.hash) {
       // Wait for the DOM to be updated before scrolling
@@ -129,7 +129,7 @@ const router = createRouter({
           })
         }, 100)
       })
-    } 
+    }
     // If it's the same route with different query parameters, don't scroll
     else if (from.path === to.path && JSON.stringify(from.query) !== JSON.stringify(to.query)) {
       return false

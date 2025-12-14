@@ -202,8 +202,23 @@ const loadAd = async () => {
 
     ad.value = data
     
+    // Helper to map type to URL format
+    const mapTypeToUrlFormat = (type: string): string => {
+      const typeMapping: Record<string, string> = {
+        'billboard': 'billboard',
+        'citylight': 'citylight',
+        'led_screen': 'ekran-led',
+        'digital': 'digital',
+        'banner': 'baner',
+        'poster': 'plakat',
+        'wall': 'sciana',
+        'other': 'inne'
+      }
+      return typeMapping[type] || 'inne'
+    }
+
     // Sprawdź czy URL jest poprawny, jeśli nie - przekieruj na poprawny
-    const correctPath = `/powierzchnia-reklamowa/${data.type}/${slugify(data.city)}/${slugify(data.title)}-${data.id}`
+    const correctPath = `/powierzchnia-reklamowa/${mapTypeToUrlFormat(data.type)}/${slugify(data.city)}/${slugify(data.title)}-${data.id}`
     const currentPath = router.currentRoute.value.path
     
     if (currentPath !== correctPath && !currentPath.includes('/ogloszenie/')) {
@@ -835,25 +850,7 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Toast Container -->
-    <div class="toast-container">
-      <div v-if="toast.show" class="toast" :class="`toast-${toast.type}`">
-        <div class="toast-icon">
-          <svg v-if="toast.type === 'success'" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M22 4L12 14.01l-3-3" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="#EF4444" stroke-width="2"/>
-            <path d="M12 8v4M12 16h.01" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div class="toast-content">
-          <div class="toast-title">{{ toast.title }}</div>
-          <div class="toast-message">{{ toast.message }}</div>
-        </div>
-      </div>
-    </div>
+
 
     <!-- Share Modal -->
     <div v-if="showShareModal" class="modal-overlay" @click.self="showShareModal = false">

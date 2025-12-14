@@ -19,10 +19,25 @@ const emit = defineEmits<{
   hoverEnd: [id: null]
 }>()
 
+const mapTypeToUrlFormat = (type: string): string => {
+  const typeMapping: Record<string, string> = {
+    'billboard': 'billboard',
+    'citylight': 'citylight',
+    'led_screen': 'ekran-led',
+    'digital': 'digital',
+    'banner': 'baner',
+    'poster': 'plakat',
+    'wall': 'sciana',
+    'other': 'inne'
+  }
+  return typeMapping[type] || 'inne'
+}
+
 const adLink = computed(() => {
   const city = slugify(props.ad.city)
   const title = slugify(props.ad.title)
-  return `/ogloszenie/${city}/${title}/${props.ad.id}`
+  const type = mapTypeToUrlFormat(props.ad.type)
+  return `/powierzchnia-reklamowa/${type}/${city}/${title}-${props.ad.id}`
 })
 
 const typeColors: Record<string, string> = {
