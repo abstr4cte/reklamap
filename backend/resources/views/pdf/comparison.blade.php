@@ -114,23 +114,24 @@
                             }
 
                             if ($imgSrc) {
-                                $path = null;
-                                if (str_contains($imgSrc, 'localhost:8001/storage/')) {
-                                    $relative = explode('localhost:8001/storage/', $imgSrc)[1];
-                                    $path = public_path('storage/' . $relative);
-                                } elseif (str_contains($imgSrc, '/storage/')) {
-                                    $relative = explode('/storage/', $imgSrc)[1];
-                                    $path = public_path('storage/' . $relative);
-                                } elseif (file_exists(public_path($imgSrc))) {
-                                    $path = public_path($imgSrc);
-                                } elseif (file_exists(public_path('storage/images/' . basename($imgSrc)))) {
-                                    $path = public_path('storage/images/' . basename($imgSrc));
+                                $imageData = null;
+                                $type = null;
+
+                                // Extract filename from URL (works for both full URLs and relative paths)
+                                $filename = basename(parse_url($imgSrc, PHP_URL_PATH));
+                                
+                                // Images are always stored in storage/app/public/advertisements/
+                                $path = storage_path('app/public/advertisements/' . $filename);
+
+                                // Try to load the image
+                                if (file_exists($path)) {
+                                    $imageData = file_get_contents($path);
+                                    $type = pathinfo($path, PATHINFO_EXTENSION);
                                 }
 
-                                if ($path && file_exists($path)) {
-                                    $type = pathinfo($path, PATHINFO_EXTENSION);
-                                    $data = file_get_contents($path);
-                                    $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                                // Convert to base64 if we have image data
+                                if ($imageData && $type) {
+                                    $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($imageData);
                                 }
                             }
                         @endphp

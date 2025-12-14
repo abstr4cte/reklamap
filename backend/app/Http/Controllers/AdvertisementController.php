@@ -35,7 +35,7 @@ class AdvertisementController extends Controller
             'height' => 'required|numeric',
             'owner_email' => 'required|email',
             'price_unit' => 'required|string',
-            'region' => 'required|string',
+            'region' => 'nullable|string',
             'orientation' => 'required|string',
             'traffic_intensity' => 'required|string',
             'offer_type' => 'required|string',

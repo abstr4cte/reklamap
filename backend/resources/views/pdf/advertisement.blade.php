@@ -125,31 +125,24 @@
 
         $base64Image = null;
         if ($imgSrc) {
-            $path = null;
+            $imageData = null;
+            $type = null;
 
-            // Case 1: Full URL with localhost:8001/storage
-            if (str_contains($imgSrc, 'localhost:8001/storage/')) {
-                $relative = explode('localhost:8001/storage/', $imgSrc)[1];
-                $path = public_path('storage/' . $relative);
-            }
-            // Case 2: Relative path starting with /storage/
-            else if (str_contains($imgSrc, '/storage/')) {
-                $relative = explode('/storage/', $imgSrc)[1];
-                $path = public_path('storage/' . $relative);
-            }
-            // Case 3: Just the filename or relative path (fallback)
-            else if (file_exists(public_path($imgSrc))) {
-                $path = public_path($imgSrc);
-            }
-            // Case 4: Try to find in storage/images if it's just a filename
-            else if (file_exists(public_path('storage/images/' . basename($imgSrc)))) {
-                $path = public_path('storage/images/' . basename($imgSrc));
-            }
+            // Extract filename from URL (works for both full URLs and relative paths)
+            $filename = basename(parse_url($imgSrc, PHP_URL_PATH));
 
-            if ($path && file_exists($path)) {
+            // Images are always stored in storage/app/public/advertisements/
+            $path = storage_path('app/public/advertisements/' . $filename);
+
+            // Try to load the image
+            if (file_exists($path)) {
+                $imageData = file_get_contents($path);
                 $type = pathinfo($path, PATHINFO_EXTENSION);
-                $data = file_get_contents($path);
-                $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
+
+            // Convert to base64 if we have image data
+            if ($imageData && $type) {
+                $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($imageData);
             }
         }
     @endphp
