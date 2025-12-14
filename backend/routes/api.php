@@ -15,6 +15,7 @@ Route::post('advertisements/{id}/increment-views', [AdvertisementController::cla
 Route::get('advertisements/{id}/similar', [AdvertisementController::class, 'similar']);
 Route::post('reports', [AdvertisementController::class, 'report']);
 Route::get('advertisements/{id}/pdf', [AdvertisementController::class, 'generatePdf']);
+Route::get('advertisements/pdf/comparison', [AdvertisementController::class, 'generateComparisonPdf']);
 Route::post('upload', [StorageController::class, 'upload']);
 
 // Management token routes

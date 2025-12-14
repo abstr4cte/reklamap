@@ -121,4 +121,18 @@ class AdvertisementController extends Controller
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.advertisement', ['advertisement' => $ad]);
         return $pdf->download('ogloszenie-' . $ad->id . '.pdf');
     }
+
+    public function generateComparisonPdf(Request $request)
+    {
+        $ids = explode(',', $request->input('ids'));
+        $unit = $request->input('unit', 'month');
+        $ads = Advertisement::whereIn('id', $ids)->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.comparison', [
+            'advertisements' => $ads,
+            'displayUnit' => $unit
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->download('porownanie-ogloszen.pdf');
+    }
 }

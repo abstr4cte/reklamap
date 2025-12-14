@@ -1,15 +1,42 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { api } from '../services/api'
+import { api, getFullImageUrl } from '../services/api'
 import type { Advertisement } from '../types'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
+
+import axios from '../api/axios'
 
 const router = useRouter()
 const comparisonAds = ref<Advertisement[]>([])
 const isLoading = ref(true)
+const isGeneratingPdf = ref(false)
 const priceUnit = ref<'day' | 'week' | 'month' | 'year'>('month')
 const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
+
+const downloadPdf = async () => {
+  if (comparisonAds.value.length === 0) return
+  
+  isGeneratingPdf.value = true
+  try {
+    const ids = comparisonAds.value.map(ad => ad.id).join(',')
+    const response = await axios.get(`/api/advertisements/pdf/comparison?ids=${ids}&unit=${priceUnit.value}`, {
+      responseType: 'blob'
+    })
+    
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'porownanie-ogloszen.pdf')
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  } catch (error) {
+    console.error('Error downloading PDF:', error)
+  } finally {
+    isGeneratingPdf.value = false
+  }
+}
 
 const loadComparison = async () => {
   const comparisonIds = JSON.parse(localStorage.getItem('comparison') || '[]')
@@ -153,6 +180,13 @@ onMounted(() => {
           Powrót do listy
         </button>
         <h1>Porównanie ogłoszeń</h1>
+        <button v-if="comparisonAds.length > 0" @click="downloadPdf" class="pdf-button" :disabled="isGeneratingPdf">
+          <svg v-if="!isGeneratingPdf" width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 15L12 3M12 15L8 11M12 15L16 11M2 17L2 21L22 21L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div v-else class="spinner-small"></div>
+          {{ isGeneratingPdf ? 'Generowanie...' : 'Pobierz PDF' }}
+        </button>
         <button v-if="comparisonAds.length > 0" @click="clearAll" class="clear-button">
           Wyczyść wszystkie
         </button>
@@ -201,13 +235,13 @@ onMounted(() => {
           <table class="comparison-table">
             <thead>
               <tr>
-                <th class="feature-column">Cecha</th>
+                <th class="feature-column"></th>
                 <th v-for="ad in comparisonAds" :key="ad.id" class="ad-column">
                   <div class="ad-header">
                     <router-link :to="`/ogloszenie/${ad.id}`" class="ad-image-link">
                       <img
                         v-if="ad.image_url"
-                        :src="ad.image_url"
+                        :src="getFullImageUrl(ad.image_url)"
                         :alt="ad.title"
                         class="ad-image"
                       />
@@ -274,12 +308,7 @@ onMounted(() => {
                   {{ formatLocation(ad.location, ad.city) }}
                 </td>
               </tr>
-              <tr>
-                <td class="feature-name">Województwo</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  {{ ad.region }}
-                </td>
-              </tr>
+
               <tr>
                 <td class="feature-name">Natężenie ruchu</td>
                 <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
@@ -411,6 +440,41 @@ onMounted(() => {
 .clear-button:hover {
   background: #fee2e2;
   border-color: #fca5a5;
+}
+
+.pdf-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 2px solid #e5e7eb;
+  color: #374151;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.pdf-button:hover:not(:disabled) {
+  border-color: #4f46e5;
+  color: #4f46e5;
+  transform: translateX(-4px);
+}
+
+.pdf-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 .page-content {
