@@ -5,7 +5,18 @@ import { api } from '../services/api'
 import ToastNotification from '../components/ToastNotification.vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import icon from 'leaflet/dist/images/marker-icon.png'
+import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
+
+// Fix Leaflet icon paths
+const DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+})
+L.Marker.prototype.options.icon = DefaultIcon
 import { point } from '@turf/helpers'
 import polandGeoJson from '../assets/poland_highres.json'
 import { nsfwService } from '../services/nsfwService'

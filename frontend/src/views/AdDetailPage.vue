@@ -6,7 +6,18 @@ import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import icon from 'leaflet/dist/images/marker-icon.png'
+import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import ToastNotification from '../components/ToastNotification.vue'
+
+// Fix Leaflet icon paths
+const DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+})
+L.Marker.prototype.options.icon = DefaultIcon
 
 const route = useRoute()
 const router = useRouter()
