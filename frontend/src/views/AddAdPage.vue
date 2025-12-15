@@ -607,17 +607,11 @@ const handleSubmit = async () => {
 
     const imageUrls = await uploadImages()
     const mainImageUrl = imageUrls.length > 0 ? imageUrls[0] : ''
-    
-    // Save all image URLs in description with special marker
-    let descriptionWithImages = formData.value.description
-    if (imageUrls.length > 1) {
-      descriptionWithImages += '\n\n[IMAGES]' + JSON.stringify(imageUrls.slice(1)) + '[/IMAGES]'
-    }
 
     const newAd = await api.createAdvertisement({
         owner_email: formData.value.email,
         title: formData.value.title,
-        description: descriptionWithImages,
+        description: formData.value.description,
         type: formData.value.type,
         price: formData.value.price!,
         // base_price_per_day: pricePerDay.value, // Not in interface?

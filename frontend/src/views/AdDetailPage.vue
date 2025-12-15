@@ -25,6 +25,7 @@ const router = useRouter()
 const ad = ref<Advertisement | null>(null)
 const similarAds = ref<Advertisement[]>([])
 const isLoading = ref(true)
+const notFound = ref(false)
 const showPhone = ref(false)
 const isFavorite = ref(false)
 const isInComparison = ref(false)
@@ -44,6 +45,12 @@ const currentImageIndex = ref(0)
 const images = computed(() => {
   if (!ad.value) return []
   
+  // Use the dedicated images field if available
+  if (ad.value.images && Array.isArray(ad.value.images) && ad.value.images.length > 0) {
+    return ad.value.images
+  }
+  
+  // Backward compatibility: try to extract from description for old ads
   const allImages: string[] = []
   
   // Add main image
@@ -51,27 +58,21 @@ const images = computed(() => {
     allImages.push(ad.value.image_url)
   }
   
-  // Extract additional images from description
+  // Extract additional images from description (for old ads)
   if (ad.value.description) {
     const match = ad.value.description.match(/\[IMAGES\](.*?)\[\/IMAGES\]/s)
     if (match && match[1]) {
       try {
-        const additionalImages = JSON.parse(match[1])
+        const additionalImages = JSON.parse(match[1].trim())
         if (Array.isArray(additionalImages)) {
           allImages.push(...additionalImages)
         }
       } catch (e) {
-        console.error('Error parsing images:', e)
+        console.error('Error parsing images from description:', e)
       }
     }
   }
   
-  // Fallback to old images array if exists
-  if (allImages.length === 0 && ad.value.images && ad.value.images.length > 0) {
-    return ad.value.images
-  }
-  
-
   return allImages
 })
 
@@ -208,6 +209,7 @@ const initMap = () => {
 const loadAd = async () => {
   try {
     isLoading.value = true
+    notFound.value = false
     // Pobierz ID z parametru URL - może być w formacie slug-id
     const idParam = route.params.id as string
     const adId = idParam.includes('-') ? idParam.split('-').pop() || idParam : idParam
@@ -215,7 +217,15 @@ const loadAd = async () => {
     const data = await api.getAdvertisement(adId)
 
     if (!data) {
-      router.push('/')
+      notFound.value = true
+      isLoading.value = false
+      return
+    }
+
+    // Block access to inactive advertisements - show 404 without changing URL
+    if (!data.is_active) {
+      notFound.value = true
+      isLoading.value = false
       return
     }
 
@@ -257,7 +267,7 @@ const loadAd = async () => {
     api.incrementViews(adId)
   } catch (error) {
     console.error('Error loading ad:', error)
-    router.push('/')
+    notFound.value = true
   } finally {
     isLoading.value = false
   }
@@ -389,7 +399,7 @@ const isSubmittingReport = ref(false)
 
 // Używamy komponentu ToastNotification zamiast własnego obiektu toast
 
-const showToast = (title: string, message: string, type: 'success' | 'error' = 'success') => {
+const showToast = (message: string, type: 'success' | 'error' = 'success') => {
   toast.value?.add(message, type)
 }
 
@@ -434,7 +444,7 @@ const handlePrint = async () => {
     }
   } catch (error) {
     console.error('Error printing PDF:', error)
-    showToast('Błąd', 'Nie udało się przygotować pliku do druku', 'error')
+    showToast('Nie udało się przygotować pliku do druku', 'error')
   } finally {
     isGeneratingPDF.value = false
   }
@@ -460,10 +470,10 @@ const handleDownloadPDF = async () => {
     link.click()
     document.body.removeChild(link)
     
-    showToast('Sukces', 'PDF został pobrany', 'success')
+    showToast('PDF został pobrany', 'success')
   } catch (error) {
     console.error('Error generating PDF:', error)
-    showToast('Błąd', 'Nie udało się wygenerować PDF', 'error')
+    showToast('Nie udało się wygenerować PDF', 'error')
   } finally {
     isGeneratingPDF.value = false
   }
@@ -495,10 +505,10 @@ const handleShare = async () => {
 const copyLink = async () => {
   try {
     await navigator.clipboard.writeText(window.location.href)
-    showToast('Skopiowano', 'Link został skopiowany do schowka', 'success')
+    showToast('Link został skopiowany do schowka', 'success')
   } catch (err) {
     console.error('Failed to copy:', err)
-    showToast('Błąd', 'Nie udało się skopiować linku', 'error')
+    showToast('Nie udało się skopiować linku', 'error')
   }
 }
 
@@ -555,10 +565,10 @@ const submitReport = async () => {
     })
 
     closeReportModal()
-    showToast('Zgłoszenie wysłane', 'Dziękujemy za zgłoszenie. Przyjrzymy się tej sprawie.', 'success')
+    showToast('Dziękujemy za zgłoszenie. Przyjrzymy się tej sprawie.', 'success')
   } catch (error) {
     console.error('Error submitting report:', error)
-    showToast('Błąd', 'Wystąpił błąd podczas wysyłania zgłoszenia. Spróbuj ponownie później.', 'error')
+    showToast('Wystąpił błąd podczas wysyłania zgłoszenia. Spróbuj ponownie później.', 'error')
   } finally {
     isSubmittingReport.value = false
   }
@@ -618,6 +628,24 @@ onUnmounted(() => {
     <div v-if="isLoading" class="loading-container">
       <div class="spinner"></div>
       <p>Ładowanie ogłoszenia...</p>
+    </div>
+
+    <div v-else-if="notFound" class="not-found-container">
+      <div class="not-found-content">
+        <div class="error-code">404</div>
+        <h1>Ogłoszenie nie zostało znalezione</h1>
+        <p>Wygląda na to, że ogłoszenie, którego szukasz, nie istnieje, zostało usunięte lub jest nieaktywne.</p>
+        
+        <div class="actions">
+          <button @click="router.push('/')" class="btn btn-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Wróć na stronę główną
+          </button>
+        </div>
+      </div>
     </div>
 
     <div v-else-if="ad" class="page-container">
@@ -1039,6 +1067,70 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+/* Not Found Styles */
+.not-found-container {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+  padding: 2rem;
+}
+
+.not-found-content {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  background: white;
+  padding: 4rem 2rem;
+  border-radius: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.not-found-content .error-code {
+  font-size: 8rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.5rem;
+}
+
+.not-found-content h1 {
+  font-size: 2rem;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  font-weight: 800;
+}
+
+.not-found-content p {
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.not-found-content .actions {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .not-found-content .error-code {
+    font-size: 6rem;
+  }
+
+  .not-found-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .not-found-content {
+    padding: 3rem 1.5rem;
+  }
+}
+
 /* Share Modal Styles */
 .share-content {
   display: flex;
@@ -1288,7 +1380,7 @@ onUnmounted(() => {
   display: flex;
   gap: 1rem;
   overflow-x: auto;
-  padding-bottom: 0.5rem;
+  padding: 0.75rem 0 0.5rem 0.5rem;
 }
 
 .thumbnail {

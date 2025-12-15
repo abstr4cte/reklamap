@@ -12,14 +12,7 @@ class AdvertisementController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Advertisement::query();
-
-        if ($request->has('ids')) {
-            $ids = explode(',', $request->input('ids'));
-            $query->whereIn('id', $ids);
-        }
-
-        return $query->orderBy('created_at', 'desc')->get();
+        return Advertisement::where('is_active', 1)->orderBy('created_at', 'desc')->get();
     }
 
     public function store(Request $request)
@@ -99,6 +92,7 @@ class AdvertisementController extends Controller
         $similar = Advertisement::where('city', $ad->city)
             ->where('type', $ad->type)
             ->where('id', '!=', $id)
+            ->where('is_active', 1)
             ->limit(4)
             ->get();
 

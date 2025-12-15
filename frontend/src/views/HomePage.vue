@@ -309,7 +309,7 @@ const loadAdvertisements = async () => {
   try {
     isLoading.value = true
     const data = await api.getAdvertisements()
-    // Show all advertisements regardless of status
+    // Backend returns only active advertisements
     advertisements.value = data
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   } catch (error) {
