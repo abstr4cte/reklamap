@@ -19,6 +19,7 @@ export interface Advertisement {
     created_at: string
     updated_at: string
     status: string
+    display_status?: string
     region: string
     orientation: string
     width: number

@@ -105,7 +105,18 @@ const checkComparisonStatus = () => {
 }
 
 const statusLabel = computed(() => {
-  switch (ad.value?.status) {
+  const currentStatus = ad.value?.display_status || ad.value?.status
+  
+  // Debug log dla szczegółów ogłoszenia
+  if (ad.value) {
+    console.log('🔍 SZCZEGÓŁY OGŁOSZENIA ID:', ad.value.id)
+    console.log('├─ Status z bazy:', ad.value.status)
+    console.log('├─ Display status:', ad.value.display_status)
+    console.log('├─ Data dostępności:', ad.value.available_from || 'brak')
+    console.log('└─ Używany status:', currentStatus)
+  }
+  
+  switch (currentStatus) {
     case 'active':
       return 'Wolne'
     case 'reserved':
@@ -118,7 +129,8 @@ const statusLabel = computed(() => {
 })
 
 const statusClass = computed(() => {
-  switch (ad.value?.status) {
+  const currentStatus = ad.value?.display_status || ad.value?.status
+  switch (currentStatus) {
     case 'active':
       return 'status-available'
     case 'reserved':
@@ -215,6 +227,14 @@ const loadAd = async () => {
     const adId = idParam.includes('-') ? idParam.split('-').pop() || idParam : idParam
 
     const data = await api.getAdvertisement(adId)
+    
+    // Debug - sprawdź co przyszło z API
+    console.log('📥 Dane z API:', {
+      id: data?.id,
+      status: data?.status,
+      display_status: data?.display_status,
+      available_from: data?.available_from
+    })
 
     if (!data) {
       notFound.value = true

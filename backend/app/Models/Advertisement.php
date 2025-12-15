@@ -71,5 +71,22 @@ class Advertisement extends Model
         'price_negotiable' => 'boolean',
     ];
 
+    protected $appends = ['display_status'];
+
+    /**
+     * Oblicz wyświetlany status na podstawie available_from
+     * Jeśli status=active i available_from jest w przyszłości -> "soon_available"
+     * W przeciwnym razie -> używamy status z bazy
+     */
+    public function getDisplayStatusAttribute(): string
+    {
+        // Jeśli status to active i mamy datę available_from w przyszłości
+        if ($this->status === 'active' && $this->available_from && $this->available_from->isFuture()) {
+            return 'soon_available';
+        }
+        
+        return $this->status;
+    }
+
     // Usunięto metodę boot generującą UUID
 }

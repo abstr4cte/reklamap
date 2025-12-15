@@ -143,7 +143,7 @@ const sortedAndFilteredAdvertisements = computed(() => {
   }
 
   if (filters.value.status && filters.value.status.length > 0) {
-    filtered = filtered.filter(ad => filters.value.status.includes(ad.status))
+    filtered = filtered.filter(ad => filters.value.status.includes(ad.display_status || ad.status))
   }
 
   if (filters.value.hasLighting) {

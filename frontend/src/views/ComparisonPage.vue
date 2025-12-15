@@ -342,7 +342,7 @@ onMounted(() => {
               <tr>
                 <td class="feature-name">Status</td>
                 <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  {{ getStatusLabel(ad.status) }}
+                  {{ getStatusLabel(ad.display_status || ad.status) }}
                 </td>
               </tr>
               <tr>

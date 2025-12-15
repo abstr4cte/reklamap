@@ -140,7 +140,17 @@ const formatLocation = (location: string, city: string) => {
 }
 
 const statusLabel = computed(() => {
-  switch (props.ad.status) {
+  const currentStatus = props.ad.display_status || props.ad.status
+  
+  // Debug log
+  console.log('📊 Ogłoszenie ID:', props.ad.id, {
+    'Status z bazy': props.ad.status,
+    'Display status': props.ad.display_status,
+    'Data dostępności': props.ad.available_from || 'brak',
+    'Używany status': currentStatus
+  })
+  
+  switch (currentStatus) {
     case 'active':
       return 'Wolne'
     case 'reserved':
@@ -153,7 +163,8 @@ const statusLabel = computed(() => {
 })
 
 const statusColor = computed(() => {
-  switch (props.ad.status) {
+  const currentStatus = props.ad.display_status || props.ad.status
+  switch (currentStatus) {
     case 'active':
       return '#10B981'
     case 'reserved':
