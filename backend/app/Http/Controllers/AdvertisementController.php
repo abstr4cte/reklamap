@@ -12,7 +12,15 @@ class AdvertisementController extends Controller
 {
     public function index(Request $request)
     {
-        return Advertisement::where('is_active', 1)->orderBy('created_at', 'desc')->get();
+        $query = Advertisement::where('is_active', 1);
+        
+        // If ids parameter is provided, filter by those IDs
+        if ($request->has('ids')) {
+            $ids = explode(',', $request->input('ids'));
+            $query->whereIn('id', $ids);
+        }
+        
+        return $query->orderBy('created_at', 'desc')->get();
     }
 
     public function store(Request $request)

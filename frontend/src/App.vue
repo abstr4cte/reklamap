@@ -25,6 +25,8 @@ const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 const syncFavorites = async () => {
   const favoriteIds = JSON.parse(localStorage.getItem('favorites') || '[]')
   
+  console.log('🔄 syncFavorites - IDs z localStorage:', favoriteIds)
+  
   if (favoriteIds.length === 0) {
     activeFavoriteIds.value = []
     return
@@ -32,12 +34,17 @@ const syncFavorites = async () => {
   
   try {
     const data = await api.getAdvertisementsByIds(favoriteIds)
+    console.log('📥 Pobrane ogłoszenia:', data.length)
+    
     // Filter to only include active advertisements
     const activeAds = data.filter(ad => ad.is_active)
+    console.log('✅ Aktywne ogłoszenia:', activeAds.length, activeAds.map(ad => ad.id))
+    
     activeFavoriteIds.value = activeAds.map(ad => ad.id)
     
     // Update localStorage if there are inactive/deleted ads
     if (activeAds.length < favoriteIds.length) {
+      console.log('🗑️ Usuwam nieaktywne z localStorage')
       localStorage.setItem('favorites', JSON.stringify(activeFavoriteIds.value))
       favoritesKey.value++
     }
@@ -150,17 +157,9 @@ const handleRemoveComparison = (id: string) => {
 }
 
 const handleStorageChange = () => {
-  // Synchronizuj activeFavoriteIds z localStorage
-  const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]')
-  activeFavoriteIds.value = storedFavorites
-  
-  // Synchronizuj activeComparisonIds z localStorage
-  const storedComparison = JSON.parse(localStorage.getItem('comparison') || '[]')
-  activeComparisonIds.value = storedComparison
-  
-  // Aktualizuj liczniki
-  favoritesKey.value++
-  comparisonKey.value++
+  // Synchronizuj z localStorage i filtruj tylko aktywne ogłoszenia
+  syncFavorites()
+  syncComparison()
 }
 
 onMounted(() => {
