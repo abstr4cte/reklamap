@@ -290,7 +290,8 @@ const typeColors: Record<string, string> = {
   led_screen: '#10B981',
   digital: '#3B82F6',
   banner: '#8B5CF6',
-  poster: '#EC4899'
+  poster: '#EC4899',
+  other: '#6B7280'
 }
 
 const typeLabels: Record<string, string> = {
@@ -299,7 +300,36 @@ const typeLabels: Record<string, string> = {
   led_screen: 'Ekran LED',
   digital: 'Digital',
   banner: 'Banner',
-  poster: 'Plakat'
+  poster: 'Plakat',
+  other: 'Inne'
+}
+
+const getStatusLabel = (ad: Advertisement) => {
+  const currentStatus = ad.display_status || ad.status
+  switch (currentStatus) {
+    case 'active':
+      return 'Wolne'
+    case 'reserved':
+      return 'Zarezerwowane'
+    case 'soon_available':
+      return 'Wkrótce dostępne'
+    default:
+      return 'Nieznany'
+  }
+}
+
+const getStatusColor = (ad: Advertisement) => {
+  const currentStatus = ad.display_status || ad.status
+  switch (currentStatus) {
+    case 'active':
+      return '#10B981'
+    case 'reserved':
+      return '#F59E0B'
+    case 'soon_available':
+      return '#3B82F6'
+    default:
+      return '#6B7280'
+  }
 }
 
 const activeFiltersCount = computed(() => {
@@ -751,6 +781,16 @@ const handleAdHover = (adId: string | null) => {
   })
 }
 
+const isFavorite = (id: string) => {
+  const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
+  return favorites.includes(id)
+}
+
+const isInComparison = (id: string) => {
+  const comparison = JSON.parse(localStorage.getItem('comparison') || '[]')
+  return comparison.includes(id)
+}
+
 const handleAdClick = (adId: string) => {
   selectedAdId.value = adId
   
@@ -1056,6 +1096,32 @@ onBeforeUnmount(() => {
               :price-display="priceDisplay"
             >
               <div class="ad-image">
+                <div class="ad-actions">
+                  <button 
+                    @click.prevent="$emit('toggleFavorite', ad.id)"
+                    class="action-btn favorite-btn"
+                    :class="{ active: isFavorite(ad.id) }"
+                    title="Dodaj do ulubionych"
+                  >
+                    <svg width="22" height="22" viewBox="0 0 24 24" :fill="isFavorite(ad.id) ? '#EF4444' : 'none'">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" :stroke="isFavorite(ad.id) ? '#EF4444' : 'white'" stroke-width="2"/>
+                    </svg>
+                  </button>
+                  <button 
+                    @click.prevent="$emit('toggleComparison', ad.id)"
+                    class="action-btn comparison-btn"
+                    :class="{ active: isInComparison(ad.id) }"
+                    title="Dodaj do porównania"
+                  >
+                    <svg width="22" height="22" viewBox="0 0 24 24" :fill="isInComparison(ad.id) ? '#667eea' : 'none'">
+                      <rect x="3" y="3" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
+                      <rect x="14" y="3" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
+                      <rect x="3" y="14" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
+                      <rect x="14" y="14" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
+                    </svg>
+                  </button>
+                </div>
+                
                 <img 
                   v-if="ad.image_url" 
                   :src="getFullImageUrl(ad.image_url)" 
@@ -1068,8 +1134,11 @@ onBeforeUnmount(() => {
                     <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/>
                   </svg>
                 </div>
-                <div class="ad-type-badge" :style="{ background: typeColors[ad.type] }">
+                <div class="ad-type-badge" :style="{ background: typeColors[ad.type] || '#6B7280' }">
                   {{ typeLabels[ad.type] || ad.type }}
+                </div>
+                <div class="ad-status-badge" :style="{ background: getStatusColor(ad) }">
+                  {{ getStatusLabel(ad) }}
                 </div>
               </div>
 
@@ -1108,6 +1177,22 @@ onBeforeUnmount(() => {
 
       <div class="map-container-wrapper">
         <div ref="mapContainer" class="map-container"></div>
+        
+        <div class="map-legend">
+          <h3 class="legend-title">Legenda</h3>
+          <div class="legend-items">
+            <div v-for="(color, type) in typeColors" :key="type" class="legend-item">
+              <div class="legend-marker" :style="{ background: color }"></div>
+              <span class="legend-label">
+                {{ type === 'billboard' ? 'Billboard' :
+                    type === 'citylight' ? 'Citylight' :
+                    type === 'led_screen' ? 'Ekran LED' :
+                    type === 'digital' ? 'Digital' :
+                    type === 'banner' ? 'Banner' : 'Plakat' }}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1621,8 +1706,8 @@ onBeforeUnmount(() => {
 
 .ads-list.list .ad-link {
   display: flex;
-  align-items: center;
-  padding: 1rem;
+  align-items: stretch;
+  padding: 0;
   border-radius: 8px;
   background: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -1630,16 +1715,25 @@ onBeforeUnmount(() => {
 }
 
 .ads-list.list .ad-image {
-  width: 150px;
-  height: 120px;
+  width: 200px;
+  height: 140px;
   flex-shrink: 0;
-  margin-right: 1.5rem;
-  border-radius: 8px;
+  margin-right: 0;
+  border-radius: 0;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
   overflow: hidden;
+}
+
+.ads-list.list .ad-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .ads-list.list .ad-content {
   flex: 1;
+  padding: 1rem;
 }
 
 .ads-list.grid .ad-list-item {
@@ -1670,9 +1764,38 @@ onBeforeUnmount(() => {
 .ad-list-item {
   border: 2px solid #e5e7eb;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   transition: all 0.2s;
   cursor: pointer;
+  background: white;
+}
+
+.action-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.action-btn:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.1);
+}
+
+.action-btn.active {
+  background: rgba(255, 255, 255, 0.95);
+  color: #ef4444;
+}
+
+.action-btn.active:hover {
   background: white;
 }
 
@@ -1707,6 +1830,17 @@ onBeforeUnmount(() => {
   position: relative;
 }
 
+.ad-actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 10;
+  opacity: 1;
+}
+
 .ad-image img {
   width: 100%;
   height: 100%;
@@ -1731,7 +1865,30 @@ onBeforeUnmount(() => {
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 600;
-  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.ad-status-badge {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  color: white;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.ad-status-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: white;
 }
 
 .ad-content {
@@ -1790,6 +1947,50 @@ onBeforeUnmount(() => {
 .map-container {
   width: 100%;
   height: 100%;
+}
+
+.map-legend {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: white;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.legend-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.legend-label {
+  font-size: 0.85rem;
+  color: #4b5563;
+  font-weight: 500;
 }
 
 /* Modal Styles */

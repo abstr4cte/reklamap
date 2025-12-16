@@ -46,7 +46,8 @@ const typeColors: Record<string, string> = {
   led_screen: '#10B981',
   digital: '#3B82F6',
   banner: '#8B5CF6',
-  poster: '#EC4899'
+  poster: '#EC4899',
+  other: '#6B7280'
 }
 
 const typeLabels: Record<string, string> = {
@@ -55,7 +56,8 @@ const typeLabels: Record<string, string> = {
   led_screen: 'Ekran LED',
   digital: 'Digital',
   banner: 'Banner',
-  poster: 'Plakat'
+  poster: 'Plakat',
+  other: 'Inne'
 }
 
 const handleFavoriteClick = (e: Event) => {
