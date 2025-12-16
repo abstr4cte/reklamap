@@ -175,18 +175,18 @@ const surface = computed(() => {
   return '0'
 })
 
-const pricePerDay = computed(() => {
+const pricePerMonth = computed(() => {
   if (!formData.value.price) return 0
 
   switch (formData.value.priceUnit) {
     case 'day':
-      return formData.value.price
+      return formData.value.price * 30
     case 'week':
-      return formData.value.price / 7
+      return formData.value.price * 4
     case 'month':
-      return formData.value.price / 30
+      return formData.value.price
     case 'year':
-      return formData.value.price / 365
+      return formData.value.price / 12
     default:
       return 0
   }
@@ -194,24 +194,24 @@ const pricePerDay = computed(() => {
 
 const pricePerSqm = computed(() => {
   const area = parseFloat(surface.value)
-  if (area > 0 && formData.value.price) {
-    return (formData.value.price / area).toFixed(2)
+  if (area > 0 && pricePerMonth.value) {
+    return (pricePerMonth.value / area).toFixed(2)
   }
   return '0'
 })
 
 const calculatePrice = (unit: 'day' | 'week' | 'month' | 'year') => {
-  const basePrice = pricePerDay.value
+  const basePrice = pricePerMonth.value
 
   switch (unit) {
     case 'day':
-      return basePrice.toFixed(2)
+      return (basePrice / 30).toFixed(2)
     case 'week':
-      return (basePrice * 7).toFixed(2)
+      return (basePrice / 4).toFixed(2)
     case 'month':
-      return (basePrice * 30).toFixed(2)
+      return basePrice.toFixed(2)
     case 'year':
-      return (basePrice * 365).toFixed(2)
+      return (basePrice * 12).toFixed(2)
     default:
       return '0'
   }
