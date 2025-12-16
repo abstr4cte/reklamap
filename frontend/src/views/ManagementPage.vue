@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { api, getFullImageUrl } from '../services/api'
 import axios from '../api/axios'
@@ -9,6 +9,22 @@ import ToastNotification from '../components/ToastNotification.vue'
 import { nsfwService } from '../services/nsfwService'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+import icon from 'leaflet/dist/images/marker-icon.png'
+import iconShadow from 'leaflet/dist/images/marker-shadow.png'
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
+import { point } from '@turf/helpers'
+import polandGeoJson from '../assets/poland_highres.json'
+
+// Fix Leaflet icon paths
+const DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+})
+L.Marker.prototype.options.icon = DefaultIcon
 
 const router = useRouter()
 const route = useRoute()
@@ -35,6 +51,14 @@ const availableFromDate = ref<Date | null>(null)
 const unifiedImages = ref<{ type: 'existing' | 'new', url?: string, file?: File, preview?: string, id: string, loading?: boolean }[]>([])
 const isDragging = ref(false)
 const draggedImageIndex = ref<number | null>(null)
+const addressSuggestions = ref<any[]>([])
+const showAddressSuggestions = ref(false)
+const isResolvingAddress = ref(false)
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
+const showMapModal = ref(false)
+const modalMapContainer = ref<HTMLElement | null>(null)
+let modalMap: L.Map | null = null
+let modalMarker: L.Marker | null = null
 
 const minDate = new Date()
 minDate.setHours(0, 0, 0, 0)
@@ -51,9 +75,76 @@ const formatDate = (date: Date | null): string => {
 const dragOverTarget = ref<{ index: number, type: 'existing' | 'new' } | null>(null)
 const isSaving = ref(false)
 
-
-
 const isTokenInvalid = ref(false)
+
+const searchAddress = (query: string) => {
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+
+  if (query.length < 3) {
+    addressSuggestions.value = []
+    showAddressSuggestions.value = false
+    isResolvingAddress.value = false
+    return
+  }
+
+  isResolvingAddress.value = true
+
+  searchTimeout = setTimeout(async () => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=5&addressdetails=1`
+      )
+      const data = await response.json()
+      addressSuggestions.value = data
+      showAddressSuggestions.value = data.length > 0
+    } catch (error) {
+      console.error('Error searching address:', error)
+    } finally {
+      isResolvingAddress.value = false
+    }
+  }, 500)
+}
+
+const selectAddress = (suggestion: any) => {
+  if (!editingAd.value) return
+  
+  const address = suggestion.address
+  editingAd.value.location = suggestion.display_name
+  editingAd.value.city = address.city || address.town || address.village || ''
+  editingAd.value.region = address.state || ''
+  
+  showAddressSuggestions.value = false
+}
+
+const handleClickOutside = (event: MouseEvent) => {
+  const target = event.target as HTMLElement
+  if (!target.closest('.address-input-wrapper')) {
+    showAddressSuggestions.value = false
+  }
+}
+
+const handleBlur = () => {
+  setTimeout(() => {
+    showAddressSuggestions.value = false
+  }, 200)
+}
+
+const clearLocation = () => {
+  if (!editingAd.value) return
+  editingAd.value.location = ''
+  editingAd.value.city = ''
+  editingAd.value.region = ''
+  editingAd.value.latitude = 52.0
+  editingAd.value.longitude = 19.0
+  
+  // Reset map view to show all of Poland if modal is open
+  if (modalMap && modalMarker) {
+    modalMap.setView([52.0, 19.0], 6)
+    modalMarker.setLatLng([52.0, 19.0])
+  }
+}
 
 const loadAdvertisements = async () => {
   try {
@@ -186,7 +277,7 @@ const saveChanges = async (id: string) => {
         type: editingAd.value.type,
         width: editingAd.value.width,
         height: editingAd.value.height,
-        orientation: editingAd.value.orientation,
+        orientation: editingAd.value.width >= editingAd.value.height ? 'horizontal' : 'vertical',
         traffic_intensity: editingAd.value.traffic_intensity,
         has_lighting: editingAd.value.has_lighting,
         price_includes_print: editingAd.value.price_includes_print,
@@ -197,7 +288,7 @@ const saveChanges = async (id: string) => {
         images: finalImageUrls,
         image_url: mainImageUrl,
         has_image: finalImageUrls.length > 0,
-        phone: (editingAd.value as any).phone ? `+48 ${(editingAd.value as any).phone}` : '',
+        phone: (editingAd.value as any).phone ? `+48${(editingAd.value as any).phone}` : '',
         contact_preference: (editingAd.value as any).contact_preference || 'email',
     })
 
@@ -207,7 +298,7 @@ const saveChanges = async (id: string) => {
       ad.images = finalImageUrls
       ad.image_url = mainImageUrl
       ad.has_image = finalImageUrls.length > 0
-      ad.phone = (editingAd.value as any).phone ? `+48 ${(editingAd.value as any).phone}` : ''
+      ad.phone = (editingAd.value as any).phone ? `+48${(editingAd.value as any).phone}` : ''
       ad.contact_preference = (editingAd.value as any).contact_preference || 'email'
     }
 
@@ -275,6 +366,10 @@ const toggleRow = (id: string) => {
     const ad = advertisements.value.find(a => a.id === id)
     if (ad) {
       editingAd.value = { ...ad }
+      // Strip +48 prefix from phone for editing
+      if ((editingAd.value as any).phone) {
+        (editingAd.value as any).phone = (editingAd.value as any).phone.replace(/^\+48\s*/g, '')
+      }
       // Initialize unifiedImages for the edited ad
       unifiedImages.value = (editingAd.value.images || []).map(url => ({
         type: 'existing',
@@ -416,6 +511,123 @@ const handleDrop = (event: DragEvent) => {
   }
   isDragging.value = false
 }
+
+const isInPoland = (lat: number, lng: number): boolean => {
+  const pt = point([lng, lat])
+  // @ts-ignore
+  for (const feature of polandGeoJson.features) {
+    if (booleanPointInPolygon(pt, feature.geometry as any)) {
+      return true
+    }
+  }
+  return false
+}
+
+const openMapModal = () => {
+  showMapModal.value = true
+  setTimeout(() => initModalMap(), 100)
+}
+
+const closeMapModal = () => {
+  showMapModal.value = false
+  if (modalMap) {
+    modalMap.remove()
+    modalMap = null
+    modalMarker = null
+  }
+}
+
+const initModalMap = () => {
+  if (!modalMapContainer.value || modalMap || !editingAd.value) return
+
+  const polandBounds = L.latLngBounds([48.5, 13.5], [55.5, 24.5])
+
+  // Check if coordinates are default (center of Poland) or actual location
+  const isDefaultLocation = editingAd.value.latitude === 52.0 && editingAd.value.longitude === 19.0
+  const zoomLevel = isDefaultLocation ? 6 : 13
+  
+  modalMap = L.map(modalMapContainer.value, {
+    maxBounds: polandBounds,
+    maxBoundsViscosity: 1.0,
+    minZoom: 6,
+    maxZoom: 18
+  }).setView([editingAd.value.latitude || 52.0, editingAd.value.longitude || 19.0], zoomLevel)
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(modalMap)
+
+  modalMarker = L.marker([editingAd.value.latitude || 52.0, editingAd.value.longitude || 19.0], {
+    draggable: true
+  }).addTo(modalMap)
+
+  modalMarker.on('dragend', async () => {
+    const position = modalMarker!.getLatLng()
+    if (!isInPoland(position.lat, position.lng)) {
+      toast.value?.add('Lokalizacja musi być w Polsce', 'error')
+      modalMarker!.setLatLng([editingAd.value!.latitude, editingAd.value!.longitude])
+      return
+    }
+  })
+
+  modalMap.on('click', async (e: L.LeafletMouseEvent) => {
+    if (!isInPoland(e.latlng.lat, e.latlng.lng)) {
+      toast.value?.add('Lokalizacja musi być w Polsce', 'error')
+      return
+    }
+    modalMarker!.setLatLng(e.latlng)
+  })
+}
+
+const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
+    )
+    const data = await response.json()
+
+    if (data.address) {
+      if (data.address.country_code !== 'pl') {
+        return false
+      }
+
+      if (editingAd.value) {
+        const address = data.address
+        editingAd.value.city = address.city || address.town || address.village || ''
+        editingAd.value.region = address.state || ''
+        editingAd.value.location = data.display_name || ''
+      }
+      return true
+    }
+    return false
+  } catch (error) {
+    console.error('Error reverse geocoding:', error)
+    return false
+  }
+}
+
+const confirmModalLocation = async () => {
+  if (!modalMarker || !editingAd.value) return
+
+  const position = modalMarker.getLatLng()
+  
+  if (!isInPoland(position.lat, position.lng)) {
+    toast.value?.add('Lokalizacja musi być w Polsce', 'error')
+    return
+  }
+
+  const isValid = await reverseGeocode(position.lat, position.lng)
+  if (!isValid) {
+    toast.value?.add('Lokalizacja musi być w Polsce', 'error')
+    return
+  }
+
+  editingAd.value.latitude = position.lat
+  editingAd.value.longitude = position.lng
+  
+  closeMapModal()
+}
+
 const handleSubmit = async () => {
   if (!email.value || !email.value.includes('@')) {
     errorMessage.value = 'Proszę podać poprawny adres email'
@@ -447,6 +659,11 @@ const handleSubmit = async () => {
 
 onMounted(async () => {
   await loadAdvertisements()
+  document.addEventListener('click', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
@@ -693,21 +910,6 @@ onMounted(async () => {
                     </div>
 
                     <div class="form-group">
-                      <label>Miasto</label>
-                      <input v-model="editingAd.city" type="text" required />
-                    </div>
-
-                    <div class="form-group">
-                      <label>Lokalizacja</label>
-                      <input v-model="editingAd.location" type="text" required />
-                    </div>
-
-                    <div class="form-group">
-                      <label>Województwo</label>
-                      <input v-model="editingAd.region" type="text" required />
-                    </div>
-
-                    <div class="form-group">
                       <label>Typ powierzchni</label>
                       <select v-model="editingAd.type" required>
                         <option value="billboard">Billboard</option>
@@ -720,6 +922,56 @@ onMounted(async () => {
                     </div>
 
                     <div class="form-group">
+                      <label>Lokalizacja</label>
+                      <div class="location-input-group">
+                        <div class="address-input-wrapper">
+                          <input 
+                            v-model="editingAd.location" 
+                            type="text" 
+                            required 
+                            @input="searchAddress(editingAd.location)"
+                            @blur="handleBlur"
+                            class="location-input"
+                          />
+                          <div v-if="isResolvingAddress" class="input-spinner">
+                            <svg class="spinner-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          </div>
+                          <button 
+                            v-if="editingAd.location && !isResolvingAddress" 
+                            type="button" 
+                            @click="clearLocation" 
+                            class="clear-location-btn"
+                            title="Wyczyść lokalizację"
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                          </button>
+                          <div v-if="showAddressSuggestions && addressSuggestions.length > 0" class="address-suggestions">
+                            <div 
+                              v-for="suggestion in addressSuggestions" 
+                              :key="suggestion.place_id"
+                              @click="selectAddress(suggestion)"
+                              class="suggestion-item"
+                            >
+                              {{ suggestion.display_name }}
+                            </div>
+                          </div>
+                        </div>
+                        <button type="button" @click="openMapModal" class="map-button-modern">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                          </svg>
+                          <span>Znajdź na mapie</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
                       <label>Szerokość (m)</label>
                       <input v-model.number="editingAd.width" type="number" step="0.1" required />
                     </div>
@@ -727,14 +979,6 @@ onMounted(async () => {
                     <div class="form-group">
                       <label>Wysokość (m)</label>
                       <input v-model.number="editingAd.height" type="number" step="0.1" required />
-                    </div>
-
-                    <div class="form-group">
-                      <label>Orientacja</label>
-                      <select v-model="editingAd.orientation" required>
-                        <option value="horizontal">Poziom</option>
-                        <option value="vertical">Pion</option>
-                      </select>
                     </div>
 
                     <div class="form-group">
@@ -797,6 +1041,8 @@ onMounted(async () => {
                           type="tel"
                           class="phone-input-field"
                           placeholder="123 456 789"
+                          maxlength="9"
+                          @input="(editingAd as any).phone = (editingAd as any).phone.replace(/[^0-9]/g, '')"
                         />
                       </div>
                     </div>
@@ -953,6 +1199,27 @@ onMounted(async () => {
   />
   <ToastNotification ref="toast" />
 
+  <!-- Map Modal -->
+  <div v-if="showMapModal" class="modal-overlay" @click="closeMapModal">
+    <div class="modal-content" @click.stop>
+      <div class="modal-header">
+        <h3>Zaznacz lokalizację na mapie</h3>
+        <button type="button" @click="closeMapModal" class="modal-close">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div ref="modalMapContainer" class="modal-map"></div>
+        <p class="modal-hint">Kliknij na mapie lub przeciągnij marker, aby ustawić lokalizację</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" @click="closeMapModal" class="btn-cancel-modal">Anuluj</button>
+        <button type="button" @click="confirmModalLocation" class="btn-primary-modal">Potwierdź lokalizację</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -2058,5 +2325,280 @@ onMounted(async () => {
   0% { transform: scale(0); }
   50% { transform: scale(1.1); }
   100% { transform: scale(1); }
+}
+
+.location-input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.location-input-group .address-input-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.location-input {
+  width: 100%;
+  padding-right: 2.5rem !important;
+}
+
+.input-spinner {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.clear-location-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: all 0.2s;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-location-btn:hover {
+  background: #f3f4f6;
+  color: #ef4444;
+}
+
+.address-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  margin-top: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.15s;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background: #f9fafb;
+}
+
+.map-button-modern {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.25rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+}
+
+.map-button-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+}
+
+.map-button-modern svg {
+  flex-shrink: 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.3s ease-out;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px 16px 0 0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+}
+
+.modal-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  padding: 0 !important;
+  flex: 1;
+  overflow: auto;
+}
+
+.modal-map {
+  width: 100%;
+  height: 500px;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+:deep(.leaflet-control-attribution),
+:deep(.leaflet-control) {
+  display: none !important;
+}
+
+.modal-hint {
+  padding: 1rem 2rem;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: #fafafa;
+  margin: 0;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #f3f4f6;
+  background: #fafafa;
+  border-radius: 0 0 16px 16px;
+}
+
+.btn-cancel-modal {
+  padding: 0.75rem 1.5rem;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  color: #6b7280;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel-modal:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  transform: translateY(-1px);
+}
+
+.btn-primary-modal {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+}
+
+.btn-primary-modal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+}
+
+@media (max-width: 768px) {
+  .location-input-group {
+    flex-direction: column;
+  }
+
+  .map-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .modal-map {
+    height: 400px;
+  }
 }
 </style>

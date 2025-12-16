@@ -39,7 +39,6 @@ const formData = ref({
   priceNegotiable: false,
   width: null as number | null,
   height: null as number | null,
-  orientation: 'horizontal' as 'horizontal' | 'vertical',
   location: '',
   city: '',
   region: '',
@@ -47,14 +46,15 @@ const formData = ref({
   longitude: 19.0,
   phone: '',
   countryCode: '+48',
-  contactPreference: 'email' as 'email' | 'phone' | 'both',
+  contactPreference: '' as '' | 'email' | 'phone' | 'both',
   hasLighting: false,
   graphicDesignHelp: false,
   priceIncludesPrint: false,
   hasVatInvoice: false,
-  status: 'available' as 'available' | 'reserved' | 'soon_available',
+  offerType: '' as '' | 'owner' | 'agency',
+  status: '' as '' | 'available' | 'reserved' | 'soon_available',
   availableFrom: null as Date | null,
-  trafficIntensity: 'medium' as 'low' | 'medium' | 'high',
+  trafficIntensity: '' as '' | 'low' | 'medium' | 'high',
   imageFiles: [] as { file: File, preview: string, id: string, loading?: boolean }[],
   acceptTerms: false
 })
@@ -89,6 +89,7 @@ const dragOverTarget = ref<number | null>(null)
 const isLoadingImages = ref(false)
 let map: L.Map | null = null
 let marker: L.Marker | null = null
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
 const displayToast = (message: string) => {
   toastMessage.value = message
@@ -321,7 +322,11 @@ const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
   }
 }
 
-const searchAddress = async (query: string) => {
+const searchAddress = (query: string) => {
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+
   if (query.length < 3) {
     addressSuggestions.value = []
     showAddressSuggestions.value = false
@@ -330,18 +335,21 @@ const searchAddress = async (query: string) => {
   }
 
   isResolvingAddress.value = true
-  try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=5&addressdetails=1`
-    )
-    const data = await response.json()
-    addressSuggestions.value = data
-    showAddressSuggestions.value = data.length > 0
-  } catch (error) {
-    console.error('Error searching address:', error)
-  } finally {
-    isResolvingAddress.value = false
-  }
+
+  searchTimeout = setTimeout(async () => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=5&addressdetails=1`
+      )
+      const data = await response.json()
+      addressSuggestions.value = data
+      showAddressSuggestions.value = data.length > 0
+    } catch (error) {
+      console.error('Error searching address:', error)
+    } finally {
+      isResolvingAddress.value = false
+    }
+  }, 500)
 }
 
 const selectAddress = (suggestion: any) => {
@@ -557,10 +565,29 @@ const validateStep = (step: number): boolean => {
       if (!formData.value.location) {
         errors.value.location = 'Lokalizacja jest wymagana'
       }
+      if (!formData.value.contactPreference) {
+        errors.value.contactPreference = 'Opcja kontaktu jest wymagana'
+      }
       if (formData.value.contactPreference === 'phone' || formData.value.contactPreference === 'both') {
         if (!formData.value.phone) {
           errors.value.phone = 'Numer telefonu jest wymagany dla wybranej opcji kontaktu'
+        } else if (formData.value.phone.length !== 9) {
+          errors.value.phone = 'Numer telefonu musi mieć dokładnie 9 cyfr'
+        } else if (!/^[0-9]{9}$/.test(formData.value.phone)) {
+          errors.value.phone = 'Numer telefonu może zawierać tylko cyfry'
         }
+      }
+      break
+
+    case 4:
+      if (!formData.value.status) {
+        errors.value.status = 'Status dostępności jest wymagany'
+      }
+      if (!formData.value.trafficIntensity) {
+        errors.value.trafficIntensity = 'Natężenie ruchu jest wymagane'
+      }
+      if (!formData.value.offerType) {
+        errors.value.offerType = 'Rodzaj oferty jest wymagany'
       }
       break
 
@@ -630,13 +657,13 @@ const handleSubmit = async () => {
         price_negotiable: formData.value.priceNegotiable,
         width: formData.value.width!,
         height: formData.value.height!,
-        orientation: formData.value.orientation,
+        orientation: formData.value.width! >= formData.value.height! ? 'horizontal' : 'vertical',
         location: formData.value.location,
         city: formData.value.city,
         region: formData.value.region,
         latitude: formData.value.latitude,
         longitude: formData.value.longitude,
-        phone: formData.value.phone ? `${formData.value.countryCode} ${formData.value.phone}` : '',
+        phone: formData.value.phone ? `+48${formData.value.phone}` : '',
         contact_preference: formData.value.contactPreference,
         has_lighting: formData.value.hasLighting,
         graphic_design_help: formData.value.graphicDesignHelp,
@@ -654,7 +681,7 @@ const handleSubmit = async () => {
         image_url: mainImageUrl,
         // dimensions: `${formData.value.width}m x ${formData.value.height}m`, // Not in interface?
         has_image: imageUrls.length > 0,
-        offer_type: 'owner', // Defaulting as it was missing in form? Or maybe I missed it.
+        offer_type: formData.value.offerType,
         views: 0,
         is_active: true,
         images: imageUrls
@@ -910,20 +937,6 @@ onMounted(() => {
           </div>
 
           <div class="form-group">
-            <label class="form-label">Orientacja</label>
-            <div class="radio-group">
-              <label class="radio-option">
-                <input type="radio" v-model="formData.orientation" value="horizontal" />
-                <span>Poziom</span>
-              </label>
-              <label class="radio-option">
-                <input type="radio" v-model="formData.orientation" value="vertical" />
-                <span>Pion</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="form-group">
             <label class="form-label">Lokalizacja <span class="required">*</span></label>
             <div class="address-input-wrapper">
               <input
@@ -973,12 +986,14 @@ onMounted(() => {
           <p class="map-hint">Kliknij na mapie lub przeciągnij marker, aby ustawić lokalizację</p>
 
           <div class="form-group">
-            <label class="form-label">Opcje kontaktu</label>
-            <select v-model="formData.contactPreference" class="form-select">
+            <label class="form-label">Opcje kontaktu <span class="required">*</span></label>
+            <select v-model="formData.contactPreference" class="form-select" :class="{ 'error': errors.contactPreference }">
+              <option value="" disabled>Wybierz opcję kontaktu</option>
               <option value="email">Tylko formularz kontaktowy</option>
               <option value="phone">Tylko telefon</option>
               <option value="both">Formularz i telefon</option>
             </select>
+            <span v-if="errors.contactPreference" class="error-text">{{ errors.contactPreference }}</span>
           </div>
 
           <div v-if="formData.contactPreference === 'phone' || formData.contactPreference === 'both'" class="form-group">
@@ -997,6 +1012,8 @@ onMounted(() => {
                 class="form-input phone-input-field"
                 :class="{ 'error': errors.phone }"
                 placeholder="123 456 789"
+                maxlength="9"
+                @input="formData.phone = formData.phone.replace(/[^0-9]/g, '')"
               />
             </div>
             <span v-if="errors.phone" class="error-text">{{ errors.phone }}</span>
@@ -1008,12 +1025,14 @@ onMounted(() => {
 
           <!-- Selecty na górze -->          
           <div class="form-group">
-            <label class="form-label">Status dostępności</label>
-            <select v-model="formData.status" class="form-select">
+            <label class="form-label">Status dostępności <span class="required">*</span></label>
+            <select v-model="formData.status" class="form-select" :class="{ 'error': errors.status }">
+              <option value="" disabled>Wybierz status</option>
               <option value="available">Wolne</option>
               <option value="reserved">Zarezerwowane</option>
               <option value="soon_available">Wkrótce dostępne</option>
             </select>
+            <span v-if="errors.status" class="error-text">{{ errors.status }}</span>
           </div>
 
           <div v-if="formData.status === 'soon_available'" class="form-group">
@@ -1049,12 +1068,24 @@ onMounted(() => {
           </div>
 
           <div class="form-group">
-            <label class="form-label">Natężenie ruchu</label>
-            <select v-model="formData.trafficIntensity" class="form-select">
+            <label class="form-label">Natężenie ruchu <span class="required">*</span></label>
+            <select v-model="formData.trafficIntensity" class="form-select" :class="{ 'error': errors.trafficIntensity }">
+              <option value="" disabled>Wybierz natężenie ruchu</option>
               <option value="low">Niskie</option>
               <option value="medium">Średnie</option>
               <option value="high">Wysokie</option>
             </select>
+            <span v-if="errors.trafficIntensity" class="error-text">{{ errors.trafficIntensity }}</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Rodzaj oferty <span class="required">*</span></label>
+            <select v-model="formData.offerType" class="form-select" :class="{ 'error': errors.offerType }">
+              <option value="" disabled>Wybierz rodzaj oferty</option>
+              <option value="owner">Właściciel</option>
+              <option value="agency">Agencja</option>
+            </select>
+            <span v-if="errors.offerType" class="error-text">{{ errors.offerType }}</span>
           </div>
 
           <!-- Checkboxy na dole -->          
