@@ -4,6 +4,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
+import { getFullImageUrl } from '../services/api'
 
 // Funkcja formatująca adres i miasto, taka sama jak w AdCard
 const formatLocation = (location: string, city: string) => {
@@ -44,6 +45,7 @@ const emit = defineEmits<{
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 const markers: Map<string, L.Marker> = new Map()
+const isMapActive = ref(false)
 
 const typeColors: Record<string, string> = {
   billboard: '#EF4444',
@@ -113,11 +115,41 @@ const createCustomIcon = (type: string, isHovered: boolean = false) => {
 const initMap = () => {
   if (!mapContainer.value) return
 
-  map = L.map(mapContainer.value).setView([52.0, 19.0], 6)
+  // Granice Polski (przybliżone) - z marginesem
+  const polandBounds = L.latLngBounds(
+    [48.5, 13.5],  // południowo-zachodni róg (z marginesem)
+    [55.5, 24.5]   // północno-wschodni róg (z marginesem)
+  )
+
+  map = L.map(mapContainer.value, {
+    scrollWheelZoom: false,
+    maxBounds: polandBounds,        // Nie można przesunąć mapy poza te granice
+    maxBoundsViscosity: 1.0,        // Twarde ograniczenie (nie można przeciągnąć poza)
+    minZoom: 6,                      // Minimalne przybliżenie (cała Polska)
+    maxZoom: 18                      // Maksymalne przybliżenie
+  }).setView([52.0, 19.0], 6)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map)
+
+  // Enable scroll wheel zoom on click and hide hint
+  map.on('click', () => {
+    if (map && !map.scrollWheelZoom.enabled()) {
+      map.scrollWheelZoom.enable()
+      isMapActive.value = true
+    }
+  })
+  
+  // Disable scroll wheel zoom when mouse leaves the map
+  if (mapContainer.value) {
+    mapContainer.value.addEventListener('mouseleave', () => {
+      if (map && map.scrollWheelZoom.enabled()) {
+        map.scrollWheelZoom.disable()
+        isMapActive.value = false
+      }
+    })
+  }
 
   updateMarkers()
 }
@@ -175,9 +207,16 @@ const updateMarkers = () => {
     const typeSlug = mapTypeToUrlFormat(ad.type)
     const adUrl = `/powierzchnia-reklamowa/${typeSlug}/${citySlug}/${titleSlug}-${ad.id}`
 
+    const imageUrl = ad.image_url ? getFullImageUrl(ad.image_url) : ''
+    
     const popupContent = `
-      <div style="min-width: 200px;">
+      <div style="width: 250px;">
         <a href="${adUrl}" style="text-decoration: none; color: inherit; display: block;">
+          ${imageUrl ? `
+            <div style="margin: -20px -20px 12px -20px; overflow: hidden; border-radius: 12px 12px 0 0;">
+              <img src="${imageUrl}" alt="${ad.title}" style="width: 100%; height: 140px; object-fit: cover; display: block;" />
+            </div>
+          ` : ''}
           <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: #1F2937;">
             ${ad.title}
           </h3>
@@ -214,7 +253,22 @@ const updateMarkers = () => {
       </div>
     `
 
-      marker.bindPopup(popupContent)
+      marker.bindPopup(popupContent, { 
+        maxWidth: 250,
+        autoPan: true,    // Automatyczne przesunięcie mapy, aby popup był widoczny
+        autoPanPadding: [50, 50]  // Padding przy autopan
+      })
+      
+      marker.on('mouseover', () => {
+        marker.setIcon(createCustomIcon(ad.type, true))
+      })
+
+      marker.on('mouseout', () => {
+        if (props.hoveredAdId !== ad.id) {
+          marker.setIcon(createCustomIcon(ad.type, false))
+        }
+      })
+      
       marker.addTo(map!)
       markers.set(ad.id, marker)
     }
@@ -281,7 +335,13 @@ onMounted(() => {
     </div>
 
     <div class="map-wrapper">
-      <div ref="mapContainer" class="map-container"></div>
+      <div ref="mapContainer" class="map-container">
+        <div v-if="!isMapActive" class="map-hint-overlay">
+          <div class="map-hint-message">
+            Kliknij, aby przybliżyć mapę
+          </div>
+        </div>
+      </div>
 
       <div class="map-legend">
         <h3 class="legend-title">Legenda</h3>
@@ -344,6 +404,38 @@ onMounted(() => {
   height: 600px;
   width: 100%;
   z-index: 1;
+  position: relative;
+  cursor: pointer;
+}
+
+.map-hint-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.map-container:hover .map-hint-overlay {
+  opacity: 1;
+}
+
+.map-hint-message {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
 }
 
 .map-legend {

@@ -631,20 +631,25 @@ const initMap = () => {
   if (!mapContainer.value) return
 
   // Współrzędne centrum Polski
-  const polandCenter = [52.0, 19.0]
+  const polandCenter: [number, number] = [52.0, 19.0]
   
-  // Tworzymy mapę z widokiem na całą Polskę
-  map = L.map(mapContainer.value).setView(polandCenter, 6)
+  // Granice Polski (przybliżone) - z marginesem
+  const polandBounds = L.latLngBounds(
+    [48.5, 13.5],  // południowo-zachodni róg (z marginesem)
+    [55.5, 24.5]   // północno-wschodni róg (z marginesem)
+  )
+  
+  // Tworzymy mapę z widokiem na całą Polskę i ograniczeniami
+  map = L.map(mapContainer.value, {
+    maxBounds: polandBounds,        // Nie można przesunąć mapy poza te granice
+    maxBoundsViscosity: 1.0,        // Twarde ograniczenie (nie można przeciągnąć poza)
+    minZoom: 6,                      // Minimalne przybliżenie (cała Polska)
+    maxZoom: 18                      // Maksymalne przybliżenie
+  }).setView(polandCenter, 6)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map)
-  
-  // Granice Polski (przybliżone)
-  const polandBounds = L.latLngBounds(
-    [49.0, 14.12], // południowo-zachodni róg
-    [55.0, 24.15]  // północno-wschodni róg
-  )
   
   // Ustaw widok na całą Polskę
   map.fitBounds(polandBounds)
@@ -668,9 +673,16 @@ const updateMarkers = () => {
     const titleSlug = slugify(ad.title)
     const adUrl = `/ogloszenie/${citySlug}/${titleSlug}/${ad.id}`
 
+    const imageUrl = ad.image_url ? getFullImageUrl(ad.image_url) : ''
+    
     marker.bindPopup(`
-      <div style="min-width: 200px;">
+      <div style="width: 250px;">
         <a href="${adUrl}" style="text-decoration: none; color: inherit; display: block;">
+          ${imageUrl ? `
+            <div style="margin: -20px -20px 12px -20px; overflow: hidden; border-radius: 12px 12px 0 0;">
+              <img src="${imageUrl}" alt="${ad.title}" style="width: 100%; height: 140px; object-fit: cover; display: block;" />
+            </div>
+          ` : ''}
           <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: #1F2937;">
             ${ad.title}
           </h3>
@@ -682,11 +694,25 @@ const updateMarkers = () => {
           </div>
         </a>
       </div>
-    `)
+    `, { 
+      maxWidth: 250,
+      autoPan: true,    // Automatyczne przesunięcie mapy, aby popup był widoczny
+      autoPanPadding: [50, 50]  // Padding przy autopan
+    })
 
     marker.on('click', () => {
       selectedAdId.value = ad.id
       scrollToAd(ad.id)
+    })
+
+    marker.on('mouseover', () => {
+      marker.setIcon(createCustomIcon(ad.type, true, selectedAdId.value === ad.id))
+    })
+
+    marker.on('mouseout', () => {
+      if (hoveredAdId.value !== ad.id) {
+        marker.setIcon(createCustomIcon(ad.type, false, selectedAdId.value === ad.id))
+      }
     })
 
     marker.addTo(map!)
