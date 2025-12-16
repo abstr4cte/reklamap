@@ -101,8 +101,8 @@
         .button {
             display: inline-block;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #ffffff;
-            text-decoration: none;
+            color: #ffffff !important;
+            text-decoration: none !important;
             padding: 14px 32px;
             border-radius: 8px;
             font-weight: 600;
@@ -112,6 +112,7 @@
         }
         .button:hover {
             opacity: 0.9;
+            color: #ffffff !important;
         }
         .footer {
             background-color: #f9fafb;
