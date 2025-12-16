@@ -80,6 +80,10 @@ const filters = ref<Filters>({
 
 const sortedAndFilteredAdvertisements = computed(() => {
   let filtered = advertisements.value
+  
+  // Dodanie zależności od sortBy i priceDisplay, aby computed się przeliczał
+  const currentSort = sortBy.value
+  const currentPriceDisplay = priceDisplay.value
 
   if (filters.value.keyword) {
     const keyword = filters.value.keyword.toLowerCase()

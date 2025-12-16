@@ -76,18 +76,18 @@ const displayPrice = computed(() => {
 
   switch (display) {
     case 'day':
-      return `${Math.round(basePrice / 30).toLocaleString('pl-PL')} zł/dzień`
+      return Math.round(basePrice / 30)
     case 'week':
-      return `${Math.round(basePrice / 4).toLocaleString('pl-PL')} zł/tydzień`
+      return Math.round(basePrice / 4)
     case 'month':
-      return `${basePrice.toLocaleString('pl-PL')} zł/mies.`
+      return basePrice
     case 'year':
-      return `${(basePrice * 12).toLocaleString('pl-PL')} zł/rok`
+      return basePrice * 12
     case 'sqm':
       const area = props.ad.width && props.ad.height ? props.ad.width * props.ad.height : 1
-      return `${Math.round(basePrice / area).toLocaleString('pl-PL')} zł/m²`
+      return Math.round(basePrice / area)
     default:
-      return `${basePrice.toLocaleString('pl-PL')} zł/mies.`
+      return basePrice
   }
 })
 
@@ -252,7 +252,7 @@ const statusColor = computed(() => {
 
       <div class="card-footer">
         <div class="card-price">
-          <span class="price-amount">{{ parseFloat(displayPrice).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} zł</span>
+          <span class="price-amount">{{ displayPrice.toLocaleString('pl-PL') }} zł</span>
           <span class="price-period">{{ priceLabel }}</span>
           <span v-if="ad.price_negotiable" class="negotiable-badge">do negocjacji</span>
         </div>
