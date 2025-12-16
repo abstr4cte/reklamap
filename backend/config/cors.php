@@ -17,17 +17,22 @@ return [
 
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
 
-    'allowed_origins' => ['*'], // Allow all origins during development
+    'allowed_origins' => [
+        'https://reklamap.pl',
+        'https://www.reklamap.pl',
+        'http://localhost:5173', // Dla developmentu
+        'http://localhost:3000',
+    ],
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*'],
+    'allowed_headers' => ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
 
     'exposed_headers' => [],
 
-    'max_age' => 0,
+    'max_age' => 86400, // 24 godziny cache dla preflight requests
 
     'supports_credentials' => true,
 
