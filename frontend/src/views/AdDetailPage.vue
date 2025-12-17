@@ -184,7 +184,14 @@ const getTypeLabel = (type: string): string => {
     'mobile': 'Reklama mobilna',
     'other': 'Inne'
   }
-  return typeLabels[type] || type
+  
+  // Jeśli typ jest w mapie, zwróć go
+  if (typeLabels[type]) {
+    return typeLabels[type]
+  }
+  
+  // W przeciwnym razie kapitalizuj pierwszą literę
+  return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
 // Helper to map type to URL format

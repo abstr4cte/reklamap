@@ -115,7 +115,14 @@ const getTypeLabel = (type: string): string => {
     'reklama-mobilna': 'Reklama mobilna',
     'inne': 'Inne'
   }
-  return typeLabels[type] || type
+  
+  // Jeśli typ jest w mapie, zwróć go
+  if (typeLabels[type]) {
+    return typeLabels[type]
+  }
+  
+  // W przeciwnym razie kapitalizuj pierwszą literę
+  return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
 // Breadcrumbs for SEO
