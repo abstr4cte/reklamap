@@ -3,9 +3,15 @@
 
 <template>
   <div class="privacy-policy-page">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">Polityka Prywatności</h1>
+        <p class="hero-subtitle">Dowiedz się, jak chronimy Twoje dane osobowe i dbamy o Twoją prywatność</p>
+      </div>
+    </div>
+
     <div class="container">
-      <h1>Polityka Prywatności</h1>
-      
       <div class="content">
         <section>
           <h2>1. Informacje ogólne</h2>
@@ -58,23 +64,58 @@
 
 <style scoped>
 .privacy-policy-page {
-  padding: 4rem 0;
   min-height: 80vh;
   background: #f9fafb;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 6rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  margin: 0 0 1rem 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
 .container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 0 2rem;
-}
-
-h1 {
-  font-size: 2.5rem;
-  color: #1f2937;
-  margin-bottom: 3rem;
-  text-align: center;
-  font-weight: 800;
+  padding: 4rem 2rem;
 }
 
 .content {
@@ -117,21 +158,24 @@ li {
 }
 
 @media (max-width: 768px) {
-  .privacy-policy-page {
-    padding: 2rem 0;
+  .hero-section {
+    padding: 4rem 1.5rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
   }
 
   .container {
-    padding: 0 1rem;
+    padding: 2rem 1rem;
   }
 
   .content {
     padding: 1.5rem;
-  }
-
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 2rem;
   }
 
   h2 {
