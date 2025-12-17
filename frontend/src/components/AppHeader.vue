@@ -72,10 +72,6 @@ const handleComparisonClick = () => {
   emit('openComparison')
 }
 
-const toggleCategoriesDropdown = () => {
-  isCategoriesDropdownOpen.value = !isCategoriesDropdownOpen.value
-}
-
 const closeCategoriesDropdown = () => {
   isCategoriesDropdownOpen.value = false
 }
@@ -410,13 +406,24 @@ const closeCategoriesDropdown = () => {
   position: absolute;
   top: 100%;
   left: 0;
-  margin-top: 0.5rem;
+  margin-top: 0;
+  padding-top: 0.5rem;
+  background: transparent;
+  min-width: 240px;
+  z-index: 1000;
+}
+
+.dropdown-menu::before {
+  content: '';
+  display: block;
+  height: 0.5rem;
+}
+
+.dropdown-menu > * {
   background: white;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  min-width: 240px;
   padding: 0.5rem;
-  z-index: 1000;
 }
 
 .dropdown-menu-wide {

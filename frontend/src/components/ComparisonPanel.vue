@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { api, getFullImageUrl } from '../services/api'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
+import { mapTypeToUrlFormat } from '../utils/typeMapping'
 
 const props = defineProps<{
   isOpen: boolean
@@ -137,7 +138,7 @@ onUnmounted(() => {
             class="comparison-item"
           >
             <div class="comparison-image">
-              <router-link :to="`/powierzchnia-reklamowa/${ad.type}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="ad-image-link">
+              <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="ad-image-link">
                 <img
                   v-if="ad.image_url"
                   :src="getFullImageUrl(ad.image_url)"

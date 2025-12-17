@@ -3,6 +3,7 @@ import { ref, watch, onUnmounted } from 'vue'
 import { api, getFullImageUrl } from '../services/api'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
+import { mapTypeToUrlFormat } from '../utils/typeMapping'
 
 const props = defineProps<{
   isOpen: boolean
@@ -121,7 +122,7 @@ onUnmounted(() => {
           <router-link
             v-for="ad in favoriteAds"
             :key="ad.id"
-            :to="`/powierzchnia-reklamowa/${ad.type}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`"
+            :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`"
             class="favorite-item"
             @click="emit('close')"
           >

@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { api, getFullImageUrl } from '../services/api'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
+import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import icon from 'leaflet/dist/images/marker-icon.png'
@@ -414,22 +415,6 @@ const loadAd = async () => {
 
     ad.value = data
     
-    // Helper to map type to URL format
-    const mapTypeToUrlFormat = (type: string): string => {
-      const typeMapping: Record<string, string> = {
-        'billboard': 'billboardy',
-        'citylight': 'citylighty',
-        'led_screen': 'ekrany-led',
-        'banner': 'banery',
-        'wall': 'sciany-reklamowe',
-        'totem': 'totemy-reklamowe',
-        'transport': 'reklama-w-transporcie',
-        'mobile': 'reklama-mobilna',
-        'other': 'inne'
-      }
-      return typeMapping[type] || 'inne'
-    }
-
     // Sprawdź czy URL jest poprawny, jeśli nie - przekieruj na poprawny
     const correctPath = `/powierzchnia-reklamowa/${mapTypeToUrlFormat(data.type)}/${slugify(data.city)}/${slugify(data.title)}-${data.id}`
     const currentPath = router.currentRoute.value.path
@@ -1113,7 +1098,7 @@ onUnmounted(() => {
               <router-link
                 v-for="similarAd in similarAds"
                 :key="similarAd.id"
-                :to="`/powierzchnia-reklamowa/${similarAd.type}/${slugify(similarAd.city)}/${slugify(similarAd.title)}-${similarAd.id}`"
+                :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(similarAd.type)}/${slugify(similarAd.city)}/${slugify(similarAd.title)}-${similarAd.id}`"
                 class="similar-ad-card"
               >
                 <div class="similar-ad-image">

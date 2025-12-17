@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router'
 import { api, getFullImageUrl } from '../services/api'
 import type { Advertisement } from '../types'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
+import { slugify } from '../utils/slugify'
+import { mapTypeToUrlFormat } from '../utils/typeMapping'
 
 import axios from '../api/axios'
 
@@ -241,7 +243,7 @@ onMounted(() => {
                 <th class="feature-column"></th>
                 <th v-for="ad in comparisonAds" :key="ad.id" class="ad-column">
                   <div class="ad-header">
-                    <router-link :to="`/ogloszenie/${ad.id}`" class="ad-image-link">
+                    <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="ad-image-link">
                       <img
                         v-if="ad.image_url"
                         :src="getFullImageUrl(ad.image_url)"
@@ -256,7 +258,7 @@ onMounted(() => {
                         </svg>
                       </div>
                     </router-link>
-                    <router-link :to="`/ogloszenie/${ad.id}`" class="ad-title">
+                    <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="ad-title">
                       {{ ad.title }}
                     </router-link>
                     <button @click="removeFromComparison(ad.id)" class="remove-btn" title="Usuń z porównania">
@@ -565,6 +567,7 @@ onMounted(() => {
   width: 100%;
   border-collapse: collapse;
   min-width: 800px;
+  table-layout: fixed;
 }
 
 .comparison-table thead {
@@ -588,8 +591,7 @@ onMounted(() => {
 }
 
 .ad-column {
-  min-width: 280px;
-  max-width: 320px;
+  width: auto;
 }
 
 .ad-header {
@@ -634,8 +636,10 @@ onMounted(() => {
   color: white;
   text-decoration: none;
   line-height: 1.3;
+  height: 2.73rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

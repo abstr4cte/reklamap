@@ -14,6 +14,7 @@ import Breadcrumbs from '../components/Breadcrumbs.vue'
 import CategoryDescription from '../components/CategoryDescription.vue'
 import { useSeo } from '../composables/useSeo'
 import { categoryDescriptions, cityDescriptions } from '../data/categoryDescriptions'
+import { mapTypeToUrlFormat } from '../utils/typeMapping'
 
 // Funkcja formatująca adres i miasto, taka sama jak w AdCard
 const formatLocation = (location: string, city: string) => {
@@ -1354,7 +1355,7 @@ onBeforeUnmount(() => {
             @click="handleAdClick(ad.id)"
           >
             <router-link 
-              :to="`/powierzchnia-reklamowa/${ad.type}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`"
+              :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`"
               class="ad-link"
               :price-display="priceDisplay"
             >
