@@ -14,6 +14,17 @@ const emit = defineEmits<{
 }>()
 
 const isMobileMenuOpen = ref(false)
+const isCategoriesDropdownOpen = ref(false)
+
+const categories = [
+  { name: 'Wszystkie powierzchnie', slug: '', icon: '🗺️' },
+  { name: 'Billboardy', slug: 'billboard', icon: '🏢' },
+  { name: 'Citylighty', slug: 'citylight', icon: '💡' },
+  { name: 'Banery', slug: 'baner', icon: '🎯' },
+  { name: 'Plakaty', slug: 'plakat', icon: '📄' },
+  { name: 'Ściany', slug: 'sciana', icon: '🧱' },
+  { name: 'Inne', slug: 'inne', icon: '✨' }
+]
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
@@ -42,6 +53,14 @@ const handleComparisonClick = () => {
   closeMobileMenu()
   emit('openComparison')
 }
+
+const toggleCategoriesDropdown = () => {
+  isCategoriesDropdownOpen.value = !isCategoriesDropdownOpen.value
+}
+
+const closeCategoriesDropdown = () => {
+  isCategoriesDropdownOpen.value = false
+}
 </script>
 
 <template>
@@ -61,10 +80,37 @@ const handleComparisonClick = () => {
       <!-- Desktop Navigation -->
       <nav class="header-center desktop-nav">
         <router-link to="/" class="nav-link">Strona główna</router-link>
+        
+        <!-- Categories Dropdown -->
+        <div 
+          class="nav-dropdown"
+          @mouseenter="isCategoriesDropdownOpen = true"
+          @mouseleave="isCategoriesDropdownOpen = false"
+        >
+          <button class="nav-link dropdown-trigger">
+            Kategorie
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="dropdown-icon">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          
+          <Transition name="dropdown">
+            <div v-if="isCategoriesDropdownOpen" class="dropdown-menu">
+              <router-link
+                v-for="category in categories"
+                :key="category.slug"
+                :to="category.slug ? `/powierzchnie-reklamowe/${category.slug}` : '/powierzchnie-reklamowe'"
+                class="dropdown-item"
+                @click="closeCategoriesDropdown"
+              >
+                {{ category.name }}
+              </router-link>
+            </div>
+          </Transition>
+        </div>
+        
         <router-link to="/blog" class="nav-link">Blog</router-link>
         <router-link to="/faq" class="nav-link">FAQ</router-link>
-        <router-link to="/regulamin" class="nav-link">Regulamin</router-link>
-        <router-link to="/polityka-prywatnosci" class="nav-link">Polityka prywatności</router-link>
         <router-link to="/kontakt" class="nav-link">Kontakt</router-link>
       </nav>
 
@@ -133,6 +179,22 @@ const handleComparisonClick = () => {
             </svg>
             Strona główna
           </router-link>
+          
+          <!-- Mobile Categories Section -->
+          <div class="mobile-nav-section">
+            <div class="mobile-nav-section-title">Kategorie powierzchni</div>
+            <router-link
+              v-for="category in categories"
+              :key="category.slug"
+              :to="category.slug ? `/powierzchnie-reklamowe/${category.slug}` : '/powierzchnie-reklamowe'"
+              class="mobile-nav-link category-link"
+              @click="closeMobileMenu"
+            >
+              <span class="category-emoji">{{ category.icon }}</span>
+              {{ category.name }}
+            </router-link>
+          </div>
+          
           <router-link to="/blog" class="mobile-nav-link" @click="closeMobileMenu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
@@ -284,6 +346,72 @@ const handleComparisonClick = () => {
 
 .nav-link.router-link-active::after {
   width: 100%;
+}
+
+/* Dropdown Styles */
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.dropdown-icon {
+  transition: transform 0.2s ease;
+}
+
+.nav-dropdown:hover .dropdown-icon {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  min-width: 240px;
+  padding: 0.5rem;
+  z-index: 1000;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: #1f2937;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.dropdown-item:hover {
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  color: #667eea;
+  transform: translateX(4px);
+}
+
+/* Dropdown Transitions */
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all 0.2s ease;
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 .header-right {
@@ -472,6 +600,22 @@ const handleComparisonClick = () => {
   overflow-y: auto;
 }
 
+.mobile-nav-section {
+  margin: 1rem 0;
+  padding: 0.5rem 0;
+  border-top: 1px solid #f3f4f6;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.mobile-nav-section-title {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+}
+
 .mobile-nav-link {
   display: flex;
   align-items: center;
@@ -499,6 +643,18 @@ const handleComparisonClick = () => {
 
 .mobile-nav-link svg {
   flex-shrink: 0;
+}
+
+.mobile-nav-link.category-link {
+  padding-left: 2rem;
+  font-size: 0.9rem;
+}
+
+.category-emoji {
+  font-size: 1.25rem;
+  display: inline-block;
+  width: 24px;
+  text-align: center;
 }
 
 .mobile-actions {

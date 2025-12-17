@@ -9,6 +9,8 @@ import 'leaflet/dist/leaflet.css'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import ToastNotification from '../components/ToastNotification.vue'
+import Breadcrumbs from '../components/Breadcrumbs.vue'
+import { useSeo } from '../composables/useSeo'
 
 // Fix Leaflet icon paths
 const DefaultIcon = L.icon({
@@ -81,6 +83,18 @@ const cleanDescription = computed(() => {
   if (!ad.value?.description) return ''
   return ad.value.description.replace(/\n\n\[IMAGES\].*?\[\/IMAGES\]/s, '')
 })
+
+// SEO-friendly alt text for images
+const imageAlt = computed(() => {
+  if (!ad.value) return ''
+  const typeLabel = getTypeLabel(ad.value.type)
+  return `${typeLabel} ${ad.value.city} - ${ad.value.title}`
+})
+
+const thumbnailAlt = (index: number) => {
+  if (!ad.value) return `Miniatura ${index + 1}`
+  return `${ad.value.title} - zdjęcie ${index + 1}`
+}
 
 const nextImage = () => {
   if (images.value.length === 0) return
@@ -155,6 +169,136 @@ const pricePerSqm = computed(() => {
     return (ad.value.price / area).toFixed(2)
   }
   return '0'
+})
+
+// Helper to map type to Polish label
+const getTypeLabel = (type: string): string => {
+  const typeLabels: Record<string, string> = {
+    'billboard': 'Billboard',
+    'citylight': 'Citylight',
+    'led_screen': 'Ekran LED',
+    'digital': 'Digital',
+    'banner': 'Baner',
+    'poster': 'Plakat',
+    'wall': 'Ściana',
+    'other': 'Inne'
+  }
+  return typeLabels[type] || type
+}
+
+// Helper to map type to URL format
+const getTypeUrlFormat = (type: string): string => {
+  const typeMapping: Record<string, string> = {
+    'billboard': 'billboard',
+    'citylight': 'citylight',
+    'led_screen': 'ekran-led',
+    'digital': 'digital',
+    'banner': 'baner',
+    'poster': 'plakat',
+    'wall': 'sciana',
+    'other': 'inne'
+  }
+  return typeMapping[type] || 'inne'
+}
+
+// SEO Meta Tags
+watch(ad, (newAd) => {
+  if (newAd) {
+    const imageUrl = newAd.image_url ? getFullImageUrl(newAd.image_url) : undefined
+    const url = typeof window !== 'undefined' ? window.location.href : ''
+    
+    useSeo({
+      title: `${newAd.title} - ${newAd.city} | ReklaMap`,
+      description: `${getTypeLabel(newAd.type)} w ${newAd.city}. Wymiary: ${newAd.width}x${newAd.height}m. Cena: ${newAd.price} zł/mies. ${newAd.description.substring(0, 150)}...`,
+      keywords: `${getTypeLabel(newAd.type)}, powierzchnia reklamowa ${newAd.city}, wynajem ${getTypeLabel(newAd.type)}, reklama ${newAd.city}`,
+      ogType: 'product',
+      ogImage: imageUrl,
+      ogUrl: url,
+      canonical: url,
+      structuredData: [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          'name': newAd.title,
+          'description': newAd.description,
+          'image': imageUrl,
+          'brand': {
+            '@type': 'Brand',
+            'name': 'ReklaMap'
+          },
+          'offers': {
+            '@type': 'Offer',
+            'price': newAd.price,
+            'priceCurrency': 'PLN',
+            'availability': newAd.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            'priceValidUntil': new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            'itemCondition': 'https://schema.org/NewCondition'
+          },
+          'category': getTypeLabel(newAd.type),
+          'additionalProperty': [
+            {
+              '@type': 'PropertyValue',
+              'name': 'Szerokość',
+              'value': `${newAd.width}m`
+            },
+            {
+              '@type': 'PropertyValue',
+              'name': 'Wysokość',
+              'value': `${newAd.height}m`
+            },
+            {
+              '@type': 'PropertyValue',
+              'name': 'Lokalizacja',
+              'value': newAd.city
+            }
+          ]
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Place',
+          'name': newAd.location,
+          'address': {
+            '@type': 'PostalAddress',
+            'addressLocality': newAd.city,
+            'addressRegion': newAd.region,
+            'addressCountry': 'PL'
+          },
+          'geo': {
+            '@type': 'GeoCoordinates',
+            'latitude': newAd.latitude,
+            'longitude': newAd.longitude
+          }
+        }
+      ]
+    })
+  }
+}, { immediate: true })
+
+// Breadcrumbs for SEO
+const breadcrumbs = computed(() => {
+  if (!ad.value) return []
+  
+  return [
+    {
+      label: 'Strona główna',
+      path: '/'
+    },
+    {
+      label: 'Powierzchnie reklamowe',
+      path: '/powierzchnie-reklamowe'
+    },
+    {
+      label: getTypeLabel(ad.value.type),
+      path: `/powierzchnie-reklamowe/${getTypeUrlFormat(ad.value.type)}`
+    },
+    {
+      label: ad.value.city,
+      path: `/powierzchnie-reklamowe/${getTypeUrlFormat(ad.value.type)}/${slugify(ad.value.city)}`
+    },
+    {
+      label: ad.value.title
+    }
+  ]
 })
 
 const toggleFavorite = () => {
@@ -686,6 +830,9 @@ onUnmounted(() => {
         Powrót do listy
       </button>
 
+      <!-- SEO Breadcrumbs -->
+      <Breadcrumbs :items="breadcrumbs" />
+
       <div class="content-layout">
         <div class="main-content">
           <div class="image-gallery">
@@ -693,7 +840,7 @@ onUnmounted(() => {
               <img
                 v-if="images.length > 0"
                 :src="getFullImageUrl(images[currentImageIndex])"
-                :alt="ad.title"
+                :alt="imageAlt"
                 class="main-image"
               />
               <div v-else class="no-image">
@@ -725,7 +872,7 @@ onUnmounted(() => {
                 :class="{ active: index === currentImageIndex }"
                 @click="currentImageIndex = index"
               >
-                <img :src="getFullImageUrl(img)" :alt="`Miniatura ${index + 1}`" />
+                <img :src="getFullImageUrl(img)" :alt="thumbnailAlt(index)" />
               </div>
             </div>
           </div>
@@ -960,7 +1107,7 @@ onUnmounted(() => {
                 class="similar-ad-card"
               >
                 <div class="similar-ad-image">
-                  <img v-if="similarAd.image_url" :src="getFullImageUrl(similarAd.image_url)" :alt="similarAd.title" />
+                  <img v-if="similarAd.image_url" :src="getFullImageUrl(similarAd.image_url)" :alt="`${getTypeLabel(similarAd.type)} ${similarAd.city} - ${similarAd.title}`" />
                   <div v-else class="similar-ad-no-image">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
                       <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>

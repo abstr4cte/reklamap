@@ -1,5 +1,33 @@
 <script setup lang="ts">
 const currentYear = new Date().getFullYear()
+
+const popularCities = [
+  { name: 'Warszawa', slug: 'warszawa' },
+  { name: 'Kraków', slug: 'krakow' },
+  { name: 'Wrocław', slug: 'wroclaw' },
+  { name: 'Poznań', slug: 'poznan' },
+  { name: 'Gdańsk', slug: 'gdansk' },
+  { name: 'Łódź', slug: 'lodz' },
+  { name: 'Katowice', slug: 'katowice' },
+  { name: 'Szczecin', slug: 'szczecin' },
+  { name: 'Bydgoszcz', slug: 'bydgoszcz' },
+  { name: 'Lublin', slug: 'lublin' },
+  { name: 'Białystok', slug: 'bialystok' },
+  { name: 'Gdynia', slug: 'gdynia' }
+]
+
+const popularSearches = [
+  { label: 'Billboardy Warszawa', type: 'billboard', city: 'warszawa' },
+  { label: 'Citylighty Kraków', type: 'citylight', city: 'krakow' },
+  { label: 'Banery Wrocław', type: 'baner', city: 'wroclaw' },
+  { label: 'Billboardy Poznań', type: 'billboard', city: 'poznan' },
+  { label: 'Citylighty Gdańsk', type: 'citylight', city: 'gdansk' },
+  { label: 'Billboardy Kraków', type: 'billboard', city: 'krakow' },
+  { label: 'Banery Warszawa', type: 'baner', city: 'warszawa' },
+  { label: 'Citylighty Wrocław', type: 'citylight', city: 'wroclaw' },
+  { label: 'Plakaty Warszawa', type: 'plakat', city: 'warszawa' },
+  { label: 'Ściany Kraków', type: 'sciana', city: 'krakow' }
+]
 </script>
 
 <template>
@@ -27,6 +55,7 @@ const currentYear = new Date().getFullYear()
           <h4>Nawigacja</h4>
           <ul class="footer-links">
             <li><router-link to="/">Strona główna</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe">Wszystkie ogłoszenia</router-link></li>
             <li><router-link to="/dodaj-powierzchnie-reklamowa">Dodaj ogłoszenie</router-link></li>
             <li><router-link to="/blog">Blog</router-link></li>
             <li><router-link to="/faq">FAQ</router-link></li>
@@ -40,6 +69,42 @@ const currentYear = new Date().getFullYear()
             <li><router-link to="/polityka-prywatnosci">Polityka prywatności</router-link></li>
             <li><router-link to="/kontakt">Kontakt</router-link></li>
           </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Kategorie powierzchni</h4>
+          <ul class="footer-links">
+            <li><router-link to="/powierzchnie-reklamowe/billboard">Billboardy</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/citylight">Citylighty</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/baner">Banery</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/plakat">Plakaty</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/sciana">Ściany</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/inne">Inne</router-link></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Popularne miasta</h4>
+          <ul class="footer-links">
+            <li v-for="city in popularCities" :key="city.slug">
+              <router-link :to="`/powierzchnie-reklamowe/${city.slug}`">{{ city.name }}</router-link>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Popularne wyszukiwania - SEO -->
+      <div class="popular-searches-section">
+        <h4>Popularne wyszukiwania</h4>
+        <div class="popular-searches-grid">
+          <router-link
+            v-for="search in popularSearches"
+            :key="`${search.type}-${search.city}`"
+            :to="`/powierzchnie-reklamowe/${search.type}/${search.city}`"
+            class="search-tag"
+          >
+            {{ search.label }}
+          </router-link>
         </div>
       </div>
 
@@ -65,8 +130,8 @@ const currentYear = new Date().getFullYear()
 
 .footer-content {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 4rem;
+  grid-template-columns: 2fr 1.2fr 1fr 1.2fr 1fr;
+  gap: 2rem;
   margin-bottom: 3rem;
 }
 
@@ -152,6 +217,45 @@ const currentYear = new Date().getFullYear()
   color: #10B981;
 }
 
+.popular-searches-section {
+  margin-bottom: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.popular-searches-section h4 {
+  font-size: 1.1rem;
+  margin: 0 0 1.5rem 0;
+  color: white;
+  font-weight: 600;
+}
+
+.popular-searches-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.search-tag {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 20px;
+  color: #a5b4fc;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.search-tag:hover {
+  background: rgba(102, 126, 234, 0.2);
+  border-color: rgba(102, 126, 234, 0.5);
+  color: #c7d2fe;
+  transform: translateY(-2px);
+}
+
 .footer-bottom {
   padding-top: 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -167,11 +271,20 @@ const currentYear = new Date().getFullYear()
 @media (max-width: 1024px) {
   .footer-content {
     grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    gap: 2.5rem;
   }
 
   .brand-section {
     grid-column: 1 / -1;
+  }
+  
+  .popular-searches-grid {
+    gap: 0.5rem;
+  }
+  
+  .search-tag {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.85rem;
   }
 }
 
@@ -187,6 +300,15 @@ const currentYear = new Date().getFullYear()
 
   .brand-section {
     grid-column: 1;
+  }
+  
+  .popular-searches-section {
+    margin-bottom: 2rem;
+  }
+  
+  .popular-searches-section h4 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
   }
 
   .footer-bottom {

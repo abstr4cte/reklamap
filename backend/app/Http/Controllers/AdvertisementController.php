@@ -6,6 +6,8 @@ use App\Models\Advertisement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use App\Mail\ContactAdvertisementOwner;
 
 class AdvertisementController extends Controller
@@ -64,6 +66,9 @@ class AdvertisementController extends Controller
 
         $ad = Advertisement::create($validated);
 
+        // Clear sitemap cache and notify Google
+        $this->notifySearchEngines();
+
         return response()->json($ad, 201);
     }
 
@@ -76,6 +81,10 @@ class AdvertisementController extends Controller
     {
         $ad = Advertisement::findOrFail($id);
         $ad->update($request->all());
+        
+        // Clear sitemap cache and notify Google
+        $this->notifySearchEngines();
+        
         return $ad;
     }
 
@@ -83,6 +92,10 @@ class AdvertisementController extends Controller
     {
         $ad = Advertisement::findOrFail($id);
         $ad->delete();
+        
+        // Clear sitemap cache and notify Google
+        $this->notifySearchEngines();
+        
         return response()->noContent();
     }
 
@@ -192,5 +205,30 @@ class AdvertisementController extends Controller
         ];
         
         return $typeMapping[$type] ?? 'inne';
+    }
+
+    /**
+     * Clear sitemap cache and notify search engines about sitemap update
+     */
+    private function notifySearchEngines()
+    {
+        // Clear sitemap cache
+        Cache::forget('sitemap_xml');
+        
+        // Notify Google about sitemap update
+        try {
+            $sitemapUrl = config('app.url') . '/sitemap.xml';
+            Http::timeout(5)->get('https://www.google.com/ping', [
+                'sitemap' => $sitemapUrl
+            ]);
+            
+            // Notify Bing
+            Http::timeout(5)->get('https://www.bing.com/ping', [
+                'sitemap' => $sitemapUrl
+            ]);
+        } catch (\Exception $e) {
+            // Log error but don't fail the request
+            \Log::info('Failed to notify search engines: ' . $e->getMessage());
+        }
     }
 }

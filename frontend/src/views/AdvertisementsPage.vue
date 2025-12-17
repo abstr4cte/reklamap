@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api, getFullImageUrl } from '../services/api'
-import { slugify } from '../utils/slugify'
+import { slugify, deslugify } from '../utils/slugify'
 import type { Advertisement } from '../types'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -10,6 +10,8 @@ import { filtersToQueryParams, queryParamsToFilters } from '../utils/filterUtils
 import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 import Pagination from '../components/Pagination.vue'
+import Breadcrumbs from '../components/Breadcrumbs.vue'
+import { useSeo } from '../composables/useSeo'
 
 // Funkcja formatująca adres i miasto, taka sama jak w AdCard
 const formatLocation = (location: string, city: string) => {
@@ -84,6 +86,99 @@ const itemsPerPage = 20
 
 const route = useRoute()
 const router = useRouter()
+
+// Flaga zapobiegająca cyklicznemu wywoływaniu watch'ów
+const isResettingFilters = ref(false)
+
+// Helper to map type to Polish label
+const getTypeLabel = (type: string): string => {
+  const typeLabels: Record<string, string> = {
+    'billboard': 'Billboard',
+    'citylight': 'Citylight',
+    'led_screen': 'Ekran LED',
+    'digital': 'Digital',
+    'banner': 'Baner',
+    'poster': 'Plakat',
+    'wall': 'Ściana',
+    'other': 'Inne'
+  }
+  return typeLabels[type] || type
+}
+
+// Breadcrumbs for SEO
+const breadcrumbs = computed(() => {
+  const items = [
+    {
+      label: 'Strona główna',
+      path: '/'
+    },
+    {
+      label: 'Powierzchnie reklamowe'
+    }
+  ]
+  
+  // Add type if filtered
+  if (route.params.type) {
+    const type = route.params.type as string
+    items[items.length - 1].path = '/powierzchnie-reklamowe'
+    items.push({
+      label: getTypeLabel(type)
+    })
+  }
+  
+  // Add city if filtered
+  if (route.params.city) {
+    const city = route.params.city as string
+    if (route.params.type) {
+      // Jeśli jest typ i miasto: Strona główna > Powierzchnie > Typ > Miasto
+      items[items.length - 1].path = `/powierzchnie-reklamowe/${route.params.type}`
+    } else {
+      // Jeśli jest tylko miasto: Strona główna > Powierzchnie > Miasto
+      items[items.length - 1].path = '/powierzchnie-reklamowe'
+    }
+    items.push({
+      label: deslugify(city)
+    })
+  }
+  
+  return items
+})
+
+// SEO Meta Tags
+watch([() => route.params.type, () => route.params.city, advertisements], () => {
+  const type = route.params.type as string | undefined
+  const city = route.params.city as string | undefined
+  
+  let title = 'Powierzchnie Reklamowe w Polsce'
+  let description = 'Przeglądaj oferty powierzchni reklamowych w całej Polsce. Billboardy, citylighty, banery i więcej.'
+  let keywords = 'powierzchnie reklamowe, billboardy, citylighty, banery, reklama zewnętrzna'
+  
+  if (type && city) {
+    const typeLabel = getTypeLabel(type)
+    const cityName = deslugify(city)
+    title = `${typeLabel} ${cityName} - Wynajem Powierzchni Reklamowych | ReklaMap`
+    description = `Znajdź i wynajmij ${typeLabel.toLowerCase()} w ${cityName}. Porównuj oferty, ceny i lokalizacje na mapie. ${advertisements.value.length} ofert dostępnych.`
+    keywords = `${typeLabel} ${cityName}, powierzchnie reklamowe ${cityName}, wynajem ${typeLabel.toLowerCase()} ${cityName}`
+  } else if (type) {
+    const typeLabel = getTypeLabel(type)
+    title = `${typeLabel} - Wynajem w Całej Polsce | ReklaMap`
+    description = `Przeglądaj oferty ${typeLabel.toLowerCase()} w całej Polsce. ${advertisements.value.length} ofert dostępnych. Porównuj ceny i lokalizacje.`
+    keywords = `${typeLabel}, wynajem ${typeLabel.toLowerCase()}, powierzchnie reklamowe`
+  } else if (city) {
+    const cityName = deslugify(city)
+    title = `Powierzchnie Reklamowe ${cityName} - Billboardy, Citylighty | ReklaMap`
+    description = `Wszystkie powierzchnie reklamowe w ${cityName}. ${advertisements.value.length} ofert. Porównuj ceny billboardy, citylighty, banery.`
+    keywords = `powierzchnie reklamowe ${cityName}, billboardy ${cityName}, reklama ${cityName}`
+  }
+  
+  useSeo({
+    title,
+    description,
+    keywords,
+    ogType: 'website',
+    canonical: typeof window !== 'undefined' ? window.location.href.split('?')[0] : undefined
+  })
+}, { immediate: true, deep: true })
 
 // Filters
 const filters = ref({
@@ -397,8 +492,12 @@ const filteredAdvertisements = computed(() => {
 
   // Location filters
   if (filters.value.city) {
-    const city = filters.value.city.toLowerCase()
-    filtered = filtered.filter(ad => ad.city.toLowerCase().includes(city))
+    // Normalizuj obie strony porównania używając slugify (usuwa polskie znaki)
+    const normalizedFilterCity = slugify(filters.value.city)
+    filtered = filtered.filter(ad => {
+      const normalizedAdCity = slugify(ad.city)
+      return normalizedAdCity.includes(normalizedFilterCity)
+    })
   }
   if (filters.value.region) {
     filtered = filtered.filter(ad => ad.region === filters.value.region)
@@ -838,6 +937,75 @@ const loadAdvertisements = async () => {
 
 // Watch for URL query parameter changes
 watch(() => route.query, (newQuery) => {
+  // Jeśli query params są puste (breadcrumb navigation), resetuj filtry do wartości z route.params
+  if (Object.keys(newQuery).length === 0) {
+    isResettingFilters.value = true
+    
+    // Resetuj wszystkie filtry do domyślnych wartości
+    filters.value = {
+      type: '',
+      priceFrom: null,
+      priceTo: null,
+      priceUnit: 'month',
+      widthFrom: null,
+      widthTo: null,
+      heightFrom: null,
+      heightTo: null,
+      city: '',
+      region: '',
+      rentalPeriod: '',
+      orientation: '',
+      trafficIntensity: '',
+      status: [],
+      hasLighting: false,
+      onlyWithImage: false,
+      priceIncludesPrint: false,
+      graphicDesignHelp: false,
+      offerType: '',
+      hasVatInvoice: false,
+      selectedLocationCoords: null
+    }
+    
+    // Zastosuj filtry z route.params (type i city)
+    if (route.params.type) {
+      const typeMapping: Record<string, string> = {
+        'billboard': 'billboard',
+        'citylight': 'citylight',
+        'ekran-led': 'led_screen',
+        'digital': 'digital',
+        'baner': 'banner',
+        'plakat': 'poster',
+        'sciana': 'wall',
+        'inne': 'other'
+      }
+      const type = typeMapping[route.params.type as string] || ''
+      if (type) {
+        filters.value.type = type
+      }
+    }
+    
+    if (route.params.city) {
+      const citySlug = route.params.city as string
+      const city = deslugify(citySlug)
+      filters.value.city = city
+      locationQuery.value = city
+    } else {
+      locationQuery.value = ''
+    }
+    
+    // Resetuj search query i sortowanie
+    searchQuery.value = ''
+    sortBy.value = 'newest'
+    currentPage.value = 1
+    
+    // Resetuj flagę po krótkiej chwili
+    setTimeout(() => {
+      isResettingFilters.value = false
+    }, 100)
+    
+    return
+  }
+  
   // Aktualizuj numer strony
   const page = parseInt(newQuery.page as string) || 1
   if (page !== currentPage.value && page >= 1 && page <= totalPages.value) {
@@ -873,6 +1041,11 @@ watch(() => route.query, (newQuery) => {
 
 // Watch for filter and sort changes - reset to page 1 and update URL
 watch([() => filters.value, () => sortBy.value, () => searchQuery.value], () => {
+  // Nie aktualizuj URL jeśli właśnie resetujemy filtry
+  if (isResettingFilters.value) {
+    return
+  }
+  
   // Reset to page 1
   currentPage.value = 1
   
@@ -912,7 +1085,9 @@ onMounted(() => {
       'ekran-led': 'led_screen',
       'digital': 'digital',
       'baner': 'banner',
-      'plakat': 'poster'
+      'plakat': 'poster',
+      'sciana': 'wall',
+      'inne': 'other'
     }
     
     const type = typeMapping[route.params.type as string] || ''
@@ -922,8 +1097,9 @@ onMounted(() => {
   }
   
   if (route.params.city) {
-    // Dekoduj miasto z URL
-    const city = (route.params.city as string).replace(/-/g, ' ')
+    // Dekoduj miasto z URL - użyj deslugify do konwersji
+    const citySlug = route.params.city as string
+    const city = deslugify(citySlug)
     filters.value.city = city
     locationQuery.value = city
   }
@@ -975,6 +1151,9 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="advertisements-page">
+    <!-- SEO Breadcrumbs -->
+    <Breadcrumbs :items="breadcrumbs" />
+    
     <!-- Search and Filters Bar -->
     <div class="search-bar">
       <div class="search-container">

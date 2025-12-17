@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useSeo } from '../composables/useSeo'
 
 interface FaqItem {
   id: number
@@ -153,6 +154,30 @@ const toggleItem = (id: number) => {
 const isOpen = (id: number) => {
   return openItems.value.includes(id)
 }
+
+// FAQ Schema for SEO
+const faqSchema = computed(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  'mainEntity': faqItems.map(item => ({
+    '@type': 'Question',
+    'name': item.question,
+    'acceptedAnswer': {
+      '@type': 'Answer',
+      'text': item.answer
+    }
+  }))
+}))
+
+// SEO Meta Tags
+useSeo({
+  title: 'FAQ - Często zadawane pytania | ReklaMap',
+  description: 'Odpowiedzi na najczęstsze pytania dotyczące korzystania z platformy ReklaMap. Dowiedz się jak dodawać ogłoszenia, zarządzać powierzchniami reklamowymi i więcej.',
+  keywords: 'faq, pytania, pomoc, instrukcje, jak dodać ogłoszenie, powierzchnie reklamowe',
+  ogType: 'website',
+  canonical: 'https://reklamap.pl/faq',
+  structuredData: faqSchema.value
+})
 </script>
 
 <template>

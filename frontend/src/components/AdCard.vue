@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 import { getFullImageUrl } from '../services/api'
+import WebPImage from './WebPImage.vue'
 
 const props = defineProps<{
   ad: Advertisement
@@ -71,6 +72,11 @@ const handleComparisonClick = (e: Event) => {
   e.stopPropagation()
   emit('toggleComparison', props.ad.id)
 }
+
+const imageAlt = computed(() => {
+  const typeLabel = typeLabels[props.ad.type] || 'Powierzchnia reklamowa'
+  return `${typeLabel} ${props.ad.city} - ${props.ad.title}`
+})
 
 const displayPrice = computed(() => {
   const basePrice = props.ad.price
@@ -183,10 +189,11 @@ const statusColor = computed(() => {
 <template>
   <router-link :to="adLink" class="ad-card" :class="{ 'list-view': viewMode === 'list' }" @mouseenter="emit('hoverStart', ad.id)" @mouseleave="emit('hoverEnd', null)">
     <div class="card-image">
-      <img
+      <WebPImage
         v-if="ad.image_url"
-        :src="getFullImageUrl(ad.image_url)"
-        :alt="ad.title"
+        :src="ad.image_url"
+        :alt="imageAlt"
+        class="card-img"
       />
       <div v-else class="no-image-placeholder">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none">

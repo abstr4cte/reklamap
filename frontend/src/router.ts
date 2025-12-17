@@ -32,14 +32,22 @@ const router = createRouter({
       name: 'advertisements',
       component: () => import('./views/AdvertisementsPage.vue')
     },
+    // Route dla konkretnych typów (billboard, citylight, etc.)
     {
-      path: '/powierzchnie-reklamowe/:type',
+      path: '/powierzchnie-reklamowe/:type(billboard|citylight|baner|plakat|sciana|ekran-led|digital|inne)',
       name: 'advertisements-by-type',
       component: () => import('./views/AdvertisementsPage.vue')
     },
+    // Route dla typu + miasto
     {
-      path: '/powierzchnie-reklamowe/:type/:city',
+      path: '/powierzchnie-reklamowe/:type(billboard|citylight|baner|plakat|sciana|ekran-led|digital|inne)/:city',
       name: 'advertisements-by-type-city',
+      component: () => import('./views/AdvertisementsPage.vue')
+    },
+    // Route dla samego miasta (bez typu)
+    {
+      path: '/powierzchnie-reklamowe/:city',
+      name: 'advertisements-by-city',
       component: () => import('./views/AdvertisementsPage.vue')
     },
     // Zachowaj stare ścieżki dla kompatybilności wstecznej

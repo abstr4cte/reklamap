@@ -168,6 +168,49 @@ onMounted(() => {
     window.addEventListener('localStorageChange', handleStorageChange)
     // Zachowaj również nasłuchiwanie standardowego zdarzenia 'storage' dla kompatybilności
     window.addEventListener('storage', handleStorageChange)
+    
+    // Add Organization and WebSite structured data for SEO
+    const organizationSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      'name': 'ReklaMap',
+      'url': 'https://reklamap.pl',
+      'logo': 'https://reklamap.pl/logo.png',
+      'description': 'Platforma do wynajmu powierzchni reklamowych w całej Polsce',
+      'contactPoint': {
+        '@type': 'ContactPoint',
+        'email': 'kontakt@reklamap.pl',
+        'contactType': 'customer service',
+        'availableLanguage': 'Polish'
+      },
+      'sameAs': []
+    }
+    
+    const websiteSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      'name': 'ReklaMap',
+      'url': 'https://reklamap.pl',
+      'potentialAction': {
+        '@type': 'SearchAction',
+        'target': {
+          '@type': 'EntryPoint',
+          'urlTemplate': 'https://reklamap.pl/powierzchnie-reklamowe?keyword={search_term_string}'
+        },
+        'query-input': 'required name=search_term_string'
+      }
+    }
+    
+    // Add schemas to head
+    const orgScript = document.createElement('script')
+    orgScript.type = 'application/ld+json'
+    orgScript.textContent = JSON.stringify(organizationSchema)
+    document.head.appendChild(orgScript)
+    
+    const websiteScript = document.createElement('script')
+    websiteScript.type = 'application/ld+json'
+    websiteScript.textContent = JSON.stringify(websiteSchema)
+    document.head.appendChild(websiteScript)
   }
   // Sync favorites and comparison on mount
   syncFavorites()

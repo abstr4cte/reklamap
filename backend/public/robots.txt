@@ -1,2 +1,13 @@
+# ReklaMap - Robots.txt
 User-agent: *
-Disallow:
+Allow: /
+
+# Blokuj API endpoints
+Disallow: /api/
+Disallow: /storage/temp/
+
+# Blokuj panele administracyjne
+Disallow: /zarzadzaj
+
+# Sitemap
+Sitemap: https://reklamap.pl/sitemap.xml

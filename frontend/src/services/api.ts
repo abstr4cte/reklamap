@@ -133,9 +133,24 @@ export const api = {
             const responseText = await response.text()
 
             try {
-                const path = JSON.parse(responseText)
-                return path
+                const data = JSON.parse(responseText)
+                
+                // New format with WebP support
+                if (typeof data === 'object' && data.default) {
+                    // Backend returns: { jpg: '...', webp: '...', default: '...' }
+                    // We store the JPG path (default) in database
+                    // Frontend will automatically use WebP via WebPImage component
+                    return data.default
+                }
+                
+                // Old format (backward compatibility)
+                if (typeof data === 'string') {
+                    return data
+                }
+                
+                return data
             } catch (e) {
+                // Fallback for plain text response
                 return responseText
             }
         }

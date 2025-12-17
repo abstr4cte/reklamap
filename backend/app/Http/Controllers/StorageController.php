@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 
 class StorageController extends Controller
 {
@@ -18,21 +19,53 @@ class StorageController extends Controller
 
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $filename = Str::random(40) . '.' . $file->getClientOriginalExtension();
+            $baseFilename = Str::random(40);
             
             \Log::info('File received: ' . $file->getClientOriginalName());
-            \Log::info('Generated filename: ' . $filename);
+            \Log::info('Generated base filename: ' . $baseFilename);
             
-            // Jawnie używamy dysku 'public'
-            $path = $file->storeAs('advertisements', $filename, 'public');
-            \Log::info('File stored at path: ' . $path);
-
-            // Zapisz tylko względną ścieżkę do zdjęcia zamiast pełnego URL
-            // Dzięki temu aplikacja będzie działać poprawnie nawet po zmianie domeny
-            $relativePath = 'advertisements/' . $filename;
-            \Log::info('Returning relative path: ' . $relativePath);
+            // Save original JPG/PNG
+            $originalExt = $file->getClientOriginalExtension();
+            $jpgFilename = $baseFilename . '.jpg';
             
-            return response()->json($relativePath);
+            // Store original as JPG (fallback)
+            $jpgPath = $file->storeAs('advertisements', $jpgFilename, 'public');
+            \Log::info('JPG stored at: ' . $jpgPath);
+            
+            // Convert to WebP for better performance
+            try {
+                $img = Image::make($file);
+                
+                // Resize if too large (max 1920px width)
+                if ($img->width() > 1920) {
+                    $img->resize(1920, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
+                }
+                
+                // Save as WebP
+                $webpFilename = $baseFilename . '.webp';
+                $webpFullPath = storage_path('app/public/advertisements/' . $webpFilename);
+                $img->encode('webp', 85)->save($webpFullPath);
+                
+                \Log::info('WebP created: ' . $webpFilename);
+                
+                // Return both paths
+                return response()->json([
+                    'jpg' => 'advertisements/' . $jpgFilename,
+                    'webp' => 'advertisements/' . $webpFilename,
+                    'default' => 'advertisements/' . $jpgFilename // Fallback
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('WebP conversion failed: ' . $e->getMessage());
+                
+                // If WebP conversion fails, return only JPG
+                return response()->json([
+                    'jpg' => 'advertisements/' . $jpgFilename,
+                    'default' => 'advertisements/' . $jpgFilename
+                ]);
+            }
         }
 
         return response()->json(['error' => 'No file uploaded'], 400);
