@@ -32,15 +32,15 @@ const router = createRouter({
       name: 'advertisements',
       component: () => import('./views/AdvertisementsPage.vue')
     },
-    // Route dla konkretnych typów (billboard, citylight, etc.)
+    // Route dla konkretnych typów (billboardy, citylighty, etc.)
     {
-      path: '/powierzchnie-reklamowe/:type(billboard|citylight|baner|plakat|sciana|ekran-led|digital|inne)',
+      path: '/powierzchnie-reklamowe/:type(billboardy|citylighty|ekrany-led|banery|sciany-reklamowe|totemy-reklamowe|reklama-w-transporcie|reklama-mobilna|inne)',
       name: 'advertisements-by-type',
       component: () => import('./views/AdvertisementsPage.vue')
     },
     // Route dla typu + miasto
     {
-      path: '/powierzchnie-reklamowe/:type(billboard|citylight|baner|plakat|sciana|ekran-led|digital|inne)/:city',
+      path: '/powierzchnie-reklamowe/:type(billboardy|citylighty|ekrany-led|banery|sciany-reklamowe|totemy-reklamowe|reklama-w-transporcie|reklama-mobilna|inne)/:city',
       name: 'advertisements-by-type-city',
       component: () => import('./views/AdvertisementsPage.vue')
     },

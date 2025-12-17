@@ -343,12 +343,15 @@ const handleConfirmDelete = async () => {
 
 const getTypeLabel = (type: string) => {
   const labels: Record<string, string> = {
-    billboard: 'Billboard',
-    citylight: 'Citylight',
-    led_screen: 'Ekran LED',
-    digital: 'Digital',
-    banner: 'Banner',
-    poster: 'Plakat'
+    billboard: 'Billboardy',
+    citylight: 'Citylighty',
+    led_screen: 'Ekrany LED',
+    banner: 'Banery',
+    wall: 'Ściany reklamowe',
+    totem: 'Totemy reklamowe',
+    transport: 'Reklama w transporcie',
+    mobile: 'Reklama mobilna',
+    other: 'Inne'
   }
   return labels[type] || type
 }
@@ -912,12 +915,15 @@ onBeforeUnmount(() => {
                     <div class="form-group">
                       <label>Typ powierzchni</label>
                       <select v-model="editingAd.type" required>
-                        <option value="billboard">Billboard</option>
-                        <option value="citylight">Citylight</option>
-                        <option value="led_screen">Ekran LED</option>
-                        <option value="digital">Digital</option>
-                        <option value="banner">Banner</option>
-                        <option value="poster">Plakat</option>
+                        <option value="billboard">Billboardy</option>
+                        <option value="citylight">Citylighty</option>
+                        <option value="led_screen">Ekrany LED</option>
+                        <option value="banner">Banery</option>
+                        <option value="wall">Ściany reklamowe</option>
+                        <option value="totem">Totemy reklamowe</option>
+                        <option value="transport">Reklama w transporcie</option>
+                        <option value="mobile">Reklama mobilna</option>
+                        <option value="other">Inne</option>
                       </select>
                     </div>
 

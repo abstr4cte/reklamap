@@ -61,11 +61,14 @@ const filters = ref<Filters>({
 
 const adTypes = [
   { value: '', label: 'Wszystkie typy' },
-  { value: 'billboard', label: 'Billboard' },
-  { value: 'citylight', label: 'Citylight' },
-  { value: 'led_screen', label: 'Ekran LED' },
-  { value: 'banner', label: 'Baner' },
-  { value: 'wall', label: 'Ściana' },
+  { value: 'billboard', label: 'Billboardy' },
+  { value: 'citylight', label: 'Citylighty' },
+  { value: 'led_screen', label: 'Ekrany LED' },
+  { value: 'banner', label: 'Banery' },
+  { value: 'wall', label: 'Ściany reklamowe' },
+  { value: 'totem', label: 'Totemy reklamowe' },
+  { value: 'transport', label: 'Reklama w transporcie' },
+  { value: 'mobile', label: 'Reklama mobilna' },
   { value: 'other', label: 'Inne' }
 ]
 

@@ -131,12 +131,15 @@ const getStatusLabel = (status: string) => {
 
 const getTypeLabel = (type: string) => {
   const labels: Record<string, string> = {
-    billboard: 'Billboard',
-    citylight: 'Citylight',
-    led_screen: 'Ekran LED',
-    digital: 'Digital',
-    banner: 'Banner',
-    poster: 'Plakat'
+    billboard: 'Billboardy',
+    citylight: 'Citylighty',
+    led_screen: 'Ekrany LED',
+    banner: 'Banery',
+    wall: 'Ściany reklamowe',
+    totem: 'Totemy reklamowe',
+    transport: 'Reklama w transporcie',
+    mobile: 'Reklama mobilna',
+    other: 'Inne'
   }
   return labels[type] || type
 }

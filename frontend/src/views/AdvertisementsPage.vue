@@ -92,15 +92,28 @@ const isResettingFilters = ref(false)
 
 // Helper to map type to Polish label
 const getTypeLabel = (type: string): string => {
+  // Mapowanie zarówno wartości z bazy danych jak i z URL
   const typeLabels: Record<string, string> = {
-    'billboard': 'Billboard',
-    'citylight': 'Citylight',
-    'led_screen': 'Ekran LED',
-    'digital': 'Digital',
-    'banner': 'Baner',
-    'poster': 'Plakat',
-    'wall': 'Ściana',
-    'other': 'Inne'
+    // Wartości z bazy danych
+    'billboard': 'Billboardy',
+    'citylight': 'Citylighty',
+    'led_screen': 'Ekrany LED',
+    'banner': 'Banery',
+    'wall': 'Ściany reklamowe',
+    'totem': 'Totemy reklamowe',
+    'transport': 'Reklama w transporcie',
+    'mobile': 'Reklama mobilna',
+    'other': 'Inne',
+    // Wartości z URL (dla breadcrumbs i SEO)
+    'billboardy': 'Billboardy',
+    'citylighty': 'Citylighty',
+    'ekrany-led': 'Ekrany LED',
+    'banery': 'Banery',
+    'sciany-reklamowe': 'Ściany reklamowe',
+    'totemy-reklamowe': 'Totemy reklamowe',
+    'reklama-w-transporcie': 'Reklama w transporcie',
+    'reklama-mobilna': 'Reklama mobilna',
+    'inne': 'Inne'
   }
   return typeLabels[type] || type
 }
@@ -383,19 +396,23 @@ const typeColors: Record<string, string> = {
   billboard: '#EF4444',
   citylight: '#F59E0B',
   led_screen: '#10B981',
-  digital: '#3B82F6',
   banner: '#8B5CF6',
-  poster: '#EC4899',
+  wall: '#EC4899',
+  totem: '#3B82F6',
+  transport: '#14B8A6',
+  mobile: '#F97316',
   other: '#6B7280'
 }
 
 const typeLabels: Record<string, string> = {
-  billboard: 'Billboard',
-  citylight: 'Citylight',
-  led_screen: 'Ekran LED',
-  digital: 'Digital',
-  banner: 'Banner',
-  poster: 'Plakat',
+  billboard: 'Billboardy',
+  citylight: 'Citylighty',
+  led_screen: 'Ekrany LED',
+  banner: 'Banery',
+  wall: 'Ściany reklamowe',
+  totem: 'Totemy reklamowe',
+  transport: 'Reklama w transporcie',
+  mobile: 'Reklama mobilna',
   other: 'Inne'
 }
 
@@ -969,13 +986,14 @@ watch(() => route.query, (newQuery) => {
     // Zastosuj filtry z route.params (type i city)
     if (route.params.type) {
       const typeMapping: Record<string, string> = {
-        'billboard': 'billboard',
-        'citylight': 'citylight',
-        'ekran-led': 'led_screen',
-        'digital': 'digital',
-        'baner': 'banner',
-        'plakat': 'poster',
-        'sciana': 'wall',
+        'billboardy': 'billboard',
+        'citylighty': 'citylight',
+        'ekrany-led': 'led_screen',
+        'banery': 'banner',
+        'sciany-reklamowe': 'wall',
+        'totemy-reklamowe': 'totem',
+        'reklama-w-transporcie': 'transport',
+        'reklama-mobilna': 'mobile',
         'inne': 'other'
       }
       const type = typeMapping[route.params.type as string] || ''
@@ -1078,15 +1096,16 @@ onMounted(() => {
   
   // Sprawdź parametry z URL path
   if (route.params.type) {
-    // Mapowanie typów z URL na wartości w filtrach
+    // Mapowanie typów z URL na wartości w filtrach (wartości w bazie danych)
     const typeMapping: Record<string, string> = {
-      'billboard': 'billboard',
-      'citylight': 'citylight',
-      'ekran-led': 'led_screen',
-      'digital': 'digital',
-      'baner': 'banner',
-      'plakat': 'poster',
-      'sciana': 'wall',
+      'billboardy': 'billboard',
+      'citylighty': 'citylight',
+      'ekrany-led': 'led_screen',
+      'banery': 'banner',
+      'sciany-reklamowe': 'wall',
+      'totemy-reklamowe': 'totem',
+      'reklama-w-transporcie': 'transport',
+      'reklama-mobilna': 'mobile',
       'inne': 'other'
     }
     
@@ -1363,11 +1382,7 @@ onBeforeUnmount(() => {
             <div v-for="(color, type) in typeColors" :key="type" class="legend-item">
               <div class="legend-marker" :style="{ background: color }"></div>
               <span class="legend-label">
-                {{ type === 'billboard' ? 'Billboard' :
-                    type === 'citylight' ? 'Citylight' :
-                    type === 'led_screen' ? 'Ekran LED' :
-                    type === 'digital' ? 'Digital' :
-                    type === 'banner' ? 'Banner' : 'Plakat' }}
+                {{ typeLabels[type] || type }}
               </span>
             </div>
           </div>
@@ -1393,12 +1408,15 @@ onBeforeUnmount(() => {
             <label class="filter-label">Typ powierzchni</label>
             <select v-model="filters.type" class="filter-select">
               <option value="">Wszystkie</option>
-              <option value="billboard">Billboard</option>
-              <option value="citylight">Citylight</option>
-              <option value="led_screen">Ekran LED</option>
-              <option value="digital">Digital</option>
-              <option value="banner">Banner</option>
-              <option value="poster">Plakat</option>
+              <option value="billboard">Billboardy</option>
+              <option value="citylight">Citylighty</option>
+              <option value="led_screen">Ekrany LED</option>
+              <option value="banner">Banery</option>
+              <option value="wall">Ściany reklamowe</option>
+              <option value="totem">Totemy reklamowe</option>
+              <option value="transport">Reklama w transporcie</option>
+              <option value="mobile">Reklama mobilna</option>
+              <option value="other">Inne</option>
             </select>
           </div>
 

@@ -374,39 +374,57 @@ useSeo({
 const categories = [
   {
     name: 'Billboardy',
-    slug: 'billboard',
-    icon: '🏢',
-    description: 'Duże formaty reklamowe przy drogach'
+    slug: 'billboardy',
+    icon: '🪧',
+    description: 'Duże formaty przy drogach krajowych i autostradach, zapewniające wysoką widoczność dla kampanii wizerunkowych.'
   },
   {
     name: 'Citylighty',
-    slug: 'citylight',
+    slug: 'citylighty',
     icon: '💡',
-    description: 'Podświetlane witryny w miastach'
+    description: 'Podświetlane witryny w centrach miast, przy przystankach i galeriach, gwarantujące stałą ekspozycję.'
+  },
+  {
+    name: 'Ekrany LED',
+    slug: 'ekrany-led',
+    icon: '📺',
+    description: 'Cyfrowe wyświetlacze dynamiczne umożliwiające animacje i spoty wideo, idealne do nowoczesnych kampanii.'
   },
   {
     name: 'Banery',
-    slug: 'baner',
+    slug: 'banery',
     icon: '🎯',
-    description: 'Elastyczne powierzchnie reklamowe'
+    description: 'Elastyczne powierzchnie montowane na budynkach i płotach, łatwe do dopasowania do dostępnej przestrzeni.'
   },
   {
-    name: 'Plakaty',
-    slug: 'plakat',
-    icon: '📄',
-    description: 'Małe formaty reklamowe'
-  },
-  {
-    name: 'Ściany',
-    slug: 'sciana',
+    name: 'Ściany reklamowe',
+    slug: 'sciany-reklamowe',
     icon: '🧱',
-    description: 'Wielkoformatowe murale'
+    description: 'Murale i reklamy wielkoformatowe na elewacjach budynków, przyciągające uwagę w przestrzeni miejskiej.'
+  },
+  {
+    name: 'Totemy reklamowe',
+    slug: 'totemy-reklamowe',
+    icon: '📍',
+    description: 'Wysokie, wolnostojące słupy w centrach handlowych i placach, skuteczne w zwiększaniu rozpoznawalności marki.'
+  },
+  {
+    name: 'Reklama w transporcie',
+    slug: 'reklama-w-transporcie',
+    icon: '🚌',
+    description: 'Nośniki umieszczone na autobusach, tramwajach, metrze i przystankach, docierające do szerokiego grona odbiorców.'
+  },
+  {
+    name: 'Reklama mobilna',
+    slug: 'reklama-mobilna',
+    icon: '🚚',
+    description: 'Ruchome formaty, takie jak przyczepki i samochody firmowe, pozwalające dotrzeć z przekazem tam, gdzie jest grupa docelowa.'
   },
   {
     name: 'Inne',
     slug: 'inne',
     icon: '✨',
-    description: 'Pozostałe powierzchnie reklamowe'
+    description: 'Niestandardowe i uzupełniające formy reklamy, w tym digital signage, reklama ambientowa czy neony'
   }
 ]
 

@@ -710,22 +710,28 @@ const handleSubmit = async () => {
 
 
 const surfaceTypes = [
-  { value: 'billboard', label: 'Billboard' },
-  { value: 'citylight', label: 'Citylight' },
-  { value: 'led_screen', label: 'Ekran LED' },
-  { value: 'banner', label: 'Baner' },
-  { value: 'wall', label: 'Ściana' },
+  { value: 'billboard', label: 'Billboardy' },
+  { value: 'citylight', label: 'Citylighty' },
+  { value: 'led_screen', label: 'Ekrany LED' },
+  { value: 'banner', label: 'Banery' },
+  { value: 'wall', label: 'Ściany reklamowe' },
+  { value: 'totem', label: 'Totemy reklamowe' },
+  { value: 'transport', label: 'Reklama w transporcie' },
+  { value: 'mobile', label: 'Reklama mobilna' },
   { value: 'other', label: 'Inne' }
 ]
 
 // Mapowanie typów powierzchni reklamowych do formatu URL
 const mapTypeToUrlFormat = (type: string): string => {
   const typeMapping: Record<string, string> = {
-    'billboard': 'billboard',
-    'citylight': 'citylight',
-    'led_screen': 'ekran-led',
-    'banner': 'baner',
-    'wall': 'sciana',
+    'billboard': 'billboardy',
+    'citylight': 'citylighty',
+    'led_screen': 'ekrany-led',
+    'banner': 'banery',
+    'wall': 'sciany-reklamowe',
+    'totem': 'totemy-reklamowe',
+    'transport': 'reklama-w-transporcie',
+    'mobile': 'reklama-mobilna',
     'other': 'inne'
   }
   

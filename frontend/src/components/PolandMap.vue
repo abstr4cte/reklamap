@@ -51,9 +51,12 @@ const typeColors: Record<string, string> = {
   billboard: '#EF4444',
   citylight: '#F59E0B',
   led_screen: '#10B981',
-  digital: '#3B82F6',
   banner: '#8B5CF6',
-  poster: '#EC4899'
+  wall: '#EC4899',
+  totem: '#3B82F6',
+  transport: '#14B8A6',
+  mobile: '#F97316',
+  other: '#6B7280'
 }
 
 const regionCoordinates: Record<string, { lat: number; lng: number; zoom: number }> = {
@@ -180,23 +183,27 @@ const updateMarkers = () => {
       })
 
     const typeLabels: Record<string, string> = {
-      billboard: 'Billboard',
-      citylight: 'Citylight',
-      led_screen: 'Ekran LED',
-      digital: 'Digital',
-      banner: 'Banner',
-      poster: 'Plakat'
+      billboard: 'Billboardy',
+      citylight: 'Citylighty',
+      led_screen: 'Ekrany LED',
+      banner: 'Banery',
+      wall: 'Ściany reklamowe',
+      totem: 'Totemy reklamowe',
+      transport: 'Reklama w transporcie',
+      mobile: 'Reklama mobilna',
+      other: 'Inne'
     }
 
     const mapTypeToUrlFormat = (type: string): string => {
       const typeMapping: Record<string, string> = {
-        'billboard': 'billboard',
-        'citylight': 'citylight',
-        'led_screen': 'ekran-led',
-        'digital': 'digital',
-        'banner': 'baner',
-        'poster': 'plakat',
-        'wall': 'sciana',
+        'billboard': 'billboardy',
+        'citylight': 'citylighty',
+        'led_screen': 'ekrany-led',
+        'banner': 'banery',
+        'wall': 'sciany-reklamowe',
+        'totem': 'totemy-reklamowe',
+        'transport': 'reklama-w-transporcie',
+        'mobile': 'reklama-mobilna',
         'other': 'inne'
       }
       return typeMapping[type] || 'inne'
@@ -349,11 +356,14 @@ onMounted(() => {
           <div v-for="(color, type) in typeColors" :key="type" class="legend-item">
             <div class="legend-marker" :style="{ background: color }"></div>
             <span class="legend-label">
-              {{ type === 'billboard' ? 'Billboard' :
-                  type === 'citylight' ? 'Citylight' :
-                  type === 'led_screen' ? 'Ekran LED' :
-                  type === 'digital' ? 'Digital' :
-                  type === 'banner' ? 'Banner' : 'Plakat' }}
+              {{ type === 'billboard' ? 'Billboardy' :
+                  type === 'citylight' ? 'Citylighty' :
+                  type === 'led_screen' ? 'Ekrany LED' :
+                  type === 'banner' ? 'Banery' :
+                  type === 'wall' ? 'Ściany reklamowe' :
+                  type === 'totem' ? 'Totemy reklamowe' :
+                  type === 'transport' ? 'Reklama w transporcie' :
+                  type === 'mobile' ? 'Reklama mobilna' : 'Inne' }}
             </span>
           </div>
         </div>

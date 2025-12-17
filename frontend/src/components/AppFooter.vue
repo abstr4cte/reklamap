@@ -17,16 +17,75 @@ const popularCities = [
 ]
 
 const popularSearches = [
-  { label: 'Billboardy Warszawa', type: 'billboard', city: 'warszawa' },
-  { label: 'Citylighty Kraków', type: 'citylight', city: 'krakow' },
-  { label: 'Banery Wrocław', type: 'baner', city: 'wroclaw' },
-  { label: 'Billboardy Poznań', type: 'billboard', city: 'poznan' },
-  { label: 'Citylighty Gdańsk', type: 'citylight', city: 'gdansk' },
-  { label: 'Billboardy Kraków', type: 'billboard', city: 'krakow' },
-  { label: 'Banery Warszawa', type: 'baner', city: 'warszawa' },
-  { label: 'Citylighty Wrocław', type: 'citylight', city: 'wroclaw' },
-  { label: 'Plakaty Warszawa', type: 'plakat', city: 'warszawa' },
-  { label: 'Ściany Kraków', type: 'sciana', city: 'krakow' }
+  // Warszawa - wszystkie typy
+  { label: 'Billboardy Warszawa', type: 'billboardy', city: 'warszawa' },
+  { label: 'Citylighty Warszawa', type: 'citylighty', city: 'warszawa' },
+  { label: 'Ekrany LED Warszawa', type: 'ekrany-led', city: 'warszawa' },
+  { label: 'Banery Warszawa', type: 'banery', city: 'warszawa' },
+  { label: 'Ściany reklamowe Warszawa', type: 'sciany-reklamowe', city: 'warszawa' },
+  { label: 'Totemy reklamowe Warszawa', type: 'totemy-reklamowe', city: 'warszawa' },
+  { label: 'Reklama w transporcie Warszawa', type: 'reklama-w-transporcie', city: 'warszawa' },
+  { label: 'Reklama mobilna Warszawa', type: 'reklama-mobilna', city: 'warszawa' },
+  
+  // Kraków - wszystkie typy
+  { label: 'Billboardy Kraków', type: 'billboardy', city: 'krakow' },
+  { label: 'Citylighty Kraków', type: 'citylighty', city: 'krakow' },
+  { label: 'Ekrany LED Kraków', type: 'ekrany-led', city: 'krakow' },
+  { label: 'Banery Kraków', type: 'banery', city: 'krakow' },
+  { label: 'Ściany reklamowe Kraków', type: 'sciany-reklamowe', city: 'krakow' },
+  { label: 'Totemy reklamowe Kraków', type: 'totemy-reklamowe', city: 'krakow' },
+  { label: 'Reklama w transporcie Kraków', type: 'reklama-w-transporcie', city: 'krakow' },
+  { label: 'Reklama mobilna Kraków', type: 'reklama-mobilna', city: 'krakow' },
+  
+  // Wrocław - wszystkie typy
+  { label: 'Billboardy Wrocław', type: 'billboardy', city: 'wroclaw' },
+  { label: 'Citylighty Wrocław', type: 'citylighty', city: 'wroclaw' },
+  { label: 'Ekrany LED Wrocław', type: 'ekrany-led', city: 'wroclaw' },
+  { label: 'Banery Wrocław', type: 'banery', city: 'wroclaw' },
+  { label: 'Ściany reklamowe Wrocław', type: 'sciany-reklamowe', city: 'wroclaw' },
+  { label: 'Totemy reklamowe Wrocław', type: 'totemy-reklamowe', city: 'wroclaw' },
+  { label: 'Reklama w transporcie Wrocław', type: 'reklama-w-transporcie', city: 'wroclaw' },
+  { label: 'Reklama mobilna Wrocław', type: 'reklama-mobilna', city: 'wroclaw' },
+  
+  // Poznań - wszystkie typy
+  { label: 'Billboardy Poznań', type: 'billboardy', city: 'poznan' },
+  { label: 'Citylighty Poznań', type: 'citylighty', city: 'poznan' },
+  { label: 'Ekrany LED Poznań', type: 'ekrany-led', city: 'poznan' },
+  { label: 'Banery Poznań', type: 'banery', city: 'poznan' },
+  { label: 'Ściany reklamowe Poznań', type: 'sciany-reklamowe', city: 'poznan' },
+  { label: 'Totemy reklamowe Poznań', type: 'totemy-reklamowe', city: 'poznan' },
+  { label: 'Reklama w transporcie Poznań', type: 'reklama-w-transporcie', city: 'poznan' },
+  { label: 'Reklama mobilna Poznań', type: 'reklama-mobilna', city: 'poznan' },
+  
+  // Gdańsk - wszystkie typy
+  { label: 'Billboardy Gdańsk', type: 'billboardy', city: 'gdansk' },
+  { label: 'Citylighty Gdańsk', type: 'citylighty', city: 'gdansk' },
+  { label: 'Ekrany LED Gdańsk', type: 'ekrany-led', city: 'gdansk' },
+  { label: 'Banery Gdańsk', type: 'banery', city: 'gdansk' },
+  { label: 'Ściany reklamowe Gdańsk', type: 'sciany-reklamowe', city: 'gdansk' },
+  { label: 'Totemy reklamowe Gdańsk', type: 'totemy-reklamowe', city: 'gdansk' },
+  { label: 'Reklama w transporcie Gdańsk', type: 'reklama-w-transporcie', city: 'gdansk' },
+  { label: 'Reklama mobilna Gdańsk', type: 'reklama-mobilna', city: 'gdansk' },
+  
+  // Łódź - wszystkie typy
+  { label: 'Billboardy Łódź', type: 'billboardy', city: 'lodz' },
+  { label: 'Citylighty Łódź', type: 'citylighty', city: 'lodz' },
+  { label: 'Ekrany LED Łódź', type: 'ekrany-led', city: 'lodz' },
+  { label: 'Banery Łódź', type: 'banery', city: 'lodz' },
+  { label: 'Ściany reklamowe Łódź', type: 'sciany-reklamowe', city: 'lodz' },
+  { label: 'Totemy reklamowe Łódź', type: 'totemy-reklamowe', city: 'lodz' },
+  { label: 'Reklama w transporcie Łódź', type: 'reklama-w-transporcie', city: 'lodz' },
+  { label: 'Reklama mobilna Łódź', type: 'reklama-mobilna', city: 'lodz' },
+  
+  // Katowice - wszystkie typy
+  { label: 'Billboardy Katowice', type: 'billboardy', city: 'katowice' },
+  { label: 'Citylighty Katowice', type: 'citylighty', city: 'katowice' },
+  { label: 'Ekrany LED Katowice', type: 'ekrany-led', city: 'katowice' },
+  { label: 'Banery Katowice', type: 'banery', city: 'katowice' },
+  { label: 'Ściany reklamowe Katowice', type: 'sciany-reklamowe', city: 'katowice' },
+  { label: 'Totemy reklamowe Katowice', type: 'totemy-reklamowe', city: 'katowice' },
+  { label: 'Reklama w transporcie Katowice', type: 'reklama-w-transporcie', city: 'katowice' },
+  { label: 'Reklama mobilna Katowice', type: 'reklama-mobilna', city: 'katowice' }
 ]
 </script>
 
@@ -74,11 +133,14 @@ const popularSearches = [
         <div class="footer-section">
           <h4>Kategorie powierzchni</h4>
           <ul class="footer-links">
-            <li><router-link to="/powierzchnie-reklamowe/billboard">Billboardy</router-link></li>
-            <li><router-link to="/powierzchnie-reklamowe/citylight">Citylighty</router-link></li>
-            <li><router-link to="/powierzchnie-reklamowe/baner">Banery</router-link></li>
-            <li><router-link to="/powierzchnie-reklamowe/plakat">Plakaty</router-link></li>
-            <li><router-link to="/powierzchnie-reklamowe/sciana">Ściany</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/billboardy">Billboardy</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/citylighty">Citylighty</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/ekrany-led">Ekrany LED</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/banery">Banery</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/sciany-reklamowe">Ściany reklamowe</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/totemy-reklamowe">Totemy reklamowe</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/reklama-w-transporcie">Reklama w transporcie</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/reklama-mobilna">Reklama mobilna</router-link></li>
             <li><router-link to="/powierzchnie-reklamowe/inne">Inne</router-link></li>
           </ul>
         </div>
@@ -163,7 +225,7 @@ const popularSearches = [
 }
 
 .footer-contact {
-  margin-top: auto;
+  margin-top: 0;
 }
 
 .email-link {

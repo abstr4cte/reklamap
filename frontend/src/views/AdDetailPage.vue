@@ -174,13 +174,14 @@ const pricePerSqm = computed(() => {
 // Helper to map type to Polish label
 const getTypeLabel = (type: string): string => {
   const typeLabels: Record<string, string> = {
-    'billboard': 'Billboard',
-    'citylight': 'Citylight',
-    'led_screen': 'Ekran LED',
-    'digital': 'Digital',
-    'banner': 'Baner',
-    'poster': 'Plakat',
-    'wall': 'Ściana',
+    'billboard': 'Billboardy',
+    'citylight': 'Citylighty',
+    'led_screen': 'Ekrany LED',
+    'banner': 'Banery',
+    'wall': 'Ściany reklamowe',
+    'totem': 'Totemy reklamowe',
+    'transport': 'Reklama w transporcie',
+    'mobile': 'Reklama mobilna',
     'other': 'Inne'
   }
   return typeLabels[type] || type
@@ -189,13 +190,14 @@ const getTypeLabel = (type: string): string => {
 // Helper to map type to URL format
 const getTypeUrlFormat = (type: string): string => {
   const typeMapping: Record<string, string> = {
-    'billboard': 'billboard',
-    'citylight': 'citylight',
-    'led_screen': 'ekran-led',
-    'digital': 'digital',
-    'banner': 'baner',
-    'poster': 'plakat',
-    'wall': 'sciana',
+    'billboard': 'billboardy',
+    'citylight': 'citylighty',
+    'led_screen': 'ekrany-led',
+    'banner': 'banery',
+    'wall': 'sciany-reklamowe',
+    'totem': 'totemy-reklamowe',
+    'transport': 'reklama-w-transporcie',
+    'mobile': 'reklama-mobilna',
     'other': 'inne'
   }
   return typeMapping[type] || 'inne'
@@ -408,13 +410,14 @@ const loadAd = async () => {
     // Helper to map type to URL format
     const mapTypeToUrlFormat = (type: string): string => {
       const typeMapping: Record<string, string> = {
-        'billboard': 'billboard',
-        'citylight': 'citylight',
-        'led_screen': 'ekran-led',
-        'digital': 'digital',
-        'banner': 'baner',
-        'poster': 'plakat',
-        'wall': 'sciana',
+        'billboard': 'billboardy',
+        'citylight': 'citylighty',
+        'led_screen': 'ekrany-led',
+        'banner': 'banery',
+        'wall': 'sciany-reklamowe',
+        'totem': 'totemy-reklamowe',
+        'transport': 'reklama-w-transporcie',
+        'mobile': 'reklama-mobilna',
         'other': 'inne'
       }
       return typeMapping[type] || 'inne'

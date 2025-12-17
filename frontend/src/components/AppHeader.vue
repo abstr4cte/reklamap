@@ -18,11 +18,14 @@ const isCategoriesDropdownOpen = ref(false)
 
 const categories = [
   { name: 'Wszystkie powierzchnie', slug: '', icon: '🗺️' },
-  { name: 'Billboardy', slug: 'billboard', icon: '🏢' },
-  { name: 'Citylighty', slug: 'citylight', icon: '💡' },
-  { name: 'Banery', slug: 'baner', icon: '🎯' },
-  { name: 'Plakaty', slug: 'plakat', icon: '📄' },
-  { name: 'Ściany', slug: 'sciana', icon: '🧱' },
+  { name: 'Billboardy', slug: 'billboardy', icon: '🏢' },
+  { name: 'Citylighty', slug: 'citylighty', icon: '💡' },
+  { name: 'Ekrany LED', slug: 'ekrany-led', icon: '📺' },
+  { name: 'Banery', slug: 'banery', icon: '🎯' },
+  { name: 'Ściany reklamowe', slug: 'sciany-reklamowe', icon: '🧱' },
+  { name: 'Totemy reklamowe', slug: 'totemy-reklamowe', icon: '📍' },
+  { name: 'Reklama w transporcie', slug: 'reklama-w-transporcie', icon: '🚌' },
+  { name: 'Reklama mobilna', slug: 'reklama-mobilna', icon: '🚚' },
   { name: 'Inne', slug: 'inne', icon: '✨' }
 ]
 
