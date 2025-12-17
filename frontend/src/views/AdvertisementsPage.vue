@@ -11,7 +11,9 @@ import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 import Pagination from '../components/Pagination.vue'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
+import CategoryDescription from '../components/CategoryDescription.vue'
 import { useSeo } from '../composables/useSeo'
+import { categoryDescriptions, cityDescriptions } from '../data/categoryDescriptions'
 
 // Funkcja formatująca adres i miasto, taka sama jak w AdCard
 const formatLocation = (location: string, city: string) => {
@@ -163,6 +165,24 @@ const breadcrumbs = computed(() => {
   }
   
   return items
+})
+
+// Category/City Description for SEO
+const currentDescription = computed(() => {
+  const city = route.params.city as string | undefined
+  const type = route.params.type as string | undefined
+  
+  // Priorytet: miasto > kategoria > domyślny
+  if (city && cityDescriptions[city]) {
+    return cityDescriptions[city]
+  }
+  
+  if (type && categoryDescriptions[type]) {
+    return categoryDescriptions[type]
+  }
+  
+  // Domyślny opis dla wszystkich powierzchni
+  return categoryDescriptions['']
 })
 
 // SEO Meta Tags
@@ -1213,7 +1233,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="advertisements-page">
+  <div>
+    <div class="advertisements-page">
     <!-- SEO Breadcrumbs -->
     <Breadcrumbs :items="breadcrumbs" />
     
@@ -1722,6 +1743,15 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
+    </div>
+
+    <!-- Category/City Description for SEO - poza advertisements-page -->
+    <div class="description-wrapper">
+      <CategoryDescription 
+        v-if="currentDescription" 
+        :description="currentDescription"
+      />
+    </div>
   </div>
 </template>
 
@@ -1732,6 +1762,14 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* Description Wrapper - poza głównym kontenerem */
+.description-wrapper {
+  padding: 2rem;
+  background: white;
+  width: 100%;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* Search Bar */
@@ -2688,10 +2726,8 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 640px) {
-  .advertisements-page {
-    height: auto;
-    min-height: 100vh;
-    overflow: auto;
+  .description-wrapper {
+    padding: 1rem;
   }
   
   .search-bar {

@@ -94,7 +94,8 @@ defineExpose({
                   :class="{ active: feedbackType === 'bug' }"
                   class="type-btn"
                 >
-                  🐛 Błąd
+                  <img src="/icons/blad.svg" alt="" class="type-icon" />
+                  Błąd
                 </button>
                 <button
                   type="button"
@@ -102,7 +103,8 @@ defineExpose({
                   :class="{ active: feedbackType === 'suggestion' }"
                   class="type-btn"
                 >
-                  💡 Sugestia
+                  <img src="/icons/sugestia.svg" alt="" class="type-icon" />
+                  Sugestia
                 </button>
                 <button
                   type="button"
@@ -110,7 +112,8 @@ defineExpose({
                   :class="{ active: feedbackType === 'question' }"
                   class="type-btn"
                 >
-                  ❓ Pytanie
+                  <img src="/icons/pytanie.svg" alt="" class="type-icon" />
+                  Pytanie
                 </button>
               </div>
 
@@ -248,7 +251,7 @@ defineExpose({
 }
 
 .type-btn {
-  padding: 0.75rem 0.5rem;
+  padding: 0.75rem 1rem;
   border: 2px solid #E5E7EB;
   background: white;
   border-radius: 10px;
@@ -257,6 +260,9 @@ defineExpose({
   font-size: 0.875rem;
   transition: all 0.2s;
   color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .type-btn:hover {
@@ -268,6 +274,18 @@ defineExpose({
   border-color: #4F46E5;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+}
+
+.type-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(224deg) brightness(94%) contrast(91%);
+}
+
+.type-btn.active .type-icon {
+  filter: brightness(0) invert(1); /* Białe ikonki dla aktywnego przycisku */
 }
 
 .input-wrapper {
