@@ -29,6 +29,21 @@ const categories = [
   { name: 'Inne', slug: 'inne', icon: '✨' }
 ]
 
+const popularCities = [
+  { name: 'Warszawa', slug: 'warszawa' },
+  { name: 'Kraków', slug: 'krakow' },
+  { name: 'Wrocław', slug: 'wroclaw' },
+  { name: 'Poznań', slug: 'poznan' },
+  { name: 'Gdańsk', slug: 'gdansk' },
+  { name: 'Łódź', slug: 'lodz' },
+  { name: 'Katowice', slug: 'katowice' },
+  { name: 'Szczecin', slug: 'szczecin' },
+  { name: 'Bydgoszcz', slug: 'bydgoszcz' },
+  { name: 'Lublin', slug: 'lublin' },
+  { name: 'Białystok', slug: 'bialystok' },
+  { name: 'Gdynia', slug: 'gdynia' }
+]
+
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
 }
@@ -98,16 +113,33 @@ const closeCategoriesDropdown = () => {
           </button>
           
           <Transition name="dropdown">
-            <div v-if="isCategoriesDropdownOpen" class="dropdown-menu">
-              <router-link
-                v-for="category in categories"
-                :key="category.slug"
-                :to="category.slug ? `/powierzchnie-reklamowe/${category.slug}` : '/powierzchnie-reklamowe'"
-                class="dropdown-item"
-                @click="closeCategoriesDropdown"
-              >
-                {{ category.name }}
-              </router-link>
+            <div v-if="isCategoriesDropdownOpen" class="dropdown-menu dropdown-menu-wide">
+              <div class="dropdown-columns">
+                <div class="dropdown-column">
+                  <div class="dropdown-column-title">Kategorie</div>
+                  <router-link
+                    v-for="category in categories"
+                    :key="category.slug"
+                    :to="category.slug ? `/powierzchnie-reklamowe/${category.slug}` : '/powierzchnie-reklamowe'"
+                    class="dropdown-item"
+                    @click="closeCategoriesDropdown"
+                  >
+                    {{ category.name }}
+                  </router-link>
+                </div>
+                <div class="dropdown-column">
+                  <div class="dropdown-column-title">Popularne miasta</div>
+                  <router-link
+                    v-for="city in popularCities"
+                    :key="city.slug"
+                    :to="`/powierzchnie-reklamowe/${city.slug}`"
+                    class="dropdown-item"
+                    @click="closeCategoriesDropdown"
+                  >
+                    {{ city.name }}
+                  </router-link>
+                </div>
+              </div>
             </div>
           </Transition>
         </div>
@@ -385,6 +417,33 @@ const closeCategoriesDropdown = () => {
   min-width: 240px;
   padding: 0.5rem;
   z-index: 1000;
+}
+
+.dropdown-menu-wide {
+  min-width: 520px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.dropdown-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.dropdown-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-column-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.25rem;
 }
 
 .dropdown-item {

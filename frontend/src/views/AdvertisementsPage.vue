@@ -43,6 +43,7 @@ const hoveredAdId = ref<string | null>(null)
 const selectedAdId = ref<string | null>(null)
 const searchQuery = ref('')
 const showFiltersModal = ref(false)
+const tempFilters = ref<any>(null) // Tymczasowe filtry do edycji w modalu
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 const markers: Map<string, L.Marker> = new Map()
@@ -708,7 +709,61 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 
+// Funkcja otwierająca modal z kopiowaniem aktualnych filtrów
+const openFiltersModal = () => {
+  // Skopiuj aktualne filtry do tymczasowych
+  tempFilters.value = JSON.parse(JSON.stringify(filters.value))
+  showFiltersModal.value = true
+}
+
+// Funkcja zamykająca modal bez stosowania zmian
+const closeFiltersModal = () => {
+  showFiltersModal.value = false
+  tempFilters.value = null
+}
+
+// Funkcja stosująca filtry z modalu
+const applyFilters = () => {
+  // Ustaw flagę resetowania
+  isResettingFilters.value = true
+  
+  // Zastosuj tymczasowe filtry
+  filters.value = JSON.parse(JSON.stringify(tempFilters.value))
+  
+  // Zamknij modal
+  showFiltersModal.value = false
+  tempFilters.value = null
+  
+  // Reset to page 1
+  currentPage.value = 1
+  
+  // Konwertuj filtry na query params
+  const queryParams = filtersToQueryParams({
+    ...filters.value,
+    keyword: searchQuery.value
+  })
+  
+  // Dodaj parametr sortowania
+  if (sortBy.value !== 'newest') {
+    queryParams.sort = sortBy.value
+  }
+  
+  // Dodaj parametr strony
+  queryParams.page = '1'
+  
+  // Aktualizuj URL z nowymi parametrami
+  router.push({ query: queryParams }).then(() => {
+    setTimeout(() => {
+      isResettingFilters.value = false
+    }, 100)
+  })
+}
+
 const clearFilters = () => {
+  // Ustaw flagę resetowania
+  isResettingFilters.value = true
+  
+  // Wyczyść wszystkie filtry
   filters.value = {
     type: '',
     priceFrom: null,
@@ -740,8 +795,16 @@ const clearFilters = () => {
   // Resetuj sortowanie
   sortBy.value = 'newest'
   
-  // Wyczyść URL
-  router.push({ query: {} })
+  // Zamknij modal
+  showFiltersModal.value = false
+  tempFilters.value = null
+  
+  // Przekieruj na stronę główną powierzchni reklamowych (bez filtrów)
+  router.push('/powierzchnie-reklamowe').then(() => {
+    setTimeout(() => {
+      isResettingFilters.value = false
+    }, 100)
+  })
 }
 const createCustomIcon = (type: string, isHovered: boolean = false, isSelected: boolean = false) => {
   const color = typeColors[type] || '#6B7280'
@@ -1064,33 +1127,7 @@ watch(() => route.query, (newQuery) => {
   }
 }, { immediate: true, deep: true })
 
-// Watch for filter and sort changes - reset to page 1 and update URL
-watch([() => filters.value, () => sortBy.value, () => searchQuery.value], () => {
-  // Nie aktualizuj URL jeśli właśnie resetujemy filtry
-  if (isResettingFilters.value) {
-    return
-  }
-  
-  // Reset to page 1
-  currentPage.value = 1
-  
-  // Konwertuj filtry na query params
-  const queryParams = filtersToQueryParams({
-    ...filters.value,
-    keyword: searchQuery.value // Dodaj wyszukiwane słowo kluczowe
-  })
-  
-  // Dodaj parametr sortowania
-  if (sortBy.value !== 'newest') {
-    queryParams.sort = sortBy.value
-  }
-  
-  // Dodaj parametr strony
-  queryParams.page = '1'
-  
-  // Aktualizuj URL z nowymi parametrami
-  router.push({ query: queryParams })
-}, { deep: true })
+// Usunięto watch - filtry aktualizują się tylko po kliknięciu "Zastosuj"
 
 watch(() => filteredAdvertisements.value, () => {
   updateMarkers()
@@ -1195,7 +1232,7 @@ onBeforeUnmount(() => {
         />
       </div>
       
-      <button @click="showFiltersModal = true" class="filters-btn">
+      <button @click="openFiltersModal" class="filters-btn">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
@@ -1398,11 +1435,11 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Filters Modal -->
-    <div v-if="showFiltersModal" class="modal-overlay" @click="showFiltersModal = false">
+    <div v-if="showFiltersModal" class="modal-overlay" @click="closeFiltersModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h2>Filtry</h2>
-          <button @click="showFiltersModal = false" class="close-btn">
+          <button @click="closeFiltersModal" class="close-btn">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
@@ -1413,7 +1450,7 @@ onBeforeUnmount(() => {
           <!-- Type Filter -->
           <div class="filter-group">
             <label class="filter-label">Typ powierzchni</label>
-            <select v-model="filters.type" class="filter-select">
+            <select v-model="tempFilters.type" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>
               <option value="billboard">Billboardy</option>
               <option value="citylight">Citylighty</option>
@@ -1433,20 +1470,22 @@ onBeforeUnmount(() => {
             <div class="price-filter-group">
               <div class="range-inputs">
                 <input 
-                  v-model.number="filters.priceFrom" 
+                  v-model.number="tempFilters.priceFrom" 
                   type="number" 
                   placeholder="Od"
                   class="filter-input"
+                  v-if="tempFilters"
                 />
                 <span>-</span>
                 <input 
-                  v-model.number="filters.priceTo" 
+                  v-model.number="tempFilters.priceTo" 
                   type="number" 
                   placeholder="Do"
                   class="filter-input"
+                  v-if="tempFilters"
                 />
               </div>
-              <select v-model="filters.priceUnit" class="filter-select price-unit-select">
+              <select v-model="tempFilters.priceUnit" class="filter-select price-unit-select" v-if="tempFilters">
                 <option value="day">dzień</option>
                 <option value="week">tydzień</option>
                 <option value="month">miesiąc</option>
@@ -1459,7 +1498,7 @@ onBeforeUnmount(() => {
           <!-- Rental Period -->
           <div class="filter-group">
             <label class="filter-label">Czas wynajmu</label>
-            <select v-model="filters.rentalPeriod" class="filter-select">
+            <select v-model="tempFilters.rentalPeriod" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>
               <option value="short_term">Krótkoterminowy (&lt;1 miesiąc)</option>
               <option value="long_term">Długoterminowy</option>
@@ -1471,17 +1510,19 @@ onBeforeUnmount(() => {
             <label class="filter-label">Szerokość (m)</label>
             <div class="range-inputs">
               <input 
-                v-model.number="filters.widthFrom" 
+                v-model.number="tempFilters.widthFrom" 
                 type="number" 
                 placeholder="Od"
                 class="filter-input"
+                v-if="tempFilters"
               />
               <span>-</span>
               <input 
-                v-model.number="filters.widthTo" 
+                v-model.number="tempFilters.widthTo" 
                 type="number" 
                 placeholder="Do"
                 class="filter-input"
+                v-if="tempFilters"
               />
             </div>
           </div>
@@ -1490,17 +1531,19 @@ onBeforeUnmount(() => {
             <label class="filter-label">Wysokość (m)</label>
             <div class="range-inputs">
               <input 
-                v-model.number="filters.heightFrom" 
+                v-model.number="tempFilters.heightFrom" 
                 type="number" 
                 placeholder="Od"
                 class="filter-input"
+                v-if="tempFilters"
               />
               <span>-</span>
               <input 
-                v-model.number="filters.heightTo" 
+                v-model.number="tempFilters.heightTo" 
                 type="number" 
                 placeholder="Do"
                 class="filter-input"
+                v-if="tempFilters"
               />
             </div>
           </div>
@@ -1508,7 +1551,7 @@ onBeforeUnmount(() => {
           <!-- Orientation -->
           <div class="filter-group">
             <label class="filter-label">Orientacja</label>
-            <select v-model="filters.orientation" class="filter-select">
+            <select v-model="tempFilters.orientation" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>
               <option value="vertical">Pion</option>
               <option value="horizontal">Poziom</option>
@@ -1591,7 +1634,7 @@ onBeforeUnmount(() => {
           <!-- Traffic Intensity -->
           <div class="filter-group">
             <label class="filter-label">Natężenie ruchu</label>
-            <select v-model="filters.trafficIntensity" class="filter-select">
+            <select v-model="tempFilters.trafficIntensity" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>
               <option value="low">Niskie</option>
               <option value="medium">Średnie</option>
@@ -1611,15 +1654,15 @@ onBeforeUnmount(() => {
               </div>
               <div v-if="isStatusMenuOpen" class="multiselect-dropdown">
                 <label class="checkbox-option">
-                  <input type="checkbox" value="active" v-model="filters.status">
+                  <input type="checkbox" value="active" v-model="tempFilters.status" v-if="tempFilters">
                   <span>Wolne</span>
                 </label>
                 <label class="checkbox-option">
-                  <input type="checkbox" value="reserved" v-model="filters.status">
+                  <input type="checkbox" value="reserved" v-model="tempFilters.status" v-if="tempFilters">
                   <span>Zarezerwowane</span>
                 </label>
                 <label class="checkbox-option">
-                  <input type="checkbox" value="soon" v-model="filters.status">
+                  <input type="checkbox" value="soon" v-model="tempFilters.status" v-if="tempFilters">
                   <span>Wkrótce dostępne</span>
                 </label>
               </div>
@@ -1629,7 +1672,7 @@ onBeforeUnmount(() => {
           <!-- Offer Type -->
           <div class="filter-group">
             <label class="filter-label">Rodzaj oferty</label>
-            <select v-model="filters.offerType" class="filter-select">
+            <select v-model="tempFilters.offerType" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>
               <option value="owner">Właściciel</option>
               <option value="agency">Agencja</option>
@@ -1639,35 +1682,35 @@ onBeforeUnmount(() => {
           <!-- Feature Filters -->
           <div class="filter-group">
             <label class="checkbox-option">
-              <input v-model="filters.onlyWithImage" type="checkbox" />
+              <input v-model="tempFilters.onlyWithImage" type="checkbox" v-if="tempFilters" />
               <span>Tylko ze zdjęciem</span>
             </label>
           </div>
 
           <div class="filter-group">
             <label class="checkbox-option">
-              <input v-model="filters.hasLighting" type="checkbox" />
+              <input v-model="tempFilters.hasLighting" type="checkbox" v-if="tempFilters" />
               <span>Z podświetleniem</span>
             </label>
           </div>
 
           <div class="filter-group">
             <label class="checkbox-option">
-              <input v-model="filters.priceIncludesPrint" type="checkbox" />
+              <input v-model="tempFilters.priceIncludesPrint" type="checkbox" v-if="tempFilters" />
               <span>Druk i montaż w cenie</span>
             </label>
           </div>
 
           <div class="filter-group">
             <label class="checkbox-option">
-              <input v-model="filters.graphicDesignHelp" type="checkbox" />
+              <input v-model="tempFilters.graphicDesignHelp" type="checkbox" v-if="tempFilters" />
               <span>Pomoc przy projekcie graficznym</span>
             </label>
           </div>
 
           <div class="filter-group">
             <label class="checkbox-option">
-              <input v-model="filters.hasVatInvoice" type="checkbox" />
+              <input v-model="tempFilters.hasVatInvoice" type="checkbox" v-if="tempFilters" />
               <span>Faktura VAT</span>
             </label>
           </div>
@@ -1675,7 +1718,7 @@ onBeforeUnmount(() => {
 
         <div class="modal-footer">
           <button @click="clearFilters" class="btn-secondary">Wyczyść</button>
-          <button @click="showFiltersModal = false" class="btn-primary">Zastosuj</button>
+          <button @click="applyFilters" class="btn-primary">Zastosuj</button>
         </div>
       </div>
     </div>
