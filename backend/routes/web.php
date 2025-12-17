@@ -39,7 +39,7 @@ Route::get('/sitemap.xml', function () {
     }
     
     // Category pages
-    $categories = ['billboard', 'citylight', 'baner', 'plakat', 'sciana', 'ekran-led', 'digital', 'inne'];
+    $categories = ['billboardy', 'citylighty', 'banery', 'sciany-reklamowe', 'totemy-reklamowe', 'reklama-w-transporcie', 'reklama-mobilna', 'ekrany-led', 'inne'];
     foreach ($categories as $category) {
         $xml .= '<url>';
         $xml .= '<loc>' . htmlspecialchars($baseUrl . '/powierzchnie-reklamowe/' . $category) . '</loc>';
@@ -64,7 +64,7 @@ Route::get('/sitemap.xml', function () {
     
     // City + Category combinations (top cities only for most important combinations)
     $topCities = ['Warszawa', 'Kraków', 'Wrocław', 'Poznań', 'Gdańsk'];
-    $topCategories = ['billboard', 'citylight', 'baner'];
+    $topCategories = ['billboardy', 'citylighty', 'banery'];
     foreach ($topCities as $city) {
         $citySlug = Str::slug($city);
         foreach ($topCategories as $category) {
@@ -82,14 +82,15 @@ Route::get('/sitemap.xml', function () {
         ->get();
     
     $typeMapping = [
-        'billboard' => 'billboard',
-        'citylight' => 'citylight',
-        'led_screen' => 'ekran-led',
-        'digital' => 'digital',
-        'banner' => 'baner',
-        'poster' => 'plakat',
-        'wall' => 'sciana',
-        'other' => 'inne',
+        'billboard' => 'billboardy',
+        'citylight' => 'citylighty',
+        'led_screen' => 'ekrany-led',
+        'banner' => 'banery',
+        'wall' => 'sciany-reklamowe',
+        'totem' => 'totemy-reklamowe',
+        'transport' => 'reklama-w-transporcie',
+        'mobile' => 'reklama-mobilna',
+        'other' => 'inne'
     ];
     
     foreach ($advertisements as $ad) {

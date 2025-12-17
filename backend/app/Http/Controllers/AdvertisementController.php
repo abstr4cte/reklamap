@@ -194,13 +194,14 @@ class AdvertisementController extends Controller
     private function mapTypeToUrlFormat($type)
     {
         $typeMapping = [
-            'billboard' => 'billboard',
-            'citylight' => 'citylight',
-            'led_screen' => 'ekran-led',
-            'digital' => 'digital',
-            'banner' => 'baner',
-            'poster' => 'plakat',
-            'wall' => 'sciana',
+            'billboard' => 'billboardy',
+            'citylight' => 'citylighty',
+            'led_screen' => 'ekrany-led',
+            'banner' => 'banery',
+            'wall' => 'sciany-reklamowe',
+            'totem' => 'totemy-reklamowe',
+            'transport' => 'reklama-w-transporcie',
+            'mobile' => 'reklama-mobilna',
             'other' => 'inne'
         ];
         
