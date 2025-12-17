@@ -8,7 +8,7 @@ import AdGrid from '../components/AdGrid.vue'
 import Pagination from '../components/Pagination.vue'
 import { api } from '../services/api'
 import type { Advertisement } from '../types'
-import { filtersToQueryParams, queryParamsToFilters } from '../utils/filterUtils'
+import { filtersToQueryParams, queryParamsToFilters, normalizePolishChars } from '../utils/filterUtils'
 import { useSeo } from '../composables/useSeo'
 
 const emit = defineEmits<{
@@ -87,11 +87,11 @@ const sortedAndFilteredAdvertisements = computed(() => {
   const currentPriceDisplay = priceDisplay.value
 
   if (filters.value.keyword) {
-    const keyword = filters.value.keyword.toLowerCase()
+    const keyword = normalizePolishChars(filters.value.keyword.toLowerCase())
     filtered = filtered.filter(ad =>
-      ad.title.toLowerCase().includes(keyword) ||
-      ad.description.toLowerCase().includes(keyword) ||
-      ad.location.toLowerCase().includes(keyword)
+      normalizePolishChars(ad.title.toLowerCase()).includes(keyword) ||
+      normalizePolishChars(ad.description.toLowerCase()).includes(keyword) ||
+      normalizePolishChars(ad.location.toLowerCase()).includes(keyword)
     )
   }
 
@@ -375,55 +375,55 @@ const categories = [
   {
     name: 'Billboardy',
     slug: 'billboardy',
-    icon: '🪧',
+    icon: 'billboard.svg',
     description: 'Duże formaty przy drogach krajowych i autostradach, zapewniające wysoką widoczność dla kampanii wizerunkowych.'
   },
   {
     name: 'Citylighty',
     slug: 'citylighty',
-    icon: '💡',
+    icon: 'citylight.svg',
     description: 'Podświetlane witryny w centrach miast, przy przystankach i galeriach, gwarantujące stałą ekspozycję.'
   },
   {
     name: 'Ekrany LED',
     slug: 'ekrany-led',
-    icon: '📺',
+    icon: 'ekran-led.svg',
     description: 'Cyfrowe wyświetlacze dynamiczne umożliwiające animacje i spoty wideo, idealne do nowoczesnych kampanii.'
   },
   {
     name: 'Banery',
     slug: 'banery',
-    icon: '🎯',
+    icon: 'banner.svg',
     description: 'Elastyczne powierzchnie montowane na budynkach i płotach, łatwe do dopasowania do dostępnej przestrzeni.'
   },
   {
     name: 'Ściany reklamowe',
     slug: 'sciany-reklamowe',
-    icon: '🧱',
+    icon: 'sciana.svg',
     description: 'Murale i reklamy wielkoformatowe na elewacjach budynków, przyciągające uwagę w przestrzeni miejskiej.'
   },
   {
     name: 'Totemy reklamowe',
     slug: 'totemy-reklamowe',
-    icon: '📍',
+    icon: 'totem.svg',
     description: 'Wysokie, wolnostojące słupy w centrach handlowych i placach, skuteczne w zwiększaniu rozpoznawalności marki.'
   },
   {
     name: 'Reklama w transporcie',
     slug: 'reklama-w-transporcie',
-    icon: '🚌',
+    icon: 'transport.svg',
     description: 'Nośniki umieszczone na autobusach, tramwajach, metrze i przystankach, docierające do szerokiego grona odbiorców.'
   },
   {
     name: 'Reklama mobilna',
     slug: 'reklama-mobilna',
-    icon: '🚚',
+    icon: 'mobilna.svg',
     description: 'Ruchome formaty, takie jak przyczepki i samochody firmowe, pozwalające dotrzeć z przekazem tam, gdzie jest grupa docelowa.'
   },
   {
     name: 'Inne',
     slug: 'inne',
-    icon: '✨',
+    icon: 'inna.svg',
     description: 'Niestandardowe i uzupełniające formy reklamy, w tym digital signage, reklama ambientowa czy neony'
   }
 ]
@@ -457,6 +457,16 @@ onMounted(() => {
 
 <template>
   <div>
+    <!-- SVG Gradient Definition -->
+    <svg width="0" height="0" style="position: absolute;">
+      <defs>
+        <linearGradient id="icon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+    </svg>
+    
     <EmailModal :is-open="isModalOpen" @close="isModalOpen = false" />
     <HeroBanner @search="handleSearch" @reset="handleReset" />
     
@@ -471,7 +481,9 @@ onMounted(() => {
             :to="`/powierzchnie-reklamowe/${category.slug}`"
             class="category-card"
           >
-            <div class="category-icon">{{ category.icon }}</div>
+            <div class="category-icon">
+              <img :src="`/icons/${category.icon}`" :alt="category.name" />
+            </div>
             <h3 class="category-name">{{ category.name }}</h3>
             <p class="category-description">{{ category.description }}</p>
             <div class="category-arrow">
@@ -587,24 +599,26 @@ onMounted(() => {
 
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
 }
 
 .category-card {
-  background: white;
-  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
   padding: 2.5rem;
   text-decoration: none;
   color: inherit;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15), 0 1px 3px rgba(0, 0, 0, 0.05);
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   animation: fadeInUp 0.6s ease-out backwards;
+  border: 1px solid rgba(102, 126, 234, 0.15);
 }
 
 .category-card:nth-child(1) { animation-delay: 0.1s; }
@@ -641,8 +655,10 @@ onMounted(() => {
 }
 
 .category-card:hover {
-  transform: translateY(-12px) scale(1.03);
-  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.25);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(102, 126, 234, 0.25), 0 10px 20px rgba(118, 75, 162, 0.2);
+  border-color: rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
 }
 
 .category-card:hover::before {
@@ -655,25 +671,49 @@ onMounted(() => {
 }
 
 .category-icon {
-  font-size: 3.5rem;
-  margin-bottom: 0.5rem;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1rem;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-radius: 20px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.category-icon img {
+  width: 100%;
+  height: 100%;
+  /* Apply gradient color to SVG stroke */
+  filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(224deg) brightness(102%) contrast(97%);
+  transition: filter 0.3s ease;
 }
 
 .category-card:hover .category-icon {
-  transform: scale(1.2) rotate(5deg);
+  transform: scale(1.15) rotate(5deg);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.25);
+}
+
+.category-card:hover .category-icon img {
+  /* Brighter gradient on hover */
+  filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(224deg) brightness(110%) contrast(105%) drop-shadow(0 0 8px rgba(102, 126, 234, 0.6));
 }
 
 .category-name {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #1f2937;
   margin: 0;
   position: relative;
   z-index: 1;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  letter-spacing: -0.02em;
 }
 
 .category-card:hover .category-name {
@@ -684,13 +724,18 @@ onMounted(() => {
 }
 
 .category-description {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #6b7280;
   margin: 0;
   flex: 1;
   position: relative;
   z-index: 1;
-  line-height: 1.6;
+  line-height: 1.7;
+  transition: color 0.3s ease;
+}
+
+.category-card:hover .category-description {
+  color: #4b5563;
 }
 
 .category-arrow {
@@ -785,24 +830,27 @@ onMounted(() => {
 
 .cities-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.75rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
 }
 
 .city-card {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem 1.75rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(249, 250, 255, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2.25rem 2rem;
   text-decoration: none;
   color: inherit;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
   animation: fadeInUp 0.6s ease-out backwards;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  min-height: 120px;
 }
 
 .city-card:nth-child(1) { animation-delay: 0.1s; }
@@ -824,11 +872,12 @@ onMounted(() => {
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 5px;
   background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 20px 20px 0 0;
 }
 
 .city-card::after {
@@ -838,14 +887,17 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
   opacity: 0;
   transition: opacity 0.4s ease;
+  border-radius: 20px;
 }
 
 .city-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 20px 50px rgba(102, 126, 234, 0.25), 0 10px 25px rgba(118, 75, 162, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(252, 253, 255, 0.95) 100%);
 }
 
 .city-card:hover::before {
@@ -857,37 +909,48 @@ onMounted(() => {
 }
 
 .city-name {
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #1f2937;
   position: relative;
   z-index: 1;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
 }
 
 .city-card:hover .city-name {
-  color: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transform: translateX(4px);
 }
 
 .city-region {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #6b7280;
   text-transform: capitalize;
   position: relative;
   z-index: 1;
   font-weight: 500;
+  line-height: 1.4;
 }
 
 .city-arrow {
   position: absolute;
   top: 2rem;
   right: 1.75rem;
-  font-size: 1.75rem;
-  color: #667eea;
+  font-size: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   opacity: 0;
   transform: translateX(-15px) rotate(-45deg);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 1;
+  filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.4));
 }
 
 .city-card:hover .city-arrow {
@@ -911,7 +974,7 @@ onMounted(() => {
 
   .cities-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
 
   .city-card {

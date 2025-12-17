@@ -345,11 +345,11 @@ onBeforeUnmount(() => {
 
     <div class="hero-content">
       <div class="hero-text">
-        <h1 class="hero-title">Znajdź idealną powierzchnię reklamową</h1>
-        <p class="hero-subtitle">Tysiące ofert w całej Polsce. Sprawdź dostępność w Twojej okolicy!</p>
+        <h1 class="hero-title animate-title">Znajdź idealną powierzchnię reklamową</h1>
+        <p class="hero-subtitle animate-subtitle">Tysiące ofert w całej Polsce. Sprawdź dostępność w Twojej okolicy!</p>
       </div>
 
-      <div class="search-card">
+      <div class="search-card animate-card">
         <form @submit.prevent="handleSearch" class="search-form">
           <div class="basic-filters">
             <div class="search-row">
@@ -724,12 +724,20 @@ onBeforeUnmount(() => {
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
 }
 
+.animate-title {
+  animation: fadeInDown 0.8s ease-out;
+}
+
 .hero-subtitle {
   font-size: 1.35rem;
   color: rgba(255, 255, 255, 0.95);
   margin: 0;
   font-weight: 400;
   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.15);
+}
+
+.animate-subtitle {
+  animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 .search-card {
@@ -741,6 +749,10 @@ onBeforeUnmount(() => {
   max-width: 1100px;
   transform: translateY(60px);
   margin-bottom: 60px;
+}
+
+.animate-card {
+  animation: fadeInScale 0.8s ease-out 0.4s both;
 }
 
 .search-form {
@@ -759,6 +771,11 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
+}
+
+/* Second row with price and rental period - custom widths */
+.basic-filters .search-row:nth-child(2) {
+  grid-template-columns: 2fr 1fr;
 }
 
 .input-group {
@@ -811,7 +828,9 @@ onBeforeUnmount(() => {
 }
 
 .price-unit {
-  min-width: 100px;
+  min-width: 105px;
+  max-width: 105px;
+  flex-shrink: 0;
 }
 
 .separator {
@@ -825,7 +844,7 @@ onBeforeUnmount(() => {
 }
 
 .price-input {
-  min-width: 80px;
+  min-width: 100px;
   flex: 1;
 }
 
@@ -1025,6 +1044,39 @@ onBeforeUnmount(() => {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(90px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(60px) scale(1);
+  }
 }
 
 .filter-section {

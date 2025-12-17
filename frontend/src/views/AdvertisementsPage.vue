@@ -6,7 +6,7 @@ import { slugify, deslugify } from '../utils/slugify'
 import type { Advertisement } from '../types'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { filtersToQueryParams, queryParamsToFilters } from '../utils/filterUtils'
+import { filtersToQueryParams, queryParamsToFilters, normalizePolishChars } from '../utils/filterUtils'
 import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 import Pagination from '../components/Pagination.vue'
@@ -472,11 +472,11 @@ const filteredAdvertisements = computed(() => {
   
   // Search query
   if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
+    const query = normalizePolishChars(searchQuery.value.toLowerCase())
     filtered = filtered.filter(ad => 
-      ad.title.toLowerCase().includes(query) ||
-      ad.city.toLowerCase().includes(query) ||
-      ad.location.toLowerCase().includes(query)
+      normalizePolishChars(ad.title.toLowerCase()).includes(query) ||
+      normalizePolishChars(ad.city.toLowerCase()).includes(query) ||
+      normalizePolishChars(ad.location.toLowerCase()).includes(query)
     )
   }
 
