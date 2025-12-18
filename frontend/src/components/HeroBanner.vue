@@ -17,15 +17,33 @@ interface Filters {
   widthTo: number | null
   heightFrom: number | null
   heightTo: number | null
+  surfaceFrom: number | null
+  surfaceTo: number | null
   trafficIntensity: string
+  trafficDirection: string
   status: string[]
+  environment: string
   hasLighting: boolean
   onlyWithImage: boolean
   priceIncludesPrint: boolean
+  priceIncludesMounting: boolean
   graphicDesignHelp: boolean
   offerType: string
   hasVatInvoice: boolean
   selectedLocationCoords?: { lat: number; lng: number } | null
+  // Type-specific filters
+  variant: string
+  roadClass: string
+  spotDurationFrom: number | null
+  spotDurationTo: number | null
+  loopDurationFrom: number | null
+  loopDurationTo: number | null
+  transportScope: string
+  vehicleCountFrom: number | null
+  vehicleCountTo: number | null
+  mobileExposureMode: string
+  campaignDurationFrom: number | null
+  campaignDurationTo: number | null
 }
 
 const emit = defineEmits<{
@@ -49,14 +67,32 @@ const filters = ref<Filters>({
   widthTo: null,
   heightFrom: null,
   heightTo: null,
+  surfaceFrom: null,
+  surfaceTo: null,
   trafficIntensity: '',
+  trafficDirection: '',
   status: [],
+  environment: '',
   hasLighting: false,
   onlyWithImage: false,
   priceIncludesPrint: false,
+  priceIncludesMounting: false,
   graphicDesignHelp: false,
   offerType: '',
   hasVatInvoice: false,
+  // Type-specific filters
+  variant: '',
+  roadClass: '',
+  spotDurationFrom: null,
+  spotDurationTo: null,
+  loopDurationFrom: null,
+  loopDurationTo: null,
+  transportScope: '',
+  vehicleCountFrom: null,
+  vehicleCountTo: null,
+  mobileExposureMode: '',
+  campaignDurationFrom: null,
+  campaignDurationTo: null,
 })
 
 const adTypes = [
@@ -280,15 +316,33 @@ const resetFilters = () => {
     widthTo: null,
     heightFrom: null,
     heightTo: null,
+    surfaceFrom: null,
+    surfaceTo: null,
     trafficIntensity: '',
+    trafficDirection: '',
     status: [],
+    environment: '',
     hasLighting: false,
     onlyWithImage: false,
     priceIncludesPrint: false,
+    priceIncludesMounting: false,
     graphicDesignHelp: false,
     offerType: '',
     hasVatInvoice: false,
     selectedLocationCoords: null,
+    // Type-specific filters
+    variant: '',
+    roadClass: '',
+    spotDurationFrom: null,
+    spotDurationTo: null,
+    loopDurationFrom: null,
+    loopDurationTo: null,
+    transportScope: '',
+    vehicleCountFrom: null,
+    vehicleCountTo: null,
+    mobileExposureMode: '',
+    campaignDurationFrom: null,
+    campaignDurationTo: null,
   }
   locationQuery.value = ''
   apiLocationResults.value = []
@@ -297,6 +351,174 @@ const resetFilters = () => {
 
 const isStatusMenuOpen = ref(false)
 const statusMultiselect = ref<HTMLElement | null>(null)
+
+// Computed properties for filter visibility based on selected ad type
+const showLightingFilter = computed(() => {
+  return filters.value.type === 'totem' || (filters.value.type === 'billboard' && filters.value.variant === 'backlit')
+})
+
+const showPrintFilter = computed(() => {
+  const type = filters.value.type
+  return ['billboard', 'banner'].includes(type)
+})
+
+const showMountingFilter = computed(() => {
+  const type = filters.value.type
+  return ['billboard', 'banner', 'wall'].includes(type)
+})
+
+const showGraphicDesignFilter = computed(() => {
+  const type = filters.value.type
+  return ['billboard', 'banner', 'wall'].includes(type)
+})
+
+const showTrafficIntensityFilter = computed(() => {
+  const type = filters.value.type
+  return ['billboard', 'banner'].includes(type)
+})
+
+const showDimensionsFilter = computed(() => {
+  const type = filters.value.type
+  return ['billboard', 'citylight', 'banner', 'wall'].includes(type)
+})
+
+// Type-specific filter visibility
+const variantOptions = computed(() => {
+  const type = filters.value.type
+  switch (type) {
+    case 'billboard':
+      return [
+        { value: 'standard', label: 'Standardowy' },
+        { value: 'three_sided', label: 'Trójstronny' },
+        { value: 'backlit', label: 'Backlit' }
+      ]
+    case 'citylight':
+      return [
+        { value: 'single', label: 'Pojedynczy' },
+        { value: 'double', label: 'Podwójny' }
+      ]
+    case 'led_screen':
+      return []
+    case 'banner':
+      return [
+        { value: 'pvc', label: 'PCV' },
+        { value: 'mesh', label: 'Mesh' },
+        { value: 'textile', label: 'Tekstylny' }
+      ]
+    case 'totem':
+      return [
+        { value: 'single', label: 'Jednostronny' },
+        { value: 'double', label: 'Dwustronny' },
+        { value: 'multi', label: 'Wielostronny' }
+      ]
+    case 'transport':
+      return [
+        { value: 'bus', label: 'Autobus' },
+        { value: 'tram', label: 'Tramwaj' },
+        { value: 'metro', label: 'Metro' },
+        { value: 'stop', label: 'Przystanek' }
+      ]
+    case 'mobile':
+      return [
+        { value: 'trailer', label: 'Przyczepka' },
+        { value: 'car', label: 'Samochód' },
+        { value: 'other', label: 'Inna' }
+      ]
+    default:
+      return []
+  }
+})
+
+const showRoadClassFilter = computed(() => {
+  return filters.value.type === 'billboard'
+})
+
+const showEnvironmentFilter = computed(() => {
+  const type = filters.value.type
+  return ['citylight', 'led_screen', 'totem', 'other'].includes(type)
+})
+
+const environmentOptions = computed(() => {
+  const type = filters.value.type
+  switch (type) {
+    case 'citylight':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' }
+      ]
+    case 'led_screen':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'totem':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'other':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    default:
+      return []
+  }
+})
+
+const showLEDFilters = computed(() => {
+  return filters.value.type === 'led_screen'
+})
+
+const showTransportFilters = computed(() => {
+  return filters.value.type === 'transport'
+})
+
+const showMobileFilters = computed(() => {
+  return filters.value.type === 'mobile'
+})
+
+
+const availablePriceUnits = computed(() => {
+  const type = filters.value.type
+  if (!type) {
+    return [
+      { value: 'day', label: 'dzień' },
+      { value: 'week', label: 'tydzień' },
+      { value: 'month', label: 'miesiąc' },
+      { value: 'year', label: 'rok' },
+      { value: 'sqm', label: 'm²' }
+    ]
+  }
+  
+  if (type === 'billboard' || type === 'banner' || type === 'wall' || type === 'citylight') {
+    return [
+      { value: 'day', label: 'dzień' },
+      { value: 'week', label: 'tydzień' },
+      { value: 'month', label: 'miesiąc' },
+      { value: 'year', label: 'rok' },
+      { value: 'sqm', label: 'm²' }
+    ]
+  } else if (type === 'led_screen') {
+    return [
+      { value: 'day', label: 'dzień (emisje)' },
+      { value: 'month', label: 'miesiąc (emisje)' }
+    ]
+  } else if (type === 'transport' || type === 'mobile') {
+    return [
+      { value: 'day', label: 'dzień' },
+      { value: 'campaign', label: 'kampania' }
+    ]
+  }
+  
+  return [
+    { value: 'day', label: 'dzień' },
+    { value: 'month', label: 'miesiąc' }
+  ]
+})
 
 const statusLabel = computed(() => {
   if (filters.value.status.length === 0) return 'Wszystkie'
@@ -481,22 +703,11 @@ onBeforeUnmount(() => {
                     class="search-input price-input"
                   />
                   <select v-model="filters.priceUnit" class="search-select price-unit">
-                    <option value="day">dzień</option>
-                    <option value="week">tydzień</option>
-                    <option value="month">miesiąc</option>
-                    <option value="year">rok</option>
-                    <option value="sqm">m²</option>
+                    <option v-for="unit in availablePriceUnits" :key="unit.value" :value="unit.value">
+                      {{ unit.label }}
+                    </option>
                   </select>
                 </div>
-              </div>
-
-              <div class="input-group">
-                <label for="search-rental" class="input-label">Czas wynajmu</label>
-                <select id="search-rental" v-model="filters.rentalPeriod" class="search-select">
-                  <option value="">Wszystkie</option>
-                  <option value="short_term">Krótkoterminowy (&lt;1 miesiąc)</option>
-                  <option value="long_term">Długoterminowy</option>
-                </select>
               </div>
             </div>
           </div>
@@ -508,17 +719,9 @@ onBeforeUnmount(() => {
 
           <transition name="slide">
             <div v-if="showAdvanced" class="advanced-filters">
-              <div class="filter-section">
+              <div v-if="showDimensionsFilter" class="filter-section">
                 <h4 class="section-title">Wymiary i powierzchnia</h4>
                 <div class="search-row">
-                  <div class="input-group">
-                    <label for="orientation" class="input-label">Orientacja</label>
-                    <select id="orientation" v-model="filters.orientation" class="search-select">
-                      <option value="">Wszystkie</option>
-                      <option value="vertical">Pion</option>
-                      <option value="horizontal">Poziom</option>
-                    </select>
-                  </div>
                   <div class="input-group">
                     <label class="input-label">Szerokość (m)</label>
                     <div class="range-input">
@@ -560,18 +763,230 @@ onBeforeUnmount(() => {
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <div class="filter-section">
-                <h4 class="section-title">Lokalizacja i dostępność</h4>
                 <div class="search-row">
                   <div class="input-group">
-                    <label for="traffic" class="input-label">Natężenie ruchu</label>
-                    <select id="traffic" v-model="filters.trafficIntensity" class="search-select">
+                    <label for="orientation" class="input-label">Orientacja</label>
+                    <select id="orientation" v-model="filters.orientation" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option value="vertical">Pion</option>
+                      <option value="horizontal">Poziom</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <label class="input-label">Powierzchnia (m²)</label>
+                    <div class="range-input">
+                      <input
+                        v-model.number="filters.surfaceFrom"
+                        type="number"
+                        placeholder="Od"
+                        step="0.1"
+                        class="search-input"
+                      />
+                      <span class="separator">-</span>
+                      <input
+                        v-model.number="filters.surfaceTo"
+                        type="number"
+                        placeholder="Do"
+                        step="0.1"
+                        class="search-input"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TYPE-SPECIFIC FILTERS SECTION -->
+              <div v-if="filters.type" class="filter-section">
+                <h4 class="section-title">Opcje specyficzne dla typu</h4>
+                
+                <!-- Variant Filter -->
+                <div v-if="variantOptions.length > 0" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Wariant</label>
+                    <select v-model="filters.variant" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option v-for="variant in variantOptions" :key="variant.value" :value="variant.value">
+                        {{ variant.label }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Road Class Filter (Billboard only) -->
+                <div v-if="showRoadClassFilter" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Klasa drogi</label>
+                    <select v-model="filters.roadClass" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option value="highway">Autostrada</option>
+                      <option value="expressway">Droga ekspresowa</option>
+                      <option value="national">Droga krajowa</option>
+                      <option value="regional">Droga wojewódzka</option>
+                      <option value="local">Droga lokalna</option>
+                      <option value="urban">Droga miejska</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Traffic Intensity (Billboard and Banner) -->
+                <div v-if="showTrafficIntensityFilter" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Natężenie ruchu</label>
+                    <select v-model="filters.trafficIntensity" class="search-select">
                       <option value="">Wszystkie</option>
                       <option value="low">Niskie</option>
                       <option value="medium">Średnie</option>
                       <option value="high">Wysokie</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Traffic Direction (Billboard and Banner) -->
+                <div v-if="showTrafficIntensityFilter" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Kierunek ruchu</label>
+                    <select v-model="filters.trafficDirection" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option value="entry">Wjazd</option>
+                      <option value="exit">Wyjazd</option>
+                      <option value="both">Oba kierunki</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Environment Filter -->
+                <div v-if="showEnvironmentFilter" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Środowisko</label>
+                    <select v-model="filters.environment" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option v-for="env in environmentOptions" :key="env.value" :value="env.value">
+                        {{ env.label }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- LED Screen Filters -->
+                <div v-if="showLEDFilters" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Czas spotu (sekundy)</label>
+                    <div class="range-input">
+                      <input
+                        v-model.number="filters.spotDurationFrom"
+                        type="number"
+                        placeholder="Od"
+                        class="search-input"
+                      />
+                      <span class="separator">-</span>
+                      <input
+                        v-model.number="filters.spotDurationTo"
+                        type="number"
+                        placeholder="Do"
+                        class="search-input"
+                      />
+                    </div>
+                  </div>
+                  <div class="input-group">
+                    <label class="input-label">Pętla emisji (sekundy)</label>
+                    <div class="range-input">
+                      <input
+                        v-model.number="filters.loopDurationFrom"
+                        type="number"
+                        placeholder="Od"
+                        class="search-input"
+                      />
+                      <span class="separator">-</span>
+                      <input
+                        v-model.number="filters.loopDurationTo"
+                        type="number"
+                        placeholder="Do"
+                        class="search-input"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Transport Filters -->
+                <div v-if="showTransportFilters" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Zakres reklamy</label>
+                    <select v-model="filters.transportScope" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option value="internal">Wewnętrzna</option>
+                      <option value="external">Zewnętrzna</option>
+                      <option value="full_vehicle">Całopojazdowa</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <label class="input-label">Liczba pojazdów</label>
+                    <div class="range-input">
+                      <input
+                        v-model.number="filters.vehicleCountFrom"
+                        type="number"
+                        placeholder="Od"
+                        class="search-input"
+                      />
+                      <span class="separator">-</span>
+                      <input
+                        v-model.number="filters.vehicleCountTo"
+                        type="number"
+                        placeholder="Do"
+                        class="search-input"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Mobile Filters -->
+                <div v-if="showMobileFilters" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Tryb ekspozycji</label>
+                    <select v-model="filters.mobileExposureMode" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option value="moving">Jeżdżąca</option>
+                      <option value="stationary">Stojąca</option>
+                      <option value="mixed">Mieszana</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="filter-section">
+                <h4 class="section-title">Wyposażenie i dodatki</h4>
+                <div class="checkbox-grid">
+                  <label class="checkbox-label search-select" style="justify-content: flex-start;">
+                    <input type="checkbox" v-model="filters.onlyWithImage" />
+                    <span>Tylko ze zdjęciem</span>
+                  </label>
+                  <label v-if="showLightingFilter" class="checkbox-label search-select" style="justify-content: flex-start;">
+                    <input type="checkbox" v-model="filters.hasLighting" />
+                    <span>Podświetlenie</span>
+                  </label>
+                  <label v-if="showPrintFilter" class="checkbox-label search-select" style="justify-content: flex-start;">
+                    <input type="checkbox" v-model="filters.priceIncludesPrint" />
+                    <span>Cena zawiera druk</span>
+                  </label>
+                  <label v-if="showMountingFilter" class="checkbox-label search-select" style="justify-content: flex-start;">
+                    <input type="checkbox" v-model="filters.priceIncludesMounting" />
+                    <span>Cena zawiera montaż</span>
+                  </label>
+                  <label v-if="showGraphicDesignFilter" class="checkbox-label search-select" style="justify-content: flex-start;">
+                    <input type="checkbox" v-model="filters.graphicDesignHelp" />
+                    <span>Pomoc przy projekcie graficznym</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="filter-section">
+                <h4 class="section-title">Dostępność</h4>
+                <div class="search-row">
+                  <div class="input-group">
+                    <label for="rental-period" class="input-label">Czas wynajmu</label>
+                    <select id="rental-period" v-model="filters.rentalPeriod" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option value="short_term">Krótkoterminowy (&lt;1 miesiąc)</option>
+                      <option value="long_term">Długoterminowy</option>
                     </select>
                   </div>
                   <div class="input-group">
@@ -599,28 +1014,6 @@ onBeforeUnmount(() => {
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-
-              <div class="filter-section">
-                <h4 class="section-title">Wyposażenie i dodatki</h4>
-                <div class="checkbox-grid">
-                  <label class="checkbox-label search-select" style="justify-content: flex-start;">
-                    <input type="checkbox" v-model="filters.onlyWithImage" />
-                    <span>Tylko ze zdjęciem</span>
-                  </label>
-                  <label class="checkbox-label search-select" style="justify-content: flex-start;">
-                    <input type="checkbox" v-model="filters.hasLighting" />
-                    <span>Podświetlenie</span>
-                  </label>
-                  <label class="checkbox-label search-select" style="justify-content: flex-start;">
-                    <input type="checkbox" v-model="filters.priceIncludesPrint" />
-                    <span>Cena zawiera druk i montaż</span>
-                  </label>
-                  <label class="checkbox-label search-select" style="justify-content: flex-start;">
-                    <input type="checkbox" v-model="filters.graphicDesignHelp" />
-                    <span>Pomoc przy projekcie graficznym</span>
-                  </label>
                 </div>
               </div>
 
@@ -773,11 +1166,6 @@ onBeforeUnmount(() => {
   gap: 1.5rem;
 }
 
-/* Second row with price and rental period - custom widths */
-.basic-filters .search-row:nth-child(2) {
-  grid-template-columns: 2fr 1fr;
-}
-
 .input-group {
   display: flex;
   flex-direction: column;
@@ -828,8 +1216,8 @@ onBeforeUnmount(() => {
 }
 
 .price-unit {
-  min-width: 105px;
-  max-width: 105px;
+  min-width: 250px;
+  max-width: 250px;
   flex-shrink: 0;
 }
 
@@ -1094,7 +1482,7 @@ onBeforeUnmount(() => {
 
 .checkbox-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
 

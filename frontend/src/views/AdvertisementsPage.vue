@@ -232,19 +232,37 @@ const filters = ref({
   widthTo: null as number | null,
   heightFrom: null as number | null,
   heightTo: null as number | null,
+  surfaceFrom: null as number | null,
+  surfaceTo: null as number | null,
   city: '',
   region: '',
   rentalPeriod: '',
   orientation: '',
   trafficIntensity: '',
+  trafficDirection: '',
   status: [] as string[],
   hasLighting: false,
   onlyWithImage: false,
   priceIncludesPrint: false,
+  priceIncludesMounting: false,
   graphicDesignHelp: false,
   offerType: '',
   hasVatInvoice: false,
-  selectedLocationCoords: null as { lat: number; lng: number } | null
+  selectedLocationCoords: null as { lat: number; lng: number } | null,
+  // Type-specific filters
+  variant: '',
+  roadClass: '',
+  environment: '',
+  spotDurationFrom: null as number | null,
+  spotDurationTo: null as number | null,
+  loopDurationFrom: null as number | null,
+  loopDurationTo: null as number | null,
+  transportScope: '',
+  vehicleCountFrom: null as number | null,
+  vehicleCountTo: null as number | null,
+  mobileExposureMode: '',
+  campaignDurationFrom: null as number | null,
+  campaignDurationTo: null as number | null
 })
 
 // Lokalizacja - podobnie jak na stronie głównej
@@ -482,6 +500,8 @@ const activeFiltersCount = computed(() => {
   if (filters.value.widthTo !== null) count++
   if (filters.value.heightFrom !== null) count++
   if (filters.value.heightTo !== null) count++
+  if (filters.value.surfaceFrom !== null) count++
+  if (filters.value.surfaceTo !== null) count++
   if (filters.value.city || filters.value.region || locationQuery.value) count++
   if (filters.value.rentalPeriod) count++
   if (filters.value.orientation) count++
@@ -490,11 +510,173 @@ const activeFiltersCount = computed(() => {
   if (filters.value.hasLighting) count++
   if (filters.value.onlyWithImage) count++
   if (filters.value.priceIncludesPrint) count++
+  if (filters.value.priceIncludesMounting) count++
   if (filters.value.graphicDesignHelp) count++
   if (filters.value.offerType) count++
   if (filters.value.hasVatInvoice) count++
+  // Type-specific filters
+  if (filters.value.variant) count++
+  if (filters.value.roadClass) count++
+  if (filters.value.environment) count++
+  if (filters.value.spotDurationFrom !== null) count++
+  if (filters.value.spotDurationTo !== null) count++
+  if (filters.value.loopDurationFrom !== null) count++
+  if (filters.value.loopDurationTo !== null) count++
+  if (filters.value.transportScope) count++
+  if (filters.value.vehicleCountFrom !== null) count++
+  if (filters.value.vehicleCountTo !== null) count++
+  if (filters.value.mobileExposureMode) count++
+  if (filters.value.campaignDurationFrom !== null) count++
+  if (filters.value.campaignDurationTo !== null) count++
   return count
 })
+
+// Computed properties for filter visibility based on selected ad type
+const showLightingFilter = computed(() => {
+  return filters.value.type === 'totem' || (filters.value.type === 'billboard' && filters.value.variant === 'backlit')
+})
+
+const showPrintFilter = computed(() => {
+  const type = filters.value.type
+  return ['billboard', 'banner'].includes(type)
+})
+
+const showMountingFilter = computed(() => {
+  const type = filters.value.type
+  return ['billboard', 'banner', 'wall'].includes(type)
+})
+
+const showGraphicDesignFilter = computed(() => {
+  const type = filters.value.type
+  return ['billboard', 'banner', 'wall'].includes(type)
+})
+
+const showTrafficIntensityFilter = computed(() => {
+  const type = filters.value.type
+  return ['billboard', 'banner'].includes(type)
+})
+
+const showDimensionsFilter = computed(() => {
+  const type = filters.value.type
+  return ['billboard', 'citylight', 'banner', 'wall'].includes(type)
+})
+
+// Type-specific filter visibility
+const getVariantOptions = (type: string) => {
+  switch (type) {
+    case 'billboard':
+      return [
+        { value: 'standard', label: 'Standardowy' },
+        { value: 'three_sided', label: 'Trójstronny' },
+        { value: 'backlit', label: 'Backlit' }
+      ]
+    case 'citylight':
+      return [
+        { value: 'single', label: 'Pojedynczy' },
+        { value: 'double', label: 'Podwójny' }
+      ]
+    case 'led_screen':
+      return []
+    case 'banner':
+      return [
+        { value: 'pvc', label: 'PCV' },
+        { value: 'mesh', label: 'Mesh' },
+        { value: 'textile', label: 'Tekstylny' }
+      ]
+    case 'totem':
+      return [
+        { value: 'single', label: 'Jednostronny' },
+        { value: 'double', label: 'Dwustronny' },
+        { value: 'multi', label: 'Wielostronny' }
+      ]
+    case 'transport':
+      return [
+        { value: 'bus', label: 'Autobus' },
+        { value: 'tram', label: 'Tramwaj' },
+        { value: 'metro', label: 'Metro' },
+        { value: 'stop', label: 'Przystanek' }
+      ]
+    case 'mobile':
+      return [
+        { value: 'trailer', label: 'Przyczepka' },
+        { value: 'car', label: 'Samochód' },
+        { value: 'other', label: 'Inna' }
+      ]
+    default:
+      return []
+  }
+}
+
+const showRoadClassFilter = computed(() => {
+  return filters.value.type === 'billboard'
+})
+
+const showEnvironmentFilter = computed(() => {
+  const type = filters.value.type
+  return ['citylight', 'led_screen', 'totem', 'other'].includes(type)
+})
+
+const getEnvironmentOptions = (type: string) => {
+  switch (type) {
+    case 'citylight':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' }
+      ]
+    case 'led_screen':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'totem':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'other':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    default:
+      return []
+  }
+}
+
+const showLEDFilters = computed(() => {
+  return filters.value.type === 'led_screen'
+})
+
+const showTransportFilters = computed(() => {
+  return filters.value.type === 'transport'
+})
+
+const showMobileFilters = computed(() => {
+  return filters.value.type === 'mobile'
+})
+
+const getAvailablePriceUnits = (type: string) => {
+  // m² tylko dla typów z wymiarami
+  if (['billboard', 'citylight', 'banner', 'wall'].includes(type)) {
+    return [
+      { value: 'day', label: 'dzień' },
+      { value: 'week', label: 'tydzień' },
+      { value: 'month', label: 'miesiąc' },
+      { value: 'year', label: 'rok' },
+      { value: 'sqm', label: 'm²' }
+    ]
+  }
+  // Dla pozostałych typów bez m²
+  return [
+    { value: 'day', label: 'dzień' },
+    { value: 'week', label: 'tydzień' },
+    { value: 'month', label: 'miesiąc' },
+    { value: 'year', label: 'rok' }
+  ]
+}
 
 const filteredAdvertisements = computed(() => {
   let filtered = advertisements.value
@@ -534,6 +716,20 @@ const filteredAdvertisements = computed(() => {
   }
   if (filters.value.heightTo !== null) {
     filtered = filtered.filter(ad => ad.height <= filters.value.heightTo!)
+  }
+
+  // Surface area filters
+  if (filters.value.surfaceFrom !== null) {
+    filtered = filtered.filter(ad => {
+      const surface = ad.width * ad.height
+      return surface >= filters.value.surfaceFrom!
+    })
+  }
+  if (filters.value.surfaceTo !== null) {
+    filtered = filtered.filter(ad => {
+      const surface = ad.width * ad.height
+      return surface <= filters.value.surfaceTo!
+    })
   }
 
   // Location filters
@@ -579,6 +775,9 @@ const filteredAdvertisements = computed(() => {
   if (filters.value.priceIncludesPrint) {
     filtered = filtered.filter(ad => ad.price_includes_print === true)
   }
+  if (filters.value.priceIncludesMounting) {
+    filtered = filtered.filter(ad => ad.price_includes_mounting === true)
+  }
   if (filters.value.graphicDesignHelp) {
     filtered = filtered.filter(ad => ad.graphic_design_help === true)
   }
@@ -591,6 +790,57 @@ const filteredAdvertisements = computed(() => {
   // VAT invoice filter
   if (filters.value.hasVatInvoice) {
     filtered = filtered.filter(ad => ad.has_vat_invoice === true)
+  }
+
+  // Type-specific filters
+  if (filters.value.variant) {
+    filtered = filtered.filter(ad => ad.variant === filters.value.variant)
+  }
+
+  if (filters.value.roadClass) {
+    filtered = filtered.filter(ad => ad.road_class === filters.value.roadClass)
+  }
+
+  if (filters.value.environment) {
+    filtered = filtered.filter(ad => ad.environment === filters.value.environment)
+  }
+
+  // LED-specific filters
+  if (filters.value.spotDurationFrom !== null) {
+    filtered = filtered.filter(ad => ad.spot_duration && ad.spot_duration >= filters.value.spotDurationFrom!)
+  }
+  if (filters.value.spotDurationTo !== null) {
+    filtered = filtered.filter(ad => ad.spot_duration && ad.spot_duration <= filters.value.spotDurationTo!)
+  }
+  if (filters.value.loopDurationFrom !== null) {
+    filtered = filtered.filter(ad => ad.loop_duration && ad.loop_duration >= filters.value.loopDurationFrom!)
+  }
+  if (filters.value.loopDurationTo !== null) {
+    filtered = filtered.filter(ad => ad.loop_duration && ad.loop_duration <= filters.value.loopDurationTo!)
+  }
+
+  // Transport-specific filters
+  if (filters.value.transportScope) {
+    filtered = filtered.filter(ad => ad.transport_scope === filters.value.transportScope)
+  }
+  if (filters.value.vehicleCountFrom !== null) {
+    filtered = filtered.filter(ad => ad.vehicle_count && ad.vehicle_count >= filters.value.vehicleCountFrom!)
+  }
+  if (filters.value.vehicleCountTo !== null) {
+    filtered = filtered.filter(ad => ad.vehicle_count && ad.vehicle_count <= filters.value.vehicleCountTo!)
+  }
+
+  // Mobile-specific filters
+  if (filters.value.mobileExposureMode) {
+    filtered = filtered.filter(ad => ad.mobile_exposure_mode === filters.value.mobileExposureMode)
+  }
+
+  // Campaign duration filter
+  if (filters.value.campaignDurationFrom !== null) {
+    filtered = filtered.filter(ad => ad.campaign_duration && ad.campaign_duration >= filters.value.campaignDurationFrom!)
+  }
+  if (filters.value.campaignDurationTo !== null) {
+    filtered = filtered.filter(ad => ad.campaign_duration && ad.campaign_duration <= filters.value.campaignDurationTo!)
   }
 
   // Sortowanie
@@ -794,19 +1044,37 @@ const clearFilters = () => {
     widthTo: null,
     heightFrom: null,
     heightTo: null,
+    surfaceFrom: null,
+    surfaceTo: null,
     city: '',
     region: '',
     rentalPeriod: '',
     orientation: '',
     trafficIntensity: '',
+    trafficDirection: '',
     status: [],
     hasLighting: false,
     onlyWithImage: false,
     priceIncludesPrint: false,
+    priceIncludesMounting: false,
     graphicDesignHelp: false,
     offerType: '',
     hasVatInvoice: false,
-    selectedLocationCoords: null
+    selectedLocationCoords: null,
+    // Type-specific filters
+    variant: '',
+    roadClass: '',
+    environment: '',
+    spotDurationFrom: null,
+    spotDurationTo: null,
+    loopDurationFrom: null,
+    loopDurationTo: null,
+    transportScope: '',
+    vehicleCountFrom: null,
+    vehicleCountTo: null,
+    mobileExposureMode: '',
+    campaignDurationFrom: null,
+    campaignDurationTo: null
   }
   
   // Wyczyść wyszukiwane słowo kluczowe i lokalizację
@@ -1059,19 +1327,37 @@ watch(() => route.query, (newQuery) => {
       widthTo: null,
       heightFrom: null,
       heightTo: null,
+      surfaceFrom: null,
+      surfaceTo: null,
       city: '',
       region: '',
       rentalPeriod: '',
       orientation: '',
       trafficIntensity: '',
+      trafficDirection: '',
       status: [],
       hasLighting: false,
       onlyWithImage: false,
       priceIncludesPrint: false,
+      priceIncludesMounting: false,
       graphicDesignHelp: false,
       offerType: '',
       hasVatInvoice: false,
-      selectedLocationCoords: null
+      selectedLocationCoords: null,
+      // Type-specific filters
+      variant: '',
+      roadClass: '',
+      environment: '',
+      spotDurationFrom: null,
+      spotDurationTo: null,
+      loopDurationFrom: null,
+      loopDurationTo: null,
+      transportScope: '',
+      vehicleCountFrom: null,
+      vehicleCountTo: null,
+      mobileExposureMode: '',
+      campaignDurationFrom: null,
+      campaignDurationTo: null
     }
     
     // Zastosuj filtry z route.params (type i city)
@@ -1455,6 +1741,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
+    </div>
 
     <!-- Filters Modal -->
     <div v-if="showFiltersModal" class="modal-overlay" @click="closeFiltersModal">
@@ -1469,30 +1756,139 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="modal-body">
-          <!-- Type Filter -->
-          <div class="filter-group">
-            <label class="filter-label">Typ powierzchni</label>
-            <select v-model="tempFilters.type" class="filter-select" v-if="tempFilters">
-              <option value="">Wszystkie</option>
-              <option value="billboard">Billboardy</option>
-              <option value="citylight">Citylighty</option>
-              <option value="led_screen">Ekrany LED</option>
-              <option value="banner">Banery</option>
-              <option value="wall">Ściany reklamowe</option>
-              <option value="totem">Totemy reklamowe</option>
-              <option value="transport">Reklama w transporcie</option>
-              <option value="mobile">Reklama mobilna</option>
-              <option value="other">Inne</option>
-            </select>
+          <!-- SEKCJA: Podstawowe filtry -->
+          <div class="filter-section">
+            <h4 class="section-title">Podstawowe</h4>
+            
+            <!-- Type Filter -->
+            <div class="filter-group">
+              <label class="filter-label">Typ powierzchni</label>
+              <select v-model="tempFilters.type" class="filter-select" v-if="tempFilters">
+                <option value="">Wszystkie typy</option>
+                <option value="billboard">Billboardy</option>
+                <option value="citylight">Citylighty</option>
+                <option value="led_screen">Ekrany LED</option>
+                <option value="banner">Banery</option>
+                <option value="wall">Ściany reklamowe</option>
+                <option value="totem">Totemy reklamowe</option>
+                <option value="transport">Reklama w transporcie</option>
+                <option value="mobile">Reklama mobilna</option>
+                <option value="other">Inne</option>
+              </select>
+            </div>
+
+            <!-- Location Filter -->
+            <div class="filter-group">
+              <label class="filter-label">Lokalizacja</label>
+              <div class="location-autocomplete">
+                <div class="input-with-clear">
+                  <input
+                    v-model="locationQuery"
+                    type="text"
+                    placeholder="Wpisz region, miasto lub ulicę"
+                    class="filter-input"
+                    @focus="handleLocationFocus"
+                    @blur="handleLocationBlur"
+                    @input="handleLocationInput"
+                    autocomplete="off"
+                  />
+                  <button 
+                    v-if="locationQuery" 
+                    type="button" 
+                    class="clear-button" 
+                    @click.stop="clearLocation"
+                    @mousedown.prevent
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+                <div v-if="isLocationMenuOpen" class="location-suggestions">
+                  <div v-if="isLoadingLocations" class="loading-state compact">
+                    <div class="loading-spinner"></div>
+                    <span>Szukam...</span>
+                  </div>
+                  <div v-else-if="!locationQuery" class="suggestion-section">
+                    <div class="suggestion-header">Popularne lokalizacje</div>
+                    <div
+                      v-for="suggestion in locationSuggestions"
+                      :key="suggestion.value"
+                      class="location-suggestion"
+                      @click="selectLocation(suggestion)"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 8C8.82843 8 9.5 7.32843 9.5 6.5C9.5 5.67157 8.82843 5 8 5C7.17157 5 6.5 5.67157 6.5 6.5C6.5 7.32843 7.17157 8 8 8Z" stroke="#6B7280" stroke-width="1.2"/>
+                        <path d="M8 14C8 14 12 10.5 12 6.5C12 4.01472 10.2091 2 8 2C5.79086 2 4 4.01472 4 6.5C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.2"/>
+                      </svg>
+                      {{ suggestion.label }}
+                    </div>
+                  </div>
+                  <div v-else>
+                    <div
+                      v-for="suggestion in locationSuggestions"
+                      :key="suggestion.value + suggestion.type"
+                      class="location-suggestion"
+                      @click="selectLocation(suggestion)"
+                    >
+                      <svg v-if="suggestion.type === 'region'" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <rect x="2" y="2" width="12" height="12" rx="1.5" stroke="#6B7280" stroke-width="1.2"/>
+                        <path d="M2 6H14M6 2V14" stroke="#6B7280" stroke-width="1.2"/>
+                      </svg>
+                      <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 8C8.82843 8 9.5 7.32843 9.5 6.5C9.5 5.67157 8.82843 5 8 5C7.17157 5 6.5 5.67157 6.5 6.5C6.5 7.32843 7.17157 8 8 8Z" stroke="#6B7280" stroke-width="1.2"/>
+                        <path d="M8 14C8 14 12 10.5 12 6.5C12 4.01472 10.2091 2 8 2C5.79086 2 4 4.01472 4 6.5C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.2"/>
+                      </svg>
+                      <span class="suggestion-text">
+                        <span class="suggestion-name">{{ suggestion.label }}</span>
+                        <span v-if="suggestion.type === 'region'" class="suggestion-type">Województwo</span>
+                        <span v-else-if="suggestion.subtitle" class="suggestion-type">{{ suggestion.subtitle }}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Price Range with Unit -->
+            <div class="filter-group">
+              <label class="filter-label">Cena</label>
+              <div class="price-filter-group">
+                <div class="range-inputs">
+                  <input 
+                    v-model.number="tempFilters.priceFrom" 
+                    type="number" 
+                    placeholder="Od"
+                    class="filter-input"
+                    v-if="tempFilters"
+                  />
+                  <span>-</span>
+                  <input 
+                    v-model.number="tempFilters.priceTo" 
+                    type="number" 
+                    placeholder="Do"
+                    class="filter-input"
+                    v-if="tempFilters"
+                  />
+                </div>
+                <select v-model="tempFilters.priceUnit" class="filter-select price-unit-select" v-if="tempFilters">
+                  <option v-for="unit in getAvailablePriceUnits(tempFilters.type)" :key="unit.value" :value="unit.value">
+                    {{ unit.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          <!-- Price Range with Unit -->
-          <div class="filter-group">
-            <label class="filter-label">Cena</label>
-            <div class="price-filter-group">
+        <!-- SEKCJA: Wymiary i powierzchnia -->
+        <div v-if="tempFilters && ['billboard', 'citylight', 'banner', 'wall'].includes(tempFilters.type)" class="filter-section">
+          <h4 class="section-title">Wymiary i powierzchnia</h4>
+          <div class="filter-row">
+            <div class="filter-group">
+              <label class="filter-label">Szerokość (m)</label>
               <div class="range-inputs">
                 <input 
-                  v-model.number="tempFilters.priceFrom" 
+                  v-model.number="tempFilters.widthFrom" 
                   type="number" 
                   placeholder="Od"
                   class="filter-input"
@@ -1500,23 +1896,267 @@ onBeforeUnmount(() => {
                 />
                 <span>-</span>
                 <input 
-                  v-model.number="tempFilters.priceTo" 
+                  v-model.number="tempFilters.widthTo" 
                   type="number" 
                   placeholder="Do"
                   class="filter-input"
                   v-if="tempFilters"
                 />
               </div>
-              <select v-model="tempFilters.priceUnit" class="filter-select price-unit-select" v-if="tempFilters">
-                <option value="day">dzień</option>
-                <option value="week">tydzień</option>
-                <option value="month">miesiąc</option>
-                <option value="year">rok</option>
-                <option value="sqm">m²</option>
-              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Wysokość (m)</label>
+              <div class="range-inputs">
+                <input 
+                  v-model.number="tempFilters.heightFrom" 
+                  type="number" 
+                  placeholder="Od"
+                  class="filter-input"
+                  v-if="tempFilters"
+                />
+                <span>-</span>
+                <input 
+                  v-model.number="tempFilters.heightTo" 
+                  type="number" 
+                  placeholder="Do"
+                  class="filter-input"
+                  v-if="tempFilters"
+                />
+              </div>
             </div>
           </div>
 
+          <!-- Row 2: Orientation and Surface -->
+          <div class="filter-row">
+            <div class="filter-group">
+              <label class="filter-label">Orientacja</label>
+              <select v-model="tempFilters.orientation" class="filter-select" v-if="tempFilters">
+                <option value="">Wszystkie</option>
+                <option value="vertical">Pion</option>
+                <option value="horizontal">Poziom</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Powierzchnia (m²)</label>
+              <div class="range-inputs">
+                <input 
+                  v-model.number="tempFilters.surfaceFrom" 
+                  type="number" 
+                  placeholder="Od"
+                  step="0.1"
+                  class="filter-input"
+                  v-if="tempFilters"
+                />
+                <span>-</span>
+                <input 
+                  v-model.number="tempFilters.surfaceTo" 
+                  type="number" 
+                  placeholder="Do"
+                  step="0.1"
+                  class="filter-input"
+                  v-if="tempFilters"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEKCJA: Opcje specyficzne dla typu -->
+        <div v-if="tempFilters.type" class="filter-section">
+          <h4 class="section-title">Opcje specyficzne dla typu</h4>
+          
+          <!-- Variant Filter -->
+          <div v-if="tempFilters && tempFilters.type && ['billboard', 'citylight', 'banner', 'totem', 'transport', 'mobile'].includes(tempFilters.type)" class="filter-group">
+            <label class="filter-label">Wariant</label>
+            <select v-model="tempFilters.variant" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option v-for="variant in getVariantOptions(tempFilters.type)" :key="variant.value" :value="variant.value">
+                {{ variant.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Road Class Filter (Billboard only) -->
+          <div v-if="tempFilters && tempFilters.type === 'billboard'" class="filter-group">
+            <label class="filter-label">Klasa drogi</label>
+            <select v-model="tempFilters.roadClass" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option value="highway">Autostrada</option>
+              <option value="expressway">Droga ekspresowa</option>
+              <option value="national">Droga krajowa</option>
+              <option value="regional">Droga wojewódzka</option>
+              <option value="local">Droga lokalna</option>
+              <option value="urban">Droga miejska</option>
+            </select>
+          </div>
+
+          <!-- Traffic Intensity -->
+          <div v-if="tempFilters && ['billboard', 'banner'].includes(tempFilters.type)" class="filter-group">
+            <label class="filter-label">Natężenie ruchu</label>
+            <select v-model="tempFilters.trafficIntensity" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option value="low">Niskie</option>
+              <option value="medium">Średnie</option>
+              <option value="high">Wysokie</option>
+            </select>
+          </div>
+
+          <!-- Traffic Direction -->
+          <div v-if="tempFilters && ['billboard', 'banner'].includes(tempFilters.type)" class="filter-group">
+            <label class="filter-label">Kierunek ruchu</label>
+            <select v-model="tempFilters.trafficDirection" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option value="entry">Wjazd</option>
+              <option value="exit">Wyjazd</option>
+              <option value="both">Oba kierunki</option>
+            </select>
+          </div>
+
+          <!-- Environment Filter -->
+          <div v-if="tempFilters && ['citylight', 'led_screen', 'totem', 'other'].includes(tempFilters.type)" class="filter-group">
+            <label class="filter-label">Środowisko</label>
+            <select v-model="tempFilters.environment" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option v-for="env in getEnvironmentOptions(tempFilters.type)" :key="env.value" :value="env.value">
+                {{ env.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- LED Screen Filters -->
+          <div v-if="tempFilters && tempFilters.type === 'led_screen'" class="filter-group">
+            <label class="filter-label">Czas spotu (sekundy)</label>
+            <div class="range-inputs">
+              <input 
+                v-model.number="tempFilters.spotDurationFrom" 
+                type="number" 
+                placeholder="Od"
+                class="filter-input"
+                v-if="tempFilters"
+              />
+              <span>-</span>
+              <input 
+                v-model.number="tempFilters.spotDurationTo" 
+                type="number" 
+                placeholder="Do"
+                class="filter-input"
+                v-if="tempFilters"
+              />
+            </div>
+          </div>
+
+          <div v-if="tempFilters && tempFilters.type === 'led_screen'" class="filter-group">
+            <label class="filter-label">Pętla emisji (sekundy)</label>
+            <div class="range-inputs">
+              <input 
+                v-model.number="tempFilters.loopDurationFrom" 
+                type="number" 
+                placeholder="Od"
+                class="filter-input"
+                v-if="tempFilters"
+              />
+              <span>-</span>
+              <input 
+                v-model.number="tempFilters.loopDurationTo" 
+                type="number" 
+                placeholder="Do"
+                class="filter-input"
+                v-if="tempFilters"
+              />
+            </div>
+          </div>
+
+          <!-- Transport Filters -->
+          <div v-if="tempFilters && tempFilters.type === 'transport'" class="filter-group">
+            <label class="filter-label">Zakres reklamy</label>
+            <select v-model="tempFilters.transportScope" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option value="internal">Wewnętrzna</option>
+              <option value="external">Zewnętrzna</option>
+              <option value="full_vehicle">Całopojazdowa</option>
+            </select>
+          </div>
+
+          <div v-if="tempFilters && tempFilters.type === 'transport'" class="filter-group">
+            <label class="filter-label">Liczba pojazdów</label>
+            <div class="range-inputs">
+              <input 
+                v-model.number="tempFilters.vehicleCountFrom" 
+                type="number" 
+                placeholder="Od"
+                class="filter-input"
+                v-if="tempFilters"
+              />
+              <span>-</span>
+              <input 
+                v-model.number="tempFilters.vehicleCountTo" 
+                type="number" 
+                placeholder="Do"
+                class="filter-input"
+                v-if="tempFilters"
+              />
+            </div>
+          </div>
+
+          <!-- Mobile Filters -->
+          <div v-if="tempFilters && tempFilters.type === 'mobile'" class="filter-group">
+            <label class="filter-label">Tryb ekspozycji</label>
+            <select v-model="tempFilters.mobileExposureMode" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option value="moving">Jeżdżąca</option>
+              <option value="stationary">Stojąca</option>
+              <option value="mixed">Mieszana</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- SEKCJA: Wyposażenie i dodatki -->
+        <div class="filter-section">
+          <h4 class="section-title">Wyposażenie i dodatki</h4>
+          
+          <!-- Feature Filters -->
+          <div class="filter-group">
+            <label class="checkbox-option">
+              <input v-model="tempFilters.onlyWithImage" type="checkbox" v-if="tempFilters" />
+              <span>Tylko ze zdjęciem</span>
+            </label>
+          </div>
+
+          <div v-if="tempFilters && (tempFilters.type === 'totem' || (tempFilters.type === 'billboard' && tempFilters.variant === 'backlit'))" class="filter-group">
+            <label class="checkbox-option">
+              <input v-model="tempFilters.hasLighting" type="checkbox" v-if="tempFilters" />
+              <span>Podświetlenie</span>
+            </label>
+          </div>
+
+          <div v-if="tempFilters && ['billboard', 'banner'].includes(tempFilters.type)" class="filter-group">
+            <label class="checkbox-option">
+              <input v-model="tempFilters.priceIncludesPrint" type="checkbox" v-if="tempFilters" />
+              <span>Cena zawiera druk</span>
+            </label>
+          </div>
+
+          <div v-if="tempFilters && ['billboard', 'banner', 'wall'].includes(tempFilters.type)" class="filter-group">
+            <label class="checkbox-option">
+              <input v-model="tempFilters.priceIncludesMounting" type="checkbox" v-if="tempFilters" />
+              <span>Cena zawiera montaż</span>
+            </label>
+          </div>
+
+          <div v-if="tempFilters && ['billboard', 'banner', 'wall'].includes(tempFilters.type)" class="filter-group">
+            <label class="checkbox-option">
+              <input v-model="tempFilters.graphicDesignHelp" type="checkbox" v-if="tempFilters" />
+              <span>Pomoc przy projekcie graficznym</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- SEKCJA: Dostępność -->
+        <div class="filter-section">
+          <h4 class="section-title">Dostępność</h4>
+          
           <!-- Rental Period -->
           <div class="filter-group">
             <label class="filter-label">Czas wynajmu</label>
@@ -1524,143 +2164,6 @@ onBeforeUnmount(() => {
               <option value="">Wszystkie</option>
               <option value="short_term">Krótkoterminowy (&lt;1 miesiąc)</option>
               <option value="long_term">Długoterminowy</option>
-            </select>
-          </div>
-
-          <!-- Size Range -->
-          <div class="filter-group">
-            <label class="filter-label">Szerokość (m)</label>
-            <div class="range-inputs">
-              <input 
-                v-model.number="tempFilters.widthFrom" 
-                type="number" 
-                placeholder="Od"
-                class="filter-input"
-                v-if="tempFilters"
-              />
-              <span>-</span>
-              <input 
-                v-model.number="tempFilters.widthTo" 
-                type="number" 
-                placeholder="Do"
-                class="filter-input"
-                v-if="tempFilters"
-              />
-            </div>
-          </div>
-
-          <div class="filter-group">
-            <label class="filter-label">Wysokość (m)</label>
-            <div class="range-inputs">
-              <input 
-                v-model.number="tempFilters.heightFrom" 
-                type="number" 
-                placeholder="Od"
-                class="filter-input"
-                v-if="tempFilters"
-              />
-              <span>-</span>
-              <input 
-                v-model.number="tempFilters.heightTo" 
-                type="number" 
-                placeholder="Do"
-                class="filter-input"
-                v-if="tempFilters"
-              />
-            </div>
-          </div>
-
-          <!-- Orientation -->
-          <div class="filter-group">
-            <label class="filter-label">Orientacja</label>
-            <select v-model="tempFilters.orientation" class="filter-select" v-if="tempFilters">
-              <option value="">Wszystkie</option>
-              <option value="vertical">Pion</option>
-              <option value="horizontal">Poziom</option>
-            </select>
-          </div>
-
-          <!-- Location Filter -->
-          <div class="filter-group">
-            <label class="filter-label">Lokalizacja</label>
-            <div class="location-autocomplete">
-              <div class="input-with-clear">
-                <input
-                  v-model="locationQuery"
-                  type="text"
-                  placeholder="Wpisz region, miasto lub ulicę"
-                  class="filter-input"
-                  @focus="handleLocationFocus"
-                  @blur="handleLocationBlur"
-                  @input="handleLocationInput"
-                  autocomplete="off"
-                />
-                <button 
-                  v-if="locationQuery" 
-                  type="button" 
-                  class="clear-button" 
-                  @click.stop="clearLocation"
-                  @mousedown.prevent
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
-              </div>
-              <div v-if="isLocationMenuOpen" class="location-suggestions">
-                <div v-if="isLoadingLocations" class="loading-state compact">
-                  <div class="loading-spinner"></div>
-                  <span>Szukam...</span>
-                </div>
-                <div v-else-if="!locationQuery" class="suggestion-section">
-                  <div class="suggestion-header">Popularne lokalizacje</div>
-                  <div
-                    v-for="suggestion in locationSuggestions"
-                    :key="suggestion.value"
-                    class="location-suggestion"
-                    @click="selectLocation(suggestion)"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M8 8C8.82843 8 9.5 7.32843 9.5 6.5C9.5 5.67157 8.82843 5 8 5C7.17157 5 6.5 5.67157 6.5 6.5C6.5 7.32843 7.17157 8 8 8Z" stroke="#6B7280" stroke-width="1.2"/>
-                      <path d="M8 14C8 14 12 10.5 12 6.5C12 4.01472 10.2091 2 8 2C5.79086 2 4 4.01472 4 6.5C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.2"/>
-                    </svg>
-                    {{ suggestion.label }}
-                  </div>
-                </div>
-                <div v-else>
-                  <div
-                    v-for="suggestion in locationSuggestions"
-                    :key="suggestion.value + suggestion.type"
-                    class="location-suggestion"
-                    @click="selectLocation(suggestion)"
-                  >
-                    <svg v-if="suggestion.type === 'region'" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <rect x="2" y="2" width="12" height="12" rx="1.5" stroke="#6B7280" stroke-width="1.2"/>
-                      <path d="M2 6H14M6 2V14" stroke="#6B7280" stroke-width="1.2"/>
-                    </svg>
-                    <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M8 8C8.82843 8 9.5 7.32843 9.5 6.5C9.5 5.67157 8.82843 5 8 5C7.17157 5 6.5 5.67157 6.5 6.5C6.5 7.32843 7.17157 8 8 8Z" stroke="#6B7280" stroke-width="1.2"/>
-                      <path d="M8 14C8 14 12 10.5 12 6.5C12 4.01472 10.2091 2 8 2C5.79086 2 4 4.01472 4 6.5C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.2"/>
-                    </svg>
-                    <span class="suggestion-text">
-                      <span class="suggestion-name">{{ suggestion.label }}</span>
-                      <span v-if="suggestion.type === 'region'" class="suggestion-type">Województwo</span>
-                      <span v-else-if="suggestion.subtitle" class="suggestion-type">{{ suggestion.subtitle }}</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Traffic Intensity -->
-          <div class="filter-group">
-            <label class="filter-label">Natężenie ruchu</label>
-            <select v-model="tempFilters.trafficIntensity" class="filter-select" v-if="tempFilters">
-              <option value="">Wszystkie</option>
-              <option value="low">Niskie</option>
-              <option value="medium">Średnie</option>
-              <option value="high">Wysokie</option>
             </select>
           </div>
 
@@ -1690,7 +2193,12 @@ onBeforeUnmount(() => {
               </div>
             </div>
           </div>
+        </div>
 
+        <!-- SEKCJA: Typ oferty i formalności -->
+        <div class="filter-section">
+          <h4 class="section-title">Typ oferty i formalności</h4>
+          
           <!-- Offer Type -->
           <div class="filter-group">
             <label class="filter-label">Rodzaj oferty</label>
@@ -1701,35 +2209,6 @@ onBeforeUnmount(() => {
             </select>
           </div>
 
-          <!-- Feature Filters -->
-          <div class="filter-group">
-            <label class="checkbox-option">
-              <input v-model="tempFilters.onlyWithImage" type="checkbox" v-if="tempFilters" />
-              <span>Tylko ze zdjęciem</span>
-            </label>
-          </div>
-
-          <div class="filter-group">
-            <label class="checkbox-option">
-              <input v-model="tempFilters.hasLighting" type="checkbox" v-if="tempFilters" />
-              <span>Z podświetleniem</span>
-            </label>
-          </div>
-
-          <div class="filter-group">
-            <label class="checkbox-option">
-              <input v-model="tempFilters.priceIncludesPrint" type="checkbox" v-if="tempFilters" />
-              <span>Druk i montaż w cenie</span>
-            </label>
-          </div>
-
-          <div class="filter-group">
-            <label class="checkbox-option">
-              <input v-model="tempFilters.graphicDesignHelp" type="checkbox" v-if="tempFilters" />
-              <span>Pomoc przy projekcie graficznym</span>
-            </label>
-          </div>
-
           <div class="filter-group">
             <label class="checkbox-option">
               <input v-model="tempFilters.hasVatInvoice" type="checkbox" v-if="tempFilters" />
@@ -1737,13 +2216,13 @@ onBeforeUnmount(() => {
             </label>
           </div>
         </div>
+        </div>
 
         <div class="modal-footer">
           <button @click="clearFilters" class="btn-secondary">Wyczyść</button>
           <button @click="applyFilters" class="btn-primary">Zastosuj</button>
         </div>
       </div>
-    </div>
     </div>
 
     <!-- Category/City Description for SEO - poza advertisements-page -->
@@ -2362,8 +2841,40 @@ onBeforeUnmount(() => {
   flex: 1;
 }
 
+.filter-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.filter-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #4f46e5;
+}
+
 .filter-group {
   margin-bottom: 1.5rem;
+}
+
+.filter-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-row .filter-group {
+  flex: 1;
+  margin-bottom: 0;
 }
 
 .filter-label {

@@ -37,6 +37,7 @@ class Advertisement extends Model
         'has_lighting',
         'has_image',
         'price_includes_print',
+        'price_includes_mounting',
         'graphic_design_help',
         'offer_type',
         'has_vat_invoice',
@@ -47,6 +48,19 @@ class Advertisement extends Model
         'images',
         'available_from',
         'price_negotiable',
+        // Nowe pola specyficzne dla typów
+        'variant',
+        'road_class',
+        'traffic_direction',
+        'environment',
+        'spot_duration',
+        'loop_duration',
+        'transport_scope',
+        'vehicle_count',
+        'mobile_exposure_mode',
+        'operating_hours',
+        'route_area',
+        'campaign_duration',
     ];
 
     /**
@@ -63,12 +77,18 @@ class Advertisement extends Model
         'has_lighting' => 'boolean',
         'has_image' => 'boolean',
         'price_includes_print' => 'boolean',
+        'price_includes_mounting' => 'boolean',
         'graphic_design_help' => 'boolean',
         'has_vat_invoice' => 'boolean',
         'is_active' => 'boolean',
         'images' => 'array',
+        'traffic_direction' => 'array',
         'available_from' => 'date',
         'price_negotiable' => 'boolean',
+        'spot_duration' => 'integer',
+        'loop_duration' => 'integer',
+        'vehicle_count' => 'integer',
+        'campaign_duration' => 'integer',
     ];
 
     protected $appends = ['display_status'];

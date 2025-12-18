@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 import ToastNotification from '../components/ToastNotification.vue'
@@ -35,7 +35,7 @@ const formData = ref({
   description: '',
   type: '',
   price: null as number | null,
-  priceUnit: 'day' as 'day' | 'week' | 'month' | 'year',
+  priceUnit: 'day' as 'day' | 'week' | 'month' | 'year' | 'campaign',
   priceNegotiable: false,
   width: null as number | null,
   height: null as number | null,
@@ -50,13 +50,27 @@ const formData = ref({
   hasLighting: false,
   graphicDesignHelp: false,
   priceIncludesPrint: false,
+  priceIncludesMounting: false,
   hasVatInvoice: false,
   offerType: '' as '' | 'owner' | 'agency',
   status: '' as '' | 'available' | 'reserved' | 'soon_available',
   availableFrom: null as Date | null,
   trafficIntensity: '' as '' | 'low' | 'medium' | 'high',
   imageFiles: [] as { file: File, preview: string, id: string, loading?: boolean }[],
-  acceptTerms: false
+  acceptTerms: false,
+  // Nowe pola specyficzne dla typów
+  variant: '' as string,
+  roadClass: '' as '' | 'highway' | 'expressway' | 'national' | 'regional' | 'local' | 'urban',
+  trafficDirection: [] as string[],
+  environment: '' as '' | 'indoor' | 'outdoor' | 'event',
+  spotDuration: null as number | null,
+  loopDuration: null as number | null,
+  transportScope: '' as '' | 'internal' | 'external' | 'full_vehicle',
+  vehicleCount: null as number | null,
+  mobileExposureMode: '' as '' | 'moving' | 'stationary' | 'mixed',
+  operatingHours: '',
+  routeArea: '',
+  campaignDuration: null as number | null
 })
 
 const minDate = new Date()
@@ -169,6 +183,197 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 
+// Automatyczne ustawienie environment dla typów, które zawsze są outdoor
+watch(() => formData.value.type, (newType: string) => {
+  // Billboard, Ściana, Transport - zawsze outdoor
+  if (['billboard', 'wall', 'transport'].includes(newType)) {
+    formData.value.environment = 'outdoor'
+  } else if (!showEnvironmentField.value) {
+    // Jeśli pole nie jest widoczne dla tego typu, wyczyść wartość
+    formData.value.environment = ''
+  }
+})
+
+// Computed properties dla dynamicznych opcji
+const availablePriceUnits = computed(() => {
+  const type = formData.value.type
+  if (type === 'billboard' || type === 'banner' || type === 'wall') {
+    return [{ value: 'day', label: 'za dzień' }, { value: 'month', label: 'za miesiąc' }]
+  } else if (type === 'led_screen') {
+    return [{ value: 'day', label: 'za dzień (emisje)' }, { value: 'month', label: 'za miesiąc (emisje)' }]
+  } else if (type === 'totem') {
+    return [{ value: 'month', label: 'za miesiąc' }]
+  } else if (type === 'transport') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'campaign', label: 'za kampanię' }
+    ]
+  } else if (type === 'mobile') {
+    return [{ value: 'day', label: 'za dzień' }, { value: 'campaign', label: 'za kampanię' }]
+  }
+  return [
+    { value: 'day', label: 'za dzień' },
+    { value: 'week', label: 'za tydzień' },
+    { value: 'month', label: 'za miesiąc' },
+    { value: 'year', label: 'za rok' }
+  ]
+})
+
+const variantOptions = computed(() => {
+  const type = formData.value.type
+  switch (type) {
+    case 'billboard':
+      return [
+        { value: 'standard', label: 'Standardowy' },
+        { value: 'three_sided', label: 'Trójstronny' },
+        { value: 'backlit', label: 'Backlit (podświetlany)' }
+      ]
+    case 'citylight':
+      return [
+        { value: 'single', label: 'Pojedynczy' },
+        { value: 'double', label: 'Podwójny' },
+        { value: 'digital', label: 'Cyfrowy' }
+      ]
+    case 'led_screen':
+      return [
+        { value: 'outdoor', label: 'Zewnętrzny' },
+        { value: 'indoor', label: 'Wewnętrzny' },
+        { value: 'interactive', label: 'Interaktywny' }
+      ]
+    case 'banner':
+      return [
+        { value: 'pvc', label: 'PCV' },
+        { value: 'mesh', label: 'Siatkowy/Mesh' },
+        { value: 'textile', label: 'Tekstylny' }
+      ]
+    case 'wall':
+      return [
+        { value: 'mural', label: 'Mural' },
+        { value: 'foil', label: 'Folia' },
+        { value: 'construction', label: 'Konstrukcja' }
+      ]
+    case 'totem':
+      return [
+        { value: 'single_sided', label: 'Jednostronny' },
+        { value: 'double_sided', label: 'Dwustronny' },
+        { value: 'multi_sided', label: 'Wielostronny' },
+        { value: 'digital', label: 'Digital' }
+      ]
+    case 'transport':
+      return [
+        { value: 'bus', label: 'Autobus' },
+        { value: 'tram', label: 'Tramwaj' },
+        { value: 'metro', label: 'Metro' },
+        { value: 'stop', label: 'Przystanek' }
+      ]
+    case 'mobile':
+      return [
+        { value: 'trailer', label: 'Przyczepka' },
+        { value: 'car', label: 'Samochód' },
+        { value: 'bike', label: 'Rower' },
+        { value: 'other', label: 'Inna' }
+      ]
+    default:
+      return []
+  }
+})
+
+const requiresDimensions = computed(() => {
+  const type = formData.value.type
+  return ['billboard', 'banner', 'wall', 'citylight'].includes(type)
+})
+
+const optionalDimensions = computed(() => {
+  const type = formData.value.type
+  return ['totem', 'led_screen'].includes(type)
+})
+
+const hideDimensions = computed(() => {
+  const type = formData.value.type
+  return ['transport', 'mobile', 'other'].includes(type)
+})
+
+// Computed properties for option visibility based on ad type
+const showLightingOption = computed(() => {
+  const type = formData.value.type
+  return ['citylight', 'led_screen', 'totem'].includes(type)
+})
+
+const showPrintOption = computed(() => {
+  const type = formData.value.type
+  return ['billboard', 'banner', 'wall', 'citylight'].includes(type)
+})
+
+const showMountingOption = computed(() => {
+  const type = formData.value.type
+  return ['billboard', 'banner', 'wall', 'citylight'].includes(type)
+})
+
+const showGraphicDesignOption = computed(() => {
+  const type = formData.value.type
+  return ['billboard', 'banner', 'wall', 'citylight'].includes(type)
+})
+
+const showTrafficIntensity = computed(() => {
+  const type = formData.value.type
+  return ['billboard', 'banner', 'wall'].includes(type)
+})
+
+const showPricePerSqm = computed(() => {
+  const type = formData.value.type
+  return ['billboard', 'banner', 'wall', 'citylight'].includes(type)
+})
+
+const showEnvironmentField = computed(() => {
+  const type = formData.value.type
+  // Billboard, Ściana, Transport - zawsze outdoor (nie pokazujemy pola)
+  if (['billboard', 'wall', 'transport'].includes(type)) return false
+  // Citylight, LED, Totem, Banner, Mobile, Other - pokazujemy pole
+  return ['citylight', 'led_screen', 'totem', 'banner', 'mobile', 'other'].includes(type)
+})
+
+const environmentOptions = computed(() => {
+  const type = formData.value.type
+  switch (type) {
+    case 'citylight':
+      return [
+        { value: 'indoor', label: 'Wewnątrz (galeria handlowa)' },
+        { value: 'outdoor', label: 'Na zewnątrz (ulica)' }
+      ]
+    case 'led_screen':
+      return [
+        { value: 'indoor', label: 'Wewnątrz (wewnętrzny)' },
+        { value: 'outdoor', label: 'Na zewnątrz (zewnętrzny)' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'totem':
+      return [
+        { value: 'indoor', label: 'Wewnątrz (galeria)' },
+        { value: 'outdoor', label: 'Na zewnątrz (plac, ulica)' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'banner':
+      return [
+        { value: 'outdoor', label: 'Na zewnątrz (budynek, płot)' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'mobile':
+      return [
+        { value: 'outdoor', label: 'Na zewnątrz (ulica)' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'other':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    default:
+      return []
+  }
+})
+
 const surface = computed(() => {
   if (formData.value.width && formData.value.height) {
     return (formData.value.width * formData.value.height).toFixed(2)
@@ -188,6 +393,13 @@ const pricePerMonth = computed(() => {
       return formData.value.price
     case 'year':
       return formData.value.price / 12
+    case 'campaign':
+      // Przelicz cenę kampanii na miesiąc (zakładając że mamy liczbę dni)
+      if (formData.value.campaignDuration && formData.value.campaignDuration > 0) {
+        const pricePerDay = formData.value.price / formData.value.campaignDuration
+        return pricePerDay * 30
+      }
+      return 0
     default:
       return 0
   }
@@ -213,6 +425,19 @@ const calculatePrice = (unit: 'day' | 'week' | 'month' | 'year') => {
       return basePrice.toFixed(2)
     case 'year':
       return (basePrice * 12).toFixed(2)
+    default:
+      return '0'
+  }
+}
+
+const calculateCampaignPrice = (unit: 'day' | 'total') => {
+  if (!formData.value.price || !formData.value.campaignDuration) return '0'
+  
+  switch (unit) {
+    case 'day':
+      return (formData.value.price / formData.value.campaignDuration).toFixed(2)
+    case 'total':
+      return formData.value.price.toFixed(2)
     default:
       return '0'
   }
@@ -553,17 +778,30 @@ const validateStep = (step: number): boolean => {
       if (!formData.value.price || formData.value.price <= 0) {
         errors.value.price = 'Cena jest wymagana'
       }
+      // Walidacja czasu trwania kampanii
+      if (formData.value.priceUnit === 'campaign') {
+        if (!formData.value.campaignDuration || formData.value.campaignDuration <= 0) {
+          errors.value.campaignDuration = 'Czas trwania kampanii jest wymagany'
+        }
+      }
       break
 
     case 3:
-      if (!formData.value.width || formData.value.width <= 0) {
-        errors.value.width = 'Szerokość jest wymagana'
-      }
-      if (!formData.value.height || formData.value.height <= 0) {
-        errors.value.height = 'Wysokość jest wymagana'
+      // Wymiary wymagane dla billboard, banner, wall, citylight
+      if (requiresDimensions.value) {
+        if (!formData.value.width || formData.value.width <= 0) {
+          errors.value.width = 'Szerokość jest wymagana'
+        }
+        if (!formData.value.height || formData.value.height <= 0) {
+          errors.value.height = 'Wysokość jest wymagana'
+        }
       }
       if (!formData.value.location) {
         errors.value.location = 'Lokalizacja jest wymagana'
+      }
+      // Klasa drogi wymagana dla billboardów
+      if (formData.value.type === 'billboard' && !formData.value.roadClass) {
+        errors.value.roadClass = 'Klasa drogi jest wymagana dla billboardów'
       }
       if (!formData.value.contactPreference) {
         errors.value.contactPreference = 'Opcja kontaktu jest wymagana'
@@ -583,12 +821,42 @@ const validateStep = (step: number): boolean => {
       if (!formData.value.status) {
         errors.value.status = 'Status dostępności jest wymagany'
       }
-      if (!formData.value.trafficIntensity) {
-        errors.value.trafficIntensity = 'Natężenie ruchu jest wymagane'
+      if (formData.value.status === 'soon_available' && !formData.value.availableFrom) {
+        errors.value.availableFrom = 'Data dostępności jest wymagana'
+      }
+      // Natężenie ruchu wymagane dla billboardów, opcjonalne dla innych
+      if (formData.value.type === 'billboard' && !formData.value.trafficIntensity) {
+        errors.value.trafficIntensity = 'Natężenie ruchu jest wymagane dla billboardów'
       }
       if (!formData.value.offerType) {
         errors.value.offerType = 'Rodzaj oferty jest wymagany'
       }
+      // Walidacja specyficzna dla LED
+      if (formData.value.type === 'led_screen') {
+        if (!formData.value.spotDuration || formData.value.spotDuration <= 0) {
+          errors.value.spotDuration = 'Czas spotu jest wymagany dla ekranów LED'
+        }
+        if (!formData.value.loopDuration || formData.value.loopDuration <= 0) {
+          errors.value.loopDuration = 'Pętla emisji jest wymagana dla ekranów LED'
+        }
+      }
+      // Walidacja dla transportu
+      if (formData.value.type === 'transport') {
+        if (!formData.value.transportScope) {
+          errors.value.transportScope = 'Zakres reklamy jest wymagany'
+        }
+      }
+      // Walidacja dla mobilnej
+      if (formData.value.type === 'mobile') {
+        if (!formData.value.mobileExposureMode) {
+          errors.value.mobileExposureMode = 'Tryb ekspozycji jest wymagany'
+        }
+      }
+      break
+
+    case 5:
+      // Zdjęcia opcjonalne, ale jeśli są, muszą być przynajmniej 1
+      // Można dodać walidację jeśli chcemy wymagać zdjęć
       break
 
     case 6:
@@ -652,12 +920,13 @@ const handleSubmit = async () => {
         description: formData.value.description,
         type: formData.value.type,
         price: formData.value.price!,
-        // base_price_per_day: pricePerDay.value, // Not in interface?
         price_unit: formData.value.priceUnit,
         price_negotiable: formData.value.priceNegotiable,
-        width: formData.value.width!,
-        height: formData.value.height!,
-        orientation: formData.value.width! >= formData.value.height! ? 'horizontal' : 'vertical',
+        width: formData.value.width || 0,
+        height: formData.value.height || 0,
+        orientation: (formData.value.width && formData.value.height) 
+          ? (formData.value.width >= formData.value.height ? 'horizontal' : 'vertical')
+          : 'horizontal',
         location: formData.value.location,
         city: formData.value.city,
         region: formData.value.region,
@@ -679,12 +948,29 @@ const handleSubmit = async () => {
           : new Date().toISOString().split('T')[0],
         traffic_intensity: formData.value.trafficIntensity,
         image_url: mainImageUrl,
-        // dimensions: `${formData.value.width}m x ${formData.value.height}m`, // Not in interface?
         has_image: imageUrls.length > 0,
         offer_type: formData.value.offerType,
         views: 0,
         is_active: true,
-        images: imageUrls
+        images: imageUrls,
+        // Nowe pola specyficzne dla typów
+        variant: formData.value.variant || undefined,
+        road_class: formData.value.roadClass || undefined,
+        traffic_direction: formData.value.trafficDirection.length === 2 
+          ? 'both' 
+          : formData.value.trafficDirection.length === 1 
+            ? formData.value.trafficDirection[0] 
+            : undefined,
+        environment: formData.value.environment || undefined,
+        spot_duration: formData.value.spotDuration || undefined,
+        loop_duration: formData.value.loopDuration || undefined,
+        transport_scope: formData.value.transportScope || undefined,
+        vehicle_count: formData.value.vehicleCount || undefined,
+        mobile_exposure_mode: formData.value.mobileExposureMode || undefined,
+        operating_hours: formData.value.operatingHours || undefined,
+        route_area: formData.value.routeArea || undefined,
+        price_includes_mounting: formData.value.priceIncludesMounting,
+        campaign_duration: formData.value.campaignDuration || undefined
     } as any) // Casting to any to avoid strict type checks for now if interface mismatches
 
     if (newAd && newAd.id) {
@@ -847,7 +1133,7 @@ onMounted(() => {
         </div>
 
         <div v-show="currentStep === 2" class="step-section">
-          <h2>Cena i typ</h2>
+          <h2>Cena i jednostka</h2>
 
           <div class="form-row">
             <div class="form-group">
@@ -866,14 +1152,28 @@ onMounted(() => {
             <div class="form-group">
               <label class="form-label">Jednostka <span class="required">*</span></label>
               <select v-model="formData.priceUnit" class="form-select">
-                <option value="day">za dzień</option>
-                <option value="week">za tydzień</option>
-                <option value="month">za miesiąc</option>
-                <option value="year">za rok</option>
+                <option v-for="unit in availablePriceUnits" :key="unit.value" :value="unit.value">
+                  {{ unit.label }}
+                </option>
               </select>
             </div>
           </div>
 
+          <!-- Czas trwania kampanii - tylko dla jednostki 'kampania' -->
+          <div v-if="formData.priceUnit === 'campaign'" class="form-group">
+            <label class="form-label">Czas trwania kampanii (dni) <span class="required">*</span></label>
+            <input
+              v-model.number="formData.campaignDuration"
+              type="number"
+              step="1"
+              class="form-input"
+              :class="{ 'error': errors.campaignDuration }"
+              placeholder="30"
+            />
+            <span v-if="errors.campaignDuration" class="error-text">{{ errors.campaignDuration }}</span>
+          </div>
+
+          <!-- Checkbox: Cena do negocjacji -->
           <div class="form-group">
             <label class="checkbox-option">
               <input type="checkbox" v-model="formData.priceNegotiable" />
@@ -881,7 +1181,31 @@ onMounted(() => {
             </label>
           </div>
 
-          <div class="price-info-box">
+          <!-- Opcje dodatkowe -->
+          <div class="checkbox-group">
+            <label v-if="showPrintOption" class="checkbox-option">
+              <input type="checkbox" v-model="formData.priceIncludesPrint" />
+              <span>Cena zawiera druk</span>
+            </label>
+
+            <label v-if="showMountingOption" class="checkbox-option">
+              <input type="checkbox" v-model="formData.priceIncludesMounting" />
+              <span>Cena zawiera montaż</span>
+            </label>
+
+            <label v-if="showGraphicDesignOption" class="checkbox-option">
+              <input type="checkbox" v-model="formData.graphicDesignHelp" />
+              <span>Pomoc przy projekcie graficznym</span>
+            </label>
+
+            <label class="checkbox-option">
+              <input type="checkbox" v-model="formData.hasVatInvoice" />
+              <span>Faktura VAT</span>
+            </label>
+          </div>
+
+          <!-- Przeliczenia cenowe dla standardowych jednostek -->
+          <div v-if="formData.price && formData.priceUnit !== 'campaign'" class="price-info-box" style="margin-top: 1.5rem;">
             <h3>Przeliczenia cenowe</h3>
             <div class="price-grid">
               <div class="price-item">
@@ -901,15 +1225,48 @@ onMounted(() => {
                 <span class="price-value">{{ calculatePrice('year') }} PLN</span>
               </div>
             </div>
+            <div v-if="showPricePerSqm && formData.width && formData.height" class="price-per-sqm">
+              <strong>Cena za m²:</strong> {{ pricePerSqm }} PLN/m² (miesięcznie)
+            </div>
+          </div>
+
+          <!-- Przeliczenia cenowe dla kampanii -->
+          <div v-if="formData.price && formData.priceUnit === 'campaign' && formData.campaignDuration" class="price-info-box" style="margin-top: 1.5rem;">
+            <h3>Przeliczenia cenowe kampanii</h3>
+            <div class="price-grid">
+              <div class="price-item">
+                <span class="price-label">Cena całkowita ({{ formData.campaignDuration }} dni):</span>
+                <span class="price-value">{{ calculateCampaignPrice('total') }} PLN</span>
+              </div>
+              <div class="price-item">
+                <span class="price-label">Cena za dzień:</span>
+                <span class="price-value">{{ calculateCampaignPrice('day') }} PLN</span>
+              </div>
+              <div class="price-item">
+                <span class="price-label">Przeliczenie na miesiąc:</span>
+                <span class="price-value">{{ calculatePrice('month') }} PLN</span>
+              </div>
+              <div class="price-item">
+                <span class="price-label">Przeliczenie na rok:</span>
+                <span class="price-value">{{ calculatePrice('year') }} PLN</span>
+              </div>
+            </div>
+            <div v-if="showPricePerSqm && formData.width && formData.height" class="price-per-sqm">
+              <strong>Cena za m²:</strong> {{ pricePerSqm }} PLN/m² (miesięcznie)
+            </div>
           </div>
         </div>
 
         <div v-show="currentStep === 3" class="step-section">
-          <h2>Wymiary i lokalizacja</h2>
+          <h2>{{ hideDimensions ? 'Lokalizacja' : 'Wymiary i lokalizacja' }}</h2>
 
-          <div class="form-row">
+          <!-- Wymiary - REQUIRED dla billboard, banner, wall, citylight -->
+          <div v-if="!hideDimensions" class="form-row">
             <div class="form-group">
-              <label class="form-label">Szerokość (m) <span class="required">*</span></label>
+              <label class="form-label">
+                Szerokość (m) 
+                <span v-if="requiresDimensions" class="required">*</span>
+              </label>
               <input
                 v-model.number="formData.width"
                 type="number"
@@ -922,7 +1279,10 @@ onMounted(() => {
             </div>
 
             <div class="form-group">
-              <label class="form-label">Wysokość (m) <span class="required">*</span></label>
+              <label class="form-label">
+                Wysokość (m) 
+                <span v-if="requiresDimensions" class="required">*</span>
+              </label>
               <input
                 v-model.number="formData.height"
                 type="number"
@@ -935,11 +1295,59 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="surface-display">
+          <div v-if="!hideDimensions && formData.width && formData.height" class="surface-display">
             <strong>Powierzchnia:</strong> {{ surface }} m²
             <span v-if="formData.price" class="surface-price">
               ({{ pricePerSqm }} PLN/m²)
             </span>
+          </div>
+
+          <!-- Klasa drogi - REQUIRED dla billboardów -->
+          <div v-if="formData.type === 'billboard'" class="form-group">
+            <label class="form-label">Klasa drogi <span class="required">*</span></label>
+            <select v-model="formData.roadClass" class="form-select" :class="{ 'error': errors.roadClass }">
+              <option value="" disabled>Wybierz klasę drogi</option>
+              <option value="highway">Autostrada</option>
+              <option value="expressway">Droga ekspresowa</option>
+              <option value="national">Droga krajowa</option>
+              <option value="regional">Droga wojewódzka</option>
+              <option value="local">Droga lokalna</option>
+              <option value="urban">Droga miejska</option>
+            </select>
+            <span v-if="errors.roadClass" class="error-text">{{ errors.roadClass }}</span>
+          </div>
+
+          <!-- Natężenie ruchu - REQUIRED dla billboardów, OPTIONAL dla innych outdoor -->
+          <div v-if="showTrafficIntensity" class="form-group">
+            <label class="form-label">
+              Natężenie ruchu 
+              <span v-if="formData.type === 'billboard'" class="required">*</span>
+            </label>
+            <select v-model="formData.trafficIntensity" class="form-select" :class="{ 'error': errors.trafficIntensity }">
+              <option value="" disabled>Wybierz natężenie ruchu</option>
+              <option value="low">Niskie</option>
+              <option value="medium">Średnie</option>
+              <option value="high">Wysokie</option>
+            </select>
+            <span v-if="errors.trafficIntensity" class="error-text">{{ errors.trafficIntensity }}</span>
+          </div>
+
+          <!-- Kierunek ruchu - OPTIONAL dla typów outdoor przy drogach -->
+          <div v-if="showTrafficIntensity" class="form-group">
+            <label class="form-label">Kierunek ruchu (opcjonalnie)</label>
+            <div class="checkbox-group">
+              <label class="checkbox-option">
+                <input type="checkbox" value="entry" v-model="formData.trafficDirection" />
+                <span>Wjazd do miasta</span>
+              </label>
+              <label class="checkbox-option">
+                <input type="checkbox" value="exit" v-model="formData.trafficDirection" />
+                <span>Wyjazd z miasta</span>
+              </label>
+            </div>
+            <p class="help-text" style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
+              Zaznacz oba, jeśli billboard widoczny z obu stron
+            </p>
           </div>
 
           <div class="form-group">
@@ -1027,9 +1435,129 @@ onMounted(() => {
         </div>
 
         <div v-show="currentStep === 4" class="step-section">
-          <h2>Wyposażenie i opcje dodatkowe</h2>
+          <h2>Warianty i cechy specjalne</h2>
 
-          <!-- Selecty na górze -->          
+          <!-- Warianty - zależnie od typu -->
+          <div v-if="variantOptions.length > 0" class="form-group">
+            <label class="form-label">Wariant</label>
+            <select v-model="formData.variant" class="form-select">
+              <option value="">Wybierz wariant (opcjonalnie)</option>
+              <option v-for="variant in variantOptions" :key="variant.value" :value="variant.value">
+                {{ variant.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Podświetlenie - dla Citylight, LED, Totem -->
+          <div v-if="showLightingOption" class="form-group">
+            <label class="checkbox-option">
+              <input type="checkbox" v-model="formData.hasLighting" />
+              <span>Podświetlenie</span>
+            </label>
+          </div>
+
+          <!-- Środowisko - dla Citylight, LED, Totem, Banner, Mobile, Other -->
+          <div v-if="showEnvironmentField" class="form-group">
+            <label class="form-label">Środowisko</label>
+            <select v-model="formData.environment" class="form-select">
+              <option value="">Wybierz środowisko (opcjonalnie)</option>
+              <option v-for="env in environmentOptions" :key="env.value" :value="env.value">
+                {{ env.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Pola specyficzne dla LED -->
+          <div v-if="formData.type === 'led_screen'">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Czas spotu (sekundy) <span class="required">*</span></label>
+                <input
+                  v-model.number="formData.spotDuration"
+                  type="number"
+                  step="1"
+                  class="form-input"
+                  :class="{ 'error': errors.spotDuration }"
+                  placeholder="10"
+                />
+                <span v-if="errors.spotDuration" class="error-text">{{ errors.spotDuration }}</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Pętla emisji (sekundy) <span class="required">*</span></label>
+                <input
+                  v-model.number="formData.loopDuration"
+                  type="number"
+                  step="1"
+                  class="form-input"
+                  :class="{ 'error': errors.loopDuration }"
+                  placeholder="120"
+                />
+                <span v-if="errors.loopDuration" class="error-text">{{ errors.loopDuration }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pola specyficzne dla Transportu -->
+          <div v-if="formData.type === 'transport'">
+            <div class="form-group">
+              <label class="form-label">Zakres reklamy <span class="required">*</span></label>
+              <select v-model="formData.transportScope" class="form-select" :class="{ 'error': errors.transportScope }">
+                <option value="" disabled>Wybierz zakres</option>
+                <option value="internal">Wewnętrzna</option>
+                <option value="external">Zewnętrzna</option>
+                <option value="full_vehicle">Całopojazdowa</option>
+              </select>
+              <span v-if="errors.transportScope" class="error-text">{{ errors.transportScope }}</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Liczba pojazdów</label>
+              <input
+                v-model.number="formData.vehicleCount"
+                type="number"
+                step="1"
+                class="form-input"
+                placeholder="1"
+              />
+            </div>
+          </div>
+
+          <!-- Pola specyficzne dla Mobilnej -->
+          <div v-if="formData.type === 'mobile'">
+            <div class="form-group">
+              <label class="form-label">Tryb ekspozycji <span class="required">*</span></label>
+              <select v-model="formData.mobileExposureMode" class="form-select" :class="{ 'error': errors.mobileExposureMode }">
+                <option value="" disabled>Wybierz tryb</option>
+                <option value="moving">Jeżdżąca</option>
+                <option value="stationary">Stojąca</option>
+                <option value="mixed">Mieszana</option>
+              </select>
+              <span v-if="errors.mobileExposureMode" class="error-text">{{ errors.mobileExposureMode }}</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Godziny działania</label>
+              <input
+                v-model="formData.operatingHours"
+                type="text"
+                class="form-input"
+                placeholder="np. 8:00-20:00"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Trasa / Obszar</label>
+              <textarea
+                v-model="formData.routeArea"
+                rows="3"
+                class="form-textarea"
+                placeholder="Opis trasy lub obszaru działania..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Status dostępności -->          
           <div class="form-group">
             <label class="form-label">Status dostępności <span class="required">*</span></label>
             <select v-model="formData.status" class="form-select" :class="{ 'error': errors.status }">
@@ -1042,7 +1570,7 @@ onMounted(() => {
           </div>
 
           <div v-if="formData.status === 'soon_available'" class="form-group">
-            <label class="form-label">Data dostępności</label>
+            <label class="form-label">Data dostępności <span class="required">*</span></label>
             <VueDatePicker
               v-model="formData.availableFrom"
               :enable-time-picker="false"
@@ -1071,17 +1599,7 @@ onMounted(() => {
                 </div>
               </template>
             </VueDatePicker>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Natężenie ruchu <span class="required">*</span></label>
-            <select v-model="formData.trafficIntensity" class="form-select" :class="{ 'error': errors.trafficIntensity }">
-              <option value="" disabled>Wybierz natężenie ruchu</option>
-              <option value="low">Niskie</option>
-              <option value="medium">Średnie</option>
-              <option value="high">Wysokie</option>
-            </select>
-            <span v-if="errors.trafficIntensity" class="error-text">{{ errors.trafficIntensity }}</span>
+            <span v-if="errors.availableFrom" class="error-text">{{ errors.availableFrom }}</span>
           </div>
 
           <div class="form-group">
@@ -1092,29 +1610,6 @@ onMounted(() => {
               <option value="agency">Agencja</option>
             </select>
             <span v-if="errors.offerType" class="error-text">{{ errors.offerType }}</span>
-          </div>
-
-          <!-- Checkboxy na dole -->          
-          <div class="checkbox-group">
-            <label class="checkbox-option">
-              <input type="checkbox" v-model="formData.hasLighting" />
-              <span>Podświetlenie</span>
-            </label>
-
-            <label class="checkbox-option">
-              <input type="checkbox" v-model="formData.graphicDesignHelp" />
-              <span>Pomoc przy projekcie graficznym</span>
-            </label>
-
-            <label class="checkbox-option">
-              <input type="checkbox" v-model="formData.priceIncludesPrint" />
-              <span>Cena zawiera druk i montaż</span>
-            </label>
-
-            <label class="checkbox-option">
-              <input type="checkbox" v-model="formData.hasVatInvoice" />
-              <span>Faktura VAT</span>
-            </label>
           </div>
         </div>
 
@@ -1691,6 +2186,22 @@ onMounted(() => {
 .price-value {
   color: #166534;
   font-weight: 700;
+}
+
+.campaign-days {
+  color: #6b7280;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.price-per-sqm {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 8px;
+  text-align: center;
+  color: #166534;
+  font-size: 1.05rem;
 }
 
 .surface-display {

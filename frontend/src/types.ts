@@ -30,6 +30,7 @@ export interface Advertisement {
     has_lighting: boolean
     has_image: boolean
     price_includes_print: boolean
+    price_includes_mounting?: boolean
     graphic_design_help: boolean
     offer_type: string
     has_vat_invoice: boolean
@@ -40,4 +41,17 @@ export interface Advertisement {
     images?: string[]
     available_from?: string
     price_negotiable?: boolean
+    // Nowe pola specyficzne dla typów
+    variant?: string
+    road_class?: string
+    traffic_direction?: string[]
+    environment?: string
+    spot_duration?: number
+    loop_duration?: number
+    transport_scope?: string
+    vehicle_count?: number
+    mobile_exposure_mode?: string
+    operating_hours?: string
+    route_area?: string
+    campaign_duration?: number
 }

@@ -43,15 +43,32 @@ interface Filters {
   widthTo: number | null
   heightFrom: number | null
   heightTo: number | null
+  surfaceFrom: number | null
+  surfaceTo: number | null
   trafficIntensity: string
   status: string[]
+  environment: string
   hasLighting: boolean
   onlyWithImage: boolean
   priceIncludesPrint: boolean
+  priceIncludesMounting: boolean
   graphicDesignHelp: boolean
   offerType: string
   hasVatInvoice: boolean
   selectedLocationCoords?: { lat: number; lng: number } | null
+  // Type-specific filters
+  variant: string
+  roadClass: string
+  spotDurationFrom: number | null
+  spotDurationTo: number | null
+  loopDurationFrom: number | null
+  loopDurationTo: number | null
+  transportScope: string
+  vehicleCountFrom: number | null
+  vehicleCountTo: number | null
+  mobileExposureMode: string
+  campaignDurationFrom: number | null
+  campaignDurationTo: number | null
 }
 
 const filters = ref<Filters>({
@@ -68,15 +85,32 @@ const filters = ref<Filters>({
   widthTo: null,
   heightFrom: null,
   heightTo: null,
+  surfaceFrom: null,
+  surfaceTo: null,
   trafficIntensity: '',
   status: [],
+  environment: '',
   hasLighting: false,
   onlyWithImage: false,
   priceIncludesPrint: false,
+  priceIncludesMounting: false,
   graphicDesignHelp: false,
   offerType: '',
   hasVatInvoice: false,
   selectedLocationCoords: null,
+  // Type-specific filters
+  variant: '',
+  roadClass: '',
+  spotDurationFrom: null,
+  spotDurationTo: null,
+  loopDurationFrom: null,
+  loopDurationTo: null,
+  transportScope: '',
+  vehicleCountFrom: null,
+  vehicleCountTo: null,
+  mobileExposureMode: '',
+  campaignDurationFrom: null,
+  campaignDurationTo: null,
 })
 
 const sortedAndFilteredAdvertisements = computed(() => {
@@ -143,6 +177,20 @@ const sortedAndFilteredAdvertisements = computed(() => {
     filtered = filtered.filter(ad => ad.height <= filters.value.heightTo!)
   }
 
+  // Surface area filters
+  if (filters.value.surfaceFrom !== null) {
+    filtered = filtered.filter(ad => {
+      const surface = ad.width * ad.height
+      return surface >= filters.value.surfaceFrom!
+    })
+  }
+  if (filters.value.surfaceTo !== null) {
+    filtered = filtered.filter(ad => {
+      const surface = ad.width * ad.height
+      return surface <= filters.value.surfaceTo!
+    })
+  }
+
   if (filters.value.trafficIntensity) {
     filtered = filtered.filter(ad => ad.traffic_intensity === filters.value.trafficIntensity)
   }
@@ -163,6 +211,10 @@ const sortedAndFilteredAdvertisements = computed(() => {
     filtered = filtered.filter(ad => ad.price_includes_print === true)
   }
 
+  if (filters.value.priceIncludesMounting) {
+    filtered = filtered.filter(ad => ad.price_includes_mounting === true)
+  }
+
   if (filters.value.graphicDesignHelp) {
     filtered = filtered.filter(ad => ad.graphic_design_help === true)
   }
@@ -173,6 +225,57 @@ const sortedAndFilteredAdvertisements = computed(() => {
 
   if (filters.value.hasVatInvoice) {
     filtered = filtered.filter(ad => ad.has_vat_invoice === true)
+  }
+
+  // Type-specific filters
+  if (filters.value.variant) {
+    filtered = filtered.filter(ad => ad.variant === filters.value.variant)
+  }
+
+  if (filters.value.roadClass) {
+    filtered = filtered.filter(ad => ad.road_class === filters.value.roadClass)
+  }
+
+  if (filters.value.environment) {
+    filtered = filtered.filter(ad => ad.environment === filters.value.environment)
+  }
+
+  // LED-specific filters
+  if (filters.value.spotDurationFrom !== null) {
+    filtered = filtered.filter(ad => ad.spot_duration && ad.spot_duration >= filters.value.spotDurationFrom!)
+  }
+  if (filters.value.spotDurationTo !== null) {
+    filtered = filtered.filter(ad => ad.spot_duration && ad.spot_duration <= filters.value.spotDurationTo!)
+  }
+  if (filters.value.loopDurationFrom !== null) {
+    filtered = filtered.filter(ad => ad.loop_duration && ad.loop_duration >= filters.value.loopDurationFrom!)
+  }
+  if (filters.value.loopDurationTo !== null) {
+    filtered = filtered.filter(ad => ad.loop_duration && ad.loop_duration <= filters.value.loopDurationTo!)
+  }
+
+  // Transport-specific filters
+  if (filters.value.transportScope) {
+    filtered = filtered.filter(ad => ad.transport_scope === filters.value.transportScope)
+  }
+  if (filters.value.vehicleCountFrom !== null) {
+    filtered = filtered.filter(ad => ad.vehicle_count && ad.vehicle_count >= filters.value.vehicleCountFrom!)
+  }
+  if (filters.value.vehicleCountTo !== null) {
+    filtered = filtered.filter(ad => ad.vehicle_count && ad.vehicle_count <= filters.value.vehicleCountTo!)
+  }
+
+  // Mobile-specific filters
+  if (filters.value.mobileExposureMode) {
+    filtered = filtered.filter(ad => ad.mobile_exposure_mode === filters.value.mobileExposureMode)
+  }
+
+  // Campaign duration filter
+  if (filters.value.campaignDurationFrom !== null) {
+    filtered = filtered.filter(ad => ad.campaign_duration && ad.campaign_duration >= filters.value.campaignDurationFrom!)
+  }
+  if (filters.value.campaignDurationTo !== null) {
+    filtered = filtered.filter(ad => ad.campaign_duration && ad.campaign_duration <= filters.value.campaignDurationTo!)
   }
 
   // Sortowanie
