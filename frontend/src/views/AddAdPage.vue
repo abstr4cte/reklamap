@@ -947,6 +947,7 @@ const handleSubmit = async () => {
             })()
           : new Date().toISOString().split('T')[0],
         traffic_intensity: formData.value.trafficIntensity,
+        rental_period: (['day', 'week'].includes(formData.value.priceUnit)) ? 'short_term' : 'long_term',
         image_url: mainImageUrl,
         has_image: imageUrls.length > 0,
         offer_type: formData.value.offerType,
@@ -1302,54 +1303,6 @@ onMounted(() => {
             </span>
           </div>
 
-          <!-- Klasa drogi - REQUIRED dla billboardów -->
-          <div v-if="formData.type === 'billboard'" class="form-group">
-            <label class="form-label">Klasa drogi <span class="required">*</span></label>
-            <select v-model="formData.roadClass" class="form-select" :class="{ 'error': errors.roadClass }">
-              <option value="" disabled>Wybierz klasę drogi</option>
-              <option value="highway">Autostrada</option>
-              <option value="expressway">Droga ekspresowa</option>
-              <option value="national">Droga krajowa</option>
-              <option value="regional">Droga wojewódzka</option>
-              <option value="local">Droga lokalna</option>
-              <option value="urban">Droga miejska</option>
-            </select>
-            <span v-if="errors.roadClass" class="error-text">{{ errors.roadClass }}</span>
-          </div>
-
-          <!-- Natężenie ruchu - REQUIRED dla billboardów, OPTIONAL dla innych outdoor -->
-          <div v-if="showTrafficIntensity" class="form-group">
-            <label class="form-label">
-              Natężenie ruchu 
-              <span v-if="formData.type === 'billboard'" class="required">*</span>
-            </label>
-            <select v-model="formData.trafficIntensity" class="form-select" :class="{ 'error': errors.trafficIntensity }">
-              <option value="" disabled>Wybierz natężenie ruchu</option>
-              <option value="low">Niskie</option>
-              <option value="medium">Średnie</option>
-              <option value="high">Wysokie</option>
-            </select>
-            <span v-if="errors.trafficIntensity" class="error-text">{{ errors.trafficIntensity }}</span>
-          </div>
-
-          <!-- Kierunek ruchu - OPTIONAL dla typów outdoor przy drogach -->
-          <div v-if="showTrafficIntensity" class="form-group">
-            <label class="form-label">Kierunek ruchu (opcjonalnie)</label>
-            <div class="checkbox-group">
-              <label class="checkbox-option">
-                <input type="checkbox" value="entry" v-model="formData.trafficDirection" />
-                <span>Wjazd do miasta</span>
-              </label>
-              <label class="checkbox-option">
-                <input type="checkbox" value="exit" v-model="formData.trafficDirection" />
-                <span>Wyjazd z miasta</span>
-              </label>
-            </div>
-            <p class="help-text" style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
-              Zaznacz oba, jeśli billboard widoczny z obu stron
-            </p>
-          </div>
-
           <div class="form-group">
             <label class="form-label">Lokalizacja <span class="required">*</span></label>
             <div class="address-input-wrapper">
@@ -1435,7 +1388,55 @@ onMounted(() => {
         </div>
 
         <div v-show="currentStep === 4" class="step-section">
-          <h2>Warianty i cechy specjalne</h2>
+          <h2>Opcje i cechy specjalne</h2>
+
+          <!-- Klasa drogi - REQUIRED dla billboardów -->
+          <div v-if="formData.type === 'billboard'" class="form-group">
+            <label class="form-label">Klasa drogi <span class="required">*</span></label>
+            <select v-model="formData.roadClass" class="form-select" :class="{ 'error': errors.roadClass }">
+              <option value="" disabled>Wybierz klasę drogi</option>
+              <option value="highway">Autostrada</option>
+              <option value="expressway">Droga ekspresowa</option>
+              <option value="national">Droga krajowa</option>
+              <option value="regional">Droga wojewódzka</option>
+              <option value="local">Droga lokalna</option>
+              <option value="urban">Droga miejska</option>
+            </select>
+            <span v-if="errors.roadClass" class="error-text">{{ errors.roadClass }}</span>
+          </div>
+
+          <!-- Natężenie ruchu - REQUIRED dla billboardów, OPTIONAL dla innych outdoor -->
+          <div v-if="showTrafficIntensity" class="form-group">
+            <label class="form-label">
+              Natężenie ruchu 
+              <span v-if="formData.type === 'billboard'" class="required">*</span>
+            </label>
+            <select v-model="formData.trafficIntensity" class="form-select" :class="{ 'error': errors.trafficIntensity }">
+              <option value="" disabled>Wybierz natężenie ruchu</option>
+              <option value="low">Niskie</option>
+              <option value="medium">Średnie</option>
+              <option value="high">Wysokie</option>
+            </select>
+            <span v-if="errors.trafficIntensity" class="error-text">{{ errors.trafficIntensity }}</span>
+          </div>
+
+          <!-- Kierunek ruchu - OPTIONAL dla typów outdoor przy drogach -->
+          <div v-if="showTrafficIntensity" class="form-group">
+            <label class="form-label">Kierunek ruchu (opcjonalnie)</label>
+            <div class="checkbox-group">
+              <label class="checkbox-option">
+                <input type="checkbox" value="entry" v-model="formData.trafficDirection" />
+                <span>Wjazd do miasta</span>
+              </label>
+              <label class="checkbox-option">
+                <input type="checkbox" value="exit" v-model="formData.trafficDirection" />
+                <span>Wyjazd z miasta</span>
+              </label>
+            </div>
+            <p class="help-text" style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
+              Zaznacz oba, jeśli billboard widoczny z obu stron
+            </p>
+          </div>
 
           <!-- Warianty - zależnie od typu -->
           <div v-if="variantOptions.length > 0" class="form-group">

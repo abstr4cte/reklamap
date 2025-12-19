@@ -573,21 +573,33 @@ const getVariantOptions = (type: string) => {
     case 'citylight':
       return [
         { value: 'single', label: 'Pojedynczy' },
-        { value: 'double', label: 'Podwójny' }
+        { value: 'double', label: 'Podwójny' },
+        { value: 'digital', label: 'Cyfrowy' }
       ]
     case 'led_screen':
-      return []
+      return [
+        { value: 'outdoor', label: 'Zewnętrzny' },
+        { value: 'indoor', label: 'Wewnętrzny' },
+        { value: 'interactive', label: 'Interaktywny' }
+      ]
     case 'banner':
       return [
         { value: 'pvc', label: 'PCV' },
-        { value: 'mesh', label: 'Mesh' },
+        { value: 'mesh', label: 'Siatkowy/Mesh' },
         { value: 'textile', label: 'Tekstylny' }
+      ]
+    case 'wall':
+      return [
+        { value: 'mural', label: 'Mural' },
+        { value: 'foil', label: 'Folia' },
+        { value: 'construction', label: 'Konstrukcja' }
       ]
     case 'totem':
       return [
-        { value: 'single', label: 'Jednostronny' },
-        { value: 'double', label: 'Dwustronny' },
-        { value: 'multi', label: 'Wielostronny' }
+        { value: 'single_sided', label: 'Jednostronny' },
+        { value: 'double_sided', label: 'Dwustronny' },
+        { value: 'multi_sided', label: 'Wielostronny' },
+        { value: 'digital', label: 'Digital' }
       ]
     case 'transport':
       return [
@@ -600,6 +612,7 @@ const getVariantOptions = (type: string) => {
       return [
         { value: 'trailer', label: 'Przyczepka' },
         { value: 'car', label: 'Samochód' },
+        { value: 'bike', label: 'Rower' },
         { value: 'other', label: 'Inna' }
       ]
     default:
@@ -1968,7 +1981,7 @@ onBeforeUnmount(() => {
           <h4 class="section-title">Opcje specyficzne dla typu</h4>
           
           <!-- Variant Filter -->
-          <div v-if="tempFilters && tempFilters.type && ['billboard', 'citylight', 'banner', 'totem', 'transport', 'mobile'].includes(tempFilters.type)" class="filter-group">
+          <div v-if="tempFilters && tempFilters.type && ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile'].includes(tempFilters.type)" class="filter-group">
             <label class="filter-label">Wariant</label>
             <select v-model="tempFilters.variant" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>

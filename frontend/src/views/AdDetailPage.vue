@@ -157,6 +157,37 @@ const statusClass = computed(() => {
   }
 })
 
+// Computed properties for field visibility based on ad type
+const showDimensions = computed(() => {
+  if (!ad.value) return false
+  return ['billboard', 'citylight', 'banner', 'wall', 'totem', 'led_screen'].includes(ad.value.type)
+})
+
+const showTrafficIntensity = computed(() => {
+  if (!ad.value) return false
+  return ['billboard', 'banner', 'wall'].includes(ad.value.type)
+})
+
+const showLighting = computed(() => {
+  if (!ad.value) return false
+  return ['citylight', 'led_screen', 'totem'].includes(ad.value.type) && ad.value.has_lighting
+})
+
+const showPrint = computed(() => {
+  if (!ad.value) return false
+  return ['billboard', 'banner', 'wall', 'citylight'].includes(ad.value.type) && ad.value.price_includes_print
+})
+
+const showMounting = computed(() => {
+  if (!ad.value) return false
+  return ['billboard', 'banner', 'wall', 'citylight'].includes(ad.value.type) && (ad.value as any).price_includes_mounting
+})
+
+const showGraphicDesign = computed(() => {
+  if (!ad.value) return false
+  return ['billboard', 'banner', 'wall', 'citylight'].includes(ad.value.type) && ad.value.graphic_design_help
+})
+
 const surfaceArea = computed(() => {
   if (ad.value?.width && ad.value?.height) {
     return (ad.value.width * ad.value.height).toFixed(2)
@@ -889,12 +920,12 @@ onUnmounted(() => {
                 <div class="spec-value">{{ ad.type }}</div>
               </div>
 
-              <div class="spec-item">
+              <div v-if="showDimensions" class="spec-item">
                 <div class="spec-label">Wymiary</div>
                 <div class="spec-value">{{ ad.width }}m × {{ ad.height }}m ({{ surfaceArea }} m²)</div>
               </div>
 
-              <div class="spec-item">
+              <div v-if="showDimensions" class="spec-item">
                 <div class="spec-label">Orientacja</div>
                 <div class="spec-value">{{ ad.orientation === 'horizontal' ? 'Poziom' : 'Pion' }}</div>
               </div>
@@ -904,29 +935,29 @@ onUnmounted(() => {
                 <div class="spec-value">{{ formatLocation(ad.location, ad.city) }}</div>
               </div>
 
-              <div class="spec-item">
-                <div class="spec-label">Województwo</div>
-                <div class="spec-value">{{ ad.region }}</div>
-              </div>
-
-              <div class="spec-item">
+              <div v-if="showTrafficIntensity" class="spec-item">
                 <div class="spec-label">Natężenie ruchu</div>
                 <div class="spec-value">
                   {{ ad.traffic_intensity === 'low' ? 'Niskie' : ad.traffic_intensity === 'medium' ? 'Średnie' : 'Wysokie' }}
                 </div>
               </div>
 
-              <div class="spec-item" v-if="ad.has_lighting">
+              <div v-if="showLighting" class="spec-item">
                 <div class="spec-label">Podświetlenie</div>
                 <div class="spec-value spec-yes">Tak</div>
               </div>
 
-              <div class="spec-item" v-if="ad.price_includes_print">
-                <div class="spec-label">Druk i montaż</div>
-                <div class="spec-value spec-yes">W cenie</div>
+              <div v-if="showPrint" class="spec-item">
+                <div class="spec-label">Druk w cenie</div>
+                <div class="spec-value spec-yes">Tak</div>
               </div>
 
-              <div class="spec-item" v-if="ad.graphic_design_help">
+              <div v-if="showMounting" class="spec-item">
+                <div class="spec-label">Montaż w cenie</div>
+                <div class="spec-value spec-yes">Tak</div>
+              </div>
+
+              <div v-if="showGraphicDesign" class="spec-item">
                 <div class="spec-label">Pomoc graficzna</div>
                 <div class="spec-value spec-yes">Dostępna</div>
               </div>

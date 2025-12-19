@@ -33,6 +33,7 @@ class Advertisement extends Model
         'region',
         'orientation',
         'traffic_intensity',
+        'rental_period',
         'price_unit',
         'has_lighting',
         'has_image',

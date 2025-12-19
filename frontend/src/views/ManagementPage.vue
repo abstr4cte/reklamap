@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { api, getFullImageUrl } from '../services/api'
 import axios from '../api/axios'
@@ -281,6 +281,7 @@ const saveChanges = async (id: string) => {
         traffic_intensity: editingAd.value.traffic_intensity,
         has_lighting: editingAd.value.has_lighting,
         price_includes_print: editingAd.value.price_includes_print,
+        price_includes_mounting: (editingAd.value as any).price_includes_mounting || false,
         graphic_design_help: editingAd.value.graphic_design_help,
         offer_type: editingAd.value.offer_type,
         has_vat_invoice: editingAd.value.has_vat_invoice,
@@ -290,6 +291,22 @@ const saveChanges = async (id: string) => {
         has_image: finalImageUrls.length > 0,
         phone: (editingAd.value as any).phone ? `+48${(editingAd.value as any).phone}` : '',
         contact_preference: (editingAd.value as any).contact_preference || 'email',
+        // Type-specific fields
+        variant: (editingAd.value as any).variant || undefined,
+        road_class: (editingAd.value as any).road_class || undefined,
+        traffic_direction: (editingAd.value as any).traffic_direction && (editingAd.value as any).traffic_direction.length === 2 
+          ? 'both' 
+          : (editingAd.value as any).traffic_direction && (editingAd.value as any).traffic_direction.length === 1 
+            ? (editingAd.value as any).traffic_direction[0] 
+            : undefined,
+        environment: (editingAd.value as any).environment || undefined,
+        spot_duration: (editingAd.value as any).spot_duration || undefined,
+        loop_duration: (editingAd.value as any).loop_duration || undefined,
+        transport_scope: (editingAd.value as any).transport_scope || undefined,
+        vehicle_count: (editingAd.value as any).vehicle_count || undefined,
+        mobile_exposure_mode: (editingAd.value as any).mobile_exposure_mode || undefined,
+        operating_hours: (editingAd.value as any).operating_hours || undefined,
+        route_area: (editingAd.value as any).route_area || undefined,
     })
 
     const ad = advertisements.value.find(a => a.id === id)
@@ -631,6 +648,170 @@ const confirmModalLocation = async () => {
   closeMapModal()
 }
 
+// Computed properties for field visibility based on ad type
+const showDimensionsFields = computed(() => {
+  if (!editingAd.value) return false
+  return ['billboard', 'citylight', 'banner', 'wall', 'totem', 'led_screen'].includes(editingAd.value.type)
+})
+
+const showTrafficIntensity = computed(() => {
+  if (!editingAd.value) return false
+  return ['billboard', 'banner', 'wall'].includes(editingAd.value.type)
+})
+
+const showLightingOption = computed(() => {
+  if (!editingAd.value) return false
+  return ['citylight', 'led_screen', 'totem'].includes(editingAd.value.type)
+})
+
+const showPrintOption = computed(() => {
+  if (!editingAd.value) return false
+  return ['billboard', 'banner', 'wall', 'citylight'].includes(editingAd.value.type)
+})
+
+const showMountingOption = computed(() => {
+  if (!editingAd.value) return false
+  return ['billboard', 'banner', 'wall', 'citylight'].includes(editingAd.value.type)
+})
+
+const showGraphicDesignOption = computed(() => {
+  if (!editingAd.value) return false
+  return ['billboard', 'banner', 'wall', 'citylight'].includes(editingAd.value.type)
+})
+
+const showVariantField = computed(() => {
+  if (!editingAd.value) return false
+  return ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile'].includes(editingAd.value.type)
+})
+
+const showRoadClassField = computed(() => {
+  if (!editingAd.value) return false
+  return editingAd.value.type === 'billboard'
+})
+
+const showTrafficDirection = computed(() => {
+  if (!editingAd.value) return false
+  return ['billboard', 'banner', 'wall'].includes(editingAd.value.type)
+})
+
+const showEnvironmentField = computed(() => {
+  if (!editingAd.value) return false
+  return ['citylight', 'led_screen', 'totem', 'banner', 'mobile', 'other'].includes(editingAd.value.type)
+})
+
+const showLEDFields = computed(() => {
+  if (!editingAd.value) return false
+  return editingAd.value.type === 'led_screen'
+})
+
+const showTransportFields = computed(() => {
+  if (!editingAd.value) return false
+  return editingAd.value.type === 'transport'
+})
+
+const showMobileFields = computed(() => {
+  if (!editingAd.value) return false
+  return editingAd.value.type === 'mobile'
+})
+
+const getVariantOptions = (type: string) => {
+  switch (type) {
+    case 'billboard':
+      return [
+        { value: 'standard', label: 'Standardowy' },
+        { value: 'three_sided', label: 'Trójstronny' },
+        { value: 'backlit', label: 'Backlit' }
+      ]
+    case 'citylight':
+      return [
+        { value: 'single', label: 'Pojedynczy' },
+        { value: 'double', label: 'Podwójny' },
+        { value: 'digital', label: 'Cyfrowy' }
+      ]
+    case 'led_screen':
+      return [
+        { value: 'outdoor', label: 'Zewnętrzny' },
+        { value: 'indoor', label: 'Wewnętrzny' },
+        { value: 'interactive', label: 'Interaktywny' }
+      ]
+    case 'banner':
+      return [
+        { value: 'pvc', label: 'PCV' },
+        { value: 'mesh', label: 'Siatkowy/Mesh' },
+        { value: 'textile', label: 'Tekstylny' }
+      ]
+    case 'wall':
+      return [
+        { value: 'mural', label: 'Mural' },
+        { value: 'foil', label: 'Folia' },
+        { value: 'construction', label: 'Konstrukcja' }
+      ]
+    case 'totem':
+      return [
+        { value: 'single_sided', label: 'Jednostronny' },
+        { value: 'double_sided', label: 'Dwustronny' },
+        { value: 'multi_sided', label: 'Wielostronny' },
+        { value: 'digital', label: 'Digital' }
+      ]
+    case 'transport':
+      return [
+        { value: 'bus', label: 'Autobus' },
+        { value: 'tram', label: 'Tramwaj' },
+        { value: 'metro', label: 'Metro' },
+        { value: 'stop', label: 'Przystanek' }
+      ]
+    case 'mobile':
+      return [
+        { value: 'trailer', label: 'Przyczepka' },
+        { value: 'car', label: 'Samochód' },
+        { value: 'bike', label: 'Rower' },
+        { value: 'other', label: 'Inna' }
+      ]
+    default:
+      return []
+  }
+}
+
+const getEnvironmentOptions = (type: string) => {
+  switch (type) {
+    case 'citylight':
+      return [
+        { value: 'indoor', label: 'Wewnątrz (galeria handlowa)' },
+        { value: 'outdoor', label: 'Na zewnątrz (ulica)' }
+      ]
+    case 'led_screen':
+      return [
+        { value: 'indoor', label: 'Wewnątrz (wewnętrzny)' },
+        { value: 'outdoor', label: 'Na zewnątrz (zewnętrzny)' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'totem':
+      return [
+        { value: 'indoor', label: 'Wewnątrz (galeria)' },
+        { value: 'outdoor', label: 'Na zewnątrz (plac, ulica)' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'banner':
+      return [
+        { value: 'outdoor', label: 'Na zewnątrz (budynek, płot)' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'mobile':
+      return [
+        { value: 'outdoor', label: 'Na zewnątrz (ulica)' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'other':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    default:
+      return []
+  }
+}
+
 const handleSubmit = async () => {
   if (!email.value || !email.value.includes('@')) {
     errorMessage.value = 'Proszę podać poprawny adres email'
@@ -880,7 +1061,7 @@ onBeforeUnmount(() => {
                       <p class="help-text">Przeciągnij i upuść zdjęcia tutaj lub kliknij "Dodaj"</p>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group full-width">
                       <label>Tytuł</label>
                       <input v-model="editingAd.title" type="text" required />
                     </div>
@@ -914,7 +1095,7 @@ onBeforeUnmount(() => {
 
                     <div class="form-group">
                       <label>Typ powierzchni</label>
-                      <select v-model="editingAd.type" required>
+                      <select v-model="editingAd.type" required disabled>
                         <option value="billboard">Billboardy</option>
                         <option value="citylight">Citylighty</option>
                         <option value="led_screen">Ekrany LED</option>
@@ -977,23 +1158,139 @@ onBeforeUnmount(() => {
                       </div>
                     </div>
 
-                    <div class="form-group">
+                    <!-- SEKCJA: Wymiary i lokalizacja -->
+                    <div v-if="showDimensionsFields" class="form-section-divider">
+                      <h4>Wymiary</h4>
+                    </div>
+
+                    <div v-if="showDimensionsFields" class="form-group">
                       <label>Szerokość (m)</label>
-                      <input v-model.number="editingAd.width" type="number" step="0.1" required />
+                      <input v-model.number="editingAd.width" type="number" step="0.1" :required="showDimensionsFields" />
                     </div>
 
-                    <div class="form-group">
+                    <div v-if="showDimensionsFields" class="form-group">
                       <label>Wysokość (m)</label>
-                      <input v-model.number="editingAd.height" type="number" step="0.1" required />
+                      <input v-model.number="editingAd.height" type="number" step="0.1" :required="showDimensionsFields" />
                     </div>
 
-                    <div class="form-group">
+                    <!-- SEKCJA: Opcje specyficzne dla typu -->
+                    <div v-if="editingAd.type" class="form-section-divider">
+                      <h4>Opcje specyficzne dla typu</h4>
+                    </div>
+
+                    <!-- Natężenie ruchu -->
+                    <div v-if="showTrafficIntensity" class="form-group">
                       <label>Natężenie ruchu</label>
-                      <select v-model="editingAd.traffic_intensity" required>
+                      <select v-model="editingAd.traffic_intensity" :required="showTrafficIntensity">
+                        <option value="">Wybierz</option>
                         <option value="low">Niskie</option>
                         <option value="medium">Średnie</option>
                         <option value="high">Wysokie</option>
                       </select>
+                    </div>
+
+                    <!-- Wariant -->
+                    <div v-if="showVariantField" class="form-group">
+                      <label>Wariant</label>
+                      <select v-model="(editingAd as any).variant">
+                        <option value="">Wybierz wariant (opcjonalnie)</option>
+                        <option v-for="variant in getVariantOptions(editingAd.type)" :key="variant.value" :value="variant.value">
+                          {{ variant.label }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <!-- Klasa drogi (Billboard) -->
+                    <div v-if="showRoadClassField" class="form-group">
+                      <label>Klasa drogi</label>
+                      <select v-model="(editingAd as any).road_class">
+                        <option value="">Wybierz klasę drogi</option>
+                        <option value="highway">Autostrada</option>
+                        <option value="expressway">Droga ekspresowa</option>
+                        <option value="national">Droga krajowa</option>
+                        <option value="regional">Droga wojewódzka</option>
+                        <option value="local">Droga lokalna</option>
+                        <option value="urban">Droga miejska</option>
+                      </select>
+                    </div>
+
+                    <!-- Kierunek ruchu (Billboard, Banner, Wall) -->
+                    <div v-if="showTrafficDirection" class="form-group full-width">
+                      <label>Kierunek ruchu</label>
+                      <div class="checkbox-group">
+                        <label>
+                          <input type="checkbox" value="entry" v-model="(editingAd as any).traffic_direction" />
+                          <span>Wjazd do miasta</span>
+                        </label>
+                        <label>
+                          <input type="checkbox" value="exit" v-model="(editingAd as any).traffic_direction" />
+                          <span>Wyjazd z miasta</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Środowisko -->
+                    <div v-if="showEnvironmentField" class="form-group">
+                      <label>Środowisko</label>
+                      <select v-model="(editingAd as any).environment">
+                        <option value="">Wybierz środowisko (opcjonalnie)</option>
+                        <option v-for="env in getEnvironmentOptions(editingAd.type)" :key="env.value" :value="env.value">
+                          {{ env.label }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <!-- Pola LED Screen -->
+                    <div v-if="showLEDFields" class="form-group">
+                      <label>Czas spotu (sekundy)</label>
+                      <input v-model.number="(editingAd as any).spot_duration" type="number" step="1" placeholder="10" />
+                    </div>
+
+                    <div v-if="showLEDFields" class="form-group">
+                      <label>Pętla emisji (sekundy)</label>
+                      <input v-model.number="(editingAd as any).loop_duration" type="number" step="1" placeholder="120" />
+                    </div>
+
+                    <!-- Pola Transport -->
+                    <div v-if="showTransportFields" class="form-group">
+                      <label>Zakres reklamy</label>
+                      <select v-model="(editingAd as any).transport_scope">
+                        <option value="">Wybierz zakres</option>
+                        <option value="internal">Wewnętrzna</option>
+                        <option value="external">Zewnętrzna</option>
+                        <option value="full_vehicle">Całopojazdowa</option>
+                      </select>
+                    </div>
+
+                    <div v-if="showTransportFields" class="form-group">
+                      <label>Liczba pojazdów</label>
+                      <input v-model.number="(editingAd as any).vehicle_count" type="number" step="1" placeholder="1" />
+                    </div>
+
+                    <!-- Pola Mobile -->
+                    <div v-if="showMobileFields" class="form-group">
+                      <label>Tryb ekspozycji</label>
+                      <select v-model="(editingAd as any).mobile_exposure_mode">
+                        <option value="">Wybierz tryb</option>
+                        <option value="moving">Jeżdżąca</option>
+                        <option value="stationary">Stojąca</option>
+                        <option value="mixed">Mieszana</option>
+                      </select>
+                    </div>
+
+                    <div v-if="showMobileFields" class="form-group">
+                      <label>Godziny działania</label>
+                      <input v-model="(editingAd as any).operating_hours" type="text" placeholder="np. 8:00-20:00" />
+                    </div>
+
+                    <div v-if="showMobileFields" class="form-group full-width">
+                      <label>Trasa / Obszar</label>
+                      <textarea v-model="(editingAd as any).route_area" rows="3" placeholder="Opis trasy lub obszaru działania..."></textarea>
+                    </div>
+
+                    <!-- SEKCJA: Dostępność i typ oferty -->
+                    <div class="form-section-divider">
+                      <h4>Dostępność i typ oferty</h4>
                     </div>
 
                     <div class="form-group">
@@ -1004,16 +1301,25 @@ onBeforeUnmount(() => {
                       </select>
                     </div>
 
+                    <!-- SEKCJA: Wyposażenie i dodatki -->
+                    <div class="form-section-divider">
+                      <h4>Wyposażenie i dodatki</h4>
+                    </div>
+
                     <div class="form-group checkbox-group full-width">
-                      <label>
+                      <label v-if="showLightingOption">
                         <input v-model="editingAd.has_lighting" type="checkbox" />
                         <span>Podświetlenie</span>
                       </label>
-                      <label>
+                      <label v-if="showPrintOption">
                         <input v-model="editingAd.price_includes_print" type="checkbox" />
-                        <span>Druk i montaż w cenie</span>
+                        <span>Druk w cenie</span>
                       </label>
-                      <label>
+                      <label v-if="showMountingOption">
+                        <input v-model="(editingAd as any).price_includes_mounting" type="checkbox" />
+                        <span>Montaż w cenie</span>
+                      </label>
+                      <label v-if="showGraphicDesignOption">
                         <input v-model="editingAd.graphic_design_help" type="checkbox" />
                         <span>Pomoc graficzna</span>
                       </label>
@@ -1858,6 +2164,20 @@ onBeforeUnmount(() => {
 .form-group textarea {
   resize: vertical;
   min-height: 100px;
+}
+
+.form-section-divider {
+  grid-column: 1 / -1;
+  margin: 1.5rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.form-section-divider h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4f46e5;
 }
 
 .checkbox-group {
