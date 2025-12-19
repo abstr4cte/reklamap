@@ -48,7 +48,7 @@ interface Filters {
   trafficIntensity: string
   status: string[]
   environment: string
-  hasLighting: boolean
+  hasBacklight: boolean
   onlyWithImage: boolean
   priceIncludesPrint: boolean
   priceIncludesMounting: boolean
@@ -90,7 +90,7 @@ const filters = ref<Filters>({
   trafficIntensity: '',
   status: [],
   environment: '',
-  hasLighting: false,
+  hasBacklight: false,
   onlyWithImage: false,
   priceIncludesPrint: false,
   priceIncludesMounting: false,
@@ -199,8 +199,8 @@ const sortedAndFilteredAdvertisements = computed(() => {
     filtered = filtered.filter(ad => filters.value.status.includes(ad.display_status || ad.status))
   }
 
-  if (filters.value.hasLighting) {
-    filtered = filtered.filter(ad => ad.has_lighting === true)
+  if (filters.value.hasBacklight) {
+    filtered = filtered.filter(ad => ad.has_backlight === true)
   }
 
   if (filters.value.onlyWithImage) {

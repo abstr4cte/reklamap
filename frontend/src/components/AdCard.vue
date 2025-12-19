@@ -85,7 +85,8 @@ const imageAlt = computed(() => {
 
 const displayPrice = computed(() => {
   const basePrice = props.ad.price
-  const display = props.priceDisplay || 'month'
+  // Use the ad's price_unit if available, otherwise fall back to priceDisplay prop
+  const display = props.ad.price_unit || props.priceDisplay || 'month'
 
   switch (display) {
     case 'day':
@@ -96,6 +97,8 @@ const displayPrice = computed(() => {
       return basePrice
     case 'year':
       return basePrice * 12
+    case 'campaign':
+      return basePrice
     case 'sqm':
       const area = props.ad.width && props.ad.height ? props.ad.width * props.ad.height : 1
       return Math.round(basePrice / area)
@@ -111,7 +114,8 @@ const cleanDescription = computed(() => {
 })
 
 const priceLabel = computed(() => {
-  const display = props.priceDisplay || 'month'
+  // Use the ad's price_unit if available, otherwise fall back to priceDisplay prop
+  const display = props.ad.price_unit || props.priceDisplay || 'month'
 
   switch (display) {
     case 'day':
@@ -122,6 +126,8 @@ const priceLabel = computed(() => {
       return '/miesiąc'
     case 'year':
       return '/rok'
+    case 'campaign':
+      return '/kampania'
     case 'sqm':
       return '/m²'
     default:

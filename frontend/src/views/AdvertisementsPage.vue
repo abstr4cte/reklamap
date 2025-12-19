@@ -240,14 +240,15 @@ const filters = ref({
   orientation: '',
   trafficIntensity: '',
   trafficDirection: '',
+  trafficType: '',
   status: [] as string[],
-  hasLighting: false,
   onlyWithImage: false,
   priceIncludesPrint: false,
   priceIncludesMounting: false,
   graphicDesignHelp: false,
   offerType: '',
   hasVatInvoice: false,
+  hasBacklight: false,
   selectedLocationCoords: null as { lat: number; lng: number } | null,
   // Type-specific filters
   variant: '',
@@ -507,13 +508,13 @@ const activeFiltersCount = computed(() => {
   if (filters.value.orientation) count++
   if (filters.value.trafficIntensity) count++
   if (filters.value.status && filters.value.status.length > 0) count++
-  if (filters.value.hasLighting) count++
   if (filters.value.onlyWithImage) count++
   if (filters.value.priceIncludesPrint) count++
   if (filters.value.priceIncludesMounting) count++
   if (filters.value.graphicDesignHelp) count++
   if (filters.value.offerType) count++
   if (filters.value.hasVatInvoice) count++
+  if (filters.value.hasBacklight) count++
   // Type-specific filters
   if (filters.value.variant) count++
   if (filters.value.roadClass) count++
@@ -532,10 +533,6 @@ const activeFiltersCount = computed(() => {
 })
 
 // Computed properties for filter visibility based on selected ad type
-const showLightingFilter = computed(() => {
-  return filters.value.type === 'totem' || (filters.value.type === 'billboard' && filters.value.variant === 'backlit')
-})
-
 const showPrintFilter = computed(() => {
   const type = filters.value.type
   return ['billboard', 'banner'].includes(type)
@@ -626,7 +623,7 @@ const showRoadClassFilter = computed(() => {
 
 const showEnvironmentFilter = computed(() => {
   const type = filters.value.type
-  return ['citylight', 'led_screen', 'totem', 'other'].includes(type)
+  return ['citylight', 'led_screen', 'totem', 'mobile', 'other'].includes(type)
 })
 
 const getEnvironmentOptions = (type: string) => {
@@ -643,6 +640,12 @@ const getEnvironmentOptions = (type: string) => {
         { value: 'event', label: 'Event / Wydarzenie' }
       ]
     case 'totem':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'mobile':
       return [
         { value: 'indoor', label: 'Wewnątrz' },
         { value: 'outdoor', label: 'Na zewnątrz' },
@@ -672,22 +675,70 @@ const showMobileFilters = computed(() => {
 })
 
 const getAvailablePriceUnits = (type: string) => {
-  // m² tylko dla typów z wymiarami
-  if (['billboard', 'citylight', 'banner', 'wall'].includes(type)) {
+  // Citylight - tylko miesiąc i m²
+  if (type === 'citylight') {
     return [
-      { value: 'day', label: 'dzień' },
-      { value: 'week', label: 'tydzień' },
-      { value: 'month', label: 'miesiąc' },
-      { value: 'year', label: 'rok' },
-      { value: 'sqm', label: 'm²' }
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'sqm', label: 'za m²' }
     ]
   }
-  // Dla pozostałych typów bez m²
+  // Billboard - dzień, tydzień, miesiąc, rok, m²
+  if (type === 'billboard') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'week', label: 'za tydzień' },
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'year', label: 'za rok' },
+      { value: 'sqm', label: 'za m²' }
+    ]
+  }
+  // Wall - miesiąc, rok, m²
+  if (type === 'wall') {
+    return [
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'year', label: 'za rok' },
+      { value: 'sqm', label: 'za m²' }
+    ]
+  }
+  // Banner - dzień, tydzień, miesiąc, m²
+  if (type === 'banner') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'week', label: 'za tydzień' },
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'sqm', label: 'za m²' }
+    ]
+  }
+  // Ekran LED - dzień, miesiąc, kampania
+  if (type === 'led_screen') {
+    return [
+      { value: 'day', label: 'za dzień (emisje)' },
+      { value: 'month', label: 'za miesiąc (emisje)' },
+      { value: 'campaign', label: 'za kampanię' }
+    ]
+  }
+  // Transport - dzień, miesiąc, kampania
+  if (type === 'transport') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'campaign', label: 'za kampanię' }
+    ]
+  }
+  // Mobile - dzień i kampania
+  if (type === 'mobile') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'campaign', label: 'za kampanię' }
+    ]
+  }
+  // Dla pozostałych typów z m²
   return [
-    { value: 'day', label: 'dzień' },
-    { value: 'week', label: 'tydzień' },
-    { value: 'month', label: 'miesiąc' },
-    { value: 'year', label: 'rok' }
+    { value: 'day', label: 'za dzień' },
+    { value: 'week', label: 'za tydzień' },
+    { value: 'month', label: 'za miesiąc' },
+    { value: 'year', label: 'za rok' },
+    { value: 'sqm', label: 'za m²' }
   ]
 }
 
@@ -779,9 +830,6 @@ const filteredAdvertisements = computed(() => {
   }
 
   // Feature filters
-  if (filters.value.hasLighting) {
-    filtered = filtered.filter(ad => ad.has_lighting === true)
-  }
   if (filters.value.onlyWithImage) {
     filtered = filtered.filter(ad => ad.has_image === true)
   }
@@ -803,6 +851,11 @@ const filteredAdvertisements = computed(() => {
   // VAT invoice filter
   if (filters.value.hasVatInvoice) {
     filtered = filtered.filter(ad => ad.has_vat_invoice === true)
+  }
+
+  // Backlight filter
+  if (filters.value.hasBacklight) {
+    filtered = filtered.filter(ad => ad.has_backlight === true)
   }
 
   // Type-specific filters
@@ -987,6 +1040,24 @@ const getFormattedPrice = (ad: Advertisement) => {
   return price.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + suffix
 }
 
+// Funkcja do pobierania etykiety okresu cenowego
+const getPriceLabel = (period: 'day' | 'week' | 'month' | 'year' | 'sqm') => {
+  switch (period) {
+    case 'day':
+      return '/dzień'
+    case 'week':
+      return '/tydzień'
+    case 'month':
+      return '/miesiąc'
+    case 'year':
+      return '/rok'
+    case 'sqm':
+      return '/m²'
+    default:
+      return '/miesiąc'
+  }
+}
+
 const handleClickOutside = (event: MouseEvent) => {
   if (statusMultiselect.value && !statusMultiselect.value.contains(event.target as Node)) {
     isStatusMenuOpen.value = false
@@ -1065,14 +1136,15 @@ const clearFilters = () => {
     orientation: '',
     trafficIntensity: '',
     trafficDirection: '',
+    trafficType: '',
     status: [],
-    hasLighting: false,
     onlyWithImage: false,
     priceIncludesPrint: false,
     priceIncludesMounting: false,
     graphicDesignHelp: false,
     offerType: '',
     hasVatInvoice: false,
+    hasBacklight: false,
     selectedLocationCoords: null,
     // Type-specific filters
     variant: '',
@@ -1348,14 +1420,15 @@ watch(() => route.query, (newQuery) => {
       orientation: '',
       trafficIntensity: '',
       trafficDirection: '',
+      trafficType: '',
       status: [],
-      hasLighting: false,
       onlyWithImage: false,
       priceIncludesPrint: false,
       priceIncludesMounting: false,
       graphicDesignHelp: false,
       offerType: '',
       hasVatInvoice: false,
+      hasBacklight: false,
       selectedLocationCoords: null,
       // Type-specific filters
       variant: '',
@@ -1548,7 +1621,7 @@ onBeforeUnmount(() => {
         <input 
           v-model="searchQuery" 
           type="text" 
-          placeholder="Szukaj po tytule, mieście..."
+          placeholder="Szukaj po tytule..."
           class="search-input"
         />
       </div>
@@ -1640,89 +1713,90 @@ onBeforeUnmount(() => {
         </div>
 
         <div v-else class="ads-list" :class="viewMode">
-          <div
+          <router-link
             v-for="ad in getCurrentPageAds()"
             :key="ad.id"
-            :id="`ad-${ad.id}`"
-            class="ad-list-item"
-            :class="{ 
-              'hovered': hoveredAdId === ad.id,
-              'selected': selectedAdId === ad.id
-            }"
+            :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`"
+            class="ad-card"
+            :class="{ hovered: hoveredAdId === ad.id, selected: selectedAdId === ad.id }"
             @mouseenter="handleAdHover(ad.id)"
-            @mouseleave="handleAdHover(null)"
-            @click="handleAdClick(ad.id)"
+            @mouseleave="handleAdLeave()"
           >
-            <router-link 
-              :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`"
-              class="ad-link"
-              :price-display="priceDisplay"
-            >
-              <div class="ad-image">
-                <div class="ad-actions">
-                  <button 
-                    @click.prevent="$emit('toggleFavorite', ad.id)"
-                    class="action-btn favorite-btn"
-                    :class="{ active: isFavorite(ad.id) }"
-                    title="Dodaj do ulubionych"
-                  >
-                    <svg width="22" height="22" viewBox="0 0 24 24" :fill="isFavorite(ad.id) ? '#EF4444' : 'none'">
-                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" :stroke="isFavorite(ad.id) ? '#EF4444' : 'white'" stroke-width="2"/>
-                    </svg>
-                  </button>
-                  <button 
-                    @click.prevent="$emit('toggleComparison', ad.id)"
-                    class="action-btn comparison-btn"
-                    :class="{ active: isInComparison(ad.id) }"
-                    title="Dodaj do porównania"
-                  >
-                    <svg width="22" height="22" viewBox="0 0 24 24" :fill="isInComparison(ad.id) ? '#667eea' : 'none'">
-                      <rect x="3" y="3" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
-                      <rect x="14" y="3" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
-                      <rect x="3" y="14" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
-                      <rect x="14" y="14" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
-                    </svg>
-                  </button>
-                </div>
-                
-                <img 
-                  v-if="ad.image_url" 
-                  :src="getFullImageUrl(ad.image_url)" 
-                  :alt="ad.title"
-                />
-                <div v-else class="no-image">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-                    <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
-                    <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/>
+            <div class="card-image">
+              <img 
+                v-if="ad.image_url" 
+                :src="getFullImageUrl(ad.image_url)" 
+                :alt="ad.title"
+              />
+              <div v-else class="no-image-placeholder">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                  <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Brak zdjęcia</span>
+              </div>
+              <div class="card-badge" :style="{ background: typeColors[ad.type] || '#6B7280' }">
+                {{ typeLabels[ad.type] || ad.type }}
+              </div>
+              <div class="status-badge" :style="{ background: getStatusColor(ad) }">
+                {{ getStatusLabel(ad) }}
+              </div>
+              <div class="card-actions">
+                <button 
+                  @click.prevent="$emit('toggleFavorite', ad.id)"
+                  class="action-btn favorite-btn"
+                  :class="{ active: isFavorite(ad.id) }"
+                  title="Dodaj do ulubionych"
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" :fill="isFavorite(ad.id) ? '#EF4444' : 'none'">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" :stroke="isFavorite(ad.id) ? '#EF4444' : 'white'" stroke-width="2"/>
                   </svg>
-                </div>
-                <div class="ad-type-badge" :style="{ background: typeColors[ad.type] || '#6B7280' }">
-                  {{ typeLabels[ad.type] || ad.type }}
-                </div>
-                <div class="ad-status-badge" :style="{ background: getStatusColor(ad) }">
-                  {{ getStatusLabel(ad) }}
-                </div>
+                </button>
+                <button 
+                  @click.prevent="$emit('toggleComparison', ad.id)"
+                  class="action-btn comparison-btn"
+                  :class="{ active: isInComparison(ad.id) }"
+                  title="Dodaj do porównania"
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" :fill="isInComparison(ad.id) ? '#667eea' : 'none'">
+                    <rect x="3" y="3" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <h3 class="card-title">{{ ad.title }}</h3>
+
+              <div class="card-location">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 8C9.1 8 10 7.1 10 6C10 4.9 9.1 4 8 4C6.9 4 6 4.9 6 6C6 7.1 6.9 8 8 8Z" stroke="#6B7280" stroke-width="1.3"/>
+                  <path d="M8 14C8 14 12 10.5 12 6C12 3.79 10.21 2 8 2C5.79 2 4 3.79 4 6C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.3"/>
+                </svg>
+                <span>{{ formatLocation(ad.location, ad.city) }}</span>
               </div>
 
-              <div class="ad-content">
-                <h3 class="ad-title">{{ ad.title }}</h3>
-                <div class="ad-location">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 8C9.1 8 10 7.1 10 6C10 4.9 9.1 4 8 4C6.9 4 6 4.9 6 6C6 7.1 6.9 8 8 8Z" stroke="currentColor" stroke-width="1.3"/>
-                    <path d="M8 14C8 14 12 10.5 12 6C12 3.79 10.21 2 8 2C5.79 2 4 3.79 4 6C4 10.5 8 14 8 14Z" stroke="currentColor" stroke-width="1.3"/>
-                  </svg>
-                  {{ formatLocation(ad.location, ad.city) }}
-                </div>
-                <div class="ad-details">
-                  <span class="ad-size">{{ ad.width }}m × {{ ad.height }}m</span>
-                  <span class="ad-price">
-                    {{ getFormattedPrice(ad) }}
-                  </span>
+              <div class="card-dimensions">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <rect x="2" y="2" width="12" height="12" rx="1" stroke="#6B7280" stroke-width="1.3"/>
+                  <path d="M2 6H14M6 2V14" stroke="#6B7280" stroke-width="1.3"/>
+                </svg>
+                <span>{{ ad.width }}m × {{ ad.height }}m</span>
+              </div>
+
+              <div class="card-footer">
+                <div class="card-price">
+                  <span class="price-amount">{{ getPrice(ad, priceDisplay).toLocaleString('pl-PL') }} zł</span>
+                  <span class="price-period">{{ getPriceLabel(priceDisplay) }}</span>
+                  <span v-if="ad.price_negotiable" class="negotiable-badge">do negocjacji</span>
                 </div>
               </div>
-            </router-link>
-          </div>
+            </div>
+          </router-link>
         </div>
         
         <!-- Pagination (na samym dole) -->
@@ -1976,6 +2050,15 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
+        <!-- Info message when no type selected -->
+        <div v-if="tempFilters && !tempFilters.type" class="info-message">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="#3B82F6" stroke-width="2"/>
+            <path d="M12 16v-4M12 8h.01" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Wybierz typ powierzchni, aby zobaczyć więcej filtrów specyficznych dla danego typu</span>
+        </div>
+
         <!-- SEKCJA: Opcje specyficzne dla typu -->
         <div v-if="tempFilters.type" class="filter-section">
           <h4 class="section-title">Opcje specyficzne dla typu</h4>
@@ -2006,7 +2089,7 @@ onBeforeUnmount(() => {
           </div>
 
           <!-- Traffic Intensity -->
-          <div v-if="tempFilters && ['billboard', 'banner'].includes(tempFilters.type)" class="filter-group">
+          <div v-if="tempFilters && ['billboard', 'banner', 'wall'].includes(tempFilters.type)" class="filter-group">
             <label class="filter-label">Natężenie ruchu</label>
             <select v-model="tempFilters.trafficIntensity" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>
@@ -2016,14 +2099,25 @@ onBeforeUnmount(() => {
             </select>
           </div>
 
-          <!-- Traffic Direction -->
-          <div v-if="tempFilters && ['billboard', 'banner'].includes(tempFilters.type)" class="filter-group">
+          <!-- Kierunek ruchu (Billboard only) -->
+          <div v-if="tempFilters && tempFilters.type === 'billboard'" class="filter-group">
             <label class="filter-label">Kierunek ruchu</label>
             <select v-model="tempFilters.trafficDirection" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>
               <option value="entry">Wjazd</option>
               <option value="exit">Wyjazd</option>
               <option value="both">Oba kierunki</option>
+            </select>
+          </div>
+
+          <!-- Rodzaj ruchu (Banner) -->
+          <div v-if="tempFilters && tempFilters.type === 'banner'" class="filter-group">
+            <label class="filter-label">Rodzaj ruchu</label>
+            <select v-model="tempFilters.trafficType" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option value="pedestrian">Pieszy</option>
+              <option value="vehicular">Samochodowy</option>
+              <option value="both">Oba rodzaje</option>
             </select>
           </div>
 
@@ -2137,13 +2231,6 @@ onBeforeUnmount(() => {
             </label>
           </div>
 
-          <div v-if="tempFilters && (tempFilters.type === 'totem' || (tempFilters.type === 'billboard' && tempFilters.variant === 'backlit'))" class="filter-group">
-            <label class="checkbox-option">
-              <input v-model="tempFilters.hasLighting" type="checkbox" v-if="tempFilters" />
-              <span>Podświetlenie</span>
-            </label>
-          </div>
-
           <div v-if="tempFilters && ['billboard', 'banner'].includes(tempFilters.type)" class="filter-group">
             <label class="checkbox-option">
               <input v-model="tempFilters.priceIncludesPrint" type="checkbox" v-if="tempFilters" />
@@ -2162,6 +2249,13 @@ onBeforeUnmount(() => {
             <label class="checkbox-option">
               <input v-model="tempFilters.graphicDesignHelp" type="checkbox" v-if="tempFilters" />
               <span>Pomoc przy projekcie graficznym</span>
+            </label>
+          </div>
+
+          <div v-if="tempFilters && ['citylight', 'totem'].includes(tempFilters.type)" class="filter-group">
+            <label class="checkbox-option">
+              <input v-model="tempFilters.hasBacklight" type="checkbox" v-if="tempFilters" />
+              <span>Podświetlenie</span>
             </label>
           </div>
         </div>
@@ -2482,70 +2576,163 @@ onBeforeUnmount(() => {
   grid-template-columns: 1fr;
 }
 
-.ads-list.list .ad-link {
-  display: flex;
-  align-items: stretch;
-  padding: 0;
-  border-radius: 8px;
+.ad-card {
   background: white;
+  border-radius: 12px;
+  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  border: 2px solid transparent;
 }
 
-.ads-list.list .ad-image {
-  width: 200px;
-  height: 140px;
-  flex-shrink: 0;
-  margin-right: 0;
-  border-radius: 0;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
+.ad-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.ad-card.hovered,
+.ad-card.selected {
+  border-color: #667eea;
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.25);
+}
+
+.card-image {
+  position: relative;
+  width: 100%;
+  height: 220px;
   overflow: hidden;
 }
 
-.ads-list.list .ad-image img {
+.card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
-.ads-list.list .ad-content {
-  flex: 1;
-  padding: 1rem;
+.ad-card:hover .card-image img {
+  transform: scale(1.05);
 }
 
-.ads-list.grid .ad-list-item {
-  flex-direction: column;
-}
-
-.ads-list.grid .ad-link {
-  flex-direction: column;
-  padding: 0;
-}
-
-.ads-list.grid .ad-image {
+.no-image-placeholder {
   width: 100%;
-  height: 180px;
-  border-radius: 8px 8px 0 0;
-}
-
-.ads-list.grid .ad-content {
-  padding: 1rem;
-}
-
-.ads-list.grid .ad-details {
+  height: 100%;
+  display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  color: #9ca3af;
 }
 
-.ad-list-item {
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  overflow: visible;
-  transition: all 0.2s;
-  cursor: pointer;
+.no-image-placeholder svg {
+  margin-bottom: 0.75rem;
+}
+
+.no-image-placeholder span {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.card-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  color: white;
+  padding: 0.375rem 0.875rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+}
+
+.status-badge {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  color: white;
+  padding: 0.375rem 0.875rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.status-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
   background: white;
+  display: inline-block;
+}
+
+.card-actions {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.card-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  flex: 1;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1F2937;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.card-location,
+.card-dimensions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6B7280;
+  font-size: 0.9rem;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #F3F4F6;
+}
+
+.card-price {
+  display: flex;
+  flex-direction: column;
+}
+
+.price-amount {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #4F46E5;
+}
+
+.price-period {
+  font-size: 0.8rem;
+  color: #9CA3AF;
 }
 
 .action-btn {
@@ -2560,7 +2747,6 @@ onBeforeUnmount(() => {
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: white;
 }
 
 .action-btn:hover {
@@ -2568,152 +2754,28 @@ onBeforeUnmount(() => {
   transform: scale(1.1);
 }
 
-.action-btn.active {
+.favorite-btn.active {
   background: rgba(255, 255, 255, 0.95);
-  color: #ef4444;
 }
 
-.action-btn.active:hover {
+.favorite-btn.active:hover {
   background: white;
 }
 
-.ad-list-item:hover,
-.ad-list-item.hovered {
-  border-color: #667eea;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-  transform: translateX(-4px);
+.comparison-btn.active {
+  background: rgba(255, 255, 255, 0.95);
 }
 
-.ad-list-item.selected {
-  border-color: #667eea;
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.25);
-  background: #f0f4ff;
-}
-
-.ad-link {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  text-decoration: none;
-  color: inherit;
-}
-
-.ad-image {
-  width: 120px;
-  height: 120px;
-  flex-shrink: 0;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f3f4f6;
-  position: relative;
-}
-
-.ad-actions {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  z-index: 10;
-  opacity: 1;
-}
-
-.ad-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.no-image {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #9ca3af;
-}
-
-.ad-type-badge {
-  position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
-  color: white;
-  padding: 0.25rem 0.625rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  backdrop-filter: blur(8px);
-}
-
-.ad-status-badge {
-  position: absolute;
-  bottom: 0.5rem;
-  left: 0.5rem;
-  color: white;
-  padding: 0.375rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-
-.ad-status-badge::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+.comparison-btn.active:hover {
   background: white;
 }
 
-.ad-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-width: 0;
-}
-
-.ad-title {
-  margin: 0;
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: #1f2937;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.ad-location {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  color: #6b7280;
-  font-size: 0.9rem;
-}
-
-.ad-details {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-}
-
-.ad-size {
-  color: #6b7280;
-  font-size: 0.875rem;
-}
-
-.ad-price {
-  font-weight: 700;
-  color: #667eea;
-  font-size: 1.125rem;
+.negotiable-badge {
+  font-size: 0.75rem;
+  color: #10B981;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  display: inline-block;
 }
 
 .map-container-wrapper {
@@ -2864,6 +2926,28 @@ onBeforeUnmount(() => {
   border-bottom: none;
   margin-bottom: 0;
   padding-bottom: 0;
+}
+
+.info-message {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  color: #1E40AF;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.info-message svg {
+  flex-shrink: 0;
+}
+
+.info-message span {
+  flex: 1;
 }
 
 .section-title {

@@ -21,15 +21,16 @@ interface Filters {
   surfaceTo: number | null
   trafficIntensity: string
   trafficDirection: string
+  trafficType: string
   status: string[]
   environment: string
-  hasLighting: boolean
   onlyWithImage: boolean
   priceIncludesPrint: boolean
   priceIncludesMounting: boolean
   graphicDesignHelp: boolean
   offerType: string
   hasVatInvoice: boolean
+  hasBacklight: boolean
   selectedLocationCoords?: { lat: number; lng: number } | null
   // Type-specific filters
   variant: string
@@ -71,15 +72,16 @@ const filters = ref<Filters>({
   surfaceTo: null,
   trafficIntensity: '',
   trafficDirection: '',
+  trafficType: '',
   status: [],
   environment: '',
-  hasLighting: false,
   onlyWithImage: false,
   priceIncludesPrint: false,
   priceIncludesMounting: false,
   graphicDesignHelp: false,
   offerType: '',
   hasVatInvoice: false,
+  hasBacklight: false,
   // Type-specific filters
   variant: '',
   roadClass: '',
@@ -320,15 +322,16 @@ const resetFilters = () => {
     surfaceTo: null,
     trafficIntensity: '',
     trafficDirection: '',
+    trafficType: '',
     status: [],
     environment: '',
-    hasLighting: false,
     onlyWithImage: false,
     priceIncludesPrint: false,
     priceIncludesMounting: false,
     graphicDesignHelp: false,
     offerType: '',
     hasVatInvoice: false,
+    hasBacklight: false,
     selectedLocationCoords: null,
     // Type-specific filters
     variant: '',
@@ -353,10 +356,6 @@ const isStatusMenuOpen = ref(false)
 const statusMultiselect = ref<HTMLElement | null>(null)
 
 // Computed properties for filter visibility based on selected ad type
-const showLightingFilter = computed(() => {
-  return filters.value.type === 'totem' || (filters.value.type === 'billboard' && filters.value.variant === 'backlit')
-})
-
 const showPrintFilter = computed(() => {
   const type = filters.value.type
   return ['billboard', 'banner'].includes(type)
@@ -374,7 +373,7 @@ const showGraphicDesignFilter = computed(() => {
 
 const showTrafficIntensityFilter = computed(() => {
   const type = filters.value.type
-  return ['billboard', 'banner'].includes(type)
+  return ['billboard', 'banner', 'wall'].includes(type)
 })
 
 const showDimensionsFilter = computed(() => {
@@ -435,7 +434,7 @@ const showRoadClassFilter = computed(() => {
 
 const showEnvironmentFilter = computed(() => {
   const type = filters.value.type
-  return ['citylight', 'led_screen', 'totem', 'other'].includes(type)
+  return ['citylight', 'led_screen', 'totem', 'mobile', 'other'].includes(type)
 })
 
 const environmentOptions = computed(() => {
@@ -453,6 +452,12 @@ const environmentOptions = computed(() => {
         { value: 'event', label: 'Event / Wydarzenie' }
       ]
     case 'totem':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'mobile':
       return [
         { value: 'indoor', label: 'Wewnątrz' },
         { value: 'outdoor', label: 'Na zewnątrz' },
@@ -486,37 +491,62 @@ const availablePriceUnits = computed(() => {
   const type = filters.value.type
   if (!type) {
     return [
-      { value: 'day', label: 'dzień' },
-      { value: 'week', label: 'tydzień' },
-      { value: 'month', label: 'miesiąc' },
-      { value: 'year', label: 'rok' },
-      { value: 'sqm', label: 'm²' }
+      { value: 'day', label: 'za dzień' },
+      { value: 'week', label: 'za tydzień' },
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'year', label: 'za rok' },
+      { value: 'sqm', label: 'za m²' }
     ]
   }
   
-  if (type === 'billboard' || type === 'banner' || type === 'wall' || type === 'citylight') {
+  if (type === 'citylight') {
     return [
-      { value: 'day', label: 'dzień' },
-      { value: 'week', label: 'tydzień' },
-      { value: 'month', label: 'miesiąc' },
-      { value: 'year', label: 'rok' },
-      { value: 'sqm', label: 'm²' }
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'sqm', label: 'za m²' }
+    ]
+  } else if (type === 'billboard') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'week', label: 'za tydzień' },
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'year', label: 'za rok' },
+      { value: 'sqm', label: 'za m²' }
+    ]
+  } else if (type === 'wall') {
+    return [
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'year', label: 'za rok' },
+      { value: 'sqm', label: 'za m²' }
+    ]
+  } else if (type === 'banner') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'week', label: 'za tydzień' },
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'sqm', label: 'za m²' }
     ]
   } else if (type === 'led_screen') {
     return [
-      { value: 'day', label: 'dzień (emisje)' },
-      { value: 'month', label: 'miesiąc (emisje)' }
+      { value: 'day', label: 'za dzień (emisje)' },
+      { value: 'month', label: 'za miesiąc (emisje)' },
+      { value: 'campaign', label: 'za kampanię' }
     ]
-  } else if (type === 'transport' || type === 'mobile') {
+  } else if (type === 'transport') {
     return [
-      { value: 'day', label: 'dzień' },
-      { value: 'campaign', label: 'kampania' }
+      { value: 'day', label: 'za dzień' },
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'campaign', label: 'za kampanię' }
+    ]
+  } else if (type === 'mobile') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'campaign', label: 'za kampanię' }
     ]
   }
   
   return [
-    { value: 'day', label: 'dzień' },
-    { value: 'month', label: 'miesiąc' }
+    { value: 'day', label: 'za dzień' },
+    { value: 'month', label: 'za miesiąc' }
   ]
 })
 
@@ -719,6 +749,15 @@ onBeforeUnmount(() => {
 
           <transition name="slide">
             <div v-if="showAdvanced" class="advanced-filters">
+              <!-- Info message when no type selected -->
+              <div v-if="!filters.type" class="info-message">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="#3B82F6" stroke-width="2"/>
+                  <path d="M12 16v-4M12 8h.01" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Wybierz typ powierzchni, aby zobaczyć więcej filtrów specyficznych dla danego typu</span>
+              </div>
+
               <div v-if="showDimensionsFilter" class="filter-section">
                 <h4 class="section-title">Wymiary i powierzchnia</h4>
                 <div class="search-row">
@@ -841,8 +880,9 @@ onBeforeUnmount(() => {
                   </div>
                 </div>
 
-                <!-- Traffic Direction (Billboard and Banner) -->
-                <div v-if="showTrafficIntensityFilter" class="search-row">
+                <!-- Traffic Direction (Billboard only) -->
+                <!-- Kierunek ruchu dla billboard -->
+                <div v-if="filters.type === 'billboard'" class="search-row">
                   <div class="input-group">
                     <label class="input-label">Kierunek ruchu</label>
                     <select v-model="filters.trafficDirection" class="search-select">
@@ -850,6 +890,19 @@ onBeforeUnmount(() => {
                       <option value="entry">Wjazd</option>
                       <option value="exit">Wyjazd</option>
                       <option value="both">Oba kierunki</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Rodzaj ruchu dla banner -->
+                <div v-if="filters.type === 'banner'" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Rodzaj ruchu</label>
+                    <select v-model="filters.trafficType" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option value="pedestrian">Pieszy</option>
+                      <option value="vehicular">Samochodowy</option>
+                      <option value="both">Oba rodzaje</option>
                     </select>
                   </div>
                 </div>
@@ -959,10 +1012,6 @@ onBeforeUnmount(() => {
                     <input type="checkbox" v-model="filters.onlyWithImage" />
                     <span>Tylko ze zdjęciem</span>
                   </label>
-                  <label v-if="showLightingFilter" class="checkbox-label search-select" style="justify-content: flex-start;">
-                    <input type="checkbox" v-model="filters.hasLighting" />
-                    <span>Podświetlenie</span>
-                  </label>
                   <label v-if="showPrintFilter" class="checkbox-label search-select" style="justify-content: flex-start;">
                     <input type="checkbox" v-model="filters.priceIncludesPrint" />
                     <span>Cena zawiera druk</span>
@@ -974,6 +1023,10 @@ onBeforeUnmount(() => {
                   <label v-if="showGraphicDesignFilter" class="checkbox-label search-select" style="justify-content: flex-start;">
                     <input type="checkbox" v-model="filters.graphicDesignHelp" />
                     <span>Pomoc przy projekcie graficznym</span>
+                  </label>
+                  <label v-if="['citylight', 'totem'].includes(filters.type)" class="checkbox-label search-select" style="justify-content: flex-start;">
+                    <input type="checkbox" v-model="filters.hasBacklight" />
+                    <span>Podświetlenie</span>
                   </label>
                 </div>
               </div>
@@ -1409,6 +1462,27 @@ onBeforeUnmount(() => {
   padding-top: 1rem;
 }
 
+.info-message {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  color: #1E40AF;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.info-message svg {
+  flex-shrink: 0;
+}
+
+.info-message span {
+  flex: 1;
+}
+
 .loading-state {
   display: flex;
   align-items: center;
@@ -1482,7 +1556,7 @@ onBeforeUnmount(() => {
 
 .checkbox-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
 }
 

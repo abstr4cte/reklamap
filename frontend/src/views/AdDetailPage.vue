@@ -160,22 +160,56 @@ const statusClass = computed(() => {
 // Computed properties for field visibility based on ad type
 const showDimensions = computed(() => {
   if (!ad.value) return false
-  return ['billboard', 'citylight', 'banner', 'wall', 'totem', 'led_screen'].includes(ad.value.type)
+  // Show dimensions only if they exist and are greater than 0
+  const hasDimensions = ad.value.width && ad.value.height && ad.value.width > 0 && ad.value.height > 0
+  return ['billboard', 'citylight', 'banner', 'wall', 'totem', 'led_screen'].includes(ad.value.type) && hasDimensions
 })
 
 const showTrafficIntensity = computed(() => {
   if (!ad.value) return false
-  return ['billboard', 'banner', 'wall'].includes(ad.value.type)
+  return ['billboard', 'banner', 'wall'].includes(ad.value.type) && ad.value.traffic_intensity
+})
+
+const showTrafficDirection = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'billboard' && ad.value.traffic_direction && ad.value.traffic_direction.length > 0
+})
+
+const formatTrafficDirection = computed(() => {
+  if (!ad.value?.traffic_direction || !Array.isArray(ad.value.traffic_direction)) return ''
+  
+  // Jeśli są oba kierunki, wyświetl "Oba kierunki"
+  if (ad.value.traffic_direction.includes('entry') && ad.value.traffic_direction.includes('exit')) {
+    return 'Oba kierunki'
+  }
+  
+  const directions = ad.value.traffic_direction.map(dir => {
+    if (dir === 'entry') return 'Wjazd do miasta'
+    if (dir === 'exit') return 'Wyjazd z miasta'
+    return dir
+  })
+  
+  return directions.join(', ')
 })
 
 const showLighting = computed(() => {
   if (!ad.value) return false
-  return ['citylight', 'led_screen', 'totem'].includes(ad.value.type) && ad.value.has_lighting
+  return ['citylight', 'led_screen', 'totem'].includes(ad.value.type) && ad.value.has_backlight
+})
+
+const showEnvironment = computed(() => {
+  if (!ad.value) return false
+  return ['citylight', 'led_screen', 'totem', 'banner', 'mobile', 'other'].includes(ad.value.type) && ad.value.environment
+})
+
+const showTrafficType = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'banner' && ad.value.traffic_type && (ad.value.traffic_type as string[]).length > 0
 })
 
 const showPrint = computed(() => {
   if (!ad.value) return false
-  return ['billboard', 'banner', 'wall', 'citylight'].includes(ad.value.type) && ad.value.price_includes_print
+  return ['billboard', 'banner', 'citylight'].includes(ad.value.type) && ad.value.price_includes_print
 })
 
 const showMounting = computed(() => {
@@ -186,6 +220,11 @@ const showMounting = computed(() => {
 const showGraphicDesign = computed(() => {
   if (!ad.value) return false
   return ['billboard', 'banner', 'wall', 'citylight'].includes(ad.value.type) && ad.value.graphic_design_help
+})
+
+const showVariant = computed(() => {
+  if (!ad.value) return false
+  return ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile'].includes(ad.value.type) && ad.value.variant && ad.value.variant.trim() !== ''
 })
 
 const surfaceArea = computed(() => {
@@ -203,27 +242,204 @@ const pricePerSqm = computed(() => {
   return '0'
 })
 
-// Helper to map type to Polish label
+const showPricePerSqm = computed(() => {
+  if (!ad.value) return false
+  // Don't show price per sqm for citylight and types without dimensions
+  return ad.value.type !== 'citylight' && ad.value.width && ad.value.height && parseFloat(surfaceArea.value) > 0
+})
+
+// Computed property for location tier (billboard only)
+const locationTier = computed(() => {
+  if (!ad.value || ad.value.type !== 'billboard') return null
+  
+  const trafficIntensity = ad.value.traffic_intensity
+  const roadClass = ad.value.road_class
+  
+  // PREMIUM: wysokie natężenie ruchu + autostrada/droga ekspresowa/droga krajowa
+  if (trafficIntensity === 'high' && ['highway', 'expressway', 'national'].includes(roadClass || '')) {
+    return 'PREMIUM'
+  }
+  
+  // STANDARD: wszystkie inne kombinacje
+  return 'STANDARD'
+})
+
+// Computed property to show road class for billboards
+const showRoadClass = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'billboard' && ad.value.road_class
+})
+
+// Helper to format road class label
+const getRoadClassLabel = (roadClass: string): string => {
+  const roadClassLabels: Record<string, string> = {
+    'highway': 'Autostrada (A)',
+    'expressway': 'Droga ekspresowa (S)',
+    'national': 'Droga krajowa (DK)',
+    'regional': 'Droga wojewódzka',
+    'local': 'Droga lokalna',
+    'urban': 'Droga miejska'
+  }
+  return roadClassLabels[roadClass] || roadClass
+}
+
+// Helper to format environment label
+const getEnvironmentLabel = (environment: string): string => {
+  const environmentLabels: Record<string, string> = {
+    'indoor': 'Wewnątrz',
+    'outdoor': 'Na zewnątrz',
+    'event': 'Event / Wydarzenie'
+  }
+  return environmentLabels[environment] || environment
+}
+
+// Helper to format transport scope label
+const getTransportScopeLabel = (scope: string): string => {
+  const scopeLabels: Record<string, string> = {
+    'internal': 'Wewnętrzna',
+    'external': 'Zewnętrzna',
+    'full_vehicle': 'Całopojazdowa'
+  }
+  return scopeLabels[scope] || scope
+}
+
+// Helper to format mobile exposure mode label
+const getMobileExposureModeLabel = (mode: string): string => {
+  const modeLabels: Record<string, string> = {
+    'moving': 'Jeżdżąca',
+    'stationary': 'Stojąca',
+    'mixed': 'Mieszana'
+  }
+  return modeLabels[mode] || mode
+}
+
+// Helper to format traffic type
+const formatTrafficType = computed(() => {
+  if (!ad.value || !ad.value.traffic_type) return ''
+  const trafficType = ad.value.traffic_type as string[]
+  const labels: Record<string, string> = {
+    'pedestrian': 'Pieszy',
+    'vehicular': 'Samochodowy'
+  }
+  return trafficType.map(type => labels[type] || type).join(', ')
+})
+
+// Helper to format type label
 const getTypeLabel = (type: string): string => {
   const typeLabels: Record<string, string> = {
-    'billboard': 'Billboardy',
-    'citylight': 'Citylighty',
-    'led_screen': 'Ekrany LED',
-    'banner': 'Banery',
-    'wall': 'Ściany reklamowe',
-    'totem': 'Totemy reklamowe',
+    'billboard': 'Billboard',
+    'citylight': 'Citylight',
+    'led_screen': 'Ekran LED',
+    'banner': 'Banner',
+    'wall': 'Ściana reklamowa',
+    'totem': 'Totem reklamowy',
     'transport': 'Reklama w transporcie',
     'mobile': 'Reklama mobilna',
     'other': 'Inne'
   }
-  
-  // Jeśli typ jest w mapie, zwróć go
-  if (typeLabels[type]) {
-    return typeLabels[type]
+  return typeLabels[type] || type
+}
+
+// Helper to format price unit label
+const getPriceUnitLabel = (priceUnit: string): string => {
+  const priceUnitLabels: Record<string, string> = {
+    'day': 'za dzień',
+    'week': 'za tydzień',
+    'month': 'za miesiąc',
+    'year': 'za rok',
+    'campaign': 'za kampanię',
+    'sqm': 'za m²'
+  }
+  return priceUnitLabels[priceUnit] || priceUnit
+}
+
+// Computed properties for LED screen specific fields
+const showSpotDuration = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'led_screen' && ad.value.spot_duration && ad.value.spot_duration > 0
+})
+
+const showLoopDuration = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'led_screen' && ad.value.loop_duration && ad.value.loop_duration > 0
+})
+
+// Computed property for campaign duration
+const showCampaignDuration = computed(() => {
+  if (!ad.value) return false
+  return ad.value.price_unit === 'campaign' && ad.value.campaign_duration && ad.value.campaign_duration > 0
+})
+
+// Computed properties for transport-specific fields
+const showTransportScope = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'transport' && ad.value.transport_scope && ad.value.transport_scope.trim() !== ''
+})
+
+const showVehicleCount = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'transport' && ad.value.vehicle_count && ad.value.vehicle_count > 0
+})
+
+// Computed properties for mobile-specific fields
+const showMobileExposureMode = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'mobile' && ad.value.mobile_exposure_mode && ad.value.mobile_exposure_mode.trim() !== ''
+})
+
+const showOperatingHours = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'mobile' && ad.value.operating_hours && ad.value.operating_hours.trim() !== ''
+})
+
+const showRouteArea = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'mobile' && ad.value.route_area && ad.value.route_area.trim() !== ''
+})
+
+// Helper to format variant label
+const getVariantLabel = (variant: string): string => {
+  const variantLabels: Record<string, string> = {
+    // Billboard
+    'standard': 'Standardowy',
+    'three_sided': 'Trójstronny',
+    'backlit': 'Backlit (podświetlany)',
+    // Citylight
+    'single': 'Pojedynczy',
+    'double': 'Podwójny',
+    'digital': 'Cyfrowy',
+    // LED Screen
+    'outdoor': 'Zewnętrzny',
+    'indoor': 'Wewnętrzny',
+    'interactive': 'Interaktywny',
+    // Banner
+    'pvc': 'PCV',
+    'mesh': 'Siatkowy/Mesh',
+    'textile': 'Tekstylny',
+    // Wall
+    'mural': 'Mural',
+    'foil': 'Folia',
+    'construction': 'Konstrukcja',
+    // Totem
+    'single_sided': 'Jednostronny',
+    'double_sided': 'Dwustronny',
+    'multi_sided': 'Wielostronny',
+    // Transport
+    'bus': 'Autobus',
+    'tram': 'Tramwaj',
+    'metro': 'Metro',
+    'stop': 'Przystanek',
+    // Mobile
+    'trailer': 'Przyczepka',
+    'car': 'Samochód',
+    'bike': 'Rower',
+    'other': 'Inna',
+    // Other
+    'static': 'Statyczny',
+    'dynamic': 'Dynamiczny'
   }
   
-  // W przeciwnym razie kapitalizuj pierwszą literę
-  return type.charAt(0).toUpperCase() + type.slice(1)
+  return variantLabels[variant] || variant
 }
 
 // Helper to map type to URL format
@@ -570,7 +786,12 @@ const formatDate = (dateString: string) => {
 
 const getMaskedPhone = (phone: string | undefined) => {
   if (!phone) return '+48 XXX XXX XXX'
-  const cleaned = phone.replace(/\D/g, '')
+  // Remove all non-digits
+  let cleaned = phone.replace(/\D/g, '')
+  // Remove +48 prefix if present (will be 48 followed by 9 digits)
+  if (cleaned.startsWith('48') && cleaned.length === 11) {
+    cleaned = cleaned.slice(2)
+  }
   if (cleaned.length < 9) return phone
 
   const start = cleaned.slice(0, 3)
@@ -582,7 +803,12 @@ const getMaskedPhone = (phone: string | undefined) => {
 
 const getFullPhone = (phone: string | undefined) => {
   if (!phone) return '+48 XXX XXX XXX'
-  const cleaned = phone.replace(/\D/g, '')
+  // Remove all non-digits
+  let cleaned = phone.replace(/\D/g, '')
+  // Remove +48 prefix if present (will be 48 followed by 9 digits)
+  if (cleaned.startsWith('48') && cleaned.length === 11) {
+    cleaned = cleaned.slice(2)
+  }
   if (cleaned.length < 9) return phone
 
   return `+48 ${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6)}`
@@ -906,23 +1132,31 @@ onUnmounted(() => {
           <div class="specs-section">
             <h1 class="ad-title">{{ ad.title }}</h1>
             <div class="price-section">
-              <div class="price-main">{{ ad.price }} PLN</div>
+              <div class="price-main">
+                {{ ad.price }} PLN
+                <span v-if="ad.price_negotiable" class="negotiable-badge">Do negocjacji</span>
+              </div>
               <div class="price-details">
-                <span>{{ pricePerSqm }} PLN/m²</span>
-                <span>•</span>
-                <span>{{ ad.price_unit === 'day' ? 'za dzień' : ad.price_unit === 'week' ? 'za tydzień' : ad.price_unit === 'month' ? 'za miesiąc' : 'za rok' }}</span>
+                <span v-if="showPricePerSqm">{{ pricePerSqm }} PLN/m²</span>
+                <span v-if="showPricePerSqm">•</span>
+                <span>{{ getPriceUnitLabel(ad.price_unit) }}</span>
               </div>
             </div>
 
             <div class="specs-grid">
               <div class="spec-item">
                 <div class="spec-label">Typ powierzchni</div>
-                <div class="spec-value">{{ ad.type }}</div>
+                <div class="spec-value">{{ getTypeLabel(ad.type) }}</div>
               </div>
 
               <div v-if="showDimensions" class="spec-item">
                 <div class="spec-label">Wymiary</div>
                 <div class="spec-value">{{ ad.width }}m × {{ ad.height }}m ({{ surfaceArea }} m²)</div>
+              </div>
+
+              <div v-if="showVariant" class="spec-item">
+                <div class="spec-label">Wariant</div>
+                <div class="spec-value">{{ getVariantLabel(ad.variant!) }}</div>
               </div>
 
               <div v-if="showDimensions" class="spec-item">
@@ -940,6 +1174,73 @@ onUnmounted(() => {
                 <div class="spec-value">
                   {{ ad.traffic_intensity === 'low' ? 'Niskie' : ad.traffic_intensity === 'medium' ? 'Średnie' : 'Wysokie' }}
                 </div>
+              </div>
+
+              <div v-if="showRoadClass" class="spec-item">
+                <div class="spec-label">Klasa drogi</div>
+                <div class="spec-value">{{ getRoadClassLabel(ad.road_class!) }}</div>
+              </div>
+
+              <div v-if="locationTier" class="spec-item">
+                <div class="spec-label">Klasa lokalizacji</div>
+                <div class="spec-value" :class="{ 'spec-premium': locationTier === 'PREMIUM', 'spec-standard': locationTier === 'STANDARD' }">
+                  {{ locationTier }}
+                </div>
+              </div>
+
+              <div v-if="showTrafficDirection" class="spec-item">
+                <div class="spec-label">Kierunek ruchu</div>
+                <div class="spec-value">{{ formatTrafficDirection }}</div>
+              </div>
+
+              <div v-if="showTrafficType" class="spec-item">
+                <div class="spec-label">Rodzaj ruchu</div>
+                <div class="spec-value">{{ formatTrafficType }}</div>
+              </div>
+
+              <div v-if="showEnvironment" class="spec-item">
+                <div class="spec-label">Środowisko</div>
+                <div class="spec-value">{{ getEnvironmentLabel(ad.environment!) }}</div>
+              </div>
+
+              <div v-if="showSpotDuration" class="spec-item">
+                <div class="spec-label">Czas spotu</div>
+                <div class="spec-value">{{ ad.spot_duration }} sek</div>
+              </div>
+
+              <div v-if="showLoopDuration" class="spec-item">
+                <div class="spec-label">Pętla emisji</div>
+                <div class="spec-value">{{ ad.loop_duration }} sek</div>
+              </div>
+
+              <div v-if="showCampaignDuration" class="spec-item">
+                <div class="spec-label">Czas trwania kampanii</div>
+                <div class="spec-value">{{ ad.campaign_duration }} dni</div>
+              </div>
+
+              <div v-if="showTransportScope" class="spec-item">
+                <div class="spec-label">Zakres</div>
+                <div class="spec-value">{{ getTransportScopeLabel(ad.transport_scope!) }}</div>
+              </div>
+
+              <div v-if="showVehicleCount" class="spec-item">
+                <div class="spec-label">Liczba pojazdów</div>
+                <div class="spec-value">{{ ad.vehicle_count }}</div>
+              </div>
+
+              <div v-if="showMobileExposureMode" class="spec-item">
+                <div class="spec-label">Tryb ekspozycji</div>
+                <div class="spec-value">{{ getMobileExposureModeLabel(ad.mobile_exposure_mode!) }}</div>
+              </div>
+
+              <div v-if="showOperatingHours" class="spec-item">
+                <div class="spec-label">Godziny działania</div>
+                <div class="spec-value">{{ ad.operating_hours }}</div>
+              </div>
+
+              <div v-if="showRouteArea" class="spec-item">
+                <div class="spec-label">Trasa / Obszar</div>
+                <div class="spec-value">{{ ad.route_area }}</div>
               </div>
 
               <div v-if="showLighting" class="spec-item">
@@ -1658,6 +1959,21 @@ onUnmounted(() => {
   font-weight: 800;
   color: #166534;
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.negotiable-badge {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 6px;
+  border: 1px solid #fbbf24;
 }
 
 .price-details {
@@ -1694,6 +2010,18 @@ onUnmounted(() => {
 
 .spec-yes {
   color: #10B981;
+}
+
+.spec-premium {
+  color: #F59E0B;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.spec-standard {
+  color: #6B7280;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .map-section h2,

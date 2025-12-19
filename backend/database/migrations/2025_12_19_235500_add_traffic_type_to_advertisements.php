@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('advertisements', function (Blueprint $table) {
-            $table->integer('campaign_duration')->nullable()->after('price_unit');
+            $table->json('traffic_type')->nullable()->after('traffic_direction');
         });
     }
 
@@ -22,9 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('advertisements', function (Blueprint $table) {
-            if (Schema::hasColumn('advertisements', 'campaign_duration')) {
-                $table->dropColumn('campaign_duration');
-            }
+            $table->dropColumn('traffic_type');
         });
     }
 };

@@ -39,7 +39,7 @@ export interface FilterParams {
   heightTo?: number | null
   trafficIntensity?: string
   status?: string[]
-  hasLighting?: boolean
+  hasBacklight?: boolean
   onlyWithImage?: boolean
   priceIncludesPrint?: boolean
   graphicDesignHelp?: boolean
@@ -164,7 +164,7 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   }
   
   // Konwersja wartości boolean na polskie odpowiedniki
-  if (filters.hasLighting) params.hasLighting = 'tak'
+  if (filters.hasBacklight) params.hasBacklight = 'tak'
   if (filters.onlyWithImage) params.onlyWithImage = 'tak'
   if (filters.priceIncludesPrint) params.priceIncludesPrint = 'tak'
   if (filters.graphicDesignHelp) params.graphicDesignHelp = 'tak'
@@ -229,7 +229,7 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   }
   
   // Konwersja string na wartości boolean
-  filters.hasLighting = query.hasLighting === 'tak' || query.hasLighting === 'true'
+  filters.hasBacklight = query.hasBacklight === 'tak' || query.hasBacklight === 'true'
   filters.onlyWithImage = query.onlyWithImage === 'tak' || query.onlyWithImage === 'true'
   filters.priceIncludesPrint = query.priceIncludesPrint === 'tak' || query.priceIncludesPrint === 'true'
   filters.graphicDesignHelp = query.graphicDesignHelp === 'tak' || query.graphicDesignHelp === 'true'

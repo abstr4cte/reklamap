@@ -16,6 +16,8 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
 import { point } from '@turf/helpers'
 import polandGeoJson from '../assets/poland_highres.json'
+import { slugify } from '../utils/slugify'
+import { mapTypeToUrlFormat } from '../utils/typeMapping'
 
 // Fix Leaflet icon paths
 const DefaultIcon = L.icon({
@@ -279,7 +281,7 @@ const saveChanges = async (id: string) => {
         height: editingAd.value.height,
         orientation: editingAd.value.width >= editingAd.value.height ? 'horizontal' : 'vertical',
         traffic_intensity: editingAd.value.traffic_intensity,
-        has_lighting: editingAd.value.has_lighting,
+        has_backlight: editingAd.value.has_backlight,
         price_includes_print: editingAd.value.price_includes_print,
         price_includes_mounting: (editingAd.value as any).price_includes_mounting || false,
         graphic_design_help: editingAd.value.graphic_design_help,
@@ -292,21 +294,22 @@ const saveChanges = async (id: string) => {
         phone: (editingAd.value as any).phone ? `+48${(editingAd.value as any).phone}` : '',
         contact_preference: (editingAd.value as any).contact_preference || 'email',
         // Type-specific fields
-        variant: (editingAd.value as any).variant || undefined,
-        road_class: (editingAd.value as any).road_class || undefined,
-        traffic_direction: (editingAd.value as any).traffic_direction && (editingAd.value as any).traffic_direction.length === 2 
-          ? 'both' 
-          : (editingAd.value as any).traffic_direction && (editingAd.value as any).traffic_direction.length === 1 
-            ? (editingAd.value as any).traffic_direction[0] 
-            : undefined,
-        environment: (editingAd.value as any).environment || undefined,
-        spot_duration: (editingAd.value as any).spot_duration || undefined,
-        loop_duration: (editingAd.value as any).loop_duration || undefined,
-        transport_scope: (editingAd.value as any).transport_scope || undefined,
-        vehicle_count: (editingAd.value as any).vehicle_count || undefined,
-        mobile_exposure_mode: (editingAd.value as any).mobile_exposure_mode || undefined,
-        operating_hours: (editingAd.value as any).operating_hours || undefined,
-        route_area: (editingAd.value as any).route_area || undefined,
+        variant: (editingAd.value as any).variant || null,
+        road_class: (editingAd.value as any).road_class || null,
+        traffic_direction: (editingAd.value as any).traffic_direction && (editingAd.value as any).traffic_direction.length > 0 
+          ? (editingAd.value as any).traffic_direction 
+          : null,
+        traffic_type: (editingAd.value as any).traffic_type && (editingAd.value as any).traffic_type.length > 0 
+          ? (editingAd.value as any).traffic_type 
+          : null,
+        environment: (editingAd.value as any).environment || null,
+        spot_duration: (editingAd.value as any).spot_duration || null,
+        loop_duration: (editingAd.value as any).loop_duration || null,
+        transport_scope: (editingAd.value as any).transport_scope || null,
+        vehicle_count: (editingAd.value as any).vehicle_count || null,
+        mobile_exposure_mode: (editingAd.value as any).mobile_exposure_mode || null,
+        operating_hours: (editingAd.value as any).operating_hours || null,
+        route_area: (editingAd.value as any).route_area || null,
     })
 
     const ad = advertisements.value.find(a => a.id === id)
@@ -374,7 +377,15 @@ const getTypeLabel = (type: string) => {
 }
 
 const openPreview = (id: string) => {
-  const { href } = router.resolve({ path: `/ogloszenie/${id}` })
+  const ad = advertisements.value.find(a => a.id === id)
+  if (!ad) return
+  
+  const city = slugify(ad.city)
+  const title = slugify(ad.title)
+  const type = mapTypeToUrlFormat(ad.type)
+  const path = `/powierzchnia-reklamowa/${type}/${city}/${title}-${id}`
+  
+  const { href } = router.resolve({ path })
   window.open(href, '_blank')
 }
 
@@ -389,6 +400,39 @@ const toggleRow = (id: string) => {
       // Strip +48 prefix from phone for editing
       if ((editingAd.value as any).phone) {
         (editingAd.value as any).phone = (editingAd.value as any).phone.replace(/^\+48\s*/g, '')
+      }
+      // Convert traffic_direction from string to array for checkboxes (backward compatibility)
+      if ((editingAd.value as any).traffic_direction) {
+        const direction = (editingAd.value as any).traffic_direction
+        // If already an array, keep it as is
+        if (Array.isArray(direction)) {
+          (editingAd.value as any).traffic_direction = direction
+        }
+        // Convert old string format to array
+        else if (direction === 'both') {
+          (editingAd.value as any).traffic_direction = ['entry', 'exit']
+        } else if (direction === 'entry' || direction === 'exit') {
+          (editingAd.value as any).traffic_direction = [direction]
+        } else {
+          (editingAd.value as any).traffic_direction = []
+        }
+      } else {
+        (editingAd.value as any).traffic_direction = []
+      }
+      // Initialize traffic_type for banners
+      if ((editingAd.value as any).traffic_type) {
+        const trafficType = (editingAd.value as any).traffic_type
+        if (Array.isArray(trafficType)) {
+          (editingAd.value as any).traffic_type = trafficType
+        } else {
+          (editingAd.value as any).traffic_type = []
+        }
+      } else {
+        (editingAd.value as any).traffic_type = []
+      }
+      // Initialize price_includes_mounting if not present
+      if ((editingAd.value as any).price_includes_mounting === undefined) {
+        (editingAd.value as any).price_includes_mounting = false
       }
       // Initialize unifiedImages for the edited ad
       unifiedImages.value = (editingAd.value.images || []).map(url => ({
@@ -651,7 +695,59 @@ const confirmModalLocation = async () => {
 // Computed properties for field visibility based on ad type
 const showDimensionsFields = computed(() => {
   if (!editingAd.value) return false
-  return ['billboard', 'citylight', 'banner', 'wall', 'totem', 'led_screen'].includes(editingAd.value.type)
+  return ['billboard', 'citylight', 'banner', 'wall'].includes(editingAd.value.type)
+})
+
+// Computed property for available price units based on ad type
+const availablePriceUnits = computed(() => {
+  if (!editingAd.value) return []
+  const type = editingAd.value.type
+  
+  if (type === 'billboard') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'month', label: 'za miesiąc' }
+    ]
+  } else if (type === 'wall') {
+    return [
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'year', label: 'za rok' }
+    ]
+  } else if (type === 'banner') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'week', label: 'za tydzień' },
+      { value: 'month', label: 'za miesiąc' }
+    ]
+  } else if (type === 'citylight') {
+    return [{ value: 'month', label: 'za miesiąc' }]
+  } else if (type === 'led_screen') {
+    return [
+      { value: 'day', label: 'za dzień (emisje)' },
+      { value: 'month', label: 'za miesiąc (emisje)' },
+      { value: 'campaign', label: 'za kampanię' }
+    ]
+  } else if (type === 'totem') {
+    return [{ value: 'month', label: 'za miesiąc' }]
+  } else if (type === 'transport') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'campaign', label: 'za kampanię' }
+    ]
+  } else if (type === 'mobile') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'campaign', label: 'za kampanię' }
+    ]
+  }
+  
+  return [
+    { value: 'day', label: 'za dzień' },
+    { value: 'week', label: 'za tydzień' },
+    { value: 'month', label: 'za miesiąc' },
+    { value: 'year', label: 'za rok' }
+  ]
 })
 
 const showTrafficIntensity = computed(() => {
@@ -661,22 +757,22 @@ const showTrafficIntensity = computed(() => {
 
 const showLightingOption = computed(() => {
   if (!editingAd.value) return false
-  return ['citylight', 'led_screen', 'totem'].includes(editingAd.value.type)
+  return ['citylight', 'totem'].includes(editingAd.value.type)
 })
 
 const showPrintOption = computed(() => {
   if (!editingAd.value) return false
-  return ['billboard', 'banner', 'wall', 'citylight'].includes(editingAd.value.type)
+  return ['billboard', 'banner'].includes(editingAd.value.type)
 })
 
 const showMountingOption = computed(() => {
   if (!editingAd.value) return false
-  return ['billboard', 'banner', 'wall', 'citylight'].includes(editingAd.value.type)
+  return ['billboard', 'banner', 'wall'].includes(editingAd.value.type)
 })
 
 const showGraphicDesignOption = computed(() => {
   if (!editingAd.value) return false
-  return ['billboard', 'banner', 'wall', 'citylight'].includes(editingAd.value.type)
+  return ['billboard', 'banner', 'wall'].includes(editingAd.value.type)
 })
 
 const showVariantField = computed(() => {
@@ -691,7 +787,12 @@ const showRoadClassField = computed(() => {
 
 const showTrafficDirection = computed(() => {
   if (!editingAd.value) return false
-  return ['billboard', 'banner', 'wall'].includes(editingAd.value.type)
+  return editingAd.value.type === 'billboard'
+})
+
+const showTrafficType = computed(() => {
+  if (!editingAd.value) return false
+  return editingAd.value.type === 'banner'
 })
 
 const showEnvironmentField = computed(() => {
@@ -935,7 +1036,12 @@ onBeforeUnmount(() => {
 
                 <div class="ad-info">
                   <h3 class="ad-title">{{ ad.title }}</h3>
-                  <p class="ad-meta">{{ ad.city }} • {{ getTypeLabel(ad.type) }} • {{ ad.width }}m × {{ ad.height }}m</p>
+                  <p class="ad-meta">
+                    {{ ad.city }} • {{ getTypeLabel(ad.type) }}
+                    <template v-if="ad.width && ad.height && ad.width > 0 && ad.height > 0">
+                      • {{ ad.width }}m × {{ ad.height }}m
+                    </template>
+                  </p>
                 </div>
 
                 <div class="ad-controls" @click.stop>
@@ -1079,10 +1185,9 @@ onBeforeUnmount(() => {
                     <div class="form-group">
                       <label>Jednostka cenowa</label>
                       <select v-model="editingAd.price_unit" required>
-                        <option value="day">za dzień</option>
-                        <option value="week">za tydzień</option>
-                        <option value="month">za miesiąc</option>
-                        <option value="year">za rok</option>
+                        <option v-for="unit in availablePriceUnits" :key="unit.value" :value="unit.value">
+                          {{ unit.label }}
+                        </option>
                       </select>
                     </div>
 
@@ -1214,7 +1319,7 @@ onBeforeUnmount(() => {
                       </select>
                     </div>
 
-                    <!-- Kierunek ruchu (Billboard, Banner, Wall) -->
+                    <!-- Kierunek ruchu (Billboard, Wall) -->
                     <div v-if="showTrafficDirection" class="form-group full-width">
                       <label>Kierunek ruchu</label>
                       <div class="checkbox-group">
@@ -1225,6 +1330,21 @@ onBeforeUnmount(() => {
                         <label>
                           <input type="checkbox" value="exit" v-model="(editingAd as any).traffic_direction" />
                           <span>Wyjazd z miasta</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Rodzaj ruchu (Banner) -->
+                    <div v-if="showTrafficType" class="form-group full-width">
+                      <label>Rodzaj ruchu</label>
+                      <div class="checkbox-group">
+                        <label>
+                          <input type="checkbox" value="pedestrian" v-model="(editingAd as any).traffic_type" />
+                          <span>Pieszy</span>
+                        </label>
+                        <label>
+                          <input type="checkbox" value="vehicular" v-model="(editingAd as any).traffic_type" />
+                          <span>Samochodowy</span>
                         </label>
                       </div>
                     </div>
@@ -1308,7 +1428,7 @@ onBeforeUnmount(() => {
 
                     <div class="form-group checkbox-group full-width">
                       <label v-if="showLightingOption">
-                        <input v-model="editingAd.has_lighting" type="checkbox" />
+                        <input v-model="editingAd.has_backlight" type="checkbox" />
                         <span>Podświetlenie</span>
                       </label>
                       <label v-if="showPrintOption">

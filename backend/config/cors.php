@@ -23,6 +23,8 @@ return [
         'https://reklamap.pl',
         'https://www.reklamap.pl',
         'http://localhost:5173', // Dla developmentu
+        'http://localhost:5174', // Vite backup port
+        'http://localhost:5175', // Vite backup port
         'http://localhost:3000',
     ],
 

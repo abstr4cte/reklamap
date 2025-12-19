@@ -47,7 +47,7 @@ const formData = ref({
   phone: '',
   countryCode: '+48',
   contactPreference: '' as '' | 'email' | 'phone' | 'both',
-  hasLighting: false,
+  hasBacklight: false,
   graphicDesignHelp: false,
   priceIncludesPrint: false,
   priceIncludesMounting: false,
@@ -62,6 +62,7 @@ const formData = ref({
   variant: '' as string,
   roadClass: '' as '' | 'highway' | 'expressway' | 'national' | 'regional' | 'local' | 'urban',
   trafficDirection: [] as string[],
+  trafficType: [] as string[],
   environment: '' as '' | 'indoor' | 'outdoor' | 'event',
   spotDuration: null as number | null,
   loopDuration: null as number | null,
@@ -197,10 +198,30 @@ watch(() => formData.value.type, (newType: string) => {
 // Computed properties dla dynamicznych opcji
 const availablePriceUnits = computed(() => {
   const type = formData.value.type
-  if (type === 'billboard' || type === 'banner' || type === 'wall') {
-    return [{ value: 'day', label: 'za dzień' }, { value: 'month', label: 'za miesiąc' }]
+  if (type === 'billboard') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'month', label: 'za miesiąc' }
+    ]
+  } else if (type === 'wall') {
+    return [
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'year', label: 'za rok' }
+    ]
+  } else if (type === 'banner') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'week', label: 'za tydzień' },
+      { value: 'month', label: 'za miesiąc' }
+    ]
+  } else if (type === 'citylight') {
+    return [{ value: 'month', label: 'za miesiąc' }]
   } else if (type === 'led_screen') {
-    return [{ value: 'day', label: 'za dzień (emisje)' }, { value: 'month', label: 'za miesiąc (emisje)' }]
+    return [
+      { value: 'day', label: 'za dzień (emisje)' },
+      { value: 'month', label: 'za miesiąc (emisje)' },
+      { value: 'campaign', label: 'za kampanię' }
+    ]
   } else if (type === 'totem') {
     return [{ value: 'month', label: 'za miesiąc' }]
   } else if (type === 'transport') {
@@ -211,6 +232,12 @@ const availablePriceUnits = computed(() => {
     ]
   } else if (type === 'mobile') {
     return [{ value: 'day', label: 'za dzień' }, { value: 'campaign', label: 'za kampanię' }]
+  } else if (type === 'other') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'campaign', label: 'za kampanię' }
+    ]
   }
   return [
     { value: 'day', label: 'za dzień' },
@@ -281,43 +308,53 @@ const variantOptions = computed(() => {
 
 const requiresDimensions = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall', 'citylight'].includes(type)
+  return ['billboard', 'banner', 'wall'].includes(type)
 })
 
 const optionalDimensions = computed(() => {
   const type = formData.value.type
-  return ['totem', 'led_screen'].includes(type)
+  return ['totem', 'citylight'].includes(type)
 })
 
 const hideDimensions = computed(() => {
   const type = formData.value.type
-  return ['transport', 'mobile', 'other'].includes(type)
+  return ['transport', 'mobile', 'other', 'led_screen', 'totem'].includes(type)
 })
 
 // Computed properties for option visibility based on ad type
 const showLightingOption = computed(() => {
   const type = formData.value.type
-  return ['citylight', 'led_screen', 'totem'].includes(type)
+  return ['citylight', 'totem'].includes(type)
 })
 
 const showPrintOption = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall', 'citylight'].includes(type)
+  return ['billboard', 'banner'].includes(type)
 })
 
 const showMountingOption = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall', 'citylight'].includes(type)
+  return ['billboard', 'banner', 'wall'].includes(type)
 })
 
 const showGraphicDesignOption = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall', 'citylight'].includes(type)
+  return ['billboard', 'banner', 'wall'].includes(type)
 })
 
 const showTrafficIntensity = computed(() => {
   const type = formData.value.type
   return ['billboard', 'banner', 'wall'].includes(type)
+})
+
+const showTrafficDirection = computed(() => {
+  const type = formData.value.type
+  return type === 'billboard'
+})
+
+const showTrafficType = computed(() => {
+  const type = formData.value.type
+  return type === 'banner'
 })
 
 const showPricePerSqm = computed(() => {
@@ -799,10 +836,6 @@ const validateStep = (step: number): boolean => {
       if (!formData.value.location) {
         errors.value.location = 'Lokalizacja jest wymagana'
       }
-      // Klasa drogi wymagana dla billboardów
-      if (formData.value.type === 'billboard' && !formData.value.roadClass) {
-        errors.value.roadClass = 'Klasa drogi jest wymagana dla billboardów'
-      }
       if (!formData.value.contactPreference) {
         errors.value.contactPreference = 'Opcja kontaktu jest wymagana'
       }
@@ -818,15 +851,19 @@ const validateStep = (step: number): boolean => {
       break
 
     case 4:
+      // Klasa drogi wymagana dla billboardów
+      if (formData.value.type === 'billboard' && !formData.value.roadClass) {
+        errors.value.roadClass = 'Klasa drogi jest wymagana dla billboardów'
+      }
+      // Natężenie ruchu wymagane dla billboardów, opcjonalne dla innych
+      if (formData.value.type === 'billboard' && !formData.value.trafficIntensity) {
+        errors.value.trafficIntensity = 'Natężenie ruchu jest wymagane dla billboardów'
+      }
       if (!formData.value.status) {
         errors.value.status = 'Status dostępności jest wymagany'
       }
       if (formData.value.status === 'soon_available' && !formData.value.availableFrom) {
         errors.value.availableFrom = 'Data dostępności jest wymagana'
-      }
-      // Natężenie ruchu wymagane dla billboardów, opcjonalne dla innych
-      if (formData.value.type === 'billboard' && !formData.value.trafficIntensity) {
-        errors.value.trafficIntensity = 'Natężenie ruchu jest wymagane dla billboardów'
       }
       if (!formData.value.offerType) {
         errors.value.offerType = 'Rodzaj oferty jest wymagany'
@@ -848,6 +885,9 @@ const validateStep = (step: number): boolean => {
       }
       // Walidacja dla mobilnej
       if (formData.value.type === 'mobile') {
+        if (!formData.value.variant) {
+          errors.value.variant = 'Wariant jest wymagany'
+        }
         if (!formData.value.mobileExposureMode) {
           errors.value.mobileExposureMode = 'Tryb ekspozycji jest wymagany'
         }
@@ -934,7 +974,7 @@ const handleSubmit = async () => {
         longitude: formData.value.longitude,
         phone: formData.value.phone ? `+48${formData.value.phone}` : '',
         contact_preference: formData.value.contactPreference,
-        has_lighting: formData.value.hasLighting,
+        has_backlight: formData.value.hasBacklight,
         graphic_design_help: formData.value.graphicDesignHelp,
         price_includes_print: formData.value.priceIncludesPrint,
         has_vat_invoice: formData.value.hasVatInvoice,
@@ -955,23 +995,24 @@ const handleSubmit = async () => {
         is_active: true,
         images: imageUrls,
         // Nowe pola specyficzne dla typów
-        variant: formData.value.variant || undefined,
-        road_class: formData.value.roadClass || undefined,
-        traffic_direction: formData.value.trafficDirection.length === 2 
-          ? 'both' 
-          : formData.value.trafficDirection.length === 1 
-            ? formData.value.trafficDirection[0] 
-            : undefined,
-        environment: formData.value.environment || undefined,
-        spot_duration: formData.value.spotDuration || undefined,
-        loop_duration: formData.value.loopDuration || undefined,
-        transport_scope: formData.value.transportScope || undefined,
-        vehicle_count: formData.value.vehicleCount || undefined,
-        mobile_exposure_mode: formData.value.mobileExposureMode || undefined,
-        operating_hours: formData.value.operatingHours || undefined,
-        route_area: formData.value.routeArea || undefined,
+        variant: formData.value.variant || null,
+        road_class: formData.value.roadClass || null,
+        traffic_direction: formData.value.trafficDirection.length > 0 
+          ? formData.value.trafficDirection 
+          : null,
+        traffic_type: formData.value.trafficType.length > 0 
+          ? formData.value.trafficType 
+          : null,
+        environment: formData.value.environment || null,
+        spot_duration: formData.value.spotDuration || null,
+        loop_duration: formData.value.loopDuration || null,
+        transport_scope: formData.value.transportScope || null,
+        vehicle_count: formData.value.vehicleCount || null,
+        mobile_exposure_mode: formData.value.mobileExposureMode || null,
+        operating_hours: formData.value.operatingHours || null,
+        route_area: formData.value.routeArea || null,
         price_includes_mounting: formData.value.priceIncludesMounting,
-        campaign_duration: formData.value.campaignDuration || undefined
+        campaign_duration: formData.value.campaignDuration || null
     } as any) // Casting to any to avoid strict type checks for now if interface mismatches
 
     if (newAd && newAd.id) {
@@ -1420,8 +1461,8 @@ onMounted(() => {
             <span v-if="errors.trafficIntensity" class="error-text">{{ errors.trafficIntensity }}</span>
           </div>
 
-          <!-- Kierunek ruchu - OPTIONAL dla typów outdoor przy drogach -->
-          <div v-if="showTrafficIntensity" class="form-group">
+          <!-- Kierunek ruchu - dla billboard/ściana -->
+          <div v-if="showTrafficDirection" class="form-group">
             <label class="form-label">Kierunek ruchu (opcjonalnie)</label>
             <div class="checkbox-group">
               <label class="checkbox-option">
@@ -1438,21 +1479,43 @@ onMounted(() => {
             </p>
           </div>
 
+          <!-- Rodzaj ruchu - dla banner -->
+          <div v-if="showTrafficType" class="form-group">
+            <label class="form-label">Rodzaj ruchu (opcjonalnie)</label>
+            <div class="checkbox-group">
+              <label class="checkbox-option">
+                <input type="checkbox" value="pedestrian" v-model="formData.trafficType" />
+                <span>Pieszy</span>
+              </label>
+              <label class="checkbox-option">
+                <input type="checkbox" value="vehicular" v-model="formData.trafficType" />
+                <span>Samochodowy</span>
+              </label>
+            </div>
+            <p class="help-text" style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
+              Możesz zaznaczyć oba rodzaje ruchu
+            </p>
+          </div>
+
           <!-- Warianty - zależnie od typu -->
           <div v-if="variantOptions.length > 0" class="form-group">
-            <label class="form-label">Wariant</label>
-            <select v-model="formData.variant" class="form-select">
-              <option value="">Wybierz wariant (opcjonalnie)</option>
+            <label class="form-label">
+              Wariant
+              <span v-if="formData.type === 'mobile'" class="required">*</span>
+            </label>
+            <select v-model="formData.variant" class="form-select" :class="{ 'error': errors.variant }">
+              <option value="">Wybierz wariant {{ formData.type === 'mobile' ? '' : '(opcjonalnie)' }}</option>
               <option v-for="variant in variantOptions" :key="variant.value" :value="variant.value">
                 {{ variant.label }}
               </option>
             </select>
+            <span v-if="errors.variant" class="error-text">{{ errors.variant }}</span>
           </div>
 
           <!-- Podświetlenie - dla Citylight, LED, Totem -->
           <div v-if="showLightingOption" class="form-group">
             <label class="checkbox-option">
-              <input type="checkbox" v-model="formData.hasLighting" />
+              <input type="checkbox" v-model="formData.hasBacklight" />
               <span>Podświetlenie</span>
             </label>
           </div>

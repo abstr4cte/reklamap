@@ -27,7 +27,7 @@ export interface Advertisement {
     traffic_intensity: string
     rental_period: string
     price_unit: string
-    has_lighting: boolean
+    has_backlight: boolean
     has_image: boolean
     price_includes_print: boolean
     price_includes_mounting?: boolean
@@ -45,6 +45,7 @@ export interface Advertisement {
     variant?: string
     road_class?: string
     traffic_direction?: string[]
+    traffic_type?: string[]
     environment?: string
     spot_duration?: number
     loop_duration?: number
