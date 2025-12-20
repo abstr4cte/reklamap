@@ -54,7 +54,8 @@ class AdvertisementController extends Controller
             'price_negotiable' => 'nullable|boolean',
             'price_includes_mounting' => 'nullable|boolean',
             'available_from' => 'nullable|date',
-            'images' => 'array',
+            'images' => 'nullable|array',
+            'images.*' => 'nullable|string',
             'image_url' => 'nullable|string',
             // Type-specific fields
             'variant' => 'nullable|string',

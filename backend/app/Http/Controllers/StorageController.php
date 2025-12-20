@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Laravel\Facades\Image;
 
 class StorageController extends Controller
 {
@@ -34,20 +34,17 @@ class StorageController extends Controller
             
             // Convert to WebP for better performance
             try {
-                $img = Image::make($file);
+                $img = Image::read($file);
                 
                 // Resize if too large (max 1920px width)
                 if ($img->width() > 1920) {
-                    $img->resize(1920, null, function ($constraint) {
-                        $constraint->aspectRatio();
-                        $constraint->upsize();
-                    });
+                    $img->scale(width: 1920);
                 }
                 
                 // Save as WebP
                 $webpFilename = $baseFilename . '.webp';
                 $webpFullPath = storage_path('app/public/advertisements/' . $webpFilename);
-                $img->encode('webp', 85)->save($webpFullPath);
+                $img->toWebp(85)->save($webpFullPath);
                 
                 \Log::info('WebP created: ' . $webpFilename);
                 
