@@ -24,7 +24,7 @@ const advertisements = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const viewMode = ref<'grid' | 'list'>('grid')
 const sortBy = ref('newest')
-const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm'>('month')
+const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | undefined>(undefined)
 const currentPage = ref(1)
 const itemsPerPage = 20
 const hoveredAdId = ref<string | null>(null)
@@ -283,21 +283,51 @@ const sortedAndFilteredAdvertisements = computed(() => {
 
   const getPrice = (ad: Advertisement, period: 'day' | 'week' | 'month' | 'year' | 'sqm') => {
     const basePrice = ad.price
+    // Use the ad's price_unit as the base, not always 'month'
+    const adPriceUnit = ad.price_unit || 'month'
 
+    // If the ad's unit matches the requested period, return the price as-is
+    if (adPriceUnit === period) {
+      return basePrice
+    }
+
+    // Convert from ad's unit to requested period
+    let pricePerMonth = basePrice
+    
+    // First convert to monthly price
+    switch (adPriceUnit) {
+      case 'day':
+        pricePerMonth = basePrice * 30
+        break
+      case 'week':
+        pricePerMonth = basePrice * 4
+        break
+      case 'month':
+        pricePerMonth = basePrice
+        break
+      case 'year':
+        pricePerMonth = basePrice / 12
+        break
+      case 'campaign':
+        pricePerMonth = basePrice
+        break
+    }
+
+    // Then convert from monthly to requested period
     switch (period) {
       case 'day':
-        return basePrice / 30
+        return pricePerMonth / 30
       case 'week':
-        return basePrice / 4
+        return pricePerMonth / 4
       case 'month':
-        return basePrice
+        return pricePerMonth
       case 'year':
-        return basePrice * 12
+        return pricePerMonth * 12
       case 'sqm':
         const area = ad.width * ad.height
-        return area > 0 ? basePrice / area : 0
+        return area > 0 ? pricePerMonth / area : 0
       default:
-        return basePrice
+        return pricePerMonth
     }
   }
 
@@ -355,7 +385,7 @@ const sortedAndFilteredAdvertisements = computed(() => {
       sorted.sort((a, b) => getPrice(b, 'sqm') - getPrice(a, 'sqm'))
       break
     default:
-      priceDisplay.value = 'month'
+      priceDisplay.value = undefined
   }
 
   return sorted

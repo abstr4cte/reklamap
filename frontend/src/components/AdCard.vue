@@ -83,28 +83,62 @@ const imageAlt = computed(() => {
   return `${typeLabel} ${props.ad.city} - ${props.ad.title}`
 })
 
-const displayPrice = computed(() => {
+// Funkcja do pobierania ceny - taka sama jak w AdvertisementsPage
+const getPrice = (period: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign') => {
   const basePrice = props.ad.price
-  // Use the ad's price_unit if available, otherwise fall back to priceDisplay prop
-  const display = props.ad.price_unit || props.priceDisplay || 'month'
+  const adPriceUnit = props.ad.price_unit || 'month'
 
-  switch (display) {
+  // If the ad's unit matches the requested period, return the price as-is
+  if (adPriceUnit === period) {
+    return basePrice
+  }
+
+  // Convert from ad's unit to requested period
+  let pricePerMonth = basePrice
+  
+  // First convert to monthly price
+  switch (adPriceUnit) {
     case 'day':
-      return Math.round(basePrice / 30)
+      pricePerMonth = basePrice * 30
+      break
     case 'week':
-      return Math.round(basePrice / 4)
+      pricePerMonth = basePrice * 4
+      break
     case 'month':
-      return basePrice
+      pricePerMonth = basePrice
+      break
     case 'year':
-      return basePrice * 12
+      pricePerMonth = basePrice / 12
+      break
     case 'campaign':
-      return basePrice
+      pricePerMonth = basePrice
+      break
+  }
+
+  // Then convert from monthly to requested period
+  switch (period) {
+    case 'day':
+      return pricePerMonth / 30
+    case 'week':
+      return pricePerMonth / 4
+    case 'month':
+      return pricePerMonth
+    case 'year':
+      return pricePerMonth * 12
+    case 'campaign':
+      return pricePerMonth
     case 'sqm':
       const area = props.ad.width && props.ad.height ? props.ad.width * props.ad.height : 1
-      return Math.round(basePrice / area)
+      return area > 0 ? pricePerMonth / area : 0
     default:
-      return basePrice
+      return pricePerMonth
   }
+}
+
+const displayPrice = computed(() => {
+  // Use priceDisplay if provided (from sorting), otherwise use ad's price_unit
+  const displayUnit = props.priceDisplay || props.ad.price_unit || 'month'
+  return Math.round(getPrice(displayUnit as any))
 })
 
 // Clean description without image data
@@ -114,10 +148,10 @@ const cleanDescription = computed(() => {
 })
 
 const priceLabel = computed(() => {
-  // Use the ad's price_unit if available, otherwise fall back to priceDisplay prop
-  const display = props.ad.price_unit || props.priceDisplay || 'month'
+  // Use priceDisplay if provided (from sorting), otherwise use ad's price_unit
+  const displayUnit = props.priceDisplay || props.ad.price_unit || 'month'
 
-  switch (display) {
+  switch (displayUnit) {
     case 'day':
       return '/dzień'
     case 'week':

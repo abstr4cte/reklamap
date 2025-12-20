@@ -129,7 +129,7 @@ const isInComparison = (id: string) => {
           :is-favorite="isFavorite(ad.id)"
           :is-in-comparison="isInComparison(ad.id)"
           :view-mode="viewMode"
-          :price-display="priceDisplay || 'month'"
+          :price-display="priceDisplay"
           @toggle-favorite="emit('toggleFavorite', $event)"
           @toggle-comparison="emit('toggleComparison', $event)"
           @hover-start="emit('update:hoveredAdId', $event)"

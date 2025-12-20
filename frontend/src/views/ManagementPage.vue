@@ -1580,8 +1580,8 @@ onBeforeUnmount(() => {
   </div>
 
   <!-- Date Modal for Soon Available Status -->
-  <div v-if="showDateModal" class="modal-overlay" @click="cancelDateModal">
-    <div class="modal-content" @click.stop>
+  <div v-if="showDateModal" class="date-modal-overlay" @click="cancelDateModal">
+    <div class="date-modal-content" @click.stop>
       <h3>Data dostępności</h3>
       <p>Wybierz datę, od kiedy powierzchnia będzie dostępna:</p>
       
@@ -1617,7 +1617,7 @@ onBeforeUnmount(() => {
         </VueDatePicker>
       </div>
 
-      <div class="modal-actions">
+      <div class="date-modal-actions">
         <button @click="cancelDateModal" class="btn btn-secondary">
           Anuluj
         </button>
@@ -1992,7 +1992,7 @@ onBeforeUnmount(() => {
 }
 
 /* Date Modal Styles */
-.modal-overlay {
+.date-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -2002,11 +2002,11 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 10001;
   backdrop-filter: blur(4px);
 }
 
-.modal-content {
+.date-modal-content {
   background: white;
   border-radius: 12px;
   padding: 2rem;
@@ -2015,20 +2015,20 @@ onBeforeUnmount(() => {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
-.modal-content h3 {
+.date-modal-content h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.5rem;
   font-weight: 700;
   color: #1f2937;
 }
 
-.modal-content p {
+.date-modal-content p {
   margin: 0 0 1.5rem 0;
   color: #6b7280;
   font-size: 0.95rem;
 }
 
-.modal-actions {
+.date-modal-actions {
   display: flex;
   gap: 0.75rem;
   margin-top: 1.5rem;
