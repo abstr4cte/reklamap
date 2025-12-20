@@ -883,11 +883,15 @@ const validateStep = (step: number): boolean => {
           errors.value.transportScope = 'Zakres reklamy jest wymagany'
         }
       }
-      // Walidacja dla mobilnej
-      if (formData.value.type === 'mobile') {
+      // Walidacja wariantu dla typów które go mają
+      const typesWithVariant = ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile']
+      if (typesWithVariant.includes(formData.value.type)) {
         if (!formData.value.variant) {
           errors.value.variant = 'Wariant jest wymagany'
         }
+      }
+      // Walidacja dla mobilnej
+      if (formData.value.type === 'mobile') {
         if (!formData.value.mobileExposureMode) {
           errors.value.mobileExposureMode = 'Tryb ekspozycji jest wymagany'
         }
@@ -1516,10 +1520,10 @@ onMounted(() => {
           <div v-if="variantOptions.length > 0" class="form-group">
             <label class="form-label">
               Wariant
-              <span v-if="formData.type === 'mobile'" class="required">*</span>
+              <span class="required">*</span>
             </label>
             <select v-model="formData.variant" class="form-select" :class="{ 'error': errors.variant }">
-              <option value="">Wybierz wariant {{ formData.type === 'mobile' ? '' : '(opcjonalnie)' }}</option>
+              <option value="">Wybierz wariant</option>
               <option v-for="variant in variantOptions" :key="variant.value" :value="variant.value">
                 {{ variant.label }}
               </option>

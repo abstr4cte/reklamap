@@ -251,6 +251,13 @@ const toggleActive = async (id: string) => {
 const saveChanges = async (id: string) => {
   if (!editingAd.value || isSaving.value) return
 
+  // Validate variant field for types that require it
+  const typesWithVariant = ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile']
+  if (typesWithVariant.includes(editingAd.value.type) && !(editingAd.value as any).variant) {
+    alert('Wariant jest wymagany dla tego typu powierzchni reklamowej')
+    return
+  }
+
   try {
     isSaving.value = true
     // Process all images in order
@@ -1304,9 +1311,9 @@ onBeforeUnmount(() => {
 
                     <!-- Wariant -->
                     <div v-if="showVariantField" class="form-group">
-                      <label>Wariant</label>
+                      <label>Wariant <span style="color: red;">*</span></label>
                       <select v-model="(editingAd as any).variant">
-                        <option value="">Wybierz wariant (opcjonalnie)</option>
+                        <option value="">Wybierz wariant</option>
                         <option v-for="variant in getVariantOptions(editingAd.type)" :key="variant.value" :value="variant.value">
                           {{ variant.label }}
                         </option>

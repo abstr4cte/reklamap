@@ -27,6 +27,10 @@ class AdvertisementController extends Controller
 
     public function store(Request $request)
     {
+        // Types that require variant field
+        $typesWithVariant = ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile'];
+        $requiresVariant = in_array($request->input('type'), $typesWithVariant);
+
         $validated = $request->validate([
             'title' => 'required|string',
             'type' => 'required|string',
@@ -58,7 +62,7 @@ class AdvertisementController extends Controller
             'images.*' => 'nullable|string',
             'image_url' => 'nullable|string',
             // Type-specific fields
-            'variant' => 'nullable|string',
+            'variant' => $requiresVariant ? 'required|string' : 'nullable|string',
             'road_class' => 'nullable|string',
             'traffic_direction' => 'nullable|array',
             'traffic_type' => 'nullable|array',
