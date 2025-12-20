@@ -24,7 +24,7 @@ const advertisements = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const viewMode = ref<'grid' | 'list'>('grid')
 const sortBy = ref('newest')
-const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | undefined>(undefined)
+const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign' | undefined>(undefined)
 const currentPage = ref(1)
 const itemsPerPage = 20
 const hoveredAdId = ref<string | null>(null)
@@ -281,7 +281,7 @@ const sortedAndFilteredAdvertisements = computed(() => {
   // Sortowanie
   const sorted = [...filtered]
 
-  const getPrice = (ad: Advertisement, period: 'day' | 'week' | 'month' | 'year' | 'sqm') => {
+  const getPrice = (ad: Advertisement, period: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign') => {
     const basePrice = ad.price
     // Use the ad's price_unit as the base, not always 'month'
     const adPriceUnit = ad.price_unit || 'month'
@@ -323,9 +323,16 @@ const sortedAndFilteredAdvertisements = computed(() => {
         return pricePerMonth
       case 'year':
         return pricePerMonth * 12
+      case 'campaign':
+        // If ad has campaign_duration, calculate based on days
+        if (ad.campaign_duration) {
+          return pricePerMonth * (ad.campaign_duration / 30)
+        }
+        // If no duration, return a very high number to sort at the end
+        return Number.MAX_SAFE_INTEGER
       case 'sqm':
         const area = ad.width * ad.height
-        return area > 0 ? pricePerMonth / area : 0
+        return area > 0 ? pricePerMonth / area : Number.MAX_SAFE_INTEGER
       default:
         return pricePerMonth
     }
@@ -350,7 +357,15 @@ const sortedAndFilteredAdvertisements = computed(() => {
       break
     case 'price-day-desc':
       priceDisplay.value = 'day'
-      sorted.sort((a, b) => getPrice(b, 'day') - getPrice(a, 'day'))
+      sorted.sort((a, b) => {
+        const priceA = getPrice(a, 'day')
+        const priceB = getPrice(b, 'day')
+        // Keep items with MAX_SAFE_INTEGER at the end
+        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
+        if (priceA === Number.MAX_SAFE_INTEGER) return 1
+        if (priceB === Number.MAX_SAFE_INTEGER) return -1
+        return priceB - priceA
+      })
       break
     case 'price-week-asc':
       priceDisplay.value = 'week'
@@ -358,7 +373,14 @@ const sortedAndFilteredAdvertisements = computed(() => {
       break
     case 'price-week-desc':
       priceDisplay.value = 'week'
-      sorted.sort((a, b) => getPrice(b, 'week') - getPrice(a, 'week'))
+      sorted.sort((a, b) => {
+        const priceA = getPrice(a, 'week')
+        const priceB = getPrice(b, 'week')
+        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
+        if (priceA === Number.MAX_SAFE_INTEGER) return 1
+        if (priceB === Number.MAX_SAFE_INTEGER) return -1
+        return priceB - priceA
+      })
       break
     case 'price-month-asc':
       priceDisplay.value = 'month'
@@ -366,7 +388,14 @@ const sortedAndFilteredAdvertisements = computed(() => {
       break
     case 'price-month-desc':
       priceDisplay.value = 'month'
-      sorted.sort((a, b) => getPrice(b, 'month') - getPrice(a, 'month'))
+      sorted.sort((a, b) => {
+        const priceA = getPrice(a, 'month')
+        const priceB = getPrice(b, 'month')
+        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
+        if (priceA === Number.MAX_SAFE_INTEGER) return 1
+        if (priceB === Number.MAX_SAFE_INTEGER) return -1
+        return priceB - priceA
+      })
       break
     case 'price-year-asc':
       priceDisplay.value = 'year'
@@ -374,7 +403,14 @@ const sortedAndFilteredAdvertisements = computed(() => {
       break
     case 'price-year-desc':
       priceDisplay.value = 'year'
-      sorted.sort((a, b) => getPrice(b, 'year') - getPrice(a, 'year'))
+      sorted.sort((a, b) => {
+        const priceA = getPrice(a, 'year')
+        const priceB = getPrice(b, 'year')
+        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
+        if (priceA === Number.MAX_SAFE_INTEGER) return 1
+        if (priceB === Number.MAX_SAFE_INTEGER) return -1
+        return priceB - priceA
+      })
       break
     case 'price-sqm-asc':
       priceDisplay.value = 'sqm'
@@ -382,7 +418,29 @@ const sortedAndFilteredAdvertisements = computed(() => {
       break
     case 'price-sqm-desc':
       priceDisplay.value = 'sqm'
-      sorted.sort((a, b) => getPrice(b, 'sqm') - getPrice(a, 'sqm'))
+      sorted.sort((a, b) => {
+        const priceA = getPrice(a, 'sqm')
+        const priceB = getPrice(b, 'sqm')
+        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
+        if (priceA === Number.MAX_SAFE_INTEGER) return 1
+        if (priceB === Number.MAX_SAFE_INTEGER) return -1
+        return priceB - priceA
+      })
+      break
+    case 'price-campaign-asc':
+      priceDisplay.value = 'campaign'
+      sorted.sort((a, b) => getPrice(a, 'campaign') - getPrice(b, 'campaign'))
+      break
+    case 'price-campaign-desc':
+      priceDisplay.value = 'campaign'
+      sorted.sort((a, b) => {
+        const priceA = getPrice(a, 'campaign')
+        const priceB = getPrice(b, 'campaign')
+        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
+        if (priceA === Number.MAX_SAFE_INTEGER) return 1
+        if (priceB === Number.MAX_SAFE_INTEGER) return -1
+        return priceB - priceA
+      })
       break
     default:
       priceDisplay.value = undefined

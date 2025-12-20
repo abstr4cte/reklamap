@@ -10,7 +10,7 @@ const props = defineProps<{
   isFavorite: boolean
   isInComparison: boolean
   viewMode?: 'grid' | 'list'
-  priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm'
+  priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
 }>()
 
 const emit = defineEmits<{
@@ -126,10 +126,15 @@ const getPrice = (period: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
     case 'year':
       return pricePerMonth * 12
     case 'campaign':
-      return pricePerMonth
+      // If ad has campaign_duration, calculate based on days
+      if (props.ad.campaign_duration) {
+        return pricePerMonth * (props.ad.campaign_duration / 30)
+      }
+      // If no duration, return a very high number to sort at the end
+      return Number.MAX_SAFE_INTEGER
     case 'sqm':
       const area = props.ad.width && props.ad.height ? props.ad.width * props.ad.height : 1
-      return area > 0 ? pricePerMonth / area : 0
+      return area > 0 ? pricePerMonth / area : Number.MAX_SAFE_INTEGER
     default:
       return pricePerMonth
   }
@@ -147,12 +152,39 @@ const cleanDescription = computed(() => {
   return props.ad.description.replace(/\n\n\[IMAGES\].*?\[\/IMAGES\]/s, '')
 })
 
+// Check if price is estimated (converted from different unit)
+const isEstimatedPrice = computed(() => {
+  const displayUnit = props.priceDisplay || props.ad.price_unit || 'month'
+  const adPriceUnit = props.ad.price_unit || 'month'
+  return displayUnit !== adPriceUnit
+})
+
+// Check if data is missing for the requested display unit
+const isMissingData = computed(() => {
+  const displayUnit = props.priceDisplay || props.ad.price_unit || 'month'
+  
+  if (displayUnit === 'sqm') {
+    const area = props.ad.width && props.ad.height ? props.ad.width * props.ad.height : 0
+    return area === 0
+  }
+  
+  if (displayUnit === 'campaign') {
+    return !props.ad.campaign_duration
+  }
+  
+  return false
+})
+
 const priceLabel = computed(() => {
   // Use priceDisplay if provided (from sorting), otherwise use ad's price_unit
   const displayUnit = props.priceDisplay || props.ad.price_unit || 'month'
 
   switch (displayUnit) {
     case 'day':
+      // For LED screens, add "(emisję)"
+      if (props.ad.type === 'led_screen') {
+        return '/dzień (emisję)'
+      }
       return '/dzień'
     case 'week':
       return '/tydzień'
@@ -161,7 +193,11 @@ const priceLabel = computed(() => {
     case 'year':
       return '/rok'
     case 'campaign':
-      return '/kampania'
+      // For campaign, add duration in days if available
+      if (props.ad.campaign_duration) {
+        return `/kampanię (${props.ad.campaign_duration} dni)`
+      }
+      return '/kampanię'
     case 'sqm':
       return '/m²'
     default:
@@ -306,9 +342,16 @@ const statusColor = computed(() => {
 
       <div class="card-footer">
         <div class="card-price">
-          <span class="price-amount">{{ displayPrice.toLocaleString('pl-PL') }} zł</span>
-          <span class="price-period">{{ priceLabel }}</span>
-          <span v-if="ad.price_negotiable" class="negotiable-badge">do negocjacji</span>
+          <span v-if="isMissingData" class="missing-data-badge">Brak danych</span>
+          <template v-else>
+            <span class="price-amount">
+              <span v-if="isEstimatedPrice" class="estimated-label">~</span>{{ displayPrice.toLocaleString('pl-PL') }} zł
+            </span>
+            <span class="price-period">
+              {{ priceLabel }}<span v-if="isEstimatedPrice" class="estimated-info"> (szacunkowo)</span>
+            </span>
+            <span v-if="ad.price_negotiable" class="negotiable-badge">do negocjacji</span>
+          </template>
         </div>
 
         <div class="card-button">
@@ -526,6 +569,28 @@ const statusColor = computed(() => {
   font-weight: 600;
   margin-top: 0.25rem;
   display: inline-block;
+}
+
+.missing-data-badge {
+  font-size: 0.9rem;
+  color: #EF4444;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  background: #FEE2E2;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.estimated-label {
+  font-size: 1.2rem;
+  color: #F59E0B;
+  margin-right: 0.25rem;
+}
+
+.estimated-info {
+  font-size: 0.7rem;
+  color: #F59E0B;
+  font-weight: 500;
 }
 
 .card-button {

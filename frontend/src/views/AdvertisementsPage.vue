@@ -104,14 +104,21 @@ const getPrice = (ad: Advertisement, period: 'day' | 'week' | 'month' | 'year' |
       return pricePerMonth
     case 'year':
       return pricePerMonth * 12
+    case 'campaign':
+      // If ad has campaign_duration, calculate based on days
+      if (ad.campaign_duration) {
+        return pricePerMonth * (ad.campaign_duration / 30)
+      }
+      // If no duration, return a very high number to sort at the end
+      return Number.MAX_SAFE_INTEGER
     case 'sqm':
       const area = ad.width * ad.height
-      return area > 0 ? pricePerMonth / area : 0
+      return area > 0 ? pricePerMonth / area : Number.MAX_SAFE_INTEGER
     default:
       return pricePerMonth
   }
 }
-const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | undefined>(undefined)
+const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign' | undefined>(undefined)
 const isStatusMenuOpen = ref(false)
 const statusMultiselect = ref<HTMLElement | null>(null)
 const currentPage = ref(1)
@@ -960,7 +967,14 @@ const filteredAdvertisements = computed(() => {
       break
     case 'price-day-desc':
       priceDisplay.value = 'day'
-      sorted.sort((a, b) => getPrice(b, 'day') - getPrice(a, 'day'))
+      sorted.sort((a, b) => {
+        const priceA = getPrice(a, 'day')
+        const priceB = getPrice(b, 'day')
+        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
+        if (priceA === Number.MAX_SAFE_INTEGER) return 1
+        if (priceB === Number.MAX_SAFE_INTEGER) return -1
+        return priceB - priceA
+      })
       break
     case 'price-week-asc':
       priceDisplay.value = 'week'
@@ -968,7 +982,14 @@ const filteredAdvertisements = computed(() => {
       break
     case 'price-week-desc':
       priceDisplay.value = 'week'
-      sorted.sort((a, b) => getPrice(b, 'week') - getPrice(a, 'week'))
+      sorted.sort((a, b) => {
+        const priceA = getPrice(a, 'week')
+        const priceB = getPrice(b, 'week')
+        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
+        if (priceA === Number.MAX_SAFE_INTEGER) return 1
+        if (priceB === Number.MAX_SAFE_INTEGER) return -1
+        return priceB - priceA
+      })
       break
     case 'price-month-asc':
       priceDisplay.value = 'month'
@@ -976,7 +997,14 @@ const filteredAdvertisements = computed(() => {
       break
     case 'price-month-desc':
       priceDisplay.value = 'month'
-      sorted.sort((a, b) => getPrice(b, 'month') - getPrice(a, 'month'))
+      sorted.sort((a, b) => {
+        const priceA = getPrice(a, 'month')
+        const priceB = getPrice(b, 'month')
+        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
+        if (priceA === Number.MAX_SAFE_INTEGER) return 1
+        if (priceB === Number.MAX_SAFE_INTEGER) return -1
+        return priceB - priceA
+      })
       break
     case 'price-year-asc':
       priceDisplay.value = 'year'
@@ -984,7 +1012,14 @@ const filteredAdvertisements = computed(() => {
       break
     case 'price-year-desc':
       priceDisplay.value = 'year'
-      sorted.sort((a, b) => getPrice(b, 'year') - getPrice(a, 'year'))
+      sorted.sort((a, b) => {
+        const priceA = getPrice(a, 'year')
+        const priceB = getPrice(b, 'year')
+        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
+        if (priceA === Number.MAX_SAFE_INTEGER) return 1
+        if (priceB === Number.MAX_SAFE_INTEGER) return -1
+        return priceB - priceA
+      })
       break
     case 'price-sqm-asc':
       priceDisplay.value = 'sqm'
@@ -992,7 +1027,29 @@ const filteredAdvertisements = computed(() => {
       break
     case 'price-sqm-desc':
       priceDisplay.value = 'sqm'
-      sorted.sort((a, b) => getPrice(b, 'sqm') - getPrice(a, 'sqm'))
+      sorted.sort((a, b) => {
+        const priceA = getPrice(a, 'sqm')
+        const priceB = getPrice(b, 'sqm')
+        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
+        if (priceA === Number.MAX_SAFE_INTEGER) return 1
+        if (priceB === Number.MAX_SAFE_INTEGER) return -1
+        return priceB - priceA
+      })
+      break
+    case 'price-campaign-asc':
+      priceDisplay.value = 'campaign'
+      sorted.sort((a, b) => getPrice(a, 'campaign') - getPrice(b, 'campaign'))
+      break
+    case 'price-campaign-desc':
+      priceDisplay.value = 'campaign'
+      sorted.sort((a, b) => {
+        const priceA = getPrice(a, 'campaign')
+        const priceB = getPrice(b, 'campaign')
+        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
+        if (priceA === Number.MAX_SAFE_INTEGER) return 1
+        if (priceB === Number.MAX_SAFE_INTEGER) return -1
+        return priceB - priceA
+      })
       break
     default:
       priceDisplay.value = undefined
@@ -1069,10 +1126,37 @@ const getFormattedPrice = (ad: Advertisement) => {
   return price.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + suffix
 }
 
+// Check if price is estimated (converted from different unit)
+const isEstimatedPrice = (ad: Advertisement) => {
+  const displayUnit = priceDisplay.value || ad.price_unit || 'month'
+  const adPriceUnit = ad.price_unit || 'month'
+  return displayUnit !== adPriceUnit
+}
+
+// Check if data is missing for the requested display unit
+const isMissingData = (ad: Advertisement) => {
+  const displayUnit = priceDisplay.value || ad.price_unit || 'month'
+  
+  if (displayUnit === 'sqm') {
+    const area = ad.width && ad.height ? ad.width * ad.height : 0
+    return area === 0
+  }
+  
+  if (displayUnit === 'campaign') {
+    return !ad.campaign_duration
+  }
+  
+  return false
+}
+
 // Funkcja do pobierania etykiety okresu cenowego
-const getPriceLabel = (period: 'day' | 'week' | 'month' | 'year' | 'sqm') => {
+const getPriceLabel = (period: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign', ad?: Advertisement) => {
   switch (period) {
     case 'day':
+      // For LED screens, add "(emisję)"
+      if (ad && ad.type === 'led_screen') {
+        return '/dzień (emisję)'
+      }
       return '/dzień'
     case 'week':
       return '/tydzień'
@@ -1080,6 +1164,12 @@ const getPriceLabel = (period: 'day' | 'week' | 'month' | 'year' | 'sqm') => {
       return '/miesiąc'
     case 'year':
       return '/rok'
+    case 'campaign':
+      // For campaign, add duration in days if available
+      if (ad && ad.campaign_duration) {
+        return `/kampanię (${ad.campaign_duration} dni)`
+      }
+      return '/kampanię'
     case 'sqm':
       return '/m²'
     default:
@@ -1716,6 +1806,10 @@ onBeforeUnmount(() => {
           <option value="price-sqm-asc">Cena za m² rosnąco</option>
           <option value="price-sqm-desc">Cena za m² malejąco</option>
         </optgroup>
+        <optgroup label="Cena za kampanię">
+          <option value="price-campaign-asc">Cena za kampanię rosnąco</option>
+          <option value="price-campaign-desc">Cena za kampanię malejąco</option>
+        </optgroup>
       </select>
 
       <div class="results-count">
@@ -1819,9 +1913,16 @@ onBeforeUnmount(() => {
 
               <div class="card-footer">
                 <div class="card-price">
-                  <span class="price-amount">{{ getPrice(ad, (priceDisplay || ad.price_unit || 'month') as any).toLocaleString('pl-PL') }} zł</span>
-                  <span class="price-period">{{ getPriceLabel((priceDisplay || ad.price_unit || 'month') as any) }}</span>
-                  <span v-if="ad.price_negotiable" class="negotiable-badge">do negocjacji</span>
+                  <span v-if="isMissingData(ad)" class="missing-data-badge">Brak danych</span>
+                  <template v-else>
+                    <span class="price-amount">
+                      <span v-if="isEstimatedPrice(ad)" class="estimated-label">~</span>{{ Math.round(getPrice(ad, (priceDisplay || ad.price_unit || 'month') as any)).toLocaleString('pl-PL') }} zł
+                    </span>
+                    <span class="price-period">
+                      {{ getPriceLabel((priceDisplay || ad.price_unit || 'month') as any, ad) }}<span v-if="isEstimatedPrice(ad)" class="estimated-info"> (szacunkowo)</span>
+                    </span>
+                    <span v-if="ad.price_negotiable" class="negotiable-badge">do negocjacji</span>
+                  </template>
                 </div>
               </div>
             </div>
@@ -2805,6 +2906,28 @@ onBeforeUnmount(() => {
   font-weight: 600;
   margin-top: 0.25rem;
   display: inline-block;
+}
+
+.missing-data-badge {
+  font-size: 0.9rem;
+  color: #EF4444;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  background: #FEE2E2;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.estimated-label {
+  font-size: 1.2rem;
+  color: #F59E0B;
+  margin-right: 0.25rem;
+}
+
+.estimated-info {
+  font-size: 0.7rem;
+  color: #F59E0B;
+  font-weight: 500;
 }
 
 .map-container-wrapper {

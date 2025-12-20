@@ -8,7 +8,7 @@ const props = defineProps<{
   isLoading?: boolean
   viewMode?: 'grid' | 'list'
   sortBy?: string
-  priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm'
+  priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
 }>()
 
 const emit = defineEmits<{
@@ -101,6 +101,10 @@ const isInComparison = (id: string) => {
             <optgroup label="Cena za m²">
               <option value="price-sqm-asc">Cena za m² rosnąco</option>
               <option value="price-sqm-desc">Cena za m² malejąco</option>
+            </optgroup>
+            <optgroup label="Cena za kampanię">
+              <option value="price-campaign-asc">Cena za kampanię rosnąco</option>
+              <option value="price-campaign-desc">Cena za kampanię malejąco</option>
             </optgroup>
           </select>
         </div>
