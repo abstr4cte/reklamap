@@ -930,19 +930,30 @@ const prevStep = () => {
 }
 
 const uploadImages = async (): Promise<string[]> => {
-  if (formData.value.imageFiles.length === 0) return []
+  if (formData.value.imageFiles.length === 0) {
+    console.log('No images to upload')
+    return []
+  }
 
-  const uploadPromises = formData.value.imageFiles.map(async (item) => {
+  console.log(`Uploading ${formData.value.imageFiles.length} images...`)
+  
+  const uploadPromises = formData.value.imageFiles.map(async (item, index) => {
     try {
-      return await api.storage.upload(item.file)
+      console.log(`Uploading image ${index + 1}/${formData.value.imageFiles.length}`)
+      const url = await api.storage.upload(item.file)
+      console.log(`Image ${index + 1} uploaded successfully:`, url)
+      return url
     } catch (error) {
-      console.error('Error uploading image:', error)
+      console.error(`Error uploading image ${index + 1}:`, error)
       return ''
     }
   })
 
   const results = await Promise.all(uploadPromises)
-  return results.filter(url => url !== '')
+  const validUrls = results.filter(url => url !== '')
+  console.log(`Upload complete. ${validUrls.length}/${results.length} images uploaded successfully`)
+  console.log('Image URLs:', validUrls)
+  return validUrls
 }
 
 const handleSubmit = async () => {
@@ -951,9 +962,13 @@ const handleSubmit = async () => {
   try {
     isSubmitting.value = true
 
+    console.log('Starting image upload...')
     const imageUrls = await uploadImages()
+    console.log('Image upload completed. URLs:', imageUrls)
     const mainImageUrl = imageUrls.length > 0 ? imageUrls[0] : ''
+    console.log('Main image URL:', mainImageUrl)
 
+    console.log('Creating advertisement with images:', imageUrls)
     const newAd = await api.createAdvertisement({
         owner_email: formData.value.email,
         title: formData.value.title,

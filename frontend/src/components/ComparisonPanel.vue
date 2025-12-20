@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { api, getFullImageUrl } from '../services/api'
+import { api } from '../services/api'
+import WebPImage from './WebPImage.vue'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
@@ -139,9 +140,9 @@ onUnmounted(() => {
           >
             <div class="comparison-image">
               <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="ad-image-link">
-                <img
+                <WebPImage
                   v-if="ad.image_url"
-                  :src="getFullImageUrl(ad.image_url)"
+                  :src="ad.image_url"
                   :alt="ad.title"
                 />
                 <div v-else class="no-image">

@@ -5,6 +5,7 @@ import { api, getFullImageUrl } from '../services/api'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
+import WebPImage from '../components/WebPImage.vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import icon from 'leaflet/dist/images/marker-icon.png'
@@ -1089,9 +1090,9 @@ onUnmounted(() => {
         <div class="main-content">
           <div class="image-gallery">
             <div class="main-image-wrapper">
-              <img
+              <WebPImage
                 v-if="images.length > 0"
-                :src="getFullImageUrl(images[currentImageIndex])"
+                :src="images[currentImageIndex]"
                 :alt="imageAlt"
                 class="main-image"
               />
@@ -1124,7 +1125,7 @@ onUnmounted(() => {
                 :class="{ active: index === currentImageIndex }"
                 @click="currentImageIndex = index"
               >
-                <img :src="getFullImageUrl(img)" :alt="thumbnailAlt(index)" />
+                <WebPImage :src="img" :alt="thumbnailAlt(index)" />
               </div>
             </div>
           </div>
@@ -1434,7 +1435,7 @@ onUnmounted(() => {
                 class="similar-ad-card"
               >
                 <div class="similar-ad-image">
-                  <img v-if="similarAd.image_url" :src="getFullImageUrl(similarAd.image_url)" :alt="`${getTypeLabel(similarAd.type)} ${similarAd.city} - ${similarAd.title}`" />
+                  <WebPImage v-if="similarAd.image_url" :src="similarAd.image_url" :alt="`${getTypeLabel(similarAd.type)} ${similarAd.city} - ${similarAd.title}`" />
                   <div v-else class="similar-ad-no-image">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
                       <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>

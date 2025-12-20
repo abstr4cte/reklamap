@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onUnmounted } from 'vue'
-import { api, getFullImageUrl } from '../services/api'
+import { api } from '../services/api'
+import WebPImage from './WebPImage.vue'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
@@ -127,9 +128,9 @@ onUnmounted(() => {
             @click="emit('close')"
           >
             <div class="favorite-image">
-              <img
+              <WebPImage
                 v-if="ad.image_url"
-                :src="getFullImageUrl(ad.image_url)"
+                :src="ad.image_url"
                 :alt="ad.title"
               />
               <div v-else class="no-image">

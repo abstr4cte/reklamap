@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { api, getFullImageUrl } from '../services/api'
+import { api } from '../services/api'
 import type { Advertisement } from '../types'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
+import WebPImage from '../components/WebPImage.vue'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
 
@@ -244,9 +245,9 @@ onMounted(() => {
                 <th v-for="ad in comparisonAds" :key="ad.id" class="ad-column">
                   <div class="ad-header">
                     <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="ad-image-link">
-                      <img
+                      <WebPImage
                         v-if="ad.image_url"
-                        :src="getFullImageUrl(ad.image_url)"
+                        :src="ad.image_url"
                         :alt="ad.title"
                         class="ad-image"
                       />

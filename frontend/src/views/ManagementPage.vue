@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { api, getFullImageUrl } from '../services/api'
+import { api } from '../services/api'
 import axios from '../api/axios'
 import type { Advertisement } from '../types'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import ToastNotification from '../components/ToastNotification.vue'
+import WebPImage from '../components/WebPImage.vue'
 import { nsfwService } from '../services/nsfwService'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -740,6 +741,12 @@ const availablePriceUnits = computed(() => {
       { value: 'day', label: 'za dzień' },
       { value: 'campaign', label: 'za kampanię' }
     ]
+  } else if (type === 'other') {
+    return [
+      { value: 'day', label: 'za dzień' },
+      { value: 'month', label: 'za miesiąc' },
+      { value: 'campaign', label: 'za kampanię' }
+    ]
   }
   
   return [
@@ -1024,7 +1031,7 @@ onBeforeUnmount(() => {
             <div v-for="ad in advertisements" :key="ad.id" :id="'ad-row-' + ad.id" class="ad-row" :class="{ expanded: expandedRows.has(ad.id) }">
               <div class="ad-summary" @click="toggleRow(ad.id)">
                 <div class="ad-thumbnail">
-                  <img v-if="ad.image_url" :src="getFullImageUrl(ad.image_url)" :alt="ad.title" />
+                  <WebPImage v-if="ad.image_url" :src="ad.image_url" :alt="ad.title" />
                   <div v-else class="no-image">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
                       <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
@@ -1136,7 +1143,8 @@ onBeforeUnmount(() => {
                           <div v-if="img.loading" class="image-loader">
                             <div class="spinner-small"></div>
                           </div>
-                          <img v-else :src="img.type === 'existing' ? getFullImageUrl(img.url || '') : img.preview" alt="Zdjęcie" />
+                          <WebPImage v-else-if="img.type === 'existing'" :src="img.url || ''" alt="Zdjęcie" />
+                          <img v-else :src="img.preview" alt="Zdjęcie" />
                           <span v-if="index === 0" class="main-badge">Główne</span>
                           <button type="button" @click="removeImage(index)" class="remove-btn" title="Usuń">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
