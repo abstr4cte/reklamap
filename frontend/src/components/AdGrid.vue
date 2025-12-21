@@ -4,7 +4,7 @@ import AdCard from './AdCard.vue'
 import type { Advertisement } from '../types'
 
 const props = defineProps<{
-  advertisements: Advertisement[]
+  listings: Advertisement[]
   isLoading?: boolean
   viewMode?: 'grid' | 'list'
   sortBy?: string
@@ -39,8 +39,8 @@ const isInComparison = (id: string) => {
         <div class="header-left">
           <h2 class="section-title">Dostępne ogłoszenia</h2>
           <p class="section-subtitle">
-            Znaleziono {{ advertisements.length }}
-            {{ advertisements.length === 1 ? 'ogłoszenie' : advertisements.length < 5 ? 'ogłoszenia' : 'ogłoszeń' }}
+            Znaleziono {{ listings.length }}
+            {{ listings.length === 1 ? 'ogłoszenie' : listings.length < 5 ? 'ogłoszenia' : 'ogłoszeń' }}
           </p>
         </div>
         <div class="header-right">
@@ -115,7 +115,7 @@ const isInComparison = (id: string) => {
         <p>Ładowanie ogłoszeń...</p>
       </div>
 
-      <div v-else-if="advertisements.length === 0" class="empty-state">
+      <div v-else-if="listings.length === 0" class="empty-state">
         <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="40" cy="40" r="40" fill="#F3F4F6"/>
           <path d="M40 50C45.5228 50 50 45.5228 50 40C50 34.4772 45.5228 30 40 30C34.4772 30 30 34.4772 30 40C30 45.5228 34.4772 50 40 50Z" stroke="#9CA3AF" stroke-width="2"/>
@@ -127,7 +127,7 @@ const isInComparison = (id: string) => {
 
       <div v-else :class="viewMode === 'grid' ? 'ads-grid' : 'ads-list'">
         <AdCard
-          v-for="ad in advertisements"
+          v-for="ad in listings"
           :key="ad.id"
           :ad="ad"
           :is-favorite="isFavorite(ad.id)"

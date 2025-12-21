@@ -30,7 +30,7 @@ const loadFavorites = async () => {
     isLoading.value = true
     const data = await api.getAdvertisementsByIds(favoriteIds)
     
-    // Filter to only include active advertisements
+    // Filter to only include active listings
     const activeAds = data.filter(ad => ad.is_active)
     favoriteAds.value = activeAds || []
     

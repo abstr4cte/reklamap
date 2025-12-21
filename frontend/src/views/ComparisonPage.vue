@@ -24,7 +24,7 @@ const downloadPdf = async () => {
   isGeneratingPdf.value = true
   try {
     const ids = comparisonAds.value.map(ad => ad.id).join(',')
-    const response = await axios.get(`/api/advertisements/pdf/comparison?ids=${ids}&unit=${priceUnit.value}`, {
+    const response = await axios.get(`/api/listings/pdf/comparison?ids=${ids}&unit=${priceUnit.value}`, {
       responseType: 'blob'
     })
     

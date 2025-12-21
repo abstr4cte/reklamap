@@ -20,13 +20,13 @@ export const getFullImageUrl = (path: string): string => {
 
 export const api = {
     async getAdvertisements(): Promise<Advertisement[]> {
-        const response = await fetch(`${API_URL}/advertisements`)
-        if (!response.ok) throw new Error('Failed to fetch advertisements')
+        const response = await fetch(`${API_URL}/listings`)
+        if (!response.ok) throw new Error('Failed to fetch listings')
         return response.json()
     },
 
     async getAdvertisement(id: string): Promise<Advertisement | null> {
-        const response = await fetch(`${API_URL}/advertisements/${id}`)
+        const response = await fetch(`${API_URL}/listings/${id}`)
         if (!response.ok) {
             if (response.status === 404) return null
             throw new Error('Failed to fetch advertisement')
@@ -36,13 +36,13 @@ export const api = {
 
     async getAdvertisementsByIds(ids: string[]): Promise<Advertisement[]> {
         if (ids.length === 0) return []
-        const response = await fetch(`${API_URL}/advertisements?ids=${ids.join(',')}`)
-        if (!response.ok) throw new Error('Failed to fetch advertisements by ids')
+        const response = await fetch(`${API_URL}/listings?ids=${ids.join(',')}`)
+        if (!response.ok) throw new Error('Failed to fetch listings by ids')
         return response.json()
     },
 
     async createAdvertisement(ad: Omit<Advertisement, 'id' | 'created_at' | 'updated_at'>): Promise<Advertisement> {
-        const response = await fetch(`${API_URL}/advertisements`, {
+        const response = await fetch(`${API_URL}/listings`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export const api = {
     },
 
     async updateAdvertisement(id: string, updates: Partial<Advertisement>): Promise<void> {
-        const response = await fetch(`${API_URL}/advertisements/${id}`, {
+        const response = await fetch(`${API_URL}/listings/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -70,20 +70,20 @@ export const api = {
     },
 
     async deleteAdvertisement(id: string): Promise<void> {
-        const response = await fetch(`${API_URL}/advertisements/${id}`, {
+        const response = await fetch(`${API_URL}/listings/${id}`, {
             method: 'DELETE',
         })
         if (!response.ok) throw new Error('Failed to delete advertisement')
     },
 
     async incrementViews(id: string): Promise<void> {
-        await fetch(`${API_URL}/advertisements/${id}/increment-views`, {
+        await fetch(`${API_URL}/listings/${id}/increment-views`, {
             method: 'POST',
         })
     },
 
     async getSimilarAdvertisements(ad: Advertisement): Promise<Advertisement[]> {
-        const response = await fetch(`${API_URL}/advertisements/${ad.id}/similar`)
+        const response = await fetch(`${API_URL}/listings/${ad.id}/similar`)
         if (!response.ok) return []
         return response.json()
     },
@@ -101,7 +101,7 @@ export const api = {
     },
 
     async contactAdvertisementOwner(id: string, contact: { email: string; message: string }): Promise<{ message: string }> {
-        const response = await fetch(`${API_URL}/advertisements/${id}/contact`, {
+        const response = await fetch(`${API_URL}/listings/${id}/contact`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

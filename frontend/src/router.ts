@@ -29,26 +29,26 @@ const router = createRouter({
     },
     {
       path: '/powierzchnie-reklamowe',
-      name: 'advertisements',
-      component: () => import('./views/AdvertisementsPage.vue')
+      name: 'listings',
+      component: () => import('./views/ListingsPage.vue')
     },
     // Route dla konkretnych typów (billboardy, citylighty, etc.)
     {
       path: '/powierzchnie-reklamowe/:type(billboardy|citylighty|ekrany-led|banery|sciany-reklamowe|totemy-reklamowe|reklama-w-transporcie|reklama-mobilna|inne)',
-      name: 'advertisements-by-type',
-      component: () => import('./views/AdvertisementsPage.vue')
+      name: 'listings-by-type',
+      component: () => import('./views/ListingsPage.vue')
     },
     // Route dla typu + miasto
     {
       path: '/powierzchnie-reklamowe/:type(billboardy|citylighty|ekrany-led|banery|sciany-reklamowe|totemy-reklamowe|reklama-w-transporcie|reklama-mobilna|inne)/:city',
-      name: 'advertisements-by-type-city',
-      component: () => import('./views/AdvertisementsPage.vue')
+      name: 'listings-by-type-city',
+      component: () => import('./views/ListingsPage.vue')
     },
     // Route dla samego miasta (bez typu)
     {
       path: '/powierzchnie-reklamowe/:city',
-      name: 'advertisements-by-city',
-      component: () => import('./views/AdvertisementsPage.vue')
+      name: 'listings-by-city',
+      component: () => import('./views/ListingsPage.vue')
     },
     // Zachowaj stare ścieżki dla kompatybilności wstecznej
     {

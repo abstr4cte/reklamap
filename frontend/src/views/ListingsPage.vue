@@ -53,7 +53,7 @@ const getPriceUnitLabel = (ad: Advertisement): string => {
   }
 }
 
-const advertisements = ref<Advertisement[]>([])
+const listings = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const hoveredAdId = ref<string | null>(null)
 const selectedAdId = ref<string | null>(null)
@@ -236,7 +236,7 @@ const currentDescription = computed(() => {
 })
 
 // SEO Meta Tags
-watch([() => route.params.type, () => route.params.city, advertisements], () => {
+watch([() => route.params.type, () => route.params.city, listings], () => {
   const type = route.params.type as string | undefined
   const city = route.params.city as string | undefined
   
@@ -248,17 +248,17 @@ watch([() => route.params.type, () => route.params.city, advertisements], () => 
     const typeLabel = getTypeLabel(type)
     const cityName = deslugify(city)
     title = `${typeLabel} ${cityName} - Wynajem Powierzchni Reklamowych | ReklaMap`
-    description = `Znajdź i wynajmij ${typeLabel.toLowerCase()} w ${cityName}. Porównuj oferty, ceny i lokalizacje na mapie. ${advertisements.value.length} ofert dostępnych.`
+    description = `Znajdź i wynajmij ${typeLabel.toLowerCase()} w ${cityName}. Porównuj oferty, ceny i lokalizacje na mapie. ${listings.value.length} ofert dostępnych.`
     keywords = `${typeLabel} ${cityName}, powierzchnie reklamowe ${cityName}, wynajem ${typeLabel.toLowerCase()} ${cityName}`
   } else if (type) {
     const typeLabel = getTypeLabel(type)
     title = `${typeLabel} - Wynajem w Całej Polsce | ReklaMap`
-    description = `Przeglądaj oferty ${typeLabel.toLowerCase()} w całej Polsce. ${advertisements.value.length} ofert dostępnych. Porównuj ceny i lokalizacje.`
+    description = `Przeglądaj oferty ${typeLabel.toLowerCase()} w całej Polsce. ${listings.value.length} ofert dostępnych. Porównuj ceny i lokalizacje.`
     keywords = `${typeLabel}, wynajem ${typeLabel.toLowerCase()}, powierzchnie reklamowe`
   } else if (city) {
     const cityName = deslugify(city)
     title = `Powierzchnie Reklamowe ${cityName} - Billboardy, Citylighty | ReklaMap`
-    description = `Wszystkie powierzchnie reklamowe w ${cityName}. ${advertisements.value.length} ofert. Porównuj ceny billboardy, citylighty, banery.`
+    description = `Wszystkie powierzchnie reklamowe w ${cityName}. ${listings.value.length} ofert. Porównuj ceny billboardy, citylighty, banery.`
     keywords = `powierzchnie reklamowe ${cityName}, billboardy ${cityName}, reklama ${cityName}`
   }
   
@@ -582,27 +582,22 @@ const activeFiltersCount = computed(() => {
 })
 
 // Computed properties for filter visibility based on selected ad type
-const showPrintFilter = computed(() => {
   const type = filters.value.type
   return ['billboard', 'banner'].includes(type)
 })
 
-const showMountingFilter = computed(() => {
   const type = filters.value.type
   return ['billboard', 'banner', 'wall'].includes(type)
 })
 
-const showGraphicDesignFilter = computed(() => {
   const type = filters.value.type
   return ['billboard', 'banner', 'wall'].includes(type)
 })
 
-const showTrafficIntensityFilter = computed(() => {
   const type = filters.value.type
   return ['billboard', 'banner'].includes(type)
 })
 
-const showDimensionsFilter = computed(() => {
   const type = filters.value.type
   return ['billboard', 'citylight', 'banner', 'wall'].includes(type)
 })
@@ -666,11 +661,9 @@ const getVariantOptions = (type: string) => {
   }
 }
 
-const showRoadClassFilter = computed(() => {
   return filters.value.type === 'billboard'
 })
 
-const showEnvironmentFilter = computed(() => {
   const type = filters.value.type
   return ['citylight', 'led_screen', 'totem', 'mobile', 'other'].includes(type)
 })
@@ -711,15 +704,12 @@ const getEnvironmentOptions = (type: string) => {
   }
 }
 
-const showLEDFilters = computed(() => {
   return filters.value.type === 'led_screen'
 })
 
-const showTransportFilters = computed(() => {
   return filters.value.type === 'transport'
 })
 
-const showMobileFilters = computed(() => {
   return filters.value.type === 'mobile'
 })
 
@@ -791,8 +781,8 @@ const getAvailablePriceUnits = (type: string) => {
   ]
 }
 
-const filteredAdvertisements = computed(() => {
-  let filtered = advertisements.value
+const filteredListings = computed(() => {
+  let filtered = listings.value
   
   // Search query
   if (searchQuery.value) {
@@ -1072,14 +1062,14 @@ const filteredAdvertisements = computed(() => {
 })
 
 const totalPages = computed(() => {
-  return Math.ceil(filteredAdvertisements.value.length / itemsPerPage)
+  return Math.ceil(filteredListings.value.length / itemsPerPage)
 })
 
 // Pobierz ogłoszenia dla aktualnej strony
 const getCurrentPageAds = () => {
   const start = (currentPage.value - 1) * itemsPerPage
   const end = start + itemsPerPage
-  return filteredAdvertisements.value.slice(start, end)
+  return filteredListings.value.slice(start, end)
 }
 
 // Obsługa zmiany strony
@@ -1114,11 +1104,10 @@ const statusLabel = computed(() => {
 })
 
 // Funkcja do formatowania ceny w zależności od wybranego sortowania
-const getFormattedPrice = (ad: Advertisement) => {
-  const price = getPrice(ad, priceDisplay.value)
+  const priceDisplayValue = getPriceUnitLabel(ad)
   let suffix = ''
   
-  switch (priceDisplay.value) {
+  switch (priceDisplayValue) {
     case 'day':
       suffix = ' zł/dzień'
       break
@@ -1136,7 +1125,7 @@ const getFormattedPrice = (ad: Advertisement) => {
       break
   }
   
-  return price.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + suffix
+  return ad.price.toFixed(2) + suffix
 }
 
 // Check if price is estimated (converted from different unit)
@@ -1386,7 +1375,7 @@ const updateMarkers = () => {
   markers.forEach(marker => marker.remove())
   markers.clear()
 
-  filteredAdvertisements.value.forEach((ad) => {
+  filteredListings.value.forEach((ad) => {
     const marker = L.marker([ad.latitude, ad.longitude], {
       icon: createCustomIcon(ad.type, hoveredAdId.value === ad.id, selectedAdId.value === ad.id)
     })
@@ -1409,7 +1398,7 @@ const updateMarkers = () => {
             ${ad.title}
           </h3>
           <div style="color: #6B7280; font-size: 0.9rem; margin-bottom: 8px;">
-            📍 ${formatLocation(ad.location, ad.city)}
+            ${formatLocation(ad.location, ad.city)}
           </div>
           <div style="font-weight: 700; color: #4F46E5; font-size: 1.1rem;">
             ${Math.round(ad.price).toLocaleString('pl-PL')} ${getPriceUnitLabel(ad)}
@@ -1455,7 +1444,7 @@ const handleAdHover = (adId: string | null) => {
   hoveredAdId.value = adId
   
   if (adId && markers.has(adId)) {
-    const ad = advertisements.value.find(a => a.id === adId)
+    const ad = listings.value.find(a => a.id === adId)
     if (ad) {
       const marker = markers.get(adId)!
       marker.setIcon(createCustomIcon(ad.type, true, selectedAdId.value === adId))
@@ -1465,7 +1454,7 @@ const handleAdHover = (adId: string | null) => {
   // Reset other markers
   markers.forEach((marker, id) => {
     if (id !== adId) {
-      const ad = advertisements.value.find(a => a.id === id)
+      const ad = listings.value.find(a => a.id === id)
       if (ad) {
         marker.setIcon(createCustomIcon(ad.type, false, selectedAdId.value === id))
       }
@@ -1483,7 +1472,6 @@ const isInComparison = (id: string) => {
   return comparison.includes(id)
 }
 
-const handleAdClick = (adId: string) => {
   selectedAdId.value = adId
   
   if (markers.has(adId) && map) {
@@ -1512,17 +1500,17 @@ const scrollToAd = (adId: string) => {
   }
 }
 
-const loadAdvertisements = async () => {
+const loadListings = async () => {
   try {
     isLoading.value = true
     const data = await api.getAdvertisements()
-    // Backend returns only active advertisements
-    advertisements.value = data
+    // Backend returns only active listings
+    listings.value = data
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     
     setTimeout(() => updateMarkers(), 100)
   } catch (error) {
-    console.error('Error loading advertisements:', error)
+    console.error('Error loading listings:', error)
   } finally {
     isLoading.value = false
   }
@@ -1585,6 +1573,7 @@ watch(() => route.query, (newQuery, oldQuery) => {
     
     // Zastosuj filtry z route.params (type i city)
     if (route.params.type) {
+      // Mapowanie typów z URL na wartości w filtrach (wartości w bazie danych)
       const typeMapping: Record<string, string> = {
         'billboardy': 'billboard',
         'citylighty': 'citylight',
@@ -1596,6 +1585,7 @@ watch(() => route.query, (newQuery, oldQuery) => {
         'reklama-mobilna': 'mobile',
         'inne': 'other'
       }
+      
       const type = typeMapping[route.params.type as string] || ''
       if (type) {
         filters.value.type = type
@@ -1603,6 +1593,7 @@ watch(() => route.query, (newQuery, oldQuery) => {
     }
     
     if (route.params.city) {
+      // Dekoduj miasto z URL - użyj deslugify do konwersji
       const citySlug = route.params.city as string
       const city = deslugify(citySlug)
       filters.value.city = city
@@ -1659,12 +1650,12 @@ watch(() => route.query, (newQuery, oldQuery) => {
 
 // Usunięto watch - filtry aktualizują się tylko po kliknięciu "Zastosuj"
 
-watch(() => filteredAdvertisements.value, () => {
+watch(() => filteredListings.value, () => {
   updateMarkers()
 })
 
 onMounted(() => {
-  loadAdvertisements()
+  loadListings()
   setTimeout(() => initMap(), 100)
   document.addEventListener('click', handleClickOutside)
   
@@ -1740,11 +1731,10 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
 })
-</script>
 
 <template>
   <div>
-    <div class="advertisements-page">
+    <div class="listings-page">
     <!-- SEO Breadcrumbs -->
     <Breadcrumbs :items="breadcrumbs" />
     
@@ -1831,7 +1821,7 @@ onBeforeUnmount(() => {
       </select>
 
       <div class="results-count">
-        {{ filteredAdvertisements.length }} ogłoszeń
+        {{ filteredListings.length }} ogłoszeń
       </div>
     </div>
 
@@ -1843,7 +1833,7 @@ onBeforeUnmount(() => {
           <p>Ładowanie ogłoszeń...</p>
         </div>
 
-        <div v-else-if="filteredAdvertisements.length === 0" class="empty-state">
+        <div v-else-if="filteredListings.length === 0" class="empty-state">
           <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
             <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
             <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
@@ -1949,10 +1939,10 @@ onBeforeUnmount(() => {
         
         <!-- Pagination (na samym dole) -->
         <Pagination
-          v-if="filteredAdvertisements.length > 0"
+          v-if="filteredListings.length > 0"
           :current-page="currentPage"
           :total-pages="totalPages"
-          :total-items="filteredAdvertisements.length"
+          :total-items="filteredListings.length"
           :items-per-page="itemsPerPage"
           :show-info="true"
           :scroll-to-top="true"
@@ -2481,7 +2471,7 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <!-- Category/City Description for SEO - poza advertisements-page -->
+    <!-- Category/City Description for SEO - poza listings-page -->
     <div class="description-wrapper">
       <CategoryDescription 
         v-if="currentDescription" 
@@ -2492,7 +2482,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.advertisements-page {
+.listings-page {
   height: 100vh;
   background: #f9fafb;
   display: flex;

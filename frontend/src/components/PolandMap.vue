@@ -44,7 +44,7 @@ const getPriceUnitLabel = (ad: Advertisement): string => {
 }
 
 const props = defineProps<{
-  advertisements: Advertisement[]
+  listings: Advertisement[]
   selectedRegion?: string
   selectedCity?: string
   selectedLocationCoords?: { lat: number; lng: number } | null
@@ -175,14 +175,14 @@ const updateMarkers = () => {
 
   // Usuń markery, których nie ma już w danych
   markers.forEach((marker, id) => {
-    if (!props.advertisements.find(ad => ad.id === id)) {
+    if (!props.listings.find(ad => ad.id === id)) {
       marker.remove()
       markers.delete(id)
     }
   })
 
   // Dodaj lub aktualizuj markery
-  props.advertisements.forEach((ad) => {
+  props.listings.forEach((ad) => {
     const isHovered = props.hoveredAdId === ad.id
     
     // Jeśli marker już istnieje, aktualizuj jego ikonę
@@ -311,7 +311,7 @@ const updateMarkers = () => {
   }
 }
 
-watch(() => props.advertisements, () => {
+watch(() => props.listings, () => {
   updateMarkers()
 }, { deep: true })
 
@@ -331,7 +331,7 @@ watch(() => props.hoveredAdId, (newId) => {
   if (!map) return
   
   // Aktualizuj tylko ikony markerów, bez zmiany pozycji mapy
-  props.advertisements.forEach((ad) => {
+  props.listings.forEach((ad) => {
     if (markers.has(ad.id)) {
       const marker = markers.get(ad.id)!
       const isHovered = newId === ad.id

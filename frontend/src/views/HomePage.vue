@@ -20,7 +20,7 @@ const route = useRoute()
 const router = useRouter()
 
 const isModalOpen = ref(false)
-const advertisements = ref<Advertisement[]>([])
+const listings = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const viewMode = ref<'grid' | 'list'>('grid')
 const sortBy = ref('newest')
@@ -113,13 +113,11 @@ const filters = ref<Filters>({
   campaignDurationTo: null,
 })
 
-const sortedAndFilteredAdvertisements = computed(() => {
-  let filtered = advertisements.value
+const sortedAndFilteredListings = computed(() => {
+  let filtered = listings.value
   
   // Dodanie zależności od sortBy i priceDisplay, aby computed się przeliczał
-  const currentSort = sortBy.value
-  const currentPriceDisplay = priceDisplay.value
-
+  
   if (filters.value.keyword) {
     const keyword = normalizePolishChars(filters.value.keyword.toLowerCase())
     filtered = filtered.filter(ad =>
@@ -450,13 +448,13 @@ const sortedAndFilteredAdvertisements = computed(() => {
 })
 
 const totalPages = computed(() => {
-  return Math.ceil(sortedAndFilteredAdvertisements.value.length / itemsPerPage)
+  return Math.ceil(sortedAndFilteredListings.value.length / itemsPerPage)
 })
 
-const paginatedAdvertisements = computed(() => {
+const paginatedListings = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
   const end = start + itemsPerPage
-  return sortedAndFilteredAdvertisements.value.slice(start, end)
+  return sortedAndFilteredListings.value.slice(start, end)
 })
 
 const handlePageChange = async (page: number) => {
@@ -514,11 +512,11 @@ const loadAdvertisements = async () => {
   try {
     isLoading.value = true
     const data = await api.getAdvertisements()
-    // Backend returns only active advertisements
-    advertisements.value = data
+    // Backend returns only active listings
+    listings.value = data
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   } catch (error) {
-    console.error('Error loading advertisements:', error)
+    console.error('Error loading listings:', error)
   } finally {
     isLoading.value = false
   }
@@ -717,14 +715,14 @@ onMounted(() => {
     </section>
     
     <PolandMap 
-      :advertisements="sortedAndFilteredAdvertisements" 
+      :listings="sortedAndFilteredListings" 
       :selected-region="filters.region"
       :selected-city="filters.city"
       :selected-location-coords="filters.selectedLocationCoords"
       :hovered-ad-id="hoveredAdId"
     />
     <AdGrid
-      :advertisements="paginatedAdvertisements"
+      :listings="paginatedListings"
       :is-loading="isLoading"
       :view-mode="viewMode"
       :sort-by="sortBy"
@@ -736,10 +734,10 @@ onMounted(() => {
       @update:hovered-ad-id="hoveredAdId = $event"
     />
     <Pagination
-      v-if="!isLoading && paginatedAdvertisements.length > 0"
+      v-if="!isLoading && paginatedListings.length > 0"
       :current-page="currentPage"
       :total-pages="totalPages"
-      :total-items="sortedAndFilteredAdvertisements.length"
+      :total-items="sortedAndFilteredListings.length"
       :items-per-page="itemsPerPage"
       :show-info="true"
       :scroll-to-top="false"

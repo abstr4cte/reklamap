@@ -32,7 +32,7 @@ const loadComparison = async () => {
     isLoading.value = true
     const data = await api.getAdvertisementsByIds(comparisonIds)
     
-    // Filter to only include active advertisements
+    // Filter to only include active listings
     const activeAds = data.filter(ad => ad.is_active)
     comparisonAds.value = activeAds || []
     

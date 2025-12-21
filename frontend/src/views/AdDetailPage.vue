@@ -852,7 +852,7 @@ const handlePrint = async () => {
   isGeneratingPDF.value = true
 
   try {
-    const response = await axios.get(`/api/advertisements/${ad.value.id}/pdf`, {
+    const response = await axios.get(`/api/listings/${ad.value.id}/pdf`, {
         responseType: 'blob'
     })
     
@@ -901,7 +901,7 @@ const handleDownloadPDF = async () => {
   isGeneratingPDF.value = true
 
   try {
-    const response = await axios.get(`/api/advertisements/${ad.value.id}/pdf`, {
+    const response = await axios.get(`/api/listings/${ad.value.id}/pdf`, {
         responseType: 'blob'
     })
     

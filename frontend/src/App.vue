@@ -21,7 +21,7 @@ const activeFavoriteIds = ref<string[]>([])
 const activeComparisonIds = ref<string[]>([])
 const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 
-// Synchronize favorites with active advertisements
+// Synchronize favorites with active listings
 const syncFavorites = async () => {
   const favoriteIds = JSON.parse(localStorage.getItem('favorites') || '[]')
   
@@ -36,7 +36,7 @@ const syncFavorites = async () => {
     const data = await api.getAdvertisementsByIds(favoriteIds)
     console.log('📥 Pobrane ogłoszenia:', data.length)
     
-    // Filter to only include active advertisements
+    // Filter to only include active listings
     const activeAds = data.filter(ad => ad.is_active)
     console.log('✅ Aktywne ogłoszenia:', activeAds.length, activeAds.map(ad => ad.id))
     
@@ -53,7 +53,7 @@ const syncFavorites = async () => {
   }
 }
 
-// Synchronize comparison with active advertisements
+// Synchronize comparison with active listings
 const syncComparison = async () => {
   const comparisonIds = JSON.parse(localStorage.getItem('comparison') || '[]')
   
@@ -64,7 +64,7 @@ const syncComparison = async () => {
   
   try {
     const data = await api.getAdvertisementsByIds(comparisonIds)
-    // Filter to only include active advertisements
+    // Filter to only include active listings
     const activeAds = data.filter(ad => ad.is_active)
     activeComparisonIds.value = activeAds.map(ad => ad.id)
     
@@ -78,13 +78,13 @@ const syncComparison = async () => {
   }
 }
 
-// Compute favorites count based on active advertisements only
+// Compute favorites count based on active listings only
 const favoritesCount = computed(() => {
   favoritesKey.value // Dependency to trigger recomputation
   return activeFavoriteIds.value.length
 })
 
-// Compute comparison count based on active advertisements only
+// Compute comparison count based on active listings only
 const comparisonCount = computed(() => {
   comparisonKey.value // Dependency to trigger recomputation
   return activeComparisonIds.value.length

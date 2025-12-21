@@ -31,7 +31,7 @@ L.Marker.prototype.options.icon = DefaultIcon
 
 const router = useRouter()
 const route = useRoute()
-const advertisements = ref<Advertisement[]>([])
+const listings = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const tokenEmail = ref('')
 const tokenExpiresAt = ref('')
@@ -171,7 +171,7 @@ const loadAdvertisements = async () => {
       try {
         const response = await axios.get(`/api/management/validate/${token}`)
         if (response.data.valid) {
-          advertisements.value = response.data.advertisements || []
+          listings.value = response.data.listings || []
           tokenEmail.value = response.data.email
           tokenExpiresAt.value = new Date(response.data.expires_at).toLocaleString()
           hasToken.value = true
@@ -194,7 +194,7 @@ const loadAdvertisements = async () => {
       // Nie pobieramy ogłoszeń, gdy nie ma tokena
     }
   } catch (error) {
-    console.error('Error loading advertisements:', error)
+    console.error('Error loading listings:', error)
   } finally {
     isLoading.value = false
   }
@@ -224,7 +224,7 @@ const updateStatus = async (id: string, newStatus: string, availableFrom?: Date 
     
     await api.updateAdvertisement(id, updateData)
 
-    const ad = advertisements.value.find(a => a.id === id)
+    const ad = listings.value.find(a => a.id === id)
     if (ad) {
       ad.status = newStatus
       if (availableFrom) {
@@ -242,7 +242,7 @@ const updateStatus = async (id: string, newStatus: string, availableFrom?: Date 
 
 const toggleActive = async (id: string) => {
   try {
-    const ad = advertisements.value.find(a => a.id === id)
+    const ad = listings.value.find(a => a.id === id)
     if (!ad) return
 
     const newActiveState = !ad.is_active
@@ -329,7 +329,7 @@ const saveChanges = async (id: string) => {
         route_area: (editingAd.value as any).route_area || null,
     })
 
-    const ad = advertisements.value.find(a => a.id === id)
+    const ad = listings.value.find(a => a.id === id)
     if (ad && editingAd.value) {
       Object.assign(ad, editingAd.value)
       ad.images = finalImageUrls
@@ -366,7 +366,7 @@ const handleConfirmDelete = async () => {
   try {
     await api.deleteAdvertisement(adToDelete.value)
 
-    advertisements.value = advertisements.value.filter(a => a.id !== adToDelete.value)
+    listings.value = listings.value.filter(a => a.id !== adToDelete.value)
     expandedRows.value.delete(adToDelete.value)
     adToDelete.value = ''
     toast.value?.add('Ogłoszenie zostało usunięte', 'success')
@@ -394,7 +394,7 @@ const getTypeLabel = (type: string) => {
 }
 
 const openPreview = (id: string) => {
-  const ad = advertisements.value.find(a => a.id === id)
+  const ad = listings.value.find(a => a.id === id)
   if (!ad) return
   
   const city = slugify(ad.city)
@@ -411,7 +411,7 @@ const toggleRow = (id: string) => {
     expandedRows.value.delete(id)
   } else {
     expandedRows.value.add(id)
-    const ad = advertisements.value.find(a => a.id === id)
+    const ad = listings.value.find(a => a.id === id)
     if (ad) {
       editingAd.value = { ...ad }
       // Strip +48 prefix from phone for editing
@@ -1073,7 +1073,7 @@ onBeforeUnmount(() => {
         </div>
         
         <div v-else-if="hasToken">
-          <div v-if="advertisements.length === 0" class="empty-state">
+          <div v-if="listings.length === 0" class="empty-state">
             <svg width="120" height="120" viewBox="0 0 24 24" fill="none">
               <rect x="3" y="3" width="18" height="18" rx="2" stroke="#d1d5db" stroke-width="2"/>
               <path d="M3 9h18M9 3v18" stroke="#d1d5db" stroke-width="2"/>
@@ -1089,19 +1089,19 @@ onBeforeUnmount(() => {
             <div class="stats-bar">
               <div class="stat">
                 <span class="stat-label">Wszystkie ogłoszenia</span>
-                <span class="stat-value">{{ advertisements.length }}</span>
+                <span class="stat-value">{{ listings.length }}</span>
               </div>
               <div class="stat">
                 <span class="stat-label">Aktywne</span>
-                <span class="stat-value">{{ advertisements.filter(ad => ad.is_active).length }}</span>
+                <span class="stat-value">{{ listings.filter(ad => ad.is_active).length }}</span>
               </div>
               <div class="stat">
                 <span class="stat-label">Nieaktywne</span>
-                <span class="stat-value">{{ advertisements.filter(ad => !ad.is_active).length }}</span>
+                <span class="stat-value">{{ listings.filter(ad => !ad.is_active).length }}</span>
               </div>
             </div>
 
-            <div v-for="ad in advertisements" :key="ad.id" :id="'ad-row-' + ad.id" class="ad-row" :class="{ expanded: expandedRows.has(ad.id) }">
+            <div v-for="ad in listings" :key="ad.id" :id="'ad-row-' + ad.id" class="ad-row" :class="{ expanded: expandedRows.has(ad.id) }">
               <div class="ad-summary" @click="toggleRow(ad.id)">
                 <div class="ad-thumbnail">
                   <WebPImage v-if="ad.image_url" :src="ad.image_url" :alt="ad.title" />
