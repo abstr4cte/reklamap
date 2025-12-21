@@ -571,7 +571,12 @@ const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
       }
 
       const address = data.address
-      formData.value.city = address.city || address.town || address.village || ''
+      let city = address.city || address.town || address.village || address.municipality || ''
+      // Usuń prefix "gmina" jeśli pochodzi z municipality
+      if (!address.city && !address.town && !address.village && address.municipality) {
+        city = city.replace(/^gmina\s+/i, '')
+      }
+      formData.value.city = city
       formData.value.region = address.state || ''
       // Use full display_name for location field
       formData.value.location = data.display_name || ''
@@ -627,7 +632,12 @@ const selectAddress = (suggestion: any) => {
   }
 
   formData.value.location = suggestion.display_name
-  formData.value.city = address.city || address.town || address.village || ''
+  let city = address.city || address.town || address.village || address.municipality || ''
+  // Usuń prefix "gmina" jeśli pochodzi z municipality
+  if (!address.city && !address.town && !address.village && address.municipality) {
+    city = city.replace(/^gmina\s+/i, '')
+  }
+  formData.value.city = city
   formData.value.region = address.state || ''
   formData.value.latitude = lat
   formData.value.longitude = lng

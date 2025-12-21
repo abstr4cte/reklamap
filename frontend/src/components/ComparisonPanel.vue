@@ -62,6 +62,19 @@ const goToComparison = () => {
 
 const canCompare = computed(() => comparisonAds.value.length >= 2)
 
+// Funkcja zwracająca etykietę jednostki ceny
+const getPriceUnitLabel = (ad: Advertisement): string => {
+  const unit = ad.price_unit || 'month'
+  switch (unit) {
+    case 'day': return '/ dzień'
+    case 'week': return '/ tydzień'
+    case 'month': return '/ miesiąc'
+    case 'year': return '/ rok'
+    case 'campaign': return '/ kampania'
+    default: return '/ miesiąc'
+  }
+}
+
 const handleStorageChange = () => {
   if (props.isOpen) {
     loadComparison()
@@ -164,7 +177,7 @@ onUnmounted(() => {
                 </svg>
                 {{ ad.city }}
               </div>
-              <div class="comparison-price">{{ ad.price.toLocaleString('pl-PL') }} PLN</div>
+              <div class="comparison-price">{{ Math.round(ad.price).toLocaleString('pl-PL') }} PLN {{ getPriceUnitLabel(ad) }}</div>
             </div>
 
             <button

@@ -7,6 +7,8 @@ const props = defineProps<{
   totalItems: number
   itemsPerPage: number
   showInfo?: boolean
+  scrollToTop?: boolean
+  scrollTarget?: string
 }>()
 
 const showInfoValue = props.showInfo !== undefined ? props.showInfo : true
@@ -62,6 +64,23 @@ const visiblePages = computed(() => {
 const goToPage = (page: number) => {
   if (page >= 1 && page <= props.totalPages && page !== props.currentPage) {
     emit('update:currentPage', page)
+    
+    // Scroll do góry jeśli włączone
+    if (props.scrollToTop !== false) {
+      if (props.scrollTarget) {
+        // Scrolluj do określonego elementu
+        const element = document.querySelector(props.scrollTarget)
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      } else {
+        // Scrolluj do góry strony
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        })
+      }
+    }
   }
 }
 </script>

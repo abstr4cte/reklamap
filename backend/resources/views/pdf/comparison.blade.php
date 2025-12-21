@@ -150,30 +150,59 @@
                 @foreach($advertisements as $ad)
                     <td class="highlight">
                         @php
-                            $price = $ad->price;
-                            $unitLabel = 'miesiąc';
+                            $basePrice = $ad->price;
+                            $originalUnit = $ad->price_unit ?? 'month';
+                            $isConverted = false;
+                            $price = $basePrice;
+                            $unitLabel = '';
 
-                            switch ($displayUnit) {
-                                case 'day':
-                                    $price = $price / 30;
-                                    $unitLabel = 'dzień';
-                                    break;
-                                case 'week':
-                                    $price = $price / 4;
-                                    $unitLabel = 'tydzień';
-                                    break;
-                                case 'year':
-                                    $price = $price * 12;
-                                    $unitLabel = 'rok';
-                                    break;
-                                default: // month
-                                    $unitLabel = 'miesiąc';
+                            // Jeśli displayUnit to 'original', użyj oryginalnej jednostki
+                            if ($displayUnit === 'original' || $displayUnit === $originalUnit) {
+                                $price = $basePrice;
+                                $isConverted = false;
+                            } else {
+                                $isConverted = true;
+                                
+                                // Przelicz na dzień
+                                $priceInDay = $basePrice;
+                                switch ($originalUnit) {
+                                    case 'day': $priceInDay = $basePrice; break;
+                                    case 'week': $priceInDay = $basePrice / 7; break;
+                                    case 'month': $priceInDay = $basePrice / 30; break;
+                                    case 'year': $priceInDay = $basePrice / 365; break;
+                                    case 'campaign':
+                                        $campaignDays = $ad->campaign_duration ?? 30;
+                                        $priceInDay = $basePrice / $campaignDays;
+                                        break;
+                                }
+                                
+                                // Przelicz na wybraną jednostkę
+                                switch ($displayUnit) {
+                                    case 'day': $price = $priceInDay; break;
+                                    case 'week': $price = $priceInDay * 7; break;
+                                    case 'month': $price = $priceInDay * 30; break;
+                                    case 'year': $price = $priceInDay * 365; break;
+                                }
+                            }
+                            
+                            // Etykieta jednostki
+                            $targetUnit = $isConverted ? $displayUnit : $originalUnit;
+                            switch ($targetUnit) {
+                                case 'day': $unitLabel = 'dzień'; break;
+                                case 'week': $unitLabel = 'tydzień'; break;
+                                case 'month': $unitLabel = 'miesiąc'; break;
+                                case 'year': $unitLabel = 'rok'; break;
+                                case 'campaign': $unitLabel = 'kampania'; break;
+                                default: $unitLabel = 'miesiąc';
                             }
                         @endphp
-                        <span class="price">{{ number_format($price, 2, ',', ' ') }} PLN</span>
+                        <span class="price">{{ number_format(round($price), 0, ',', ' ') }} PLN</span>
                         <br>
                         <span style="font-size: 9px;">
                             / {{ $unitLabel }}
+                            @if($isConverted)
+                                <br>(szacunkowo)
+                            @endif
                         </span>
                     </td>
                 @endforeach
@@ -186,7 +215,9 @@
                             $area = $ad->width * $ad->height;
                             $pricePerSqm = $area > 0 ? $ad->price / $area : 0;
                         @endphp
-                        {{ number_format($pricePerSqm, 2, ',', ' ') }} PLN/m²
+                        {{ number_format(round($pricePerSqm), 0, ',', ' ') }} PLN/m²
+                        <br>
+                        <span style="font-size: 9px;">(szacunkowo)</span>
                     </td>
                 @endforeach
             </tr>

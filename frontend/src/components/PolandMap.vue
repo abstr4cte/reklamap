@@ -30,6 +30,19 @@ const formatLocation = (location: string, city: string) => {
   return `${streetWithNumber}, ${city}`
 }
 
+// Funkcja zwracająca etykietę jednostki ceny
+const getPriceUnitLabel = (ad: Advertisement): string => {
+  const unit = ad.price_unit || 'month'
+  switch (unit) {
+    case 'day': return 'zł/dzień'
+    case 'week': return 'zł/tydzień'
+    case 'month': return 'zł/mies.'
+    case 'year': return 'zł/rok'
+    case 'campaign': return 'zł/kampania'
+    default: return 'zł/mies.'
+  }
+}
+
 const props = defineProps<{
   advertisements: Advertisement[]
   selectedRegion?: string
@@ -253,7 +266,7 @@ const updateMarkers = () => {
               </div>
             ` : ''}
             <div style="font-weight: 700; color: #4F46E5; font-size: 1.1rem; margin-top: 4px;">
-              ${ad.price.toLocaleString('pl-PL')} zł/mies.
+              ${Math.round(ad.price).toLocaleString('pl-PL')} ${getPriceUnitLabel(ad)}
             </div>
           </div>
         </a>

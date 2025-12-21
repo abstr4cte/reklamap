@@ -40,6 +40,19 @@ const formatLocation = (location: string, city: string) => {
   return `${streetWithNumber}, ${city}`
 }
 
+// Funkcja zwracająca etykietę jednostki ceny
+const getPriceUnitLabel = (ad: Advertisement): string => {
+  const unit = ad.price_unit || 'month'
+  switch (unit) {
+    case 'day': return 'zł/dzień'
+    case 'week': return 'zł/tydzień'
+    case 'month': return 'zł/mies.'
+    case 'year': return 'zł/rok'
+    case 'campaign': return 'zł/kampania'
+    default: return 'zł/mies.'
+  }
+}
+
 const advertisements = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const hoveredAdId = ref<string | null>(null)
@@ -1399,7 +1412,7 @@ const updateMarkers = () => {
             📍 ${formatLocation(ad.location, ad.city)}
           </div>
           <div style="font-weight: 700; color: #4F46E5; font-size: 1.1rem;">
-            ${ad.price.toLocaleString('pl-PL')} zł/mies.
+            ${Math.round(ad.price).toLocaleString('pl-PL')} ${getPriceUnitLabel(ad)}
           </div>
         </a>
       </div>
@@ -1516,7 +1529,12 @@ const loadAdvertisements = async () => {
 }
 
 // Watch for URL query parameter changes
-watch(() => route.query, (newQuery) => {
+watch(() => route.query, (newQuery, oldQuery) => {
+  // Jeśli query nie zmienił się faktycznie, nie rób nic
+  if (JSON.stringify(newQuery) === JSON.stringify(oldQuery)) {
+    return
+  }
+  
   // Jeśli query params są puste (breadcrumb navigation), resetuj filtry do wartości z route.params
   if (Object.keys(newQuery).length === 0) {
     isResettingFilters.value = true
@@ -1637,7 +1655,7 @@ watch(() => route.query, (newQuery) => {
       }
     })
   }
-}, { immediate: true, deep: true })
+}, { immediate: true })
 
 // Usunięto watch - filtry aktualizują się tylko po kliknięciu "Zastosuj"
 
@@ -1867,7 +1885,7 @@ onBeforeUnmount(() => {
               </div>
               <div class="card-actions">
                 <button 
-                  @click.prevent="$emit('toggleFavorite', ad.id)"
+                  @click.prevent.stop="$emit('toggleFavorite', ad.id)"
                   class="action-btn favorite-btn"
                   :class="{ active: isFavorite(ad.id) }"
                   title="Dodaj do ulubionych"
@@ -1877,7 +1895,7 @@ onBeforeUnmount(() => {
                   </svg>
                 </button>
                 <button 
-                  @click.prevent="$emit('toggleComparison', ad.id)"
+                  @click.prevent.stop="$emit('toggleComparison', ad.id)"
                   class="action-btn comparison-btn"
                   :class="{ active: isInComparison(ad.id) }"
                   title="Dodaj do porównania"
@@ -1937,6 +1955,7 @@ onBeforeUnmount(() => {
           :total-items="filteredAdvertisements.length"
           :items-per-page="itemsPerPage"
           :show-info="true"
+          :scroll-to-top="true"
           @update:current-page="onPageChange"
           class="pagination-bottom"
         />

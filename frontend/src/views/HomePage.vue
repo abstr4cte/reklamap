@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import EmailModal from '../components/EmailModal.vue'
 import HeroBanner from '../components/HeroBanner.vue'
@@ -459,14 +459,23 @@ const paginatedAdvertisements = computed(() => {
   return sortedAndFilteredAdvertisements.value.slice(start, end)
 })
 
-const handlePageChange = (page: number) => {
+const handlePageChange = async (page: number) => {
   currentPage.value = page
-  router.push({ query: { ...route.query, page: page.toString() } })
+  await router.push({ query: { ...route.query, page: page.toString() } })
   
-  // Scroll to top of ads section
+  // Poczekaj na aktualizację DOM przed scrollowaniem
+  await nextTick()
+  
+  // Scroll to top of ads section z offsetem
   const adsSection = document.querySelector('.ads-section')
   if (adsSection) {
-    adsSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const elementPosition = adsSection.getBoundingClientRect().top + window.pageYOffset
+    const offsetPosition = elementPosition - 32 // 2rem = 32px offset
+    
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
   }
 }
 
@@ -733,6 +742,7 @@ onMounted(() => {
       :total-items="sortedAndFilteredAdvertisements.length"
       :items-per-page="itemsPerPage"
       :show-info="true"
+      :scroll-to-top="false"
       @update:current-page="handlePageChange"
     />
   </div>

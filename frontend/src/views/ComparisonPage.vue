@@ -7,6 +7,7 @@ import ConfirmDialog from '../components/ConfirmDialog.vue'
 import WebPImage from '../components/WebPImage.vue'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
+import { getFieldsForType, shouldShowField, type ComparisonField } from '../utils/comparisonFields'
 
 import axios from '../api/axios'
 
@@ -14,7 +15,7 @@ const router = useRouter()
 const comparisonAds = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const isGeneratingPdf = ref(false)
-const priceUnit = ref<'day' | 'week' | 'month' | 'year'>('month')
+const priceUnit = ref<'original' | 'day' | 'week' | 'month' | 'year'>('original')
 const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
 
 const downloadPdf = async () => {
@@ -53,6 +54,9 @@ const loadComparison = async () => {
     isLoading.value = true
     const data = await api.getAdvertisementsByIds(comparisonIds)
     comparisonAds.value = data || []
+    
+    // Ustaw domyślną jednostkę na 'original'
+    priceUnit.value = 'original'
   } catch (error) {
     console.error('Error loading comparison:', error)
   } finally {
@@ -97,27 +101,89 @@ const getPricePerSqm = (ad: Advertisement) => {
 
 const getPrice = (ad: Advertisement) => {
   const basePrice = ad.price
-  // Assuming base price is always monthly as per app logic
+  const originalUnit = ad.price_unit || 'month'
+  
+  // Jeśli wybrana jednostka to 'original' lub oryginalna jednostka ogłoszenia, zwróć cenę bez przeliczania
+  if (priceUnit.value === 'original' || priceUnit.value === originalUnit) {
+    return Math.round(basePrice).toLocaleString('pl-PL')
+  }
+  
+  // Przelicz cenę z oryginalnej jednostki na wybraną
+  let priceInDay = basePrice
+  
+  // Najpierw przelicz na dzień (jako bazę)
+  switch (originalUnit) {
+    case 'day':
+      priceInDay = basePrice
+      break
+    case 'week':
+      priceInDay = basePrice / 7
+      break
+    case 'month':
+      priceInDay = basePrice / 30
+      break
+    case 'year':
+      priceInDay = basePrice / 365
+      break
+    case 'campaign':
+      // Dla kampanii używamy campaign_duration (ilość dni)
+      const campaignDays = (ad as any).campaign_duration || 30 // domyślnie 30 dni jeśli nie podano
+      priceInDay = basePrice / campaignDays
+      break
+  }
+  
+  // Następnie przelicz z dnia na wybraną jednostkę
+  let convertedPrice = priceInDay
   switch (priceUnit.value) {
     case 'day':
-      return (basePrice / 30).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      convertedPrice = priceInDay
+      break
     case 'week':
-      return (basePrice / 4).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      convertedPrice = priceInDay * 7
+      break
     case 'month':
-      return basePrice.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      convertedPrice = priceInDay * 30
+      break
     case 'year':
-      return (basePrice * 12).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      convertedPrice = priceInDay * 365
+      break
   }
+  
+  return Math.round(convertedPrice).toLocaleString('pl-PL')
 }
 
 const priceUnitLabel = computed(() => {
   switch (priceUnit.value) {
+    case 'original': return ''
     case 'day': return '/ dzień'
     case 'week': return '/ tydzień'
     case 'month': return '/ miesiąc'
     case 'year': return '/ rok'
   }
 })
+
+// Funkcja zwracająca etykietę jednostki dla konkretnego ogłoszenia
+const getPriceUnitLabelForAd = (ad: Advertisement): string => {
+  const unit = ad.price_unit || 'month'
+  switch (unit) {
+    case 'day': return '/ dzień'
+    case 'week': return '/ tydzień'
+    case 'month': return '/ miesiąc'
+    case 'year': return '/ rok'
+    case 'campaign': return '/ kampania'
+    default: return '/ miesiąc'
+  }
+}
+
+// Funkcja sprawdzająca czy cena została przeliczona
+const isPriceConverted = (ad: Advertisement): boolean => {
+  const originalUnit = ad.price_unit || 'month'
+  // Nie jest przeliczona jeśli wybrano 'original' lub jeśli wybrana jednostka = oryginalna
+  if (priceUnit.value === 'original' || priceUnit.value === originalUnit) {
+    return false
+  }
+  return true
+}
 
 const getStatusLabel = (status: string) => {
   switch (status) {
@@ -168,6 +234,228 @@ const formatLocation = (location: string, city: string) => {
   }
   
   return `${streetWithNumber}, ${city}`
+}
+
+// Dynamiczne pola do wyświetlenia w porównywarce
+const comparisonFields = computed(() => {
+  if (comparisonAds.value.length === 0) return []
+  
+  // Pobierz typ pierwszego ogłoszenia (wszystkie powinny być tego samego typu)
+  const adType = comparisonAds.value[0]?.type
+  if (!adType) return []
+  
+  // Pobierz pola dla tego typu
+  const fields = getFieldsForType(adType)
+  
+  // Filtruj pola - pokaż tylko te, które są wymagane lub mają wartość w którymś ogłoszeniu
+  return fields.filter(field => shouldShowField(field, comparisonAds.value))
+})
+
+// Funkcja do pobierania wartości pola dla ogłoszenia
+const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
+  switch (field.key) {
+    case 'price':
+      const price = getPrice(ad)
+      const isConverted = isPriceConverted(ad)
+      return isConverted ? price : price
+    case 'price_per_sqm':
+      return `${getPricePerSqm(ad)} PLN/m² (szacunkowo)`
+    case 'type':
+      return getTypeLabel(ad.type)
+    case 'dimensions':
+      return ad.width && ad.height ? `${ad.width}m × ${ad.height}m` : '—'
+    case 'surface_area':
+      return `${getSurfaceArea(ad)} m²`
+    case 'orientation':
+      return ad.orientation === 'horizontal' ? 'Poziom' : 'Pion'
+    case 'location':
+      return formatLocation(ad.location, ad.city)
+    case 'traffic_intensity':
+      return ad.traffic_intensity === 'low' ? 'Niskie' : ad.traffic_intensity === 'medium' ? 'Średnie' : ad.traffic_intensity === 'high' ? 'Wysokie' : '—'
+    case 'traffic_direction':
+      return formatTrafficDirectionValue(ad.traffic_direction)
+    case 'traffic_type':
+      return formatTrafficType(ad.traffic_type)
+    case 'location_tier':
+      return getLocationTier(ad)
+    case 'road_class':
+      return formatRoadClass((ad as any).road_class)
+    case 'variant':
+      return formatVariant(ad.variant, ad.type)
+    case 'environment':
+      return formatEnvironment((ad as any).environment)
+    case 'has_backlight':
+      return ad.has_backlight ? 'Tak' : 'Nie'
+    case 'price_includes_print':
+      return ad.price_includes_print ? 'Tak' : 'Nie'
+    case 'price_includes_mounting':
+      return (ad as any).price_includes_mounting ? 'Tak' : 'Nie'
+    case 'graphic_design_help':
+      return ad.graphic_design_help ? 'Tak' : 'Nie'
+    case 'status':
+      return getStatusLabel(ad.display_status || ad.status)
+    case 'offer_type':
+      return ad.offer_type === 'owner' ? 'Właściciel' : 'Agencja'
+    case 'has_vat_invoice':
+      return ad.has_vat_invoice ? 'Tak' : 'Nie'
+    case 'spot_duration':
+      return (ad as any).spot_duration ? `${(ad as any).spot_duration}s` : '—'
+    case 'loop_duration':
+      return (ad as any).loop_duration ? `${(ad as any).loop_duration}s` : '—'
+    case 'transport_scope':
+      return formatTransportScope((ad as any).transport_scope)
+    case 'vehicle_count':
+      return (ad as any).vehicle_count || '—'
+    case 'mobile_exposure_mode':
+      return formatMobileExposureMode((ad as any).mobile_exposure_mode)
+    case 'route_area':
+      return (ad as any).route_area || '—'
+    case 'operating_hours':
+      return (ad as any).operating_hours || '—'
+    default:
+      return '—'
+  }
+}
+
+// Funkcja obliczająca klasę lokalizacji dla billboardu
+const getLocationTier = (ad: Advertisement): string => {
+  if (ad.type !== 'billboard') return '—'
+  
+  const trafficIntensity = ad.traffic_intensity
+  const roadClass = (ad as any).road_class
+  
+  // PREMIUM: wysokie natężenie ruchu + autostrada/droga ekspresowa/droga krajowa
+  if (trafficIntensity === 'high' && ['highway', 'expressway', 'national'].includes(roadClass || '')) {
+    return 'PREMIUM'
+  }
+  
+  // STANDARD: wszystkie inne kombinacje
+  return 'STANDARD'
+}
+
+// Funkcje formatujące
+const formatTrafficDirectionValue = (directions: string[] | undefined) => {
+  if (!directions || !Array.isArray(directions) || directions.length === 0) return '—'
+  if (directions.includes('entry') && directions.includes('exit')) return 'Oba kierunki'
+  const formatted = directions.map(dir => {
+    if (dir === 'entry') return 'Wjazd do miasta'
+    if (dir === 'exit') return 'Wyjazd z miasta'
+    return dir
+  })
+  return formatted.join(', ')
+}
+
+const formatTrafficType = (types: string[] | undefined) => {
+  if (!types || !Array.isArray(types) || types.length === 0) return '—'
+  const formatted = types.map(type => {
+    if (type === 'pedestrian') return 'Pieszy'
+    if (type === 'vehicular') return 'Samochodowy'
+    return type
+  })
+  return formatted.join(', ')
+}
+
+const formatRoadClass = (roadClass: string | undefined) => {
+  if (!roadClass) return '—'
+  const labels: Record<string, string> = {
+    highway: 'Autostrada',
+    expressway: 'Droga ekspresowa',
+    national: 'Droga krajowa',
+    regional: 'Droga wojewódzka',
+    local: 'Droga lokalna',
+    urban: 'Droga miejska'
+  }
+  return labels[roadClass] || roadClass
+}
+
+const formatVariant = (variant: string | undefined, type: string) => {
+  if (!variant) return '—'
+  const labels: Record<string, Record<string, string>> = {
+    billboard: {
+      standard: 'Standardowy',
+      three_sided: 'Trójstronny',
+      backlit: 'Backlit (podświetlany)'
+    },
+    citylight: {
+      single: 'Pojedynczy',
+      double: 'Podwójny',
+      digital: 'Cyfrowy'
+    },
+    led_screen: {
+      outdoor: 'Zewnętrzny',
+      indoor: 'Wewnętrzny',
+      interactive: 'Interaktywny'
+    },
+    banner: {
+      pvc: 'PCV',
+      mesh: 'Siatkowy/Mesh',
+      textile: 'Tekstylny'
+    },
+    wall: {
+      mural: 'Mural',
+      foil: 'Folia',
+      construction: 'Konstrukcja'
+    },
+    totem: {
+      single_sided: 'Jednostronny',
+      double_sided: 'Dwustronny',
+      multi_sided: 'Wielostronny',
+      digital: 'Digital'
+    },
+    transport: {
+      bus: 'Autobus',
+      tram: 'Tramwaj',
+      metro: 'Metro',
+      stop: 'Przystanek'
+    },
+    mobile: {
+      trailer: 'Przyczepka',
+      car: 'Samochód',
+      bike: 'Rower',
+      other: 'Inna'
+    }
+  }
+  return labels[type]?.[variant] || variant
+}
+
+const formatEnvironment = (environment: string | undefined) => {
+  if (!environment) return '—'
+  const labels: Record<string, string> = {
+    indoor: 'Wewnątrz',
+    outdoor: 'Na zewnątrz',
+    event: 'Event / Wydarzenie'
+  }
+  return labels[environment] || environment
+}
+
+const formatTransportScope = (scope: string | undefined) => {
+  if (!scope) return '—'
+  const labels: Record<string, string> = {
+    internal: 'Wewnętrzna',
+    external: 'Zewnętrzna',
+    full_vehicle: 'Całopojazdowa'
+  }
+  return labels[scope] || scope
+}
+
+const formatMobileExposureMode = (mode: string | undefined) => {
+  if (!mode) return '—'
+  const labels: Record<string, string> = {
+    moving: 'Jeżdżąca',
+    stationary: 'Stojąca',
+    mixed: 'Mieszana'
+  }
+  return labels[mode] || mode
+}
+
+// Funkcja sprawdzająca czy wartość jest pozytywna (dla kolorowania)
+const isPositiveValue = (field: ComparisonField, value: any): boolean => {
+  if (field.key === 'has_backlight' || field.key === 'price_includes_print' || 
+      field.key === 'price_includes_mounting' || field.key === 'graphic_design_help' || 
+      field.key === 'has_vat_invoice') {
+    return value === 'Tak'
+  }
+  return false
 }
 
 onMounted(() => {
@@ -226,6 +514,13 @@ onMounted(() => {
               <span class="toggle-label">Jednostka ceny:</span>
               <div class="toggle-buttons">
                 <button 
+                  @click="priceUnit = 'original'"
+                  class="toggle-btn"
+                  :class="{ active: priceUnit === 'original' }"
+                >
+                  Oryginalna
+                </button>
+                <button 
                   v-for="unit in ['day', 'week', 'month', 'year'] as const" 
                   :key="unit"
                   @click="priceUnit = unit"
@@ -272,96 +567,33 @@ onMounted(() => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="feature-name">Cena</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value highlight">
-                  <strong>{{ getPrice(ad) }} PLN {{ priceUnitLabel }}</strong>
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Cena za m²</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  {{ getPricePerSqm(ad) }} PLN/m²
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Typ powierzchni</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  {{ getTypeLabel(ad.type) }}
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Wymiary (szer × wys)</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  {{ ad.width }}m × {{ ad.height }}m
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Powierzchnia</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value highlight">
-                  <strong>{{ getSurfaceArea(ad) }} m²</strong>
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Orientacja</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  {{ ad.orientation === 'horizontal' ? 'Poziom' : 'Pion' }}
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Lokalizacja</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  {{ formatLocation(ad.location, ad.city) }}
-                </td>
-              </tr>
-
-              <tr>
-                <td class="feature-name">Natężenie ruchu</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  {{ ad.traffic_intensity === 'low' ? 'Niskie' : ad.traffic_intensity === 'medium' ? 'Średnie' : 'Wysokie' }}
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Podświetlenie</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  <span :class="ad.has_lighting ? 'value-yes' : 'value-no'">
-                    {{ ad.has_lighting ? 'Tak' : 'Nie' }}
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Druk i montaż w cenie</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  <span :class="ad.price_includes_print ? 'value-yes' : 'value-no'">
-                    {{ ad.price_includes_print ? 'Tak' : 'Nie' }}
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Pomoc graficzna</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  <span :class="ad.graphic_design_help ? 'value-yes' : 'value-no'">
-                    {{ ad.graphic_design_help ? 'Tak' : 'Nie' }}
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Status</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  {{ getStatusLabel(ad.display_status || ad.status) }}
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Rodzaj oferty</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  {{ ad.offer_type === 'owner' ? 'Właściciel' : 'Agencja' }}
-                </td>
-              </tr>
-              <tr>
-                <td class="feature-name">Faktura VAT</td>
-                <td v-for="ad in comparisonAds" :key="ad.id" class="feature-value">
-                  <span :class="ad.has_vat_invoice ? 'value-yes' : 'value-no'">
-                    {{ ad.has_vat_invoice ? 'Tak' : 'Nie' }}
+              <tr v-for="field in comparisonFields" :key="field.key">
+                <td class="feature-name">{{ field.label }}</td>
+                <td 
+                  v-for="ad in comparisonAds" 
+                  :key="ad.id" 
+                  class="feature-value"
+                  :class="{ 
+                    'highlight': field.key === 'price' || field.key === 'surface_area',
+                  }"
+                >
+                  <div v-if="field.key === 'price'" class="price-cell">
+                    <strong>
+                      {{ getFieldValue(field, ad) }} PLN {{ isPriceConverted(ad) ? priceUnitLabel : getPriceUnitLabelForAd(ad) }}
+                    </strong>
+                    <span v-if="isPriceConverted(ad)" class="estimated-label">(szacunkowo)</span>
+                  </div>
+                  <strong v-else-if="field.key === 'surface_area'">
+                    {{ getFieldValue(field, ad) }}
+                  </strong>
+                  <span 
+                    v-else
+                    :class="{ 
+                      'value-yes': isPositiveValue(field, getFieldValue(field, ad)),
+                      'value-no': !isPositiveValue(field, getFieldValue(field, ad)) && (field.key === 'has_backlight' || field.key === 'price_includes_print' || field.key === 'price_includes_mounting' || field.key === 'graphic_design_help' || field.key === 'has_vat_invoice')
+                    }"
+                  >
+                    {{ getFieldValue(field, ad) }}
                   </span>
                 </td>
               </tr>
@@ -713,6 +945,21 @@ onMounted(() => {
 
 .value-no {
   color: #6b7280;
+}
+
+.estimated-label {
+  display: block;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 400;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+.price-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 @media (max-width: 768px) {

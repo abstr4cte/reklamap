@@ -576,7 +576,7 @@ const toggleFavorite = () => {
   window.dispatchEvent(new CustomEvent('localStorageChange'))
 }
 
-const toggleComparison = () => {
+const toggleComparison = async () => {
   if (!ad.value) return
   const comparison = JSON.parse(localStorage.getItem('comparison') || '[]')
   const index = comparison.indexOf(ad.value.id)
@@ -588,6 +588,22 @@ const toggleComparison = () => {
       toast.value?.add('Możesz porównać maksymalnie 5 ogłoszeń', 'error')
       return
     }
+    
+    // Check if there are already ads in comparison with different type
+    if (comparison.length > 0) {
+      try {
+        const existingAds = await api.getAdvertisementsByIds(comparison)
+        const existingType = existingAds[0]?.type
+        
+        if (existingType && existingType !== ad.value.type) {
+          toast.value?.add('Możesz porównywać tylko ogłoszenia tego samego typu', 'error')
+          return
+        }
+      } catch (error) {
+        console.error('Error checking existing ads:', error)
+      }
+    }
+    
     comparison.push(ad.value.id)
   }
 

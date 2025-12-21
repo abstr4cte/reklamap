@@ -139,6 +139,17 @@ const handleToggleComparison = async (id: string) => {
     try {
       const ad = await api.getAdvertisement(id)
       if (ad && ad.is_active) {
+        // Check if there are already ads in comparison with different type
+        if (comparison.length > 0) {
+          const existingAds = await api.getAdvertisementsByIds(comparison)
+          const existingType = existingAds[0]?.type
+          
+          if (existingType && existingType !== ad.type) {
+            toast.value?.add('Możesz porównywać tylko ogłoszenia tego samego typu', 'error')
+            return
+          }
+        }
+        
         comparison.push(id)
         activeComparisonIds.value.push(id)
       }

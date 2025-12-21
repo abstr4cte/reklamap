@@ -53,7 +53,18 @@ const removeFavorite = (id: string) => {
   favoriteAds.value = favoriteAds.value.filter(ad => ad.id !== id)
 }
 
-
+// Funkcja zwracająca etykietę jednostki ceny
+const getPriceUnitLabel = (ad: Advertisement): string => {
+  const unit = ad.price_unit || 'month'
+  switch (unit) {
+    case 'day': return '/ dzień'
+    case 'week': return '/ tydzień'
+    case 'month': return '/ miesiąc'
+    case 'year': return '/ rok'
+    case 'campaign': return '/ kampania'
+    default: return '/ miesiąc'
+  }
+}
 
 const handleStorageChange = () => {
   if (props.isOpen) {
@@ -151,7 +162,7 @@ onUnmounted(() => {
                 </svg>
                 {{ ad.city }}
               </div>
-              <div class="favorite-price">{{ ad.price.toLocaleString('pl-PL') }} PLN</div>
+              <div class="favorite-price">{{ Math.round(ad.price).toLocaleString('pl-PL') }} PLN {{ getPriceUnitLabel(ad) }}</div>
             </div>
 
             <button

@@ -62,6 +62,10 @@ const showMapModal = ref(false)
 const modalMapContainer = ref<HTMLElement | null>(null)
 let modalMap: L.Map | null = null
 let modalMarker: L.Marker | null = null
+const modalSearchQuery = ref('')
+const modalSearchSuggestions = ref<any[]>([])
+const showModalSearchSuggestions = ref(false)
+let modalSearchTimeout: ReturnType<typeof setTimeout> | null = null
 
 const minDate = new Date()
 minDate.setHours(0, 0, 0, 0)
@@ -115,7 +119,12 @@ const selectAddress = (suggestion: any) => {
   
   const address = suggestion.address
   editingAd.value.location = suggestion.display_name
-  editingAd.value.city = address.city || address.town || address.village || ''
+  let city = address.city || address.town || address.village || address.municipality || ''
+  // Usuń prefix "gmina" jeśli pochodzi z municipality
+  if (!address.city && !address.town && !address.village && address.municipality) {
+    city = city.replace(/^gmina\s+/i, '')
+  }
+  editingAd.value.city = city
   editingAd.value.region = address.state || ''
   
   showAddressSuggestions.value = false
@@ -602,6 +611,9 @@ const openMapModal = () => {
 
 const closeMapModal = () => {
   showMapModal.value = false
+  modalSearchQuery.value = ''
+  modalSearchSuggestions.value = []
+  showModalSearchSuggestions.value = false
   if (modalMap) {
     modalMap.remove()
     modalMap = null
@@ -622,7 +634,8 @@ const initModalMap = () => {
     maxBounds: polandBounds,
     maxBoundsViscosity: 1.0,
     minZoom: 6,
-    maxZoom: 18
+    maxZoom: 18,
+    zoomControl: true
   }).setView([editingAd.value.latitude || 52.0, editingAd.value.longitude || 19.0], zoomLevel)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -665,7 +678,12 @@ const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
 
       if (editingAd.value) {
         const address = data.address
-        editingAd.value.city = address.city || address.town || address.village || ''
+        let city = address.city || address.town || address.village || address.municipality || ''
+        // Usuń prefix "gmina" jeśli pochodzi z municipality
+        if (!address.city && !address.town && !address.village && address.municipality) {
+          city = city.replace(/^gmina\s+/i, '')
+        }
+        editingAd.value.city = city
         editingAd.value.region = address.state || ''
         editingAd.value.location = data.display_name || ''
       }
@@ -676,6 +694,54 @@ const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
     console.error('Error reverse geocoding:', error)
     return false
   }
+}
+
+const searchModalLocation = async () => {
+  if (!modalSearchQuery.value || modalSearchQuery.value.length < 3) {
+    modalSearchSuggestions.value = []
+    showModalSearchSuggestions.value = false
+    return
+  }
+
+  if (modalSearchTimeout) {
+    clearTimeout(modalSearchTimeout)
+  }
+
+  modalSearchTimeout = setTimeout(async () => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(modalSearchQuery.value)},Poland&addressdetails=1&limit=5`
+      )
+      const data = await response.json()
+      modalSearchSuggestions.value = data.filter((item: any) => {
+        const lat = parseFloat(item.lat)
+        const lng = parseFloat(item.lon)
+        return isInPoland(lat, lng)
+      })
+      showModalSearchSuggestions.value = modalSearchSuggestions.value.length > 0
+    } catch (error) {
+      console.error('Error searching location:', error)
+    }
+  }, 300)
+}
+
+const selectModalLocation = (suggestion: any) => {
+  const lat = parseFloat(suggestion.lat)
+  const lng = parseFloat(suggestion.lon)
+
+  if (!isInPoland(lat, lng)) {
+    toast.value?.add('Lokalizacja musi być w Polsce', 'error')
+    return
+  }
+
+  if (modalMap && modalMarker) {
+    modalMap.setView([lat, lng], 16)
+    modalMarker.setLatLng([lat, lng])
+  }
+
+  modalSearchQuery.value = ''
+  modalSearchSuggestions.value = []
+  showModalSearchSuggestions.value = false
 }
 
 const confirmModalLocation = async () => {
@@ -1657,9 +1723,34 @@ onBeforeUnmount(() => {
           </svg>
         </button>
       </div>
+      <div class="modal-search">
+        <div class="modal-search-wrapper">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input
+            v-model="modalSearchQuery"
+            @input="searchModalLocation"
+            type="text"
+            placeholder="Wyszukaj miasto, ulicę..."
+            class="modal-search-input"
+          />
+          <div v-if="showModalSearchSuggestions && modalSearchSuggestions.length > 0" class="modal-suggestions">
+            <div
+              v-for="(suggestion, index) in modalSearchSuggestions"
+              :key="index"
+              @click="selectModalLocation(suggestion)"
+              class="modal-suggestion-item"
+            >
+              {{ suggestion.display_name }}
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="modal-body">
         <div ref="modalMapContainer" class="modal-map"></div>
-        <p class="modal-hint">Kliknij na mapie lub przeciągnij marker, aby ustawić lokalizację</p>
+        <p class="modal-hint">Wyszukaj lokalizację powyżej lub kliknij na mapie / przeciągnij marker</p>
       </div>
       <div class="modal-footer">
         <button type="button" @click="closeMapModal" class="btn-cancel-modal">Anuluj</button>
@@ -2976,6 +3067,72 @@ onBeforeUnmount(() => {
   transform: rotate(90deg);
 }
 
+.modal-search {
+  padding: 1.5rem 2rem;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-search-wrapper {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.modal-search-input {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.modal-search-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.modal-suggestions {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.modal-suggestion-item {
+  padding: 0.875rem 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 0.9rem;
+  color: #374151;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.modal-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.modal-suggestion-item:hover {
+  background: #f9fafb;
+  color: #667eea;
+}
+
 .modal-body {
   padding: 0 !important;
   flex: 1;
@@ -2989,8 +3146,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
 }
 
-:deep(.leaflet-control-attribution),
-:deep(.leaflet-control) {
+:deep(.leaflet-control-attribution) {
   display: none !important;
 }
 
