@@ -79,15 +79,17 @@ class AdvertisementController extends Controller
             'rental_period' => 'nullable|string',
         ]);
 
-        $validated['id'] = (string) Str::uuid();
-        $validated['slug'] = Str::slug($validated['title']) . '-' . $validated['id'];
-
+        
         // Set defaults if not present (though migration has defaults, explicit is good)
         $validated['status'] = $request->input('status', 'active');
         $validated['is_active'] = $request->input('is_active', true);
         $validated['views'] = 0;
 
         $ad = Advertisement::create($validated);
+
+        // Generate slug after the ad is created and has an ID
+        $ad->slug = Str::slug($ad->title) . '-' . $ad->id;
+        $ad->save();
 
         try {
             Mail::to($ad->owner_email)->send(new AdCreatedConfirmationMail($ad));
