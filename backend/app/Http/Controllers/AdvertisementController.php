@@ -80,6 +80,7 @@ class AdvertisementController extends Controller
         ]);
 
         $validated['id'] = (string) Str::uuid();
+        $validated['slug'] = Str::slug($validated['title']) . '-' . $validated['id'];
 
         // Set defaults if not present (though migration has defaults, explicit is good)
         $validated['status'] = $request->input('status', 'active');

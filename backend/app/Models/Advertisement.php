@@ -63,6 +63,7 @@ class Advertisement extends Model
         'operating_hours',
         'route_area',
         'campaign_duration',
+        'slug',
     ];
 
     /**
