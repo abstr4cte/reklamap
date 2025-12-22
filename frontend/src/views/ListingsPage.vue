@@ -1748,7 +1748,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div>
-    <div class="advertisements-page">
+    <div class="listings-page">
     <!-- SEO Breadcrumbs -->
     <Breadcrumbs :items="breadcrumbs" />
     
@@ -2485,7 +2485,7 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <!-- Category/City Description for SEO - poza advertisements-page -->
+    <!-- Category/City Description for SEO - poza listings-page -->
     <div class="description-wrapper">
       <CategoryDescription 
         v-if="currentDescription" 
@@ -2496,7 +2496,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.advertisements-page {
+.listings-page {
   height: 100vh;
   background: #f9fafb;
   display: flex;
