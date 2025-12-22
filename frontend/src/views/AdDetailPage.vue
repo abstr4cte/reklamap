@@ -1067,7 +1067,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="ad-detail-page">
+  <div class="listing-detail-page">
     <div v-if="isLoading" class="loading-container">
       <div class="spinner"></div>
       <p>Ładowanie ogłoszenia...</p>
@@ -1147,7 +1147,7 @@ onUnmounted(() => {
           </div>
 
           <div class="specs-section">
-            <h1 class="ad-title">{{ ad.title }}</h1>
+            <h1 class="listing-title">{{ ad.title }}</h1>
             <div class="price-section">
               <div class="price-main">
                 {{ ad.price }} PLN
@@ -1777,7 +1777,7 @@ onUnmounted(() => {
 }
 
 /* ... existing styles ... */
-.ad-detail-page {
+.listing-detail-page {
   min-height: calc(100vh - 200px);
   background: #f9fafb;
   padding: 2rem 0;
@@ -1956,7 +1956,7 @@ onUnmounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.ad-title {
+.listing-title {
   font-size: 2rem;
   color: #1f2937;
   margin: 0 0 1.5rem 0;
@@ -2405,7 +2405,7 @@ onUnmounted(() => {
     height: 300px;
   }
 
-  .ad-title {
+  .listing-title {
     font-size: 1.5rem;
   }
 
@@ -2721,7 +2721,7 @@ onUnmounted(() => {
     display: none !important;
   }
 
-  .ad-detail-page {
+  .listing-detail-page {
     padding: 0;
     background: white;
   }

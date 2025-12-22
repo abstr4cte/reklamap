@@ -152,7 +152,7 @@ onUnmounted(() => {
             class="comparison-item"
           >
             <div class="comparison-image">
-              <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="ad-image-link">
+              <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="listing-image-link">
                 <WebPImage
                   v-if="ad.image_url"
                   :src="ad.image_url"

@@ -163,7 +163,7 @@ const closeCategoriesDropdown = () => {
             </svg>
             <span class="badge-count" v-if="comparisonCount > 0">{{ comparisonCount }}</span>
           </button>
-          <button @click="handleAddAdClick" class="add-ad-btn">
+          <button @click="handleAddAdClick" class="add-listing-btn">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
@@ -498,7 +498,7 @@ const closeCategoriesDropdown = () => {
 
 .favorites-btn,
 .comparison-btn,
-.add-ad-btn,
+.add-listing-btn,
 .manage-btn {
   background: white;
   color: #4F46E5;
@@ -538,14 +538,14 @@ const closeCategoriesDropdown = () => {
   border: 2px solid white;
 }
 
-.add-ad-btn {
+.add-listing-btn {
   background: #10B981;
   color: white;
 }
 
 .favorites-btn:hover,
 .comparison-btn:hover,
-.add-ad-btn:hover,
+.add-listing-btn:hover,
 .manage-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -561,7 +561,7 @@ const closeCategoriesDropdown = () => {
   color: #667eea;
 }
 
-.add-ad-btn:hover {
+.add-listing-btn:hover {
   background: #059669;
 }
 
@@ -569,7 +569,7 @@ const closeCategoriesDropdown = () => {
   background: #f8f8ff;
 }
 
-.add-ad-btn:active,
+.add-listing-btn:active,
 .manage-btn:active {
   transform: translateY(0);
 }

@@ -1103,7 +1103,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="add-ad-page">
+  <div class="add-listing-page">
     <!-- Toast Notification -->
     <ToastNotification ref="toast" />
     
@@ -1847,7 +1847,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.add-ad-page {
+.add-listing-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 2rem 0 3rem;
@@ -2572,7 +2572,7 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
-  .add-ad-page {
+  .add-listing-page {
     padding: 1rem 0 2rem;
   }
 

@@ -537,14 +537,14 @@ onMounted(() => {
             <thead>
               <tr>
                 <th class="feature-column"></th>
-                <th v-for="ad in comparisonAds" :key="ad.id" class="ad-column">
-                  <div class="ad-header">
-                    <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="ad-image-link">
+                <th v-for="ad in comparisonAds" :key="ad.id" class="listing-column">
+                  <div class="listing-header">
+                    <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="listing-image-link">
                       <WebPImage
                         v-if="ad.image_url"
                         :src="ad.image_url"
                         :alt="ad.title"
-                        class="ad-image"
+                        class="listing-image"
                       />
                       <div v-else class="no-image">
                         <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
@@ -554,7 +554,7 @@ onMounted(() => {
                         </svg>
                       </div>
                     </router-link>
-                    <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="ad-title">
+                    <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="listing-title">
                       {{ ad.title }}
                     </router-link>
                     <button @click="removeFromComparison(ad.id)" class="remove-btn" title="Usuń z porównania">
@@ -823,18 +823,18 @@ onMounted(() => {
   z-index: 10;
 }
 
-.ad-column {
+.listing-column {
   width: auto;
 }
 
-.ad-header {
+.listing-header {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   position: relative;
 }
 
-.ad-image-link {
+.listing-image-link {
   width: 100%;
   height: 160px;
   border-radius: 8px;
@@ -842,14 +842,14 @@ onMounted(() => {
   display: block;
 }
 
-.ad-image {
+.listing-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s;
 }
 
-.ad-image-link:hover .ad-image {
+.listing-image-link:hover .listing-image {
   transform: scale(1.05);
 }
 
@@ -863,7 +863,7 @@ onMounted(() => {
   color: rgba(255, 255, 255, 0.6);
 }
 
-.ad-title {
+.listing-title {
   font-size: 1.05rem;
   font-weight: 600;
   color: white;
@@ -877,7 +877,7 @@ onMounted(() => {
   overflow: hidden;
 }
 
-.ad-title:hover {
+.listing-title:hover {
   text-decoration: underline;
 }
 
@@ -984,11 +984,11 @@ onMounted(() => {
     border-radius: 8px;
   }
 
-  .ad-column {
+  .listing-column {
     min-width: 240px;
   }
 
-  .ad-image-link {
+  .listing-image-link {
     height: 120px;
   }
 }

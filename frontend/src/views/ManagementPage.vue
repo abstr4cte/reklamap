@@ -1085,7 +1085,7 @@ onBeforeUnmount(() => {
             </button>
           </div>
 
-          <div v-else class="ads-list">
+          <div v-else class="listings-list">
             <div class="stats-bar">
               <div class="stat">
                 <span class="stat-label">Wszystkie ogłoszenia</span>
@@ -1101,9 +1101,9 @@ onBeforeUnmount(() => {
               </div>
             </div>
 
-            <div v-for="ad in listings" :key="ad.id" :id="'ad-row-' + ad.id" class="ad-row" :class="{ expanded: expandedRows.has(ad.id) }">
-              <div class="ad-summary" @click="toggleRow(ad.id)">
-                <div class="ad-thumbnail">
+            <div v-for="ad in listings" :key="ad.id" :id="'listing-row-' + ad.id" class="listing-row" :class="{ expanded: expandedRows.has(ad.id) }">
+              <div class="listing-summary" @click="toggleRow(ad.id)">
+                <div class="listing-thumbnail">
                   <WebPImage v-if="ad.image_url" :src="ad.image_url" :alt="ad.title" />
                   <div v-else class="no-image">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
@@ -1114,9 +1114,9 @@ onBeforeUnmount(() => {
                   </div>
                 </div>
 
-                <div class="ad-info">
-                  <h3 class="ad-title">{{ ad.title }}</h3>
-                  <p class="ad-meta">
+                <div class="listing-info">
+                  <h3 class="listing-title">{{ ad.title }}</h3>
+                  <p class="listing-meta">
                     {{ ad.city }} • {{ getTypeLabel(ad.type) }}
                     <template v-if="ad.width && ad.height && ad.width > 0 && ad.height > 0">
                       • {{ ad.width }}m × {{ ad.height }}m
@@ -1124,7 +1124,7 @@ onBeforeUnmount(() => {
                   </p>
                 </div>
 
-                <div class="ad-controls" @click.stop>
+                <div class="listing-controls" @click.stop>
                   <div class="status-dropdown">
                     <select 
                       :value="pendingStatusChanges[ad.id] || ad.status" 
@@ -1185,7 +1185,7 @@ onBeforeUnmount(() => {
                 </div>
               </div>
 
-              <div v-if="expandedRows.has(ad.id) && editingAd" class="ad-details">
+              <div v-if="expandedRows.has(ad.id) && editingAd" class="listing-details">
                 <form @submit.prevent="saveChanges(ad.id)" class="edit-form">
                   <div class="form-grid">
                   <div class="form-group full-width">
@@ -1932,13 +1932,13 @@ onBeforeUnmount(() => {
   color: #667eea;
 }
 
-.ads-list {
+.listings-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.ad-row {
+.listing-row {
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -1946,11 +1946,11 @@ onBeforeUnmount(() => {
   transition: all 0.3s;
 }
 
-.ad-row:hover {
+.listing-row:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.ad-summary {
+.listing-summary {
   display: flex;
   align-items: center;
   gap: 1.5rem;
@@ -1959,11 +1959,11 @@ onBeforeUnmount(() => {
   transition: background 0.2s;
 }
 
-.ad-summary:hover {
+.listing-summary:hover {
   background: #f9fafb;
 }
 
-.ad-thumbnail {
+.listing-thumbnail {
   width: 100px;
   height: 70px;
   border-radius: 8px;
@@ -1972,7 +1972,7 @@ onBeforeUnmount(() => {
   background: #f3f4f6;
 }
 
-.ad-thumbnail img {
+.listing-thumbnail img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1987,12 +1987,12 @@ onBeforeUnmount(() => {
   color: #9ca3af;
 }
 
-.ad-info {
+.listing-info {
   flex: 1;
   min-width: 0;
 }
 
-.ad-title {
+.listing-title {
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
   font-weight: 700;
@@ -2002,13 +2002,13 @@ onBeforeUnmount(() => {
   white-space: nowrap;
 }
 
-.ad-meta {
+.listing-meta {
   margin: 0;
   color: #6b7280;
   font-size: 0.9rem;
 }
 
-.ad-controls {
+.listing-controls {
   display: flex;
   align-items: center;
   gap: 1.5rem;
@@ -2279,11 +2279,11 @@ onBeforeUnmount(() => {
   transition: transform 0.3s;
 }
 
-.ad-row.expanded .expand-icon {
+.listing-row.expanded .expand-icon {
   transform: rotate(180deg);
 }
 
-.ad-details {
+.listing-details {
   border-top: 2px solid #f3f4f6;
   padding: 2rem;
   background: #f9fafb;
@@ -2508,7 +2508,7 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 1200px) {
-  .ad-controls {
+  .listing-controls {
     flex-wrap: wrap;
   }
 }
@@ -2523,11 +2523,11 @@ onBeforeUnmount(() => {
     font-size: 1.5rem;
   }
 
-  .ad-summary {
+  .listing-summary {
     flex-wrap: wrap;
   }
 
-  .ad-controls {
+  .listing-controls {
     width: 100%;
     justify-content: space-between;
   }
