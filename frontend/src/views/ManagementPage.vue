@@ -171,7 +171,7 @@ const loadAdvertisements = async () => {
       try {
         const response = await axios.get(`/api/management/validate/${token}`)
         if (response.data.valid) {
-          listings.value = response.data.ads || []
+          listings.value = response.data.listings || []
           tokenEmail.value = response.data.email
           tokenExpiresAt.value = new Date(response.data.expires_at).toLocaleString()
           hasToken.value = true
@@ -341,7 +341,7 @@ const saveChanges = async (id: string) => {
 
     toggleRow(id)
     nextTick(() => {
-      const row = document.getElementById(`ad-row-${id}`)
+      const row = document.getElementById(`listing-row-${id}`)
       if (row) {
         row.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
       }

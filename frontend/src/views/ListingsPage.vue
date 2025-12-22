@@ -53,7 +53,7 @@ const getPriceUnitLabel = (ad: Advertisement): string => {
   }
 }
 
-const advertisements = ref<Advertisement[]>([])
+const listings = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const hoveredAdId = ref<string | null>(null)
 const selectedAdId = ref<string | null>(null)
@@ -236,7 +236,7 @@ const currentDescription = computed(() => {
 })
 
 // SEO Meta Tags
-watch([() => route.params.type, () => route.params.city, advertisements], () => {
+watch([() => route.params.type, () => route.params.city, listings], () => {
   const type = route.params.type as string | undefined
   const city = route.params.city as string | undefined
   
@@ -248,17 +248,17 @@ watch([() => route.params.type, () => route.params.city, advertisements], () => 
     const typeLabel = getTypeLabel(type)
     const cityName = deslugify(city)
     title = `${typeLabel} ${cityName} - Wynajem Powierzchni Reklamowych | ReklaMap`
-    description = `Znajdź i wynajmij ${typeLabel.toLowerCase()} w ${cityName}. Porównuj oferty, ceny i lokalizacje na mapie. ${advertisements.value.length} ofert dostępnych.`
+    description = `Znajdź i wynajmij ${typeLabel.toLowerCase()} w ${cityName}. Porównuj oferty, ceny i lokalizacje na mapie. ${listings.value.length} ofert dostępnych.`
     keywords = `${typeLabel} ${cityName}, powierzchnie reklamowe ${cityName}, wynajem ${typeLabel.toLowerCase()} ${cityName}`
   } else if (type) {
     const typeLabel = getTypeLabel(type)
     title = `${typeLabel} - Wynajem w Całej Polsce | ReklaMap`
-    description = `Przeglądaj oferty ${typeLabel.toLowerCase()} w całej Polsce. ${advertisements.value.length} ofert dostępnych. Porównuj ceny i lokalizacje.`
+    description = `Przeglądaj oferty ${typeLabel.toLowerCase()} w całej Polsce. ${listings.value.length} ofert dostępnych. Porównuj ceny i lokalizacje.`
     keywords = `${typeLabel}, wynajem ${typeLabel.toLowerCase()}, powierzchnie reklamowe`
   } else if (city) {
     const cityName = deslugify(city)
     title = `Powierzchnie Reklamowe ${cityName} - Billboardy, Citylighty | ReklaMap`
-    description = `Wszystkie powierzchnie reklamowe w ${cityName}. ${advertisements.value.length} ofert. Porównuj ceny billboardy, citylighty, banery.`
+    description = `Wszystkie powierzchnie reklamowe w ${cityName}. ${listings.value.length} ofert. Porównuj ceny billboardy, citylighty, banery.`
     keywords = `powierzchnie reklamowe ${cityName}, billboardy ${cityName}, reklama ${cityName}`
   }
   
@@ -791,8 +791,8 @@ const getAvailablePriceUnits = (type: string) => {
   ]
 }
 
-const filteredAdvertisements = computed(() => {
-  let filtered = advertisements.value
+const filteredListings = computed(() => {
+  let filtered = listings.value
   
   // Search query
   if (searchQuery.value) {
@@ -1072,14 +1072,14 @@ const filteredAdvertisements = computed(() => {
 })
 
 const totalPages = computed(() => {
-  return Math.ceil(filteredAdvertisements.value.length / itemsPerPage)
+  return Math.ceil(filteredListings.value.length / itemsPerPage)
 })
 
 // Pobierz ogłoszenia dla aktualnej strony
 const getCurrentPageAds = () => {
   const start = (currentPage.value - 1) * itemsPerPage
   const end = start + itemsPerPage
-  return filteredAdvertisements.value.slice(start, end)
+  return filteredListings.value.slice(start, end)
 }
 
 // Obsługa zmiany strony
@@ -1386,7 +1386,7 @@ const updateMarkers = () => {
   markers.forEach(marker => marker.remove())
   markers.clear()
 
-  filteredAdvertisements.value.forEach((ad) => {
+  filteredListings.value.forEach((ad) => {
     const marker = L.marker([ad.latitude, ad.longitude], {
       icon: createCustomIcon(ad.type, hoveredAdId.value === ad.id, selectedAdId.value === ad.id)
     })
@@ -1455,7 +1455,7 @@ const handleAdHover = (adId: string | null) => {
   hoveredAdId.value = adId
   
   if (adId && markers.has(adId)) {
-    const ad = advertisements.value.find(a => a.id === adId)
+    const ad = listings.value.find(a => a.id === adId)
     if (ad) {
       const marker = markers.get(adId)!
       marker.setIcon(createCustomIcon(ad.type, true, selectedAdId.value === adId))
@@ -1465,7 +1465,7 @@ const handleAdHover = (adId: string | null) => {
   // Reset other markers
   markers.forEach((marker, id) => {
     if (id !== adId) {
-      const ad = advertisements.value.find(a => a.id === id)
+      const ad = listings.value.find(a => a.id === id)
       if (ad) {
         marker.setIcon(createCustomIcon(ad.type, false, selectedAdId.value === id))
       }
@@ -1516,12 +1516,12 @@ const scrollToAd = (adId: string) => {
   }
 }
 
-const loadAdvertisements = async () => {
+const loadListings = async () => {
   try {
     isLoading.value = true
     const data = await api.getAdvertisements()
     // Backend returns only active advertisements
-    advertisements.value = data
+    listings.value = data
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     
     setTimeout(() => updateMarkers(), 100)
@@ -1663,12 +1663,12 @@ watch(() => route.query, (newQuery, oldQuery) => {
 
 // Usunięto watch - filtry aktualizują się tylko po kliknięciu "Zastosuj"
 
-watch(() => filteredAdvertisements.value, () => {
+watch(() => filteredListings.value, () => {
   updateMarkers()
 })
 
 onMounted(() => {
-  loadAdvertisements()
+  loadListings()
   setTimeout(() => initMap(), 100)
   document.addEventListener('click', handleClickOutside)
   
@@ -1835,7 +1835,7 @@ onBeforeUnmount(() => {
       </select>
 
       <div class="results-count">
-        {{ filteredAdvertisements.length }} ogłoszeń
+        {{ filteredListings.length }} ogłoszeń
       </div>
     </div>
 
@@ -1847,7 +1847,7 @@ onBeforeUnmount(() => {
           <p>Ładowanie ogłoszeń...</p>
         </div>
 
-        <div v-else-if="filteredAdvertisements.length === 0" class="empty-state">
+        <div v-else-if="filteredListings.length === 0" class="empty-state">
           <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
             <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
             <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
@@ -1953,10 +1953,10 @@ onBeforeUnmount(() => {
         
         <!-- Pagination (na samym dole) -->
         <Pagination
-          v-if="filteredAdvertisements.length > 0"
+          v-if="filteredListings.length > 0"
           :current-page="currentPage"
           :total-pages="totalPages"
-          :total-items="filteredAdvertisements.length"
+          :total-items="filteredListings.length"
           :items-per-page="itemsPerPage"
           :show-info="true"
           :scroll-to-top="true"
