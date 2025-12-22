@@ -23,6 +23,8 @@ import { nsfwService } from '../services/nsfwService'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { slugify } from '../utils/slugify'
+import axios from 'axios'
+import { Filter } from 'bad-words'
 
 const router = useRouter()
 
@@ -88,6 +90,9 @@ const formatDate = (date: Date | null): string => {
 
 const errors = ref<Record<string, string>>({})
 const isSubmitting = ref(false)
+const profanityFilter = new Filter();
+const polishBadWords = ['kurwa', 'chuj', 'pizda', 'jebac', 'pierdolic', 'spierdalaj', 'cipa', 'dupa', 'skurwysyn', 'cholera', 'gowno'];
+profanityFilter.addWords(...polishBadWords);
 const addressSuggestions = ref<any[]>([])
 const showAddressSuggestions = ref(false)
 const mapContainer = ref<HTMLElement | null>(null)
@@ -264,8 +269,7 @@ const variantOptions = computed(() => {
       ]
     case 'led_screen':
       return [
-        { value: 'outdoor', label: 'Zewnętrzny' },
-        { value: 'indoor', label: 'Wewnętrzny' },
+        { value: 'standard', label: 'Standardowy' },
         { value: 'interactive', label: 'Interaktywny' }
       ]
     case 'banner':
@@ -936,6 +940,27 @@ const nextStep = () => {
   }
 }
 
+const validateField = (field: 'title' | 'description') => {
+  console.log(`Validating field: ${field}`);
+  const value = formData.value[field];
+  if (!value) return; // Don't validate empty fields on blur
+
+  // Check for links
+  if (/(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i.test(value)) {
+    errors.value[field] = `Pole ${field === 'title' ? 'Tytuł' : 'Opis'} nie może zawierać linków.`;
+    return;
+  }
+
+  // Check for profanity
+  if (profanityFilter.isProfane(value)) {
+    errors.value[field] = `Pole ${field === 'title' ? 'Tytuł' : 'Opis'} zawiera niedozwolone słowa.`;
+    return;
+  }
+
+  // Clear error if validation passes
+  delete errors.value[field];
+}
+
 const prevStep = () => {
   if (currentStep.value > 1) {
     currentStep.value--
@@ -1056,10 +1081,55 @@ const handleSubmit = async () => {
     } else {
       router.push('/')
     }
-  } catch (error) {
-    console.error('Error creating advertisement:', error)
-    errors.value.submit = 'Wystąpił błąd podczas dodawania ogłoszenia'
-    toast.value?.add('Wystąpił błąd podczas dodawania ogłoszenia', 'error')
+  } catch (error: any) {
+    console.error('Error submitting form:', error);
+    console.log('Full error object:', JSON.stringify(error, null, 2));
+    if (error.response) {
+      console.log('Server response data:', JSON.stringify(error.response, null, 2));
+    }
+
+    if (error.response && error.response.data && error.response.data.errors) {
+      const fieldTranslations: Record<string, string> = {
+        title: 'Tytuł',
+        description: 'Opis',
+        email: 'E-mail',
+        type: 'Rodzaj powierzchni',
+        price: 'Cena',
+        location: 'Lokalizacja',
+        city: 'Miasto',
+        region: 'Region',
+        owner_email: 'E-mail właściciela',
+        variant: 'Wariant',
+        road_class: 'Klasa drogi',
+        traffic_intensity: 'Natężenie ruchu',
+        status: 'Status',
+        available_from: 'Data dostępności',
+        offer_type: 'Typ oferty',
+        contact_preference: 'Preferowany kontakt',
+        phone: 'Telefon',
+        width: 'Szerokość',
+        height: 'Wysokość',
+        spot_duration: 'Czas trwania spotu',
+        loop_duration: 'Pętla emisji',
+        campaign_duration: 'Czas trwania kampanii',
+      };
+
+      const serverErrors = error.response.data.errors;
+      const newErrors: Record<string, string> = {};
+      let toastMessage = 'Formularz zawiera błędy:';
+
+      for (const key in serverErrors) {
+        const translatedField = fieldTranslations[key] || key;
+        const message = serverErrors[key][0].replace(key, translatedField);
+        newErrors[key] = message;
+        toastMessage += `\n- ${message}`;
+      }
+
+      errors.value = newErrors;
+      toast.value?.add(toastMessage, 'error', 8000);
+    } else {
+      toast.value?.add(error.message || 'Wystąpił nieoczekiwany błąd. Spróbuj ponownie.', 'error');
+    }
   } finally {
     isSubmitting.value = false
   }
@@ -1189,7 +1259,9 @@ onMounted(() => {
           <div class="form-group">
             <label class="form-label">Opis <span class="required">*</span></label>
             <textarea
+              id="description"
               v-model="formData.description"
+              @blur="validateField('description')"
               rows="5"
               class="form-textarea"
               :class="{ 'error': errors.description }"
@@ -1400,7 +1472,7 @@ onMounted(() => {
                 title="Wyczyść lokalizację"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </button>
               <div v-if="showAddressSuggestions && addressSuggestions.length > 0" class="address-suggestions">

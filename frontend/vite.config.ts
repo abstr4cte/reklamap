@@ -7,11 +7,11 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://api.reklamap.pl',
+        target: 'http://localhost:8000',
         changeOrigin: true,
       },
       '/storage': {
-        target: 'https://api.reklamap.pl',
+        target: 'http://localhost:8000',
         changeOrigin: true,
       }
     }

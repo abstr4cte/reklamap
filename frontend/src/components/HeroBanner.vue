@@ -397,7 +397,10 @@ const variantOptions = computed(() => {
         { value: 'double', label: 'Podwójny' }
       ]
     case 'led_screen':
-      return []
+      return [
+        { value: 'standard', label: 'Standardowy' },
+        { value: 'interactive', label: 'Interaktywny' }
+      ]
     case 'banner':
       return [
         { value: 'pvc', label: 'PCV' },

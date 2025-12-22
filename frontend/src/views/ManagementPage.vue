@@ -215,28 +215,27 @@ const uploadImage = async (file: File): Promise<string> => {
 
 const updateStatus = async (id: string, newStatus: string, availableFrom?: Date | null) => {
   try {
-    const updateData: any = { status: newStatus }
-    if (newStatus === 'soon_available' && availableFrom) {
-      const date = new Date(availableFrom)
-      date.setHours(0, 0, 0, 0)
-      updateData.available_from = date.toISOString().split('T')[0]
-    }
+    const availableFromISO = availableFrom ? new Date(availableFrom).toISOString().split('T')[0] : null;
     
-    await api.updateAdvertisement(id, updateData)
+    const updatedAd = await api.updateAdvertisementStatus(id, newStatus, availableFromISO);
 
-    const ad = listings.value.find(a => a.id === id)
-    if (ad) {
-      ad.status = newStatus
-      if (availableFrom) {
-        const date = new Date(availableFrom)
-        date.setHours(0, 0, 0, 0)
-        ad.available_from = date.toISOString().split('T')[0]
-      }
+    const adIndex = listings.value.findIndex(a => a.id === id);
+    if (adIndex !== -1) {
+      listings.value[adIndex] = { ...listings.value[adIndex], ...updatedAd };
     }
-    toast.value?.add('Status został zaktualizowany', 'success')
+    toast.value?.add('Status został zaktualizowany', 'success');
   } catch (error: any) {
-    console.error('Error updating status:', error)
-    toast.value?.add(`Błąd podczas aktualizacji statusu: ${error.message || error}`, 'error')
+    console.error('Error updating status:', error);
+    if (error.response && error.response.data && error.response.data.errors) {
+      const serverErrors = error.response.data.errors;
+      let toastMessage = 'Błąd walidacji:';
+      for (const key in serverErrors) {
+        toastMessage += `\n- ${serverErrors[key][0]}`;
+      }
+      toast.value?.add(toastMessage, 'error', 6000);
+    } else {
+      toast.value?.add(`Błąd podczas aktualizacji statusu: ${error.message || 'Nieznany błąd'}`, 'error');
+    }
   }
 }
 
@@ -911,8 +910,7 @@ const getVariantOptions = (type: string) => {
       ]
     case 'led_screen':
       return [
-        { value: 'outdoor', label: 'Zewnętrzny' },
-        { value: 'indoor', label: 'Wewnętrzny' },
+        { value: 'standard', label: 'Standardowy' },
         { value: 'interactive', label: 'Interaktywny' }
       ]
     case 'banner':

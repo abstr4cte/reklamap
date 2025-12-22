@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use App\Mail\ContactAdvertisementOwner;
 use App\Mail\AdCreatedConfirmationMail;
+use App\Rules\ProfanityRule;
 
 class AdvertisementController extends Controller
 {
@@ -33,13 +34,13 @@ class AdvertisementController extends Controller
         $requiresVariant = in_array($request->input('type'), $typesWithVariant);
 
         $validated = $request->validate([
-            'title' => 'required|string',
+            'title' => ['required', 'string', new ProfanityRule],
             'type' => 'required|string',
             'location' => 'required|string',
             'city' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'description' => 'required|string',
+            'description' => ['required', 'string', new ProfanityRule],
             'price' => 'required|numeric',
             'width' => 'nullable|numeric',
             'height' => 'nullable|numeric',
@@ -110,13 +111,77 @@ class AdvertisementController extends Controller
 
     public function update(Request $request, string $id)
     {
+        // Types that require variant field
+        $typesWithVariant = ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile'];
+        $requiresVariant = in_array($request->input('type'), $typesWithVariant);
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', new ProfanityRule],
+            'type' => 'required|string',
+            'location' => 'required|string',
+            'city' => 'required|string',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'description' => ['required', 'string', new ProfanityRule],
+            'price' => 'required|numeric',
+            'width' => 'nullable|numeric',
+            'height' => 'nullable|numeric',
+            'owner_email' => 'required|email',
+            'price_unit' => 'required|string',
+            'region' => 'nullable|string',
+            'orientation' => 'required|string',
+            'traffic_intensity' => 'nullable|string',
+            'offer_type' => 'required|string',
+            'phone' => 'nullable|string',
+            'contact_preference' => 'nullable|string',
+            'has_backlight' => 'nullable|boolean',
+            'has_image' => 'nullable|boolean',
+            'price_includes_print' => 'nullable|boolean',
+            'graphic_design_help' => 'nullable|boolean',
+            'has_vat_invoice' => 'nullable|boolean',
+            'price_negotiable' => 'nullable|boolean',
+            'price_includes_mounting' => 'nullable|boolean',
+            'available_from' => 'nullable|date',
+            'images' => 'nullable|array',
+            'images.*' => 'nullable|string',
+            'image_url' => 'nullable|string',
+            // Type-specific fields
+            'variant' => $requiresVariant ? 'required|string' : 'nullable|string',
+            'road_class' => 'nullable|string',
+            'traffic_direction' => 'nullable|array',
+            'traffic_type' => 'nullable|array',
+            'environment' => 'nullable|string',
+            'spot_duration' => 'nullable|integer',
+            'loop_duration' => 'nullable|integer',
+            'transport_scope' => 'nullable|string',
+            'vehicle_count' => 'nullable|integer',
+            'mobile_exposure_mode' => 'nullable|string',
+            'operating_hours' => 'nullable|string',
+            'route_area' => 'nullable|string',
+            'campaign_duration' => 'nullable|integer',
+            'rental_period' => 'nullable|string',
+        ]);
+
         $ad = Advertisement::findOrFail($id);
-        $ad->update($request->all());
+        $ad->update($validated);
         
         // Clear sitemap cache and notify Google
         $this->notifySearchEngines();
         
         return $ad;
+    }
+
+    public function updateStatus(Request $request, string $id)
+    {
+        $validated = $request->validate([
+            'status' => 'required|string|in:active,reserved,soon_available,inactive',
+            'available_from' => 'nullable|date|required_if:status,soon_available',
+        ]);
+
+        $advertisement = Advertisement::findOrFail($id);
+        $advertisement->update($validated);
+
+        return response()->json($advertisement);
     }
 
     public function destroy(string $id)

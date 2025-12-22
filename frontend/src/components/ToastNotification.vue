@@ -10,10 +10,10 @@ interface Toast {
 const toasts = ref<Toast[]>([])
 let nextId = 0
 
-const add = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+const add = (message: string, type: 'success' | 'error' | 'info' = 'info', duration: number = 5000) => {
   const id = nextId++
   toasts.value.push({ id, message, type })
-  setTimeout(() => remove(id), 5000)
+  setTimeout(() => remove(id), duration)
 }
 
 const remove = (id: number) => {
@@ -113,6 +113,7 @@ defineExpose({ add })
   color: #1F2937;
   font-weight: 600;
   line-height: 1.4;
+  white-space: pre-wrap; /* Allow line breaks */
 }
 
 .toast-close {

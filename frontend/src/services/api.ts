@@ -51,10 +51,32 @@ export const api = {
             body: JSON.stringify(ad),
         })
         if (!response.ok) {
-            const error = await response.json()
-            throw new Error(error.message || 'Failed to create advertisement')
+            const errorData = await response.json();
+            const error = new Error(errorData.message || 'Failed to create advertisement');
+            (error as any).response = { data: errorData }; // Attach server response data
+            throw error;
         }
         return response.json()
+    },
+
+    async updateAdvertisementStatus(id: string, status: string, available_from: string | null): Promise<Advertisement> {
+        const response = await fetch(`${API_URL}/listings/${id}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ status, available_from }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            const error = new Error(errorData.message || 'Failed to update status');
+            (error as any).response = { data: errorData };
+            throw error;
+        }
+
+        return response.json();
     },
 
     async updateAdvertisement(id: string, updates: Partial<Advertisement>): Promise<void> {

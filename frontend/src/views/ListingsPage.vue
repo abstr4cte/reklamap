@@ -624,8 +624,7 @@ const getVariantOptions = (type: string) => {
       ]
     case 'led_screen':
       return [
-        { value: 'outdoor', label: 'Zewnętrzny' },
-        { value: 'indoor', label: 'Wewnętrzny' },
+        { value: 'standard', label: 'Standardowy' },
         { value: 'interactive', label: 'Interaktywny' }
       ]
     case 'banner':

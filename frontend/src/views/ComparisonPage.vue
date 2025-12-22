@@ -382,8 +382,7 @@ const formatVariant = (variant: string | undefined, type: string) => {
       digital: 'Cyfrowy'
     },
     led_screen: {
-      outdoor: 'Zewnętrzny',
-      indoor: 'Wewnętrzny',
+      standard: 'Standardowy',
       interactive: 'Interaktywny'
     },
     banner: {

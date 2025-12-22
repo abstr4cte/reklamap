@@ -138,6 +138,9 @@ const statusLabel = computed(() => {
     case 'reserved':
       return 'Zarezerwowane'
     case 'soon_available':
+      if (ad.value?.available_from) {
+        return `Dostępne od: ${formatDate(ad.value.available_from)}`
+      }
       return 'Wkrótce dostępne'
     default:
       return 'Nieznany'
