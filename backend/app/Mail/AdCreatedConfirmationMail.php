@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Ad;
+use App\Models\Advertisement;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -14,12 +14,12 @@ class AdCreatedConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public Ad $ad;
+    public Advertisement $ad;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Ad $ad)
+    public function __construct(Advertisement $ad)
     {
         $this->ad = $ad;
     }
