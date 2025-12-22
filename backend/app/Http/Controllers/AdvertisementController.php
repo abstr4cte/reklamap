@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use App\Mail\ContactAdvertisementOwner;
+use App\Mail\AdCreatedConfirmationMail;
 
 class AdvertisementController extends Controller
 {
@@ -86,6 +87,12 @@ class AdvertisementController extends Controller
         $validated['views'] = 0;
 
         $ad = Advertisement::create($validated);
+
+        try {
+            Mail::to($ad->owner_email)->send(new AdCreatedConfirmationMail($ad));
+        } catch (\Exception $e) {
+            \Log::error('Error sending ad creation confirmation email: ' . $e->getMessage());
+        }
 
         // Clear sitemap cache and notify Google
         $this->notifySearchEngines();
