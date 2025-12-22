@@ -33,7 +33,7 @@ const isInComparison = (id: string) => {
 </script>
 
 <template>
-  <section class="ads-section">
+  <section class="listings-section">
     <div class="container">
       <div class="section-header">
         <div class="header-left">
@@ -125,7 +125,7 @@ const isInComparison = (id: string) => {
         <p>Spróbuj zmienić kryteria wyszukiwania</p>
       </div>
 
-      <div v-else :class="viewMode === 'grid' ? 'ads-grid' : 'ads-list'">
+      <div v-else :class="viewMode === 'grid' ? 'listings-grid' : 'listings-list'">
         <AdCard
           v-for="ad in listings"
           :key="ad.id"
@@ -145,7 +145,7 @@ const isInComparison = (id: string) => {
 </template>
 
 <style scoped>
-.ads-section {
+.listings-section {
   padding: 4rem 0;
   background: white;
 }
@@ -270,13 +270,13 @@ const isInComparison = (id: string) => {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.ads-grid {
+.listings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 2rem;
 }
 
-.ads-list {
+.listings-list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -322,7 +322,7 @@ const isInComparison = (id: string) => {
 }
 
 @media (max-width: 1024px) {
-  .ads-grid {
+  .listings-grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
   }
@@ -351,7 +351,7 @@ const isInComparison = (id: string) => {
 }
 
 @media (max-width: 640px) {
-  .ads-section {
+  .listings-section {
     padding: 3rem 0;
   }
 
@@ -367,7 +367,7 @@ const isInComparison = (id: string) => {
     font-size: 1rem;
   }
 
-  .ads-grid {
+  .listings-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
   }

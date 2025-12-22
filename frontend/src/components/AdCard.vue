@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
-import { getFullImageUrl } from '../services/api'
+
 import WebPImage from './WebPImage.vue'
 
 const props = defineProps<{
@@ -268,7 +268,7 @@ const statusColor = computed(() => {
 </script>
 
 <template>
-  <router-link :to="adLink" class="ad-card" :class="{ 'list-view': viewMode === 'list' }" @mouseenter="emit('hoverStart', ad.id)" @mouseleave="emit('hoverEnd', null)">
+  <router-link :to="adLink" class="listing-card" :class="{ 'list-view': viewMode === 'list' }" @mouseenter="emit('hoverStart', ad.id)" @mouseleave="emit('hoverEnd', null)">
     <div class="card-image">
       <WebPImage
         v-if="ad.image_url"
@@ -366,7 +366,7 @@ const statusColor = computed(() => {
 </template>
 
 <style scoped>
-.ad-card {
+.listing-card {
   background: white;
   border-radius: 12px;
   overflow: hidden;
@@ -379,7 +379,7 @@ const statusColor = computed(() => {
   color: inherit;
 }
 
-.ad-card:hover {
+.listing-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
@@ -418,7 +418,7 @@ const statusColor = computed(() => {
   font-weight: 500;
 }
 
-.ad-card:hover .card-image img {
+.listing-card:hover .card-image img {
   transform: scale(1.05);
 }
 
@@ -614,18 +614,18 @@ const statusColor = computed(() => {
 }
 
 /* List View Styles */
-.ad-card.list-view {
+.listing-card.list-view {
   flex-direction: row;
   height: auto;
 }
 
-.ad-card.list-view .card-image {
+.listing-card.list-view .card-image {
   width: 280px;
   height: 200px;
   flex-shrink: 0;
 }
 
-.ad-card.list-view .card-content {
+.listing-card.list-view .card-content {
   flex: 1;
   padding: 1.5rem;
   display: flex;
@@ -633,31 +633,31 @@ const statusColor = computed(() => {
   justify-content: space-between;
 }
 
-.ad-card.list-view .card-title {
+.listing-card.list-view .card-title {
   font-size: 1.5rem;
   margin-bottom: 0.75rem;
 }
 
-.ad-card.list-view .card-location,
-.ad-card.list-view .card-dimensions {
+.listing-card.list-view .card-location,
+.listing-card.list-view .card-dimensions {
   font-size: 1rem;
 }
 
-.ad-card.list-view .card-description {
+.listing-card.list-view .card-description {
   display: block;
   margin: 1rem 0;
 }
 
-.ad-card.list-view .card-footer {
+.listing-card.list-view .card-footer {
   margin-top: auto;
 }
 
 @media (max-width: 1024px) {
-  .ad-card.list-view {
+  .listing-card.list-view {
     flex-direction: column;
   }
 
-  .ad-card.list-view .card-image {
+  .listing-card.list-view .card-image {
     width: 100%;
     height: 220px;
   }

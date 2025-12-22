@@ -465,7 +465,7 @@ const handlePageChange = async (page: number) => {
   await nextTick()
   
   // Scroll to top of ads section z offsetem
-  const adsSection = document.querySelector('.ads-section')
+  const adsSection = document.querySelector('.listings-section')
   if (adsSection) {
     const elementPosition = adsSection.getBoundingClientRect().top + window.pageYOffset
     const offsetPosition = elementPosition - 32 // 2rem = 32px offset
