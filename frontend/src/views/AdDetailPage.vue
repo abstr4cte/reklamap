@@ -1441,18 +1441,18 @@ onUnmounted(() => {
             </button>
           </div>
 
-          <div v-if="similarAds.length > 0" class="similar-ads">
+          <div v-if="similarAds.length > 0" class="similar-listings">
             <h3>Podobne oferty</h3>
-            <div class="similar-ads-list">
+            <div class="similar-listings-list">
               <router-link
                 v-for="similarAd in similarAds"
                 :key="similarAd.id"
                 :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(similarAd.type)}/${slugify(similarAd.city)}/${slugify(similarAd.title)}-${similarAd.id}`"
-                class="similar-ad-card"
+                class="similar-listing-card"
               >
-                <div class="similar-ad-image">
+                <div class="similar-listing-image">
                   <WebPImage v-if="similarAd.image_url" :src="similarAd.image_url" :alt="`${getTypeLabel(similarAd.type)} ${similarAd.city} - ${similarAd.title}`" />
-                  <div v-else class="similar-ad-no-image">
+                  <div v-else class="similar-listing-no-image">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
                       <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
                       <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
@@ -1460,10 +1460,10 @@ onUnmounted(() => {
                     </svg>
                   </div>
                 </div>
-                <div class="similar-ad-content">
+                <div class="similar-listing-content">
                   <h4>{{ similarAd.title }}</h4>
-                  <div class="similar-ad-price">{{ similarAd.price }} PLN</div>
-                  <div class="similar-ad-location">{{ similarAd.city }}</div>
+                  <div class="similar-listing-price">{{ similarAd.price }} PLN</div>
+                  <div class="similar-listing-location">{{ similarAd.city }}</div>
                 </div>
               </router-link>
             </div>
@@ -2297,27 +2297,27 @@ onUnmounted(() => {
   color: #667eea;
 }
 
-.similar-ads {
+.similar-listings {
   background: white;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.similar-ads h3 {
+.similar-listings h3 {
   font-size: 1.25rem;
   color: #1f2937;
   margin: 0 0 1.5rem 0;
   font-weight: 700;
 }
 
-.similar-ads-list {
+.similar-listings-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.similar-ad-card {
+.similar-listing-card {
   display: flex;
   gap: 1rem;
   padding: 1rem;
@@ -2327,13 +2327,13 @@ onUnmounted(() => {
   transition: all 0.2s;
 }
 
-.similar-ad-card:hover {
+.similar-listing-card:hover {
   border-color: #10B981;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
   transform: translateY(-2px);
 }
 
-.similar-ad-image {
+.similar-listing-image {
   width: 80px;
   height: 80px;
   flex-shrink: 0;
@@ -2342,13 +2342,13 @@ onUnmounted(() => {
   background: #f3f4f6;
 }
 
-.similar-ad-image img {
+.similar-listing-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.similar-ad-no-image {
+.similar-listing-no-image {
   width: 100%;
   height: 100%;
   display: flex;
@@ -2357,7 +2357,7 @@ onUnmounted(() => {
   color: #9ca3af;
 }
 
-.similar-ad-content {
+.similar-listing-content {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -2365,7 +2365,7 @@ onUnmounted(() => {
   min-width: 0;
 }
 
-.similar-ad-content h4 {
+.similar-listing-content h4 {
   margin: 0;
   font-size: 0.95rem;
   color: #1f2937;
@@ -2375,13 +2375,13 @@ onUnmounted(() => {
   white-space: nowrap;
 }
 
-.similar-ad-price {
+.similar-listing-price {
   font-weight: 700;
   color: #10B981;
   font-size: 1rem;
 }
 
-.similar-ad-location {
+.similar-listing-location {
   font-size: 0.875rem;
   color: #6b7280;
 }

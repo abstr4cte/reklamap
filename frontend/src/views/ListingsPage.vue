@@ -1473,6 +1473,10 @@ const handleAdHover = (adId: string | null) => {
   })
 }
 
+const handleAdLeave = () => {
+  handleAdHover(null)
+}
+
 const isFavorite = (id: string) => {
   const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
   return favorites.includes(id)
@@ -1496,7 +1500,7 @@ const handleAdClick = (adId: string) => {
 
 const scrollToAd = (adId: string) => {
   const element = document.getElementById(`ad-${adId}`)
-  const container = document.querySelector('.ads-list-container')
+  const container = document.querySelector('.listings-list-container')
   if (element && container) {
     // Przewijamy tylko kontener z ogłoszeniami, a nie całą stronę
     // Obliczamy pozycję elementu względem kontenera
@@ -1837,7 +1841,7 @@ onBeforeUnmount(() => {
 
     <!-- Main Content -->
     <div class="content-wrapper">
-      <div class="ads-list-container">
+      <div class="listings-list-container">
         <div v-if="isLoading" class="loading-state">
           <div class="spinner"></div>
           <p>Ładowanie ogłoszeń...</p>
@@ -1853,12 +1857,12 @@ onBeforeUnmount(() => {
           <p>Nie znaleziono ogłoszeń pasujących do wyszukiwania</p>
         </div>
 
-        <div v-else class="ads-list" :class="viewMode">
+        <div v-else class="listings-list" :class="viewMode">
           <router-link
             v-for="ad in getCurrentPageAds()"
             :key="ad.id"
             :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`"
-            class="ad-card"
+            class="listing-card"
             :class="{ hovered: hoveredAdId === ad.id, selected: selectedAdId === ad.id }"
             @mouseenter="handleAdHover(ad.id)"
             @mouseleave="handleAdLeave()"
@@ -2661,7 +2665,7 @@ onBeforeUnmount(() => {
   height: calc(100vh - 70px); /* Odejmujemy wysokość paska wyszukiwania */
 }
 
-.ads-list-container {
+.listings-list-container {
   background: white;
   border-right: 2px solid #e5e7eb;
   overflow-y: auto;
@@ -2712,7 +2716,7 @@ onBeforeUnmount(() => {
   color: #6b7280;
 }
 
-.ads-list {
+.listings-list {
   padding: 1rem;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -2721,11 +2725,11 @@ onBeforeUnmount(() => {
 }
 
 /* Widok listy */
-.ads-list.list {
+.listings-list.list {
   grid-template-columns: 1fr;
 }
 
-.ad-card {
+.listing-card {
   background: white;
   border-radius: 12px;
   overflow: hidden;
@@ -2739,13 +2743,13 @@ onBeforeUnmount(() => {
   border: 2px solid transparent;
 }
 
-.ad-card:hover {
+.listing-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
-.ad-card.hovered,
-.ad-card.selected {
+.listing-card.hovered,
+.listing-card.selected {
   border-color: #667eea;
   box-shadow: 0 6px 16px rgba(102, 126, 234, 0.25);
 }
@@ -2764,7 +2768,7 @@ onBeforeUnmount(() => {
   transition: transform 0.3s ease;
 }
 
-.ad-card:hover .card-image img {
+.listing-card:hover .card-image img {
   transform: scale(1.05);
 }
 
