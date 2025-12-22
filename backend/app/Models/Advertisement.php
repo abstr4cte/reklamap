@@ -95,7 +95,7 @@ class Advertisement extends Model
         'campaign_duration' => 'integer',
     ];
 
-    protected $appends = ['display_status'];
+    protected $appends = ['display_status', 'full_url'];
 
     /**
      * Oblicz wyświetlany status na podstawie available_from
@@ -110,6 +110,26 @@ class Advertisement extends Model
         }
         
         return $this->status;
+    }
+
+    public function getFullUrlAttribute(): string
+    {
+        $typeMapping = [
+            'billboard' => 'billboardy',
+            'citylight' => 'citylighty',
+            'led_screen' => 'ekrany-led',
+            'banner' => 'banery',
+            'wall' => 'sciany-reklamowe',
+            'totem' => 'totemy-reklamowe',
+            'transport' => 'reklama-w-transporcie',
+            'mobile' => 'reklama-mobilna',
+            'other' => 'inne'
+        ];
+        
+        $typeUrl = $typeMapping[$this->type] ?? 'inne';
+        $citySlug = \Illuminate\Support\Str::slug($this->city);
+
+        return "/powierzchnia-reklamowa/{$typeUrl}/{$citySlug}/{$this->slug}";
     }
 
     // Usunięto metodę boot generującą UUID

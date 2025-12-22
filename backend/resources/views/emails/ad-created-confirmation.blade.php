@@ -68,7 +68,7 @@
         <p>Możesz zobaczyć swoje ogłoszenie, klikając w poniższy przycisk:</p>
 
         <div style="text-align: center;">
-            <a href="{{ env('FRONTEND_URL', 'https://reklamap.pl') }}/ogloszenie/{{ $ad->slug }}" class="button">Zobacz swoje ogłoszenie</a>
+            <a href="{{ env('FRONTEND_URL', 'https://reklamap.pl') }}{{ $ad->full_url }}" class="button">Zobacz swoje ogłoszenie</a>
         </div>
 
         <p>Chcesz zarządzać swoimi ogłoszeniami? Przejdź do panelu zarządzania, gdzie możesz je edytować lub usunąć.</p>
