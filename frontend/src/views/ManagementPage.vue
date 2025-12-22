@@ -171,7 +171,7 @@ const loadAdvertisements = async () => {
       try {
         const response = await axios.get(`/api/management/validate/${token}`)
         if (response.data.valid) {
-          listings.value = response.data.listings || []
+          listings.value = response.data.ads || []
           tokenEmail.value = response.data.email
           tokenExpiresAt.value = new Date(response.data.expires_at).toLocaleString()
           hasToken.value = true
