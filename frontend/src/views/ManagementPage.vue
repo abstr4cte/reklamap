@@ -3328,11 +3328,13 @@ onBeforeUnmount(() => {
 .modal-suggestion-item .suggestion-name {
   font-weight: 500;
   color: #1f2937;
+  pointer-events: none;
 }
 
 .modal-suggestion-item .suggestion-type {
   font-size: 12px;
   color: #6b7280;
+  pointer-events: none;
 }
 
 .modal-body {
