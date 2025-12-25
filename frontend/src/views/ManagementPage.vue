@@ -927,8 +927,7 @@ const selectModalLocation = (suggestion: any) => {
     
     if (isLocationResult) {
       // LocationResult from locationService
-      // Use shorter location name (just city, not full displayName with ratusz etc)
-      editingAd.value.location = suggestion.name
+      editingAd.value.location = suggestion.displayName
       editingAd.value.city = suggestion.name
       editingAd.value.region = suggestion.state || ''
     } else {
