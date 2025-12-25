@@ -401,12 +401,14 @@ const locationSuggestions = computed(() => {
       }
     })
 
-  // Deduplicate by city name, preferring place/city over boundary
+  // Deduplicate by city + state, preferring place/city over boundary
   const uniqueCities = new Map<string, LocationSuggestion>()
   apiSuggestions.forEach(suggestion => {
-    const existing = uniqueCities.get(suggestion.value)
+    // Create key with city name and voivodeship to show cities from different voivodeships
+    const cityKey = `${suggestion.value}|${suggestion.subtitle?.split(', ').slice(-2)[0] || ''}`
+    const existing = uniqueCities.get(cityKey)
     if (!existing) {
-      uniqueCities.set(suggestion.value, suggestion)
+      uniqueCities.set(cityKey, suggestion)
     } else {
       // Calculate priority for current and existing
       // Priority: place/city > place/town > addresstype=city > others
@@ -422,7 +424,7 @@ const locationSuggestions = computed(() => {
       const existingPriority = getPriority(existing)
       
       if (currentPriority > existingPriority) {
-        uniqueCities.set(suggestion.value, suggestion)
+        uniqueCities.set(cityKey, suggestion)
       }
     }
   })
