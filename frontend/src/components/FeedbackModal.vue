@@ -137,7 +137,7 @@ defineExpose({
                 </svg>
                 <input
                   v-model="email"
-                  type="email"
+                  type="text"
                   placeholder="twoj@email.pl"
                   class="form-input"
                   required

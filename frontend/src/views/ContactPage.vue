@@ -120,7 +120,7 @@ const handleSubmit = async () => {
                   <input
                     id="email"
                     v-model="formData.email"
-                    type="email"
+                    type="text"
                     required
                     placeholder="jan@przykład.pl"
                   />

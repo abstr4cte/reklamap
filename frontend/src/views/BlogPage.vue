@@ -300,7 +300,7 @@ const handleNewsletterSubmit = async () => {
               <div style="display: flex; gap: 1rem;">
                 <input
                   v-model="newsletterEmail"
-                  type="email"
+                  type="text"
                   placeholder="Twój adres e-mail"
                   class="newsletter-input"
                   :disabled="isSubmittingNewsletter"
