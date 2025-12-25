@@ -241,6 +241,10 @@ onUnmounted(() => {
   border-radius: 10px;
   padding: 0.25rem;
   background: white;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
 
 .view-btn {

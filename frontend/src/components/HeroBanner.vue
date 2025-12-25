@@ -1699,6 +1699,11 @@ onBeforeUnmount(() => {
   .checkbox-grid {
     grid-template-columns: 1fr;
   }
+
+  .price-unit {
+    min-width: 120px;
+    max-width: 140px;
+  }
 }
 
 .multiselect-wrapper {

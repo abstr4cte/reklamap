@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch, nextTick } from 'vue'
+import { ref, onMounted, computed, watch, nextTick, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import EmailModal from '../components/EmailModal.vue'
 import HeroBanner from '../components/HeroBanner.vue'
@@ -496,21 +496,70 @@ const handleSearch = (searchFilters: Filters) => {
 
 const isResettingFilters = ref(false)
 
+// Zmienne do zarządzania widocznością kafelków na urządzeniach mobilnych
+const showAllCategories = ref(false)
+const showAllCities = ref(false)
+const isMobile = ref(false)
+
+// Posortowane kategorie w stałej kolejności
+const orderedCategories = computed(() => {
+  const order = ['billboardy', 'banery', 'citylighty']
+  return [...categories].sort((a, b) => {
+    const indexA = order.indexOf(a.slug)
+    const indexB = order.indexOf(b.slug)
+    
+    // Jeśli obie kategorie są w liście priorytetowej, sortuj według kolejności
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB
+    }
+    // Jeśli tylko A jest w liście priorytetowej, daj A pierwszeństwo
+    if (indexA !== -1) return -1
+    // Jeśli tylko B jest w liście priorytetowej, daj B pierwszeństwo
+    if (indexB !== -1) return 1
+    // W przeciwnym razie zachowaj oryginalną kolejność
+    return categories.indexOf(a) - categories.indexOf(b)
+  })
+})
+
+// Sprawdź czy to urządzenie mobilne
+const checkIfMobile = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+
+// Przełącz widoczność wszystkich kategorii
+const toggleShowAllCategories = () => {
+  showAllCategories.value = !showAllCategories.value
+}
+
+// Obsługa zmiany rozmiaru okna
+onMounted(() => {
+  checkIfMobile()
+  window.addEventListener('resize', checkIfMobile)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', checkIfMobile)
+})
+
 const handleReset = (resetFilters: Filters) => {
-  filters.value = resetFilters
-  currentPage.value = 1 // Reset to first page
-  
-  // Set flag to prevent watch from overriding filters
+  // Ustaw flagę, że resetujemy filtry
   isResettingFilters.value = true
   
-  // Prevent scrolling by using replaceState instead of router.push
-  const currentPosition = window.scrollY
-  window.history.replaceState({}, document.title, window.location.pathname)
+  // Zresetuj filtry
+  filters.value = { ...resetFilters }
   
-  // Ensure we stay at the current scroll position
+  // Zresetuj sortowanie do domyślnego
+  sortBy.value = 'newest'
+  priceDisplay.value = undefined
+  
+  // Wyczyść parametry URL
+  router.replace({ query: {} })
+  
+  // Zapobiegaj przewijaniu do góry
+  window.scrollTo(0, window.scrollY)
+  
+  // Zresetuj flagę po zakończeniu
   setTimeout(() => {
-    window.scrollTo(0, currentPosition)
-    // Reset flag after scroll
     isResettingFilters.value = false
   }, 0)
 }
@@ -589,6 +638,12 @@ const categories = [
     description: 'Duże formaty przy drogach krajowych i autostradach, zapewniające wysoką widoczność dla kampanii wizerunkowych.'
   },
   {
+    name: 'Banery',
+    slug: 'banery',
+    icon: 'banner.svg',
+    description: 'Elastyczne powierzchnie montowane na budynkach i płotach, łatwe do dopasowania do dostępnej przestrzeni.'
+  },
+  {
     name: 'Citylighty',
     slug: 'citylighty',
     icon: 'citylight.svg',
@@ -599,12 +654,6 @@ const categories = [
     slug: 'ekrany-led',
     icon: 'ekran-led.svg',
     description: 'Cyfrowe wyświetlacze dynamiczne umożliwiające animacje i spoty wideo, idealne do nowoczesnych kampanii.'
-  },
-  {
-    name: 'Banery',
-    slug: 'banery',
-    icon: 'banner.svg',
-    description: 'Elastyczne powierzchnie montowane na budynkach i płotach, łatwe do dopasowania do dostępnej przestrzeni.'
   },
   {
     name: 'Ściany reklamowe',
@@ -685,23 +734,37 @@ onMounted(() => {
       <div class="categories-container">
         <h2 class="categories-title">Przeglądaj kategorie powierzchni reklamowych</h2>
         <div class="categories-grid">
-          <router-link
-            v-for="category in categories"
-            :key="category.slug"
-            :to="`/powierzchnie-reklamowe/${category.slug}`"
-            class="category-card"
+          <template v-for="(category, index) in isMobile && !showAllCategories ? orderedCategories.slice(0, 3) : orderedCategories" :key="category.slug">
+            <router-link
+              :to="`/powierzchnie-reklamowe/${category.slug}`"
+              class="category-card"
+              :class="{ 'mobile-category': isMobile }"
+            >
+              <div class="category-icon">
+                <img :src="`/icons/${category.icon}`" :alt="category.name" />
+              </div>
+              <h3 class="category-name">{{ category.name }}</h3>
+              <p class="category-description">{{ category.description }}</p>
+              <div class="category-arrow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </router-link>
+          </template>
+          
+          <!-- Przycisk Pokaż więcej/mniej -->
+          <button 
+            v-if="isMobile && orderedCategories.length > 3" 
+            @click="toggleShowAllCategories" 
+            class="show-more-button"
+            :aria-expanded="showAllCategories"
           >
-            <div class="category-icon">
-              <img :src="`/icons/${category.icon}`" :alt="category.name" />
-            </div>
-            <h3 class="category-name">{{ category.name }}</h3>
-            <p class="category-description">{{ category.description }}</p>
-            <div class="category-arrow">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-          </router-link>
+            {{ showAllCategories ? 'Pokaż mniej' : `Pokaż więcej (${orderedCategories.length - 3})` }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" :class="{ 'rotate-180': showAllCategories }">
+              <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -712,16 +775,30 @@ onMounted(() => {
         <h2 class="cities-title">Popularne miasta</h2>
         <p class="cities-subtitle">Znajdź powierzchnie reklamowe w największych miastach Polski</p>
         <div class="cities-grid">
-          <router-link
-            v-for="city in popularCities"
-            :key="city.slug"
-            :to="`/powierzchnie-reklamowe/${city.slug}`"
-            class="city-card"
+          <template v-for="city in isMobile && !showAllCities ? popularCities.slice(0, 6) : popularCities" :key="city.slug">
+            <router-link
+              :to="`/powierzchnie-reklamowe/${city.slug}`"
+              class="city-card"
+              :class="{ 'mobile-city': isMobile }"
+            >
+              <div class="city-name">{{ city.name }}</div>
+              <div class="city-region">{{ city.region }}</div>
+              <div class="city-arrow">→</div>
+            </router-link>
+          </template>
+          
+          <!-- Przycisk Pokaż więcej/mniej dla miast -->
+          <button 
+            v-if="isMobile && popularCities.length > 6" 
+            @click="showAllCities = !showAllCities" 
+            class="show-more-button show-more-cities"
+            :aria-expanded="showAllCities"
           >
-            <div class="city-name">{{ city.name }}</div>
-            <div class="city-region">{{ city.region }}</div>
-            <div class="city-arrow">→</div>
-          </router-link>
+            {{ showAllCities ? 'Pokaż mniej' : `Pokaż więcej (${popularCities.length - 6})` }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" :class="{ 'rotate-180': showAllCities }">
+              <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -866,19 +943,13 @@ onMounted(() => {
 }
 
 .category-card:hover {
-  transform: translateY(-12px) scale(1.02);
-  box-shadow: 0 20px 50px rgba(102, 126, 234, 0.25), 0 10px 20px rgba(118, 75, 162, 0.2);
-  border-color: rgba(102, 126, 234, 0.3);
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.category-card:hover::before {
-  transform: scaleX(1);
-}
-
-.category-card:hover::after {
-  width: 300px;
-  height: 300px;
+.category-card:hover .category-arrow {
+  transform: translateX(5px);
+  opacity: 1;
 }
 
 .category-icon {
@@ -954,10 +1025,14 @@ onMounted(() => {
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   z-index: 1;
+  display: inline-flex;
+  margin-top: auto;
+  padding-top: 1rem;
 }
 
 .category-card:hover .category-arrow {
-  transform: translateX(8px) scale(1.2);
+  transform: translateX(5px);
+  opacity: 1;
 }
 
 @media (max-width: 768px) {
@@ -977,19 +1052,65 @@ onMounted(() => {
 
   .categories-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
+    max-width: 100%;
+    width: 100%;
   }
-
+  
   .category-card {
-    padding: 2rem;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .category-icon {
-    font-size: 3rem;
+    font-size: 2.2rem;
+    margin-bottom: 0.75rem;
   }
   
   .category-name {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .category-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  
+  .show-more-button {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    color: #4F46E5;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 0.5rem;
+  }
+  
+  .show-more-button:hover {
+    background: rgba(102, 126, 234, 0.15);
+    border-color: rgba(102, 126, 234, 0.3);
+  }
+  
+  .show-more-button svg {
+    transition: transform 0.3s ease;
+  }
+  
+  .show-more-button .rotate-180 {
+    transform: rotate(180deg);
   }
 }
 
@@ -1198,6 +1319,39 @@ onMounted(() => {
   
   .city-region {
     font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .cities-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .city-card {
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+  }
+  
+  .city-name {
+    font-size: 1.2rem;
+  }
+  
+  .city-region {
+    font-size: 0.8rem;
+  }
+  
+  .show-more-cities {
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+  }
+  
+  .show-more-cities:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
   }
 }
 
