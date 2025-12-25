@@ -1404,11 +1404,11 @@ onBeforeUnmount(() => {
                           <div v-if="showAddressSuggestions && addressSuggestions.length > 0" class="address-suggestions">
                             <div 
                               v-for="suggestion in addressSuggestions" 
-                              :key="suggestion.place_id"
+                              :key="suggestion.name"
                               @click="selectAddress(suggestion)"
                               class="suggestion-item"
                             >
-                              {{ suggestion.display_name }}
+                              {{ suggestion.displayName || suggestion.display_name }}
                             </div>
                           </div>
                         </div>
