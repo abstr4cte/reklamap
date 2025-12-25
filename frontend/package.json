@@ -17,6 +17,7 @@
     "bad-words": "^4.0.0",
     "leaflet": "^1.9.4",
     "nsfwjs": "^4.2.1",
+    "puppeteer": "^24.34.0",
     "vue": "^3.4.38",
     "vue-router": "^4.4.5"
   },

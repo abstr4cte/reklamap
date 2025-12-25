@@ -92,6 +92,13 @@ class AdvertisementController extends Controller
         $ad->slug = Str::slug($ad->title) . '-' . $ad->id;
         $ad->save();
 
+        // Generate map screenshot
+        try {
+            $this->generateMapScreenshot($ad);
+        } catch (\Exception $e) {
+            \Log::error('Error generating map screenshot: ' . $e->getMessage());
+        }
+
         try {
             Mail::to($ad->owner_email)->send(new AdCreatedConfirmationMail($ad));
         } catch (\Exception $e) {
@@ -393,6 +400,44 @@ class AdvertisementController extends Controller
         ];
         
         return $typeMapping[$type] ?? 'inne';
+    }
+
+    /**
+     * Generate map screenshot for advertisement
+     */
+    private function generateMapScreenshot(Advertisement $ad)
+    {
+        try {
+            $html = view('map-screenshot', [
+                'latitude' => $ad->latitude,
+                'longitude' => $ad->longitude,
+                'title' => $ad->title
+            ])->render();
+
+            $screenshotPath = 'maps/' . $ad->id . '-' . time() . '.png';
+            $fullPath = storage_path('app/public/' . $screenshotPath);
+
+            // Create directory if it doesn't exist
+            if (!is_dir(dirname($fullPath))) {
+                mkdir(dirname($fullPath), 0755, true);
+            }
+
+            // Generate screenshot using Browsershot
+            \Spatie\Browsershot\Browsershot::html($html)
+                ->setNodeBinary('/usr/bin/node')
+                ->setNpmBinary('/usr/bin/npm')
+                ->windowSize(800, 600)
+                ->save($fullPath);
+
+            // Save path to database
+            $ad->map_screenshot_path = $screenshotPath;
+            $ad->save();
+
+            \Log::info('Map screenshot generated for ad ' . $ad->id);
+        } catch (\Exception $e) {
+            \Log::error('Error generating map screenshot: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
     /**
