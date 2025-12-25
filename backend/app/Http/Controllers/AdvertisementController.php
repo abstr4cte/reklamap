@@ -171,7 +171,21 @@ class AdvertisementController extends Controller
         ]);
 
         $ad = Advertisement::findOrFail($id);
+        
+        // Check if location changed (latitude or longitude)
+        $locationChanged = $ad->latitude != $validated['latitude'] || $ad->longitude != $validated['longitude'];
+        
         $ad->update($validated);
+        
+        // Regenerate map screenshot if location changed
+        if ($locationChanged) {
+            try {
+                $this->generateMapScreenshot($ad);
+            } catch (\Throwable $e) {
+                \Log::error('Error regenerating map screenshot on update: ' . $e->getMessage());
+                // Don't fail the update if screenshot generation fails
+            }
+        }
         
         // Clear sitemap cache and notify Google
         $this->notifySearchEngines();
