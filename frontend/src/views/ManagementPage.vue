@@ -19,7 +19,6 @@ import { point } from '@turf/helpers'
 import polandGeoJson from '../assets/poland_highres.json'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
-import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 
 // Fix Leaflet icon paths
 const DefaultIcon = L.icon({
@@ -93,42 +92,20 @@ const searchAddress = (query: string) => {
 
   isResolvingAddress.value = true
 
-  debouncedSearchLocations(query, (results: LocationResult[]) => {
-    // Deduplicate by city + state, preferring place/city over boundary
-    const uniqueCities = new Map<string, LocationResult>()
-    results.forEach(suggestion => {
-      // Use city from address if available, otherwise use name
-      const city = suggestion.city || suggestion.name
-      const state = suggestion.state || ''
-      // Create key with both city and state to show cities from different voivodeships
-      const cityKey = `${city}|${state}`
-      const existing = uniqueCities.get(cityKey)
-      if (!existing) {
-        uniqueCities.set(cityKey, suggestion)
-      } else {
-        // Calculate priority for current and existing
-        // Priority: place/city > place/town > addresstype=city > others
-        const getPriority = (s: LocationResult) => {
-          if (s.osmClass === 'place' && s.osmType === 'city') return 4
-          if (s.osmClass === 'place' && s.osmType === 'town') return 3
-          if (s.addresstype === 'city') return 2
-          if (s.type === 'city') return 1
-          return 0
-        }
-        
-        const currentPriority = getPriority(suggestion)
-        const existingPriority = getPriority(existing)
-        
-        if (currentPriority > existingPriority) {
-          uniqueCities.set(cityKey, suggestion)
-        }
-      }
-    })
-    
-    addressSuggestions.value = Array.from(uniqueCities.values())
-    showAddressSuggestions.value = addressSuggestions.value.length > 0
-    isResolvingAddress.value = false
-  })
+  setTimeout(async () => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=10&addressdetails=1`
+      )
+      const data = await response.json()
+      addressSuggestions.value = data
+      showAddressSuggestions.value = data.length > 0
+    } catch (error) {
+      console.error('Error searching address:', error)
+    } finally {
+      isResolvingAddress.value = false
+    }
+  }, 500)
 }
 
 const resolveAddressFromInput = async (query: string) => {
