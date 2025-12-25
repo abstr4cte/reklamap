@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { api } from '../services/api'
 
 const isOpen = ref(false)
 const feedbackType = ref('suggestion')
@@ -7,6 +8,7 @@ const email = ref('')
 const message = ref('')
 const isSubmitting = ref(false)
 const showSuccess = ref(false)
+const error = ref('')
 
 const emit = defineEmits<{
   close: []
@@ -31,33 +33,36 @@ const handleSubmit = async () => {
   }
 
   isSubmitting.value = true
+  error.value = ''
 
-  // TODO: Wysłać na backend
-  const feedbackData = {
-    type: feedbackType.value,
-    email: email.value || null,
-    message: message.value,
-    timestamp: new Date().toISOString(),
-    userAgent: navigator.userAgent,
-    url: window.location.href
+  try {
+    const feedbackData = {
+      type: feedbackType.value,
+      email: email.value.trim(),
+      message: message.value.trim(),
+      url: typeof window !== 'undefined' ? window.location.href : '',
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : ''
+    }
+
+    await api.submitFeedback(feedbackData)
+
+    isSubmitting.value = false
+    showSuccess.value = true
+
+    // Reset form
+    setTimeout(() => {
+      feedbackType.value = 'suggestion'
+      email.value = ''
+      message.value = ''
+      error.value = ''
+      showSuccess.value = false
+      closeModal()
+    }, 2000)
+  } catch (err) {
+    isSubmitting.value = false
+    error.value = err instanceof Error ? err.message : 'Błąd podczas wysyłania feedback'
+    console.error('Error submitting feedback:', err)
   }
-
-
-
-  // Symulacja wysyłki
-  await new Promise(resolve => setTimeout(resolve, 500))
-
-  isSubmitting.value = false
-  showSuccess.value = true
-
-  // Reset form
-  setTimeout(() => {
-    feedbackType.value = 'suggestion'
-    email.value = ''
-    message.value = ''
-    showSuccess.value = false
-    closeModal()
-  }, 2000)
 }
 
 defineExpose({
@@ -91,6 +96,10 @@ defineExpose({
             </p>
 
             <form @submit.prevent="handleSubmit" class="feedback-form">
+              <div v-if="error" class="error-message">
+                {{ error }}
+              </div>
+
               <div class="type-selector">
                 <button
                   type="button"
@@ -250,6 +259,16 @@ defineExpose({
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.error-message {
+  padding: 0.75rem 1rem;
+  background: #FEE2E2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  color: #DC2626;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .type-selector {

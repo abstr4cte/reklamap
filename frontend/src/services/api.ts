@@ -153,6 +153,24 @@ export const api = {
         return response.json()
     },
 
+    async submitFeedback(feedback: { type: string; email: string; message: string; url: string; userAgent: string }): Promise<{ message: string }> {
+        const response = await fetch(`${API_URL}/feedback`, {
+            method: 'POST',
+            headers: {
+                ...withKey({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                })
+            },
+            body: JSON.stringify(feedback),
+        })
+        if (!response.ok) {
+            const error = await response.json()
+            throw new Error(error.message || 'Failed to submit feedback')
+        }
+        return response.json()
+    },
+
     storage: {
         async upload(file: File): Promise<string> {
             const formData = new FormData()

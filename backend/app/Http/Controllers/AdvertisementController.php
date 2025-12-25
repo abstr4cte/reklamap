@@ -228,6 +228,27 @@ class AdvertisementController extends Controller
 
         return response()->json(['message' => 'Report submitted']);
     }
+
+    public function submitFeedback(Request $request)
+    {
+        $validated = $request->validate([
+            'type' => 'required|string|in:bug,suggestion,question',
+            'email' => 'required|email',
+            'message' => 'required|string|max:2000',
+            'url' => 'nullable|string',
+            'userAgent' => 'nullable|string',
+        ]);
+
+        \App\Models\Feedback::create([
+            'type' => $validated['type'],
+            'email' => $validated['email'],
+            'message' => $validated['message'],
+            'url' => $validated['url'] ?? null,
+            'user_agent' => $validated['userAgent'] ?? null,
+        ]);
+
+        return response()->json(['message' => 'Feedback submitted successfully']);
+    }
     public function generatePdf(string $id)
     {
         $ad = Advertisement::findOrFail($id);
