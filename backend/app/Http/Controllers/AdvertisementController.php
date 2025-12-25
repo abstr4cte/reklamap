@@ -416,10 +416,15 @@ class AdvertisementController extends Controller
                 mkdir(dirname($fullPath), 0755, true);
             }
 
+            // Set environment variables for correct Node version
+            $nodePath = '/home/dev/.nvm/versions/node/v21.5.0/bin/node';
+            putenv('PATH=' . dirname($nodePath) . ':' . getenv('PATH'));
+
             // Generate screenshot using Browsershot with HTTP URL
             $mapUrl = route('map-screenshot', $ad->id, true);
             
             \Spatie\Browsershot\Browsershot::url($mapUrl)
+                ->setNodeBinary($nodePath)
                 ->windowSize(860, 400)
                 ->waitUntilNetworkIdle()
                 ->waitForFunction("window.mapReady === true")
