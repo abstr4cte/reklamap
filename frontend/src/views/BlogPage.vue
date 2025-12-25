@@ -152,15 +152,44 @@ const filteredPosts = computed(() => {
 })
 
 const handleNewsletterSubmit = async () => {
-  if (!newsletterEmail.value.trim()) {
+  const email = newsletterEmail.value.trim()
+  
+  if (!email) {
     newsletterError.value = 'Proszę wpisać adres e-mail'
     return
   }
 
-  // Validate email format
+  // Validate email format - RFC 5322 simplified
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(newsletterEmail.value)) {
-    newsletterError.value = 'Proszę wpisać prawidłowy adres e-mail'
+  if (!emailRegex.test(email)) {
+    newsletterError.value = 'Proszę wpisać prawidłowy adres e-mail (np. nazwa@domena.pl)'
+    return
+  }
+
+  // Additional validation - check for common mistakes
+  if (email.includes('..')) {
+    newsletterError.value = 'Adres e-mail zawiera błędy'
+    return
+  }
+
+  if (email.startsWith('.') || email.endsWith('.')) {
+    newsletterError.value = 'Adres e-mail zawiera błędy'
+    return
+  }
+
+  const [localPart, domain] = email.split('@')
+  if (!localPart || localPart.length === 0 || localPart.length > 64) {
+    newsletterError.value = 'Część przed @ jest za długa lub pusta'
+    return
+  }
+
+  if (!domain || domain.length === 0 || domain.length > 255) {
+    newsletterError.value = 'Domena jest za długa lub pusta'
+    return
+  }
+
+  if (!domain.includes('.')) {
+    newsletterError.value = 'Domena musi zawierać kropkę (np. domena.pl)'
     return
   }
 
