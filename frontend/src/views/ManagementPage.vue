@@ -114,6 +114,27 @@ const searchAddress = (query: string) => {
   }, 500)
 }
 
+const resolveAddressFromInput = async (query: string) => {
+  if (query.length < 3) return
+
+  isResolvingAddress.value = true
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=1&addressdetails=1`
+    )
+    const data = await response.json()
+    
+    if (data && data.length > 0) {
+      const suggestion = data[0]
+      selectAddress(suggestion)
+    }
+  } catch (error) {
+    console.error('Error resolving address:', error)
+  } finally {
+    isResolvingAddress.value = false
+  }
+}
+
 const selectAddress = (suggestion: any) => {
   if (!editingAd.value) return
   
@@ -145,10 +166,15 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 
-const handleBlur = () => {
+const handleBlur = async () => {
   setTimeout(() => {
     showAddressSuggestions.value = false
   }, 200)
+  
+  // If location is filled but city/region missing, try to resolve
+  if (editingAd.value && editingAd.value.location && (!editingAd.value.city || !editingAd.value.region)) {
+    await resolveAddressFromInput(editingAd.value.location)
+  }
 }
 
 const clearLocation = () => {
