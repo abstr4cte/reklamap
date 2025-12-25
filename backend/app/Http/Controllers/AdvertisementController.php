@@ -249,6 +249,42 @@ class AdvertisementController extends Controller
 
         return response()->json(['message' => 'Feedback submitted successfully']);
     }
+
+    public function submitContact(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'nullable|string|max:20',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string|max:5000',
+        ]);
+
+        try {
+            // Send email to admin
+            $adminEmail = config('mail.from.address', 'admin@reklamap.pl');
+            
+            Mail::send('emails.contact', [
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'],
+                'subject' => $validated['subject'],
+                'message' => $validated['message'],
+            ], function ($message) use ($adminEmail, $validated) {
+                $message->to($adminEmail)
+                    ->subject('Nowa wiadomość z formularza kontaktowego: ' . $validated['subject'])
+                    ->replyTo($validated['email']);
+            });
+
+            return response()->json(['message' => 'Wiadomość została wysłana pomyślnie']);
+        } catch (\Exception $e) {
+            \Log::error('Error sending contact email: ' . $e->getMessage());
+            
+            return response()->json([
+                'message' => 'Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie później.'
+            ], 500);
+        }
+    }
     public function generatePdf(string $id)
     {
         $ad = Advertisement::findOrFail($id);

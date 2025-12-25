@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { api } from '../services/api'
 
 const formData = ref({
   name: '',
@@ -11,26 +12,45 @@ const formData = ref({
 
 const isSubmitting = ref(false)
 const submitSuccess = ref(false)
+const error = ref('')
 
 const handleSubmit = async () => {
-  isSubmitting.value = true
-
-  await new Promise(resolve => setTimeout(resolve, 1500))
-
-  submitSuccess.value = true
-  isSubmitting.value = false
-
-  formData.value = {
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: ''
+  if (!formData.value.name || !formData.value.email || !formData.value.subject || !formData.value.message) {
+    error.value = 'Proszę wypełnić wszystkie wymagane pola'
+    return
   }
 
-  setTimeout(() => {
-    submitSuccess.value = false
-  }, 5000)
+  isSubmitting.value = true
+  error.value = ''
+
+  try {
+    await api.submitContact({
+      name: formData.value.name,
+      email: formData.value.email,
+      phone: formData.value.phone,
+      subject: formData.value.subject,
+      message: formData.value.message
+    })
+
+    submitSuccess.value = true
+    isSubmitting.value = false
+
+    formData.value = {
+      name: '',
+      email: '',
+      phone: '',
+      subject: '',
+      message: ''
+    }
+
+    setTimeout(() => {
+      submitSuccess.value = false
+    }, 5000)
+  } catch (err) {
+    isSubmitting.value = false
+    error.value = err instanceof Error ? err.message : 'Błąd podczas wysyłania wiadomości'
+    console.error('Error submitting contact form:', err)
+  }
 }
 </script>
 
@@ -78,6 +98,10 @@ const handleSubmit = async () => {
             <form @submit.prevent="handleSubmit" class="contact-form">
               <h2>Wyślij wiadomość</h2>
               <p class="form-description">Wypełnij formularz, a my skontaktujemy się z Tobą najszybciej jak to możliwe.</p>
+
+              <div v-if="error" class="error-message">
+                {{ error }}
+              </div>
 
               <div class="form-group">
                 <label for="name">Imię i nazwisko *</label>
@@ -335,6 +359,17 @@ const handleSubmit = async () => {
   color: #6b7280;
   margin: 0 0 2rem 0;
   line-height: 1.6;
+}
+
+.error-message {
+  padding: 0.75rem 1rem;
+  background: #FEE2E2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  color: #DC2626;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
 }
 
 .form-group {

@@ -171,6 +171,24 @@ export const api = {
         return response.json()
     },
 
+    async submitContact(contact: { name: string; email: string; phone: string; subject: string; message: string }): Promise<{ message: string }> {
+        const response = await fetch(`${API_URL}/contact`, {
+            method: 'POST',
+            headers: {
+                ...withKey({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                })
+            },
+            body: JSON.stringify(contact),
+        })
+        if (!response.ok) {
+            const error = await response.json()
+            throw new Error(error.message || 'Failed to submit contact form')
+        }
+        return response.json()
+    },
+
     storage: {
         async upload(file: File): Promise<string> {
             const formData = new FormData()
