@@ -6,21 +6,12 @@
     <title>Map Screenshot</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
     <style>
-        * {
+        html, body, #map {
+            width: 860px;
+            height: 400px;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-        
-        body {
-            width: 800px;
-            height: 600px;
-            overflow: hidden;
-        }
-        
-        #map {
-            width: 100%;
-            height: 100%;
         }
     </style>
 </head>
@@ -39,13 +30,12 @@
         }).addTo(map);
         
         // Add marker
-        L.marker([{{ $latitude }}, {{ $longitude }}]).addTo(map)
-            .bindPopup('{{ $title }}');
+        L.marker([{{ $latitude }}, {{ $longitude }}]).addTo(map);
         
-        // Wait for map to render
-        setTimeout(() => {
+        // Signal when map is ready
+        map.whenReady(() => {
             window.mapReady = true;
-        }, 1000);
+        });
     </script>
 </body>
 </html>

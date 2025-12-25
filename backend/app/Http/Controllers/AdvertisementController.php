@@ -408,12 +408,6 @@ class AdvertisementController extends Controller
     private function generateMapScreenshot(Advertisement $ad)
     {
         try {
-            $html = view('map-screenshot', [
-                'latitude' => $ad->latitude,
-                'longitude' => $ad->longitude,
-                'title' => $ad->title
-            ])->render();
-
             $screenshotPath = 'maps/' . $ad->id . '-' . time() . '.png';
             $fullPath = storage_path('app/public/' . $screenshotPath);
 
@@ -422,13 +416,13 @@ class AdvertisementController extends Controller
                 mkdir(dirname($fullPath), 0755, true);
             }
 
-            // Generate screenshot using Browsershot
-            $nodePath = '/home/dev/.nvm/versions/node/v21.5.0/bin/node';
+            // Generate screenshot using Browsershot with HTTP URL
+            $mapUrl = route('map-screenshot', $ad->id, true);
             
-            \Spatie\Browsershot\Browsershot::html($html)
-                ->setNodeBinary($nodePath)
-                ->setChromePath('/snap/bin/chromium')
-                ->windowSize(800, 600)
+            \Spatie\Browsershot\Browsershot::url($mapUrl)
+                ->windowSize(860, 400)
+                ->waitUntilNetworkIdle()
+                ->waitForFunction("window.mapReady === true")
                 ->save($fullPath);
 
             // Save path to database
@@ -436,7 +430,7 @@ class AdvertisementController extends Controller
             $ad->save();
 
             \Log::info('Map screenshot generated for ad ' . $ad->id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             \Log::error('Error generating map screenshot: ' . $e->getMessage());
             throw $e;
         }

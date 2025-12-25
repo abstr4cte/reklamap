@@ -9,6 +9,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Map screenshot route for Browsershot
+Route::get('/map-screenshot/{id}', function ($id) {
+    $ad = Advertisement::findOrFail($id);
+    return view('map-screenshot', [
+        'latitude' => $ad->latitude,
+        'longitude' => $ad->longitude,
+        'title' => $ad->title
+    ]);
+})->name('map-screenshot');
+
 // Sitemap.xml generator with cache
 Route::get('/sitemap.xml', function () {
     // Cache sitemap for 1 hour (cleared when new ad is added/updated)
