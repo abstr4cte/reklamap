@@ -135,34 +135,25 @@ const resolveAddressFromInput = async (query: string) => {
   }
 }
 
-const selectAddress = async (suggestion: any) => {
+const selectAddress = (suggestion: any) => {
   if (!editingAd.value) return
   
   const address = suggestion.address
-  const lat = parseFloat(suggestion.lat)
-  const lng = parseFloat(suggestion.lon)
-  
   editingAd.value.location = suggestion.display_name
-  
-  // Update coordinates from suggestion
-  if (!isNaN(lat) && !isNaN(lng)) {
-    editingAd.value.latitude = lat
-    editingAd.value.longitude = lng
-  }
-  
-  // Try to get city from suggestion.address first
   let city = address.city || address.town || address.village || address.municipality || address.county || ''
   // Usuń prefix "gmina" jeśli pochodzi z municipality
   if (!address.city && !address.town && !address.village && address.municipality) {
     city = city.replace(/^gmina\s+/i, '')
   }
+  editingAd.value.city = city
+  editingAd.value.region = address.state || ''
   
-  // If city is empty, use reverseGeocode to get it from coordinates
-  if (!city && !isNaN(lat) && !isNaN(lng)) {
-    await reverseGeocode(lat, lng)
-  } else {
-    editingAd.value.city = city
-    editingAd.value.region = address.state || ''
+  // Update coordinates from suggestion
+  const lat = parseFloat(suggestion.lat)
+  const lng = parseFloat(suggestion.lon)
+  if (!isNaN(lat) && !isNaN(lng)) {
+    editingAd.value.latitude = lat
+    editingAd.value.longitude = lng
   }
   
   showAddressSuggestions.value = false
@@ -770,7 +761,7 @@ const searchModalLocation = async () => {
   }, 300)
 }
 
-const selectModalLocation = async (suggestion: any) => {
+const selectModalLocation = (suggestion: any) => {
   const lat = parseFloat(suggestion.lat)
   const lng = parseFloat(suggestion.lon)
 
@@ -788,24 +779,16 @@ const selectModalLocation = async (suggestion: any) => {
   if (editingAd.value) {
     editingAd.value.latitude = lat
     editingAd.value.longitude = lng
-    editingAd.value.location = suggestion.display_name || ''
-    
-    // Try to get city from suggestion.address first
-    let city = ''
+    // Also update city and location from suggestion
     if (suggestion.address) {
       const address = suggestion.address
-      city = address.city || address.town || address.village || address.municipality || address.county || ''
+      let city = address.city || address.town || address.village || address.municipality || address.county || ''
       if (!address.city && !address.town && !address.village && address.municipality) {
         city = city.replace(/^gmina\s+/i, '')
       }
-      editingAd.value.region = address.state || ''
-    }
-    
-    // If city is empty, use reverseGeocode to get it from coordinates
-    if (!city) {
-      await reverseGeocode(lat, lng)
-    } else {
       editingAd.value.city = city
+      editingAd.value.region = address.state || ''
+      editingAd.value.location = suggestion.display_name || ''
     }
   }
 
