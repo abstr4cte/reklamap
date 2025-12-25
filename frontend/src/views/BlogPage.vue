@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { api } from '../services/api'
 
 const router = useRouter()
+
+const newsletterEmail = ref('')
+const isSubmittingNewsletter = ref(false)
+const newsletterSuccess = ref(false)
+const newsletterError = ref('')
 
 interface BlogPost {
   id: number
@@ -144,6 +150,39 @@ const filteredPosts = computed(() => {
   }
   return blogPosts.filter(post => post.category === selectedCategory.value)
 })
+
+const handleNewsletterSubmit = async () => {
+  if (!newsletterEmail.value.trim()) {
+    newsletterError.value = 'Proszę wpisać adres e-mail'
+    return
+  }
+
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(newsletterEmail.value)) {
+    newsletterError.value = 'Proszę wpisać prawidłowy adres e-mail'
+    return
+  }
+
+  isSubmittingNewsletter.value = true
+  newsletterError.value = ''
+
+  try {
+    await api.subscribeNewsletter(newsletterEmail.value)
+    
+    newsletterSuccess.value = true
+    newsletterEmail.value = ''
+    
+    setTimeout(() => {
+      newsletterSuccess.value = false
+    }, 5000)
+  } catch (err) {
+    newsletterError.value = err instanceof Error ? err.message : 'Błąd podczas zapisywania do newslettera'
+    console.error('Error subscribing to newsletter:', err)
+  } finally {
+    isSubmittingNewsletter.value = false
+  }
+}
 </script>
 
 <template>
@@ -217,18 +256,39 @@ const filteredPosts = computed(() => {
             <h2>Bądź na bieżąco</h2>
             <p>Zapisz się do newslettera i otrzymuj najnowsze artykuły, porady i informacje o trendach w reklamie outdoor.</p>
           </div>
-          <form class="newsletter-form" @submit.prevent>
-            <input
-              type="email"
-              placeholder="Twój adres e-mail"
-              class="newsletter-input"
-            />
-            <button type="submit" class="newsletter-btn">
-              Zapisz się
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
+          <form class="newsletter-form" @submit.prevent="handleNewsletterSubmit">
+            <div style="width: 100%; display: flex; flex-direction: column; gap: 0.5rem;">
+              <div v-if="newsletterError" class="newsletter-error">
+                {{ newsletterError }}
+              </div>
+              <div v-if="newsletterSuccess" class="newsletter-success">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Dziękujemy! Sprawdź swoją skrzynkę e-mail.
+              </div>
+              <div style="display: flex; gap: 1rem;">
+                <input
+                  v-model="newsletterEmail"
+                  type="email"
+                  placeholder="Twój adres e-mail"
+                  class="newsletter-input"
+                  :disabled="isSubmittingNewsletter"
+                />
+                <button type="submit" class="newsletter-btn" :disabled="isSubmittingNewsletter">
+                  <span v-if="!isSubmittingNewsletter">
+                    Zapisz się
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                  <span v-else>
+                    <div class="spinner"></div>
+                  </span>
+                </button>
+              </div>
+            </div>
           </form>
         </div>
       </div>
@@ -493,9 +553,52 @@ const filteredPosts = computed(() => {
   transition: all 0.2s;
 }
 
-.newsletter-btn:hover {
+.newsletter-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.newsletter-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.newsletter-error {
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.newsletter-success {
+  padding: 0.75rem 1rem;
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 1024px) {

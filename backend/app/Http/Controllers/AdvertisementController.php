@@ -285,6 +285,40 @@ class AdvertisementController extends Controller
             ], 500);
         }
     }
+
+    public function subscribeNewsletter(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|unique:newsletter_subscribers,email',
+        ]);
+
+        try {
+            \App\Models\Newsletter::create([
+                'email' => $validated['email'],
+            ]);
+
+            return response()->json(['message' => 'Dziękujemy za zapisanie się do newslettera!']);
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000') {
+                // Duplicate entry
+                return response()->json([
+                    'message' => 'Ten adres e-mail jest już zapisany w naszym newsletterze.'
+                ], 409);
+            }
+            
+            \Log::error('Error subscribing to newsletter: ' . $e->getMessage());
+            
+            return response()->json([
+                'message' => 'Błąd podczas zapisywania do newslettera. Spróbuj ponownie później.'
+            ], 500);
+        } catch (\Exception $e) {
+            \Log::error('Error subscribing to newsletter: ' . $e->getMessage());
+            
+            return response()->json([
+                'message' => 'Błąd podczas zapisywania do newslettera. Spróbuj ponownie później.'
+            ], 500);
+        }
+    }
     public function generatePdf(string $id)
     {
         $ad = Advertisement::findOrFail($id);

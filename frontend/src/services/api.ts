@@ -189,6 +189,24 @@ export const api = {
         return response.json()
     },
 
+    async subscribeNewsletter(email: string): Promise<{ message: string }> {
+        const response = await fetch(`${API_URL}/newsletter/subscribe`, {
+            method: 'POST',
+            headers: {
+                ...withKey({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                })
+            },
+            body: JSON.stringify({ email }),
+        })
+        if (!response.ok) {
+            const error = await response.json()
+            throw new Error(error.message || 'Failed to subscribe to newsletter')
+        }
+        return response.json()
+    },
+
     storage: {
         async upload(file: File): Promise<string> {
             const formData = new FormData()
