@@ -1929,15 +1929,15 @@ onBeforeUnmount(() => {
             placeholder="Wyszukaj miasto, ulicę..."
             class="modal-search-input"
           />
-          <button 
-            v-if="modalSearchQuery" 
-            type="button" 
-            @click.stop="modalSearchQuery = ''; modalSearchSuggestions = []; showModalSearchSuggestions = false"
-            class="clear-modal-search-btn"
+          <button
+            v-if="modalSearchQuery"
+            type="button"
+            @click="modalSearchQuery = ''"
+            class="modal-clear-button"
             title="Wyczyść wyszukiwanie"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </button>
           <div v-if="showModalSearchSuggestions && formattedModalSearchSuggestions.length > 0" class="modal-suggestions">
@@ -3319,7 +3319,7 @@ onBeforeUnmount(() => {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.clear-modal-search-btn {
+.modal-clear-button {
   position: absolute;
   right: 1rem;
   top: 50%;
@@ -3335,7 +3335,7 @@ onBeforeUnmount(() => {
   transition: color 0.15s;
 }
 
-.clear-modal-search-btn:hover {
+.modal-clear-button:hover {
   color: #6b7280;
 }
 
