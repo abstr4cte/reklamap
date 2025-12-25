@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api, getFullImageUrl } from '../services/api'
 import { slugify, deslugify } from '../utils/slugify'
@@ -42,7 +42,7 @@ const formatLocation = (location: string, city: string) => {
 
 // Funkcja zwracająca etykietę jednostki ceny
 const getPriceUnitLabel = (ad: Advertisement): string => {
-  const unit = ad.price_unit || 'month'
+  const unit = (ad.price_unit as 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign') || 'month'
   switch (unit) {
     case 'day': return 'zł/dzień'
     case 'week': return 'zł/tydzień'
@@ -66,6 +66,74 @@ const markers: Map<string, L.Marker> = new Map()
 // Get saved view mode from localStorage or default to grid
 const savedViewMode = typeof window !== 'undefined' ? window.localStorage.getItem('adsViewMode') : null
 const viewMode = ref<'grid' | 'list'>(savedViewMode === 'list' ? 'list' : 'grid')
+const isMobile = ref(false)
+const showMapOnMobile = ref(false)
+const showSortPanel = ref(false)
+const isLegendVisible = ref(false)
+
+const sortOptions = [
+  { value: 'newest', label: 'Najnowsze', description: 'Od najnowszych' },
+  { value: 'oldest', label: 'Najstarsze', description: 'Od najstarszych' },
+  { value: 'name-asc', label: 'Nazwa A-Z', description: 'Alfabetycznie rosnąco' },
+  { value: 'name-desc', label: 'Nazwa Z-A', description: 'Alfabetycznie malejąco' },
+  { value: 'price-day-asc', label: 'Cena za dzień', description: 'Od najtańszych' },
+  { value: 'price-day-desc', label: 'Cena za dzień', description: 'Od najdroższych' },
+  { value: 'price-month-asc', label: 'Cena za miesiąc', description: 'Od najtańszych' },
+  { value: 'price-month-desc', label: 'Cena za miesiąc', description: 'Od najdroższych' },
+  { value: 'price-sqm-asc', label: 'Cena za m²', description: 'Od najtańszych' },
+  { value: 'price-sqm-desc', label: 'Cena za m²', description: 'Od najdroższych' },
+  { value: 'price-campaign-asc', label: 'Cena za kampanię', description: 'Od najtańszych' },
+  { value: 'price-campaign-desc', label: 'Cena za kampanię', description: 'Od najdroższych' }
+]
+
+const handleSortButtonClick = () => {
+  showSortPanel.value = true
+}
+
+const handleSortOptionClick = (value: string) => (e: PointerEvent) => {
+  e.preventDefault()
+  e.stopPropagation()
+  selectSortOption(value)
+}
+
+const onSortPanelShown = () => {
+  // This function is called after the sort panel has been shown
+  // We can use it to set focus or perform other actions
+  const activeElement = document.activeElement as HTMLElement
+  if (activeElement) {
+    activeElement.blur()
+  }
+}
+
+const selectSortOption = (value: string) => {
+  // Update the sortBy ref with the new value
+  sortBy.value = value
+  // Close the sort panel
+  showSortPanel.value = false
+  
+  // Force Vue to recognize the change immediately
+  nextTick(() => {
+    // This ensures the UI updates with the new sort
+  })
+}
+
+// Check if mobile on mount and on resize
+const checkIfMobile = () => {
+  isMobile.value = window.innerWidth < 768
+  if (!isMobile.value) {
+    showMapOnMobile.value = false
+  }
+}
+
+// Toggle between list and map on mobile
+const toggleMobileMap = () => {
+  showMapOnMobile.value = !showMapOnMobile.value
+  if (showMapOnMobile.value && mapContainer.value && !map) {
+    nextTick(() => {
+      initMap()
+    })
+  }
+}
 
 // Function to change view mode and save to localStorage
 const changeViewMode = (mode: 'grid' | 'list') => {
@@ -131,7 +199,7 @@ const getPrice = (ad: Advertisement, period: 'day' | 'week' | 'month' | 'year' |
       return pricePerMonth
   }
 }
-const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign' | undefined>(undefined)
+const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign' | null>(null)
 const isStatusMenuOpen = ref(false)
 const statusMultiselect = ref<HTMLElement | null>(null)
 const currentPage = ref(1)
@@ -1066,7 +1134,7 @@ const filteredListings = computed(() => {
       })
       break
     default:
-      priceDisplay.value = undefined
+      priceDisplay.value = null
   }
 
   return sorted
@@ -1116,10 +1184,11 @@ const statusLabel = computed(() => {
 
 // Funkcja do formatowania ceny w zależności od wybranego sortowania
 const getFormattedPrice = (ad: Advertisement) => {
-  const price = getPrice(ad, priceDisplay.value)
+  const displayUnit = priceDisplay.value || ad.price_unit || 'month'
+  const price = getPrice(ad, displayUnit as any)
   let suffix = ''
   
-  switch (priceDisplay.value) {
+  switch (displayUnit) {
     case 'day':
       suffix = ' zł/dzień'
       break
@@ -1140,14 +1209,18 @@ const getFormattedPrice = (ad: Advertisement) => {
   return price.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + suffix
 }
 
-// Check if price is estimated (converted from different unit)
+// Helper function to check if price is estimated for a specific ad
 const isEstimatedPrice = (ad: Advertisement) => {
+  // If priceDisplay is null, use original ad.price_unit (not estimated)
+  if (priceDisplay.value === null) {
+    return false
+  }
   const displayUnit = priceDisplay.value || ad.price_unit || 'month'
   const adPriceUnit = ad.price_unit || 'month'
   return displayUnit !== adPriceUnit
 }
 
-// Check if data is missing for the requested display unit
+// Helper function to check if data is missing for a specific ad
 const isMissingData = (ad: Advertisement) => {
   const displayUnit = priceDisplay.value || ad.price_unit || 'month'
   
@@ -1680,7 +1753,14 @@ watch(() => filteredListings.value, () => {
 
 onMounted(() => {
   loadListings()
-  setTimeout(() => initMap(), 100)
+  checkIfMobile()
+  window.addEventListener('resize', checkIfMobile)
+  
+  // Initialize map only on desktop or if mobile and map is shown
+  if (!isMobile.value) {
+    setTimeout(() => initMap(), 100)
+  }
+  
   document.addEventListener('click', handleClickOutside)
   
   // Listen to localStorage changes
@@ -1777,94 +1857,161 @@ onBeforeUnmount(() => {
     
     <!-- Search and Filters Bar -->
     <div class="search-bar">
-      <div class="search-container">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-          <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <input 
-          v-model="searchQuery" 
-          type="text" 
-          placeholder="Szukaj po tytule..."
-          class="search-input"
-        />
-      </div>
-      
-      <button @click="openFiltersModal" class="filters-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        Filtry
-        <span v-if="activeFiltersCount > 0" class="filter-badge">{{ activeFiltersCount }}</span>
-      </button>
-
-      <div class="view-toggle">
-        <button 
-          @click="changeViewMode('grid')" 
-          class="view-btn"
-          :class="{ active: viewMode === 'grid' }"
-          title="Widok kafelków"
-        >
+      <!-- Desktop View -->
+      <div class="desktop-search">
+        <div class="search-container">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-            <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-            <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-            <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input 
+            v-model="searchQuery" 
+            type="text" 
+            placeholder="Szukaj po tytule..."
+            class="search-input"
+          />
+        </div>
+        
+        <button @click="openFiltersModal" class="filters-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Filtry
+          <span v-if="activeFiltersCount > 0" class="filter-badge">{{ activeFiltersCount }}</span>
+        </button>
+
+        <div class="view-toggle">
+          <button 
+            @click="changeViewMode('grid')" 
+            class="view-btn"
+            :class="{ active: viewMode === 'grid' }"
+            title="Widok kafelków"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+              <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+              <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+              <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+          <button 
+            @click="changeViewMode('list')" 
+            class="view-btn"
+            :class="{ active: viewMode === 'list' }"
+            title="Widok listy"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="5" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+              <rect x="3" y="11" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+              <rect x="3" y="17" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+        </div>
+
+        <select v-model="sortBy" class="sort-select">
+          <option value="newest">Najnowsze</option>
+          <option value="oldest">Najstarsze</option>
+          <option value="name-asc">Nazwa A-Z</option>
+          <option value="name-desc">Nazwa Z-A</option>
+          <optgroup label="Cena za dzień">
+            <option value="price-day-asc">Cena za dzień rosnąco</option>
+            <option value="price-day-desc">Cena za dzień malejąco</option>
+          </optgroup>
+          <optgroup label="Cena za tydzień">
+            <option value="price-week-asc">Cena za tydzień rosnąco</option>
+            <option value="price-week-desc">Cena za tydzień malejąco</option>
+          </optgroup>
+          <optgroup label="Cena za miesiąc">
+            <option value="price-month-asc">Cena za miesiąc rosnąco</option>
+            <option value="price-month-desc">Cena za miesiąc malejąco</option>
+          </optgroup>
+          <optgroup label="Cena za rok">
+            <option value="price-year-asc">Cena za rok rosnąco</option>
+            <option value="price-year-desc">Cena za rok malejąco</option>
+          </optgroup>
+          <optgroup label="Cena za m²">
+            <option value="price-sqm-asc">Cena za m² rosnąco</option>
+            <option value="price-sqm-desc">Cena za m² malejąco</option>
+          </optgroup>
+          <optgroup label="Cena za kampanię">
+            <option value="price-campaign-asc">Cena za kampanię rosnąco</option>
+            <option value="price-campaign-desc">Cena za kampanię malejąco</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- Mobile View -->
+      <div class="mobile-search">
+        <div class="search-container">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input 
+            v-model="searchQuery" 
+            type="text" 
+            placeholder="Szukaj..."
+            class="search-input"
+          />
+        </div>
+        
+        <button
+          @click="handleSortButtonClick"
+          class="mobile-action-btn"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18"/>
+            <path d="M6 12h12"/>
+            <path d="M10 18h4"/>
           </svg>
         </button>
-        <button 
-          @click="changeViewMode('list')" 
-          class="view-btn"
-          :class="{ active: viewMode === 'list' }"
-          title="Widok listy"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="5" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-            <rect x="3" y="11" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-            <rect x="3" y="17" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+        
+        <button @click="openFiltersModal" class="mobile-action-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
           </svg>
+          <span v-if="activeFiltersCount > 0" class="mobile-filter-badge">{{ activeFiltersCount }}</span>
         </button>
       </div>
-
-      <select v-model="sortBy" class="sort-select">
-        <option value="newest">Najnowsze</option>
-        <option value="oldest">Najstarsze</option>
-        <option value="name-asc">Nazwa A-Z</option>
-        <option value="name-desc">Nazwa Z-A</option>
-        <optgroup label="Cena za dzień">
-          <option value="price-day-asc">Cena za dzień rosnąco</option>
-          <option value="price-day-desc">Cena za dzień malejąco</option>
-        </optgroup>
-        <optgroup label="Cena za tydzień">
-          <option value="price-week-asc">Cena za tydzień rosnąco</option>
-          <option value="price-week-desc">Cena za tydzień malejąco</option>
-        </optgroup>
-        <optgroup label="Cena za miesiąc">
-          <option value="price-month-asc">Cena za miesiąc rosnąco</option>
-          <option value="price-month-desc">Cena za miesiąc malejąco</option>
-        </optgroup>
-        <optgroup label="Cena za rok">
-          <option value="price-year-asc">Cena za rok rosnąco</option>
-          <option value="price-year-desc">Cena za rok malejąco</option>
-        </optgroup>
-        <optgroup label="Cena za m²">
-          <option value="price-sqm-asc">Cena za m² rosnąco</option>
-          <option value="price-sqm-desc">Cena za m² malejąco</option>
-        </optgroup>
-        <optgroup label="Cena za kampanię">
-          <option value="price-campaign-asc">Cena za kampanię rosnąco</option>
-          <option value="price-campaign-desc">Cena za kampanię malejąco</option>
-        </optgroup>
-      </select>
 
       <div class="results-count">
         {{ filteredListings.length }} ogłoszeń
       </div>
+      
+      <!-- Sort Panel -->
+      <div v-if="showSortPanel" class="overlay" @pointerdown.self="showSortPanel = false"></div>
+      
+      <Transition name="sort-panel" @after-enter="onSortPanelShown">
+        <div v-if="showSortPanel" class="sort-panel" @pointerdown.stop>
+          <div class="sort-panel-header">
+            <h3 class="sort-panel-title">Sortuj według</h3>
+            <button @click="showSortPanel = false" class="sort-panel-close" aria-label="Zamknij">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="sort-options">
+            <button 
+              v-for="option in sortOptions" 
+              :key="option.value"
+              @pointerdown="handleSortOptionClick(option.value)"
+              class="sort-option"
+              :class="{ active: sortBy === option.value }"
+            >
+              <span class="option-label">{{ option.label }}</span>
+              <span class="option-desc">{{ option.description }}</span>
+            </button>
+          </div>
+        </div>
+      </Transition>
     </div>
 
     <!-- Main Content -->
     <div class="content-wrapper">
-      <div class="listings-list-container">
+      <div class="listings-list-container" :class="{ 'mobile-hidden': isMobile && showMapOnMobile }">
         <div v-if="isLoading" class="loading-state">
           <div class="spinner"></div>
           <p>Ładowanie ogłoszeń...</p>
@@ -1988,16 +2135,87 @@ onBeforeUnmount(() => {
         />
       </div>
 
-      <div class="map-container-wrapper">
-        <div ref="mapContainer" class="map-container"></div>
+      <!-- Mobile toggle button (shows either list or map) -->
+      <button v-if="isMobile" @click="toggleMobileMap" class="mobile-map-toggle">
+        <span>{{ showMapOnMobile ? 'Pokaż listę' : 'Pokaż mapę' }}</span>
+        <svg v-if="!showMapOnMobile" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
+          <line x1="9" y1="21" x2="9" y2="9"></line>
+        </svg>
+      </button>
+
+      <div class="map-container-wrapper" :class="{ 'mobile-visible': showMapOnMobile, 'mobile-hidden': isMobile && !showMapOnMobile }">
+        <div ref="mapContainer" class="map-container">
+          <!-- Legend Toggle Button -->
+          <button 
+            class="legend-toggle-button"
+            @click="isLegendVisible = !isLegendVisible"
+            :aria-expanded="isLegendVisible"
+            :class="{ 'is-active': isLegendVisible }"
+          >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Legenda</span>
+        </button>
+        </div>
         
-        <div class="map-legend">
-          <h3 class="legend-title">Legenda</h3>
+        <!-- Side panel legend -->
+        <div class="legend-side-panel" :class="{ 'is-visible': isLegendVisible && isMobile }">
+          <div class="legend-header">
+            <h3>Legenda</h3>
+            <button class="close-legend" @click="isLegendVisible = false" aria-label="Zamknij legendę">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="legend-content">
+            <div class="legend-items">
+              <div v-for="(color, type) in typeColors" :key="type" class="legend-item">
+                <div class="legend-marker" :style="{ background: color }"></div>
+                <span class="legend-label">
+                  {{ type === 'billboard' ? 'Billboardy' :
+                      type === 'citylight' ? 'Citylighty' :
+                      type === 'led_screen' ? 'Ekrany LED' :
+                      type === 'banner' ? 'Banery' :
+                      type === 'wall' ? 'Ściany reklamowe' :
+                      type === 'totem' ? 'Totemy reklamowe' :
+                      type === 'transport' ? 'Reklama w transporcie' :
+                      type === 'mobile' ? 'Reklama mobilna' : 'Inne' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Desktop Legend -->
+        <div v-if="!isMobile" class="map-legend" :class="{ 'is-visible': isLegendVisible }">
+          <div class="legend-header">
+            <h3 class="legend-title">Legenda</h3>
+            <button class="close-legend" @click="isLegendVisible = false" aria-label="Zamknij legendę">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
           <div class="legend-items">
             <div v-for="(color, type) in typeColors" :key="type" class="legend-item">
               <div class="legend-marker" :style="{ background: color }"></div>
               <span class="legend-label">
-                {{ typeLabels[type] || type }}
+                {{ type === 'billboard' ? 'Billboardy' :
+                    type === 'citylight' ? 'Citylighty' :
+                    type === 'led_screen' ? 'Ekrany LED' :
+                    type === 'banner' ? 'Banery' :
+                    type === 'wall' ? 'Ściany' :
+                    type === 'totem' ? 'Totemy' :
+                    type === 'transport' ? 'Transport' :
+                    type === 'mobile' ? 'Mobilna' : 'Inne' }}
               </span>
             </div>
           </div>
@@ -2519,6 +2737,230 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+/* Mobile Search Bar */
+.mobile-search {
+  display: none;
+  width: 100%;
+  gap: 8px;
+  align-items: center;
+}
+
+.mobile-search .search-container {
+  flex: 1;
+  margin-right: 0;
+}
+
+.mobile-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-action-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+}
+
+.mobile-action-btn:active {
+  transform: translateY(-2px);
+}
+
+.mobile-filter-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.overlay-enter-to,
+.overlay-leave-from {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.overlay-enter-from,
+.overlay-leave-to {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Sort Panel */
+.sort-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 16px 16px 0 0;
+  padding: 20px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 1100;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  max-height: 80vh;
+  overflow-y: auto;
+  touch-action: manipulation;
+}
+
+.sort-panel-enter-active,
+.sort-panel-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.sort-panel-enter-from,
+.sort-panel-leave-to {
+  transform: translateY(100%);
+}
+
+.sort-panel-enter-to,
+.sort-panel-leave-from {
+  transform: translateY(0);
+}
+
+.sort-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sort-panel-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.sort-panel-close {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.sort-panel-close:hover {
+  background: #f3f4f6;
+}
+
+.sort-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sort-option {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sort-option:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.sort-option.active {
+  background: #e0e7ff;
+  border-color: #a5b4fc;
+  color: #4f46e5;
+  font-weight: 500;
+}
+
+.sort-option .option-label {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.sort-option .option-desc {
+  display: block;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.sort-option.active .option-desc {
+  color: #6366f1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .desktop-search {
+    display: none;
+  }
+  
+  .mobile-search {
+    display: flex;
+  }
+  
+  .results-count {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-search {
+    display: none;
+  }
+  
+  .desktop-search {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  .search-container {
+    flex: 1;
+    max-width: 400px;
+  }
+  
+  .sort-select {
+    min-width: 200px;
+  }
+}
+
+/* Existing styles below */
 .listings-page {
   height: 100vh;
   background: #f9fafb;
@@ -2686,6 +3128,7 @@ onBeforeUnmount(() => {
   flex: 1;
   overflow: hidden;
   height: calc(100vh - 70px); /* Odejmujemy wysokość paska wyszukiwania */
+  position: relative;
 }
 
 .listings-list-container {
@@ -2977,58 +3420,291 @@ onBeforeUnmount(() => {
 }
 
 .map-container-wrapper {
-  position: relative;
-  background: #e5e7eb;
   height: 100%;
+  position: relative;
+  background: #f3f4f6;
+  display: flex;
+  flex-direction: column;
 }
 
 .map-container {
+  flex: 1;
+  min-height: 0; /* Allows the container to shrink below its content size */
   width: 100%;
-  height: 100%;
 }
 
-.map-legend {
+/* Legend Toggle Button */
+.legend-toggle-button {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: white;
-  padding: 1rem 1.25rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.75);
+  border: 2px solid rgba(229, 231, 235, 0.75);
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
   z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
 }
 
-.legend-title {
-  margin: 0 0 0.75rem 0;
-  font-size: 0.9rem;
-  font-weight: 700;
+.legend-toggle-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(209, 213, 219, 0.9);
+  transform: translateY(-1px);
+}
+
+.legend-toggle-button:active {
+  transform: translateY(0);
+}
+
+.legend-toggle-button.is-active {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(156, 163, 175, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.legend-toggle-button svg {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.legend-toggle-button.is-active svg {
+  transform: rotate(90deg);
+}
+
+/* Side Panel Legend */
+.legend-side-panel {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 300px;
+  height: 100%;
+  background: white;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 1100;
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.legend-side-panel.is-visible {
+  transform: translateX(-100%);
+}
+
+.legend-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.legend-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
   color: #1f2937;
+}
+
+.close-legend {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.close-legend:hover {
+  background-color: #e5e7eb;
+  color: #1f2937;
+}
+
+.legend-content {
+  padding: 1.25rem;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .legend-items {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.legend-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  font-size: 0.9375rem;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+/* Desktop Legend */
+.map-legend {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: white;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-width: 240px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+.map-legend.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.legend-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+  padding: 0.25rem 1rem 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: transparent;
+}
+
+.legend-header .legend-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1F2937;
+}
+
+.close-legend {
+  background: rgba(255, 255, 255, 0.75);
+  border: none;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.close-legend:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #111827;
+}
+
+.close-legend svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (min-width: 768px) {
+  .legend-side-panel {
+    display: none;
+  }
+  
+  .legend-toggle-button {
+    display: flex;
+  }
+  
+  .map-legend {
+    display: block;
+  }
+}
+
+/* Legend items for desktop */
+.legend-items {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+/* Mobile legend items - single row */
+@media (max-width: 767px) {
+  .legend-side-panel .legend-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: none;
+    overflow-y: visible;
+    padding: 0.5rem 1rem 1rem;
+  }
+  
+  .legend-side-panel .legend-item {
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .legend-side-panel .legend-label {
+    white-space: normal;
+  }
 }
 
 .legend-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.2rem 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .legend-marker {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
 }
 
 .legend-label {
-  font-size: 0.85rem;
-  color: #4b5563;
+  font-size: 0.8rem;
+  color: #4B5563;
   font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Modal Styles */
@@ -3532,6 +4208,88 @@ onBeforeUnmount(() => {
   }
 }
 
+/* Mobile Map Toggle Button */
+.mobile-map-toggle {
+  display: none; /* Hidden by default, shown only on mobile */
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+.mobile-map-toggle:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+}
+
+.mobile-map-toggle:active {
+  transform: translateX(-50%) translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 767px) {
+  .mobile-map-toggle {
+    display: flex;
+    opacity: 0.9;
+  }
+  
+  .mobile-map-toggle span {
+    display: inline-block;
+  }
+  
+  .content-wrapper {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 200px);
+  }
+  
+  .listings-list-container {
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    min-height: calc(100vh - 250px); /* Adjust based on your header/footer */
+    transition: opacity 0.3s ease, height 0.3s ease;
+    
+    &.mobile-hidden {
+      display: none;
+    }
+  }
+  
+  .map-container-wrapper {
+    display: none;
+    height: calc(100vh - 250px); /* Adjust based on your header/footer */
+    transition: opacity 0.3s ease, height 0.3s ease;
+    
+    &.mobile-visible {
+      display: block;
+      opacity: 1;
+    }
+    
+    &.mobile-hidden {
+      display: none;
+    }
+  }
+}
+
 @media (max-width: 640px) {
   .description-wrapper {
     padding: 1rem;
@@ -3553,8 +4311,9 @@ onBeforeUnmount(() => {
   }
 
   .content-wrapper {
-    grid-template-rows: auto 300px;
-    height: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    height: calc(100vh - 70px);
   }
   
   .ads-list-container {
@@ -3562,7 +4321,21 @@ onBeforeUnmount(() => {
   }
 
   .map-container-wrapper {
-    height: 300px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+  }
+
+  .map-container-wrapper.mobile-visible {
+    display: flex;
+  }
+
+  .listings-list-container.mobile-hidden {
+    display: none;
   }
 
   .ad-image {
