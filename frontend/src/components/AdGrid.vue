@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import AdCard from './AdCard.vue'
 import type { Advertisement } from '../types'
 
@@ -20,16 +20,39 @@ const emit = defineEmits<{
 }>()
 
 const sortBy = ref(props.sortBy || 'newest')
+const favoritesRefresh = ref(0)
+const comparisonRefresh = ref(0)
 
 const isFavorite = (id: string) => {
+  favoritesRefresh.value // Dependency to trigger reactivity
   const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
   return favorites.includes(id)
 }
 
 const isInComparison = (id: string) => {
+  comparisonRefresh.value // Dependency to trigger reactivity
   const comparison = JSON.parse(localStorage.getItem('comparison') || '[]')
   return comparison.includes(id)
 }
+
+const handleStorageChange = () => {
+  favoritesRefresh.value++
+  comparisonRefresh.value++
+}
+
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('localStorageChange', handleStorageChange)
+    window.addEventListener('storage', handleStorageChange)
+  }
+})
+
+onUnmounted(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('localStorageChange', handleStorageChange)
+    window.removeEventListener('storage', handleStorageChange)
+  }
+})
 </script>
 
 <template>
