@@ -65,7 +65,6 @@ let modalMarker: L.Marker | null = null
 const modalSearchQuery = ref('')
 const modalSearchSuggestions = ref<any[]>([])
 const showModalSearchSuggestions = ref(false)
-let modalSearchTimeout: ReturnType<typeof setTimeout> | null = null
 
 const minDate = new Date()
 minDate.setHours(0, 0, 0, 0)
@@ -165,7 +164,7 @@ const selectAddress = (suggestion: any) => {
     // Raw Nominatim response
     const address = suggestion.address
     editingAd.value.location = suggestion.display_name
-    let city = address.city || address.town || address.village || address.municipality || address.county || ''
+    let city = address.city || address.town || address.village || address.municipality || address.county || address.administrative || ''
     // Usuń prefix "gmina" jeśli pochodzi z municipality
     if (!address.city && !address.town && !address.village && address.municipality) {
       city = city.replace(/^gmina\s+/i, '')
@@ -784,7 +783,7 @@ const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
 
       if (editingAd.value) {
         const address = data.address
-        let city = address.city || address.town || address.village || address.municipality || address.county || ''
+        let city = address.city || address.town || address.village || address.municipality || address.county || address.administrative || ''
         // Usuń prefix "gmina" jeśli pochodzi z municipality
         if (!address.city && !address.town && !address.village && address.municipality) {
           city = city.replace(/^gmina\s+/i, '')
@@ -802,33 +801,87 @@ const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
   }
 }
 
-const searchModalLocation = async () => {
-  if (!modalSearchQuery.value || modalSearchQuery.value.length < 3) {
+const formattedModalSearchSuggestions = computed(() => {
+  return modalSearchSuggestions.value.map(loc => {
+    // Use state from Nominatim address
+    const voivodeship = loc.state || ''
+    
+    // Extract detailed location from displayName
+    // displayName format: "Jelitkowo, Gdańsk, Pomorskie, Polska"
+    const parts = loc.displayName.split(', ')
+    let detailedLocation = ''
+    
+    if (parts.length >= 2) {
+      // If first part is different from city name, it's a district/suburb
+      if (parts[0] !== loc.name && parts[1] === loc.name) {
+        detailedLocation = `${parts[0]}, ${loc.name}`
+      } else {
+        detailedLocation = loc.name
+      }
+    } else {
+      detailedLocation = loc.name
+    }
+    
+    // Construct subtitle with city if available and different from name
+    let subtitleParts: string[] = []
+    
+    // Add city to subtitle if it exists, is different from the main name, 
+    // and isn't already part of the detailed location label
+    if (loc.city && loc.city !== loc.name && !detailedLocation.includes(loc.city)) {
+      subtitleParts.push(loc.city)
+    }
+    
+    if (voivodeship) {
+      subtitleParts.push(voivodeship)
+    }
+    
+    subtitleParts.push('Polska')
+    
+    return {
+      ...loc,
+      label: detailedLocation,
+      subtitle: subtitleParts.join(', ')
+    }
+  })
+})
+
+const searchModalLocation = () => {
+  if (modalSearchQuery.value.length < 3) {
     modalSearchSuggestions.value = []
     showModalSearchSuggestions.value = false
     return
   }
 
-  if (modalSearchTimeout) {
-    clearTimeout(modalSearchTimeout)
-  }
-
-  modalSearchTimeout = setTimeout(async () => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(modalSearchQuery.value)},Poland&addressdetails=1&limit=5`
-      )
-      const data = await response.json()
-      modalSearchSuggestions.value = data.filter((item: any) => {
-        const lat = parseFloat(item.lat)
-        const lng = parseFloat(item.lon)
-        return isInPoland(lat, lng)
-      })
-      showModalSearchSuggestions.value = modalSearchSuggestions.value.length > 0
-    } catch (error) {
-      console.error('Error searching location:', error)
-    }
-  }, 300)
+  debouncedSearchLocations(modalSearchQuery.value, (results: LocationResult[]) => {
+    // Deduplicate by city name, preferring place/city over boundary
+    const uniqueCities = new Map<string, LocationResult>()
+    results.forEach(suggestion => {
+      const existing = uniqueCities.get(suggestion.name)
+      if (!existing) {
+        uniqueCities.set(suggestion.name, suggestion)
+      } else {
+        // Calculate priority for current and existing
+        // Priority: place/city > place/town > addresstype=city > others
+        const getPriority = (s: LocationResult) => {
+          if (s.osmClass === 'place' && s.osmType === 'city') return 4
+          if (s.osmClass === 'place' && s.osmType === 'town') return 3
+          if (s.addresstype === 'city') return 2
+          if (s.type === 'city') return 1
+          return 0
+        }
+        
+        const currentPriority = getPriority(suggestion)
+        const existingPriority = getPriority(existing)
+        
+        if (currentPriority > existingPriority) {
+          uniqueCities.set(suggestion.name, suggestion)
+        }
+      }
+    })
+    
+    modalSearchSuggestions.value = Array.from(uniqueCities.values())
+    showModalSearchSuggestions.value = modalSearchSuggestions.value.length > 0
+  })
 }
 
 const selectModalLocation = (suggestion: any) => {
@@ -852,7 +905,7 @@ const selectModalLocation = (suggestion: any) => {
     // Also update city and location from suggestion
     if (suggestion.address) {
       const address = suggestion.address
-      let city = address.city || address.town || address.village || address.municipality || address.county || ''
+      let city = address.city || address.town || address.village || address.municipality || address.county  || address.administrative || ''
       if (!address.city && !address.town && !address.village && address.municipality) {
         city = city.replace(/^gmina\s+/i, '')
       }
@@ -1859,14 +1912,15 @@ onBeforeUnmount(() => {
             placeholder="Wyszukaj miasto, ulicę..."
             class="modal-search-input"
           />
-          <div v-if="showModalSearchSuggestions && modalSearchSuggestions.length > 0" class="modal-suggestions">
+          <div v-if="showModalSearchSuggestions && formattedModalSearchSuggestions.length > 0" class="modal-suggestions">
             <div
-              v-for="(suggestion, index) in modalSearchSuggestions"
-              :key="index"
+              v-for="suggestion in formattedModalSearchSuggestions"
+              :key="suggestion.name"
               @click="selectModalLocation(suggestion)"
               class="modal-suggestion-item"
             >
-              {{ suggestion.display_name }}
+              <span class="suggestion-name">{{ suggestion.label }}</span>
+              <span v-if="suggestion.subtitle" class="suggestion-type">{{ suggestion.subtitle }}</span>
             </div>
           </div>
         </div>
@@ -3255,9 +3309,11 @@ onBeforeUnmount(() => {
   padding: 0.875rem 1rem;
   cursor: pointer;
   transition: background 0.15s;
-  font-size: 0.9rem;
   color: #374151;
   border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .modal-suggestion-item:last-child {
@@ -3267,6 +3323,16 @@ onBeforeUnmount(() => {
 .modal-suggestion-item:hover {
   background: #f9fafb;
   color: #667eea;
+}
+
+.modal-suggestion-item .suggestion-name {
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.modal-suggestion-item .suggestion-type {
+  font-size: 12px;
+  color: #6b7280;
 }
 
 .modal-body {
