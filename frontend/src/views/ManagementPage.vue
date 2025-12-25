@@ -885,8 +885,8 @@ const searchModalLocation = () => {
 }
 
 const selectModalLocation = (suggestion: any) => {
-  const lat = parseFloat(suggestion.lat)
-  const lng = parseFloat(suggestion.lon)
+  const lat = suggestion.lat
+  const lng = suggestion.lng
 
   if (!isInPoland(lat, lng)) {
     toast.value?.add('Lokalizacja musi być w Polsce', 'error')
@@ -902,16 +902,27 @@ const selectModalLocation = (suggestion: any) => {
   if (editingAd.value) {
     editingAd.value.latitude = lat
     editingAd.value.longitude = lng
-    // Also update city and location from suggestion
-    if (suggestion.address) {
-      const address = suggestion.address
-      let city = address.city || address.town || address.village || address.municipality || address.county  || address.administrative || ''
-      if (!address.city && !address.town && !address.village && address.municipality) {
-        city = city.replace(/^gmina\s+/i, '')
+    
+    // Handle both LocationResult and raw Nominatim response
+    const isLocationResult = suggestion.name !== undefined && suggestion.displayName !== undefined
+    
+    if (isLocationResult) {
+      // LocationResult from locationService
+      editingAd.value.location = suggestion.displayName
+      editingAd.value.city = suggestion.name
+      editingAd.value.region = suggestion.state || ''
+    } else {
+      // Raw Nominatim response
+      if (suggestion.address) {
+        const address = suggestion.address
+        let city = address.city || address.town || address.village || address.municipality || address.county || address.administrative || ''
+        if (!address.city && !address.town && !address.village && address.municipality) {
+          city = city.replace(/^gmina\s+/i, '')
+        }
+        editingAd.value.city = city
+        editingAd.value.region = address.state || ''
+        editingAd.value.location = suggestion.display_name || ''
       }
-      editingAd.value.city = city
-      editingAd.value.region = address.state || ''
-      editingAd.value.location = suggestion.display_name || ''
     }
   }
 
