@@ -1476,14 +1476,24 @@ const handleAdLeave = () => {
   handleAdHover(null)
 }
 
+const favoritesRefresh = ref(0)
+const comparisonRefresh = ref(0)
+
 const isFavorite = (id: string) => {
+  favoritesRefresh.value // Dependency to trigger reactivity
   const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
   return favorites.includes(id)
 }
 
 const isInComparison = (id: string) => {
+  comparisonRefresh.value // Dependency to trigger reactivity
   const comparison = JSON.parse(localStorage.getItem('comparison') || '[]')
   return comparison.includes(id)
+}
+
+const handleStorageChange = () => {
+  favoritesRefresh.value++
+  comparisonRefresh.value++
 }
 
 const handleAdClick = (adId: string) => {
@@ -1671,6 +1681,12 @@ onMounted(() => {
   setTimeout(() => initMap(), 100)
   document.addEventListener('click', handleClickOutside)
   
+  // Listen to localStorage changes
+  if (typeof window !== 'undefined') {
+    window.addEventListener('localStorageChange', handleStorageChange)
+    window.addEventListener('storage', handleStorageChange)
+  }
+  
   // Sprawdź parametry z URL path
   if (route.params.type) {
     // Mapowanie typów z URL na wartości w filtrach (wartości w bazie danych)
@@ -1742,6 +1758,12 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
+  
+  // Remove localStorage listeners
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('localStorageChange', handleStorageChange)
+    window.removeEventListener('storage', handleStorageChange)
+  }
 })
 </script>
 
