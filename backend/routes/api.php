@@ -12,6 +12,7 @@ Route::get('/user', function (Request $request) {
 
 Route::apiResource('listings', AdvertisementController::class);
 Route::patch('listings/{id}/status', [AdvertisementController::class, 'updateStatus']);
+Route::patch('advertisements/{id}/active', [AdvertisementController::class, 'updateActiveStatus']);
 Route::post('listings/{id}/increment-views', [AdvertisementController::class, 'incrementViews']);
 Route::get('listings/{id}/similar', [AdvertisementController::class, 'similar']);
 Route::post('listings/{id}/contact', [AdvertisementController::class, 'contactOwner']);

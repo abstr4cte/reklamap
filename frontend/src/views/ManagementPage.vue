@@ -347,17 +347,29 @@ const updateStatus = async (id: string, newStatus: string, availableFrom?: Date 
   }
 }
 
+const updateActiveStatus = async (id: string, isActive: boolean) => {
+  try {
+    const ad = listings.value.find(a => a.id === id)
+    if (!ad) return
+
+    // Use a dedicated endpoint that only updates is_active
+    await axios.patch(`/api/advertisements/${id}/active`, { is_active: isActive })
+
+    ad.is_active = isActive
+    toast.value?.add(isActive ? 'Ogłoszenie zostało aktywowane' : 'Ogłoszenie zostało dezaktywowane', 'success')
+  } catch (error) {
+    console.error('Error updating active status:', error)
+    toast.value?.add('Błąd podczas zmiany stanu aktywności', 'error')
+  }
+}
+
 const toggleActive = async (id: string) => {
   try {
     const ad = listings.value.find(a => a.id === id)
     if (!ad) return
 
     const newActiveState = !ad.is_active
-
-    await api.updateAdvertisement(id, { is_active: newActiveState })
-
-    ad.is_active = newActiveState
-    toast.value?.add(newActiveState ? 'Ogłoszenie zostało aktywowane' : 'Ogłoszenie zostało dezaktywowane', 'success')
+    await updateActiveStatus(id, newActiveState)
   } catch (error) {
     console.error('Error toggling active state:', error)
     toast.value?.add('Błąd podczas zmiany stanu aktywności', 'error')

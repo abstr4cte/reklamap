@@ -460,6 +460,22 @@ class AdvertisementController extends Controller
     }
 
     /**
+     * Update only the active status of an advertisement
+     */
+    public function updateActiveStatus(Request $request, $id)
+    {
+        $ad = Advertisement::findOrFail($id);
+        
+        $validated = $request->validate([
+            'is_active' => 'required|boolean'
+        ]);
+        
+        $ad->update($validated);
+        
+        return response()->json($ad, 200);
+    }
+
+    /**
      * Clear sitemap cache and notify search engines about sitemap update
      */
     private function notifySearchEngines()
