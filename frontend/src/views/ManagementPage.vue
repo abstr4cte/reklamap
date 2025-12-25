@@ -94,14 +94,17 @@ const searchAddress = (query: string) => {
   isResolvingAddress.value = true
 
   debouncedSearchLocations(query, (results: LocationResult[]) => {
-    // Deduplicate by city name, preferring place/city over boundary
+    // Deduplicate by city + state, preferring place/city over boundary
     const uniqueCities = new Map<string, LocationResult>()
     results.forEach(suggestion => {
       // Use city from address if available, otherwise use name
       const city = suggestion.city || suggestion.name
-      const existing = uniqueCities.get(city)
+      const state = suggestion.state || ''
+      // Create key with both city and state to show cities from different voivodeships
+      const cityKey = `${city}|${state}`
+      const existing = uniqueCities.get(cityKey)
       if (!existing) {
-        uniqueCities.set(city, suggestion)
+        uniqueCities.set(cityKey, suggestion)
       } else {
         // Calculate priority for current and existing
         // Priority: place/city > place/town > addresstype=city > others
@@ -117,7 +120,7 @@ const searchAddress = (query: string) => {
         const existingPriority = getPriority(existing)
         
         if (currentPriority > existingPriority) {
-          uniqueCities.set(city, suggestion)
+          uniqueCities.set(cityKey, suggestion)
         }
       }
     })
@@ -855,14 +858,17 @@ const searchModalLocation = () => {
   }
 
   debouncedSearchLocations(modalSearchQuery.value, (results: LocationResult[]) => {
-    // Deduplicate by city name, preferring place/city over boundary
+    // Deduplicate by city + state, preferring place/city over boundary
     const uniqueCities = new Map<string, LocationResult>()
     results.forEach(suggestion => {
       // Use city from address if available, otherwise use name
       const city = suggestion.city || suggestion.name
-      const existing = uniqueCities.get(city)
+      const state = suggestion.state || ''
+      // Create key with both city and state to show cities from different voivodeships
+      const cityKey = `${city}|${state}`
+      const existing = uniqueCities.get(cityKey)
       if (!existing) {
-        uniqueCities.set(city, suggestion)
+        uniqueCities.set(cityKey, suggestion)
       } else {
         // Calculate priority for current and existing
         // Priority: place/city > place/town > addresstype=city > others
@@ -878,7 +884,7 @@ const searchModalLocation = () => {
         const existingPriority = getPriority(existing)
         
         if (currentPriority > existingPriority) {
-          uniqueCities.set(city, suggestion)
+          uniqueCities.set(cityKey, suggestion)
         }
       }
     })
