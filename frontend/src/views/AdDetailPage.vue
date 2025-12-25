@@ -1327,13 +1327,6 @@ onUnmounted(() => {
 
           <div class="map-section">
             <h2>Lokalizacja na mapie</h2>
-            <div v-if="ad.map_screenshot_path" class="map-screenshot-wrapper">
-              <img 
-                :src="getFullImageUrl(ad.map_screenshot_path)" 
-                alt="Mapa lokalizacji"
-                class="map-screenshot"
-              />
-            </div>
             <div class="map-container" ref="mapContainer"></div>
           </div>
 
