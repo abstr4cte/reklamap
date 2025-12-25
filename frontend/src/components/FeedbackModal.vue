@@ -22,6 +22,10 @@ const closeModal = () => {
 }
 
 const handleSubmit = async () => {
+  if (!email.value.trim()) {
+    return
+  }
+
   if (!message.value.trim()) {
     return
   }
@@ -125,8 +129,9 @@ defineExpose({
                 <input
                   v-model="email"
                   type="email"
-                  placeholder="twoj@email.pl (opcjonalnie)"
+                  placeholder="twoj@email.pl"
                   class="form-input"
+                  required
                 />
               </div>
 
@@ -135,10 +140,14 @@ defineExpose({
                 placeholder="Opisz swój problem, sugestię lub pytanie..."
                 rows="4"
                 required
+                maxlength="2000"
                 class="form-textarea"
               ></textarea>
+              <div class="char-counter" :class="{ 'near-limit': message.length > 1800 }">
+                {{ message.length }}/2000 znaków
+              </div>
 
-              <button type="submit" :disabled="isSubmitting || !message.trim()" class="submit-btn">
+              <button type="submit" :disabled="isSubmitting || !email.trim() || !message.trim()" class="submit-btn">
                 <span v-if="isSubmitting">Wysyłanie...</span>
                 <span v-else>Wyślij feedback</span>
               </button>
@@ -331,6 +340,18 @@ defineExpose({
   outline: none;
   border-color: #4F46E5;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.char-counter {
+  font-size: 0.875rem;
+  color: #9CA3AF;
+  text-align: right;
+  margin-top: 0.25rem;
+  transition: color 0.2s ease;
+}
+
+.char-counter.near-limit {
+  color: #F59E0B;
 }
 
 .submit-btn {

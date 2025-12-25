@@ -46,6 +46,8 @@ const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 
 const currentImageIndex = ref(0)
+const showImagePreview = ref(false)
+
 const images = computed(() => {
   if (!ad.value) return []
   
@@ -106,6 +108,32 @@ const nextImage = () => {
 const prevImage = () => {
   if (images.value.length === 0) return
   currentImageIndex.value = (currentImageIndex.value - 1 + images.value.length) % images.value.length
+}
+
+const openImagePreview = () => {
+  if (images.value.length > 0) {
+    showImagePreview.value = true
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden'
+  }
+}
+
+const closeImagePreview = () => {
+  showImagePreview.value = false
+  // Restore body scroll
+  document.body.style.overflow = 'auto'
+}
+
+const handlePreviewKeydown = (event: KeyboardEvent) => {
+  if (!showImagePreview.value) return
+  
+  if (event.key === 'ArrowLeft') {
+    prevImage()
+  } else if (event.key === 'ArrowRight') {
+    nextImage()
+  } else if (event.key === 'Escape') {
+    closeImagePreview()
+  }
 }
 
 const checkFavoriteStatus = () => {
@@ -1048,6 +1076,7 @@ onMounted(() => {
   if (typeof window !== 'undefined') {
     window.addEventListener('localStorageChange', handleStorageChange)
     window.addEventListener('storage', handleStorageChange)
+    window.addEventListener('keydown', handlePreviewKeydown)
   }
 })
 
@@ -1055,6 +1084,7 @@ onUnmounted(() => {
   if (typeof window !== 'undefined') {
     window.removeEventListener('localStorageChange', handleStorageChange)
     window.removeEventListener('storage', handleStorageChange)
+    window.removeEventListener('keydown', handlePreviewKeydown)
   }
   
   // Clean up map instance to prevent memory leaks and conflicts
@@ -1108,7 +1138,7 @@ onUnmounted(() => {
       <div class="content-layout">
         <div class="main-content">
           <div class="image-gallery">
-            <div class="main-image-wrapper">
+            <div class="main-image-wrapper" @click="openImagePreview" :class="{ 'cursor-pointer': images.length > 0 }">
               <WebPImage
                 v-if="images.length > 0"
                 :src="images[currentImageIndex]"
@@ -1586,6 +1616,43 @@ onUnmounted(() => {
         </form>
       </div>
     </div>
+
+    <!-- Image Preview Modal -->
+    <Transition name="fade">
+      <div v-if="showImagePreview" class="image-preview-overlay" @click.self="closeImagePreview">
+        <button @click="closeImagePreview" class="preview-close-btn" aria-label="Zamknij podgląd">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="preview-container">
+          <button v-if="images.length > 1" @click="prevImage" class="preview-nav-btn prev" aria-label="Poprzednie zdjęcie">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+              <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <div class="preview-image-wrapper">
+            <WebPImage
+              :src="images[currentImageIndex]"
+              :alt="imageAlt"
+              class="preview-image"
+            />
+          </div>
+
+          <button v-if="images.length > 1" @click="nextImage" class="preview-nav-btn next" aria-label="Następne zdjęcie">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+              <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div v-if="images.length > 1" class="preview-counter">
+          {{ currentImageIndex + 1 }} / {{ images.length }}
+        </div>
+      </div>
+    </Transition>
   </div>
   <ToastNotification ref="toast" />
 </template>
@@ -2423,6 +2490,30 @@ onUnmounted(() => {
   .map-container {
     height: 300px;
   }
+
+  .preview-nav-btn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .preview-nav-btn.prev {
+    left: 0.5rem;
+  }
+
+  .preview-nav-btn.next {
+    right: 0.5rem;
+  }
+
+  .preview-counter {
+    bottom: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .preview-close-btn {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
 }
 
 /* Toast Notifications */
@@ -2705,6 +2796,141 @@ onUnmounted(() => {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+/* Image Preview Modal Styles */
+.image-preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.preview-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  z-index: 2001;
+}
+
+.preview-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.preview-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.preview-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.preview-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  z-index: 2001;
+}
+
+.preview-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.preview-nav-btn.prev {
+  left: 1rem;
+}
+
+.preview-nav-btn.next {
+  right: 1rem;
+}
+
+.preview-counter {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  backdrop-filter: blur(4px);
+  z-index: 2001;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-pointer:hover {
+  opacity: 0.9;
+}
+
+/* Fade transition for preview modal */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 @media print {
