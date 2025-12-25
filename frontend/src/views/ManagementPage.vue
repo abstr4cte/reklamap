@@ -127,6 +127,14 @@ const selectAddress = (suggestion: any) => {
   editingAd.value.city = city
   editingAd.value.region = address.state || ''
   
+  // Update coordinates from suggestion
+  const lat = parseFloat(suggestion.lat)
+  const lng = parseFloat(suggestion.lon)
+  if (!isNaN(lat) && !isNaN(lng)) {
+    editingAd.value.latitude = lat
+    editingAd.value.longitude = lng
+  }
+  
   showAddressSuggestions.value = false
 }
 
