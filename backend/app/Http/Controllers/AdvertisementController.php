@@ -423,7 +423,10 @@ class AdvertisementController extends Controller
             }
 
             // Generate screenshot using Browsershot
+            $nodePath = '/home/dev/.nvm/versions/node/v21.5.0/bin/node';
+            
             \Spatie\Browsershot\Browsershot::html($html)
+                ->setNodeBinary($nodePath)
                 ->setChromePath('/snap/bin/chromium')
                 ->windowSize(800, 600)
                 ->save($fullPath);
