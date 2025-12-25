@@ -887,6 +887,9 @@ const searchModalLocation = () => {
 const selectModalLocation = (suggestion: any) => {
   const lat = suggestion.lat
   const lng = suggestion.lng
+  
+  // Handle both LocationResult and raw Nominatim response
+  const isLocationResult = suggestion.name !== undefined && suggestion.displayName !== undefined
 
   if (!isInPoland(lat, lng)) {
     toast.value?.add('Lokalizacja musi być w Polsce', 'error')
@@ -902,9 +905,6 @@ const selectModalLocation = (suggestion: any) => {
   if (editingAd.value) {
     editingAd.value.latitude = lat
     editingAd.value.longitude = lng
-    
-    // Handle both LocationResult and raw Nominatim response
-    const isLocationResult = suggestion.name !== undefined && suggestion.displayName !== undefined
     
     if (isLocationResult) {
       // LocationResult from locationService
@@ -926,7 +926,13 @@ const selectModalLocation = (suggestion: any) => {
     }
   }
 
-  modalSearchQuery.value = ''
+  // Update search query with selected location
+  if (isLocationResult) {
+    modalSearchQuery.value = suggestion.label
+  } else {
+    modalSearchQuery.value = suggestion.display_name || ''
+  }
+  
   modalSearchSuggestions.value = []
   showModalSearchSuggestions.value = false
 }
