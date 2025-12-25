@@ -1221,7 +1221,7 @@ onMounted(() => {
             <label class="form-label">Adres e-mail <span class="required">*</span></label>
             <input
               v-model="formData.email"
-              type="email"
+              type="text"
               class="form-input"
               :class="{ 'error': errors.email }"
               placeholder="twoj@email.pl"

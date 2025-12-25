@@ -1347,7 +1347,7 @@ onUnmounted(() => {
                 <label class="form-label">Twój e-mail</label>
                 <input
                   v-model="contactForm.email"
-                  type="email"
+                  type="text"
                   class="form-input"
                   :class="{ 'error': contactErrors.email }"
                   placeholder="twoj@email.pl"
