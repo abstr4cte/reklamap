@@ -416,9 +416,11 @@ class AdvertisementController extends Controller
                 mkdir(dirname($fullPath), 0755, true);
             }
 
-            // Set environment variables for correct Node version
+            // Set environment variables for correct Node version and puppeteer
             $nodePath = '/home/dev/.nvm/versions/node/v21.5.0/bin/node';
+            $nodeModulesPath = base_path('node_modules');
             putenv('PATH=' . dirname($nodePath) . ':' . getenv('PATH'));
+            putenv('NODE_PATH=' . $nodeModulesPath);
 
             // Generate screenshot using Browsershot with HTTP URL
             $mapUrl = route('map-screenshot', $ad->id, true);
