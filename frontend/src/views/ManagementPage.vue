@@ -19,6 +19,7 @@ import { point } from '@turf/helpers'
 import polandGeoJson from '../assets/poland_highres.json'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
+import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 
 // Fix Leaflet icon paths
 const DefaultIcon = L.icon({
@@ -57,7 +58,6 @@ const draggedImageIndex = ref<number | null>(null)
 const addressSuggestions = ref<any[]>([])
 const showAddressSuggestions = ref(false)
 const isResolvingAddress = ref(false)
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
 const showMapModal = ref(false)
 const modalMapContainer = ref<HTMLElement | null>(null)
 let modalMap: L.Map | null = null
@@ -85,10 +85,6 @@ const isSaving = ref(false)
 const isTokenInvalid = ref(false)
 
 const searchAddress = (query: string) => {
-  if (searchTimeout) {
-    clearTimeout(searchTimeout)
-  }
-
   if (query.length < 3) {
     addressSuggestions.value = []
     showAddressSuggestions.value = false
@@ -98,20 +94,37 @@ const searchAddress = (query: string) => {
 
   isResolvingAddress.value = true
 
-  searchTimeout = setTimeout(async () => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=5&addressdetails=1`
-      )
-      const data = await response.json()
-      addressSuggestions.value = data
-      showAddressSuggestions.value = data.length > 0
-    } catch (error) {
-      console.error('Error searching address:', error)
-    } finally {
-      isResolvingAddress.value = false
-    }
-  }, 500)
+  debouncedSearchLocations(query, (results: LocationResult[]) => {
+    // Deduplicate by city name, preferring place/city over boundary
+    const uniqueCities = new Map<string, LocationResult>()
+    results.forEach(suggestion => {
+      const existing = uniqueCities.get(suggestion.name)
+      if (!existing) {
+        uniqueCities.set(suggestion.name, suggestion)
+      } else {
+        // Calculate priority for current and existing
+        // Priority: place/city > place/town > addresstype=city > others
+        const getPriority = (s: LocationResult) => {
+          if (s.osmClass === 'place' && s.osmType === 'city') return 4
+          if (s.osmClass === 'place' && s.osmType === 'town') return 3
+          if (s.addresstype === 'city') return 2
+          if (s.type === 'city') return 1
+          return 0
+        }
+        
+        const currentPriority = getPriority(suggestion)
+        const existingPriority = getPriority(existing)
+        
+        if (currentPriority > existingPriority) {
+          uniqueCities.set(suggestion.name, suggestion)
+        }
+      }
+    })
+    
+    addressSuggestions.value = Array.from(uniqueCities.values())
+    showAddressSuggestions.value = addressSuggestions.value.length > 0
+    isResolvingAddress.value = false
+  })
 }
 
 const resolveAddressFromInput = async (query: string) => {
