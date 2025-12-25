@@ -197,6 +197,22 @@
     </div>
 
     <div class="section-title">Lokalizacja</div>
+    
+    @php
+        $mapScreenshotBase64 = null;
+        if ($advertisement->map_screenshot_path) {
+            $mapScreenshotPath = storage_path('app/public/' . $advertisement->map_screenshot_path);
+            if (file_exists($mapScreenshotPath)) {
+                $mapScreenshotData = file_get_contents($mapScreenshotPath);
+                $mapScreenshotBase64 = 'data:image/png;base64,' . base64_encode($mapScreenshotData);
+            }
+        }
+    @endphp
+    
+    @if($mapScreenshotBase64)
+        <img src="{{ $mapScreenshotBase64 }}" style="width: 100%; height: auto; margin-bottom: 1rem; border-radius: 8px;">
+    @endif
+    
     <div style="margin-bottom: 1rem;">
         <div class="label">Współrzędne GPS</div>
         <div class="value">{{ number_format($advertisement->latitude, 6) }},

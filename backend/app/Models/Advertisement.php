@@ -64,6 +64,7 @@ class Advertisement extends Model
         'route_area',
         'campaign_duration',
         'slug',
+        'map_screenshot_path',
     ];
 
     /**
