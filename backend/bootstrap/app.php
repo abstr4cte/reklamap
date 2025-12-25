@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->alias(['app.key' => \App\Http\Middleware\VerifyAppKey::class,]);
+        $middleware->appendToGroup('api' , 'app.key');
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {

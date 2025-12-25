@@ -18,15 +18,18 @@ export const getFullImageUrl = (path: string): string => {
     return fullUrl
 }
 
+const APP_KEY = import.meta.env.VITE_INTERNAL_APP_KEY as string
+const withKey = (headers: HeadersInit = {}): HeadersInit => ({ ...(headers as any), 'X-App-Key': APP_KEY })
+
 export const api = {
     async getAdvertisements(): Promise<Advertisement[]> {
-        const response = await fetch(`${API_URL}/listings`)
+        const response = await fetch(`${API_URL}/listings`, { headers: withKey() })
         if (!response.ok) throw new Error('Failed to fetch listings')
         return response.json()
     },
 
     async getAdvertisement(id: string): Promise<Advertisement | null> {
-        const response = await fetch(`${API_URL}/listings/${id}`)
+        const response = await fetch(`${API_URL}/listings/${id}`, { headers: withKey() })
         if (!response.ok) {
             if (response.status === 404) return null
             throw new Error('Failed to fetch advertisement')
@@ -36,7 +39,7 @@ export const api = {
 
     async getAdvertisementsByIds(ids: string[]): Promise<Advertisement[]> {
         if (ids.length === 0) return []
-        const response = await fetch(`${API_URL}/listings?ids=${ids.join(',')}`)
+        const response = await fetch(`${API_URL}/listings?ids=${ids.join(',')}`, { headers: withKey() })
         if (!response.ok) throw new Error('Failed to fetch listings by ids')
         return response.json()
     },
@@ -45,8 +48,10 @@ export const api = {
         const response = await fetch(`${API_URL}/listings`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
+                ...withKey({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                })
             },
             body: JSON.stringify(ad),
         })
@@ -63,8 +68,10 @@ export const api = {
         const response = await fetch(`${API_URL}/listings/${id}/status`, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
+                ...withKey({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                })
             },
             body: JSON.stringify({ status, available_from }),
         });
@@ -83,8 +90,10 @@ export const api = {
         const response = await fetch(`${API_URL}/listings/${id}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
+                ...withKey({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                })
             },
             body: JSON.stringify(updates),
         })
@@ -94,6 +103,7 @@ export const api = {
     async deleteAdvertisement(id: string): Promise<void> {
         const response = await fetch(`${API_URL}/listings/${id}`, {
             method: 'DELETE',
+            headers: withKey(),
         })
         if (!response.ok) throw new Error('Failed to delete advertisement')
     },
@@ -101,11 +111,12 @@ export const api = {
     async incrementViews(id: string): Promise<void> {
         await fetch(`${API_URL}/listings/${id}/increment-views`, {
             method: 'POST',
+            headers: withKey(),
         })
     },
 
     async getSimilarAdvertisements(ad: Advertisement): Promise<Advertisement[]> {
-        const response = await fetch(`${API_URL}/listings/${ad.id}/similar`)
+        const response = await fetch(`${API_URL}/listings/${ad.id}/similar`, { headers: withKey() })
         if (!response.ok) return []
         return response.json()
     },
@@ -114,8 +125,10 @@ export const api = {
         const response = await fetch(`${API_URL}/reports`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
+                ...withKey({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                })
             },
             body: JSON.stringify(report),
         })
@@ -126,8 +139,10 @@ export const api = {
         const response = await fetch(`${API_URL}/listings/${id}/contact`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
+                ...withKey({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                })
             },
             body: JSON.stringify(contact),
         })
@@ -145,6 +160,7 @@ export const api = {
 
             const response = await fetch(`${API_URL}/upload`, {
                 method: 'POST',
+                headers: withKey(),
                 body: formData,
             })
 
