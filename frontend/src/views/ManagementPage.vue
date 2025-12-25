@@ -97,9 +97,11 @@ const searchAddress = (query: string) => {
     // Deduplicate by city name, preferring place/city over boundary
     const uniqueCities = new Map<string, LocationResult>()
     results.forEach(suggestion => {
-      const existing = uniqueCities.get(suggestion.name)
+      // Use city from address if available, otherwise use name
+      const cityKey = suggestion.city || suggestion.name
+      const existing = uniqueCities.get(cityKey)
       if (!existing) {
-        uniqueCities.set(suggestion.name, suggestion)
+        uniqueCities.set(cityKey, suggestion)
       } else {
         // Calculate priority for current and existing
         // Priority: place/city > place/town > addresstype=city > others
@@ -115,7 +117,7 @@ const searchAddress = (query: string) => {
         const existingPriority = getPriority(existing)
         
         if (currentPriority > existingPriority) {
-          uniqueCities.set(suggestion.name, suggestion)
+          uniqueCities.set(cityKey, suggestion)
         }
       }
     })
@@ -856,9 +858,11 @@ const searchModalLocation = () => {
     // Deduplicate by city name, preferring place/city over boundary
     const uniqueCities = new Map<string, LocationResult>()
     results.forEach(suggestion => {
-      const existing = uniqueCities.get(suggestion.name)
+      // Use city from address if available, otherwise use name
+      const cityKey = suggestion.city || suggestion.name
+      const existing = uniqueCities.get(cityKey)
       if (!existing) {
-        uniqueCities.set(suggestion.name, suggestion)
+        uniqueCities.set(cityKey, suggestion)
       } else {
         // Calculate priority for current and existing
         // Priority: place/city > place/town > addresstype=city > others
@@ -874,7 +878,7 @@ const searchModalLocation = () => {
         const existingPriority = getPriority(existing)
         
         if (currentPriority > existingPriority) {
-          uniqueCities.set(suggestion.name, suggestion)
+          uniqueCities.set(cityKey, suggestion)
         }
       }
     })
