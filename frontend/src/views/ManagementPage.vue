@@ -132,32 +132,13 @@ const resolveAddressFromInput = async (query: string) => {
   isResolvingAddress.value = true
   try {
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=5&addressdetails=1`
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=1&addressdetails=1`
     )
     const data = await response.json()
     
     if (data && data.length > 0) {
-      // Find best result preferring place/city over boundary
-      let bestResult = data[0]
-      let bestPriority = 0
-      
-      const getPriority = (item: any) => {
-        if (item.type === 'city' || item.class === 'place' && item.type === 'city') return 4
-        if (item.type === 'town' || item.class === 'place' && item.type === 'town') return 3
-        if (item.addresstype === 'city') return 2
-        if (item.class === 'boundary') return 0
-        return 1
-      }
-      
-      data.forEach((item: any) => {
-        const priority = getPriority(item)
-        if (priority > bestPriority) {
-          bestPriority = priority
-          bestResult = item
-        }
-      })
-      
-      selectAddress(bestResult)
+      const suggestion = data[0]
+      selectAddress(suggestion)
     }
   } catch (error) {
     console.error('Error resolving address:', error)
