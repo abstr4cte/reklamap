@@ -494,9 +494,14 @@ const handleSearch = (searchFilters: Filters) => {
   // No need to scroll here as HeroBanner component will handle scrolling
 }
 
+const isResettingFilters = ref(false)
+
 const handleReset = (resetFilters: Filters) => {
   filters.value = resetFilters
   currentPage.value = 1 // Reset to first page
+  
+  // Set flag to prevent watch from overriding filters
+  isResettingFilters.value = true
   
   // Prevent scrolling by using replaceState instead of router.push
   const currentPosition = window.scrollY
@@ -505,6 +510,8 @@ const handleReset = (resetFilters: Filters) => {
   // Ensure we stay at the current scroll position
   setTimeout(() => {
     window.scrollTo(0, currentPosition)
+    // Reset flag after scroll
+    isResettingFilters.value = false
   }, 0)
 }
 
@@ -524,6 +531,11 @@ const loadAdvertisements = async () => {
 
 // Watch for URL query parameter changes
 watch(() => route.query, (newQuery) => {
+  // Skip if we're in the middle of resetting filters
+  if (isResettingFilters.value) {
+    return
+  }
+  
   // Aktualizuj numer strony
   const page = parseInt(newQuery.page as string) || 1
   if (page !== currentPage.value && page >= 1 && page <= totalPages.value) {
