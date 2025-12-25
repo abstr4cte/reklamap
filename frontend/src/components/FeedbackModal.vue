@@ -24,11 +24,50 @@ const closeModal = () => {
 }
 
 const handleSubmit = async () => {
-  if (!email.value.trim()) {
+  const emailTrimmed = email.value.trim()
+  const messageTrimmed = message.value.trim()
+
+  if (!emailTrimmed) {
+    error.value = 'Proszę wpisać adres e-mail'
     return
   }
 
-  if (!message.value.trim()) {
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(emailTrimmed)) {
+    error.value = 'Proszę wpisać prawidłowy adres e-mail (np. nazwa@domena.pl)'
+    return
+  }
+
+  // Additional validation - check for common mistakes
+  if (emailTrimmed.includes('..')) {
+    error.value = 'Adres e-mail zawiera błędy'
+    return
+  }
+
+  if (emailTrimmed.startsWith('.') || emailTrimmed.endsWith('.')) {
+    error.value = 'Adres e-mail zawiera błędy'
+    return
+  }
+
+  const [localPart, domain] = emailTrimmed.split('@')
+  if (!localPart || localPart.length === 0 || localPart.length > 64) {
+    error.value = 'Część przed @ jest za długa lub pusta'
+    return
+  }
+
+  if (!domain || domain.length === 0 || domain.length > 255) {
+    error.value = 'Domena jest za długa lub pusta'
+    return
+  }
+
+  if (!domain.includes('.')) {
+    error.value = 'Domena musi zawierać kropkę (np. domena.pl)'
+    return
+  }
+
+  if (!messageTrimmed) {
+    error.value = 'Proszę wpisać wiadomość'
     return
   }
 
@@ -38,8 +77,8 @@ const handleSubmit = async () => {
   try {
     const feedbackData = {
       type: feedbackType.value,
-      email: email.value.trim(),
-      message: message.value.trim(),
+      email: emailTrimmed,
+      message: messageTrimmed,
       url: typeof window !== 'undefined' ? window.location.href : '',
       userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : ''
     }
