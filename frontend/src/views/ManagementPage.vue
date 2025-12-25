@@ -774,48 +774,23 @@ const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
   }
 }
 
-const searchModalLocation = () => {
+const searchModalLocation = async () => {
   if (modalSearchQuery.value.length < 3) {
     modalSearchSuggestions.value = []
     showModalSearchSuggestions.value = false
     return
   }
 
-  debouncedSearchLocations(modalSearchQuery.value, (results: LocationResult[]) => {
-    // Deduplicate by city + state, preferring place/city over boundary
-    const uniqueCities = new Map<string, LocationResult>()
-    results.forEach(suggestion => {
-      // Use city from address if available, otherwise use name
-      const city = suggestion.city || suggestion.name
-      const state = suggestion.state || ''
-      // Create key with both city and state to show cities from different voivodeships
-      const cityKey = `${city}|${state}`
-      const existing = uniqueCities.get(cityKey)
-      if (!existing) {
-        uniqueCities.set(cityKey, suggestion)
-      } else {
-        // Calculate priority for current and existing
-        // Priority: place/city > place/town > addresstype=city > others
-        const getPriority = (s: LocationResult) => {
-          if (s.osmClass === 'place' && s.osmType === 'city') return 4
-          if (s.osmClass === 'place' && s.osmType === 'town') return 3
-          if (s.addresstype === 'city') return 2
-          if (s.type === 'city') return 1
-          return 0
-        }
-        
-        const currentPriority = getPriority(suggestion)
-        const existingPriority = getPriority(existing)
-        
-        if (currentPriority > existingPriority) {
-          uniqueCities.set(cityKey, suggestion)
-        }
-      }
-    })
-    
-    modalSearchSuggestions.value = Array.from(uniqueCities.values())
-    showModalSearchSuggestions.value = modalSearchSuggestions.value.length > 0
-  })
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(modalSearchQuery.value)}&countrycodes=pl&limit=10&addressdetails=1`
+    )
+    const data = await response.json()
+    modalSearchSuggestions.value = data
+    showModalSearchSuggestions.value = data.length > 0
+  } catch (error) {
+    console.error('Error searching location:', error)
+  }
 }
 
 const selectModalLocation = (suggestion: any) => {
