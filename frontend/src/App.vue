@@ -246,7 +246,7 @@ onUnmounted(() => {
       @open-favorites="isFavoritesPanelOpen = true"
       @open-comparison="isComparisonPanelOpen = true"
     />
-    <router-view :key="favoritesKey + comparisonKey" @toggle-favorite="handleToggleFavorite" @toggle-comparison="handleToggleComparison" />
+    <router-view @toggle-favorite="handleToggleFavorite" @toggle-comparison="handleToggleComparison" />
     <AppFooter />
     <FavoritesPanel
       :is-open="isFavoritesPanelOpen"
