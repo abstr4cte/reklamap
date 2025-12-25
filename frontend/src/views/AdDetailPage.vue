@@ -1327,6 +1327,13 @@ onUnmounted(() => {
 
           <div class="map-section">
             <h2>Lokalizacja na mapie</h2>
+            <div v-if="ad.map_screenshot_path" class="map-screenshot-wrapper">
+              <img 
+                :src="getFullImageUrl(ad.map_screenshot_path)" 
+                alt="Mapa lokalizacji"
+                class="map-screenshot"
+              />
+            </div>
             <div class="map-container" ref="mapContainer"></div>
           </div>
 
@@ -2933,6 +2940,20 @@ onUnmounted(() => {
   opacity: 0;
 }
 
+.map-screenshot-wrapper {
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.map-screenshot {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #f5f5f5;
+}
+
 @media print {
   .app-header,
   .app-footer,
@@ -2942,12 +2963,20 @@ onUnmounted(() => {
   .image-gallery-thumbnails,
   .gallery-nav-btn,
   .contact-form-section,
-  .map-section,
+  .map-container,
   .favorites-panel,
   .comparison-panel,
   .email-modal,
   .feedback-button {
     display: none !important;
+  }
+  
+  .map-section {
+    page-break-inside: avoid;
+  }
+  
+  .map-screenshot-wrapper {
+    margin-bottom: 2rem;
   }
 
   .listing-detail-page {

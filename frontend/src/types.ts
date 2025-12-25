@@ -55,4 +55,5 @@ export interface Advertisement {
     operating_hours?: string
     route_area?: string
     campaign_duration?: number
+    map_screenshot_path?: string
 }
