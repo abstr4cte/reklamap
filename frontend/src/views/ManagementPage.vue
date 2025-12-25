@@ -218,6 +218,50 @@ const clearLocation = () => {
   }
 }
 
+const formattedAddressSuggestions = computed(() => {
+  return addressSuggestions.value.map(loc => {
+    // Use state from Nominatim address
+    const voivodeship = loc.state || ''
+    
+    // Extract detailed location from displayName
+    // displayName format: "Jelitkowo, Gdańsk, Pomorskie, Polska"
+    const parts = loc.displayName.split(', ')
+    let detailedLocation = ''
+    
+    if (parts.length >= 2) {
+      // If first part is different from city name, it's a district/suburb
+      if (parts[0] !== loc.name && parts[1] === loc.name) {
+        detailedLocation = `${parts[0]}, ${loc.name}`
+      } else {
+        detailedLocation = loc.name
+      }
+    } else {
+      detailedLocation = loc.name
+    }
+    
+    // Construct subtitle with city if available and different from name
+    let subtitleParts: string[] = []
+    
+    // Add city to subtitle if it exists, is different from the main name, 
+    // and isn't already part of the detailed location label
+    if (loc.city && loc.city !== loc.name && !detailedLocation.includes(loc.city)) {
+      subtitleParts.push(loc.city)
+    }
+    
+    if (voivodeship) {
+      subtitleParts.push(voivodeship)
+    }
+    
+    subtitleParts.push('Polska')
+    
+    return {
+      ...loc,
+      label: detailedLocation,
+      subtitle: subtitleParts.join(', ')
+    }
+  })
+})
+
 const loadAdvertisements = async () => {
   try {
     isLoading.value = true
@@ -1401,14 +1445,15 @@ onBeforeUnmount(() => {
                               <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                             </svg>
                           </button>
-                          <div v-if="showAddressSuggestions && addressSuggestions.length > 0" class="address-suggestions">
+                          <div v-if="showAddressSuggestions && formattedAddressSuggestions.length > 0" class="address-suggestions">
                             <div 
-                              v-for="suggestion in addressSuggestions" 
+                              v-for="suggestion in formattedAddressSuggestions" 
                               :key="suggestion.name"
                               @click="selectAddress(suggestion)"
                               class="suggestion-item"
                             >
-                              {{ suggestion.displayName || suggestion.display_name }}
+                              <span class="suggestion-name">{{ suggestion.label }}</span>
+                              <span v-if="suggestion.subtitle" class="suggestion-type">{{ suggestion.subtitle }}</span>
                             </div>
                           </div>
                         </div>
@@ -3023,6 +3068,9 @@ onBeforeUnmount(() => {
   cursor: pointer;
   border-bottom: 1px solid #f3f4f6;
   transition: background 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .suggestion-item:last-child {
@@ -3031,6 +3079,16 @@ onBeforeUnmount(() => {
 
 .suggestion-item:hover {
   background: #f9fafb;
+}
+
+.suggestion-name {
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.suggestion-type {
+  font-size: 12px;
+  color: #6b7280;
 }
 
 .map-button-modern {
