@@ -741,6 +741,23 @@ const selectModalLocation = (suggestion: any) => {
     modalMarker.setLatLng([lat, lng])
   }
 
+  // Update coordinates in editingAd
+  if (editingAd.value) {
+    editingAd.value.latitude = lat
+    editingAd.value.longitude = lng
+    // Also update city and location from suggestion
+    if (suggestion.address) {
+      const address = suggestion.address
+      let city = address.city || address.town || address.village || address.municipality || address.county || ''
+      if (!address.city && !address.town && !address.village && address.municipality) {
+        city = city.replace(/^gmina\s+/i, '')
+      }
+      editingAd.value.city = city
+      editingAd.value.region = address.state || ''
+      editingAd.value.location = suggestion.display_name || ''
+    }
+  }
+
   modalSearchQuery.value = ''
   modalSearchSuggestions.value = []
   showModalSearchSuggestions.value = false
