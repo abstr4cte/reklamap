@@ -117,6 +117,10 @@ const handleToggleFavorite = async (id: string) => {
   localStorage.setItem('favorites', JSON.stringify(favorites))
   // Increment the key to force recomputation of the favorites count
   favoritesKey.value++
+  // Emit custom event to notify other components
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('localStorageChange'))
+  }
 }
 
 const handleRemoveFavorite = (id: string) => {
@@ -161,6 +165,10 @@ const handleToggleComparison = async (id: string) => {
   localStorage.setItem('comparison', JSON.stringify(comparison))
   // Increment the key to force recomputation of the comparison count
   comparisonKey.value++
+  // Emit custom event to notify other components
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('localStorageChange'))
+  }
 }
 
 const handleRemoveComparison = (id: string) => {
