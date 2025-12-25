@@ -94,11 +94,14 @@ const searchAddress = (query: string) => {
   isResolvingAddress.value = true
 
   debouncedSearchLocations(query, (results: LocationResult[]) => {
-    // Deduplicate by city name, preferring place/city over boundary
+    // Deduplicate by city + state, preferring place/city over boundary
     const uniqueCities = new Map<string, LocationResult>()
     results.forEach(suggestion => {
       // Use city from address if available, otherwise use name
-      const cityKey = suggestion.city || suggestion.name
+      const city = suggestion.city || suggestion.name
+      const state = suggestion.state || ''
+      // Create key with both city and state to show cities from different voivodeships
+      const cityKey = `${city}|${state}`
       const existing = uniqueCities.get(cityKey)
       if (!existing) {
         uniqueCities.set(cityKey, suggestion)
@@ -855,11 +858,14 @@ const searchModalLocation = () => {
   }
 
   debouncedSearchLocations(modalSearchQuery.value, (results: LocationResult[]) => {
-    // Deduplicate by city name, preferring place/city over boundary
+    // Deduplicate by city + state, preferring place/city over boundary
     const uniqueCities = new Map<string, LocationResult>()
     results.forEach(suggestion => {
       // Use city from address if available, otherwise use name
-      const cityKey = suggestion.city || suggestion.name
+      const city = suggestion.city || suggestion.name
+      const state = suggestion.state || ''
+      // Create key with both city and state to show cities from different voivodeships
+      const cityKey = `${city}|${state}`
       const existing = uniqueCities.get(cityKey)
       if (!existing) {
         uniqueCities.set(cityKey, suggestion)
