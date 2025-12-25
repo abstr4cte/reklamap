@@ -928,7 +928,7 @@ const selectModalLocation = (suggestion: any) => {
 
   // Update search query with selected location
   if (isLocationResult) {
-    modalSearchQuery.value = suggestion.label
+    modalSearchQuery.value = suggestion.displayName
   } else {
     modalSearchQuery.value = suggestion.display_name || ''
   }
