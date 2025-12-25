@@ -424,8 +424,7 @@ class AdvertisementController extends Controller
 
             // Generate screenshot using Browsershot
             \Spatie\Browsershot\Browsershot::html($html)
-                ->setNodeBinary('/usr/bin/node')
-                ->setNpmBinary('/usr/bin/npm')
+                ->setChromePath('/snap/bin/chromium')
                 ->windowSize(800, 600)
                 ->save($fullPath);
 
