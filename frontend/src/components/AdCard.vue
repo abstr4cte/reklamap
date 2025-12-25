@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 
@@ -12,6 +12,40 @@ const props = defineProps<{
   viewMode?: 'grid' | 'list'
   priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
 }>()
+
+const localIsFavorite = ref(props.isFavorite)
+const localIsInComparison = ref(props.isInComparison)
+
+// Watch props changes
+watch(() => props.isFavorite, (newVal) => {
+  localIsFavorite.value = newVal
+})
+
+watch(() => props.isInComparison, (newVal) => {
+  localIsInComparison.value = newVal
+})
+
+// Listen to localStorage changes
+const handleStorageChange = () => {
+  const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
+  const comparison = JSON.parse(localStorage.getItem('comparison') || '[]')
+  localIsFavorite.value = favorites.includes(props.ad.id)
+  localIsInComparison.value = comparison.includes(props.ad.id)
+}
+
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('localStorageChange', handleStorageChange)
+    window.addEventListener('storage', handleStorageChange)
+  }
+})
+
+onUnmounted(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('localStorageChange', handleStorageChange)
+    window.removeEventListener('storage', handleStorageChange)
+  }
+})
 
 const emit = defineEmits<{
   toggleFavorite: [id: string]
@@ -294,24 +328,24 @@ const statusColor = computed(() => {
         <button
           @click="handleFavoriteClick"
           class="action-btn favorite-btn"
-          :class="{ active: isFavorite }"
-          :aria-label="isFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'"
+          :class="{ active: localIsFavorite }"
+          :aria-label="localIsFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'"
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" :fill="isFavorite ? '#EF4444' : 'none'">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" :stroke="isFavorite ? '#EF4444' : 'white'" stroke-width="2"/>
+          <svg width="22" height="22" viewBox="0 0 24 24" :fill="localIsFavorite ? '#EF4444' : 'none'">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" :stroke="localIsFavorite ? '#EF4444' : 'white'" stroke-width="2"/>
           </svg>
         </button>
         <button
           @click="handleComparisonClick"
           class="action-btn comparison-btn"
-          :class="{ active: isInComparison }"
-          :aria-label="isInComparison ? 'Usuń z porównania' : 'Dodaj do porównania'"
+          :class="{ active: localIsInComparison }"
+          :aria-label="localIsInComparison ? 'Usuń z porównania' : 'Dodaj do porównania'"
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" :fill="isInComparison ? '#667eea' : 'none'">
-            <rect x="3" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
-            <rect x="14" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
-            <rect x="3" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
-            <rect x="14" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
+          <svg width="22" height="22" viewBox="0 0 24 24" :fill="localIsInComparison ? '#667eea' : 'none'">
+            <rect x="3" y="3" width="7" height="7" :stroke="localIsInComparison ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" :stroke="localIsInComparison ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" :stroke="localIsInComparison ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" :stroke="localIsInComparison ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
           </svg>
         </button>
       </div>
