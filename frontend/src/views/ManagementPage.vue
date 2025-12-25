@@ -151,22 +151,35 @@ const resolveAddressFromInput = async (query: string) => {
 const selectAddress = (suggestion: any) => {
   if (!editingAd.value) return
   
-  const address = suggestion.address
-  editingAd.value.location = suggestion.display_name
-  let city = address.city || address.town || address.village || address.municipality || address.county || ''
-  // Usuń prefix "gmina" jeśli pochodzi z municipality
-  if (!address.city && !address.town && !address.village && address.municipality) {
-    city = city.replace(/^gmina\s+/i, '')
-  }
-  editingAd.value.city = city
-  editingAd.value.region = address.state || ''
+  // Handle both LocationResult and raw Nominatim response
+  const isLocationResult = suggestion.name !== undefined && suggestion.displayName !== undefined
   
-  // Update coordinates from suggestion
-  const lat = parseFloat(suggestion.lat)
-  const lng = parseFloat(suggestion.lon)
-  if (!isNaN(lat) && !isNaN(lng)) {
-    editingAd.value.latitude = lat
-    editingAd.value.longitude = lng
+  if (isLocationResult) {
+    // LocationResult from locationService
+    editingAd.value.location = suggestion.displayName
+    editingAd.value.city = suggestion.name
+    editingAd.value.region = suggestion.state || ''
+    editingAd.value.latitude = suggestion.lat
+    editingAd.value.longitude = suggestion.lng
+  } else {
+    // Raw Nominatim response
+    const address = suggestion.address
+    editingAd.value.location = suggestion.display_name
+    let city = address.city || address.town || address.village || address.municipality || address.county || ''
+    // Usuń prefix "gmina" jeśli pochodzi z municipality
+    if (!address.city && !address.town && !address.village && address.municipality) {
+      city = city.replace(/^gmina\s+/i, '')
+    }
+    editingAd.value.city = city
+    editingAd.value.region = address.state || ''
+    
+    // Update coordinates from suggestion
+    const lat = parseFloat(suggestion.lat)
+    const lng = parseFloat(suggestion.lon)
+    if (!isNaN(lat) && !isNaN(lng)) {
+      editingAd.value.latitude = lat
+      editingAd.value.longitude = lng
+    }
   }
   
   showAddressSuggestions.value = false
