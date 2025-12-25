@@ -774,50 +774,6 @@ const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
   }
 }
 
-const formattedModalSearchSuggestions = computed(() => {
-  return modalSearchSuggestions.value.map(loc => {
-    // Use state from Nominatim address
-    const voivodeship = loc.state || ''
-    
-    // Extract detailed location from displayName
-    // displayName format: "Jelitkowo, Gdańsk, Pomorskie, Polska"
-    const parts = loc.displayName.split(', ')
-    let detailedLocation = ''
-    
-    if (parts.length >= 2) {
-      // If first part is different from city name, it's a district/suburb
-      if (parts[0] !== loc.name && parts[1] === loc.name) {
-        detailedLocation = `${parts[0]}, ${loc.name}`
-      } else {
-        detailedLocation = loc.name
-      }
-    } else {
-      detailedLocation = loc.name
-    }
-    
-    // Construct subtitle with city if available and different from name
-    let subtitleParts: string[] = []
-    
-    // Add city to subtitle if it exists, is different from the main name, 
-    // and isn't already part of the detailed location label
-    if (loc.city && loc.city !== loc.name && !detailedLocation.includes(loc.city)) {
-      subtitleParts.push(loc.city)
-    }
-    
-    if (voivodeship) {
-      subtitleParts.push(voivodeship)
-    }
-    
-    subtitleParts.push('Polska')
-    
-    return {
-      ...loc,
-      label: detailedLocation,
-      subtitle: subtitleParts.join(', ')
-    }
-  })
-})
-
 const searchModalLocation = () => {
   if (modalSearchQuery.value.length < 3) {
     modalSearchSuggestions.value = []
@@ -1917,15 +1873,14 @@ onBeforeUnmount(() => {
               <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </button>
-          <div v-if="showModalSearchSuggestions && formattedModalSearchSuggestions.length > 0" class="modal-suggestions">
+          <div v-if="showModalSearchSuggestions && modalSearchSuggestions.length > 0" class="modal-suggestions">
             <div
-              v-for="suggestion in formattedModalSearchSuggestions"
-              :key="suggestion.name"
+              v-for="(suggestion, index) in modalSearchSuggestions"
+              :key="index"
               @click="selectModalLocation(suggestion)"
               class="modal-suggestion-item"
             >
-              <span class="suggestion-name">{{ suggestion.label }}</span>
-              <span v-if="suggestion.subtitle" class="suggestion-type">{{ suggestion.subtitle }}</span>
+              {{ suggestion.displayName || suggestion.display_name }}
             </div>
           </div>
         </div>
@@ -3336,9 +3291,6 @@ onBeforeUnmount(() => {
   transition: background 0.15s;
   color: #374151;
   border-bottom: 1px solid #f3f4f6;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
 }
 
 .modal-suggestion-item:last-child {
@@ -3348,18 +3300,6 @@ onBeforeUnmount(() => {
 .modal-suggestion-item:hover {
   background: #f9fafb;
   color: #667eea;
-}
-
-.modal-suggestion-item .suggestion-name {
-  font-weight: 500;
-  color: #1f2937;
-  pointer-events: none;
-}
-
-.modal-suggestion-item .suggestion-type {
-  font-size: 12px;
-  color: #6b7280;
-  pointer-events: none;
 }
 
 .modal-body {
