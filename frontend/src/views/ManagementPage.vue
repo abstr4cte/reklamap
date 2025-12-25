@@ -57,6 +57,7 @@ const draggedImageIndex = ref<number | null>(null)
 const addressSuggestions = ref<any[]>([])
 const showAddressSuggestions = ref(false)
 const isResolvingAddress = ref(false)
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
 const showMapModal = ref(false)
 const modalMapContainer = ref<HTMLElement | null>(null)
 let modalMap: L.Map | null = null
@@ -64,6 +65,7 @@ let modalMarker: L.Marker | null = null
 const modalSearchQuery = ref('')
 const modalSearchSuggestions = ref<any[]>([])
 const showModalSearchSuggestions = ref(false)
+let modalSearchTimeout: ReturnType<typeof setTimeout> | null = null
 
 const minDate = new Date()
 minDate.setHours(0, 0, 0, 0)
@@ -83,6 +85,10 @@ const isSaving = ref(false)
 const isTokenInvalid = ref(false)
 
 const searchAddress = (query: string) => {
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+
   if (query.length < 3) {
     addressSuggestions.value = []
     showAddressSuggestions.value = false
@@ -92,7 +98,7 @@ const searchAddress = (query: string) => {
 
   isResolvingAddress.value = true
 
-  setTimeout(async () => {
+  searchTimeout = setTimeout(async () => {
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=10&addressdetails=1`
@@ -751,23 +757,29 @@ const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
   }
 }
 
-const searchModalLocation = async () => {
+const searchModalLocation = () => {
+  if (modalSearchTimeout) {
+    clearTimeout(modalSearchTimeout)
+  }
+
   if (modalSearchQuery.value.length < 3) {
     modalSearchSuggestions.value = []
     showModalSearchSuggestions.value = false
     return
   }
 
-  try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(modalSearchQuery.value)}&countrycodes=pl&limit=10&addressdetails=1`
-    )
-    const data = await response.json()
-    modalSearchSuggestions.value = data
-    showModalSearchSuggestions.value = data.length > 0
-  } catch (error) {
-    console.error('Error searching location:', error)
-  }
+  modalSearchTimeout = setTimeout(async () => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(modalSearchQuery.value)}&countrycodes=pl&limit=10&addressdetails=1`
+      )
+      const data = await response.json()
+      modalSearchSuggestions.value = data
+      showModalSearchSuggestions.value = data.length > 0
+    } catch (error) {
+      console.error('Error searching location:', error)
+    }
+  }, 500)
 }
 
 const selectModalLocation = (suggestion: any) => {
