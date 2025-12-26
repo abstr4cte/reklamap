@@ -391,7 +391,7 @@ onMounted(() => {
       </button>
 
       <!-- Side panel legend -->
-      <div class="legend-side-panel" :class="{ 'is-visible': isLegendVisible }">
+      <div class="legend-side-panel" :class="{ 'is-visible': isLegendVisible && isMobile }">
         <div class="legend-header">
           <h3>Legenda</h3>
           <button class="close-legend" @click="isLegendVisible = false" aria-label="Zamknij legendę">
@@ -419,10 +419,36 @@ onMounted(() => {
         </div>
       </div>
       
+      <div v-if="!isMobile" class="map-legend" :class="{ 'is-visible': isLegendVisible }">
+        <div class="legend-header">
+          <h3 class="legend-title">Legenda</h3>
+          <button class="close-legend" @click="isLegendVisible = false" aria-label="Zamknij legendę">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="legend-items">
+          <div v-for="(color, type) in typeColors" :key="type" class="legend-item">
+            <div class="legend-marker" :style="{ background: color }"></div>
+            <span class="legend-label">
+              {{ type === 'billboard' ? 'Billboardy' :
+                  type === 'citylight' ? 'Citylighty' :
+                  type === 'led_screen' ? 'Ekrany LED' :
+                  type === 'banner' ? 'Banery' :
+                  type === 'wall' ? 'Ściany' :
+                  type === 'totem' ? 'Totemy' :
+                  type === 'transport' ? 'Transport' :
+                  type === 'mobile' ? 'Mobilna' : 'Inne' }}
+            </span>
+          </div>
+        </div>
+      </div>
+      
       <!-- Overlay when legend is open -->
       <div 
         class="legend-overlay" 
-        :class="{ 'is-visible': isLegendVisible }"
+        :class="{ 'is-visible': isLegendVisible && isMobile }"
         @click="isLegendVisible = false"
       ></div>
     </div>
@@ -510,35 +536,41 @@ onMounted(() => {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  z-index: 1000;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: white;
-  border: 1px solid #E5E7EB;
+  background: rgba(255, 255, 255, 0.75);
+  border: 2px solid rgba(229, 231, 235, 0.75);
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  font-size: 0.9rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  color: #4B5563;
+  color: #374151;
   cursor: pointer;
-  transition: all 0.2s ease;
   z-index: 1001;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
 }
 
 .legend-toggle-button:hover {
-  background: #F9FAFB;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(209, 213, 219, 0.9);
+  transform: translateY(-1px);
+}
+
+.legend-toggle-button:active {
+  transform: translateY(0);
 }
 
 .legend-toggle-button.is-active {
-  background: #4F46E5;
-  color: white;
-  border-color: #4338CA;
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(156, 163, 175, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .legend-toggle-button svg {
+  flex-shrink: 0;
   transition: transform 0.2s ease;
 }
 
@@ -569,8 +601,9 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.25rem 1.5rem;
+  padding: 1.25rem;
   border-bottom: 1px solid #E5E7EB;
+  background: #f9fafb;
 }
 
 .legend-header h3 {
@@ -621,18 +654,64 @@ onMounted(() => {
 }
 
 .legend-marker {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  flex-shrink: 0;
   border: 2px solid white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
 }
 
 .legend-label {
   font-size: 0.9rem;
   color: #374151;
   line-height: 1.4;
+}
+
+.map-legend {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem 1rem;
+  z-index: 1001;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+}
+
+.map-legend.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.map-legend .legend-items {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  max-width: 320px;
+}
+
+.map-legend .legend-item {
+  padding: 0.25rem 0.25rem;
+}
+
+.map-legend .legend-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+  padding: 0.25rem 1rem 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: transparent;
 }
 
 /* Overlay when legend is open */
