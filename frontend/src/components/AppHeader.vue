@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps<{
   favoritesCount: number
@@ -15,6 +15,7 @@ const emit = defineEmits<{
 
 const isMobileMenuOpen = ref(false)
 const isCategoriesDropdownOpen = ref(false)
+const isMobileCategoriesOpen = ref(false)
 
 const categories = [
   { name: 'Wszystkie powierzchnie', slug: '', icon: '🗺️' },
@@ -75,6 +76,14 @@ const handleComparisonClick = () => {
 const closeCategoriesDropdown = () => {
   isCategoriesDropdownOpen.value = false
 }
+
+watch(isMobileMenuOpen, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
 </script>
 
 <template>
@@ -212,19 +221,44 @@ const closeCategoriesDropdown = () => {
           </router-link>
           
           <!-- Mobile Categories Section -->
-          <div class="mobile-nav-section">
-            <div class="mobile-nav-section-title">Kategorie powierzchni</div>
-            <router-link
-              v-for="category in categories"
-              :key="category.slug"
-              :to="category.slug ? `/powierzchnie-reklamowe/${category.slug}` : '/powierzchnie-reklamowe'"
-              class="mobile-nav-link category-link"
-              @click="closeMobileMenu"
+          <button 
+            @click="isMobileCategoriesOpen = !isMobileCategoriesOpen"
+            class="mobile-nav-link categories-toggle"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" rx="1"/>
+              <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" rx="1"/>
+            </svg>
+            <span>Kategorie</span>
+            <svg 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="none"
+              :class="{ 'rotate-180': isMobileCategoriesOpen }"
+              class="categories-toggle-icon"
             >
-              <span class="category-emoji">{{ category.icon }}</span>
-              {{ category.name }}
-            </router-link>
-          </div>
+              <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <Transition name="accordion">
+            <div v-if="isMobileCategoriesOpen" class="mobile-categories-list">
+              <router-link
+                v-for="category in categories"
+                :key="category.slug"
+                :to="category.slug ? `/powierzchnie-reklamowe/${category.slug}` : '/powierzchnie-reklamowe'"
+                class="mobile-nav-link category-link"
+                @click="closeMobileMenu"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                {{ category.name }}
+              </router-link>
+            </div>
+          </Transition>
           
           <router-link to="/blog" class="mobile-nav-link" @click="closeMobileMenu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -669,21 +703,6 @@ const closeCategoriesDropdown = () => {
   overflow-y: auto;
 }
 
-.mobile-nav-section {
-  margin: 1rem 0;
-  padding: 0.5rem 0;
-  border-top: 1px solid #f3f4f6;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.mobile-nav-section-title {
-  padding: 0.75rem 1.5rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #9ca3af;
-}
 
 .mobile-nav-link {
   display: flex;
@@ -695,6 +714,11 @@ const closeCategoriesDropdown = () => {
   font-weight: 500;
   transition: all 0.2s;
   border-left: 3px solid transparent;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
 }
 
 .mobile-nav-link:hover {
@@ -715,15 +739,20 @@ const closeCategoriesDropdown = () => {
 }
 
 .mobile-nav-link.category-link {
-  padding-left: 2rem;
+  padding-left: 3.5rem;
   font-size: 0.9rem;
+  color: #4b5563;
 }
 
-.category-emoji {
-  font-size: 1.25rem;
-  display: inline-block;
-  width: 24px;
-  text-align: center;
+.mobile-nav-link.category-link:hover {
+  background: #f0f4ff;
+  color: #667eea;
+}
+
+.mobile-nav-link.category-link.router-link-active {
+  background: #f5f3ff;
+  color: #667eea;
+  font-weight: 600;
 }
 
 .mobile-actions {
@@ -785,6 +814,26 @@ const closeCategoriesDropdown = () => {
   padding: 0 0.375rem;
 }
 
+/* Mobile Categories Toggle */
+.mobile-nav-link.categories-toggle {
+  width: 100%;
+}
+
+.mobile-nav-link.categories-toggle span {
+  flex: 1;
+  text-align: left;
+}
+
+.categories-toggle-icon {
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.mobile-categories-list {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Transitions */
 .overlay-enter-active,
 .overlay-leave-active {
@@ -804,6 +853,17 @@ const closeCategoriesDropdown = () => {
 .sidebar-enter-from,
 .sidebar-leave-to {
   transform: translateX(100%);
+}
+
+.accordion-enter-active,
+.accordion-leave-active {
+  transition: all 0.3s ease;
+}
+
+.accordion-enter-from,
+.accordion-leave-to {
+  opacity: 0;
+  max-height: 0;
 }
 
 /* Responsive */
