@@ -70,6 +70,8 @@ const isMobile = ref(false)
 const showMapOnMobile = ref(false)
 const showSortPanel = ref(false)
 const isLegendVisible = ref(false)
+const sortPanelRef = ref<HTMLElement | null>(null)
+const sortButtonRef = ref<HTMLElement | null>(null)
 
 const sortOptions = [
   { value: 'newest', label: 'Najnowsze', description: 'Od najnowszych' },
@@ -90,9 +92,7 @@ const handleSortButtonClick = () => {
   showSortPanel.value = true
 }
 
-const handleSortOptionClick = (value: string) => (e: PointerEvent) => {
-  e.preventDefault()
-  e.stopPropagation()
+const handleSortOptionClick = (value: string) => {
   selectSortOption(value)
 }
 
@@ -1270,6 +1270,7 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 
+
 // Funkcja otwierająca modal z kopiowaniem aktualnych filtrów
 const openFiltersModal = () => {
   // Skopiuj aktualne filtry do tymczasowych
@@ -1956,7 +1957,9 @@ onBeforeUnmount(() => {
         </div>
         
         <button
-          @click="handleSortButtonClick"
+          ref="sortButtonRef"
+          @pointerdown.stop="handleSortButtonClick"
+          @click.stop="handleSortButtonClick"
           class="mobile-action-btn"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1979,10 +1982,9 @@ onBeforeUnmount(() => {
       </div>
       
       <!-- Sort Panel -->
-      <div v-if="showSortPanel" class="overlay" @pointerdown.self="showSortPanel = false"></div>
-      
-      <Transition name="sort-panel" @after-enter="onSortPanelShown">
-        <div v-if="showSortPanel" class="sort-panel" @pointerdown.stop>
+      <Teleport to="body">
+        <div class="overlay" v-show="showSortPanel" @pointerdown="showSortPanel = false" @click="showSortPanel = false"></div>
+        <div ref="sortPanelRef" class="sort-panel" :class="{ 'is-open': showSortPanel }" @pointerdown.stop>
           <div class="sort-panel-header">
             <h3 class="sort-panel-title">Sortuj według</h3>
             <button @click="showSortPanel = false" class="sort-panel-close" aria-label="Zamknij">
@@ -1997,7 +1999,7 @@ onBeforeUnmount(() => {
             <button 
               v-for="option in sortOptions" 
               :key="option.value"
-              @pointerdown="handleSortOptionClick(option.value)"
+              @click.stop="handleSortOptionClick(option.value)"
               class="sort-option"
               :class="{ active: sortBy === option.value }"
             >
@@ -2006,7 +2008,7 @@ onBeforeUnmount(() => {
             </button>
           </div>
         </div>
-      </Transition>
+      </Teleport>
     </div>
 
     <!-- Main Content -->
@@ -2800,21 +2802,15 @@ onBeforeUnmount(() => {
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.overlay-enter-to,
-.overlay-leave-from {
   opacity: 1;
   pointer-events: auto;
+  transition: opacity 0.2s ease;
 }
 
+/* Overlay transition classes (optional, kept minimal) */
 .overlay-enter-from,
 .overlay-leave-to {
   opacity: 0;
-  pointer-events: none;
 }
 
 /* Sort Panel */
@@ -2835,18 +2831,7 @@ onBeforeUnmount(() => {
   touch-action: manipulation;
 }
 
-.sort-panel-enter-active,
-.sort-panel-leave-active {
-  transition: transform 0.3s ease;
-}
-
-.sort-panel-enter-from,
-.sort-panel-leave-to {
-  transform: translateY(100%);
-}
-
-.sort-panel-enter-to,
-.sort-panel-leave-from {
+.sort-panel.is-open {
   transform: translateY(0);
 }
 
