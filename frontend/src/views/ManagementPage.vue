@@ -2625,12 +2625,90 @@ onBeforeUnmount(() => {
   }
 
   .listing-summary {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .listing-thumbnail {
+    width: 100%;
+    height: 200px;
+    border-radius: 12px;
+  }
+
+  .listing-info {
+    width: 100%;
+  }
+
+  .listing-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .listing-meta {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
   }
 
   .listing-controls {
     width: 100%;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    justify-content: flex-start;
+  }
+
+  .status-dropdown {
+    width: 100%;
+    display: flex;
+    grid-column: 1 / -1;
+  }
+
+  .status-select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .views-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #f3f4f6;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .preview-btn,
+  .delete-btn {
+    width: auto;
+    height: auto;
+    padding: 0.5rem 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+  }
+
+  .expand-icon {
+    width: auto;
+    height: auto;
+    padding: 0.5rem;
+    display: none;
   }
 
   .form-grid {
@@ -2644,6 +2722,116 @@ onBeforeUnmount(() => {
   .stats-bar {
     flex-direction: column;
     gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .listing-row {
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+  }
+
+  .listing-summary {
+    padding: 0.75rem;
+    gap: 0.75rem;
+    border-radius: 12px;
+  }
+
+  .listing-thumbnail {
+    height: 160px;
+    border-radius: 10px;
+  }
+
+  .listing-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .listing-meta {
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .listing-controls {
+    gap: 0.35rem;
+    grid-template-columns: 1fr;
+  }
+
+  .status-dropdown {
+    width: 100%;
+    grid-column: 1 / -1;
+  }
+
+  .status-select {
+    width: 100%;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .switch {
+    padding: 0.35rem 0.5rem;
+    gap: 0.35rem;
+    flex: 0 1 auto;
+  }
+
+  .slider {
+    width: 36px;
+    height: 20px;
+  }
+
+  .slider::before {
+    width: 14px;
+    height: 14px;
+  }
+
+  .switch input:checked + .slider::before {
+    transform: translateX(16px);
+  }
+
+  .switch-label {
+    font-size: 0.65rem;
+    display: none;
+  }
+
+  .views-counter {
+    font-size: 0.65rem;
+    padding: 0.35rem 0.5rem;
+    flex: 0 1 auto;
+  }
+
+  .views-counter svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .preview-btn,
+  .delete-btn {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.65rem;
+    width: auto;
+    flex: 0 1 auto;
+  }
+
+  .preview-btn svg,
+  .delete-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .expand-icon {
+    padding: 0.35rem;
+    width: auto;
+    display: inline-flex;
+  }
+
+  .expand-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .listing-details {
+    padding: 1rem;
+    border-radius: 0 0 12px 12px;
   }
 }
 
@@ -3347,8 +3535,41 @@ onBeforeUnmount(() => {
     justify-content: center;
   }
 
+  .map-button-modern {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .map-button-modern span {
+    display: none;
+  }
+
   .modal-map {
     height: 400px;
   }
 }
+@media (max-width: 640px) {
+  .listing-controls {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .listing-controls .status-dropdown {
+    width: 100%;
+  }
+
+  .listing-controls > :not(.status-dropdown) {
+    display: flex;
+    align-items: center;
+  }
+
+  .views-counter {
+    margin-left: auto;
+  }
+}
+
 </style>

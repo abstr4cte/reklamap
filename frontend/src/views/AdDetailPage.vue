@@ -870,6 +870,8 @@ const reportForm = ref({
   details: ''
 })
 const isSubmittingReport = ref(false)
+const showActionsMenu = ref(false)
+const showSpecifications = ref(false)
 
 // Używamy komponentu ToastNotification zamiast własnego obiektu toast
 
@@ -1193,7 +1195,12 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <div class="specs-grid">
+            <button @click="showSpecifications = !showSpecifications" class="specs-toggle-btn">
+              {{ showSpecifications ? 'Ukryj specyfikację' : 'Pokaż specyfikację' }}
+              <span class="arrow" :class="{ expanded: showSpecifications }">▼</span>
+            </button>
+
+            <div class="specs-grid" v-show="showSpecifications">
               <div class="spec-item">
                 <div class="spec-label">Typ powierzchni</div>
                 <div class="spec-value">{{ getTypeLabel(ad.type) }}</div>
@@ -1416,62 +1423,150 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <button @click="toggleFavorite" class="action-btn" :class="{ active: isFavorite }">
-              <svg width="20" height="20" viewBox="0 0 24 24" :fill="isFavorite ? '#EF4444' : 'none'">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" :stroke="isFavorite ? '#EF4444' : 'currentColor'" stroke-width="2"/>
-              </svg>
-              {{ isFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych' }}
-            </button>
+            <!-- Desktop Actions -->
+            <div class="actions-desktop">
+              <button @click="toggleFavorite" class="action-btn" :class="{ active: isFavorite }">
+                <svg width="20" height="20" viewBox="0 0 24 24" :fill="isFavorite ? '#EF4444' : 'none'">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" :stroke="isFavorite ? '#EF4444' : 'currentColor'" stroke-width="2"/>
+                </svg>
+                {{ isFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych' }}
+              </button>
 
-            <button @click="toggleComparison" class="action-btn" :class="{ active: isInComparison }">
-              <svg width="20" height="20" viewBox="0 0 24 24" :fill="isInComparison ? '#667eea' : 'none'">
-                <rect x="3" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
-                <rect x="14" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
-                <rect x="3" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
-                <rect x="14" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
-              </svg>
-              {{ isInComparison ? 'Usuń z porównania' : 'Dodaj do porównania' }}
-            </button>
+              <button @click="toggleComparison" class="action-btn" :class="{ active: isInComparison }">
+                <svg width="20" height="20" viewBox="0 0 24 24" :fill="isInComparison ? '#667eea' : 'none'">
+                  <rect x="3" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                  <rect x="14" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                  <rect x="3" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                  <rect x="14" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                </svg>
+                {{ isInComparison ? 'Usuń z porównania' : 'Dodaj do porównania' }}
+              </button>
 
-            <div class="actions-divider"></div>
+              <div class="actions-divider"></div>
 
-            <button @click="handlePrint" class="action-btn">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M6 14h12v8H6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Drukuj
-            </button>
+              <button @click="handlePrint" class="action-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M6 14h12v8H6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Drukuj
+              </button>
 
-            <button @click="handleDownloadPDF" class="action-btn" :disabled="isGeneratingPDF">
-              <svg v-if="isGeneratingPDF" class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              {{ isGeneratingPDF ? 'Generowanie...' : 'Pobierz PDF' }}
-            </button>
+              <button @click="handleDownloadPDF" class="action-btn" :disabled="isGeneratingPDF">
+                <svg v-if="isGeneratingPDF" class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {{ isGeneratingPDF ? 'Generowanie...' : 'Pobierz PDF' }}
+              </button>
 
-            <button @click="handleShare" class="action-btn">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <circle cx="18" cy="5" r="3" stroke="currentColor" stroke-width="2"/>
-                <circle cx="6" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-                <circle cx="18" cy="19" r="3" stroke="currentColor" stroke-width="2"/>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="currentColor" stroke-width="2"/>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="currentColor" stroke-width="2"/>
-              </svg>
-              Udostępnij
-            </button>
+              <button @click="handleShare" class="action-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="18" cy="5" r="3" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="6" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="18" cy="19" r="3" stroke="currentColor" stroke-width="2"/>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="currentColor" stroke-width="2"/>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Udostępnij
+              </button>
 
-            <button @click="openReportModal" class="action-btn report-btn">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Zgłoś naruszenie
-            </button>
+              <button @click="openReportModal" class="action-btn report-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Zgłoś naruszenie
+              </button>
+            </div>
+
+            <!-- Mobile Actions Bar (Fixed Bottom) -->
+            <div class="actions-mobile">
+              <button @click="showActionsMenu = !showActionsMenu" class="mobile-actions-bar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Zobacz opcje</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" :class="{ 'rotate-180': showActionsMenu }">
+                  <path d="M19 14l-7 7m0 0l-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+
+              <div v-if="showActionsMenu" class="mobile-menu-overlay" @click="showActionsMenu = false">
+                <div class="mobile-menu-content" @click.stop>
+                  <div class="mobile-menu-header">
+                    <h3>Opcje</h3>
+                    <button @click="showActionsMenu = false" class="mobile-menu-close">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div class="mobile-menu-items">
+                    <button @click="toggleFavorite; showActionsMenu = false" class="mobile-menu-item" :class="{ active: isFavorite }">
+                      <svg width="20" height="20" viewBox="0 0 24 24" :fill="isFavorite ? '#EF4444' : 'none'">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" :stroke="isFavorite ? '#EF4444' : 'currentColor'" stroke-width="2"/>
+                      </svg>
+                      <span>{{ isFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych' }}</span>
+                    </button>
+
+                    <button @click="toggleComparison; showActionsMenu = false" class="mobile-menu-item" :class="{ active: isInComparison }">
+                      <svg width="20" height="20" viewBox="0 0 24 24" :fill="isInComparison ? '#667eea' : 'none'">
+                        <rect x="3" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                      </svg>
+                      <span>{{ isInComparison ? 'Usuń z porównania' : 'Dodaj do porównania' }}</span>
+                    </button>
+
+                    <div class="mobile-menu-divider"></div>
+
+                    <button @click="handlePrint; showActionsMenu = false" class="mobile-menu-item">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6 14h12v8H6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <span>Drukuj</span>
+                    </button>
+
+                    <button @click="handleDownloadPDF; showActionsMenu = false" class="mobile-menu-item" :disabled="isGeneratingPDF">
+                      <svg v-if="isGeneratingPDF" class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <span>{{ isGeneratingPDF ? 'Generowanie...' : 'Pobierz PDF' }}</span>
+                    </button>
+
+                    <button @click="handleShare; showActionsMenu = false" class="mobile-menu-item">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <circle cx="18" cy="5" r="3" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="6" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="18" cy="19" r="3" stroke="currentColor" stroke-width="2"/>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="currentColor" stroke-width="2"/>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                      <span>Udostępnij</span>
+                    </button>
+
+                    <button @click="openReportModal; showActionsMenu = false" class="mobile-menu-item report-btn">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <span>Zgłoś naruszenie</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div v-if="similarAds.length > 0" class="similar-listings">
@@ -2200,14 +2295,14 @@ onUnmounted(() => {
 }
 
 .btn-primary {
-  background: #10B981;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  border: none;
 }
 
 .btn-primary:hover {
-  background: #059669;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .btn:disabled {
@@ -2456,6 +2551,194 @@ onUnmounted(() => {
   color: #6b7280;
 }
 
+/* Mobile Actions Menu */
+.actions-desktop {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.actions-mobile {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 500;
+}
+
+.mobile-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #8b9eff 0%, #9b7bb5 100%);
+  color: white;
+  border: none;
+  padding: 1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  box-shadow: 0 -2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.mobile-actions-bar:active {
+  background: linear-gradient(135deg, #7a8ee8 0%, #8a6ba4 100%);
+}
+
+.mobile-actions-bar svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: white;
+  flex-shrink: 0;
+}
+
+.mobile-actions-bar svg.rotate-180 {
+  transform: rotate(180deg);
+}
+
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.mobile-menu-content {
+  background: white;
+  width: 100%;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-bottom: 80px;
+}
+
+.mobile-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  background: white;
+  border-radius: 20px 20px 0 0;
+}
+
+.mobile-menu-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #1f2937;
+  font-weight: 700;
+}
+
+.mobile-menu-close {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.mobile-menu-close:hover {
+  color: #EF4444;
+  transform: scale(1.1);
+}
+
+.mobile-menu-items {
+  padding: 1rem 0;
+}
+
+.mobile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: white;
+  color: #374151;
+  border: none;
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 1rem;
+}
+
+.mobile-menu-item:last-of-type {
+  border-bottom: none;
+}
+
+.mobile-menu-item:active {
+  background: #f9fafb;
+  transform: scale(0.98);
+}
+
+.mobile-menu-item svg {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  transition: all 0.2s;
+}
+
+.mobile-menu-item span {
+  flex: 1;
+}
+
+.mobile-menu-item.active {
+  background: white;
+  color: #10B981;
+  border-left: 4px solid #10B981;
+  padding-left: calc(1.5rem - 4px);
+}
+
+.mobile-menu-item.active svg {
+  color: #10B981;
+}
+
+.mobile-menu-item.report-btn {
+  color: #EF4444;
+}
+
+.mobile-menu-item.report-btn:active {
+  background: #fef2f2;
+}
+
+.mobile-menu-item.report-btn svg {
+  color: #EF4444;
+}
+
+.mobile-menu-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 0.5rem 0;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 @media (max-width: 1024px) {
   .content-layout {
     grid-template-columns: 1fr;
@@ -2463,6 +2746,102 @@ onUnmounted(() => {
 
   .sidebar {
     order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content-layout {
+    display: flex;
+    flex-direction: column;
+    order: 1;
+  }
+
+  .main-content {
+    order: 1;
+  }
+
+  .sidebar {
+    order: 2;
+    margin-bottom: 1rem;
+  }
+
+  .specs-section {
+    order: 3;
+  }
+
+  .map-section {
+    order: 4;
+  }
+
+  .description-section {
+    order: 5;
+  }
+
+  .contact-form-section {
+    order: 6;
+  }
+  .actions-desktop {
+    display: none;
+  }
+
+  .actions-mobile {
+    display: block;
+  }
+
+  .specs-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    color: #4F46E5;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 1rem 0;
+    width: 100%;
+  }
+
+  .specs-toggle-btn:hover {
+    background: rgba(102, 126, 234, 0.15);
+    border-color: rgba(102, 126, 234, 0.3);
+  }
+
+  .specs-toggle-btn .arrow {
+    transition: transform 0.3s ease;
+    font-size: 0.75rem;
+  }
+
+  .specs-toggle-btn .arrow.expanded {
+    transform: rotate(180deg);
+  }
+
+  .specs-grid {
+    animation: slideDown 0.3s ease-out;
+  }
+}
+
+@media (min-width: 769px) {
+  .specs-toggle-btn {
+    display: none;
+  }
+
+  .specs-section {
+    display: block !important;
+    animation: none;
+  }
+
+  .specs-grid {
+    display: grid !important;
   }
 }
 
