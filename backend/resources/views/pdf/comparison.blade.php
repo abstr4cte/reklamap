@@ -207,6 +207,11 @@
                     </td>
                 @endforeach
             </tr>
+            @php
+                // Pokazuj "Cena za m²" tylko dla typów, które mają wymiary
+                $showPricePerSqm = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'banner', 'wall']));
+            @endphp
+            @if($showPricePerSqm)
             <tr>
                 <th>Cena za m²</th>
                 @foreach($advertisements as $ad)
@@ -221,30 +226,65 @@
                     </td>
                 @endforeach
             </tr>
+            @endif
             <tr>
                 <th>Typ powierzchni</th>
                 @foreach($advertisements as $ad)
-                    <td>{{ $ad->type }}</td>
+                    <td>
+                        @php
+                            $typeLabels = [
+                                'billboard' => 'Billboardy',
+                                'citylight' => 'Citylighty',
+                                'led_screen' => 'Ekrany LED',
+                                'banner' => 'Banery',
+                                'wall' => 'Ściany reklamowe',
+                                'totem' => 'Totemy reklamowe',
+                                'transport' => 'Reklama w transporcie',
+                                'mobile' => 'Reklama mobilna',
+                                'other' => 'Inne'
+                            ];
+                            $typeLabel = $typeLabels[$ad->type] ?? $ad->type;
+                        @endphp
+                        {{ $typeLabel }}
+                    </td>
                 @endforeach
             </tr>
+            @php
+                // Pokazuj "Wymiary" tylko dla typów, które mają wymiary
+                $showDimensions = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'banner', 'wall', 'citylight', 'led_screen', 'totem']));
+            @endphp
+            @if($showDimensions)
             <tr>
                 <th>Wymiary</th>
                 @foreach($advertisements as $ad)
                     <td>{{ $ad->width }}m x {{ $ad->height }}m</td>
                 @endforeach
             </tr>
+            @endif
+            @php
+                // Pokazuj "Powierzchnia" tylko dla typów, które mają wymiary
+                $showSurfaceArea = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'banner', 'wall', 'citylight', 'led_screen', 'totem']));
+            @endphp
+            @if($showSurfaceArea)
             <tr>
                 <th>Powierzchnia</th>
                 @foreach($advertisements as $ad)
                     <td class="highlight">{{ number_format($ad->width * $ad->height, 2) }} m²</td>
                 @endforeach
             </tr>
+            @endif
+            @php
+                // Pokazuj "Orientacja" tylko dla typów, które mają orientację
+                $showOrientation = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'banner', 'wall', 'citylight', 'totem']));
+            @endphp
+            @if($showOrientation)
             <tr>
                 <th>Orientacja</th>
                 @foreach($advertisements as $ad)
                     <td>{{ $ad->orientation === 'horizontal' ? 'Poziom' : 'Pion' }}</td>
                 @endforeach
             </tr>
+            @endif
             <tr>
                 <th>Lokalizacja</th>
                 @foreach($advertisements as $ad)
@@ -268,6 +308,11 @@
                     </td>
                 @endforeach
             </tr>
+            @php
+                // Pokazuj "Natężenie ruchu" tylko dla typów, które mają natężenie ruchu
+                $showTrafficIntensity = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'banner']));
+            @endphp
+            @if($showTrafficIntensity)
             <tr>
                 <th>Natężenie ruchu</th>
                 @foreach($advertisements as $ad)
@@ -279,6 +324,12 @@
                     </td>
                 @endforeach
             </tr>
+            @endif
+            @php
+                // Pokazuj "Oświetlenie" tylko dla typów, które mają oświetlenie
+                $showLighting = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'citylight', 'totem']));
+            @endphp
+            @if($showLighting)
             <tr>
                 <th>Oświetlenie</th>
                 @foreach($advertisements as $ad)
@@ -286,6 +337,12 @@
                     </td>
                 @endforeach
             </tr>
+            @endif
+            @php
+                // Pokazuj "Druk w cenie" tylko dla typów, które mają druk w cenie
+                $showPriceIncludesPrint = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'citylight', 'banner']));
+            @endphp
+            @if($showPriceIncludesPrint)
             <tr>
                 <th>Druk w cenie</th>
                 @foreach($advertisements as $ad)
@@ -294,6 +351,7 @@
                     </td>
                 @endforeach
             </tr>
+            @endif
             <tr>
                 <th>Pomoc graficzna</th>
                 @foreach($advertisements as $ad)
