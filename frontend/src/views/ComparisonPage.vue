@@ -473,14 +473,14 @@ onMounted(() => {
           Powrót do listy
         </button>
         <h1>Porównanie ogłoszeń</h1>
-        <button v-if="comparisonAds.length > 0" @click="downloadPdf" class="pdf-button" :disabled="isGeneratingPdf">
+        <button @click="downloadPdf" class="pdf-button" :disabled="isGeneratingPdf || comparisonAds.length === 0">
           <svg v-if="!isGeneratingPdf" width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path d="M12 15L12 3M12 15L8 11M12 15L16 11M2 17L2 21L22 21L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           <div v-else class="spinner-small"></div>
           {{ isGeneratingPdf ? 'Generowanie...' : 'Pobierz PDF' }}
         </button>
-        <button v-if="comparisonAds.length > 0" @click="clearAll" class="clear-button">
+        <button @click="clearAll" class="clear-button" :disabled="comparisonAds.length === 0">
           Wyczyść wszystkie
         </button>
       </div>
