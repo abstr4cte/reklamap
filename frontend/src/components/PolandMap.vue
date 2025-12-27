@@ -75,7 +75,6 @@ const isMapActive = ref(false)
 const isLegendVisible = ref(false)
 const isMobile = ref(window.innerWidth < 768)
 const headerHeight = ref(80)
-let hasAutoScrolled = false
 
 const typeColors: Record<string, string> = {
   billboard: '#EF4444',
@@ -357,25 +356,6 @@ watch(() => props.hoveredAdId, (newId) => {
   })
 })
 
-const goToPolandMap = () => {
-  const mapContainer = document.querySelector('[data-poland-map] .map-container')
-  const header = document.querySelector('.app-header')
-  
-  if (mapContainer && header) {
-    const headerRect = header.getBoundingClientRect()
-    const headerStyles = window.getComputedStyle(header)
-    const headerHeightValue = headerRect.height + parseFloat(headerStyles.marginTop) + parseFloat(headerStyles.marginBottom)
-    
-    const elementPosition = mapContainer.getBoundingClientRect().top + window.pageYOffset
-    const offsetPosition = elementPosition - headerHeightValue
-    
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: 'smooth'
-    })
-  }
-}
-
 onMounted(() => {
   initMap()
   
@@ -400,36 +380,9 @@ onMounted(() => {
   calculateHeaderHeight()
   window.addEventListener('resize', handleResize)
   
-  // Scroll event to auto-adjust when header touches section-header
-  const sectionHeader = document.querySelector('.section-header')
-  let wasHeaderInView = true // Track if header was in view on previous scroll
-  
-  const handleScroll = () => {
-    if (sectionHeader && !hasAutoScrolled) {
-      const rect = sectionHeader.getBoundingClientRect()
-      const isHeaderInView = rect.top >= 0 && rect.top <= window.innerHeight
-      
-      // Detect transition: header was in view, now it's not (scrolling down)
-      if (wasHeaderInView && !isHeaderInView && rect.top < 0) {
-        hasAutoScrolled = true
-        goToPolandMap()
-      }
-      
-      // Reset flag when header comes back into view (scrolling up)
-      if (!wasHeaderInView && isHeaderInView) {
-        hasAutoScrolled = false
-      }
-      
-      wasHeaderInView = isHeaderInView
-    }
-  }
-  
-  window.addEventListener('scroll', handleScroll)
-  
   // Cleanup
   onBeforeUnmount(() => {
     window.removeEventListener('resize', handleResize)
-    window.removeEventListener('scroll', handleScroll)
   })
 })
 </script>
