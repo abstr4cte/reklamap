@@ -26,7 +26,7 @@ const viewMode = ref<'grid' | 'list'>('grid')
 const sortBy = ref('newest')
 const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign' | undefined>(undefined)
 const currentPage = ref(1)
-const itemsPerPage = 20
+const itemsPerPage = 18
 const hoveredAdId = ref<string | null>(null)
 
 interface Filters {
