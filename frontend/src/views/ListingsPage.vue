@@ -1440,7 +1440,7 @@ const initMap = () => {
   map = L.map(mapContainer.value, {
     maxBounds: polandBounds,        // Nie można przesunąć mapy poza te granice
     maxBoundsViscosity: 1.0,        // Twarde ograniczenie (nie można przeciągnąć poza)
-    minZoom: 6,                      // Minimalne przybliżenie (cała Polska)
+    minZoom: 5,                      // Minimalne przybliżenie (cała Polska + więcej)
     maxZoom: 18                      // Maksymalne przybliżenie
   }).setView(polandCenter, 6)
 

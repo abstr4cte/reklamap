@@ -466,7 +466,7 @@ onMounted(() => {
   <div class="comparison-page">
     <div class="page-header">
       <div class="container">
-        <button @click="router.push('/')" class="back-button">
+        <button @click="router.back()" class="back-button">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M15 10H5M5 10L10 15M5 10L10 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
