@@ -727,7 +727,7 @@ onMounted(() => {
     </svg>
     
     <EmailModal :is-open="isModalOpen" @close="isModalOpen = false" />
-    <HeroBanner @search="handleSearch" @reset="handleReset" />
+    <HeroBanner data-hero-banner @search="handleSearch" @reset="handleReset" />
     
     <!-- Categories Section -->
     <section class="categories-section">
@@ -804,6 +804,7 @@ onMounted(() => {
     </section>
     
     <PolandMap 
+      data-poland-map
       :listings="sortedAndFilteredListings" 
       :selected-region="filters.region"
       :selected-city="filters.city"

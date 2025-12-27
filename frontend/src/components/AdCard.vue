@@ -7,8 +7,8 @@ import WebPImage from './WebPImage.vue'
 
 const props = defineProps<{
   ad: Advertisement
-  isFavorite: boolean
-  isInComparison: boolean
+  isFavorite?: boolean
+  isInComparison?: boolean
   viewMode?: 'grid' | 'list'
   priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
 }>()
@@ -299,6 +299,8 @@ const statusColor = computed(() => {
   }
 })
 
+
+
 </script>
 
 <template>
@@ -397,6 +399,7 @@ const statusColor = computed(() => {
       </div>
     </div>
   </router-link>
+
 </template>
 
 <style scoped>
@@ -568,6 +571,7 @@ const statusColor = computed(() => {
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

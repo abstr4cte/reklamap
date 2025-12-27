@@ -43,6 +43,19 @@ const getPriceUnitLabel = (ad: Advertisement): string => {
   }
 }
 
+const scrollToAdGrid = () => {
+  const adGrid = document.querySelector('.listings-section')
+  if (adGrid) {
+    const elementPosition = adGrid.getBoundingClientRect().top + window.pageYOffset
+    const offsetPosition = elementPosition - 32
+    
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
+  }
+}
+
 const props = defineProps<{
   listings: Advertisement[]
   selectedRegion?: string
@@ -451,6 +464,16 @@ onMounted(() => {
         :class="{ 'is-visible': isLegendVisible && isMobile }"
         @click="isLegendVisible = false"
       ></div>
+
+      <!-- Mobile toggle button (shows list) -->
+      <button v-if="isMobile" @click="scrollToAdGrid" class="mobile-list-toggle">
+        <span>Pokaż listę</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="5" width="18" height="4" rx="1"/>
+          <rect x="3" y="11" width="18" height="4" rx="1"/>
+          <rect x="3" y="17" width="18" height="4" rx="1"/>
+        </svg>
+      </button>
     </div>
   </section>
 </template>
@@ -805,6 +828,43 @@ onMounted(() => {
 
   .legend-label {
     font-size: 0.8rem;
+  }
+
+  .mobile-list-toggle {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0.9;
+    white-space: nowrap;
+    z-index: 100;
+  }
+
+  .mobile-list-toggle:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+  }
+
+  .mobile-list-toggle:active {
+    transform: translateX(-50%) translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 }
 </style>

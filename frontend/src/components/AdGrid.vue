@@ -11,6 +11,95 @@ const props = defineProps<{
   priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
 }>()
 
+const showSortPanel = ref(false)
+const localSortBy = ref(props.sortBy || 'newest')
+
+const sortOptions = [
+  { value: 'newest', label: 'Najnowsze', description: 'Od najnowszych' },
+  { value: 'oldest', label: 'Najstarsze', description: 'Od najstarszych' },
+  { value: 'name-asc', label: 'Nazwa A-Z', description: 'Alfabetycznie rosnąco' },
+  { value: 'name-desc', label: 'Nazwa Z-A', description: 'Alfabetycznie malejąco' },
+  { value: 'price-day-asc', label: 'Cena za dzień', description: 'Od najtańszych' },
+  { value: 'price-day-desc', label: 'Cena za dzień', description: 'Od najdroższych' },
+  { value: 'price-month-asc', label: 'Cena za miesiąc', description: 'Od najtańszych' },
+  { value: 'price-month-desc', label: 'Cena za miesiąc', description: 'Od najdroższych' },
+  { value: 'price-sqm-asc', label: 'Cena za m²', description: 'Od najtańszych' },
+  { value: 'price-sqm-desc', label: 'Cena za m²', description: 'Od najdroższych' },
+  { value: 'price-campaign-asc', label: 'Cena za kampanię', description: 'Od najtańszych' },
+  { value: 'price-campaign-desc', label: 'Cena za kampanię', description: 'Od najdroższych' }
+]
+
+const handleSortButtonClick = () => {
+  showSortPanel.value = true
+}
+
+const handleSortOptionClick = (value: string) => {
+  localSortBy.value = value
+  emit('update:sortBy', value)
+  showSortPanel.value = false
+}
+
+const handleFilterButtonClick = () => {
+  // Scroll to hero banner
+  const heroBanner = document.querySelector('[data-hero-banner]')
+  if (heroBanner) {
+    const elementPosition = heroBanner.getBoundingClientRect().top + window.pageYOffset
+    const offsetPosition = elementPosition - 32 // 2rem = 32px offset
+    
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
+  }
+}
+
+const isMobile = ref(false)
+const showMapButton = ref(false)
+
+const checkIfMobile = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+
+const handleScroll = () => {
+  const listingsSection = document.querySelector('.listings-section')
+  const sectionHeader = document.querySelector('.section-header')
+  const footer = document.querySelector('footer')
+  const polandMap = document.querySelector('[data-poland-map]')
+  
+  if (sectionHeader && listingsSection && isMobile.value) {
+    const headerRect = sectionHeader.getBoundingClientRect()
+    const listingsRect = listingsSection.getBoundingClientRect()
+    const footerRect = footer?.getBoundingClientRect()
+    const mapRect = polandMap?.getBoundingClientRect()
+    
+    // Show button when:
+    // 1. Header is sticky (at top)
+    // 2. We're in listings section (not at footer)
+    // 3. Footer is not visible
+    // 4. Map is below us (we've scrolled past it)
+    const headerIsSticky = headerRect.top <= 0
+    const inListingsSection = listingsRect.top < window.innerHeight && listingsRect.bottom > 0
+    const footerIsVisible = footerRect && footerRect.top < window.innerHeight
+    const mapIsBelowUs = !mapRect || mapRect.bottom < 0 // Map is above viewport (we've passed it) or doesn't exist
+    
+    showMapButton.value = headerIsSticky && inListingsSection && !footerIsVisible && mapIsBelowUs
+  }
+}
+
+const goToPolandMap = () => {
+  const polandMap = document.querySelector('[data-poland-map]')
+  if (polandMap) {
+    const elementPosition = polandMap.getBoundingClientRect().top + window.pageYOffset
+    const offsetPosition = elementPosition - 32 // 2rem = 32px offset
+    
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
+  }
+}
+
+
 const emit = defineEmits<{
   toggleFavorite: [id: string]
   toggleComparison: [id: string]
@@ -44,6 +133,10 @@ onMounted(() => {
   if (typeof window !== 'undefined') {
     window.addEventListener('localStorageChange', handleStorageChange)
     window.addEventListener('storage', handleStorageChange)
+    checkIfMobile()
+    window.addEventListener('resize', checkIfMobile)
+    window.addEventListener('scroll', handleScroll)
+    handleScroll() // Initial check
   }
 })
 
@@ -51,6 +144,8 @@ onUnmounted(() => {
   if (typeof window !== 'undefined') {
     window.removeEventListener('localStorageChange', handleStorageChange)
     window.removeEventListener('storage', handleStorageChange)
+    window.removeEventListener('resize', checkIfMobile)
+    window.removeEventListener('scroll', handleScroll)
   }
 })
 </script>
@@ -73,6 +168,21 @@ onUnmounted(() => {
               <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </router-link>
+          <!-- Mobile Sort and Filter Buttons -->
+          <div class="mobile-header-actions">
+            <button @click="handleSortButtonClick" class="mobile-header-btn" title="Sortuj">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18"/>
+                <path d="M6 12h12"/>
+                <path d="M10 18h4"/>
+              </svg>
+            </button>
+            <button @click="handleFilterButtonClick" class="mobile-header-btn" title="Filtruj">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+              </svg>
+            </button>
+          </div>
           <div class="view-switcher">
             <button
               @click="emit('update:viewMode', 'grid')"
@@ -164,6 +274,44 @@ onUnmounted(() => {
         />
       </div>
     </div>
+
+    <!-- Sort Panel (Mobile) -->
+    <Teleport to="body">
+      <div class="overlay" v-show="showSortPanel" @click="showSortPanel = false"></div>
+      <div class="sort-panel" :class="{ 'is-open': showSortPanel }">
+        <div class="sort-panel-header">
+          <h3 class="sort-panel-title">Sortuj według</h3>
+          <button @click="showSortPanel = false" class="sort-panel-close" aria-label="Zamknij">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="sort-options">
+          <button 
+            v-for="option in sortOptions" 
+            :key="option.value"
+            @click.stop="handleSortOptionClick(option.value)"
+            class="sort-option"
+            :class="{ active: localSortBy === option.value }"
+          >
+            <span class="option-label">{{ option.label }}</span>
+            <span class="option-desc">{{ option.description }}</span>
+          </button>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Mobile toggle button (shows map) -->
+    <button v-if="showMapButton" @click="goToPolandMap" class="mobile-map-toggle">
+      <span>Pokaż mapę</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+      </svg>
+    </button>
   </section>
 </template>
 
@@ -185,6 +333,7 @@ onUnmounted(() => {
   align-items: center;
   margin-bottom: 3rem;
   gap: 2rem;
+  position: relative;
 }
 
 .header-left {
@@ -232,6 +381,36 @@ onUnmounted(() => {
   font-size: 1.1rem;
   color: #6B7280;
   margin: 0;
+}
+
+/* Mobile Header Actions */
+.mobile-header-actions {
+  display: none;
+  gap: 0.5rem;
+}
+
+.mobile-header-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-header-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.mobile-header-btn:active {
+  transform: translateY(0);
 }
 
 .view-switcher {
@@ -348,6 +527,115 @@ onUnmounted(() => {
   }
 }
 
+/* Sort Panel Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.2s ease;
+}
+
+/* Sort Panel */
+.sort-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 16px 16px 0 0;
+  padding: 20px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 1100;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  max-height: 80vh;
+  overflow-y: auto;
+  touch-action: manipulation;
+}
+
+.sort-panel.is-open {
+  transform: translateY(0);
+}
+
+.sort-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sort-panel-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.sort-panel-close {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.sort-panel-close:hover {
+  background: #f3f4f6;
+}
+
+.sort-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sort-option {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sort-option:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.sort-option.active {
+  background: #e0e7ff;
+  border-color: #a5b4fc;
+  color: #4f46e5;
+  font-weight: 500;
+}
+
+.sort-option .option-label {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.sort-option .option-desc {
+  display: block;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.sort-option.active .option-desc {
+  color: #6366f1;
+}
+
 @media (max-width: 1024px) {
   .listings-grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -356,24 +644,53 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
+  .listings-section {
+    padding: 2rem 0;
+  }
+
   .section-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    margin-left: -2rem;
+    margin-right: -2rem;
+    padding: 0rem 2rem 1rem 2rem;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 50;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .header-left {
+    width: 100%;
   }
 
   .header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     width: 100%;
-    flex-direction: column;
+  }
+
+  .see-all-btn {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
   }
 
   .sort-select {
-    width: 100%;
+    display: none;
   }
 
   .view-switcher {
-    width: 100%;
-    justify-content: center;
+    display: none;
+  }
+
+  .mobile-header-actions {
+    display: flex;
+    gap: 0.5rem;
   }
 }
 
@@ -398,5 +715,43 @@ onUnmounted(() => {
     grid-template-columns: 1fr;
     gap: 1.25rem;
   }
+}
+
+/* Mobile Map Toggle Button */
+.mobile-map-toggle {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+.mobile-map-toggle:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+}
+
+.mobile-map-toggle:active {
+  transform: translateX(-50%) translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 </style>
