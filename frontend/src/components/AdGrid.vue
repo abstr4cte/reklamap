@@ -55,6 +55,7 @@ const handleFilterButtonClick = () => {
 
 const isMobile = ref(false)
 const showMapButton = ref(false)
+const showMapButtonDesktop = ref(false)
 
 const checkIfMobile = () => {
   isMobile.value = window.innerWidth <= 768
@@ -66,7 +67,7 @@ const handleScroll = () => {
   const footer = document.querySelector('footer')
   const polandMap = document.querySelector('[data-poland-map]')
   
-  if (sectionHeader && listingsSection && isMobile.value) {
+  if (sectionHeader && listingsSection) {
     const headerRect = sectionHeader.getBoundingClientRect()
     const listingsRect = listingsSection.getBoundingClientRect()
     const footerRect = footer?.getBoundingClientRect()
@@ -82,15 +83,27 @@ const handleScroll = () => {
     const footerIsVisible = footerRect && footerRect.top < window.innerHeight
     const mapIsBelowUs = !mapRect || mapRect.bottom < 0 // Map is above viewport (we've passed it) or doesn't exist
     
-    showMapButton.value = headerIsSticky && inListingsSection && !footerIsVisible && mapIsBelowUs
+    const shouldShowButton = headerIsSticky && inListingsSection && !footerIsVisible && mapIsBelowUs
+    
+    if (isMobile.value) {
+      showMapButton.value = shouldShowButton
+    } else {
+      showMapButtonDesktop.value = shouldShowButton
+    }
   }
 }
 
 const goToPolandMap = () => {
-  const polandMap = document.querySelector('[data-poland-map]')
-  if (polandMap) {
-    const elementPosition = polandMap.getBoundingClientRect().top + window.pageYOffset
-    const offsetPosition = elementPosition - 32 // 2rem = 32px offset
+  const mapContainer = document.querySelector('[data-poland-map] .map-container')
+  const header = document.querySelector('.app-header')
+  
+  if (mapContainer && header) {
+    const headerRect = header.getBoundingClientRect()
+    const headerStyles = window.getComputedStyle(header)
+    const headerHeight = headerRect.height + parseFloat(headerStyles.marginTop) + parseFloat(headerStyles.marginBottom)
+    
+    const elementPosition = mapContainer.getBoundingClientRect().top + window.pageYOffset
+    const offsetPosition = elementPosition - headerHeight  // Subtract header height + small padding
     
     window.scrollTo({
       top: offsetPosition,
@@ -152,7 +165,7 @@ onUnmounted(() => {
 
 <template>
   <section class="listings-section">
-    <div class="container">
+    <div class="section-header-wrapper">
       <div class="section-header">
         <div class="header-left">
           <h2 class="section-title">Dostępne ogłoszenia</h2>
@@ -168,6 +181,14 @@ onUnmounted(() => {
               <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </router-link>
+          <!-- Desktop Filter Button -->
+          <button @click="handleFilterButtonClick" class="desktop-filter-btn" title="Filtruj">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+            </svg>
+            <span>Filtruj</span>
+          </button>
+
           <!-- Mobile Sort and Filter Buttons -->
           <div class="mobile-header-actions">
             <button @click="handleSortButtonClick" class="mobile-header-btn" title="Sortuj">
@@ -242,6 +263,9 @@ onUnmounted(() => {
           </select>
         </div>
       </div>
+    </div>
+
+    <div class="container">
 
       <div v-if="isLoading" class="loading-state">
         <div class="spinner"></div>
@@ -304,6 +328,15 @@ onUnmounted(() => {
       </div>
     </Teleport>
 
+    <!-- Desktop toggle button (shows map) -->
+    <button v-if="showMapButtonDesktop" @click="goToPolandMap" class="desktop-map-toggle">
+      <span>Pokaż mapę</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+      </svg>
+    </button>
+
     <!-- Mobile toggle button (shows map) -->
     <button v-if="showMapButton" @click="goToPolandMap" class="mobile-map-toggle">
       <span>Pokaż mapę</span>
@@ -321,19 +354,28 @@ onUnmounted(() => {
   background: white;
 }
 
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2rem;
+.section-header-wrapper {
+  position: sticky;
+  top: 75px;
+  background: white;
+  z-index: 50;
+  box-shadow: 0 8px 12px -6px rgba(0, 0, 0, 0.15);
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 3rem;
   gap: 2rem;
-  position: relative;
+  padding: 1rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 2rem 0 2rem;
 }
 
 .header-left {
@@ -384,6 +426,36 @@ onUnmounted(() => {
 }
 
 /* Mobile Header Actions */
+.desktop-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.desktop-filter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.desktop-filter-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .desktop-filter-btn {
+    display: none;
+  }
+}
+
 .mobile-header-actions {
   display: none;
   gap: 0.5rem;
@@ -694,6 +766,24 @@ onUnmounted(() => {
   }
 }
 
+@media (max-width: 768px) {
+  .section-header-wrapper {
+    top: 5px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
 @media (max-width: 640px) {
   .listings-section {
     padding: 3rem 0;
@@ -715,6 +805,44 @@ onUnmounted(() => {
     grid-template-columns: 1fr;
     gap: 1.25rem;
   }
+}
+
+/* Desktop Map Toggle Button */
+.desktop-map-toggle {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+.desktop-map-toggle:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+}
+
+.desktop-map-toggle:active {
+  transform: translateX(-50%) translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Mobile Map Toggle Button */

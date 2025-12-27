@@ -294,15 +294,31 @@ const clearLocation = () => {
   apiLocationResults.value = []
 }
 
+const goToPolandMap = () => {
+  const mapContainer = document.querySelector('[data-poland-map] .map-container')
+  const header = document.querySelector('.app-header')
+  
+  if (mapContainer && header) {
+    const headerRect = header.getBoundingClientRect()
+    const headerStyles = window.getComputedStyle(header)
+    const headerHeight = headerRect.height + parseFloat(headerStyles.marginTop) + parseFloat(headerStyles.marginBottom)
+    
+    const elementPosition = mapContainer.getBoundingClientRect().top + window.pageYOffset
+    const offsetPosition = elementPosition - headerHeight
+    
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
+  }
+}
+
 const handleSearch = () => {
   // First emit the search event
   emit('search', { ...filters.value })
   
-  // Then directly scroll to map section without any URL changes
-  const mapSection = document.getElementById('map-section')
-  if (mapSection) {
-    mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
+  // Then scroll to map using goToPolandMap function
+  goToPolandMap()
 }
 
 const resetFilters = () => {

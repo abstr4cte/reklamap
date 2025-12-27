@@ -3180,6 +3180,51 @@ onBeforeUnmount(() => {
   grid-template-columns: 1fr;
 }
 
+/* List View Card Styles */
+.listings-list.list .listing-card {
+  flex-direction: row;
+  height: auto;
+}
+
+.listings-list.list .card-image {
+  width: 280px;
+  height: 200px;
+  flex-shrink: 0;
+}
+
+.listings-list.list .card-content {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.listings-list.list .card-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.listings-list.list .card-location,
+.listings-list.list .card-dimensions {
+  font-size: 1rem;
+}
+
+.listings-list.list .card-footer {
+  margin-top: auto;
+}
+
+@media (max-width: 1024px) {
+  .listings-list.list .listing-card {
+    flex-direction: column;
+  }
+
+  .listings-list.list .card-image {
+    width: 100%;
+    height: 220px;
+  }
+}
+
 .listing-card {
   background: white;
   border-radius: 12px;

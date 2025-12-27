@@ -74,6 +74,8 @@ const markers: Map<string, L.Marker> = new Map()
 const isMapActive = ref(false)
 const isLegendVisible = ref(false)
 const isMobile = ref(window.innerWidth < 768)
+const headerHeight = ref(80)
+let hasAutoScrolled = false
 
 const typeColors: Record<string, string> = {
   billboard: '#EF4444',
@@ -355,19 +357,79 @@ watch(() => props.hoveredAdId, (newId) => {
   })
 })
 
+const goToPolandMap = () => {
+  const mapContainer = document.querySelector('[data-poland-map] .map-container')
+  const header = document.querySelector('.app-header')
+  
+  if (mapContainer && header) {
+    const headerRect = header.getBoundingClientRect()
+    const headerStyles = window.getComputedStyle(header)
+    const headerHeightValue = headerRect.height + parseFloat(headerStyles.marginTop) + parseFloat(headerStyles.marginBottom)
+    
+    const elementPosition = mapContainer.getBoundingClientRect().top + window.pageYOffset
+    const offsetPosition = elementPosition - headerHeightValue
+    
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
+  }
+}
+
 onMounted(() => {
   initMap()
+  
+  // Calculate header height including padding and margins
+  const calculateHeaderHeight = () => {
+    const header = document.querySelector('.app-header')
+    if (header) {
+      const rect = header.getBoundingClientRect()
+      const styles = window.getComputedStyle(header)
+      const marginTop = parseFloat(styles.marginTop)
+      const marginBottom = parseFloat(styles.marginBottom)
+      headerHeight.value = rect.height + marginTop + marginBottom
+    }
+  }
   
   // Update isMobile on window resize
   const handleResize = () => {
     isMobile.value = window.innerWidth < 768
+    calculateHeaderHeight()
   }
   
+  calculateHeaderHeight()
   window.addEventListener('resize', handleResize)
+  
+  // Scroll event to auto-adjust when header touches section-header
+  const sectionHeader = document.querySelector('.section-header')
+  let wasHeaderInView = true // Track if header was in view on previous scroll
+  
+  const handleScroll = () => {
+    if (sectionHeader && !hasAutoScrolled) {
+      const rect = sectionHeader.getBoundingClientRect()
+      const isHeaderInView = rect.top >= 0 && rect.top <= window.innerHeight
+      
+      // Detect transition: header was in view, now it's not (scrolling down)
+      if (wasHeaderInView && !isHeaderInView && rect.top < 0) {
+        hasAutoScrolled = true
+        goToPolandMap()
+      }
+      
+      // Reset flag when header comes back into view (scrolling up)
+      if (!wasHeaderInView && isHeaderInView) {
+        hasAutoScrolled = false
+      }
+      
+      wasHeaderInView = isHeaderInView
+    }
+  }
+  
+  window.addEventListener('scroll', handleScroll)
   
   // Cleanup
   onBeforeUnmount(() => {
     window.removeEventListener('resize', handleResize)
+    window.removeEventListener('scroll', handleScroll)
   })
 })
 </script>
@@ -381,7 +443,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="map-wrapper">
+    <div class="map-wrapper" :style="{ minHeight: `calc(100vh - ${headerHeight}px)` }">
       <div ref="mapContainer" class="map-container">
         <div v-if="!isMapActive && !isMobile" class="map-hint-overlay">
           <div class="map-hint-message">
@@ -465,6 +527,16 @@ onMounted(() => {
         @click="isLegendVisible = false"
       ></div>
 
+      <!-- Desktop toggle button (shows list) -->
+      <button v-if="!isMobile" @click="scrollToAdGrid" class="desktop-list-toggle">
+        <span>Pokaż listę</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="5" width="18" height="4" rx="1"/>
+          <rect x="3" y="11" width="18" height="4" rx="1"/>
+          <rect x="3" y="17" width="18" height="4" rx="1"/>
+        </svg>
+      </button>
+
       <!-- Mobile toggle button (shows list) -->
       <button v-if="isMobile" @click="scrollToAdGrid" class="mobile-list-toggle">
         <span>Pokaż listę</span>
@@ -484,7 +556,8 @@ onMounted(() => {
   background: linear-gradient(to bottom, #F9FAFB 0%, white 100%);
   scroll-margin-top: 120px; /* Increased to ensure header visibility */
   scroll-behavior: smooth;
-  display: block; /* Ensure the section is treated as a block element */
+  display: flex;
+  flex-direction: column;
 }
 
 .container {
@@ -514,10 +587,12 @@ onMounted(() => {
 .map-wrapper {
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .map-container {
-  height: 600px;
+  flex: 1;
   width: 100%;
   z-index: 1;
   position: relative;
@@ -756,6 +831,44 @@ onMounted(() => {
   visibility: visible;
 }
 
+/* Desktop List Toggle Button */
+.desktop-list-toggle {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0.9;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+.desktop-list-toggle:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+}
+
+.desktop-list-toggle:active {
+  transform: translateX(-50%) translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
 /* Responsive adjustments */
 @media (max-width: 480px) {
   .legend-side-panel {
@@ -800,7 +913,7 @@ onMounted(() => {
 
 @media (max-width: 768px) {
   .map-section {
-    padding: 6rem 0 3rem;
+    padding: 4rem 0 0 0;
   }
 
   .section-title {
@@ -812,7 +925,7 @@ onMounted(() => {
   }
 
   .map-container {
-    height: 450px;
+    flex: 1;
   }
 
   .map-legend {
