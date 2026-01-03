@@ -1874,40 +1874,12 @@ onBeforeUnmount(() => {
         </div>
         
         <button @click="openFiltersModal" class="filters-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
           </svg>
-          Filtry
+          <span>Filtruj</span>
           <span v-if="activeFiltersCount > 0" class="filter-badge">{{ activeFiltersCount }}</span>
         </button>
-
-        <div class="view-toggle">
-          <button 
-            @click="changeViewMode('grid')" 
-            class="view-btn"
-            :class="{ active: viewMode === 'grid' }"
-            title="Widok kafelków"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-              <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-              <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-              <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-            </svg>
-          </button>
-          <button 
-            @click="changeViewMode('list')" 
-            class="view-btn"
-            :class="{ active: viewMode === 'list' }"
-            title="Widok listy"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="5" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-              <rect x="3" y="11" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-              <rect x="3" y="17" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-            </svg>
-          </button>
-        </div>
 
         <select v-model="sortBy" class="sort-select">
           <option value="newest">Najnowsze</option>
@@ -1939,6 +1911,35 @@ onBeforeUnmount(() => {
             <option value="price-campaign-desc">Cena za kampanię malejąco</option>
           </optgroup>
         </select>
+
+        <div class="view-toggle">
+          <button 
+            @click="changeViewMode('grid')" 
+            class="view-btn"
+            :class="{ active: viewMode === 'grid' }"
+            title="Widok kafelków"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+              <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+              <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+              <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+          <button 
+            @click="changeViewMode('list')" 
+            class="view-btn"
+            :class="{ active: viewMode === 'list' }"
+            title="Widok listy"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="5" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+              <rect x="3" y="11" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+              <rect x="3" y="17" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+        </div>
+
       </div>
 
       <!-- Mobile View -->
@@ -1962,17 +1963,19 @@ onBeforeUnmount(() => {
           @click.stop="handleSortButtonClick"
           class="mobile-action-btn"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 6h18"/>
             <path d="M6 12h12"/>
             <path d="M10 18h4"/>
           </svg>
+          <span>Sortuj</span>
         </button>
         
         <button @click="openFiltersModal" class="mobile-action-btn">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
           </svg>
+          <span>Filtruj</span>
           <span v-if="activeFiltersCount > 0" class="mobile-filter-badge">{{ activeFiltersCount }}</span>
         </button>
       </div>
@@ -2756,8 +2759,8 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
   border-radius: 8px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border: none;
@@ -2766,6 +2769,9 @@ onBeforeUnmount(() => {
   position: relative;
   transition: all 0.2s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .mobile-action-btn:hover {
@@ -2775,6 +2781,10 @@ onBeforeUnmount(() => {
 
 .mobile-action-btn:active {
   transform: translateY(-2px);
+}
+
+.mobile-action-btn svg {
+  flex-shrink: 0;
 }
 
 .mobile-filter-badge {
@@ -2923,7 +2933,21 @@ onBeforeUnmount(() => {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 1180px) {
+  .desktop-search {
+    display: none;
+  }
+  
+  .mobile-search {
+    display: flex;
+  }
+  
+  .results-count {
+    display: none;
+  }
+}
+
+@media (min-width: 1180px) {
   .mobile-search {
     display: none;
   }
@@ -3009,20 +3033,20 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: white;
-  border: 2px solid #e5e7eb;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
   border-radius: 10px;
-  font-weight: 600;
-  color: #374151;
   cursor: pointer;
-  transition: all 0.2s;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
   position: relative;
 }
 
 .filters-btn:hover {
-  border-color: #667eea;
-  color: #667eea;
-  background: #f0f4ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
 .filter-badge {
@@ -4388,6 +4412,18 @@ onBeforeUnmount(() => {
     padding: 1rem;
   }
 }
+@media (max-width: 1331px) {
+  .view-toggle {
+    display: none;
+  }
+}
+
+@media (max-width: 564px) {
+  .mobile-action-btn span:not(.mobile-filter-badge) {
+    display: none;
+  }
+}
+
 .pagination-bottom {
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
