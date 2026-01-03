@@ -1291,6 +1291,12 @@ onMounted(() => {
   transform: translateX(0) rotate(0deg);
 }
 
+@media (max-width: 1050px) {
+  .cities-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .cities-section {
     padding: 3.5rem 0;
