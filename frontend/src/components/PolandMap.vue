@@ -75,6 +75,9 @@ const isMapActive = ref(false)
 const isLegendVisible = ref(false)
 const isMobile = ref(window.innerWidth < 768)
 const headerHeight = ref(80)
+const mapSection = ref<HTMLElement | null>(null)
+const showMobileToggle = ref(false)
+const toggleButtonTop = ref(0)
 
 const typeColors: Record<string, string> = {
   billboard: '#EF4444',
@@ -158,7 +161,7 @@ const initMap = () => {
     dragging: !isMobile.value, // Disable dragging on mobile until activated
     touchZoom: false, // Disable touch zoom until activated
     doubleClickZoom: false, // Disable double click zoom until activated
-    zoomControl: false, // Disable zoom controls until activated
+    zoomControl: true, // Disable zoom controls until activated
     maxBounds: polandBounds,
     maxBoundsViscosity: 1.0,
     minZoom: 5,
@@ -383,6 +386,9 @@ watch(() => props.hoveredAdId, (newId) => {
 onMounted(() => {
   initMap()
   
+  // Get map section reference
+  mapSection.value = document.querySelector('#map-section') as HTMLElement
+  
   // Calculate header height including padding and margins
   const calculateHeaderHeight = () => {
     const header = document.querySelector('.app-header')
@@ -395,6 +401,31 @@ onMounted(() => {
     }
   }
   
+  // Handle scroll to show/hide and position toggle button
+  const handleScroll = () => {
+    if (!mapSection.value || !isMobile.value) return
+    
+    const mapRect = mapSection.value.getBoundingClientRect()
+    const mapTop = mapRect.top
+    const mapBottom = mapRect.bottom
+    const mapHeight = mapRect.height
+    const map3QuartersPoint = mapTop + (mapHeight * 3 / 4)
+    
+    // Show button only when map is visible and we're past 3/4 of the map
+    const isMapVisible = mapBottom > 0 && mapTop < window.innerHeight
+    const isPast3Quarters = map3QuartersPoint < window.innerHeight / 2
+    
+    showMobileToggle.value = isMapVisible && isPast3Quarters
+    
+    // Calculate button position (fixed, following the map but clamped within it)
+    if (showMobileToggle.value) {
+      // Position button at map's 3/4 point, but don't let it go below the map
+      const buttonY = Math.max(mapTop + (mapHeight * 3 / 4), window.innerHeight / 2)
+      // Clamp to stay within map bounds (with 60px margin from bottom)
+      toggleButtonTop.value = Math.min(buttonY, mapBottom - 60)
+    }
+  }
+  
   // Update isMobile on window resize
   const handleResize = () => {
     isMobile.value = window.innerWidth < 768
@@ -403,10 +434,12 @@ onMounted(() => {
   
   calculateHeaderHeight()
   window.addEventListener('resize', handleResize)
+  window.addEventListener('scroll', handleScroll)
   
   // Cleanup
   onBeforeUnmount(() => {
     window.removeEventListener('resize', handleResize)
+    window.removeEventListener('scroll', handleScroll)
   })
 })
 </script>
@@ -515,7 +548,17 @@ onMounted(() => {
       </button>
 
       <!-- Mobile toggle button (shows list) -->
-      <button v-if="isMobile" @click="scrollToAdGrid" class="mobile-list-toggle">
+      <button 
+        v-if="isMobile" 
+        @click="scrollToAdGrid" 
+        class="mobile-list-toggle"
+        :style="{
+          top: showMobileToggle ? `${toggleButtonTop}px` : 'auto',
+          opacity: showMobileToggle ? 0.9 : 0,
+          visibility: showMobileToggle ? 'visible' : 'hidden',
+          pointerEvents: showMobileToggle ? 'auto' : 'none'
+        }"
+      >
         <span>Pokaż listę</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="5" width="18" height="4" rx="1"/>
@@ -921,8 +964,7 @@ onMounted(() => {
   }
 
   .mobile-list-toggle {
-    position: absolute;
-    bottom: 1rem;
+    position: fixed;
     left: 50%;
     transform: translateX(-50%);
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -937,12 +979,14 @@ onMounted(() => {
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: all 0.2s ease;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     opacity: 0.9;
+    visibility: hidden;
     white-space: nowrap;
     z-index: 100;
+    pointer-events: none;
   }
 
   .mobile-list-toggle:hover {
