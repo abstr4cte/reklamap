@@ -155,26 +155,46 @@ const initMap = () => {
 
   map = L.map(mapContainer.value, {
     scrollWheelZoom: false,
-    maxBounds: polandBounds,        // Nie można przesunąć mapy poza te granice
-    maxBoundsViscosity: 1.0,        // Twarde ograniczenie (nie można przeciągnąć poza)
-    minZoom: 5,                      // Minimalne przybliżenie (cała Polska + więcej)
-    maxZoom: 18                      // Maksymalne przybliżenie
+    dragging: !isMobile.value, // Disable dragging on mobile until activated
+    touchZoom: false, // Disable touch zoom until activated
+    doubleClickZoom: false, // Disable double click zoom until activated
+    zoomControl: false, // Disable zoom controls until activated
+    maxBounds: polandBounds,
+    maxBoundsViscosity: 1.0,
+    minZoom: 5,
+    maxZoom: 18
   }).setView([52.0, 19.0], 6)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map)
 
-  // Enable scroll wheel zoom on click and hide hint
+  // Function to enable all interactions
+  const enableMapInteractions = () => {
+    if (!map) return
+    
+    map.scrollWheelZoom.enable()
+    map.dragging.enable()
+    map.touchZoom.enable()
+    map.doubleClickZoom.enable()
+    
+    // Add zoom control if on mobile
+    if (isMobile.value) {
+      map.zoomControl = L.control.zoom({ position: 'bottomright' }).addTo(map)
+    }
+    
+    isMapActive.value = true
+  }
+
+  // Enable interactions on click and hide hint
   map.on('click', () => {
-    if (map && !map.scrollWheelZoom.enabled()) {
-      map.scrollWheelZoom.enable()
-      isMapActive.value = true
+    if (map && !isMapActive.value) {
+      enableMapInteractions()
     }
   })
   
-  // Disable scroll wheel zoom when mouse leaves the map
-  if (mapContainer.value) {
+  // Disable scroll wheel zoom when mouse leaves the map (desktop only)
+  if (mapContainer.value && !isMobile.value) {
     mapContainer.value.addEventListener('mouseleave', () => {
       if (map && map.scrollWheelZoom.enabled()) {
         map.scrollWheelZoom.disable()
@@ -312,18 +332,22 @@ const updateMarkers = () => {
 
   if (props.selectedLocationCoords) {
     // Priority 1: If exact coordinates are provided, zoom to them
-    map.setView([props.selectedLocationCoords.lat, props.selectedLocationCoords.lng], 13)
+    const zoomLevel = isMobile.value ? 12 : 13
+    map.setView([props.selectedLocationCoords.lat, props.selectedLocationCoords.lng], zoomLevel)
   } else if (props.selectedCity && markers.size > 0) {
     // Priority 2: If city is selected, fit bounds to markers (likely clustered in that city)
     const group = new L.FeatureGroup(Array.from(markers.values()))
-    map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 12 })
+    const maxZoom = isMobile.value ? 11 : 12
+    map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom })
   } else if (props.selectedRegion && regionCoordinates[props.selectedRegion]) {
     // Priority 3: If region is selected (and no city), zoom to region center
     const region = regionCoordinates[props.selectedRegion]
-    map.setView([region.lat, region.lng], region.zoom)
+    const zoomLevel = isMobile.value ? region.zoom - 1 : region.zoom
+    map.setView([region.lat, region.lng], zoomLevel)
   } else {
     // Default: Always show full Poland when no specific filters are active
-    map.setView([52.0, 19.0], 6)
+    const defaultZoom = isMobile.value ? 5 : 6
+    map.setView([52.0, 19.0], defaultZoom)
   }
 }
 
@@ -398,9 +422,9 @@ onMounted(() => {
 
     <div class="map-wrapper" :style="{ minHeight: `calc(100vh - ${headerHeight}px)` }">
       <div ref="mapContainer" class="map-container">
-        <div v-if="!isMapActive && !isMobile" class="map-hint-overlay">
+        <div v-if="!isMapActive" class="map-hint-overlay">
           <div class="map-hint-message">
-            Kliknij, aby przybliżyć mapę
+            {{'Kliknij, aby móc przybliżyć mapę' }}
           </div>
         </div>
       </div>

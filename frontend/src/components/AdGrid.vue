@@ -78,12 +78,12 @@ const handleScroll = () => {
     // 2. We're in listings section (not at footer)
     // 3. Footer is not visible
     // 4. Map is below us (we've scrolled past it)
-    const headerIsSticky = headerRect.top <= 0
+    const isHeaderSticky = headerRect.top <= 0
     const inListingsSection = listingsRect.top < window.innerHeight && listingsRect.bottom > 0
     const footerIsVisible = footerRect && footerRect.top < window.innerHeight
     const mapIsBelowUs = !mapRect || mapRect.bottom < 0 // Map is above viewport (we've passed it) or doesn't exist
     
-    const shouldShowButton = headerIsSticky && inListingsSection && !footerIsVisible && mapIsBelowUs
+    const shouldShowButton = isHeaderSticky && inListingsSection && !footerIsVisible && mapIsBelowUs
     
     if (isMobile.value) {
       showMapButton.value = shouldShowButton
@@ -165,18 +165,22 @@ onUnmounted(() => {
 
 <template>
   <section class="listings-section">
+    <!-- Title and count - always visible, not sticky -->
+    <div class="section-title-wrapper">
+      <h2 class="section-title">Dostępne ogłoszenia</h2>
+      <p class="section-subtitle">
+        Znaleziono {{ listings.length }}
+        {{ listings.length === 1 ? 'ogłoszenie' : listings.length < 5 ? 'ogłoszenia' : 'ogłoszeń' }}
+      </p>
+    </div>
+
+    <!-- Sticky buttons header -->
     <div class="section-header-wrapper">
       <div class="section-header">
-        <div class="header-left">
-          <h2 class="section-title">Dostępne ogłoszenia</h2>
-          <p class="section-subtitle">
-            Znaleziono {{ listings.length }}
-            {{ listings.length === 1 ? 'ogłoszenie' : listings.length < 5 ? 'ogłoszenia' : 'ogłoszeń' }}
-          </p>
-        </div>
         <div class="header-right">
           <router-link to="/powierzchnie-reklamowe" class="see-all-btn">
-            Zobacz wszystkie ogłoszenia
+            <span class="full-text">Zobacz wszystkie ogłoszenia</span>
+            <span class="short-text">Zobacz wszystkie</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -197,38 +201,13 @@ onUnmounted(() => {
                 <path d="M6 12h12"/>
                 <path d="M10 18h4"/>
               </svg>
+              <span class="btn-text">Sortuj</span>
             </button>
             <button @click="handleFilterButtonClick" class="mobile-header-btn" title="Filtruj">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
               </svg>
-            </button>
-          </div>
-          <div class="view-switcher">
-            <button
-              @click="emit('update:viewMode', 'grid')"
-              class="view-btn"
-              :class="{ active: viewMode === 'grid' }"
-              title="Widok kafelków"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-                <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-                <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-                <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-              </svg>
-            </button>
-            <button
-              @click="emit('update:viewMode', 'list')"
-              class="view-btn"
-              :class="{ active: viewMode === 'list' }"
-              title="Widok listy"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="5" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-                <rect x="3" y="11" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-                <rect x="3" y="17" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-              </svg>
+              <span class="btn-text">Filtruj</span>
             </button>
           </div>
           <select v-model="sortBy" @change="emit('update:sortBy', sortBy)" class="sort-select">
@@ -261,6 +240,33 @@ onUnmounted(() => {
               <option value="price-campaign-desc">Cena za kampanię malejąco</option>
             </optgroup>
           </select>
+          <div class="view-switcher">
+            <button
+              @click="emit('update:viewMode', 'grid')"
+              class="view-btn"
+              :class="{ active: viewMode === 'grid' }"
+              title="Widok kafelków"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </button>
+            <button
+              @click="emit('update:viewMode', 'list')"
+              class="view-btn"
+              :class="{ active: viewMode === 'list' }"
+              title="Widok listy"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="5" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="3" y="11" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="3" y="17" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -354,12 +360,25 @@ onUnmounted(() => {
   background: white;
 }
 
+.section-title-wrapper {
+  text-align: center;
+  padding: 1rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
 .section-header-wrapper {
   position: sticky;
-  top: 75px;
+  top: 70px;
   background: white;
   z-index: 50;
   box-shadow: 0 8px 12px -6px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .section-header-wrapper {
+    top: 70px;
+  }
 }
 
 .section-header {
@@ -383,6 +402,7 @@ onUnmounted(() => {
 }
 
 .header-right {
+  margin: auto;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -401,6 +421,25 @@ onUnmounted(() => {
   font-size: 0.95rem;
   transition: all 0.2s;
   white-space: nowrap;
+  height: fit-content;
+}
+
+.see-all-btn .full-text {
+  display: inline;
+}
+
+.see-all-btn .short-text {
+  display: none;
+}
+
+@media (max-width: 415px) {
+  .see-all-btn .full-text {
+    display: none;
+  }
+
+  .see-all-btn .short-text {
+    display: inline;
+  }
 }
 
 .see-all-btn:hover {
@@ -436,8 +475,8 @@ onUnmounted(() => {
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
   transition: all 0.2s ease;
 }
 
@@ -450,7 +489,7 @@ onUnmounted(() => {
   transform: translateY(0);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 825px) {
   .desktop-filter-btn {
     display: none;
   }
@@ -465,15 +504,21 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
   transition: all 0.2s ease;
+  height: fit-content;
+}
+
+.mobile-header-btn .btn-text {
+  display: none;
 }
 
 .mobile-header-btn:hover {
@@ -492,8 +537,10 @@ onUnmounted(() => {
   border-radius: 10px;
   padding: 0.25rem;
   background: white;
-  
-  @media (max-width: 768px) {
+}
+
+@media (max-width: 688px) {
+  .view-switcher {
     display: none;
   }
 }
@@ -536,6 +583,7 @@ onUnmounted(() => {
   cursor: pointer;
   transition: all 0.2s;
   min-width: 200px;
+  max-width: 250px;
 }
 
 .sort-select:hover {
@@ -546,6 +594,41 @@ onUnmounted(() => {
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+@media (max-width: 825px) {
+  .sort-select {
+    display: none;
+  }
+
+  .mobile-header-actions {
+    display: flex !important;
+    gap: 0.5rem;
+  }
+
+  .mobile-header-btn .btn-text {
+    display: inline;
+  }
+
+  .mobile-header-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 564px) {
+  .mobile-header-btn {
+    padding: 0.75rem 0.75rem;
+  }
+
+  .mobile-header-btn .btn-text {
+    display: none;
+  }
+
+  .mobile-header-btn svg {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .listings-grid {
@@ -720,22 +803,18 @@ onUnmounted(() => {
     padding: 2rem 0;
   }
 
-  .section-header {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-    margin-left: -2rem;
-    margin-right: -2rem;
-    padding: 0rem 2rem 1rem 2rem;
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 50;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  .section-title-wrapper {
+    padding: 1rem 2rem;
   }
 
-  .header-left {
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
     width: 100%;
   }
 
@@ -743,12 +822,13 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 
   .see-all-btn {
     font-size: 0.85rem;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 0.75rem;
     white-space: nowrap;
   }
 
@@ -756,9 +836,6 @@ onUnmounted(() => {
     display: none;
   }
 
-  .view-switcher {
-    display: none;
-  }
 
   .mobile-header-actions {
     display: flex;
@@ -767,10 +844,7 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .section-header-wrapper {
-    top: 5px;
-  }
-
+ 
   .section-header {
     flex-direction: column;
     align-items: center;
@@ -804,6 +878,18 @@ onUnmounted(() => {
   .listings-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
+  }
+}
+
+@media (max-width: 415px) {
+  .see-all-btn {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .section-title {
+    font-size: 1.8rem;
   }
 }
 

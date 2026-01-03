@@ -575,6 +575,7 @@ watch(isMobileMenuOpen, (isOpen) => {
 .add-listing-btn {
   background: #10B981;
   color: white;
+  white-space: nowrap;
 }
 
 .favorites-btn:hover,
@@ -877,7 +878,7 @@ watch(isMobileMenuOpen, (isOpen) => {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1180px) {
   .header-center.desktop-nav {
     display: none;
   }

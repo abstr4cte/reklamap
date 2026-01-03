@@ -1716,9 +1716,30 @@ onBeforeUnmount(() => {
     grid-template-columns: 1fr;
   }
 
+  .price-filter {
+    flex-wrap: wrap;
+  }
+
   .price-unit {
-    min-width: 120px;
-    max-width: 140px;
+    min-width: 100%;
+    max-width: 100%;
+    flex-basis: 100%;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .price-group {
+    min-width: auto;
+  }
+
+  .price-unit {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .search-card {
+    padding: 1rem;
   }
 }
 
