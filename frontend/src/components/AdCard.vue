@@ -389,13 +389,6 @@ const statusColor = computed(() => {
             <span v-if="ad.price_negotiable" class="negotiable-badge">do negocjacji</span>
           </template>
         </div>
-
-        <div class="card-button">
-          Zobacz szczegóły
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
       </div>
     </div>
   </router-link>
