@@ -10,7 +10,7 @@ class VerifyAppKey
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->isMethod('OPTIONS')) {
+        if ($request->isMethod('OPTIONS') || $request->is('admin*') || $request->is('livewire*')) {
             return $next($request);
         }
 
