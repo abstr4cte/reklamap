@@ -72,6 +72,7 @@ const showSortPanel = ref(false)
 const isLegendVisible = ref(false)
 const sortPanelRef = ref<HTMLElement | null>(null)
 const sortButtonRef = ref<HTMLElement | null>(null)
+const showMapButton = ref(false)
 
 const sortOptions = [
   { value: 'newest', label: 'Najnowsze', description: 'Od najnowszych' },
@@ -122,6 +123,31 @@ const checkIfMobile = () => {
   isMobile.value = window.innerWidth < 768
   if (!isMobile.value) {
     showMapOnMobile.value = false
+  }
+}
+
+const handleScroll = () => {
+  const listingsContainer = document.querySelector('.listings-list-container')
+  const mapContainer = document.querySelector('.map-container-wrapper')
+  const footer = document.querySelector('footer')
+  
+  if (listingsContainer && mapContainer) {
+    const listingsRect = listingsContainer.getBoundingClientRect()
+    const mapRect = mapContainer.getBoundingClientRect()
+    const footerRect = footer?.getBoundingClientRect()
+    
+    // Show button when:
+    // 1. We're in listings or map section (not at footer)
+    // 2. Footer is not visible
+    const inListingsSection = listingsRect.top < window.innerHeight && listingsRect.bottom > 0
+    const inMapSection = mapRect.top < window.innerHeight && mapRect.bottom > 0
+    const footerIsVisible = footerRect && footerRect.top < window.innerHeight
+    
+    const shouldShowButton = (inListingsSection || inMapSection) && !footerIsVisible
+    
+    if (isMobile.value) {
+      showMapButton.value = shouldShowButton
+    }
   }
 }
 
@@ -1756,6 +1782,8 @@ onMounted(() => {
   loadListings()
   checkIfMobile()
   window.addEventListener('resize', checkIfMobile)
+  window.addEventListener('scroll', handleScroll)
+  handleScroll() // Initial check
   
   // Initialize map only on desktop or if mobile and map is shown
   if (!isMobile.value) {
@@ -1841,6 +1869,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
+  window.removeEventListener('scroll', handleScroll)
   
   // Remove localStorage listeners
   if (typeof window !== 'undefined') {
@@ -2141,7 +2170,7 @@ onBeforeUnmount(() => {
       </div>
 
       <!-- Mobile toggle button (shows either list or map) -->
-      <button v-if="isMobile" @click="toggleMobileMap" class="mobile-map-toggle">
+      <button v-if="isMobile && showMapButton" @click="toggleMobileMap" class="mobile-map-toggle">
         <span>{{ showMapOnMobile ? 'Pokaż listę' : 'Pokaż mapę' }}</span>
         <svg v-if="!showMapOnMobile" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>

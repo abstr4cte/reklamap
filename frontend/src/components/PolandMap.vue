@@ -181,11 +181,6 @@ const initMap = () => {
     map.touchZoom.enable()
     map.doubleClickZoom.enable()
     
-    // Add zoom control if on mobile
-    if (isMobile.value) {
-      map.zoomControl = L.control.zoom({ position: 'bottomright' }).addTo(map)
-    }
-    
     isMapActive.value = true
   }
 
