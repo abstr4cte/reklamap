@@ -1065,6 +1065,13 @@ watch(() => route.params.id, (newId) => {
   }
 }, { immediate: true })
 
+// Prevent body scroll when mobile actions menu is open
+watch(showActionsMenu, (isOpen) => {
+  if (typeof window !== 'undefined') {
+    document.body.style.overflow = isOpen ? 'hidden' : 'auto'
+  }
+})
+
 onMounted(() => {
   // Dodatkowe sprawdzenie stanu po zamontowaniu komponentu
   setTimeout(() => {
@@ -1087,6 +1094,8 @@ onUnmounted(() => {
     window.removeEventListener('localStorageChange', handleStorageChange)
     window.removeEventListener('storage', handleStorageChange)
     window.removeEventListener('keydown', handlePreviewKeydown)
+    // Restore body scroll on unmount
+    document.body.style.overflow = 'auto'
   }
   
   // Clean up map instance to prevent memory leaks and conflicts
@@ -2620,6 +2629,7 @@ onUnmounted(() => {
   max-height: 80vh;
   overflow-y: auto;
   padding-bottom: 80px;
+  z-index: 2001;
 }
 
 .mobile-menu-header {
@@ -3390,5 +3400,19 @@ onUnmounted(() => {
     background: white;
     color: black;
   }
+}
+
+/* Override Leaflet controls z-index to be below mobile menu */
+:deep(.leaflet-control) {
+  z-index: 500 !important;
+}
+
+:deep(.leaflet-control-zoom) {
+  z-index: 500 !important;
+}
+
+:deep(.leaflet-top),
+:deep(.leaflet-bottom) {
+  z-index: 500 !important;
 }
 </style>
