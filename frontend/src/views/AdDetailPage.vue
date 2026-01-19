@@ -1190,6 +1190,130 @@ onUnmounted(() => {
             </div>
           </div>
 
+          <!-- Mobile Sidebar Card - wyświetlany tylko na mobile -->
+          <div class="sidebar-card mobile-sidebar-card">
+            <div class="status-badge" :class="statusClass">
+              {{ statusLabel }}
+            </div>
+
+            <div class="sidebar-info">
+              <div class="info-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>{{ formatDate(ad.created_at) }}</span>
+              </div>
+              <div class="info-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>{{ ad.views || 0 }} wyświetleń</span>
+              </div>
+            </div>
+
+            <div v-if="ad.phone && ad.phone.trim()" class="phone-section">
+              <button v-if="!showPhone" @click="showPhone = true" class="btn btn-phone">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                {{ getMaskedPhone(ad.phone) }}
+              </button>
+              <div v-else class="phone-display">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <a :href="`tel:${ad.phone}`" class="phone-number">{{ getFullPhone(ad.phone) }}</a>
+              </div>
+            </div>
+
+            <!-- Mobile Actions Bar (Fixed Bottom) -->
+            <div class="actions-mobile">
+              <button @click="showActionsMenu = !showActionsMenu" class="mobile-actions-bar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Zobacz opcje</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" :class="{ 'rotate-180': showActionsMenu }">
+                  <path d="M19 14l-7 7m0 0l-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+
+              <div v-if="showActionsMenu" class="mobile-menu-overlay" @click="showActionsMenu = false">
+                <div class="mobile-menu-content" @click.stop>
+                  <div class="mobile-menu-header">
+                    <h3>Opcje</h3>
+                    <button @click="showActionsMenu = false" class="mobile-menu-close">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div class="mobile-menu-items">
+                    <button type="button" @click="toggleFavorite(); showActionsMenu = false" class="mobile-menu-item" :class="{ active: isFavorite }">
+                      <svg width="20" height="20" viewBox="0 0 24 24" :fill="isFavorite ? '#EF4444' : 'none'">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" :stroke="isFavorite ? '#EF4444' : 'currentColor'" stroke-width="2"/>
+                      </svg>
+                      <span>{{ isFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych' }}</span>
+                    </button>
+
+                    <button type="button" @click="toggleComparison(); showActionsMenu = false" class="mobile-menu-item" :class="{ active: isInComparison }">
+                      <svg width="20" height="20" viewBox="0 0 24 24" :fill="isInComparison ? '#667eea' : 'none'">
+                        <rect x="3" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
+                      </svg>
+                      <span>{{ isInComparison ? 'Usuń z porównania' : 'Dodaj do porównania' }}</span>
+                    </button>
+
+                    <div class="mobile-menu-divider"></div>
+
+                    <button type="button" @click="handlePrint(); showActionsMenu = false" class="mobile-menu-item">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6 14h12v8H6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <span>Drukuj</span>
+                    </button>
+
+                    <button type="button" @click="handleDownloadPDF(); showActionsMenu = false" class="mobile-menu-item" :disabled="isGeneratingPDF">
+                      <svg v-if="isGeneratingPDF" class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <span>{{ isGeneratingPDF ? 'Generowanie...' : 'Pobierz PDF' }}</span>
+                    </button>
+
+                    <button type="button" @click="handleShare(); showActionsMenu = false" class="mobile-menu-item">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <circle cx="18" cy="5" r="3" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="6" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="18" cy="19" r="3" stroke="currentColor" stroke-width="2"/>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="currentColor" stroke-width="2"/>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                      <span>Udostępnij</span>
+                    </button>
+
+                    <button type="button" @click="openReportModal(); showActionsMenu = false" class="mobile-menu-item report-btn">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <span>Zgłoś naruszenie</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="specs-section">
             <h1 class="listing-title">{{ ad.title }}</h1>
             <div class="price-section">
@@ -1394,7 +1518,8 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="sidebar">
+        <!-- Desktop Sidebar -->
+        <div class="sidebar desktop-sidebar">
           <div class="sidebar-card">
             <div class="status-badge" :class="statusClass">
               {{ statusLabel }}
@@ -2776,9 +2901,15 @@ onUnmounted(() => {
     order: 1;
   }
 
-  .sidebar {
+  /* Ukryj desktop sidebar na mobile */
+  .desktop-sidebar {
+    display: none;
+  }
+
+  /* Pokaż mobile sidebar card w main-content */
+  .mobile-sidebar-card {
+    display: flex;
     order: 2;
-    margin-bottom: 1rem;
   }
 
   .specs-section {
@@ -2854,6 +2985,11 @@ onUnmounted(() => {
 
   .specs-grid {
     display: grid !important;
+  }
+
+  /* Ukryj mobile sidebar card na desktop */
+  .mobile-sidebar-card {
+    display: none !important;
   }
 }
 
