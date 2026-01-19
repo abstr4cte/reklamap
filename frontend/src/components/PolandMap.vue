@@ -78,6 +78,8 @@ const headerHeight = ref(80)
 const mapSection = ref<HTMLElement | null>(null)
 const showMobileToggle = ref(false)
 const toggleButtonTop = ref(0)
+const showDesktopToggle = ref(false)
+const desktopToggleTop = ref(0)
 
 const typeColors: Record<string, string> = {
   billboard: '#EF4444',
@@ -414,7 +416,7 @@ onMounted(() => {
   
   // Handle scroll to show/hide and position toggle button
   const handleScroll = () => {
-    if (!mapSection.value || !isMobile.value) return
+    if (!mapSection.value) return
     
     const mapRect = mapSection.value.getBoundingClientRect()
     const mapTop = mapRect.top
@@ -426,13 +428,25 @@ onMounted(() => {
     const isMapVisible = mapBottom > 0 && mapTop < window.innerHeight
     const isPastQuarter = mapQuarterPoint < window.innerHeight / 2
     
-    showMobileToggle.value = isMapVisible && isPastQuarter
-    
-    // Position button at bottom of viewport, but clamp it to stay within map bounds
-    if (showMobileToggle.value) {
-      const buttonY = window.innerHeight - 80
-      // Don't let button go below the map (with 60px margin from bottom)
-      toggleButtonTop.value = Math.min(buttonY, mapBottom - 60)
+    if (isMobile.value) {
+      showMobileToggle.value = isMapVisible && isPastQuarter
+      
+      // Position button at bottom of viewport, but clamp it to stay within map bounds
+      if (showMobileToggle.value) {
+        const buttonY = window.innerHeight - 80
+        // Don't let button go below the map (with 60px margin from bottom)
+        toggleButtonTop.value = Math.min(buttonY, mapBottom - 60)
+      }
+    } else {
+      // Desktop version
+      showDesktopToggle.value = isMapVisible && isPastQuarter
+      
+      // Position button at bottom of viewport, but clamp it to stay within map bounds
+      if (showDesktopToggle.value) {
+        const buttonY = window.innerHeight - 80
+        // Don't let button go below the map (with 60px margin from bottom)
+        desktopToggleTop.value = Math.min(buttonY, mapBottom - 60)
+      }
     }
   }
   
@@ -548,7 +562,17 @@ onMounted(() => {
       ></div>
 
       <!-- Desktop toggle button (shows list) -->
-      <button v-if="!isMobile" @click="scrollToAdGrid" class="desktop-list-toggle">
+      <button 
+        v-if="!isMobile" 
+        @click="scrollToAdGrid" 
+        class="desktop-list-toggle"
+        :style="{
+          top: showDesktopToggle ? `${desktopToggleTop}px` : 'auto',
+          opacity: showDesktopToggle ? 0.9 : 0,
+          visibility: showDesktopToggle ? 'visible' : 'hidden',
+          pointerEvents: showDesktopToggle ? 'auto' : 'none'
+        }"
+      >
         <span>Pokaż listę</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="5" width="18" height="4" rx="1"/>
@@ -863,8 +887,7 @@ onMounted(() => {
 
 /* Desktop List Toggle Button */
 .desktop-list-toggle {
-  position: absolute;
-  bottom: 1rem;
+  position: fixed;
   left: 50%;
   transform: translateX(-50%);
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -879,12 +902,14 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   opacity: 0.9;
+  visibility: hidden;
   white-space: nowrap;
   z-index: 100;
+  pointer-events: none;
 }
 
 .desktop-list-toggle:hover {
