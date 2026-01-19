@@ -420,19 +420,18 @@ onMounted(() => {
     const mapTop = mapRect.top
     const mapBottom = mapRect.bottom
     const mapHeight = mapRect.height
-    const map3QuartersPoint = mapTop + (mapHeight * 3 / 4)
+    const mapQuarterPoint = mapTop + (mapHeight / 4)
     
-    // Show button only when map is visible and we're past 3/4 of the map
+    // Show button when map is visible and we're past 1/4 of the map
     const isMapVisible = mapBottom > 0 && mapTop < window.innerHeight
-    const isPast3Quarters = map3QuartersPoint < window.innerHeight / 2
+    const isPastQuarter = mapQuarterPoint < window.innerHeight / 2
     
-    showMobileToggle.value = isMapVisible && isPast3Quarters
+    showMobileToggle.value = isMapVisible && isPastQuarter
     
-    // Calculate button position (fixed, following the map but clamped within it)
+    // Position button at bottom of viewport, but clamp it to stay within map bounds
     if (showMobileToggle.value) {
-      // Position button at map's 3/4 point, but don't let it go below the map
-      const buttonY = Math.max(mapTop + (mapHeight * 3 / 4), window.innerHeight / 2)
-      // Clamp to stay within map bounds (with 60px margin from bottom)
+      const buttonY = window.innerHeight - 80
+      // Don't let button go below the map (with 60px margin from bottom)
       toggleButtonTop.value = Math.min(buttonY, mapBottom - 60)
     }
   }
