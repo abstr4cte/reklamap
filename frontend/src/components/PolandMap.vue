@@ -313,6 +313,22 @@ const updateMarkers = () => {
         autoPanPadding: [50, 50]  // Padding przy autopan
       })
       
+      // On mobile, prevent popup from opening until map is activated
+      marker.on('click', () => {
+        if (isMobile.value && !isMapActive.value) {
+          // Activate map interactions on first marker click
+          if (map) {
+            map.scrollWheelZoom.enable()
+            map.dragging.enable()
+            map.touchZoom.enable()
+            map.doubleClickZoom.enable()
+            isMapActive.value = true
+          }
+          // Don't open popup on first click, wait for second click
+          return
+        }
+      })
+      
       marker.on('mouseover', () => {
         marker.setIcon(createCustomIcon(ad.type, true))
       })

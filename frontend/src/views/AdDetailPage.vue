@@ -958,6 +958,35 @@ const handleDownloadPDF = async () => {
 // Share Logic
 const showShareModal = ref(false)
 
+// Prevent body scroll when modals are open
+watch(showShareModal, (isOpen) => {
+  if (typeof document !== 'undefined') {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.width = '100%'
+    } else {
+      document.body.style.overflow = 'auto'
+      document.body.style.position = 'static'
+      document.body.style.width = 'auto'
+    }
+  }
+})
+
+watch(showReportModal, (isOpen) => {
+  if (typeof document !== 'undefined') {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.width = '100%'
+    } else {
+      document.body.style.overflow = 'auto'
+      document.body.style.position = 'static'
+      document.body.style.width = 'auto'
+    }
+  }
+})
+
 const handleShare = async () => {
   if (!ad.value) return
 
@@ -1096,6 +1125,8 @@ onUnmounted(() => {
     window.removeEventListener('keydown', handlePreviewKeydown)
     // Restore body scroll on unmount
     document.body.style.overflow = 'auto'
+    document.body.style.position = 'static'
+    document.body.style.width = 'auto'
   }
   
   // Clean up map instance to prevent memory leaks and conflicts
@@ -3138,6 +3169,7 @@ onUnmounted(() => {
   padding: 1rem;
   backdrop-filter: blur(8px);
   animation: fadeIn 0.2s ease-out;
+  overflow: hidden;
 }
 
 .modal-content {

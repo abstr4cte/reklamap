@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import { api } from '../services/api'
 
 const isOpen = ref(false)
@@ -13,6 +13,30 @@ const error = ref('')
 const emit = defineEmits<{
   close: []
 }>()
+
+// Prevent body scroll when modal is open
+watch(isOpen, (open) => {
+  if (typeof document !== 'undefined') {
+    if (open) {
+      document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.width = '100%'
+    } else {
+      document.body.style.overflow = 'auto'
+      document.body.style.position = 'static'
+      document.body.style.width = 'auto'
+    }
+  }
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = 'auto'
+    document.body.style.position = 'static'
+    document.body.style.width = 'auto'
+  }
+})
 
 const openModal = () => {
   isOpen.value = true
@@ -235,6 +259,7 @@ defineExpose({
   justify-content: center;
   z-index: 9999;
   padding: 1rem;
+  overflow: hidden;
 }
 
 .modal-content {

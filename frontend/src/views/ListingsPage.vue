@@ -63,6 +63,7 @@ const tempFilters = ref<any>(null) // Tymczasowe filtry do edycji w modalu
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 const markers: Map<string, L.Marker> = new Map()
+const isMapActive = ref(false)
 // Get saved view mode from localStorage or default to grid
 const savedViewMode = typeof window !== 'undefined' ? window.localStorage.getItem('adsViewMode') : null
 const viewMode = ref<'grid' | 'list'>(savedViewMode === 'list' ? 'list' : 'grid')
@@ -1467,12 +1468,35 @@ const initMap = () => {
     maxBounds: polandBounds,        // Nie można przesunąć mapy poza te granice
     maxBoundsViscosity: 1.0,        // Twarde ograniczenie (nie można przeciągnąć poza)
     minZoom: 5,                      // Minimalne przybliżenie (cała Polska + więcej)
-    maxZoom: 18                      // Maksymalne przybliżenie
+    maxZoom: 18,                     // Maksymalne przybliżenie
+    scrollWheelZoom: false,          // Disable scroll wheel zoom until activated
+    dragging: !isMobile.value,       // Disable dragging on mobile until activated
+    touchZoom: false,                // Disable touch zoom until activated
+    doubleClickZoom: false           // Disable double click zoom until activated
   }).setView(polandCenter, 6)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map)
+  
+  // Function to enable all interactions
+  const enableMapInteractions = () => {
+    if (!map) return
+    
+    map.scrollWheelZoom.enable()
+    map.dragging.enable()
+    map.touchZoom.enable()
+    map.doubleClickZoom.enable()
+    
+    isMapActive.value = true
+  }
+
+  // Enable interactions on click and hide hint
+  map.on('click', () => {
+    if (map && !isMapActive.value) {
+      enableMapInteractions()
+    }
+  })
   
   // Ustaw widok na całą Polskę
   map.fitBounds(polandBounds)
@@ -1524,6 +1548,20 @@ const updateMarkers = () => {
     })
 
     marker.on('click', () => {
+      // On mobile, prevent popup from opening until map is activated
+      if (isMobile.value && !isMapActive.value) {
+        // Activate map interactions on first marker click
+        if (map) {
+          map.scrollWheelZoom.enable()
+          map.dragging.enable()
+          map.touchZoom.enable()
+          map.doubleClickZoom.enable()
+          isMapActive.value = true
+        }
+        // Don't open popup on first click, wait for second click
+        return
+      }
+      
       selectedAdId.value = ad.id
       scrollToAd(ad.id)
     })
