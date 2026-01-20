@@ -2794,10 +2794,15 @@ onUnmounted(() => {
   justify-content: space-between;
   padding: 1.5rem;
   border-bottom: 1px solid #e5e7eb;
-  position: sticky;
-  top: 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: white;
   border-radius: 20px 20px 0 0;
+  z-index: 2002;
+  width: auto;
+  min-width: 300px;
 }
 
 .mobile-menu-header h3 {

@@ -466,23 +466,27 @@ onMounted(() => {
   <div class="comparison-page">
     <div class="page-header">
       <div class="container">
-        <button @click="router.back()" class="back-button">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M15 10H5M5 10L10 15M5 10L10 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Powrót do listy
-        </button>
+        <div class="header-nav">
+          <button @click="router.back()" class="back-button">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M15 10H5M5 10L10 15M5 10L10 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Powrót</span>
+          </button>
+          <div class="header-actions">
+            <button @click="downloadPdf" class="pdf-button" :disabled="isGeneratingPdf || comparisonAds.length === 0">
+              <svg v-if="!isGeneratingPdf" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M12 15L12 3M12 15L8 11M12 15L16 11M2 17L2 21L22 21L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div v-else class="spinner-small"></div>
+              <span>{{ isGeneratingPdf ? 'Generowanie...' : 'Pobierz PDF' }}</span>
+            </button>
+            <button @click="clearAll" class="clear-button" :disabled="comparisonAds.length === 0">
+              Wyczyść
+            </button>
+          </div>
+        </div>
         <h1>Porównanie ogłoszeń</h1>
-        <button @click="downloadPdf" class="pdf-button" :disabled="isGeneratingPdf || comparisonAds.length === 0">
-          <svg v-if="!isGeneratingPdf" width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M12 15L12 3M12 15L8 11M12 15L16 11M2 17L2 21L22 21L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <div v-else class="spinner-small"></div>
-          {{ isGeneratingPdf ? 'Generowanie...' : 'Pobierz PDF' }}
-        </button>
-        <button @click="clearAll" class="clear-button" :disabled="comparisonAds.length === 0">
-          Wyczyść wszystkie
-        </button>
       </div>
     </div>
 
@@ -507,7 +511,7 @@ onMounted(() => {
           </button>
         </div>
 
-        <div v-else class="comparison-table-wrapper">
+        <div v-else class="comparison-container">
           <div class="controls-bar">
             <div class="price-toggle">
               <span class="toggle-label">Jednostka ceny:</span>
@@ -532,72 +536,83 @@ onMounted(() => {
             </div>
           </div>
 
-          <table class="comparison-table">
-            <thead>
-              <tr>
-                <th class="feature-column"></th>
-                <th v-for="ad in comparisonAds" :key="ad.id" class="listing-column">
-                  <div class="listing-header">
-                    <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="listing-image-link">
-                      <WebPImage
-                        v-if="ad.image_url"
-                        :src="ad.image_url"
-                        :alt="ad.title"
-                        class="listing-image"
-                      />
-                      <div v-else class="no-image">
-                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
-                          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-                          <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
-                          <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/>
+          <div class="comparison-table-wrapper">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th class="feature-column"></th>
+                  <th v-for="ad in comparisonAds" :key="ad.id" class="listing-column">
+                    <div class="listing-header">
+                      <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="listing-image-link">
+                        <WebPImage
+                          v-if="ad.image_url"
+                          :src="ad.image_url"
+                          :alt="ad.title"
+                          class="listing-image"
+                        />
+                        <div v-else class="no-image">
+                          <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                            <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/>
+                          </svg>
+                        </div>
+                      </router-link>
+                      <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="listing-title">
+                        {{ ad.title }}
+                      </router-link>
+                      <button @click="removeFromComparison(ad.id)" class="remove-btn" title="Usuń z porównania">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                         </svg>
+                      </button>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <template v-for="field in comparisonFields" :key="field.key">
+                  <!-- Mobile Label Row -->
+                  <tr class="mobile-label-row">
+                    <td :colspan="comparisonAds.length + 1">
+                      <div class="mobile-label-text">{{ field.label }}</div>
+                    </td>
+                  </tr>
+                  <!-- Data Row -->
+                  <tr class="data-row">
+                    <td class="feature-name desktop-only">{{ field.label }}</td>
+                    <td 
+                      v-for="ad in comparisonAds" 
+                      :key="ad.id" 
+                      class="feature-value"
+                      :class="{ 
+                        'highlight': field.key === 'price' || field.key === 'surface_area',
+                      }"
+                    >
+                      <div v-if="field.key === 'price'" class="price-cell">
+                        <strong>
+                          {{ getFieldValue(field, ad) }} PLN {{ isPriceConverted(ad) ? priceUnitLabel : getPriceUnitLabelForAd(ad) }}
+                        </strong>
+                        <span v-if="isPriceConverted(ad)" class="estimated-label">(szacunkowo)</span>
                       </div>
-                    </router-link>
-                    <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="listing-title">
-                      {{ ad.title }}
-                    </router-link>
-                    <button @click="removeFromComparison(ad.id)" class="remove-btn" title="Usuń z porównania">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="field in comparisonFields" :key="field.key">
-                <td class="feature-name">{{ field.label }}</td>
-                <td 
-                  v-for="ad in comparisonAds" 
-                  :key="ad.id" 
-                  class="feature-value"
-                  :class="{ 
-                    'highlight': field.key === 'price' || field.key === 'surface_area',
-                  }"
-                >
-                  <div v-if="field.key === 'price'" class="price-cell">
-                    <strong>
-                      {{ getFieldValue(field, ad) }} PLN {{ isPriceConverted(ad) ? priceUnitLabel : getPriceUnitLabelForAd(ad) }}
-                    </strong>
-                    <span v-if="isPriceConverted(ad)" class="estimated-label">(szacunkowo)</span>
-                  </div>
-                  <strong v-else-if="field.key === 'surface_area'">
-                    {{ getFieldValue(field, ad) }}
-                  </strong>
-                  <span 
-                    v-else
-                    :class="{ 
-                      'value-yes': isPositiveValue(field, getFieldValue(field, ad)),
-                      'value-no': !isPositiveValue(field, getFieldValue(field, ad)) && (field.key === 'has_backlight' || field.key === 'price_includes_print' || field.key === 'price_includes_mounting' || field.key === 'graphic_design_help' || field.key === 'has_vat_invoice')
-                    }"
-                  >
-                    {{ getFieldValue(field, ad) }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                      <strong v-else-if="field.key === 'surface_area'">
+                        {{ getFieldValue(field, ad) }}
+                      </strong>
+                      <span 
+                        v-else
+                        :class="{ 
+                          'value-yes': isPositiveValue(field, getFieldValue(field, ad)),
+                          'value-no': !isPositiveValue(field, getFieldValue(field, ad)) && (field.key === 'has_backlight' || field.key === 'price_includes_print' || field.key === 'price_includes_mounting' || field.key === 'graphic_design_help' || field.key === 'has_vat_invoice')
+                        }"
+                      >
+                        {{ getFieldValue(field, ad) }}
+                      </span>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -623,7 +638,7 @@ onMounted(() => {
 .page-header {
   background: white;
   border-bottom: 2px solid #e5e7eb;
-  padding: 2rem 0;
+  padding: 1.5rem 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -631,22 +646,31 @@ onMounted(() => {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 2rem;
+}
+
+.header-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
 }
 
 .page-header h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 800;
   color: #1f2937;
-  flex: 1;
-  text-align: center;
+  text-align: left;
 }
 
 .back-button,
+.pdf-button,
 .clear-button {
   display: inline-flex;
   align-items: center;
@@ -654,12 +678,12 @@ onMounted(() => {
   background: white;
   border: 2px solid #e5e7eb;
   color: #374151;
-  padding: 0.75rem 1.5rem;
+  padding: 0.6rem 1.25rem;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .back-button:hover {
@@ -680,24 +704,15 @@ onMounted(() => {
 }
 
 .pdf-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: white;
-  border: 2px solid #e5e7eb;
-  color: #374151;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 0.95rem;
+  background: #f5f3ff;
+  border-color: #ddd6fe;
+  color: #5b21b6;
 }
 
 .pdf-button:hover:not(:disabled) {
-  border-color: #4f46e5;
-  color: #4f46e5;
-  transform: translateX(-4px);
+  background: #ede9fe;
+  border-color: #c4b5fd;
+  transform: translateY(-2px);
 }
 
 .pdf-button:disabled {
@@ -706,16 +721,16 @@ onMounted(() => {
 }
 
 .spinner-small {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #e5e7eb;
-  border-top-color: #4f46e5;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ddd6fe;
+  border-top-color: #5b21b6;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 .page-content {
-  padding: 3rem 0;
+  padding: 2rem 0;
 }
 
 .container {
@@ -788,42 +803,52 @@ onMounted(() => {
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
+.comparison-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
 .comparison-table-wrapper {
   overflow-x: auto;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  -webkit-overflow-scrolling: touch;
+  position: relative;
 }
 
 .comparison-table {
   width: 100%;
-  border-collapse: collapse;
-  min-width: 800px;
+  border-collapse: separate;
+  border-spacing: 0;
   table-layout: fixed;
 }
 
-.comparison-table thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.comparison-table th {
+.comparison-table thead th {
   padding: 1.5rem 1rem;
   text-align: left;
-  font-weight: 700;
-  font-size: 1rem;
+  background: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
 .feature-column {
-  width: 200px;
+  width: 220px;
+  background: #f8fafc !important;
   position: sticky;
   left: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  z-index: 10;
+  z-index: 30;
+  border-right: 2px solid #e2e8f0;
+}
+
+.mobile-label-row {
+  display: none;
 }
 
 .listing-column {
-  width: auto;
+  width: 300px;
+  min-width: 260px;
 }
 
 .listing-header {
@@ -836,9 +861,10 @@ onMounted(() => {
 .listing-image-link {
   width: 100%;
   height: 160px;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   display: block;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .listing-image {
@@ -855,20 +881,20 @@ onMounted(() => {
 .no-image {
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.1);
+  background: #f1f5f9;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.6);
+  color: #94a3b8;
 }
 
 .listing-title {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
   text-decoration: none;
-  line-height: 1.3;
-  height: 2.73rem;
+  line-height: 1.4;
+  height: 2.8rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -877,79 +903,87 @@ onMounted(() => {
 }
 
 .listing-title:hover {
-  text-decoration: underline;
+  color: #4f46e5;
 }
 
 .remove-btn {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  width: 32px;
-  height: 32px;
-  background: rgba(220, 38, 38, 0.9);
-  border: none;
+  top: -0.5rem;
+  right: -0.5rem;
+  width: 28px;
+  height: 28px;
+  background: white;
+  border: 1px solid #fee2e2;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
-  color: white;
+  color: #ef4444;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .remove-btn:hover {
-  background: #dc2626;
+  background: #ef4444;
+  color: white;
   transform: scale(1.1);
 }
 
 .comparison-table tbody tr {
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.comparison-table tbody tr:last-child {
-  border-bottom: none;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .comparison-table tbody tr:hover {
-  background: #f9fafb;
+  background: #f8fafc;
 }
 
 .feature-name {
   padding: 1.25rem 1rem;
   font-weight: 600;
-  color: #374151;
-  background: white;
+  color: #475569;
+  background: #f8fafc;
   position: sticky;
   left: 0;
-  border-right: 2px solid #e5e7eb;
-  z-index: 5;
+  z-index: 10;
+  border-right: 2px solid #e2e8f0;
+  font-size: 0.9rem;
 }
 
 .feature-value {
   padding: 1.25rem 1rem;
-  color: #6b7280;
+  color: #334155;
   font-size: 0.95rem;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .feature-value.highlight {
   background: #f0f9ff;
-  color: #1e40af;
-  font-size: 1rem;
-}
-
-.value-yes {
-  color: #10B981;
+  color: #0369a1;
   font-weight: 600;
 }
 
+.value-yes {
+  color: #059669;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.value-yes::before {
+  content: '✓';
+  font-weight: 800;
+}
+
 .value-no {
-  color: #6b7280;
+  color: #94a3b8;
 }
 
 .estimated-label {
   display: block;
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: #94a3b8;
   font-weight: 400;
   margin-top: 0.25rem;
   font-style: italic;
@@ -961,41 +995,10 @@ onMounted(() => {
   align-items: flex-start;
 }
 
-@media (max-width: 768px) {
-  .page-header .container {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .page-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .back-button {
-    align-self: flex-start;
-  }
-
-  .clear-button {
-    align-self: flex-end;
-  }
-
-  .comparison-table-wrapper {
-    border-radius: 8px;
-  }
-
-  .listing-column {
-    min-width: 240px;
-  }
-
-  .listing-image-link {
-    height: 120px;
-  }
-}
-
 .controls-bar {
-  padding: 1rem;
+  padding: 1.25rem;
   background: white;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #f1f5f9;
   display: flex;
   justify-content: flex-end;
 }
@@ -1008,38 +1011,219 @@ onMounted(() => {
 
 .toggle-label {
   font-weight: 600;
-  color: #374151;
-  font-size: 0.9rem;
+  color: #64748b;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 
 .toggle-buttons {
   display: flex;
-  background: #f3f4f6;
+  background: #f1f5f9;
   padding: 0.25rem;
-  border-radius: 8px;
+  border-radius: 10px;
   gap: 0.25rem;
 }
 
 .toggle-btn {
-  padding: 0.375rem 0.75rem;
+  padding: 0.4rem 0.8rem;
   border: none;
   background: transparent;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.85rem;
-  font-weight: 500;
-  color: #6b7280;
+  font-weight: 600;
+  color: #64748b;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .toggle-btn:hover {
-  color: #374151;
+  color: #1e293b;
 }
 
 .toggle-btn.active {
   background: white;
   color: #4f46e5;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    padding: 1rem 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .page-header .container {
+    padding: 0 1rem;
+  }
+
+  .header-nav {
+    margin-bottom: 0.75rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .back-button, .pdf-button, .clear-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .back-button span, .pdf-button span {
+    display: none;
+  }
+
+  .back-button::after {
+    content: 'Wróć';
+  }
+
+  .pdf-button::after {
+    content: 'PDF';
+  }
+
+  .page-content {
+    padding: 1rem 0;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .comparison-container {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .controls-bar {
+    padding: 1rem;
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+
+  .price-toggle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    min-width: 100%;
+  }
+
+  .toggle-buttons {
+    width: 100%;
+    overflow-x: auto;
+    padding: 0.25rem;
+  }
+
+  .toggle-btn {
+    flex: 1 0 auto;
+    text-align: center;
+  }
+
+  /* SYNCHRONIZED SCROLLING FOR MOBILE */
+  .comparison-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+  }
+
+  .comparison-table {
+    display: table;
+    width: 100%;
+    min-width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .comparison-table thead {
+    display: table-header-group;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .comparison-table thead th {
+    background: white;
+    padding: 0.75rem 0.5rem;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  .feature-column {
+    display: none;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-label-row {
+    display: table-row;
+    background: #f1f5f9;
+  }
+
+  .mobile-label-row td {
+    padding: 0;
+    border: none;
+  }
+
+  .mobile-label-text {
+    position: sticky;
+    left: 0;
+    width: 100vw;
+    padding: 0.6rem 1rem;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: #f1f5f9;
+    text-align: center;
+    box-sizing: border-box;
+    z-index: 50;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .data-row {
+    display: table-row;
+  }
+
+  .listing-column, .feature-value {
+    width: 160px; /* Bazowa szerokość, rozciągnie się jeśli mało ogłoszeń */
+    padding: 0.75rem 0.5rem;
+    box-sizing: border-box;
+    border-right: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+
+  .listing-column:last-child, .feature-value:last-child {
+    border-right: none;
+  }
+
+  .listing-image-link {
+    height: 80px;
+    margin-bottom: 0.5rem;
+  }
+
+  .listing-title {
+    font-size: 0.8rem;
+    height: 2.2rem;
+    margin-top: 0;
+    text-align: center;
+    color: #1e293b;
+  }
+
+  .feature-value {
+    padding: 1rem 0.5rem;
+    font-size: 0.85rem;
+    text-align: center;
+    min-height: 60px;
+    background: white;
+  }
+
+  .price-cell {
+    align-items: center;
+    text-align: center;
+  }
 }
 </style>
