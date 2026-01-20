@@ -3572,15 +3572,15 @@ onUnmounted(() => {
 
 /* Override Leaflet controls z-index to be below mobile menu */
 :deep(.leaflet-control) {
-  z-index: 500 !important;
+  z-index: 400 !important;
 }
 
 :deep(.leaflet-control-zoom) {
-  z-index: 500 !important;
+  z-index: 400 !important;
 }
 
 :deep(.leaflet-top),
 :deep(.leaflet-bottom) {
-  z-index: 500 !important;
+  z-index: 400 !important;
 }
 </style>
