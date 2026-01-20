@@ -1047,7 +1047,7 @@ onMounted(() => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1180px) {
   .page-header {
     padding: 1rem 0;
     position: relative;
@@ -1131,7 +1131,7 @@ onMounted(() => {
     display: table;
     width: 100%;
     min-width: 100%;
-    table-layout: fixed;
+    table-layout: auto;
     border-collapse: separate;
     border-spacing: 0;
   }
@@ -1189,7 +1189,8 @@ onMounted(() => {
   }
 
   .listing-column, .feature-value {
-    width: 160px; /* Bazowa szerokość, rozciągnie się jeśli mało ogłoszeń */
+    width: 100%;
+    min-width: 200px;
     padding: 0.75rem 0.5rem;
     box-sizing: border-box;
     border-right: 1px solid #f1f5f9;
