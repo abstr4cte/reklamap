@@ -1159,7 +1159,7 @@ onMounted(() => {
 
   .mobile-label-row {
     display: table-row;
-    background: #f1f5f9;
+    background: transparent;
   }
 
   .mobile-label-row td {
@@ -1170,7 +1170,7 @@ onMounted(() => {
   .mobile-label-text {
     position: sticky;
     left: 0;
-    width: 100vw;
+    width: calc(100vw - 2rem);
     padding: 0.6rem 1rem;
     font-weight: 700;
     font-size: 0.8rem;
