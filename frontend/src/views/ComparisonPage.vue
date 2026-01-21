@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 import type { Advertisement } from '../types'
@@ -17,6 +17,19 @@ const isLoading = ref(true)
 const isGeneratingPdf = ref(false)
 const priceUnit = ref<'original' | 'day' | 'week' | 'month' | 'year'>('original')
 const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
+const headerScrollRef = ref<HTMLElement | null>(null)
+const isMobile = ref(window.innerWidth <= 1180)
+
+const updateIsMobile = () => {
+  isMobile.value = window.innerWidth <= 1180
+}
+
+const syncScroll = (e: Event) => {
+  const target = e.target as HTMLElement
+  if (headerScrollRef.value) {
+    headerScrollRef.value.scrollLeft = target.scrollLeft
+  }
+}
 
 const downloadPdf = async () => {
   if (comparisonAds.value.length === 0) return
@@ -459,6 +472,11 @@ const isPositiveValue = (field: ComparisonField, value: any): boolean => {
 
 onMounted(() => {
   loadComparison()
+  window.addEventListener('resize', updateIsMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateIsMobile)
 })
 </script>
 
@@ -536,58 +554,71 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="comparison-table-wrapper">
-            <table class="comparison-table">
-              <thead>
-                <tr>
-                  <th class="feature-column"></th>
-                  <th v-for="ad in comparisonAds" :key="ad.id" class="listing-column">
-                    <div class="listing-header">
-                      <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="listing-image-link">
-                        <WebPImage
-                          v-if="ad.image_url"
-                          :src="ad.image_url"
-                          :alt="ad.title"
-                          class="listing-image"
-                        />
-                        <div v-else class="no-image">
-                          <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
-                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-                            <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
-                            <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/>
+          <!-- Sticky Header Table -->
+          <div class="comparison-header-sticky">
+            <div class="comparison-table-wrapper header-only" ref="headerScrollRef">
+              <table class="comparison-table">
+                <colgroup>
+                  <col class="col-feature">
+                  <col v-for="ad in comparisonAds" :key="ad.id" class="col-listing">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th class="feature-column"></th>
+                    <th v-for="ad in comparisonAds" :key="ad.id" class="listing-column">
+                      <div class="listing-header">
+                        <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="listing-image-link">
+                          <WebPImage
+                            v-if="ad.image_url"
+                            :src="ad.image_url"
+                            :alt="ad.title"
+                            class="listing-image"
+                          />
+                          <div v-else class="no-image">
+                            <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
+                              <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                              <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                              <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                          </div>
+                        </router-link>
+                        <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="listing-title">
+                          {{ ad.title }}
+                        </router-link>
+                        <button @click="removeFromComparison(ad.id)" class="remove-btn" title="Usuń z porównania">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                           </svg>
-                        </div>
-                      </router-link>
-                      <router-link :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`" class="listing-title">
-                        {{ ad.title }}
-                      </router-link>
-                      <button @click="removeFromComparison(ad.id)" class="remove-btn" title="Usuń z porównania">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                      </button>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
+                        </button>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+
+          <!-- Scrollable Body Table -->
+          <div class="comparison-table-wrapper" @scroll="syncScroll">
+            <table class="comparison-table">
+              <colgroup>
+                <col class="col-feature">
+                <col v-for="ad in comparisonAds" :key="ad.id" class="col-listing">
+              </colgroup>
               <tbody>
                 <template v-for="field in comparisonFields" :key="field.key">
-                  <!-- Mobile Label Row -->
                   <tr class="mobile-label-row">
-                    <td :colspan="comparisonAds.length + 1">
+                    <td :colspan="comparisonAds.length + (isMobile ? 0 : 1)">
                       <div class="mobile-label-text">{{ field.label }}</div>
                     </td>
                   </tr>
-                  <!-- Data Row -->
                   <tr class="data-row">
                     <td class="feature-name desktop-only">{{ field.label }}</td>
                     <td 
                       v-for="ad in comparisonAds" 
                       :key="ad.id" 
                       class="feature-value"
-                      :class="{ 
-                        'highlight': field.key === 'price' || field.key === 'surface_area',
-                      }"
+                      :class="{ 'highlight': field.key === 'price' || field.key === 'surface_area' }"
                     >
                       <div v-if="field.key === 'price'" class="price-cell">
                         <strong>
@@ -807,20 +838,39 @@ onMounted(() => {
   background: white;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
+  width: 100%;
+  overflow: visible; /* Changed to visible for native sticky to work */
 }
 
 .comparison-table-wrapper {
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: visible;
   position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+.comparison-table-wrapper.header-only {
+  overflow: hidden; /* Hide horizontal scrollbar for the header */
+}
+
+.comparison-header-sticky {
+  position: sticky;
+  top: 72px;
+  z-index: 1000;
+  background: white;
+  border-bottom: 2px solid #e2e8f0;
 }
 
 .comparison-table {
   width: 100%;
+  min-width: 1200px;
   border-collapse: separate;
   border-spacing: 0;
   table-layout: fixed;
+}
+
+.comparison-table thead {
+  background: #f8fafc;
 }
 
 .comparison-table thead th {
@@ -828,28 +878,27 @@ onMounted(() => {
   text-align: left;
   background: #f8fafc;
   border-bottom: 2px solid #e2e8f0;
-  position: sticky;
-  top: 0;
-  z-index: 20;
 }
 
 .feature-column {
-  width: 220px;
   background: #f8fafc !important;
   position: sticky;
   left: 0;
-  z-index: 30;
+  z-index: 101 !important;
   border-right: 2px solid #e2e8f0;
 }
+
+.col-feature {
+  width: 220px;
+}
+
+
 
 .mobile-label-row {
   display: none;
 }
 
-.listing-column {
-  width: 300px;
-  min-width: 260px;
-}
+/* .listing-column width is handled by .col-listing */
 
 .listing-header {
   display: flex;
@@ -1050,7 +1099,6 @@ onMounted(() => {
 @media (max-width: 1180px) {
   .page-header {
     padding: 1rem 0;
-    position: relative;
     z-index: 1;
   }
 
@@ -1093,7 +1141,8 @@ onMounted(() => {
 
   .comparison-container {
     border-radius: 12px;
-    overflow: hidden;
+    width: 100%;
+    overflow: visible;
   }
 
   .controls-bar {
@@ -1138,27 +1187,29 @@ onMounted(() => {
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
   }
 
-  /* SYNCHRONIZED SCROLLING FOR MOBILE */
   .comparison-table-wrapper {
     overflow-x: auto;
+    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
-    position: relative;
   }
 
   .comparison-table {
     display: table;
     width: 100%;
     min-width: 100%;
-    table-layout: auto;
+    table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0;
   }
 
+  .col-feature {
+    display: none;
+  }
+
+
+
   .comparison-table thead {
     display: table-header-group;
-    position: sticky;
-    top: 0;
-    z-index: 100;
   }
 
   .comparison-table thead th {

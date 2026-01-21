@@ -283,5 +283,6 @@ onUnmounted(() => {
 
 .app {
   min-height: 100vh;
+  padding-top: 76px;
 }
 </style>
