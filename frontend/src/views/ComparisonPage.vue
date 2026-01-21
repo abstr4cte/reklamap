@@ -948,6 +948,7 @@ onMounted(() => {
   z-index: 10;
   border-right: 2px solid #e2e8f0;
   font-size: 0.9rem;
+  text-transform: uppercase;
 }
 
 .feature-value {
@@ -1013,7 +1014,6 @@ onMounted(() => {
   font-weight: 600;
   color: #64748b;
   font-size: 0.85rem;
-  text-transform: uppercase;
   letter-spacing: 0.025em;
 }
 
@@ -1042,9 +1042,9 @@ onMounted(() => {
 }
 
 .toggle-btn.active {
-  background: white;
-  color: #4f46e5;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 @media (max-width: 1180px) {
@@ -1099,25 +1099,43 @@ onMounted(() => {
   .controls-bar {
     padding: 1rem;
     justify-content: flex-start;
-    overflow-x: auto;
+    overflow: visible;
   }
 
   .price-toggle {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
-    min-width: 100%;
+    width: 100%;
   }
 
   .toggle-buttons {
     width: 100%;
-    overflow-x: auto;
-    padding: 0.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    background: transparent;
+    padding: 0;
+    overflow: visible;
   }
 
   .toggle-btn {
-    flex: 1 0 auto;
+    flex: 1 1 calc(33.333% - 0.5rem);
+    min-width: 90px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.6rem 0.4rem;
+    font-size: 0.8rem;
     text-align: center;
+    transition: all 0.2s;
+  }
+
+  .toggle-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
   }
 
   /* SYNCHRONIZED SCROLLING FOR MOBILE */
