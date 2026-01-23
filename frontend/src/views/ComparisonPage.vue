@@ -862,8 +862,8 @@ onUnmounted(() => {
 }
 
 .comparison-table {
-  width: 100%;
-  min-width: 1200px;
+  width: max-content;
+  min-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   table-layout: fixed;
@@ -890,6 +890,10 @@ onUnmounted(() => {
 
 .col-feature {
   width: 220px;
+}
+
+.col-listing {
+  width: 280px;
 }
 
 
@@ -1195,7 +1199,7 @@ onUnmounted(() => {
 
   .comparison-table {
     display: table;
-    width: 100%;
+    width: max-content;
     min-width: 100%;
     table-layout: fixed;
     border-collapse: separate;
@@ -1206,6 +1210,9 @@ onUnmounted(() => {
     display: none;
   }
 
+  .col-listing {
+    width: 280px;
+  }
 
 
   .comparison-table thead {
@@ -1258,8 +1265,7 @@ onUnmounted(() => {
   }
 
   .listing-column, .feature-value {
-    width: 100%;
-    min-width: 200px;
+    width: 280px;
     padding: 0.75rem 0.5rem;
     box-sizing: border-box;
     border-right: 1px solid #f1f5f9;
