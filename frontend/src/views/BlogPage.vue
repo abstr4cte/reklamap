@@ -286,7 +286,7 @@ const handleNewsletterSubmit = async () => {
             <p>Zapisz się do newslettera i otrzymuj najnowsze artykuły, porady i informacje o trendach w reklamie outdoor.</p>
           </div>
           <form class="newsletter-form" @submit.prevent="handleNewsletterSubmit">
-            <div style="width: 100%; display: flex; flex-direction: column; gap: 0.5rem;">
+            <div class="newsletter-form-container">
               <div v-if="newsletterError" class="newsletter-error">
                 {{ newsletterError }}
               </div>
@@ -297,7 +297,7 @@ const handleNewsletterSubmit = async () => {
                 </svg>
                 Dziękujemy! Sprawdź swoją skrzynkę e-mail.
               </div>
-              <div style="display: flex; gap: 1rem;">
+              <div class="newsletter-input-group">
                 <input
                   v-model="newsletterEmail"
                   type="text"
@@ -552,6 +552,17 @@ const handleNewsletterSubmit = async () => {
 
 .newsletter-form {
   display: flex;
+}
+
+.newsletter-form-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.newsletter-input-group {
+  display: flex;
   gap: 1rem;
 }
 
@@ -669,6 +680,14 @@ const handleNewsletterSubmit = async () => {
 
   .newsletter-form {
     flex-direction: column;
+  }
+
+  .newsletter-input-group {
+    flex-direction: column;
+  }
+
+  .newsletter-input {
+    width: 100%;
   }
 
   .newsletter-btn {

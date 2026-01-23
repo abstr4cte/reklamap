@@ -1,5 +1,21 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+
 const currentYear = new Date().getFullYear()
+
+const openSections = ref<Record<string, boolean>>({
+  nav: false,
+  info: false,
+  categories: false,
+  cities: false,
+  searches: false
+})
+
+const toggleSection = (section: string) => {
+  if (window.innerWidth <= 768) {
+    openSections.value[section] = !openSections.value[section]
+  }
+}
 
 const popularCities = [
   { name: 'Warszawa', slug: 'warszawa' },
@@ -87,6 +103,7 @@ const popularSearches = [
   { label: 'Reklama w transporcie Katowice', type: 'reklama-w-transporcie', city: 'katowice' },
   { label: 'Reklama mobilna Katowice', type: 'reklama-mobilna', city: 'katowice' }
 ]
+
 </script>
 
 <template>
@@ -110,8 +127,13 @@ const popularSearches = [
           </div>
         </div>
 
-        <div class="footer-section">
-          <h4>Nawigacja</h4>
+        <div class="footer-section" :class="{ 'is-open': openSections.nav }">
+          <h4 @click="toggleSection('nav')">
+            Nawigacja
+            <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </h4>
           <ul class="footer-links">
             <li><router-link to="/">Strona główna</router-link></li>
             <li><router-link to="/powierzchnie-reklamowe">Wszystkie ogłoszenia</router-link></li>
@@ -121,8 +143,13 @@ const popularSearches = [
           </ul>
         </div>
 
-        <div class="footer-section">
-          <h4>Informacje</h4>
+        <div class="footer-section" :class="{ 'is-open': openSections.info }">
+          <h4 @click="toggleSection('info')">
+            Informacje
+            <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </h4>
           <ul class="footer-links">
             <li><router-link to="/regulamin">Regulamin</router-link></li>
             <li><router-link to="/polityka-prywatnosci">Polityka prywatności</router-link></li>
@@ -130,8 +157,13 @@ const popularSearches = [
           </ul>
         </div>
 
-        <div class="footer-section">
-          <h4>Kategorie powierzchni</h4>
+        <div class="footer-section" :class="{ 'is-open': openSections.categories }">
+          <h4 @click="toggleSection('categories')">
+            Kategorie powierzchni
+            <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </h4>
           <ul class="footer-links">
             <li><router-link to="/powierzchnie-reklamowe/billboardy">Billboardy</router-link></li>
             <li><router-link to="/powierzchnie-reklamowe/citylighty">Citylighty</router-link></li>
@@ -145,8 +177,13 @@ const popularSearches = [
           </ul>
         </div>
 
-        <div class="footer-section">
-          <h4>Popularne miasta</h4>
+        <div class="footer-section" :class="{ 'is-open': openSections.cities }">
+          <h4 @click="toggleSection('cities')">
+            Popularne miasta
+            <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </h4>
           <ul class="footer-links">
             <li v-for="city in popularCities" :key="city.slug">
               <router-link :to="`/powierzchnie-reklamowe/${city.slug}`">{{ city.name }}</router-link>
@@ -156,8 +193,13 @@ const popularSearches = [
       </div>
 
       <!-- Popularne wyszukiwania - SEO -->
-      <div class="popular-searches-section">
-        <h4>Popularne wyszukiwania</h4>
+      <div class="popular-searches-section" :class="{ 'is-open': openSections.searches }">
+        <h4 @click="toggleSection('searches')">
+          Popularne wyszukiwania
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </h4>
         <div class="popular-searches-grid">
           <router-link
             v-for="search in popularSearches"
@@ -295,27 +337,29 @@ const popularSearches = [
 .popular-searches-grid {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.75rem;
 }
 
 .search-tag {
   display: inline-block;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.25rem;
   background: rgba(102, 126, 234, 0.1);
-  border: 1px solid rgba(102, 126, 234, 0.3);
-  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
   color: #a5b4fc;
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-tag:hover {
-  background: rgba(102, 126, 234, 0.2);
-  border-color: rgba(102, 126, 234, 0.5);
-  color: #c7d2fe;
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10B981;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .footer-bottom {
@@ -328,6 +372,11 @@ const popularSearches = [
   margin: 0;
   color: #9ca3af;
   font-size: 0.9rem;
+}
+
+.chevron {
+  display: none;
+  transition: transform 0.3s ease;
 }
 
 @media (max-width: 1024px) {
@@ -350,31 +399,104 @@ const popularSearches = [
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .app-footer {
     padding: 3rem 0 1.5rem;
   }
 
   .footer-content {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 0;
+  }
+
+  .footer-section {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1rem 0;
+  }
+
+  .footer-section:last-child {
+    border-bottom: none;
   }
 
   .brand-section {
-    grid-column: 1;
-  }
-  
-  .popular-searches-section {
-    margin-bottom: 2rem;
-  }
-  
-  .popular-searches-section h4 {
-    font-size: 1rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     margin-bottom: 1rem;
+  }
+
+  .footer-section h4 {
+    margin-bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.5rem 0;
+  }
+
+  .chevron {
+    display: block;
+  }
+
+  .is-open .chevron {
+    transform: rotate(180deg);
+  }
+
+  .footer-links {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+    gap: 0.5rem;
+    padding-top: 0;
+  }
+
+  .is-open .footer-links {
+    max-height: 500px;
+    opacity: 1;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .popular-searches-section {
+    padding-top: 1.5rem;
+  }
+
+  .popular-searches-section h4 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .popular-searches-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+    padding-top: 0;
+    gap: 0.5rem;
+  }
+
+  .search-tag {
+    display: inline-block;
+    width: auto;
+    border-radius: 100px;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.8rem;
+  }
+
+  .is-open .popular-searches-grid {
+    max-height: 1500px;
+    opacity: 1;
+    padding-top: 1rem;
   }
 
   .footer-bottom {
     padding-top: 1.5rem;
+    margin-top: 1rem;
   }
 }
 </style>
