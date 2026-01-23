@@ -71,8 +71,6 @@ const isMobile = ref(false)
 const showMapOnMobile = ref(false)
 const showSortPanel = ref(false)
 const isLegendVisible = ref(false)
-const sortPanelRef = ref<HTMLElement | null>(null)
-const sortButtonRef = ref<HTMLElement | null>(null)
 const showMapButton = ref(false)
 
 const sortOptions = [
@@ -96,15 +94,6 @@ const handleSortButtonClick = () => {
 
 const handleSortOptionClick = (value: string) => {
   selectSortOption(value)
-}
-
-const onSortPanelShown = () => {
-  // This function is called after the sort panel has been shown
-  // We can use it to set focus or perform other actions
-  const activeElement = document.activeElement as HTMLElement
-  if (activeElement) {
-    activeElement.blur()
-  }
 }
 
 const selectSortOption = (value: string) => {
@@ -679,31 +668,6 @@ const activeFiltersCount = computed(() => {
 })
 
 // Computed properties for filter visibility based on selected ad type
-const showPrintFilter = computed(() => {
-  const type = filters.value.type
-  return ['billboard', 'banner'].includes(type)
-})
-
-const showMountingFilter = computed(() => {
-  const type = filters.value.type
-  return ['billboard', 'banner', 'wall'].includes(type)
-})
-
-const showGraphicDesignFilter = computed(() => {
-  const type = filters.value.type
-  return ['billboard', 'banner', 'wall'].includes(type)
-})
-
-const showTrafficIntensityFilter = computed(() => {
-  const type = filters.value.type
-  return ['billboard', 'banner'].includes(type)
-})
-
-const showDimensionsFilter = computed(() => {
-  const type = filters.value.type
-  return ['billboard', 'citylight', 'banner', 'wall'].includes(type)
-})
-
 // Type-specific filter visibility
 const getVariantOptions = (type: string) => {
   switch (type) {
@@ -762,15 +726,6 @@ const getVariantOptions = (type: string) => {
   }
 }
 
-const showRoadClassFilter = computed(() => {
-  return filters.value.type === 'billboard'
-})
-
-const showEnvironmentFilter = computed(() => {
-  const type = filters.value.type
-  return ['citylight', 'led_screen', 'totem', 'mobile', 'other'].includes(type)
-})
-
 const getEnvironmentOptions = (type: string) => {
   switch (type) {
     case 'citylight':
@@ -806,18 +761,6 @@ const getEnvironmentOptions = (type: string) => {
       return []
   }
 }
-
-const showLEDFilters = computed(() => {
-  return filters.value.type === 'led_screen'
-})
-
-const showTransportFilters = computed(() => {
-  return filters.value.type === 'transport'
-})
-
-const showMobileFilters = computed(() => {
-  return filters.value.type === 'mobile'
-})
 
 const getAvailablePriceUnits = (type: string) => {
   // Citylight - tylko miesiąc i m²
@@ -2025,8 +1968,6 @@ onBeforeUnmount(() => {
         </div>
         
         <button
-          ref="sortButtonRef"
-          @pointerdown.stop="handleSortButtonClick"
           @click.stop="handleSortButtonClick"
           class="mobile-action-btn"
         >
@@ -2038,7 +1979,7 @@ onBeforeUnmount(() => {
           <span>Sortuj</span>
         </button>
         
-        <button @click="openFiltersModal" class="mobile-action-btn">
+        <button @click.stop="openFiltersModal" class="mobile-action-btn">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
           </svg>
@@ -2053,8 +1994,8 @@ onBeforeUnmount(() => {
       
       <!-- Sort Panel -->
       <Teleport to="body">
-        <div class="overlay" v-show="showSortPanel" @pointerdown="showSortPanel = false" @click="showSortPanel = false"></div>
-        <div ref="sortPanelRef" class="sort-panel" :class="{ 'is-open': showSortPanel }" @pointerdown.stop>
+        <div class="overlay" v-show="showSortPanel" @click="showSortPanel = false"></div>
+        <div ref="sortPanelRef" class="sort-panel" :class="{ 'is-open': showSortPanel }">
           <div class="sort-panel-header">
             <h3 class="sort-panel-title">Sortuj według</h3>
             <button @click="showSortPanel = false" class="sort-panel-close" aria-label="Zamknij">
@@ -2297,8 +2238,9 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Filters Modal -->
-    <div v-if="showFiltersModal" class="modal-overlay" @click="closeFiltersModal">
-      <div class="modal-content" @click.stop>
+    <Teleport to="body">
+      <div v-if="showFiltersModal" class="modal-overlay" @click="closeFiltersModal">
+        <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h2>Filtry</h2>
           <button @click="closeFiltersModal" class="close-btn">
@@ -2797,6 +2739,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
+    </Teleport>
 
     <!-- Category/City Description for SEO - poza listings-page -->
     <div class="description-wrapper">
@@ -4469,8 +4412,14 @@ onBeforeUnmount(() => {
   }
 
   .modal-content {
-    width: 95%;
-    max-height: 95vh;
+    width: 100%;
+    max-height: 90vh;
+    border-radius: 20px 20px 0 0;
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    left: 0;
+    transform: none;
   }
 
   .modal-header,
