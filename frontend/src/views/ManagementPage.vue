@@ -1166,11 +1166,16 @@ const addAdToChart = (adId: string) => {
     // Dodaj ogłoszenie
     engagementChartRef.value.addAdsToChart([adId])
     
-    // Scroll do wykresu
+    // Scroll do wykresu z offsetem dla headera
     nextTick(() => {
       const chartElement = document.querySelector('.engagement-chart-container')
       if (chartElement) {
-        chartElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        const headerHeight = 80 // Przybliżona wysokość headera
+        const elementPosition = chartElement.getBoundingClientRect().top + window.scrollY
+        window.scrollTo({
+          top: elementPosition - headerHeight,
+          behavior: 'smooth'
+        })
       }
     })
   }
@@ -1218,11 +1223,16 @@ const executeAddTopAdsToChart = (adIds: string[]) => {
         chartComponent.selectedAds.push(id)
       })
     }
-    // Scroll do wykresu
+    // Scroll do wykresu z offsetem dla headera
     nextTick(() => {
       const chartElement = document.querySelector('.engagement-chart-container')
       if (chartElement) {
-        chartElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        const headerHeight = 80 // Przybliżona wysokość headera
+        const elementPosition = chartElement.getBoundingClientRect().top + window.scrollY
+        window.scrollTo({
+          top: elementPosition - headerHeight,
+          behavior: 'smooth'
+        })
       }
     })
   }
