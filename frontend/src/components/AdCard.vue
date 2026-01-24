@@ -263,7 +263,7 @@ const formatLocation = (location: string, city: string) => {
 }
 
 const statusLabel = computed(() => {
-  const currentStatus = props.ad.display_status || props.ad.status
+  let currentStatus = props.ad.display_status || props.ad.status
   
   // Debug log
   console.log('📊 Ogłoszenie ID:', props.ad.id, {
@@ -272,6 +272,20 @@ const statusLabel = computed(() => {
     'Data dostępności': props.ad.available_from || 'brak',
     'Używany status': currentStatus
   })
+  
+  // Jeśli status to soon_available, sprawdź czy data dostępności już minęła
+  if (currentStatus === 'soon_available' && props.ad.available_from) {
+    const availableDate = new Date(props.ad.available_from)
+    const today = new Date()
+    // Ustaw czas na początek dnia dla porównania
+    today.setHours(0, 0, 0, 0)
+    availableDate.setHours(0, 0, 0, 0)
+    
+    // Jeśli data dostępności to dzisiaj lub wcześniej, zmień status na active
+    if (availableDate <= today) {
+      currentStatus = 'active'
+    }
+  }
   
   switch (currentStatus) {
     case 'active':
@@ -286,7 +300,22 @@ const statusLabel = computed(() => {
 })
 
 const statusColor = computed(() => {
-  const currentStatus = props.ad.display_status || props.ad.status
+  let currentStatus = props.ad.display_status || props.ad.status
+  
+  // Jeśli status to soon_available, sprawdź czy data dostępności już minęła
+  if (currentStatus === 'soon_available' && props.ad.available_from) {
+    const availableDate = new Date(props.ad.available_from)
+    const today = new Date()
+    // Ustaw czas na początek dnia dla porównania
+    today.setHours(0, 0, 0, 0)
+    availableDate.setHours(0, 0, 0, 0)
+    
+    // Jeśli data dostępności to dzisiaj lub wcześniej, zmień status na active
+    if (availableDate <= today) {
+      currentStatus = 'active'
+    }
+  }
+  
   switch (currentStatus) {
     case 'active':
       return '#10B981'

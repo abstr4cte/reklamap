@@ -18,13 +18,13 @@ class AdvertisementController extends Controller
     public function index(Request $request)
     {
         $query = Advertisement::where('is_active', 1);
-        
+
         // If ids parameter is provided, filter by those IDs
         if ($request->has('ids')) {
             $ids = explode(',', $request->input('ids'));
             $query->whereIn('id', $ids);
         }
-        
+
         return $query->orderBy('created_at', 'desc')->get();
     }
 
@@ -81,7 +81,7 @@ class AdvertisementController extends Controller
             'rental_period' => 'nullable|string',
         ]);
 
-        
+
         // Set defaults if not present (though migration has defaults, explicit is good)
         $validated['status'] = $request->input('status', 'active');
         $validated['is_active'] = $request->input('is_active', true);
@@ -171,12 +171,12 @@ class AdvertisementController extends Controller
         ]);
 
         $ad = Advertisement::findOrFail($id);
-        
+
         // Check if location changed (latitude or longitude)
         $locationChanged = $ad->latitude != $validated['latitude'] || $ad->longitude != $validated['longitude'];
-        
+
         $ad->update($validated);
-        
+
         // Regenerate map screenshot if location changed
         if ($locationChanged) {
             try {
@@ -186,10 +186,10 @@ class AdvertisementController extends Controller
                 // Don't fail the update if screenshot generation fails
             }
         }
-        
+
         // Clear sitemap cache and notify Google
         $this->notifySearchEngines();
-        
+
         return $ad;
     }
 
@@ -210,10 +210,10 @@ class AdvertisementController extends Controller
     {
         $ad = Advertisement::findOrFail($id);
         $ad->delete();
-        
+
         // Clear sitemap cache and notify Google
         $this->notifySearchEngines();
-        
+
         return response()->noContent();
     }
 
@@ -221,7 +221,36 @@ class AdvertisementController extends Controller
     {
         $ad = Advertisement::findOrFail($id);
         $ad->increment('views');
+        
+        // Zapisz statystykę dzienną
+        $dailyStat = \App\Models\AdvertisementDailyStat::getTodayOrCreate($id);
+        $dailyStat->increment('views');
+        
         return response()->json(['message' => 'Views incremented']);
+    }
+
+    public function incrementPhoneClicks(string $id)
+    {
+        $ad = Advertisement::findOrFail($id);
+        $ad->increment('phone_clicks');
+        
+        // Zapisz statystykę dzienną
+        $dailyStat = \App\Models\AdvertisementDailyStat::getTodayOrCreate($id);
+        $dailyStat->increment('phone_clicks');
+        
+        return response()->json(['message' => 'Phone clicks incremented']);
+    }
+
+    public function incrementEmailClicks(string $id)
+    {
+        $ad = Advertisement::findOrFail($id);
+        $ad->increment('email_clicks');
+        
+        // Zapisz statystykę dzienną
+        $dailyStat = \App\Models\AdvertisementDailyStat::getTodayOrCreate($id);
+        $dailyStat->increment('email_clicks');
+        
+        return response()->json(['message' => 'Email clicks incremented']);
     }
 
     public function similar(string $id)
@@ -285,7 +314,7 @@ class AdvertisementController extends Controller
         try {
             // Send email to admin
             $adminEmail = config('mail.from.address', 'admin@reklamap.pl');
-            
+
             Mail::send('emails.contact', [
                 'name' => $validated['name'],
                 'email' => $validated['email'],
@@ -301,7 +330,7 @@ class AdvertisementController extends Controller
             return response()->json(['message' => 'Wiadomość została wysłana pomyślnie']);
         } catch (\Exception $e) {
             \Log::error('Error sending contact email: ' . $e->getMessage());
-            
+
             return response()->json([
                 'message' => 'Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie później.'
             ], 500);
@@ -327,15 +356,15 @@ class AdvertisementController extends Controller
                     'message' => 'Ten adres e-mail jest już zapisany w naszym newsletterze.'
                 ], 409);
             }
-            
+
             \Log::error('Error subscribing to newsletter: ' . $e->getMessage());
-            
+
             return response()->json([
                 'message' => 'Błąd podczas zapisywania do newslettera. Spróbuj ponownie później.'
             ], 500);
         } catch (\Exception $e) {
             \Log::error('Error subscribing to newsletter: ' . $e->getMessage());
-            
+
             return response()->json([
                 'message' => 'Błąd podczas zapisywania do newslettera. Spróbuj ponownie później.'
             ], 500);
@@ -372,9 +401,9 @@ class AdvertisementController extends Controller
         $ad = Advertisement::findOrFail($id);
 
         // Build advertisement URL
-        $advertisementUrl = config('app.frontend_url', config('app.url')) . '/powierzchnia-reklamowa/' . 
-            $this->mapTypeToUrlFormat($ad->type) . '/' . 
-            \Illuminate\Support\Str::slug($ad->city) . '/' . 
+        $advertisementUrl = config('app.frontend_url', config('app.url')) . '/powierzchnia-reklamowa/' .
+            $this->mapTypeToUrlFormat($ad->type) . '/' .
+            \Illuminate\Support\Str::slug($ad->city) . '/' .
             \Illuminate\Support\Str::slug($ad->title) . '-' . $ad->id;
 
         try {
@@ -393,7 +422,7 @@ class AdvertisementController extends Controller
             ], 200);
         } catch (\Exception $e) {
             \Log::error('Error sending contact email: ' . $e->getMessage());
-            
+
             return response()->json([
                 'message' => 'Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie później.'
             ], 500);
@@ -413,7 +442,7 @@ class AdvertisementController extends Controller
             'mobile' => 'reklama-mobilna',
             'other' => 'inne'
         ];
-        
+
         return $typeMapping[$type] ?? 'inne';
     }
 
@@ -440,7 +469,7 @@ class AdvertisementController extends Controller
                 'longitude' => $ad->longitude,
                 'title' => $ad->title,
             ])->render();
-            
+
             \Spatie\Browsershot\Browsershot::html($html)
                 ->setNodeBinary($nodePath)
                 ->windowSize(860, 400)
@@ -465,14 +494,68 @@ class AdvertisementController extends Controller
     public function updateActiveStatus(Request $request, $id)
     {
         $ad = Advertisement::findOrFail($id);
-        
+
         $validated = $request->validate([
             'is_active' => 'required|boolean'
         ]);
-        
+
         $ad->update($validated);
-        
+
         return response()->json($ad, 200);
+    }
+
+    /**
+     * Pobierz statystyki dzienne dla ogłoszenia
+     */
+    public function getDailyStats(string $id)
+    {
+        $ad = Advertisement::findOrFail($id);
+        
+        // Pobierz statystyki za ostatnie 30 dni
+        $stats = \App\Models\AdvertisementDailyStat::getStatsForPeriod($id, 30);
+        
+        return response()->json([
+            'advertisement_id' => $id,
+            'title' => $ad->title,
+            'city' => $ad->city,
+            'type' => $ad->type,
+            'stats' => $stats,
+            'summary' => [
+                'total_views' => $ad->views,
+                'total_phone_clicks' => $ad->phone_clicks,
+                'total_email_clicks' => $ad->email_clicks,
+            ]
+        ]);
+    }
+
+    /**
+     * Pobierz statystyki dzienne dla wielu ogłoszeń
+     */
+    public function getMultipleDailyStats(Request $request)
+    {
+        $validated = $request->validate([
+            'advertisement_ids' => 'required|array|max:5',
+            'advertisement_ids.*' => 'required|exists:advertisements,id',
+            'days' => 'nullable|integer|min:1|max:365'
+        ]);
+
+        $days = $validated['days'] ?? 30;
+        $results = [];
+
+        foreach ($validated['advertisement_ids'] as $adId) {
+            $ad = Advertisement::find($adId);
+            if ($ad) {
+                $results[] = [
+                    'advertisement_id' => $adId,
+                    'title' => $ad->title,
+                    'city' => $ad->city,
+                    'type' => $ad->type,
+                    'stats' => \App\Models\AdvertisementDailyStat::getStatsForPeriod($adId, $days),
+                ];
+            }
+        }
+
+        return response()->json($results);
     }
 
     /**
@@ -482,14 +565,14 @@ class AdvertisementController extends Controller
     {
         // Clear sitemap cache
         Cache::forget('sitemap_xml');
-        
+
         // Notify Google about sitemap update
         try {
             $sitemapUrl = config('app.url') . '/sitemap.xml';
             Http::timeout(5)->get('https://www.google.com/ping', [
                 'sitemap' => $sitemapUrl
             ]);
-            
+
             // Notify Bing
             Http::timeout(5)->get('https://www.bing.com/ping', [
                 'sitemap' => $sitemapUrl

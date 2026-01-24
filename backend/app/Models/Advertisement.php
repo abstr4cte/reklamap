@@ -43,6 +43,8 @@ class Advertisement extends Model
         'offer_type',
         'has_vat_invoice',
         'views',
+        'phone_clicks',
+        'email_clicks',
         'is_active',
         'phone',
         'contact_preference',
@@ -88,7 +90,7 @@ class Advertisement extends Model
         'images' => 'array',
         'traffic_direction' => 'array',
         'traffic_type' => 'array',
-        'available_from' => 'date',
+        'available_from' => 'datetime',
         'price_negotiable' => 'boolean',
         'spot_duration' => 'integer',
         'loop_duration' => 'integer',
@@ -106,10 +108,10 @@ class Advertisement extends Model
     public function getDisplayStatusAttribute(): string
     {
         // Jeśli status to active i mamy datę available_from w przyszłości
-        if ($this->status === 'active' && $this->available_from && $this->available_from->isFuture()) {
+        if ($this->status === 'active' && $this->available_from && $this->available_from->gt(now())) {
             return 'soon_available';
         }
-        
+
         return $this->status;
     }
 
@@ -126,11 +128,19 @@ class Advertisement extends Model
             'mobile' => 'reklama-mobilna',
             'other' => 'inne'
         ];
-        
+
         $typeUrl = $typeMapping[$this->type] ?? 'inne';
         $citySlug = \Illuminate\Support\Str::slug($this->city);
 
         return "/powierzchnia-reklamowa/{$typeUrl}/{$citySlug}/{$this->slug}";
+    }
+
+    /**
+     * Relacja do statystyk dziennych
+     */
+    public function dailyStats()
+    {
+        return $this->hasMany(AdvertisementDailyStat::class);
     }
 
     // Usunięto metodę boot generującą UUID

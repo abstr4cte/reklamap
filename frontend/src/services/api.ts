@@ -114,10 +114,43 @@ export const api = {
             headers: withKey(),
         })
     },
+    async incrementPhoneClicks(id: string): Promise<void> {
+        await fetch(`${API_URL}/listings/${id}/increment-phone-clicks`, {
+            method: 'POST',
+            headers: withKey(),
+        })
+    },
+    async incrementEmailClicks(id: string): Promise<void> {
+        await fetch(`${API_URL}/listings/${id}/increment-email-clicks`, {
+            method: 'POST',
+            headers: withKey(),
+        })
+    },
 
     async getSimilarAdvertisements(ad: Advertisement): Promise<Advertisement[]> {
         const response = await fetch(`${API_URL}/listings/${ad.id}/similar`, { headers: withKey() })
         if (!response.ok) return []
+        return response.json()
+    },
+
+    async getDailyStats(id: string): Promise<any> {
+        const response = await fetch(`${API_URL}/listings/${id}/daily-stats`, { headers: withKey() })
+        if (!response.ok) throw new Error('Failed to fetch daily stats')
+        return response.json()
+    },
+
+    async getMultipleDailyStats(ids: string[], days: number = 30): Promise<any[]> {
+        const response = await fetch(`${API_URL}/listings/daily-stats/multiple`, {
+            method: 'POST',
+            headers: {
+                ...withKey({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                })
+            },
+            body: JSON.stringify({ advertisement_ids: ids, days }),
+        })
+        if (!response.ok) throw new Error('Failed to fetch multiple daily stats')
         return response.json()
     },
 
@@ -226,7 +259,7 @@ export const api = {
 
             try {
                 const data = JSON.parse(responseText)
-                
+
                 // New format with WebP support
                 if (typeof data === 'object' && data.default) {
                     // Backend returns: { jpg: '...', webp: '...', default: '...' }
@@ -234,12 +267,12 @@ export const api = {
                     // Frontend will automatically use WebP via WebPImage component
                     return data.default
                 }
-                
+
                 // Old format (backward compatibility)
                 if (typeof data === 'string') {
                     return data
                 }
-                
+
                 return data
             } catch (e) {
                 // Fallback for plain text response

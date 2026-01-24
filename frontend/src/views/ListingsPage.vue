@@ -600,7 +600,22 @@ const typeLabels: Record<string, string> = {
 }
 
 const getStatusLabel = (ad: Advertisement) => {
-  const currentStatus = ad.display_status || ad.status
+  let currentStatus = ad.display_status || ad.status
+  
+  // Jeśli status to soon_available, sprawdź czy data dostępności już minęła
+  if (currentStatus === 'soon_available' && ad.available_from) {
+    const availableDate = new Date(ad.available_from)
+    const today = new Date()
+    // Ustaw czas na początek dnia dla porównania
+    today.setHours(0, 0, 0, 0)
+    availableDate.setHours(0, 0, 0, 0)
+    
+    // Jeśli data dostępności to dzisiaj lub wcześniej, zmień status na active
+    if (availableDate <= today) {
+      currentStatus = 'active'
+    }
+  }
+  
   switch (currentStatus) {
     case 'active':
       return 'Wolne'
@@ -614,7 +629,22 @@ const getStatusLabel = (ad: Advertisement) => {
 }
 
 const getStatusColor = (ad: Advertisement) => {
-  const currentStatus = ad.display_status || ad.status
+  let currentStatus = ad.display_status || ad.status
+  
+  // Jeśli status to soon_available, sprawdź czy data dostępności już minęła
+  if (currentStatus === 'soon_available' && ad.available_from) {
+    const availableDate = new Date(ad.available_from)
+    const today = new Date()
+    // Ustaw czas na początek dnia dla porównania
+    today.setHours(0, 0, 0, 0)
+    availableDate.setHours(0, 0, 0, 0)
+    
+    // Jeśli data dostępności to dzisiaj lub wcześniej, zmień status na active
+    if (availableDate <= today) {
+      currentStatus = 'active'
+    }
+  }
+  
   switch (currentStatus) {
     case 'active':
       return '#10B981'

@@ -189,7 +189,7 @@ const checkComparisonStatus = () => {
 }
 
 const statusLabel = computed(() => {
-  const currentStatus = ad.value?.display_status || ad.value?.status
+  let currentStatus = ad.value?.display_status || ad.value?.status
   
   // Debug log dla szczegółów ogłoszenia
   if (ad.value) {
@@ -198,6 +198,20 @@ const statusLabel = computed(() => {
     console.log('├─ Display status:', ad.value.display_status)
     console.log('├─ Data dostępności:', ad.value.available_from || 'brak')
     console.log('└─ Używany status:', currentStatus)
+  }
+  
+  // Jeśli status to soon_available, sprawdź czy data dostępności już minęła
+  if (currentStatus === 'soon_available' && ad.value?.available_from) {
+    const availableDate = new Date(ad.value.available_from)
+    const today = new Date()
+    // Ustaw czas na początek dnia dla porównania
+    today.setHours(0, 0, 0, 0)
+    availableDate.setHours(0, 0, 0, 0)
+    
+    // Jeśli data dostępności to dzisiaj lub wcześniej, zmień status na active
+    if (availableDate <= today) {
+      currentStatus = 'active'
+    }
   }
   
   switch (currentStatus) {
@@ -216,7 +230,22 @@ const statusLabel = computed(() => {
 })
 
 const statusClass = computed(() => {
-  const currentStatus = ad.value?.display_status || ad.value?.status
+  let currentStatus = ad.value?.display_status || ad.value?.status
+  
+  // Jeśli status to soon_available, sprawdź czy data dostępności już minęła
+  if (currentStatus === 'soon_available' && ad.value?.available_from) {
+    const availableDate = new Date(ad.value.available_from)
+    const today = new Date()
+    // Ustaw czas na początek dnia dla porównania
+    today.setHours(0, 0, 0, 0)
+    availableDate.setHours(0, 0, 0, 0)
+    
+    // Jeśli data dostępności to dzisiaj lub wcześniej, zmień status na active
+    if (availableDate <= today) {
+      currentStatus = 'active'
+    }
+  }
+  
   switch (currentStatus) {
     case 'active':
       return 'status-available'
@@ -815,6 +844,9 @@ const submitContactForm = async () => {
       message: contactForm.value.message
     })
 
+    // Track email click statistics
+    api.incrementEmailClicks(ad.value.id)
+
     contactSuccess.value = true
     contactForm.value.email = ''
     contactForm.value.message = ''
@@ -870,6 +902,13 @@ const formatDate = (dateString: string) => {
     month: 'long',
     day: 'numeric'
   })
+}
+
+const handleShowPhone = () => {
+  if (!ad.value) return
+  showPhone.value = true
+  // Track phone click statistics
+  api.incrementPhoneClicks(ad.value.id)
 }
 
 const getMaskedPhone = (phone: string | undefined) => {
@@ -1285,7 +1324,7 @@ onUnmounted(() => {
             </div>
 
             <div v-if="ad.phone && ad.phone.trim()" class="phone-section">
-              <button v-if="!showPhone" @click="showPhone = true" class="btn btn-phone">
+              <button v-if="!showPhone" @click="handleShowPhone" class="btn btn-phone">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/>
                 </svg>
@@ -1614,7 +1653,7 @@ onUnmounted(() => {
             </div>
 
             <div v-if="ad.phone && ad.phone.trim()" class="phone-section">
-              <button v-if="!showPhone" @click="showPhone = true" class="btn btn-phone">
+              <button v-if="!showPhone" @click="handleShowPhone" class="btn btn-phone">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/>
                 </svg>
