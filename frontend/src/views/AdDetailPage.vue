@@ -47,6 +47,10 @@ let map: L.Map | null = null
 
 const currentImageIndex = ref(0)
 const showImagePreview = ref(false)
+const isZoomed = ref(false)
+const touchStartX = ref(0)
+const touchEndX = ref(0)
+const touchStartTime = ref(0)
 
 const images = computed(() => {
   if (!ad.value) return []
@@ -113,6 +117,7 @@ const prevImage = () => {
 const openImagePreview = () => {
   if (images.value.length > 0) {
     showImagePreview.value = true
+    isZoomed.value = false
     // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden'
   }
@@ -120,8 +125,43 @@ const openImagePreview = () => {
 
 const closeImagePreview = () => {
   showImagePreview.value = false
+  isZoomed.value = false
   // Restore body scroll
   document.body.style.overflow = 'auto'
+}
+
+const toggleZoom = () => {
+  isZoomed.value = !isZoomed.value
+}
+
+const handleTouchStart = (e: TouchEvent) => {
+  touchStartX.value = e.touches[0].clientX
+  touchStartTime.value = Date.now()
+}
+
+const handleTouchEnd = (e: TouchEvent) => {
+  touchEndX.value = e.changedTouches[0].clientX
+  const touchEndTime = Date.now()
+  const duration = touchEndTime - touchStartTime.value
+  const distance = touchEndX.value - touchStartX.value
+
+  // Swipe detection
+  if (Math.abs(distance) > 50 && duration < 300) {
+    if (distance > 0) {
+      prevImage()
+    } else {
+      nextImage()
+    }
+    isZoomed.value = false
+  } 
+  // Double tap detection (very basic)
+  else if (duration < 200) {
+    // We could implement a proper double tap here, but for now let's use the click event
+  }
+}
+
+const handleImageClick = () => {
+  toggleZoom()
 }
 
 const handlePreviewKeydown = (event: KeyboardEvent) => {
@@ -1879,37 +1919,52 @@ onUnmounted(() => {
 
     <!-- Image Preview Modal -->
     <Transition name="fade">
-      <div v-if="showImagePreview" class="image-preview-overlay" @click.self="closeImagePreview">
+      <div 
+        v-if="showImagePreview" 
+        class="image-preview-overlay" 
+        @click.self="closeImagePreview"
+      >
         <button @click="closeImagePreview" class="preview-close-btn" aria-label="Zamknij podgląd">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
             <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
 
-        <div class="preview-container">
-          <button v-if="images.length > 1" @click="prevImage" class="preview-nav-btn prev" aria-label="Poprzednie zdjęcie">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-              <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
+        <button v-if="images.length > 1 && !isZoomed" @click="prevImage" class="preview-nav-btn prev" aria-label="Poprzednie zdjęcie">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+            <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
 
-          <div class="preview-image-wrapper">
-            <WebPImage
-              :src="images[currentImageIndex]"
+        <button v-if="images.length > 1 && !isZoomed" @click="nextImage" class="preview-nav-btn next" aria-label="Następne zdjęcie">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+            <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div 
+          class="preview-container" 
+          :class="{ 'is-zoomed': isZoomed }"
+          @touchstart="handleTouchStart"
+          @touchend="handleTouchEnd"
+          @click.self="closeImagePreview"
+        >
+          <div class="preview-image-wrapper" @click="handleImageClick">
+            <img
+              :src="getFullImageUrl(images[currentImageIndex])"
               :alt="imageAlt"
-              class="preview-image"
+              :class="`preview-image ${isZoomed ? 'zoomed' : ''}`"
             />
           </div>
-
-          <button v-if="images.length > 1" @click="nextImage" class="preview-nav-btn next" aria-label="Następne zdjęcie">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-              <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
         </div>
 
-        <div v-if="images.length > 1" class="preview-counter">
-          {{ currentImageIndex + 1 }} / {{ images.length }}
+        <div class="preview-footer">
+          <div v-if="images.length > 1" class="preview-counter">
+            {{ currentImageIndex + 1 }} / {{ images.length }}
+          </div>
+          <div class="preview-hint">
+            {{ isZoomed ? 'Kliknij, aby pomniejszyć' : (images.length > 1 ? 'Przesuń, aby zmienić • ' : '') + 'Kliknij, aby powiększyć' }}
+          </div>
         </div>
       </div>
     </Transition>
@@ -2956,12 +3011,16 @@ onUnmounted(() => {
     order: 4;
   }
 
-  .description-section {
-    order: 5;
+  .comparison-table-wrapper {
+    cursor: default;
   }
 
-  .contact-form-section {
-    order: 6;
+  .comparison-table-wrapper:not(.zoomed) {
+    cursor: zoom-in;
+  }
+
+  .comparison-table-wrapper.zoomed {
+    cursor: zoom-out;
   }
   .actions-desktop {
     display: none;
@@ -3404,31 +3463,73 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: 100%;
-  max-width: 90vw;
-  max-height: 90vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
+  overflow: auto;
+  padding: 1rem;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 .preview-image-wrapper {
   position: relative;
+  margin: auto; /* Centers the image when smaller than container */
   width: 100%;
   height: 100%;
+  max-width: 1400px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 8px;
+  overflow: hidden;
+}
+
+.preview-container.is-zoomed .preview-image-wrapper {
+  width: max-content;
+  height: max-content;
+  max-width: none;
+  border-radius: 0;
+  padding: 2rem;
 }
 
 .preview-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
   max-width: 100%;
   max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain !important;
+  transition: transform 0.3s ease;
+  cursor: zoom-in;
+  display: block;
+}
+
+.preview-image.zoomed {
+  max-width: none;
+  max-height: none;
+  width: auto;
+  height: auto;
+  transform: scale(1); /* Reset any scale if used */
+  cursor: zoom-out;
+}
+
+.preview-container.is-zoomed {
+  overflow: auto;
+  display: block;
+}
+
+.preview-container.is-zoomed .preview-image-wrapper {
+  width: max-content;
+  height: max-content;
+  min-width: 100%;
+  min-height: 100%;
+  padding: 2rem;
+  display: block;
+}
+
+.preview-container.is-zoomed .preview-image {
+  /* On zoom, we want to see the image at a much larger size */
+  min-width: 150vw; 
 }
 
 .preview-nav-btn {
@@ -3463,19 +3564,33 @@ onUnmounted(() => {
   right: 1rem;
 }
 
-.preview-counter {
+.preview-footer {
   position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  pointer-events: none;
+  z-index: 2001;
+}
+
+.preview-counter {
   background: rgba(0, 0, 0, 0.6);
   color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   backdrop-filter: blur(4px);
-  z-index: 2001;
+}
+
+.preview-hint {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .cursor-pointer {
@@ -3484,6 +3599,42 @@ onUnmounted(() => {
 
 .cursor-pointer:hover {
   opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .preview-nav-btn {
+    display: none;
+  }
+  
+  .preview-container {
+    padding: 0;
+  }
+
+  .preview-image-wrapper {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .preview-container.is-zoomed .preview-image-wrapper {
+    width: max-content;
+    height: max-content;
+    padding: 0;
+  }
+
+  .preview-container.is-zoomed .preview-image {
+    width: 300vw;
+    height: auto;
+    min-width: auto;
+  }
+
+  .preview-close-btn {
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.5);
+  }
 }
 
 /* Fade transition for preview modal */

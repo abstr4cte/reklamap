@@ -19,9 +19,22 @@ const priceUnit = ref<'original' | 'day' | 'week' | 'month' | 'year'>('original'
 const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
 const headerScrollRef = ref<HTMLElement | null>(null)
 const isMobile = ref(window.innerWidth <= 1180)
+const isTableZoomed = ref(false)
+const tableWrapperRef = ref<HTMLElement | null>(null)
 
 const updateIsMobile = () => {
   isMobile.value = window.innerWidth <= 1180
+}
+
+const toggleTableZoom = () => {
+  if (window.innerWidth <= 640) {
+    isTableZoomed.value = !isTableZoomed.value
+    if (isTableZoomed.value) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+    }
+  }
 }
 
 const syncScroll = (e: Event) => {
@@ -599,7 +612,13 @@ onUnmounted(() => {
           </div>
 
           <!-- Scrollable Body Table -->
-          <div class="comparison-table-wrapper" @scroll="syncScroll">
+          <div 
+            class="comparison-table-wrapper" 
+            @scroll="syncScroll"
+            @click="toggleTableZoom"
+            :class="{ zoomed: isTableZoomed }"
+            ref="tableWrapperRef"
+          >
             <table class="comparison-table">
               <colgroup>
                 <col class="col-feature">
@@ -1420,6 +1439,105 @@ onUnmounted(() => {
   .price-cell {
     align-items: center;
     text-align: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .col-listing {
+    width: 140px !important;
+  }
+
+  .listing-column, .feature-value {
+    width: 140px !important;
+    padding: 0.5rem 0.25rem !important;
+    font-size: 0.7rem !important;
+  }
+
+  .listing-image-link {
+    height: 50px !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .listing-image-link img,
+  .listing-image-link .no-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .listing-title {
+    font-size: 0.65rem !important;
+    height: 1.8rem !important;
+    margin-top: 0;
+  }
+
+  .feature-value {
+    padding: 0.5rem 0.25rem !important;
+    font-size: 0.65rem !important;
+    min-height: 40px !important;
+  }
+
+  .mobile-label-text {
+    font-size: 0.65rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  .comparison-table-wrapper {
+    cursor: default;
+  }
+
+  .comparison-table-wrapper:not(.zoomed) {
+    cursor: zoom-in;
+  }
+
+  .comparison-table-wrapper.zoomed {
+    cursor: zoom-out;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: white;
+    overflow: auto;
+    border-radius: 0;
+  }
+
+  .comparison-table-wrapper.zoomed .comparison-table {
+    width: auto !important;
+    min-width: auto !important;
+  }
+
+  .comparison-table-wrapper.zoomed .col-listing {
+    width: 280px !important;
+  }
+
+  .comparison-table-wrapper.zoomed .listing-column,
+  .comparison-table-wrapper.zoomed .feature-value {
+    width: 280px !important;
+    padding: 0.75rem 0.5rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  .comparison-table-wrapper.zoomed .listing-image-link {
+    height: 80px !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .comparison-table-wrapper.zoomed .listing-title {
+    font-size: 0.8rem !important;
+    height: 2.2rem !important;
+  }
+
+  .comparison-table-wrapper.zoomed .feature-value {
+    min-height: 60px !important;
+  }
+
+  .comparison-table-wrapper.zoomed .mobile-label-text {
+    font-size: 0.75rem !important;
+    padding: 0.75rem 1rem !important;
   }
 }
 </style>
