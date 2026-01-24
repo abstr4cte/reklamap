@@ -14,6 +14,8 @@ import {
 } from 'chart.js'
 import type { Advertisement } from '../types'
 import { api } from '../services/api'
+import { VueDatePicker } from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 
 ChartJS.register(
   CategoryScale,
@@ -40,6 +42,31 @@ const isLoading = ref(false)
 const showAdSelector = ref(false)
 const searchQuery = ref('')
 const sortBy = ref<'title' | 'views' | 'phone' | 'email' | 'total'>('views')
+
+// Zakres dat
+const dateRangeType = ref<'30days' | 'custom'>('30days')
+const startDate = ref<Date | null>(null)
+const endDate = ref<Date | null>(null)
+
+// Inicjalizuj daty
+const initializeDates = () => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
+  
+  endDate.value = today
+  startDate.value = thirtyDaysAgo
+}
+
+// Formatuj datę do wyświetlenia
+const formatDate = (date: Date | null): string => {
+  if (!date) return ''
+  const d = new Date(date)
+  const day = String(d.getDate()).padStart(2, '0')
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const year = d.getFullYear()
+  return `${day}.${month}.${year}`
+}
 
 // Kolory dla różnych ogłoszeń
 const colors = [
@@ -77,35 +104,47 @@ const getDailyData = (adId: string, metric: 'clicks' | 'views') => {
   const cached = dailyStatsCache.value[adId]
   
   if (cached && cached.stats && cached.stats.length > 0) {
+    // Filtruj dane według wybranego zakresu dat
+    const start = startDate.value || new Date()
+    const end = endDate.value || new Date()
+    
     // Użyj rzeczywistych danych z backendu
-    return cached.stats.map((stat: any) => {
-      let value = 0
-      if (metric === 'clicks') {
-        if (clicksType.value === 'all') {
-          value = stat.total_clicks
-        } else if (clicksType.value === 'phone') {
-          value = stat.phone_clicks
-        } else if (clicksType.value === 'email') {
-          value = stat.email_clicks
+    return cached.stats
+      .filter((stat: any) => {
+        const statDate = new Date(stat.date)
+        return statDate >= start && statDate <= end
+      })
+      .map((stat: any) => {
+        let value = 0
+        if (metric === 'clicks') {
+          if (clicksType.value === 'all') {
+            value = stat.total_clicks
+          } else if (clicksType.value === 'phone') {
+            value = stat.phone_clicks
+          } else if (clicksType.value === 'email') {
+            value = stat.email_clicks
+          }
+        } else {
+          value = stat.views
         }
-      } else {
-        value = stat.views
-      }
-      
-      return {
-        date: new Date(stat.date).toLocaleDateString('pl-PL', { month: 'short', day: 'numeric' }),
-        value
-      }
-    })
+        
+        return {
+          date: new Date(stat.date).toLocaleDateString('pl-PL', { month: 'short', day: 'numeric' }),
+          value
+        }
+      })
   }
   
   // Fallback: generuj symulowane dane jeśli brak rzeczywistych
-  const days = 30
   const data = []
-  const today = new Date()
+  const start = startDate.value || new Date()
+  const end = endDate.value || new Date()
   const ad = props.ads.find(a => a.id === adId)
   
   if (!ad) return []
+  
+  // Oblicz liczbę dni w wybranym zakresie
+  const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
   
   let total = 0
   if (metric === 'clicks') {
@@ -121,11 +160,11 @@ const getDailyData = (adId: string, metric: 'clicks' | 'views') => {
   }
   
   let cumulative = 0
-  for (let i = days - 1; i >= 0; i--) {
-    const date = new Date(today)
-    date.setDate(date.getDate() - i)
+  for (let i = 0; i < days; i++) {
+    const date = new Date(start)
+    date.setDate(date.getDate() + i)
     
-    const trend = (days - i) / days
+    const trend = (i + 1) / days
     const randomFactor = Math.random() * 0.5 + 0.5
     const dailyValue = Math.floor((total / days) * trend * randomFactor)
     cumulative += dailyValue
@@ -141,6 +180,9 @@ const getDailyData = (adId: string, metric: 'clicks' | 'views') => {
 
 // Przygotuj dane do wykresu
 const chartData = computed(() => {
+  // Dodaj dependency na daty aby chart się aktualizował
+  void ((startDate.value?.getTime() || 0) + (endDate.value?.getTime() || 0))
+  
   if (selectedAds.value.length === 0) {
     return {
       labels: [],
@@ -269,9 +311,16 @@ watch(showAdSelector, (isOpen) => {
   }
 })
 
+// Watcher - aktualizuj wykres gdy zmienią się daty
+watch([startDate, endDate], () => {
+  // Trigger reactivity na chartData poprzez zmianę któregoś z obserwowanych properties
+  // chartData będzie się automatycznie przeliczać dzięki computed property
+}, { deep: true })
+
 // Pobierz dane przy montowaniu komponentu
 onMounted(() => {
-  // Opcjonalnie: preload danych dla pierwszych ogłoszeń
+  // Inicjalizuj daty
+  initializeDates()
 })
 
 // Cleanup przy unmountowaniu
@@ -383,64 +432,151 @@ defineExpose({
       </button>
     </div>
 
-    <!-- Metric Selector -->
-    <div class="metric-selector">
-      <button
-        @click="chartMetric = 'views'"
-        :class="{ active: chartMetric === 'views' }"
-        class="metric-btn"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
-          <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-        </svg>
-        Wyświetlenia
-      </button>
-      <button
-        @click="chartMetric = 'clicks'"
-        :class="{ active: chartMetric === 'clicks' }"
-        class="metric-btn"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Kliknięcia
-      </button>
-    </div>
+    <!-- Controls Section -->
+    <div class="chart-controls">
+      <!-- Left Column: Metric -->
+      <div class="controls-column">
+        <!-- Metric Selector -->
+        <div class="control-group">
+          <label class="control-label">Metryka:</label>
+          <div class="metric-selector">
+            <button
+              @click="chartMetric = 'views'"
+              :class="{ active: chartMetric === 'views' }"
+              class="metric-btn"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Wyświetlenia
+            </button>
+            <button
+              @click="chartMetric = 'clicks'"
+              :class="{ active: chartMetric === 'clicks' }"
+              class="metric-btn"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Kliknięcia
+            </button>
+          </div>
+        </div>
 
-    <!-- Clicks Type Selector (pokazuj tylko gdy metric = 'clicks') -->
-    <div v-if="chartMetric === 'clicks'" class="clicks-type-selector">
-      <button
-        @click="clicksType = 'all'"
-        :class="{ active: clicksType === 'all' }"
-        class="clicks-type-btn"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor"/>
-        </svg>
-        Wszystkie
-      </button>
-      <button
-        @click="clicksType = 'phone'"
-        :class="{ active: clicksType === 'phone' }"
-        class="clicks-type-btn"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2" fill="none"/>
-        </svg>
-        Telefon
-      </button>
-      <button
-        @click="clicksType = 'email'"
-        :class="{ active: clicksType === 'email' }"
-        class="clicks-type-btn"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
-          <path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        Email
-      </button>
+        <!-- Clicks Type Selector (pokazuj tylko gdy metric = 'clicks') -->
+        <div v-if="chartMetric === 'clicks'" class="clicks-type-selector">
+          <button
+            @click="clicksType = 'all'"
+            :class="{ active: clicksType === 'all' }"
+            class="clicks-type-btn"
+          >
+            Wszystkie
+          </button>
+          <button
+            @click="clicksType = 'phone'"
+            :class="{ active: clicksType === 'phone' }"
+            class="clicks-type-btn"
+          >
+            Telefon
+          </button>
+          <button
+            @click="clicksType = 'email'"
+            :class="{ active: clicksType === 'email' }"
+            class="clicks-type-btn"
+          >
+            Email
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Date Range -->
+      <div class="controls-column">
+        <!-- Date Range Selector -->
+        <div class="control-group">
+          <label class="control-label">Zakres:</label>
+          <div class="date-range-buttons">
+            <button
+              @click="dateRangeType = '30days'"
+              :class="{ active: dateRangeType === '30days' }"
+              class="date-range-btn"
+            >
+              Ostatnie 30 dni
+            </button>
+            <button
+              @click="dateRangeType = 'custom'"
+              :class="{ active: dateRangeType === 'custom' }"
+              class="date-range-btn"
+            >
+              Własny zakres
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Date Inputs (separate from control-group to not affect layout) -->
+        <div v-if="dateRangeType === 'custom'" class="date-inputs">
+          <div class="date-input-group">
+            <label>Od:</label>
+            <VueDatePicker
+              v-model="startDate"
+              :enable-time-picker="false"
+              auto-apply
+              :clearable="false"
+              class="w-full"
+            >
+              <template #trigger>
+                <div class="date-picker-wrapper">
+                  <input
+                    type="text"
+                    readonly
+                    :value="startDate ? formatDate(startDate) : 'dd.mm.rrrr'"
+                    placeholder="dd.mm.rrrr"
+                    class="dp__input date-input"
+                  />
+                  <div class="date-picker-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </div>
+                </div>
+              </template>
+            </VueDatePicker>
+          </div>
+          <div class="date-input-group">
+            <label>Do:</label>
+            <VueDatePicker
+              v-model="endDate"
+              :enable-time-picker="false"
+              auto-apply
+              :clearable="false"
+              class="w-full"
+            >
+              <template #trigger>
+                <div class="date-picker-wrapper">
+                  <input
+                    type="text"
+                    readonly
+                    :value="endDate ? formatDate(endDate) : 'dd.mm.rrrr'"
+                    placeholder="dd.mm.rrrr"
+                    class="dp__input date-input"
+                  />
+                  <div class="date-picker-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </div>
+                </div>
+              </template>
+            </VueDatePicker>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Ad Selector Button -->
@@ -643,11 +779,46 @@ defineExpose({
   border-color: #fca5a5;
 }
 
+/* Chart Controls */
+.chart-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.controls-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.controls-column:last-child .control-group {
+  align-items: flex-end;
+}
+
+.control-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 /* Metric Selector */
 .metric-selector {
   display: flex;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
+  gap: 0.5rem;
 }
 
 .metric-btn {
@@ -679,13 +850,15 @@ defineExpose({
 /* Clicks Type Selector */
 .clicks-type-selector {
   display: flex;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
+  gap: 0.5rem;
+  flex-wrap: wrap;
   padding: 1rem;
   background: #f9fafb;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
   animation: slideDown 0.3s ease-out;
+  align-content: flex-start;
+  min-height: 80px;
 }
 
 @keyframes slideDown {
@@ -724,6 +897,121 @@ defineExpose({
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-color: transparent;
   color: white;
+}
+
+/* Date Range Selector */
+.date-range-selector {
+  margin-bottom: 2rem;
+}
+
+.date-range-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.date-range-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #f3f4f6;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.date-range-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.date-range-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  color: white;
+}
+
+.date-inputs {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  flex-wrap: nowrap;
+}
+
+.date-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.date-input-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.date-input {
+  padding: 0.625rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #1f2937;
+  background: white;
+  transition: all 0.2s;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.date-picker-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.date-picker-wrapper .dp__input {
+  padding: 0.875rem 2.5rem 0.875rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  background: white;
+  cursor: pointer;
+  color: #1f2937;
+  width: 100%;
+}
+
+.date-picker-wrapper .dp__input:hover {
+  border-color: #9ca3af;
+}
+
+.date-picker-wrapper .dp__input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none;
+}
+
+.date-picker-icon {
+  position: absolute;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: #6b7280;
 }
 
 /* Ad Selector */
