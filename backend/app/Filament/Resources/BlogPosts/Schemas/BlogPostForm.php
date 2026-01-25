@@ -5,6 +5,8 @@ namespace App\Filament\Resources\BlogPosts\Schemas;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
@@ -65,10 +67,29 @@ class BlogPostForm
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
+                Select::make('category')
+                    ->label('Kategoria')
+                    ->options([
+                        'poradniki' => 'Poradniki',
+                        'trendy' => 'Trendy',
+                        'case-study' => 'Case Study',
+                        'nowosci' => 'Nowości',
+                    ])
+                    ->default('nowosci')
+                    ->required(),
+                Toggle::make('status')
+                    ->label('Opublikowany')
+                    ->onIcon('heroicon-m-check-badge')
+                    ->offIcon('heroicon-m-x-mark')
+                    ->default(true)
+                    ->formatStateUsing(fn ($state) => $state === 'published' || $state === true || $state === 1)
+                    ->dehydrateStateUsing(fn ($state) => $state ? 'published' : 'draft'),
                 FileUpload::make('image')
                     ->label('Obrazek')
                     ->image()
+                    ->disk('public')
                     ->directory('blog')
+                    ->previewable(false)
                     ->nullable(),
                 RichEditor::make('content')
                     ->label('Treść')

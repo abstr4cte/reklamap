@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { api } from '../services/api'
 
 const route = useRoute()
 const router = useRouter()
@@ -12,13 +13,35 @@ interface BlogPost {
   excerpt: string
   content: string
   category: string
-  image: string
+  image: string | null
   date: string
   readTime: string
   author: string
 }
 
-// Mock data - same as in BlogPage.vue
+const post = ref<BlogPost | null>(null)
+const isLoading = ref(true)
+const notFound = ref(false)
+
+const loadBlogPost = async () => {
+  try {
+    isLoading.value = true
+    const slug = route.params.slug as string
+    const response = await api.get(`/blog/${slug}`)
+    post.value = response
+  } catch (error) {
+    console.error('Error loading blog post:', error)
+    notFound.value = true
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(() => {
+  loadBlogPost()
+})
+
+// Mock data - fallback if API fails
 const blogPosts: BlogPost[] = [
   {
     id: 1,
@@ -159,11 +182,6 @@ const blogPosts: BlogPost[] = [
   }
 ]
 
-const post = computed(() => {
-  const slug = route.params.slug as string
-  return blogPosts.find(p => p.slug === slug) || blogPosts[0]
-})
-
 const categories = [
   { id: 'poradniki', name: 'Poradniki' },
   { id: 'trendy', name: 'Trendy' },
@@ -181,6 +199,8 @@ const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 
 
 const shareToSocial = (platform: 'facebook' | 'twitter' | 'whatsapp' | 'linkedin') => {
+  if (!post.value) return
+  
   const url = encodeURIComponent(window.location.href)
   const text = encodeURIComponent(`Zobacz ten artykuł: ${post.value.title}`)
   
@@ -206,16 +226,28 @@ const shareToSocial = (platform: 'facebook' | 'twitter' | 'whatsapp' | 'linkedin
 
 <template>
   <div class="blog-post-page">
-    <div class="hero-section" :style="{ backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${post.image})` }">
-      <div class="container">
-        <div class="post-meta-header">
-          <span class="category-badge">{{ getCategoryName(post.category) }}</span>
-          <span class="post-date">{{ post.date }} • {{ post.readTime }} czytania</span>
-        </div>
-        <h1>{{ post.title }}</h1>
-
-      </div>
+    <div v-if="isLoading" class="loading">
+      <p>Ładowanie artykułu...</p>
     </div>
+    
+    <div v-else-if="notFound" class="not-found">
+      <h2>Artykuł nie znaleziony</h2>
+      <button @click="router.push('/blog')" class="back-btn">
+        Wróć do bloga
+      </button>
+    </div>
+    
+    <div v-else-if="post" class="blog-post-page">
+      <div class="hero-section" :style="{ backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${post.image})` }">
+        <div class="container">
+          <div class="post-meta-header">
+            <span class="category-badge">{{ getCategoryName(post.category) }}</span>
+            <span class="post-date">{{ post.date }} • {{ post.readTime }} czytania</span>
+          </div>
+          <h1>{{ post.title }}</h1>
+
+        </div>
+      </div>
 
     <div class="content-section">
       <div class="container">
@@ -264,7 +296,7 @@ const shareToSocial = (platform: 'facebook' | 'twitter' | 'whatsapp' | 'linkedin
         </div>
       </div>
     </div>
-    <ToastNotification ref="toast" />
+    </div>
   </div>
 </template>
 

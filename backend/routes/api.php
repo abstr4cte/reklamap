@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\ManagementController;
+use App\Http\Controllers\BlogController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -27,6 +28,10 @@ Route::post('newsletter/subscribe', [AdvertisementController::class, 'subscribeN
 Route::get('listings/{id}/pdf', [AdvertisementController::class, 'generatePdf']);
 Route::get('listings/pdf/comparison', [AdvertisementController::class, 'generateComparisonPdf']);
 Route::post('upload', [StorageController::class, 'upload']);
+
+// Blog routes
+Route::get('blog', [BlogController::class, 'index']);
+Route::get('blog/{slug}', [BlogController::class, 'show']);
 
 // Management token routes
 Route::post('management/send-link', [ManagementController::class, 'sendManagementLink']);

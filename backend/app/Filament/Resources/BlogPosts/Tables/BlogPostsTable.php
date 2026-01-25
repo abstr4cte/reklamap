@@ -22,6 +22,7 @@ class BlogPostsTable
                     ->sortable(),
                 ImageColumn::make('image')
                     ->label('Obrazek')
+                    ->disk('public')
                     ->square(),
                 TextColumn::make('title')
                     ->label('Tytuł')
@@ -30,6 +31,32 @@ class BlogPostsTable
                 TextColumn::make('slug')
                     ->label('Slug')
                     ->sortable(),
+                BadgeColumn::make('status')
+                    ->label('Status')
+                    ->colors([
+                        'success' => 'published',
+                        'warning' => 'draft',
+                    ])
+                    ->formatStateUsing(fn (string $state): string => match($state) {
+                        'published' => 'Opublikowany',
+                        'draft' => 'Szkic',
+                        default => $state,
+                    }),
+                BadgeColumn::make('category')
+                    ->label('Kategoria')
+                    ->colors([
+                        'info' => 'poradniki',
+                        'warning' => 'trendy',
+                        'success' => 'case-study',
+                        'primary' => 'nowosci',
+                    ])
+                    ->formatStateUsing(fn (string $state): string => match($state) {
+                        'poradniki' => 'Poradniki',
+                        'trendy' => 'Trendy',
+                        'case-study' => 'Case Study',
+                        'nowosci' => 'Nowości',
+                        default => $state,
+                    }),
                 TextColumn::make('excerpt')
                     ->label('Fragment')
                     ->limit(50),
@@ -41,7 +68,16 @@ class BlogPostsTable
                     ->dateTime('d.m.Y H:i')
                     ->sortable(),
             ])
-            ->filters([])
+            ->filters([
+                SelectFilter::make('category')
+                    ->label('Kategoria')
+                    ->options([
+                        'poradniki' => 'Poradniki',
+                        'trendy' => 'Trendy',
+                        'case-study' => 'Case Study',
+                        'nowosci' => 'Nowości',
+                    ]),
+            ])
             ->recordActions([
                 EditAction::make(),
             ])

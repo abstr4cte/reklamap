@@ -22,6 +22,12 @@ const APP_KEY = import.meta.env.VITE_INTERNAL_APP_KEY as string
 const withKey = (headers: HeadersInit = {}): HeadersInit => ({ ...(headers as any), 'X-App-Key': APP_KEY })
 
 export const api = {
+    async get(endpoint: string): Promise<any> {
+        const response = await fetch(`${API_URL}${endpoint}`, { headers: withKey() })
+        if (!response.ok) throw new Error(`Failed to fetch ${endpoint}`)
+        return response.json()
+    },
+
     async getAdvertisements(): Promise<Advertisement[]> {
         const response = await fetch(`${API_URL}/listings`, { headers: withKey() })
         if (!response.ok) throw new Error('Failed to fetch listings')

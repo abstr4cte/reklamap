@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('excerpt')->nullable();
             $table->enum('status', ['draft', 'published'])->default('draft');
+            $table->enum('category', ['poradniki', 'trendy', 'case-study', 'nowosci'])->default('nowosci');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamp('published_at')->nullable();
             $table->timestamps();

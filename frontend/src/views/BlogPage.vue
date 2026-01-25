@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 
@@ -24,6 +24,8 @@ interface BlogPost {
 }
 
 const selectedCategory = ref('wszystkie')
+const blogPosts = ref<BlogPost[]>([])
+const isLoading = ref(true)
 
 const categories = [
   { id: 'wszystkie', name: 'Wszystkie' },
@@ -33,122 +35,30 @@ const categories = [
   { id: 'nowosci', name: 'Nowości' }
 ]
 
-const blogPosts: BlogPost[] = [
-  {
-    id: 1,
-    title: 'Jak wybrać idealne miejsce na billboard reklamowy',
-    slug: 'jak-wybrac-idealne-miejsce-na-billboard-reklamowy',
-    excerpt: 'Poznaj kluczowe czynniki, które decydują o skuteczności reklamy outdoorowej. Lokalizacja to podstawa sukcesu każdej kampanii.',
-    content: '',
-    category: 'poradniki',
-    image: 'https://images.pexels.com/photos/417273/pexels-photo-417273.jpeg?auto=compress&cs=tinysrgb&w=800',
-    date: '15 listopada 2025',
-    readTime: '5 min',
-    author: 'Anna Kowalska'
-  },
-  {
-    id: 2,
-    title: 'Trendy w reklamie zewnętrznej na 2025 rok',
-    slug: 'trendy-w-reklamie-zewnetrznej-na-2025-rok',
-    excerpt: 'Digital out-of-home, programmatic buying i personalizacja - sprawdź, co będzie kształtować branżę outdoor w najbliższych miesiącach.',
-    content: '',
-    category: 'trendy',
-    image: 'https://images.pexels.com/photos/3761504/pexels-photo-3761504.jpeg?auto=compress&cs=tinysrgb&w=800',
-    date: '10 listopada 2025',
-    readTime: '7 min',
-    author: 'Michał Nowak'
-  },
-  {
-    id: 3,
-    title: 'ROI kampanii outdoor - jak mierzyć efektywność',
-    slug: 'roi-kampanii-outdoor-jak-mierzyc-efektywnosc',
-    excerpt: 'Kompleksowy przewodnik po metodach pomiaru skuteczności kampanii reklamowych w przestrzeni miejskiej i na drogach.',
-    content: '',
-    category: 'poradniki',
-    image: 'https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=800',
-    date: '5 listopada 2025',
-    readTime: '8 min',
-    author: 'Katarzyna Wiśniewska'
-  },
-  {
-    id: 4,
-    title: 'Kampania marki XYZ - 300% wzrost rozpoznawalności',
-    slug: 'kampania-marki-xyz-300-wzrost-rozpoznawalnosci',
-    excerpt: 'Sprawdź, jak marka XYZ wykorzystała strategicznie rozmieszczone billboardy do zwiększenia świadomości marki w kluczowych regionach.',
-    content: '',
-    category: 'case-study',
-    image: 'https://images.pexels.com/photos/3683056/pexels-photo-3683056.jpeg?auto=compress&cs=tinysrgb&w=800',
-    date: '1 listopada 2025',
-    readTime: '6 min',
-    author: 'Piotr Zieliński'
-  },
-  {
-    id: 5,
-    title: 'Ekrany LED vs tradycyjne billboardy - co wybrać',
-    slug: 'ekrany-led-vs-tradycyjne-billboardy-co-wybrac',
-    excerpt: 'Porównanie kosztów, zasięgu i skuteczności nowoczesnych ekranów LED z klasycznymi nośnikami reklamowymi.',
-    content: '',
-    category: 'poradniki',
-    image: 'https://images.pexels.com/photos/936137/pexels-photo-936137.jpeg?auto=compress&cs=tinysrgb&w=800',
-    date: '28 października 2025',
-    readTime: '6 min',
-    author: 'Anna Kowalska'
-  },
-  {
-    id: 6,
-    title: 'Nowa funkcja - porównywanie powierzchni reklamowych',
-    slug: 'nowa-funkcja-porownywanie-powierzchni-reklamowych',
-    excerpt: 'Wprowadziliśmy nowe narzędzie umożliwiające zestawienie do 5 ogłoszeń obok siebie. Zobacz, jak z niego korzystać.',
-    content: '',
-    category: 'nowosci',
-    image: 'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=800',
-    date: '25 października 2025',
-    readTime: '3 min',
-    author: 'Michał Nowak'
-  },
-  {
-    id: 7,
-    title: 'Sezonowość w reklamie outdoor - kompletny przewodnik',
-    slug: 'sezonowosc-w-reklamie-outdoor-kompletny-przewodnik',
-    excerpt: 'Dowiedz się, kiedy najlepiej zaplanować kampanię reklamową, aby zmaksymalizować jej skuteczność i zoptymalizować koszty.',
-    content: '',
-    category: 'poradniki',
-    image: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=800',
-    date: '20 października 2025',
-    readTime: '9 min',
-    author: 'Katarzyna Wiśniewska'
-  },
-  {
-    id: 8,
-    title: 'Przyszłość reklamy zewnętrznej w erze cyfrowej',
-    slug: 'przyszlosc-reklamy-zewnetrznej-w-erze-cyfrowej',
-    excerpt: 'Jak technologie AR, IoT i AI zmieniają tradycyjną reklamę outdoor? Analiza najnowszych innowacji w branży.',
-    content: '',
-    category: 'trendy',
-    image: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800',
-    date: '15 października 2025',
-    readTime: '10 min',
-    author: 'Piotr Zieliński'
-  },
-  {
-    id: 9,
-    title: 'Startup osiągnął 10 000 leadów dzięki citylightom',
-    slug: 'startup-osiagnal-10-000-leadow-dzieki-citylightom',
-    excerpt: 'Historia sukcesu technologicznego startupu, który dzięki przemyślanej kampanii citylightowej zdobył tysiące potencjalnych klientów.',
-    content: '',
-    category: 'case-study',
-    image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800',
-    date: '10 października 2025',
-    readTime: '7 min',
-    author: 'Anna Kowalska'
+const loadBlogPosts = async () => {
+  try {
+    isLoading.value = true
+    console.log('Loading blog posts from API...')
+    const response = await api.get('/blog')
+    console.log('Blog posts response:', response)
+    blogPosts.value = response
+  } catch (error) {
+    console.error('Error loading blog posts:', error)
+    blogPosts.value = []
+  } finally {
+    isLoading.value = false
   }
-]
+}
+
+onMounted(() => {
+  loadBlogPosts()
+})
 
 const filteredPosts = computed(() => {
   if (selectedCategory.value === 'wszystkie') {
-    return blogPosts
+    return blogPosts.value
   }
-  return blogPosts.filter(post => post.category === selectedCategory.value)
+  return blogPosts.value.filter(post => post.category === selectedCategory.value)
 })
 
 const handleNewsletterSubmit = async () => {

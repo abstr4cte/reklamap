@@ -14,6 +14,7 @@ class BlogPost extends Model
         'image',
         'user_id',
         'published_at',
+        'category',
     ];
 
     protected $attributes = [
