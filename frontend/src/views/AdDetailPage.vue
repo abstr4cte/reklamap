@@ -41,6 +41,7 @@ const contactErrors = ref<Record<string, string>>({})
 const isSubmittingContact = ref(false)
 const contactSuccess = ref(false)
 const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
+const dailyStatsViews = ref(0)
 
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
@@ -51,6 +52,10 @@ const isZoomed = ref(false)
 const touchStartX = ref(0)
 const touchEndX = ref(0)
 const touchStartTime = ref(0)
+
+const displayViews = computed(() => {
+  return dailyStatsViews.value || 0
+})
 
 const images = computed(() => {
   if (!ad.value) return []
@@ -779,6 +784,17 @@ const loadAd = async () => {
 
     ad.value = data
     
+    // Load daily stats for views
+    try {
+      const response = await api.getDailyStats(adId)
+      if (response && response.summary && response.summary.total_views) {
+        dailyStatsViews.value = response.summary.total_views
+      }
+    } catch (error) {
+      console.error('Error loading daily stats:', error)
+      // Fallback to ad.views if daily stats fail
+    }
+    
     // Sprawdź czy URL jest poprawny, jeśli nie - przekieruj na poprawny
     const correctPath = `/powierzchnia-reklamowa/${mapTypeToUrlFormat(data.type)}/${slugify(data.city)}/${slugify(data.title)}-${data.id}`
     const currentPath = router.currentRoute.value.path
@@ -1319,7 +1335,7 @@ onUnmounted(() => {
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
                   <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
                 </svg>
-                <span>{{ ad.views || 0 }} wyświetleń</span>
+                <span>{{ displayViews }} wyświetleń</span>
               </div>
             </div>
 
@@ -1648,7 +1664,7 @@ onUnmounted(() => {
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
                   <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
                 </svg>
-                <span>{{ ad.views || 0 }} wyświetleń</span>
+                <span>{{ displayViews }} wyświetleń</span>
               </div>
             </div>
 

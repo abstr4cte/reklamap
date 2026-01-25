@@ -230,6 +230,39 @@ const loadAdvertisements = async () => {
           tokenExpiresAt.value = new Date(response.data.expires_at).toLocaleString()
           hasToken.value = true
           isTokenInvalid.value = false
+          
+          // Load daily stats for all listings
+          if (listings.value.length > 0) {
+            const adIds = listings.value.map(ad => ad.id)
+            try {
+              const statsResponse = await api.getMultipleDailyStats(adIds, 30)
+              // Map stats to listings
+              listings.value = listings.value.map(ad => {
+                const stats = statsResponse.find((s: any) => s.advertisement_id === ad.id)
+                if (stats && stats.stats) {
+                  const views30d = stats.stats.reduce((sum: number, s: any) => sum + (s.views || 0), 0)
+                  const phoneClicks30d = stats.stats.reduce((sum: number, s: any) => sum + (s.phone_clicks || 0), 0)
+                  const emailClicks30d = stats.stats.reduce((sum: number, s: any) => sum + (s.email_clicks || 0), 0)
+                  return {
+                    ...ad,
+                    views_30d: views30d,
+                    phone_clicks_30d: phoneClicks30d,
+                    email_clicks_30d: emailClicks30d
+                  }
+                }
+                return { ...ad, views_30d: 0, phone_clicks_30d: 0, email_clicks_30d: 0 }
+              })
+            } catch (error) {
+              console.error('Error loading daily stats:', error)
+              // Set default values if stats fail to load
+              listings.value = listings.value.map(ad => ({
+                ...ad,
+                views_30d: 0,
+                phone_clicks_30d: 0,
+                email_clicks_30d: 0
+              }))
+            }
+          }
         } else {
           // Token jest nieprawidłowy
           hasToken.value = false
@@ -1703,7 +1736,7 @@ onBeforeUnmount(() => {
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                       <path d="M12 5C7 5 2.73 8.11 1 12.5 2.73 16.89 7 20 12 20s9.27-3.11 11-7.5C21.27 8.11 17 5 12 5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor"/>
                     </svg>
-                    <span>{{ ad.views || 0 }}</span>
+                    <span>{{ ad.views_30d || 0 }}</span>
                   </div>
 
                   <button @click.stop="openPreview(ad.id)" class="preview-btn" title="Zobacz ogłoszenie">

@@ -219,8 +219,7 @@ class AdvertisementController extends Controller
 
     public function incrementViews(string $id)
     {
-        $ad = Advertisement::findOrFail($id);
-        $ad->increment('views');
+        Advertisement::findOrFail($id); // Verify ad exists
         
         // Zapisz statystykę dzienną
         $dailyStat = \App\Models\AdvertisementDailyStat::getTodayOrCreate($id);
@@ -231,8 +230,7 @@ class AdvertisementController extends Controller
 
     public function incrementPhoneClicks(string $id)
     {
-        $ad = Advertisement::findOrFail($id);
-        $ad->increment('phone_clicks');
+        Advertisement::findOrFail($id); // Verify ad exists
         
         // Zapisz statystykę dzienną
         $dailyStat = \App\Models\AdvertisementDailyStat::getTodayOrCreate($id);
@@ -243,8 +241,7 @@ class AdvertisementController extends Controller
 
     public function incrementEmailClicks(string $id)
     {
-        $ad = Advertisement::findOrFail($id);
-        $ad->increment('email_clicks');
+        Advertisement::findOrFail($id); // Verify ad exists
         
         // Zapisz statystykę dzienną
         $dailyStat = \App\Models\AdvertisementDailyStat::getTodayOrCreate($id);
@@ -514,6 +511,11 @@ class AdvertisementController extends Controller
         // Pobierz statystyki za ostatnie 30 dni
         $stats = \App\Models\AdvertisementDailyStat::getStatsForPeriod($id, 30);
         
+        // Pobierz sumę wszystkich wyświetleń z daily_stats
+        $allTimeStats = \App\Models\AdvertisementDailyStat::where('advertisement_id', $id)
+            ->selectRaw('SUM(views) as total_views, SUM(phone_clicks) as total_phone_clicks, SUM(email_clicks) as total_email_clicks')
+            ->first();
+        
         return response()->json([
             'advertisement_id' => $id,
             'title' => $ad->title,
@@ -521,9 +523,9 @@ class AdvertisementController extends Controller
             'type' => $ad->type,
             'stats' => $stats,
             'summary' => [
-                'total_views' => $ad->views,
-                'total_phone_clicks' => $ad->phone_clicks,
-                'total_email_clicks' => $ad->email_clicks,
+                'total_views' => $allTimeStats->total_views ?? 0,
+                'total_phone_clicks' => $allTimeStats->total_phone_clicks ?? 0,
+                'total_email_clicks' => $allTimeStats->total_email_clicks ?? 0,
             ]
         ]);
     }
@@ -534,7 +536,7 @@ class AdvertisementController extends Controller
     public function getMultipleDailyStats(Request $request)
     {
         $validated = $request->validate([
-            'advertisement_ids' => 'required|array|max:5',
+            'advertisement_ids' => 'required|array',
             'advertisement_ids.*' => 'required|exists:advertisements,id',
             'days' => 'nullable|integer|min:1|max:365'
         ]);
