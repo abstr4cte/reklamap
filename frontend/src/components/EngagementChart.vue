@@ -1518,19 +1518,106 @@ defineExpose({
 
 @media (max-width: 768px) {
   .engagement-chart-container {
-    padding: 1.5rem;
+    padding: 1rem;
+  }
+
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .chart-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .chart-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .chart-controls {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .controls-column:last-child .control-group {
+    align-items: flex-start;
+  }
+
+  .metric-selector,
+  .clicks-type-selector,
+  .date-range-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    overflow-x: visible;
+    padding-bottom: 0;
+    gap: 0.5rem;
+  }
+
+  .metric-btn,
+  .clicks-type-btn,
+  .date-range-btn {
+    flex: 1 1 auto;
+    justify-content: center;
+    white-space: nowrap;
+    padding: 0.6rem 0.5rem;
+    font-size: 0.8rem;
+    min-width: 120px; /* Ensure buttons have reasonable width */
+  }
+
+  .date-inputs {
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
   .ads-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
-
-  .metric-selector {
-    flex-wrap: wrap;
+    grid-template-columns: 1fr;
   }
 
   .chart-wrapper {
-    min-height: 300px;
+    min-height: 250px;
+    padding: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  /* Modal Mobile Styles */
+  .modal-content {
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-list {
+    flex: 1;
+    max-height: none;
+  }
+
+  .modal-footer {
+    padding: 1rem;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .ad-selector-btn {
+    padding: 0.875rem 1rem;
+    font-size: 0.95rem;
+  }
+  .modal-sort {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding: 0.75rem 1rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sort-btn {
+    flex: 0 0 auto;
   }
 }
 </style>

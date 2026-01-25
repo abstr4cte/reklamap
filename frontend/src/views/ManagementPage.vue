@@ -425,6 +425,9 @@ const saveChanges = async (id: string) => {
 
 const deleteAd = (id: string) => {
   adToDelete.value = id
+  confirmDialogTitle.value = 'Usuń ogłoszenie'
+  confirmDialogMessage.value = 'Czy na pewno chcesz usunąć to ogłoszenie? Tej operacji nie można cofnąć.'
+  confirmDialogType.value = 'danger'
   confirmDialog.value?.open()
 }
 
@@ -447,6 +450,11 @@ const handleConfirmDelete = async () => {
 // Handler dla dynamicznego dialogu potwierdzenia
 // Handler dla dynamicznego dialogu potwierdzenia
 const handleConfirmDialog = () => {
+  if (adToDelete.value) {
+    handleConfirmDelete()
+    return
+  }
+
   if (pendingTopAdsToAdd.value.length > 0) {
     executeAddTopAdsToChart(pendingTopAdsToAdd.value, pendingTopAdsMetric.value)
     pendingTopAdsToAdd.value = []
@@ -3870,11 +3878,21 @@ onBeforeUnmount(() => {
 @media (max-width: 768px) {
   .stats-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
   }
 
   .tabs-navigation {
     gap: 0.5rem;
     overflow-x: auto;
+    padding-bottom: 0.5rem;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -3882,19 +3900,105 @@ onBeforeUnmount(() => {
     padding: 0.75rem 1rem;
     font-size: 0.85rem;
     white-space: nowrap;
+    flex: 1;
+    justify-content: center;
   }
 
   .chart-card,
   .stat-breakdown-card {
-    padding: 1.5rem;
+    padding: 1rem;
+  }
+
+  .chart-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .chart-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .chart-quick-add-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .chart-item {
+    display: flex;
     flex-wrap: wrap;
+    align-items: center;
+    padding: 0.75rem;
+    gap: 0.5rem;
+    row-gap: 0.5rem;
+  }
+
+  .chart-item-rank {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+    order: 1;
+  }
+
+  .chart-item-info {
+    display: contents;
+  }
+
+  .chart-item-title {
+    order: 2;
+    width: calc(100% - 24px - 0.5rem);
+    margin-bottom: 0;
+  }
+
+  .chart-item-meta {
+    order: 3;
+    font-size: 0.75rem;
+    margin-top: 0;
+    margin-right: auto;
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chart-item-value {
+    order: 4;
+    font-size: 0.85rem;
+    margin-left: 0;
+    width: auto;
   }
 
   .chart-item-bar {
-    width: 60px;
+    order: 5;
+    flex: 1;
+    min-width: 40px;
+    margin: 0 0.5rem;
+  }
+
+  .chart-item-btn {
+    order: 6;
+    width: 28px;
+    height: 28px;
+    margin-left: 0;
+  }
+
+  /* Additional Stats Mobile */
+  .breakdown-item {
+    flex-wrap: wrap;
+  }
+  
+  .breakdown-bar {
+    width: 100%;
+    margin-top: 0.5rem;
+    order: 3;
+  }
+  
+  .breakdown-value {
+    order: 2;
+  }
+  
+  .breakdown-label {
+    order: 1;
   }
 }
 </style>
