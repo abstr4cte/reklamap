@@ -47,6 +47,10 @@ const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 
 const showStreetView = ref(false)
+const streetViewError = ref(false)
+const streetViewLoading = ref(false)
+const streetViewCached = ref(false) // Track if we've already loaded/tried to load
+const streetViewUrl = ref('') // Store URL to prevent re-renders
 
 const currentImageIndex = ref(0)
 const showImagePreview = ref(false)
@@ -731,6 +735,7 @@ const getStreetViewEmbedUrl = (): string => {
   // Format: https://www.google.com/maps/embed/v1/streetview?key=API_KEY&location=lat,lng
   if (!apiKey) {
     console.warn('Google Maps API key not configured')
+    streetViewError.value = true
     return ''
   }
   
@@ -743,6 +748,171 @@ const getStreetViewEmbedUrl = (): string => {
   })
   
   return `https://www.google.com/maps/embed/v1/streetview?${params.toString()}`
+}
+
+const handleStreetViewError = () => {
+  streetViewError.value = true
+  streetViewLoading.value = false
+  streetViewCached.value = true
+  console.error('Failed to load Street View')
+}
+
+const handleStreetViewLoad = (event: Event) => {
+  const iframe = event.target as HTMLIFrameElement
+  
+  // Give iframe time to fully load and execute scripts
+  setTimeout(() => {
+    try {
+      // Try to access iframe's window object to detect if it loaded error response
+      const iframeWindow = iframe.contentWindow
+      
+      // Check if iframe has any content
+      if (!iframeWindow || !iframeWindow.document || !iframeWindow.document.body) {
+        console.warn('❌ Iframe body is empty')
+        handleStreetViewError()
+        return
+      }
+      
+      // Try to find error indicators in the page
+      const bodyHTML = iframeWindow.document.body.innerHTML || ''
+      const bodyText = iframeWindow.document.body.innerText || ''
+      
+      console.log('🔍 Iframe loaded, checking content...')
+      
+      // Check for error messages
+      if (bodyHTML.includes('no images') || 
+          bodyHTML.includes('Search returned no images') ||
+          bodyText.includes('no images') ||
+          bodyText.includes('error')) {
+        console.warn('❌ Street View error detected in iframe')
+        handleStreetViewError()
+        return
+      }
+      
+      // Check if body is completely empty (black screen)
+      if (bodyHTML.trim() === '' && bodyText.trim() === '') {
+        console.warn('❌ Iframe is empty (black screen)')
+        handleStreetViewError()
+        return
+      }
+      
+      // Success - iframe loaded with content
+      console.log('✅ Street View iframe loaded successfully')
+      streetViewLoading.value = false
+      streetViewError.value = false
+      streetViewCached.value = true
+    } catch (e) {
+      // CORS error - this is expected for Google Maps iframe
+      // If iframe loaded without @error event, assume it's working
+      console.log('⚠️ CORS - cannot access iframe content (expected for Google Maps)')
+      streetViewLoading.value = false
+      streetViewError.value = false
+      streetViewCached.value = true
+    }
+  }, 2000)
+}
+
+const checkStreetViewAvailability = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    if (!ad.value) {
+      resolve(false)
+      return
+    }
+
+    try {
+      // Load Google Maps API if not already loaded
+      if (typeof window.google === 'undefined' || !window.google.maps) {
+        console.log('Loading Google Maps API...')
+        const script = document.createElement('script')
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`
+        script.async = true
+        script.defer = true
+        script.onload = () => {
+          checkStreetViewWithAPI(resolve)
+        }
+        script.onerror = () => {
+          console.error('Failed to load Google Maps API')
+          resolve(false)
+        }
+        document.head.appendChild(script)
+      } else {
+        checkStreetViewWithAPI(resolve)
+      }
+    } catch (error) {
+      console.error('Error checking Street View:', error)
+      resolve(false)
+    }
+  })
+}
+
+const checkStreetViewWithAPI = (resolve: (available: boolean) => void) => {
+  if (!ad.value || typeof window.google === 'undefined') {
+    resolve(false)
+    return
+  }
+
+  try {
+    const streetViewService = new window.google.maps.StreetViewService()
+    const location = new window.google.maps.LatLng(ad.value.latitude, ad.value.longitude)
+
+    streetViewService.getPanorama(
+      { location: location, radius: 50 },
+      (_data: any, status: any) => {
+        if (status === window.google.maps.StreetViewStatus.OK) {
+          console.log('✅ Street View available')
+          resolve(true)
+        } else {
+          console.warn('❌ Street View not available:', status)
+          resolve(false)
+        }
+      }
+    )
+  } catch (error) {
+    console.error('Error with StreetViewService:', error)
+    resolve(false)
+  }
+}
+
+const toggleStreetView = async () => {
+  if (showStreetView.value) {
+    // Just hide it - keep cached state
+    showStreetView.value = false
+  } else {
+    // Show it
+    showStreetView.value = true
+    
+    // If not cached yet, check availability first
+    if (!streetViewCached.value) {
+      streetViewLoading.value = true
+      streetViewError.value = false
+      
+      // Check if Street View is available using Google Maps API
+      const available = await checkStreetViewAvailability()
+      
+      if (!available) {
+        // Street View not available
+        streetViewError.value = true
+        streetViewLoading.value = false
+        streetViewCached.value = true
+        console.warn('Street View not available for this location')
+        return
+      }
+      
+      // Street View is available, generate URL and load iframe
+      if (!streetViewUrl.value) {
+        streetViewUrl.value = getStreetViewEmbedUrl()
+      }
+      
+      // Set timeout - if not loaded in 3 seconds, show error
+      setTimeout(() => {
+        if (streetViewLoading.value) {
+          streetViewError.value = true
+          streetViewLoading.value = false
+          streetViewCached.value = true
+        }
+      }, 3000)
+    }
+  }
 }
 
 const initMap = () => {
@@ -1628,7 +1798,7 @@ onUnmounted(() => {
               <h2>Wirtualny spacer</h2>
               <button 
                 v-if="!showStreetView" 
-                @click="showStreetView = true"
+                @click="toggleStreetView"
                 class="btn btn-secondary street-view-toggle"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -1638,7 +1808,7 @@ onUnmounted(() => {
               </button>
               <button 
                 v-else 
-                @click="showStreetView = false"
+                @click="toggleStreetView"
                 class="btn btn-secondary street-view-toggle"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -1648,23 +1818,54 @@ onUnmounted(() => {
               </button>
             </div>
 
-            <div v-if="showStreetView" class="street-view-container">
+            <!-- Iframe always in DOM - never removed to prevent reloading -->
+            <div
+              class="street-view-cached-iframe"
+              :style="{ display: streetViewUrl && !showStreetView ? 'none' : 'block' }"
+            >
               <iframe
-                :src="getStreetViewEmbedUrl()"
+                v-if="streetViewUrl"
+                :src="streetViewUrl"
                 width="100%"
                 height="400"
                 style="border: none; border-radius: 8px;"
                 allowfullscreen
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
+                @error="handleStreetViewError"
+                @load="handleStreetViewLoad"
               ></iframe>
-              <p class="street-view-info">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            </div>
+
+            <div v-if="showStreetView" class="street-view-container">
+              <div v-if="streetViewError" class="street-view-error">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                  <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
-                Wirtualny spacer (Google Street View) pozwala zobaczyć lokalizację powierzchni reklamowej z perspektywy ulicy. Możesz obracać widok, zmieniać zoom i perspektywę.
-              </p>
+                <div>
+                  <h3>Street View niedostępny</h3>
+                  <p>Niestety, Google Street View nie jest dostępny dla tej lokalizacji. Przyczyny mogą być następujące:</p>
+                  <ul class="street-view-error-list">
+                    <li>Brak pokrycia Street View w tym obszarze</li>
+                    <li>Lokalizacja znajduje się w terenie niedostępnym dla Google Street View</li>
+                    <li>Czasowy problem z ładowaniem danych</li>
+                  </ul>
+                  <p>Możesz zobaczyć lokalizację na mapie powyżej lub skontaktować się z właścicielem nośnika, aby uzyskać więcej informacji.</p>
+                  <button @click="toggleStreetView" class="street-view-error-close">
+                    Zamknij
+                  </button>
+                </div>
+              </div>
+              <div v-else class="street-view-iframe-wrapper">
+                <p class="street-view-info">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  Wirtualny spacer (Google Street View) pozwala zobaczyć lokalizację powierzchni reklamowej z perspektywy ulicy. Możesz obracać widok, zmieniać zoom i perspektywę.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -3873,6 +4074,11 @@ onUnmounted(() => {
   padding: 0;
 }
 
+.street-view-cached-iframe {
+  display: none;
+  margin-bottom: 1rem;
+}
+
 .street-view-header {
   display: flex;
   justify-content: space-between;
@@ -3951,6 +4157,80 @@ onUnmounted(() => {
   flex-shrink: 0;
   margin-top: 2px;
   color: #667eea;
+}
+
+.street-view-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(220, 38, 38, 0.02));
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.street-view-error svg {
+  flex-shrink: 0;
+  color: #ef4444;
+  margin-top: 2px;
+}
+
+.street-view-error h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.street-view-error p {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.street-view-error p:last-child {
+  margin-bottom: 0;
+}
+
+.street-view-error-list {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.street-view-error-list li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.street-view-error-list li:last-child {
+  margin-bottom: 0;
+}
+
+.street-view-error-close {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.street-view-error-close:hover {
+  background: #b91c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+}
+
+.street-view-error-close:active {
+  transform: translateY(0);
 }
 
 @media (max-width: 768px) {
