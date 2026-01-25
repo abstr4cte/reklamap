@@ -247,7 +247,7 @@ const chartData = computed(() => {
 
 const chartOptions = computed(() => ({
   responsive: true,
-  maintainAspectRatio: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       display: true,
@@ -431,6 +431,17 @@ const addAdsToChart = (adIds: string[]) => {
 
 const setMetric = (metric: 'views' | 'clicks') => {
   chartMetric.value = metric
+}
+
+const showFullscreenChart = ref(false)
+
+const toggleFullscreenChart = () => {
+  showFullscreenChart.value = !showFullscreenChart.value
+  if (showFullscreenChart.value) {
+    document.body.classList.add('modal-open')
+  } else {
+    document.body.classList.remove('modal-open')
+  }
 }
 
 defineExpose({
@@ -744,7 +755,17 @@ defineExpose({
 
     <!-- Chart -->
     <div v-if="selectedAds.length > 0" class="chart-wrapper">
-      <Line :data="chartData" :options="chartOptions" />
+      <div class="chart-actions">
+        <button @click="toggleFullscreenChart" class="fullscreen-btn" title="Pokaż na pełnym ekranie">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="fullscreen-text">Pełny ekran</span>
+        </button>
+      </div>
+      <div class="chart-scroll-container">
+        <Line :data="chartData" :options="chartOptions" />
+      </div>
     </div>
     <div v-else class="chart-empty">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
@@ -752,6 +773,21 @@ defineExpose({
         <path d="M7 16v-6M12 16V8M17 16v-4" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
       </svg>
       <p>Wybierz co najmniej jedno ogłoszenie, aby zobaczyć wykres</p>
+    </div>
+
+    <!-- Fullscreen Chart Modal -->
+    <div v-if="showFullscreenChart" class="fullscreen-chart-modal">
+      <div class="fullscreen-chart-content">
+        <button @click="toggleFullscreenChart" class="fullscreen-close-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Zamknij
+        </button>
+        <div class="fullscreen-chart-container">
+          <Line :data="chartData" :options="{ ...chartOptions, maintainAspectRatio: false }" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -1150,6 +1186,12 @@ defineExpose({
   background: #f9fafb;
   border-radius: 8px;
   min-height: 400px;
+}
+
+.chart-scroll-container {
+  position: relative;
+  height: 400px;
+  width: 100%;
 }
 
 .chart-empty {
@@ -1579,9 +1621,17 @@ defineExpose({
   }
 
   .chart-wrapper {
-    min-height: 250px;
+    min-height: auto;
     padding: 1rem;
     margin-top: 1.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .chart-scroll-container {
+    min-width: 600px;
+    height: 300px;
+    position: relative;
   }
 
   /* Modal Mobile Styles */
@@ -1619,5 +1669,88 @@ defineExpose({
   .sort-btn {
     flex: 0 0 auto;
   }
+
+  .fullscreen-text {
+    display: none;
+  }
 }
+  .chart-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .fullscreen-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    color: #6b7280;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .fullscreen-btn:hover {
+    border-color: #667eea;
+    color: #667eea;
+    background: #f9fafb;
+  }
+
+  .fullscreen-chart-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .fullscreen-chart-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .fullscreen-close-btn {
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 8px;
+    color: #374151;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+
+  .fullscreen-chart-container {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (orientation: landscape) and (max-width: 900px) {
+    .fullscreen-chart-modal {
+      padding: 0.5rem;
+    }
+    
+    .fullscreen-close-btn {
+      padding: 0.5rem 1rem;
+      margin-bottom: 0.5rem;
+    }
+  }
 </style>
