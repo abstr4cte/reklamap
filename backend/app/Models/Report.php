@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Report extends Model
 {
-    protected $fillable = ['advertisement_id', 'reason', 'details'];
+    protected $fillable = ['advertisement_id', 'reason', 'details', 'status'];
 }

@@ -175,6 +175,9 @@ class AdvertisementController extends Controller
         // Check if location changed (latitude or longitude)
         $locationChanged = $ad->latitude != $validated['latitude'] || $ad->longitude != $validated['longitude'];
 
+        // Reset verification status when ad is edited
+        $validated['is_verified'] = false;
+
         $ad->update($validated);
 
         // Regenerate map screenshot if location changed

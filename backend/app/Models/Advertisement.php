@@ -46,6 +46,7 @@ class Advertisement extends Model
         'phone_clicks',
         'email_clicks',
         'is_active',
+        'is_verified',
         'phone',
         'contact_preference',
         'images',

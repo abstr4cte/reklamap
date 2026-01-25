@@ -441,12 +441,9 @@ const saveChanges = async (id: string) => {
     }
 
     toggleRow(id)
-    nextTick(() => {
-      const row = document.getElementById(`listing-row-${id}`)
-      if (row) {
-        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-      }
-    })
+    // Scroll to top of page
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
     toast.value?.add('Zmiany zostały zapisane', 'success')
   } catch (error) {
     console.error('Error saving changes:', error)
