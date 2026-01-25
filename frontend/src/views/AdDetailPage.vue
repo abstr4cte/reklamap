@@ -46,6 +46,8 @@ const dailyStatsViews = ref(0)
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 
+const showStreetView = ref(false)
+
 const currentImageIndex = ref(0)
 const showImagePreview = ref(false)
 const isZoomed = ref(false)
@@ -716,6 +718,31 @@ const toggleComparison = async () => {
   checkComparisonStatus()
   // Użyj niestandardowego zdarzenia, które działa w ramach tej samej karty
   window.dispatchEvent(new CustomEvent('localStorageChange'))
+}
+
+const getStreetViewEmbedUrl = (): string => {
+  if (!ad.value) return ''
+  
+  const lat = ad.value.latitude
+  const lng = ad.value.longitude
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+  
+  // Google Maps Embed API - Street View mode
+  // Format: https://www.google.com/maps/embed/v1/streetview?key=API_KEY&location=lat,lng
+  if (!apiKey) {
+    console.warn('Google Maps API key not configured')
+    return ''
+  }
+  
+  const params = new URLSearchParams({
+    key: apiKey,
+    location: `${lat},${lng}`,
+    heading: '0',
+    pitch: '0',
+    fov: '80'
+  })
+  
+  return `https://www.google.com/maps/embed/v1/streetview?${params.toString()}`
 }
 
 const initMap = () => {
@@ -1594,6 +1621,51 @@ onUnmounted(() => {
           <div class="map-section">
             <h2>Lokalizacja na mapie</h2>
             <div class="map-container" ref="mapContainer"></div>
+          </div>
+
+          <div class="street-view-section">
+            <div class="street-view-header">
+              <h2>Wirtualny spacer</h2>
+              <button 
+                v-if="!showStreetView" 
+                @click="showStreetView = true"
+                class="btn btn-secondary street-view-toggle"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" fill="currentColor"/>
+                </svg>
+                Pokaż Street View
+              </button>
+              <button 
+                v-else 
+                @click="showStreetView = false"
+                class="btn btn-secondary street-view-toggle"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" fill="currentColor"/>
+                </svg>
+                Ukryj Street View
+              </button>
+            </div>
+
+            <div v-if="showStreetView" class="street-view-container">
+              <iframe
+                :src="getStreetViewEmbedUrl()"
+                width="100%"
+                height="400"
+                style="border: none; border-radius: 8px;"
+                allowfullscreen
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
+              <p class="street-view-info">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Wirtualny spacer (Google Street View) pozwala zobaczyć lokalizację powierzchni reklamowej z perspektywy ulicy. Możesz obracać widok, zmieniać zoom i perspektywę.
+              </p>
+            </div>
           </div>
 
           <div class="description-section">
@@ -3793,5 +3865,114 @@ onUnmounted(() => {
 :deep(.leaflet-top),
 :deep(.leaflet-bottom) {
   z-index: 400 !important;
+}
+
+/* Street View Section */
+.street-view-section {
+  margin: 2rem 0;
+  padding: 0;
+}
+
+.street-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.street-view-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.street-view-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(79, 70, 229, 0.05));
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 8px;
+  color: #667eea;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.street-view-toggle:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(79, 70, 229, 0.1));
+  border-color: rgba(102, 126, 234, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.street-view-toggle:active {
+  transform: translateY(0);
+}
+
+.street-view-container {
+  animation: slideDown 0.3s ease;
+  margin-top: 1rem;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.street-view-container iframe {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.street-view-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(102, 126, 234, 0.05);
+  border-left: 3px solid #667eea;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+.street-view-info svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #667eea;
+}
+
+@media (max-width: 768px) {
+  .street-view-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .street-view-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .street-view-container iframe {
+    height: 300px !important;
+  }
+}
+
+@media print {
+  .street-view-section {
+    display: none !important;
+  }
 }
 </style>
