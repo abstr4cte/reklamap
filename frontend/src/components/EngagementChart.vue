@@ -155,12 +155,20 @@ const getDailyData = (adId: string, metric: 'clicks' | 'views') => {
         })
       } else {
         // Szukaj danych dla tej daty
-        // Porównuj daty jako stringi YYYY-MM-DD aby uniknąć problemów ze strefami czasowymi
-        const dateString = date.toISOString().split('T')[0]
+        // Użyj lokalnych komponentów daty aby uniknąć przesunięć stref czasowych
+        const year = date.getFullYear()
+        const month = String(date.getMonth() + 1).padStart(2, '0')
+        const day = String(date.getDate()).padStart(2, '0')
+        const dateString = `${year}-${month}-${day}`
+        
         const stat = allData.find((d: any) => {
-          const statDate = new Date(d.date)
-          const statDateString = statDate.toISOString().split('T')[0]
-          return statDateString === dateString
+          const dDate = new Date(d.date)
+          const dYear = dDate.getFullYear()
+          const dMonth = String(dDate.getMonth() + 1).padStart(2, '0')
+          const dDay = String(dDate.getDate()).padStart(2, '0')
+          const dDateString = `${dYear}-${dMonth}-${dDay}`
+          
+          return dDateString === dateString
         })
         
         data.push({
@@ -421,8 +429,13 @@ const addAdsToChart = (adIds: string[]) => {
   showAdSelector.value = false
 }
 
+const setMetric = (metric: 'views' | 'clicks') => {
+  chartMetric.value = metric
+}
+
 defineExpose({
   addAdsToChart,
+  setMetric,
   selectedAds
 })
 </script>

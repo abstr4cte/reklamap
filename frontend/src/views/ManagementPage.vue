@@ -445,10 +445,12 @@ const handleConfirmDelete = async () => {
 }
 
 // Handler dla dynamicznego dialogu potwierdzenia
+// Handler dla dynamicznego dialogu potwierdzenia
 const handleConfirmDialog = () => {
   if (pendingTopAdsToAdd.value.length > 0) {
-    executeAddTopAdsToChart(pendingTopAdsToAdd.value)
+    executeAddTopAdsToChart(pendingTopAdsToAdd.value, pendingTopAdsMetric.value)
     pendingTopAdsToAdd.value = []
+    pendingTopAdsMetric.value = undefined
   }
 }
 
@@ -1181,8 +1183,10 @@ const addAdToChart = (adId: string) => {
   }
 }
 
+const pendingTopAdsMetric = ref<'views' | 'clicks' | undefined>(undefined)
+
 // Dodaj top ogłoszenia do wykresu (nadpisz wszystkie)
-const addTopAdsToChart = (adIds: string[]) => {
+const addTopAdsToChart = (adIds: string[], metric?: 'views' | 'clicks') => {
   if (engagementChartRef.value) {
     const chartComponent = engagementChartRef.value as any
     let selectedAds: string[] = []
@@ -1197,6 +1201,7 @@ const addTopAdsToChart = (adIds: string[]) => {
     // Jeśli są już wybrane ogłoszenia, pokaż potwierdzenie
     if (selectedAds.length > 0) {
       pendingTopAdsToAdd.value = adIds
+      pendingTopAdsMetric.value = metric
       confirmDialogTitle.value = 'Nadpisać wybrane ogłoszenia?'
       confirmDialogMessage.value = `Masz już dodane ogłoszenia na wykresie. Nadpisać i dodać nowe z wybranej tabeli?`
       confirmDialogType.value = 'warning'
@@ -1205,12 +1210,12 @@ const addTopAdsToChart = (adIds: string[]) => {
     }
     
     // Jeśli nie ma poprzednich wyborów, dodaj od razu
-    executeAddTopAdsToChart(adIds)
+    executeAddTopAdsToChart(adIds, metric)
   }
 }
 
 // Wykonaj dodanie top ogłoszeń
-const executeAddTopAdsToChart = (adIds: string[]) => {
+const executeAddTopAdsToChart = (adIds: string[], metric?: 'views' | 'clicks') => {
   if (engagementChartRef.value) {
     const chartComponent = engagementChartRef.value as any
     
@@ -1223,6 +1228,12 @@ const executeAddTopAdsToChart = (adIds: string[]) => {
         chartComponent.selectedAds.push(id)
       })
     }
+    
+    // Ustaw metrykę jeśli podana
+    if (metric && typeof chartComponent.setMetric === 'function') {
+      chartComponent.setMetric(metric)
+    }
+
     // Scroll do wykresu z offsetem dla headera
     nextTick(() => {
       const chartElement = document.querySelector('.engagement-chart-container')
@@ -1240,15 +1251,15 @@ const executeAddTopAdsToChart = (adIds: string[]) => {
 
 // Statistics computed properties
 const totalViews = computed(() => {
-  return listings.value.reduce((sum, ad) => sum + (ad.views || 0), 0)
+  return listings.value.reduce((sum, ad) => sum + (ad.views_30d || 0), 0)
 })
 
 const totalPhoneClicks = computed(() => {
-  return listings.value.reduce((sum, ad) => sum + ((ad as any).phone_clicks || 0), 0)
+  return listings.value.reduce((sum, ad) => sum + (ad.phone_clicks_30d || 0), 0)
 })
 
 const totalEmailClicks = computed(() => {
-  return listings.value.reduce((sum, ad) => sum + ((ad as any).email_clicks || 0), 0)
+  return listings.value.reduce((sum, ad) => sum + (ad.email_clicks_30d || 0), 0)
 })
 
 const totalEngagement = computed(() => {
@@ -1453,7 +1464,7 @@ onBeforeUnmount(() => {
                     <h3>Najczęściej wyświetlane ogłoszenia</h3>
                     <button 
                       v-if="topPerformingAds.length > 0"
-                      @click="addTopAdsToChart(topPerformingAds.slice(0, 5).map(ad => ad.id))"
+                      @click="addTopAdsToChart(topPerformingAds.slice(0, 5).map(ad => ad.id), 'views')"
                       class="chart-quick-add-btn"
                       title="Dodaj top 5 do wykresu"
                     >
@@ -1507,7 +1518,7 @@ onBeforeUnmount(() => {
                     <h3>Najbardziej angażujące ogłoszenia</h3>
                     <button 
                       v-if="mostEngagingAds.length > 0"
-                      @click="addTopAdsToChart(mostEngagingAds.slice(0, 5).map(ad => ad.id))"
+                      @click="addTopAdsToChart(mostEngagingAds.slice(0, 5).map(ad => ad.id), 'clicks')"
                       class="chart-quick-add-btn"
                       title="Dodaj top 5 do wykresu"
                     >
