@@ -86,12 +86,18 @@ const colors = [
 const fetchDailyStats = async (adIds: string[]) => {
   if (adIds.length === 0) return
   
+  console.log('[EngagementChart] Fetching daily stats for:', adIds)
   isLoading.value = true
   try {
     const stats = await api.getMultipleDailyStats(adIds, 30)
+    console.log('[EngagementChart] Received stats from API:', stats)
+    
+    const newCache = { ...dailyStatsCache.value }
     stats.forEach((stat: any) => {
-      dailyStatsCache.value[stat.advertisement_id] = stat
+      newCache[stat.advertisement_id] = stat
     })
+    dailyStatsCache.value = newCache
+    console.log('[EngagementChart] Updated cache:', dailyStatsCache.value)
   } catch (error) {
     console.error('Failed to fetch daily stats:', error)
   } finally {
@@ -102,18 +108,15 @@ const fetchDailyStats = async (adIds: string[]) => {
 // Pobierz dane dzienne dla wybranego ogłoszenia
 const getDailyData = (adId: string, metric: 'clicks' | 'views') => {
   const cached = dailyStatsCache.value[adId]
+  // console.log(`[EngagementChart] Getting data for ${adId}, cached:`, cached)
+  const start = startDate.value || new Date()
+  const end = endDate.value || new Date()
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
   
   if (cached && cached.stats && cached.stats.length > 0) {
-    // Filtruj dane według wybranego zakresu dat
-    const start = startDate.value || new Date()
-    const end = endDate.value || new Date()
-    
     // Użyj rzeczywistych danych z backendu
-    return cached.stats
-      .filter((stat: any) => {
-        const statDate = new Date(stat.date)
-        return statDate >= start && statDate <= end
-      })
+    const allData = cached.stats
       .map((stat: any) => {
         let value = 0
         if (metric === 'clicks') {
@@ -129,49 +132,61 @@ const getDailyData = (adId: string, metric: 'clicks' | 'views') => {
         }
         
         return {
-          date: new Date(stat.date).toLocaleDateString('pl-PL', { month: 'short', day: 'numeric' }),
+          date: new Date(stat.date),
+          dateStr: new Date(stat.date).toLocaleDateString('pl-PL', { month: 'short', day: 'numeric' }),
           value
         }
       })
+    
+    // Generuj pełny zakres dat
+    const data = []
+    const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
+    
+    for (let i = 0; i < days; i++) {
+      const date = new Date(start)
+      date.setDate(date.getDate() + i)
+      date.setHours(0, 0, 0, 0)
+      
+      // Jeśli data jest w przyszłości, ustaw wartość na 0
+      if (date > today) {
+        data.push({
+          date: date.toLocaleDateString('pl-PL', { month: 'short', day: 'numeric' }),
+          value: 0
+        })
+      } else {
+        // Szukaj danych dla tej daty
+        // Porównuj daty jako stringi YYYY-MM-DD aby uniknąć problemów ze strefami czasowymi
+        const dateString = date.toISOString().split('T')[0]
+        const stat = allData.find((d: any) => {
+          const statDate = new Date(d.date)
+          const statDateString = statDate.toISOString().split('T')[0]
+          return statDateString === dateString
+        })
+        
+        data.push({
+          date: date.toLocaleDateString('pl-PL', { month: 'short', day: 'numeric' }),
+          value: stat ? stat.value : 0
+        })
+      }
+    }
+    
+    return data
   }
   
-  // Fallback: generuj symulowane dane jeśli brak rzeczywistych
+  // Fallback: zwróć zera jeśli brak danych (nie symuluj)
   const data = []
-  const start = startDate.value || new Date()
-  const end = endDate.value || new Date()
-  const ad = props.ads.find(a => a.id === adId)
-  
-  if (!ad) return []
   
   // Oblicz liczbę dni w wybranym zakresie
   const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
   
-  let total = 0
-  if (metric === 'clicks') {
-    if (clicksType.value === 'all') {
-      total = ((ad as any).phone_clicks || 0) + ((ad as any).email_clicks || 0)
-    } else if (clicksType.value === 'phone') {
-      total = (ad as any).phone_clicks || 0
-    } else if (clicksType.value === 'email') {
-      total = (ad as any).email_clicks || 0
-    }
-  } else {
-    total = (ad.views || 0)
-  }
-  
-  let cumulative = 0
   for (let i = 0; i < days; i++) {
     const date = new Date(start)
     date.setDate(date.getDate() + i)
-    
-    const trend = (i + 1) / days
-    const randomFactor = Math.random() * 0.5 + 0.5
-    const dailyValue = Math.floor((total / days) * trend * randomFactor)
-    cumulative += dailyValue
+    date.setHours(0, 0, 0, 0)
     
     data.push({
       date: date.toLocaleDateString('pl-PL', { month: 'short', day: 'numeric' }),
-      value: Math.min(cumulative, total)
+      value: 0
     })
   }
   

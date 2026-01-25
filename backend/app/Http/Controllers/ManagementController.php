@@ -60,6 +60,17 @@ class ManagementController extends Controller
         // Get all advertisements associated with this email
         $advertisements = Advertisement::where('owner_email', $managementToken->email)->get();
 
+        // Append aggregated daily stats for the last 30 days
+        foreach ($advertisements as $ad) {
+            $stats = \App\Models\AdvertisementDailyStat::where('advertisement_id', $ad->id)
+                ->where('date', '>=', Carbon::now()->subDays(30))
+                ->get();
+
+            $ad->views_30d = $stats->sum('views');
+            $ad->phone_clicks_30d = $stats->sum('phone_clicks');
+            $ad->email_clicks_30d = $stats->sum('email_clicks');
+        }
+
         return response()->json([
             'valid' => true,
             'email' => $managementToken->email,

@@ -1262,15 +1262,15 @@ const engagementRate = computed(() => {
 
 const topPerformingAds = computed(() => {
   return [...listings.value]
-    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .sort((a, b) => ((b.views_30d || 0) - (a.views_30d || 0)))
     .slice(0, 5)
 })
 
 const mostEngagingAds = computed(() => {
   return [...listings.value]
     .sort((a, b) => {
-      const aEngagement = ((a as any).phone_clicks || 0) + ((a as any).email_clicks || 0)
-      const bEngagement = ((b as any).phone_clicks || 0) + ((b as any).email_clicks || 0)
+      const aEngagement = (a.phone_clicks_30d || 0) + (a.email_clicks_30d || 0)
+      const bEngagement = (b.phone_clicks_30d || 0) + (b.email_clicks_30d || 0)
       return bEngagement - aEngagement
     })
     .slice(0, 5)
@@ -1475,12 +1475,12 @@ onBeforeUnmount(() => {
                           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
                           <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
                         </svg>
-                        {{ ad.views || 0 }}
+                        {{ ad.views_30d || 0 }}
                       </div>
                       <div class="chart-item-bar">
                         <div 
                           class="chart-item-bar-fill" 
-                          :style="{ width: `${(ad.views || 0) / (topPerformingAds[0]?.views || 1) * 100}%` }"
+                          :style="{ width: `${(ad.views_30d || 0) / (topPerformingAds[0]?.views_30d || 1) * 100}%` }"
                         ></div>
                       </div>
                       <button 
@@ -1528,12 +1528,12 @@ onBeforeUnmount(() => {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                           <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        {{ ((ad as any).phone_clicks || 0) + ((ad as any).email_clicks || 0) }}
+                        {{ (ad.phone_clicks_30d || 0) + (ad.email_clicks_30d || 0) }}
                       </div>
                       <div class="chart-item-bar">
                         <div 
                           class="chart-item-bar-fill engagement" 
-                          :style="{ width: `${(((ad as any).phone_clicks || 0) + ((ad as any).email_clicks || 0)) / Math.max(((mostEngagingAds[0] as any)?.phone_clicks || 0) + ((mostEngagingAds[0] as any)?.email_clicks || 0), 1) * 100}%` }"
+                          :style="{ width: `${((ad.phone_clicks_30d || 0) + (ad.email_clicks_30d || 0)) / Math.max(((mostEngagingAds[0]?.phone_clicks_30d || 0) + (mostEngagingAds[0]?.email_clicks_30d || 0)), 1) * 100}%` }"
                         ></div>
                       </div>
                       <button 

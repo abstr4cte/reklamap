@@ -56,4 +56,7 @@ export interface Advertisement {
     route_area?: string
     campaign_duration?: number
     map_screenshot_path?: string
+    views_30d?: number
+    phone_clicks_30d?: number
+    email_clicks_30d?: number
 }
