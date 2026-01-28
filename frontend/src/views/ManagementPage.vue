@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { api } from '../services/api'
 import axios from '../api/axios'
@@ -220,7 +220,7 @@ const loadAdvertisements = async () => {
     // Sprawdź, czy mamy token w parametrach ścieżki (priorytet) lub URL query
     const token = (route.params.token as string) || (route.query.token as string)
     
-    if (token) {
+    if (token && token !== 'undefined' && token !== 'null') {
       // Jeśli mamy token, pobierz ogłoszenia dla tego tokena
       try {
         const response = await axios.get(`/api/management/validate/${token}`)
@@ -278,6 +278,8 @@ const loadAdvertisements = async () => {
       // Brak tokena, pokaż formularz email
       hasToken.value = false
       isTokenInvalid.value = false
+      isSuccess.value = false
+      listings.value = []
       // Nie pobieramy ogłoszeń, gdy nie ma tokena
     }
   } catch (error) {
@@ -1351,6 +1353,10 @@ onMounted(async () => {
   document.addEventListener('click', handleClickOutside)
 })
 
+watch(() => [route.params.token, route.query.token], () => {
+  loadAdvertisements()
+})
+
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
 })
@@ -1396,7 +1402,68 @@ onBeforeUnmount(() => {
           </button>
         </div>
         
-        <div v-else-if="hasToken">
+        <div v-else-if="!hasToken" class="content-card">
+          <div v-if="!isSuccess" class="card-body">
+            <div class="icon-wrapper">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#667eea" stroke-width="2"/>
+                <path d="M3 9h18M9 3v18" stroke="#667eea" stroke-width="2"/>
+              </svg>
+            </div>
+
+            <h1>Panel zarządzania ogłoszeniami</h1>
+            <p class="description">
+              Podaj swój adres e-mail, aby otrzymać link do panelu zarządzania Twoimi ogłoszeniami.
+            </p>
+
+            <form @submit.prevent="handleSubmit" class="email-form">
+              <div class="input-wrapper">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 4H17C17.55 4 18 4.45 18 5V15C18 15.55 17.55 16 17 16H3C2.45 16 2 15.55 2 15V5C2 4.45 2.45 4 3 4Z" stroke="#4F46E5" stroke-width="1.5"/>
+                  <path d="M18 5L10 11L2 5" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <input
+                  v-model="email"
+                  type="email"
+                  placeholder="twoj@email.com"
+                  required
+                  class="email-input"
+                />
+              </div>
+              
+              <div v-if="errorMessage" class="error-message">
+                {{ errorMessage }}
+              </div>
+
+              <button type="submit" :disabled="isSubmitting" class="submit-btn">
+                <span v-if="!isSubmitting">Wyślij link do panelu</span>
+                <span v-else class="loading">Wysyłam...</span>
+              </button>
+              
+              <p class="info-text">
+                Link będzie ważny przez 24 godziny
+              </p>
+            </form>
+          </div>
+
+          <div v-else class="success-body">
+            <div class="success-icon">
+              <svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="32" fill="#10B981" opacity="0.1"/>
+                <circle cx="32" cy="32" r="24" fill="#10B981"/>
+                <path d="M22 32L28 38L42 24" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h2 class="success-title">Link został wysłany!</h2>
+            <p class="success-description">
+              Sprawdź swoją skrzynkę odbiorczą na adresie <strong>{{ email }}</strong>
+              <br>
+              <span class="redirect-info">Za chwilę nastąpi przekierowanie na stronę główną...</span>
+            </p>
+          </div>
+        </div>
+
+        <div v-else>
           <div v-if="listings.length === 0" class="empty-state">
             <svg width="120" height="120" viewBox="0 0 24 24" fill="none">
               <rect x="3" y="3" width="18" height="18" rx="2" stroke="#d1d5db" stroke-width="2"/>
@@ -2160,66 +2227,7 @@ onBeforeUnmount(() => {
           </div>
         </div>
         
-        <div v-else class="content-card">
-          <div v-if="!isSuccess" class="card-body">
-            <div class="icon-wrapper">
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#667eea" stroke-width="2"/>
-                <path d="M3 9h18M9 3v18" stroke="#667eea" stroke-width="2"/>
-              </svg>
-            </div>
 
-            <h1>Panel zarządzania ogłoszeniami</h1>
-            <p class="description">
-              Podaj swój adres e-mail, aby otrzymać link do panelu zarządzania Twoimi ogłoszeniami.
-            </p>
-
-            <form @submit.prevent="handleSubmit" class="email-form">
-              <div class="input-wrapper">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3 4H17C17.55 4 18 4.45 18 5V15C18 15.55 17.55 16 17 16H3C2.45 16 2 15.55 2 15V5C2 4.45 2.45 4 3 4Z" stroke="#4F46E5" stroke-width="1.5"/>
-                  <path d="M18 5L10 11L2 5" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <input
-                  v-model="email"
-                  type="email"
-                  placeholder="twoj@email.com"
-                  required
-                  class="email-input"
-                />
-              </div>
-              
-              <div v-if="errorMessage" class="error-message">
-                {{ errorMessage }}
-              </div>
-
-              <button type="submit" :disabled="isSubmitting" class="submit-btn">
-                <span v-if="!isSubmitting">Wyślij link do panelu</span>
-                <span v-else class="loading">Wysyłam...</span>
-              </button>
-              
-              <p class="info-text">
-                Link będzie ważny przez 24 godziny
-              </p>
-            </form>
-          </div>
-
-          <div v-else class="success-body">
-            <div class="success-icon">
-              <svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="32" cy="32" r="32" fill="#10B981" opacity="0.1"/>
-                <circle cx="32" cy="32" r="24" fill="#10B981"/>
-                <path d="M22 32L28 38L42 24" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <h2 class="success-title">Link został wysłany!</h2>
-            <p class="success-description">
-              Sprawdź swoją skrzynkę odbiorczą na adresie <strong>{{ email }}</strong>
-              <br>
-              <span class="redirect-info">Za chwilę nastąpi przekierowanie na stronę główną...</span>
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
