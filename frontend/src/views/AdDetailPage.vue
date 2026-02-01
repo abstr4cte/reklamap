@@ -341,6 +341,11 @@ const showVariant = computed(() => {
 
 const surfaceArea = computed(() => {
   if (ad.value?.width && ad.value?.height) {
+    // Dla LED screens wymiary są w mm, konwertuj na m²
+    if (ad.value.type === 'led_screen') {
+      return ((ad.value.width * ad.value.height) / 1000000).toFixed(2)
+    }
+    // Dla pozostałych typów wymiary są w metrach
     return (ad.value.width * ad.value.height).toFixed(2)
   }
   return '0'
@@ -466,6 +471,21 @@ const getPriceUnitLabel = (priceUnit: string): string => {
 }
 
 // Computed properties for LED screen specific fields
+const showResolution = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'led_screen' && (ad.value as any).resolution && (ad.value as any).resolution.trim() !== ''
+})
+
+const showPixelPitch = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'led_screen' && (ad.value as any).pixel_pitch && (ad.value as any).pixel_pitch > 0
+})
+
+const showBrightness = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'led_screen' && (ad.value as any).brightness && (ad.value as any).brightness > 0
+})
+
 const showSpotDuration = computed(() => {
   if (!ad.value) return false
   return ad.value.type === 'led_screen' && ad.value.spot_duration && ad.value.spot_duration > 0
@@ -1664,7 +1684,10 @@ onUnmounted(() => {
 
               <div v-if="showDimensions" class="spec-item">
                 <div class="spec-label">Wymiary</div>
-                <div class="spec-value">{{ ad.width }}m × {{ ad.height }}m ({{ surfaceArea }} m²)</div>
+                <div class="spec-value">
+                  <span v-if="ad.type === 'led_screen'">{{ ad.width }}mm × {{ ad.height }}mm ({{ surfaceArea }} m²)</span>
+                  <span v-else>{{ ad.width }}m × {{ ad.height }}m ({{ surfaceArea }} m²)</span>
+                </div>
               </div>
 
               <div v-if="showVariant" class="spec-item">
@@ -1714,6 +1737,21 @@ onUnmounted(() => {
               <div v-if="showEnvironment" class="spec-item">
                 <div class="spec-label">Środowisko</div>
                 <div class="spec-value">{{ getEnvironmentLabel(ad.environment!) }}</div>
+              </div>
+
+              <div v-if="showResolution" class="spec-item">
+                <div class="spec-label">Rozdzielczość</div>
+                <div class="spec-value">{{ (ad as any).resolution }}</div>
+              </div>
+
+              <div v-if="showPixelPitch" class="spec-item">
+                <div class="spec-label">Pixel Pitch</div>
+                <div class="spec-value">{{ (ad as any).pixel_pitch }} mm</div>
+              </div>
+
+              <div v-if="showBrightness" class="spec-item">
+                <div class="spec-label">Jasność</div>
+                <div class="spec-value">{{ (ad as any).brightness }} nits</div>
               </div>
 
               <div v-if="showSpotDuration" class="spec-item">

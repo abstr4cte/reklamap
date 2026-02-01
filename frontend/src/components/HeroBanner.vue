@@ -35,10 +35,12 @@ interface Filters {
   // Type-specific filters
   variant: string
   roadClass: string
-  spotDurationFrom: number | null
-  spotDurationTo: number | null
-  loopDurationFrom: number | null
-  loopDurationTo: number | null
+  // LED screen filters
+  resolution: string
+  pixelPitchFrom: number | null
+  pixelPitchTo: number | null
+  brightnessFrom: number | null
+  brightnessTo: number | null
   transportScope: string
   vehicleCountFrom: number | null
   vehicleCountTo: number | null
@@ -85,10 +87,12 @@ const filters = ref<Filters>({
   // Type-specific filters
   variant: '',
   roadClass: '',
-  spotDurationFrom: null,
-  spotDurationTo: null,
-  loopDurationFrom: null,
-  loopDurationTo: null,
+  // LED screen filters
+  resolution: '',
+  pixelPitchFrom: null,
+  pixelPitchTo: null,
+  brightnessFrom: null,
+  brightnessTo: null,
   transportScope: '',
   vehicleCountFrom: null,
   vehicleCountTo: null,
@@ -354,10 +358,12 @@ const resetFilters = () => {
     // Type-specific filters
     variant: '',
     roadClass: '',
-    spotDurationFrom: null,
-    spotDurationTo: null,
-    loopDurationFrom: null,
-    loopDurationTo: null,
+    // LED screen filters
+    resolution: '',
+    pixelPitchFrom: null,
+    pixelPitchTo: null,
+    brightnessFrom: null,
+    brightnessTo: null,
     transportScope: '',
     vehicleCountFrom: null,
     vehicleCountTo: null,
@@ -396,7 +402,7 @@ const showTrafficIntensityFilter = computed(() => {
 
 const showDimensionsFilter = computed(() => {
   const type = filters.value.type
-  return ['billboard', 'citylight', 'banner', 'wall'].includes(type)
+  return ['billboard', 'citylight', 'banner', 'wall', 'led_screen'].includes(type)
 })
 
 // Type-specific filter visibility
@@ -548,8 +554,8 @@ const availablePriceUnits = computed(() => {
     ]
   } else if (type === 'led_screen') {
     return [
-      { value: 'day', label: 'za dzień (emisje)' },
-      { value: 'month', label: 'za miesiąc (emisje)' },
+      { value: 'day', label: 'za dzień' },
+      { value: 'month', label: 'za miesiąc' },
       { value: 'campaign', label: 'za kampanię' }
     ]
   } else if (type === 'transport') {
@@ -783,13 +789,13 @@ onBeforeUnmount(() => {
                 <h4 class="section-title">Wymiary i powierzchnia</h4>
                 <div class="search-row">
                   <div class="input-group">
-                    <label class="input-label">Szerokość (m)</label>
+                    <label class="input-label">Szerokość ({{ filters.type === 'led_screen' ? 'mm' : 'm' }})</label>
                     <div class="range-input">
                       <input
                         v-model.number="filters.widthFrom"
                         type="number"
                         placeholder="Od"
-                        step="0.1"
+                        :step="filters.type === 'led_screen' ? '1' : '0.1'"
                         class="search-input"
                       />
                       <span class="separator">-</span>
@@ -797,19 +803,19 @@ onBeforeUnmount(() => {
                         v-model.number="filters.widthTo"
                         type="number"
                         placeholder="Do"
-                        step="0.1"
+                        :step="filters.type === 'led_screen' ? '1' : '0.1'"
                         class="search-input"
                       />
                     </div>
                   </div>
                   <div class="input-group">
-                    <label class="input-label">Wysokość (m)</label>
+                    <label class="input-label">Wysokość ({{ filters.type === 'led_screen' ? 'mm' : 'm' }})</label>
                     <div class="range-input">
                       <input
                         v-model.number="filters.heightFrom"
                         type="number"
                         placeholder="Od"
-                        step="0.1"
+                        :step="filters.type === 'led_screen' ? '1' : '0.1'"
                         class="search-input"
                       />
                       <span class="separator">-</span>
@@ -817,7 +823,7 @@ onBeforeUnmount(() => {
                         v-model.number="filters.heightTo"
                         type="number"
                         placeholder="Do"
-                        step="0.1"
+                        :step="filters.type === 'led_screen' ? '1' : '0.1'"
                         class="search-input"
                       />
                     </div>
@@ -944,35 +950,46 @@ onBeforeUnmount(() => {
                 <!-- LED Screen Filters -->
                 <div v-if="showLEDFilters" class="search-row">
                   <div class="input-group">
-                    <label class="input-label">Czas spotu (sekundy)</label>
+                    <label class="input-label">Rozdzielczość</label>
+                    <input
+                      v-model="filters.resolution"
+                      type="text"
+                      placeholder="np. 1920x1080"
+                      class="search-input"
+                    />
+                  </div>
+                  <div class="input-group">
+                    <label class="input-label">Pixel Pitch (mm)</label>
                     <div class="range-input">
                       <input
-                        v-model.number="filters.spotDurationFrom"
+                        v-model.number="filters.pixelPitchFrom"
                         type="number"
+                        step="0.1"
                         placeholder="Od"
                         class="search-input"
                       />
                       <span class="separator">-</span>
                       <input
-                        v-model.number="filters.spotDurationTo"
+                        v-model.number="filters.pixelPitchTo"
                         type="number"
+                        step="0.1"
                         placeholder="Do"
                         class="search-input"
                       />
                     </div>
                   </div>
                   <div class="input-group">
-                    <label class="input-label">Pętla emisji (sekundy)</label>
+                    <label class="input-label">Jasność (nits)</label>
                     <div class="range-input">
                       <input
-                        v-model.number="filters.loopDurationFrom"
+                        v-model.number="filters.brightnessFrom"
                         type="number"
                         placeholder="Od"
                         class="search-input"
                       />
                       <span class="separator">-</span>
                       <input
-                        v-model.number="filters.loopDurationTo"
+                        v-model.number="filters.brightnessTo"
                         type="number"
                         placeholder="Do"
                         class="search-input"

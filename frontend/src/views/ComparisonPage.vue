@@ -112,6 +112,10 @@ const handleConfirmClear = () => {
 
 const getSurfaceArea = (ad: Advertisement) => {
   if (ad.width && ad.height) {
+    // Dla LED screens wymiary są w mm, konwertuj na m²
+    if (ad.type === 'led_screen') {
+      return ((ad.width * ad.height) / 1000000).toFixed(2)
+    }
     return (ad.width * ad.height).toFixed(2)
   }
   return '0'
@@ -289,7 +293,12 @@ const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
     case 'type':
       return getTypeLabel(ad.type)
     case 'dimensions':
-      return ad.width && ad.height ? `${ad.width}m × ${ad.height}m` : '—'
+      if (!ad.width || !ad.height) return '—'
+      // Dla LED screens wymiary są w mm
+      if (ad.type === 'led_screen') {
+        return `${ad.width}mm × ${ad.height}mm`
+      }
+      return `${ad.width}m × ${ad.height}m`
     case 'surface_area':
       return `${getSurfaceArea(ad)} m²`
     case 'orientation':
@@ -338,6 +347,12 @@ const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
       return (ad as any).route_area || '—'
     case 'operating_hours':
       return (ad as any).operating_hours || '—'
+    case 'resolution':
+      return (ad as any).resolution || '—'
+    case 'pixel_pitch':
+      return (ad as any).pixel_pitch ? `${(ad as any).pixel_pitch} mm` : '—'
+    case 'brightness':
+      return (ad as any).brightness ? `${(ad as any).brightness} nits` : '—'
     default:
       return '—'
   }

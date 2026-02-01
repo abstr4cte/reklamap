@@ -73,7 +73,11 @@ const formData = ref({
   mobileExposureMode: '' as '' | 'moving' | 'stationary' | 'mixed',
   operatingHours: '',
   routeArea: '',
-  campaignDuration: null as number | null
+  campaignDuration: null as number | null,
+  // Pola techniczne dla LED screens
+  resolution: '' as string,
+  pixelPitch: null as number | null,
+  brightness: null as number | null
 })
 
 const minDate = new Date()
@@ -223,8 +227,8 @@ const availablePriceUnits = computed(() => {
     return [{ value: 'month', label: 'za miesiąc' }]
   } else if (type === 'led_screen') {
     return [
-      { value: 'day', label: 'za dzień (emisje)' },
-      { value: 'month', label: 'za miesiąc (emisje)' },
+      { value: 'day', label: 'za dzień' },
+      { value: 'month', label: 'za miesiąc' },
       { value: 'campaign', label: 'za kampanię' }
     ]
   } else if (type === 'totem') {
@@ -312,7 +316,7 @@ const variantOptions = computed(() => {
 
 const requiresDimensions = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall'].includes(type)
+  return ['billboard', 'banner', 'wall', 'led_screen'].includes(type)
 })
 
 const optionalDimensions = computed(() => {
@@ -322,7 +326,7 @@ const optionalDimensions = computed(() => {
 
 const hideDimensions = computed(() => {
   const type = formData.value.type
-  return ['transport', 'mobile', 'other', 'led_screen', 'totem'].includes(type)
+  return ['transport', 'mobile', 'other', 'totem'].includes(type)
 })
 
 // Computed properties for option visibility based on ad type
@@ -363,8 +367,9 @@ const showTrafficType = computed(() => {
 
 const showPricePerSqm = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall', 'citylight'].includes(type)
+  return ['billboard', 'banner', 'wall', 'citylight', 'led_screen'].includes(type)
 })
+
 
 const showEnvironmentField = computed(() => {
   const type = formData.value.type
@@ -882,15 +887,6 @@ const validateStep = (step: number): boolean => {
       if (!formData.value.offerType) {
         errors.value.offerType = 'Rodzaj oferty jest wymagany'
       }
-      // Walidacja specyficzna dla LED
-      if (formData.value.type === 'led_screen') {
-        if (!formData.value.spotDuration || formData.value.spotDuration <= 0) {
-          errors.value.spotDuration = 'Czas spotu jest wymagany dla ekranów LED'
-        }
-        if (!formData.value.loopDuration || formData.value.loopDuration <= 0) {
-          errors.value.loopDuration = 'Pętla emisji jest wymagana dla ekranów LED'
-        }
-      }
       // Walidacja dla transportu
       if (formData.value.type === 'transport') {
         if (!formData.value.transportScope) {
@@ -1045,7 +1041,6 @@ const handleSubmit = async () => {
         image_url: mainImageUrl,
         has_image: imageUrls.length > 0,
         offer_type: formData.value.offerType,
-        views: 0,
         is_active: true,
         images: imageUrls,
         // Nowe pola specyficzne dla typów
@@ -1058,8 +1053,9 @@ const handleSubmit = async () => {
           ? formData.value.trafficType 
           : null,
         environment: formData.value.environment || null,
-        spot_duration: formData.value.spotDuration || null,
-        loop_duration: formData.value.loopDuration || null,
+        resolution: formData.value.resolution || null,
+        pixel_pitch: formData.value.pixelPitch || null,
+        brightness: formData.value.brightness || null,
         transport_scope: formData.value.transportScope || null,
         vehicle_count: formData.value.vehicleCount || null,
         mobile_exposure_mode: formData.value.mobileExposureMode || null,
@@ -1403,8 +1399,39 @@ onMounted(() => {
         <div v-show="currentStep === 3" class="step-section">
           <h2>{{ hideDimensions ? 'Lokalizacja' : 'Wymiary i lokalizacja' }}</h2>
 
-          <!-- Wymiary - REQUIRED dla billboard, banner, wall, citylight -->
-          <div v-if="!hideDimensions" class="form-row">
+          <!-- Wymiary dla LED screens (mm) -->
+          <div v-if="formData.type === 'led_screen'" class="form-row">
+            <div class="form-group">
+              <label class="form-label">Szerokość (mm) <span class="required">*</span></label>
+              <input
+                v-model.number="formData.width"
+                type="number"
+                step="1"
+                class="form-input"
+                :class="{ 'error': errors.width }"
+                placeholder="2000"
+              />
+              <span v-if="errors.width" class="error-text">{{ errors.width }}</span>
+              <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Szerokość ekranu w milimetrach</p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Wysokość (mm) <span class="required">*</span></label>
+              <input
+                v-model.number="formData.height"
+                type="number"
+                step="1"
+                class="form-input"
+                :class="{ 'error': errors.height }"
+                placeholder="1000"
+              />
+              <span v-if="errors.height" class="error-text">{{ errors.height }}</span>
+              <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Wysokość ekranu w milimetrach</p>
+            </div>
+          </div>
+
+          <!-- Wymiary dla pozostałych typów (m) -->
+          <div v-if="!hideDimensions && formData.type !== 'led_screen'" class="form-row">
             <div class="form-group">
               <label class="form-label">
                 Szerokość (m) 
@@ -1438,8 +1465,11 @@ onMounted(() => {
             </div>
           </div>
 
+          <!-- Powierzchnia i cena za m² (dla LED i billboardów) -->
           <div v-if="!hideDimensions && formData.width && formData.height" class="surface-display">
-            <strong>Powierzchnia:</strong> {{ surface }} m²
+            <strong>Powierzchnia:</strong> 
+            <span v-if="formData.type === 'led_screen'">{{ (formData.width * formData.height / 1000000).toFixed(2) }} m²</span>
+            <span v-else>{{ surface }} m²</span>
             <span v-if="formData.price" class="surface-price">
               ({{ pricePerSqm }} PLN/m²)
             </span>
@@ -1632,33 +1662,44 @@ onMounted(() => {
             </select>
           </div>
 
-          <!-- Pola specyficzne dla LED -->
+          <!-- Parametry techniczne dla LED screens -->
           <div v-if="formData.type === 'led_screen'">
+            <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; font-size: 0.95rem; color: #374151;">Parametry techniczne (opcjonalnie)</h3>
+            
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">Czas spotu (sekundy) <span class="required">*</span></label>
+                <label class="form-label">Rozdzielczość (piksele)</label>
                 <input
-                  v-model.number="formData.spotDuration"
-                  type="number"
-                  step="1"
+                  v-model="formData.resolution"
+                  type="text"
                   class="form-input"
-                  :class="{ 'error': errors.spotDuration }"
-                  placeholder="10"
+                  placeholder="np. 1920x1080"
                 />
-                <span v-if="errors.spotDuration" class="error-text">{{ errors.spotDuration }}</span>
+                <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Przykład: 1920x1080, 3840x2160, 1280x720</p>
               </div>
 
               <div class="form-group">
-                <label class="form-label">Pętla emisji (sekundy) <span class="required">*</span></label>
+                <label class="form-label">Pixel Pitch (mm)</label>
                 <input
-                  v-model.number="formData.loopDuration"
+                  v-model.number="formData.pixelPitch"
                   type="number"
-                  step="1"
+                  step="0.1"
                   class="form-input"
-                  :class="{ 'error': errors.loopDuration }"
-                  placeholder="120"
+                  placeholder="np. 3.9"
                 />
-                <span v-if="errors.loopDuration" class="error-text">{{ errors.loopDuration }}</span>
+                <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Przykład: 3.9, 6.67, 10</p>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Jasność (nits)</label>
+                <input
+                  v-model.number="formData.brightness"
+                  type="number"
+                  step="100"
+                  class="form-input"
+                  placeholder="np. 5000"
+                />
+                <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Przykład: 5000, 6500, 8000</p>
               </div>
             </div>
           </div>

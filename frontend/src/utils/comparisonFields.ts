@@ -57,14 +57,16 @@ export const typeFieldsConfig: Record<string, ComparisonField[]> = {
   ],
   led_screen: [
     { key: 'price', label: 'Cena', required: true },
+    { key: 'price_per_sqm', label: 'Cena za m²', required: true },
     { key: 'type', label: 'Typ powierzchni', required: true },
     { key: 'variant', label: 'Wariant', required: true },
     { key: 'dimensions', label: 'Wymiary (szer × wys)', required: false },
     { key: 'surface_area', label: 'Powierzchnia', required: false },
     { key: 'location', label: 'Lokalizacja', required: true },
     { key: 'environment', label: 'Środowisko', required: false },
-    { key: 'spot_duration', label: 'Czas spotu (s)', required: true },
-    { key: 'loop_duration', label: 'Pętla emisji (s)', required: true },
+    { key: 'resolution', label: 'Rozdzielczość', required: false },
+    { key: 'pixel_pitch', label: 'Pixel Pitch (mm)', required: false },
+    { key: 'brightness', label: 'Jasność (nits)', required: false },
     { key: 'has_backlight', label: 'Podświetlenie', required: false },
     { key: 'status', label: 'Status', required: true },
     { key: 'offer_type', label: 'Rodzaj oferty', required: true },
@@ -179,12 +181,30 @@ export function shouldShowField(field: ComparisonField, ads: any[]): boolean {
 function getFieldValue(key: string, ad: any): any {
   switch (key) {
     case 'price_per_sqm':
-      const area = ad.width && ad.height ? ad.width * ad.height : 0
+      let area = 0
+      if (ad.width && ad.height) {
+        // Dla LED screens wymiary są w mm, konwertuj na m²
+        if (ad.type === 'led_screen') {
+          area = (ad.width * ad.height) / 1000000
+        } else {
+          area = ad.width * ad.height
+        }
+      }
       return area > 0 ? ad.price / area : null
     case 'surface_area':
-      return ad.width && ad.height ? ad.width * ad.height : null
+      if (!ad.width || !ad.height) return null
+      // Dla LED screens wymiary są w mm, konwertuj na m²
+      if (ad.type === 'led_screen') {
+        return (ad.width * ad.height) / 1000000
+      }
+      return ad.width * ad.height
     case 'dimensions':
-      return ad.width && ad.height ? `${ad.width}m × ${ad.height}m` : null
+      if (!ad.width || !ad.height) return null
+      // Dla LED screens wymiary są w mm
+      if (ad.type === 'led_screen') {
+        return `${ad.width}mm × ${ad.height}mm`
+      }
+      return `${ad.width}m × ${ad.height}m`
     case 'location_tier':
       // Oblicz klasę lokalizacji dla billboardu
       if (ad.type !== 'billboard') return null

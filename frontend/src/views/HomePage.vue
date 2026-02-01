@@ -59,10 +59,12 @@ interface Filters {
   // Type-specific filters
   variant: string
   roadClass: string
-  spotDurationFrom: number | null
-  spotDurationTo: number | null
-  loopDurationFrom: number | null
-  loopDurationTo: number | null
+  // LED screen filters
+  resolution: string
+  pixelPitchFrom: number | null
+  pixelPitchTo: number | null
+  brightnessFrom: number | null
+  brightnessTo: number | null
   transportScope: string
   vehicleCountFrom: number | null
   vehicleCountTo: number | null
@@ -101,10 +103,12 @@ const filters = ref<Filters>({
   // Type-specific filters
   variant: '',
   roadClass: '',
-  spotDurationFrom: null,
-  spotDurationTo: null,
-  loopDurationFrom: null,
-  loopDurationTo: null,
+  // LED screen filters
+  resolution: '',
+  pixelPitchFrom: null,
+  pixelPitchTo: null,
+  brightnessFrom: null,
+  brightnessTo: null,
   transportScope: '',
   vehicleCountFrom: null,
   vehicleCountTo: null,
@@ -178,13 +182,21 @@ const sortedAndFilteredListings = computed(() => {
   // Surface area filters
   if (filters.value.surfaceFrom !== null) {
     filtered = filtered.filter(ad => {
-      const surface = ad.width * ad.height
+      let surface = ad.width * ad.height
+      // Convert mm² to m² for LED screens
+      if (ad.type === 'led_screen') {
+        surface = surface / 1000000 // mm² to m²
+      }
       return surface >= filters.value.surfaceFrom!
     })
   }
   if (filters.value.surfaceTo !== null) {
     filtered = filtered.filter(ad => {
-      const surface = ad.width * ad.height
+      let surface = ad.width * ad.height
+      // Convert mm² to m² for LED screens
+      if (ad.type === 'led_screen') {
+        surface = surface / 1000000 // mm² to m²
+      }
       return surface <= filters.value.surfaceTo!
     })
   }
@@ -239,17 +251,20 @@ const sortedAndFilteredListings = computed(() => {
   }
 
   // LED-specific filters
-  if (filters.value.spotDurationFrom !== null) {
-    filtered = filtered.filter(ad => ad.spot_duration && ad.spot_duration >= filters.value.spotDurationFrom!)
+  if (filters.value.resolution) {
+    filtered = filtered.filter(ad => ad.resolution && ad.resolution.toLowerCase().includes(filters.value.resolution.toLowerCase()))
   }
-  if (filters.value.spotDurationTo !== null) {
-    filtered = filtered.filter(ad => ad.spot_duration && ad.spot_duration <= filters.value.spotDurationTo!)
+  if (filters.value.pixelPitchFrom !== null) {
+    filtered = filtered.filter(ad => (ad as any).pixel_pitch && (ad as any).pixel_pitch >= filters.value.pixelPitchFrom!)
   }
-  if (filters.value.loopDurationFrom !== null) {
-    filtered = filtered.filter(ad => ad.loop_duration && ad.loop_duration >= filters.value.loopDurationFrom!)
+  if (filters.value.pixelPitchTo !== null) {
+    filtered = filtered.filter(ad => (ad as any).pixel_pitch && (ad as any).pixel_pitch <= filters.value.pixelPitchTo!)
   }
-  if (filters.value.loopDurationTo !== null) {
-    filtered = filtered.filter(ad => ad.loop_duration && ad.loop_duration <= filters.value.loopDurationTo!)
+  if (filters.value.brightnessFrom !== null) {
+    filtered = filtered.filter(ad => (ad as any).brightness && (ad as any).brightness >= filters.value.brightnessFrom!)
+  }
+  if (filters.value.brightnessTo !== null) {
+    filtered = filtered.filter(ad => (ad as any).brightness && (ad as any).brightness <= filters.value.brightnessTo!)
   }
 
   // Transport-specific filters

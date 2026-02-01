@@ -943,8 +943,8 @@ const availablePriceUnits = computed(() => {
     return [{ value: 'month', label: 'za miesiąc' }]
   } else if (type === 'led_screen') {
     return [
-      { value: 'day', label: 'za dzień (emisje)' },
-      { value: 'month', label: 'za miesiąc (emisje)' },
+      { value: 'day', label: 'za dzień' },
+      { value: 'month', label: 'za miesiąc' },
       { value: 'campaign', label: 'za kampanię' }
     ]
   } else if (type === 'totem') {

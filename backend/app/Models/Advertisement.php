@@ -42,9 +42,6 @@ class Advertisement extends Model
         'graphic_design_help',
         'offer_type',
         'has_vat_invoice',
-        'views',
-        'phone_clicks',
-        'email_clicks',
         'is_active',
         'is_verified',
         'phone',
@@ -58,8 +55,6 @@ class Advertisement extends Model
         'traffic_direction',
         'traffic_type',
         'environment',
-        'spot_duration',
-        'loop_duration',
         'transport_scope',
         'vehicle_count',
         'mobile_exposure_mode',
@@ -68,6 +63,10 @@ class Advertisement extends Model
         'campaign_duration',
         'slug',
         'map_screenshot_path',
+        // Pola techniczne dla LED screens
+        'resolution',
+        'pixel_pitch',
+        'brightness',
     ];
 
     /**
@@ -93,10 +92,10 @@ class Advertisement extends Model
         'traffic_type' => 'array',
         'available_from' => 'datetime',
         'price_negotiable' => 'boolean',
-        'spot_duration' => 'integer',
-        'loop_duration' => 'integer',
         'vehicle_count' => 'integer',
         'campaign_duration' => 'integer',
+        'pixel_pitch' => 'decimal:2',
+        'brightness' => 'integer',
     ];
 
     protected $appends = ['display_status', 'full_url'];

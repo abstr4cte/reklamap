@@ -387,10 +387,12 @@ const filters = ref({
   variant: '',
   roadClass: '',
   environment: '',
-  spotDurationFrom: null as number | null,
-  spotDurationTo: null as number | null,
-  loopDurationFrom: null as number | null,
-  loopDurationTo: null as number | null,
+  // LED screen filters
+  resolution: '',
+  pixelPitchFrom: null as number | null,
+  pixelPitchTo: null as number | null,
+  brightnessFrom: null as number | null,
+  brightnessTo: null as number | null,
   transportScope: '',
   vehicleCountFrom: null as number | null,
   vehicleCountTo: null as number | null,
@@ -684,10 +686,11 @@ const activeFiltersCount = computed(() => {
   if (filters.value.variant) count++
   if (filters.value.roadClass) count++
   if (filters.value.environment) count++
-  if (filters.value.spotDurationFrom !== null) count++
-  if (filters.value.spotDurationTo !== null) count++
-  if (filters.value.loopDurationFrom !== null) count++
-  if (filters.value.loopDurationTo !== null) count++
+  if (filters.value.resolution) count++
+  if (filters.value.pixelPitchFrom !== null) count++
+  if (filters.value.pixelPitchTo !== null) count++
+  if (filters.value.brightnessFrom !== null) count++
+  if (filters.value.brightnessTo !== null) count++
   if (filters.value.transportScope) count++
   if (filters.value.vehicleCountFrom !== null) count++
   if (filters.value.vehicleCountTo !== null) count++
@@ -830,8 +833,8 @@ const getAvailablePriceUnits = (type: string) => {
   // Ekran LED - dzień, miesiąc, kampania
   if (type === 'led_screen') {
     return [
-      { value: 'day', label: 'za dzień (emisje)' },
-      { value: 'month', label: 'za miesiąc (emisje)' },
+      { value: 'day', label: 'za dzień' },
+      { value: 'month', label: 'za miesiąc' },
       { value: 'campaign', label: 'za kampanię' }
     ]
   }
@@ -886,13 +889,15 @@ const filteredListings = computed(() => {
     filtered = filtered.filter(ad => ad.price <= filters.value.priceTo!)
   }
 
-  // Size filters
+  // Width filters
   if (filters.value.widthFrom !== null) {
     filtered = filtered.filter(ad => ad.width >= filters.value.widthFrom!)
   }
   if (filters.value.widthTo !== null) {
     filtered = filtered.filter(ad => ad.width <= filters.value.widthTo!)
   }
+
+  // Height filters
   if (filters.value.heightFrom !== null) {
     filtered = filtered.filter(ad => ad.height >= filters.value.heightFrom!)
   }
@@ -903,13 +908,21 @@ const filteredListings = computed(() => {
   // Surface area filters
   if (filters.value.surfaceFrom !== null) {
     filtered = filtered.filter(ad => {
-      const surface = ad.width * ad.height
+      let surface = ad.width * ad.height
+      // Convert mm² to m² for LED screens
+      if (ad.type === 'led_screen') {
+        surface = surface / 1000000 // mm² to m²
+      }
       return surface >= filters.value.surfaceFrom!
     })
   }
   if (filters.value.surfaceTo !== null) {
     filtered = filtered.filter(ad => {
-      const surface = ad.width * ad.height
+      let surface = ad.width * ad.height
+      // Convert mm² to m² for LED screens
+      if (ad.type === 'led_screen') {
+        surface = surface / 1000000 // mm² to m²
+      }
       return surface <= filters.value.surfaceTo!
     })
   }
@@ -990,17 +1003,20 @@ const filteredListings = computed(() => {
   }
 
   // LED-specific filters
-  if (filters.value.spotDurationFrom !== null) {
-    filtered = filtered.filter(ad => ad.spot_duration && ad.spot_duration >= filters.value.spotDurationFrom!)
+  if (filters.value.resolution) {
+    filtered = filtered.filter(ad => ad.resolution && ad.resolution.toLowerCase().includes(filters.value.resolution.toLowerCase()))
   }
-  if (filters.value.spotDurationTo !== null) {
-    filtered = filtered.filter(ad => ad.spot_duration && ad.spot_duration <= filters.value.spotDurationTo!)
+  if (filters.value.pixelPitchFrom !== null) {
+    filtered = filtered.filter(ad => (ad as any).pixel_pitch && (ad as any).pixel_pitch >= filters.value.pixelPitchFrom!)
   }
-  if (filters.value.loopDurationFrom !== null) {
-    filtered = filtered.filter(ad => ad.loop_duration && ad.loop_duration >= filters.value.loopDurationFrom!)
+  if (filters.value.pixelPitchTo !== null) {
+    filtered = filtered.filter(ad => (ad as any).pixel_pitch && (ad as any).pixel_pitch <= filters.value.pixelPitchTo!)
   }
-  if (filters.value.loopDurationTo !== null) {
-    filtered = filtered.filter(ad => ad.loop_duration && ad.loop_duration <= filters.value.loopDurationTo!)
+  if (filters.value.brightnessFrom !== null) {
+    filtered = filtered.filter(ad => (ad as any).brightness && (ad as any).brightness >= filters.value.brightnessFrom!)
+  }
+  if (filters.value.brightnessTo !== null) {
+    filtered = filtered.filter(ad => (ad as any).brightness && (ad as any).brightness <= filters.value.brightnessTo!)
   }
 
   // Transport-specific filters
@@ -1240,10 +1256,6 @@ const isMissingData = (ad: Advertisement) => {
 const getPriceLabel = (period: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign', ad?: Advertisement) => {
   switch (period) {
     case 'day':
-      // For LED screens, add "(emisję)"
-      if (ad && ad.type === 'led_screen') {
-        return '/dzień (emisję)'
-      }
       return '/dzień'
     case 'week':
       return '/tydzień'
@@ -1357,10 +1369,12 @@ const clearFilters = () => {
     variant: '',
     roadClass: '',
     environment: '',
-    spotDurationFrom: null,
-    spotDurationTo: null,
-    loopDurationFrom: null,
-    loopDurationTo: null,
+    // LED screen filters
+    resolution: '',
+    pixelPitchFrom: null,
+    pixelPitchTo: null,
+    brightnessFrom: null,
+    brightnessTo: null,
     transportScope: '',
     vehicleCountFrom: null,
     vehicleCountTo: null,
@@ -1697,10 +1711,12 @@ watch(() => route.query, (newQuery, oldQuery) => {
       variant: '',
       roadClass: '',
       environment: '',
-      spotDurationFrom: null,
-      spotDurationTo: null,
-      loopDurationFrom: null,
-      loopDurationTo: null,
+      // LED screen filters
+      resolution: '',
+      pixelPitchFrom: null,
+      pixelPitchTo: null,
+      brightnessFrom: null,
+      brightnessTo: null,
       transportScope: '',
       vehicleCountFrom: null,
       vehicleCountTo: null,
@@ -2143,7 +2159,7 @@ onBeforeUnmount(() => {
                   <rect x="2" y="2" width="12" height="12" rx="1" stroke="#6B7280" stroke-width="1.3"/>
                   <path d="M2 6H14M6 2V14" stroke="#6B7280" stroke-width="1.3"/>
                 </svg>
-                <span>{{ ad.width }}m × {{ ad.height }}m</span>
+                <span>{{ ad.width }}{{ ad.type === 'led_screen' ? 'mm' : 'm' }} × {{ ad.height }}{{ ad.type === 'led_screen' ? 'mm' : 'm' }}</span>
               </div>
 
               <div class="card-footer">
@@ -2406,16 +2422,17 @@ onBeforeUnmount(() => {
           </div>
 
         <!-- SEKCJA: Wymiary i powierzchnia -->
-        <div v-if="tempFilters && ['billboard', 'citylight', 'banner', 'wall'].includes(tempFilters.type)" class="filter-section">
+        <div v-if="tempFilters && ['billboard', 'citylight', 'banner', 'wall', 'led_screen'].includes(tempFilters.type)" class="filter-section">
           <h4 class="section-title">Wymiary i powierzchnia</h4>
           <div class="filter-row">
             <div class="filter-group">
-              <label class="filter-label">Szerokość (m)</label>
+              <label class="filter-label">Szerokość ({{ tempFilters && tempFilters.type === 'led_screen' ? 'mm' : 'm' }})</label>
               <div class="range-inputs">
                 <input 
                   v-model.number="tempFilters.widthFrom" 
                   type="number" 
                   placeholder="Od"
+                  :step="tempFilters && tempFilters.type === 'led_screen' ? '1' : '0.1'"
                   class="filter-input"
                   v-if="tempFilters"
                 />
@@ -2424,6 +2441,7 @@ onBeforeUnmount(() => {
                   v-model.number="tempFilters.widthTo" 
                   type="number" 
                   placeholder="Do"
+                  :step="tempFilters && tempFilters.type === 'led_screen' ? '1' : '0.1'"
                   class="filter-input"
                   v-if="tempFilters"
                 />
@@ -2431,12 +2449,13 @@ onBeforeUnmount(() => {
             </div>
 
             <div class="filter-group">
-              <label class="filter-label">Wysokość (m)</label>
+              <label class="filter-label">Wysokość ({{ tempFilters && tempFilters.type === 'led_screen' ? 'mm' : 'm' }})</label>
               <div class="range-inputs">
                 <input 
                   v-model.number="tempFilters.heightFrom" 
                   type="number" 
                   placeholder="Od"
+                  :step="tempFilters && tempFilters.type === 'led_screen' ? '1' : '0.1'"
                   class="filter-input"
                   v-if="tempFilters"
                 />
@@ -2445,6 +2464,7 @@ onBeforeUnmount(() => {
                   v-model.number="tempFilters.heightTo" 
                   type="number" 
                   placeholder="Do"
+                  :step="tempFilters && tempFilters.type === 'led_screen' ? '1' : '0.1'"
                   class="filter-input"
                   v-if="tempFilters"
                 />
@@ -2572,19 +2592,32 @@ onBeforeUnmount(() => {
 
           <!-- LED Screen Filters -->
           <div v-if="tempFilters && tempFilters.type === 'led_screen'" class="filter-group">
-            <label class="filter-label">Czas spotu (sekundy)</label>
+            <label class="filter-label">Rozdzielczość</label>
+            <input 
+              v-model="tempFilters.resolution" 
+              type="text" 
+              placeholder="np. 1920x1080"
+              class="filter-input"
+              v-if="tempFilters"
+            />
+          </div>
+
+          <div v-if="tempFilters && tempFilters.type === 'led_screen'" class="filter-group">
+            <label class="filter-label">Pixel Pitch (mm)</label>
             <div class="range-inputs">
               <input 
-                v-model.number="tempFilters.spotDurationFrom" 
+                v-model.number="tempFilters.pixelPitchFrom" 
                 type="number" 
+                step="0.1"
                 placeholder="Od"
                 class="filter-input"
                 v-if="tempFilters"
               />
               <span>-</span>
               <input 
-                v-model.number="tempFilters.spotDurationTo" 
+                v-model.number="tempFilters.pixelPitchTo" 
                 type="number" 
+                step="0.1"
                 placeholder="Do"
                 class="filter-input"
                 v-if="tempFilters"
@@ -2593,10 +2626,10 @@ onBeforeUnmount(() => {
           </div>
 
           <div v-if="tempFilters && tempFilters.type === 'led_screen'" class="filter-group">
-            <label class="filter-label">Pętla emisji (sekundy)</label>
+            <label class="filter-label">Jasność (nits)</label>
             <div class="range-inputs">
               <input 
-                v-model.number="tempFilters.loopDurationFrom" 
+                v-model.number="tempFilters.brightnessFrom" 
                 type="number" 
                 placeholder="Od"
                 class="filter-input"
@@ -2604,7 +2637,7 @@ onBeforeUnmount(() => {
               />
               <span>-</span>
               <input 
-                v-model.number="tempFilters.loopDurationTo" 
+                v-model.number="tempFilters.brightnessTo" 
                 type="number" 
                 placeholder="Do"
                 class="filter-input"

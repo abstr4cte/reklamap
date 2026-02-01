@@ -79,13 +79,16 @@ class AdvertisementController extends Controller
             'route_area' => 'nullable|string',
             'campaign_duration' => 'nullable|integer',
             'rental_period' => 'nullable|string',
+            // LED screen technical fields
+            'resolution' => 'nullable|string',
+            'pixel_pitch' => 'nullable|numeric|between:0.1,100',
+            'brightness' => 'nullable|integer|between:1000,15000',
         ]);
 
 
         // Set defaults if not present (though migration has defaults, explicit is good)
         $validated['status'] = $request->input('status', 'active');
         $validated['is_active'] = $request->input('is_active', true);
-        $validated['views'] = 0;
 
         $ad = Advertisement::create($validated);
 

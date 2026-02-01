@@ -59,4 +59,8 @@ export interface Advertisement {
     views_30d?: number
     phone_clicks_30d?: number
     email_clicks_30d?: number
+    // Pola techniczne dla LED screens
+    resolution?: string
+    pixel_pitch?: number
+    brightness?: number
 }

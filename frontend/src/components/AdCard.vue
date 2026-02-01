@@ -215,10 +215,6 @@ const priceLabel = computed(() => {
 
   switch (displayUnit) {
     case 'day':
-      // For LED screens, add "(emisję)"
-      if (props.ad.type === 'led_screen') {
-        return '/dzień (emisję)'
-      }
       return '/dzień'
     case 'week':
       return '/tydzień'
