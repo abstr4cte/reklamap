@@ -6,17 +6,14 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias([
-            'app.key' => \App\Http\Middleware\VerifyAppKey::class,
-            'is_admin' => \App\Http\Middleware\IsAdmin::class,
-        ]);
-        $middleware->appendToGroup('api' , 'app.key');
+        $middleware->alias(['app.key' => \App\Http\Middleware\VerifyAppKey::class,]);
+        $middleware->appendToGroup('api', 'app.key');
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
