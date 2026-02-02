@@ -28,8 +28,8 @@ return new class extends Migration {
             // Rename back to has_lighting
             $table->renameColumn('has_backlight', 'has_lighting');
             
-            // Make traffic_intensity required again
-            $table->string('traffic_intensity')->nullable(false)->change();
+            // Revert traffic_intensity to nullable
+            $table->string('traffic_intensity')->nullable()->change();
         });
     }
 };
