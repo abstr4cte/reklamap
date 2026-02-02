@@ -12,7 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias(['app.key' => \App\Http\Middleware\VerifyAppKey::class,]);
+        $middleware->alias([
+            'app.key' => \App\Http\Middleware\VerifyAppKey::class,
+            'is_admin' => \App\Http\Middleware\IsAdmin::class,
+        ]);
         $middleware->appendToGroup('api' , 'app.key');
         //
     })
