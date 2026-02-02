@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('advertisements', function (Blueprint $table) {
-            $table->boolean('is_verified')->default(false);
+            if (!Schema::hasColumn('advertisements', 'is_verified')) {
+                $table->boolean('is_verified')->default(false);
+            }
         });
     }
 
@@ -22,7 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('advertisements', function (Blueprint $table) {
-            $table->dropColumn('is_verified');
+            if (Schema::hasColumn('advertisements', 'is_verified')) {
+                $table->dropColumn('is_verified');
+            }
         });
     }
 };
