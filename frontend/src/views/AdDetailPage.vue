@@ -341,11 +341,7 @@ const showVariant = computed(() => {
 
 const surfaceArea = computed(() => {
   if (ad.value?.width && ad.value?.height) {
-    // Dla LED screens wymiary są w mm, konwertuj na m²
-    if (ad.value.type === 'led_screen') {
-      return ((ad.value.width * ad.value.height) / 1000000).toFixed(2)
-    }
-    // Dla pozostałych typów wymiary są w metrach
+    // Wymiary są zawsze przechowywane w metrach w bazie
     return (ad.value.width * ad.value.height).toFixed(2)
   }
   return '0'
@@ -1685,7 +1681,7 @@ onUnmounted(() => {
               <div v-if="showDimensions" class="spec-item">
                 <div class="spec-label">Wymiary</div>
                 <div class="spec-value">
-                  <span v-if="ad.type === 'led_screen'">{{ ad.width }}mm × {{ ad.height }}mm ({{ surfaceArea }} m²)</span>
+                  <span v-if="ad.type === 'led_screen'">{{ (ad.width * 1000).toFixed(0) }}mm × {{ (ad.height * 1000).toFixed(0) }}mm ({{ surfaceArea }} m²)</span>
                   <span v-else>{{ ad.width }}m × {{ ad.height }}m ({{ surfaceArea }} m²)</span>
                 </div>
               </div>

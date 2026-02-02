@@ -112,10 +112,7 @@ const handleConfirmClear = () => {
 
 const getSurfaceArea = (ad: Advertisement) => {
   if (ad.width && ad.height) {
-    // Dla LED screens wymiary są w mm, konwertuj na m²
-    if (ad.type === 'led_screen') {
-      return ((ad.width * ad.height) / 1000000).toFixed(2)
-    }
+    // Wymiary są zawsze przechowywane w metrach w bazie
     return (ad.width * ad.height).toFixed(2)
   }
   return '0'
@@ -294,9 +291,9 @@ const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
       return getTypeLabel(ad.type)
     case 'dimensions':
       if (!ad.width || !ad.height) return '—'
-      // Dla LED screens wymiary są w mm
+      // Dla LED screens konwertuj z metrów na mm
       if (ad.type === 'led_screen') {
-        return `${ad.width}mm × ${ad.height}mm`
+        return `${(ad.width * 1000).toFixed(0)}mm × ${(ad.height * 1000).toFixed(0)}mm`
       }
       return `${ad.width}m × ${ad.height}m`
     case 'surface_area':

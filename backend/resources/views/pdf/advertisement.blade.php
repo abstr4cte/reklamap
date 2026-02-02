@@ -161,7 +161,13 @@
             </div>
             <div class="col">
                 <div class="label">Wymiary</div>
-                <div class="value">{{ $advertisement->width }}m x {{ $advertisement->height }}m</div>
+                <div class="value">
+                    @if($advertisement->type === 'led_screen')
+                        {{ number_format($advertisement->width * 1000, 0) }}mm x {{ number_format($advertisement->height * 1000, 0) }}mm
+                    @else
+                        {{ $advertisement->width }}m x {{ $advertisement->height }}m
+                    @endif
+                </div>
             </div>
         </div>
         <div class="row">

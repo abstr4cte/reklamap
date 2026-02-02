@@ -891,38 +891,38 @@ const filteredListings = computed(() => {
 
   // Width filters
   if (filters.value.widthFrom !== null) {
-    filtered = filtered.filter(ad => ad.width >= filters.value.widthFrom!)
+    // Konwertuj wartość filtru z mm na metry dla LED screens
+    const widthFrom = filters.value.type === 'led_screen' ? filters.value.widthFrom / 1000 : filters.value.widthFrom
+    filtered = filtered.filter(ad => ad.width >= widthFrom)
   }
   if (filters.value.widthTo !== null) {
-    filtered = filtered.filter(ad => ad.width <= filters.value.widthTo!)
+    // Konwertuj wartość filtru z mm na metry dla LED screens
+    const widthTo = filters.value.type === 'led_screen' ? filters.value.widthTo / 1000 : filters.value.widthTo
+    filtered = filtered.filter(ad => ad.width <= widthTo)
   }
 
   // Height filters
   if (filters.value.heightFrom !== null) {
-    filtered = filtered.filter(ad => ad.height >= filters.value.heightFrom!)
+    // Konwertuj wartość filtru z mm na metry dla LED screens
+    const heightFrom = filters.value.type === 'led_screen' ? filters.value.heightFrom / 1000 : filters.value.heightFrom
+    filtered = filtered.filter(ad => ad.height >= heightFrom)
   }
   if (filters.value.heightTo !== null) {
-    filtered = filtered.filter(ad => ad.height <= filters.value.heightTo!)
+    // Konwertuj wartość filtru z mm na metry dla LED screens
+    const heightTo = filters.value.type === 'led_screen' ? filters.value.heightTo / 1000 : filters.value.heightTo
+    filtered = filtered.filter(ad => ad.height <= heightTo)
   }
 
   // Surface area filters
   if (filters.value.surfaceFrom !== null) {
     filtered = filtered.filter(ad => {
-      let surface = ad.width * ad.height
-      // Convert mm² to m² for LED screens
-      if (ad.type === 'led_screen') {
-        surface = surface / 1000000 // mm² to m²
-      }
+      const surface = ad.width * ad.height
       return surface >= filters.value.surfaceFrom!
     })
   }
   if (filters.value.surfaceTo !== null) {
     filtered = filtered.filter(ad => {
-      let surface = ad.width * ad.height
-      // Convert mm² to m² for LED screens
-      if (ad.type === 'led_screen') {
-        surface = surface / 1000000 // mm² to m²
-      }
+      const surface = ad.width * ad.height
       return surface <= filters.value.surfaceTo!
     })
   }
@@ -2152,14 +2152,6 @@ onBeforeUnmount(() => {
                   <path d="M8 14C8 14 12 10.5 12 6C12 3.79 10.21 2 8 2C5.79 2 4 3.79 4 6C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.3"/>
                 </svg>
                 <span>{{ formatLocation(ad.location, ad.city) }}</span>
-              </div>
-
-              <div class="card-dimensions">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <rect x="2" y="2" width="12" height="12" rx="1" stroke="#6B7280" stroke-width="1.3"/>
-                  <path d="M2 6H14M6 2V14" stroke="#6B7280" stroke-width="1.3"/>
-                </svg>
-                <span>{{ ad.width }}{{ ad.type === 'led_screen' ? 'mm' : 'm' }} × {{ ad.height }}{{ ad.type === 'led_screen' ? 'mm' : 'm' }}</span>
               </div>
 
               <div class="card-footer">

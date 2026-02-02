@@ -318,8 +318,27 @@ const goToPolandMap = () => {
 }
 
 const handleSearch = () => {
-  // First emit the search event
-  emit('search', { ...filters.value })
+  // Konwertuj wymiary LED z mm na metry przed wysłaniem
+  const searchFilters = { ...filters.value }
+  
+  if (filters.value.type === 'led_screen') {
+    // Konwertuj wymiary z mm na metry
+    if (searchFilters.widthFrom !== null) {
+      searchFilters.widthFrom = searchFilters.widthFrom / 1000
+    }
+    if (searchFilters.widthTo !== null) {
+      searchFilters.widthTo = searchFilters.widthTo / 1000
+    }
+    if (searchFilters.heightFrom !== null) {
+      searchFilters.heightFrom = searchFilters.heightFrom / 1000
+    }
+    if (searchFilters.heightTo !== null) {
+      searchFilters.heightTo = searchFilters.heightTo / 1000
+    }
+  }
+  
+  // Emit the search event with converted filters
+  emit('search', searchFilters)
   
   // Then scroll to map using goToPolandMap function
   goToPolandMap()

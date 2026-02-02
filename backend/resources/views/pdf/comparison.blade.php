@@ -257,7 +257,13 @@
             <tr>
                 <th>Wymiary</th>
                 @foreach($advertisements as $ad)
-                    <td>{{ $ad->width }}m x {{ $ad->height }}m</td>
+                    <td>
+                        @if($ad->type === 'led_screen')
+                            {{ number_format($ad->width * 1000, 0) }}mm x {{ number_format($ad->height * 1000, 0) }}mm
+                        @else
+                            {{ $ad->width }}m x {{ $ad->height }}m
+                        @endif
+                    </td>
                 @endforeach
             </tr>
             @endif

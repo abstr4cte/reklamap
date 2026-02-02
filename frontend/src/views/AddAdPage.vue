@@ -1004,6 +1004,15 @@ const handleSubmit = async () => {
     console.log('Main image URL:', mainImageUrl)
 
     console.log('Creating advertisement with images:', imageUrls)
+    
+    // Konwertuj wymiary LCD z mm na metry
+    let width = formData.value.width || 0
+    let height = formData.value.height || 0
+    if (formData.value.type === 'led_screen') {
+      width = width / 1000  // mm -> m
+      height = height / 1000  // mm -> m
+    }
+    
     const newAd = await api.createAdvertisement({
         owner_email: formData.value.email,
         title: formData.value.title,
@@ -1012,8 +1021,8 @@ const handleSubmit = async () => {
         price: formData.value.price!,
         price_unit: formData.value.priceUnit,
         price_negotiable: formData.value.priceNegotiable,
-        width: formData.value.width || 0,
-        height: formData.value.height || 0,
+        width: width,
+        height: height,
         orientation: (formData.value.width && formData.value.height) 
           ? (formData.value.width >= formData.value.height ? 'horizontal' : 'vertical')
           : 'horizontal',
