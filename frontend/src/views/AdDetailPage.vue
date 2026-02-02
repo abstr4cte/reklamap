@@ -482,16 +482,6 @@ const showBrightness = computed(() => {
   return ad.value.type === 'led_screen' && (ad.value as any).brightness && (ad.value as any).brightness > 0
 })
 
-const showSpotDuration = computed(() => {
-  if (!ad.value) return false
-  return ad.value.type === 'led_screen' && ad.value.spot_duration && ad.value.spot_duration > 0
-})
-
-const showLoopDuration = computed(() => {
-  if (!ad.value) return false
-  return ad.value.type === 'led_screen' && ad.value.loop_duration && ad.value.loop_duration > 0
-})
-
 // Computed property for campaign duration
 const showCampaignDuration = computed(() => {
   if (!ad.value) return false
@@ -1748,16 +1738,6 @@ onUnmounted(() => {
               <div v-if="showBrightness" class="spec-item">
                 <div class="spec-label">Jasność</div>
                 <div class="spec-value">{{ (ad as any).brightness }} nits</div>
-              </div>
-
-              <div v-if="showSpotDuration" class="spec-item">
-                <div class="spec-label">Czas spotu</div>
-                <div class="spec-value">{{ ad.spot_duration }} sek</div>
-              </div>
-
-              <div v-if="showLoopDuration" class="spec-item">
-                <div class="spec-label">Pętla emisji</div>
-                <div class="spec-value">{{ ad.loop_duration }} sek</div>
               </div>
 
               <div v-if="showCampaignDuration" class="spec-item">

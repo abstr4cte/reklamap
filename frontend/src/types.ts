@@ -47,8 +47,6 @@ export interface Advertisement {
     traffic_direction?: string[]
     traffic_type?: string[]
     environment?: string
-    spot_duration?: number
-    loop_duration?: number
     transport_scope?: string
     vehicle_count?: number
     mobile_exposure_mode?: string

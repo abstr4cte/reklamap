@@ -423,8 +423,6 @@ const saveChanges = async (id: string) => {
           ? (editingAd.value as any).traffic_type 
           : null,
         environment: (editingAd.value as any).environment || null,
-        spot_duration: (editingAd.value as any).spot_duration || null,
-        loop_duration: (editingAd.value as any).loop_duration || null,
         transport_scope: (editingAd.value as any).transport_scope || null,
         vehicle_count: (editingAd.value as any).vehicle_count || null,
         mobile_exposure_mode: (editingAd.value as any).mobile_exposure_mode || null,
@@ -1024,11 +1022,6 @@ const showTrafficType = computed(() => {
 const showEnvironmentField = computed(() => {
   if (!editingAd.value) return false
   return ['citylight', 'led_screen', 'totem', 'banner', 'mobile', 'other'].includes(editingAd.value.type)
-})
-
-const showLEDFields = computed(() => {
-  if (!editingAd.value) return false
-  return editingAd.value.type === 'led_screen'
 })
 
 const showTransportFields = computed(() => {
@@ -2078,17 +2071,6 @@ onBeforeUnmount(() => {
                           {{ env.label }}
                         </option>
                       </select>
-                    </div>
-
-                    <!-- Pola LED Screen -->
-                    <div v-if="showLEDFields" class="form-group">
-                      <label>Czas spotu (sekundy)</label>
-                      <input v-model.number="(editingAd as any).spot_duration" type="number" step="1" placeholder="10" />
-                    </div>
-
-                    <div v-if="showLEDFields" class="form-group">
-                      <label>Pętla emisji (sekundy)</label>
-                      <input v-model.number="(editingAd as any).loop_duration" type="number" step="1" placeholder="120" />
                     </div>
 
                     <!-- Pola Transport -->

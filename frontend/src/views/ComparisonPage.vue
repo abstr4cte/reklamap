@@ -330,10 +330,6 @@ const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
       return ad.offer_type === 'owner' ? 'Właściciel' : 'Agencja'
     case 'has_vat_invoice':
       return ad.has_vat_invoice ? 'Tak' : 'Nie'
-    case 'spot_duration':
-      return (ad as any).spot_duration ? `${(ad as any).spot_duration}s` : '—'
-    case 'loop_duration':
-      return (ad as any).loop_duration ? `${(ad as any).loop_duration}s` : '—'
     case 'transport_scope':
       return formatTransportScope((ad as any).transport_scope)
     case 'vehicle_count':
