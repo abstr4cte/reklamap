@@ -23,12 +23,8 @@ return new class extends Migration {
             // Środowisko (indoor/outdoor/event)
             $table->string('environment')->nullable()->after('traffic_direction');
             
-            // Pola dla ekranów LED
-            $table->integer('spot_duration')->nullable()->after('environment'); // sekundy
-            $table->integer('loop_duration')->nullable()->after('spot_duration'); // sekundy
-            
             // Pola dla transportu
-            $table->string('transport_scope')->nullable()->after('loop_duration'); // internal/external/full_vehicle
+            $table->string('transport_scope')->nullable()->after('environment'); // internal/external/full_vehicle
             $table->integer('vehicle_count')->nullable()->after('transport_scope');
             
             // Pola dla reklamy mobilnej
@@ -52,8 +48,6 @@ return new class extends Migration {
                 'road_class',
                 'traffic_direction',
                 'environment',
-                'spot_duration',
-                'loop_duration',
                 'transport_scope',
                 'vehicle_count',
                 'mobile_exposure_mode',

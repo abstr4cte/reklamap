@@ -66,8 +66,6 @@ const formData = ref({
   trafficDirection: [] as string[],
   trafficType: [] as string[],
   environment: '' as '' | 'indoor' | 'outdoor' | 'event',
-  spotDuration: null as number | null,
-  loopDuration: null as number | null,
   transportScope: '' as '' | 'internal' | 'external' | 'full_vehicle',
   vehicleCount: null as number | null,
   mobileExposureMode: '' as '' | 'moving' | 'stationary' | 'mixed',
@@ -1114,8 +1112,6 @@ const handleSubmit = async () => {
         phone: 'Telefon',
         width: 'Szerokość',
         height: 'Wysokość',
-        spot_duration: 'Czas trwania spotu',
-        loop_duration: 'Pętla emisji',
         campaign_duration: 'Czas trwania kampanii',
       };
 
