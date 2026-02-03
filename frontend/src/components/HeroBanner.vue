@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 
@@ -532,6 +532,21 @@ const showMobileFilters = computed(() => {
   return filters.value.type === 'mobile'
 })
 
+const transportScopeOptions = computed(() => {
+  // Dla przystanku (stop) - tylko opcje wewnętrzna i zewnętrzna
+  if (filters.value.variant === 'stop') {
+    return [
+      { value: 'internal', label: 'Wewnętrzna' },
+      { value: 'external', label: 'Zewnętrzna' }
+    ]
+  }
+  // Dla pozostałych wariantów (bus, tram, metro) - wszystkie opcje
+  return [
+    { value: 'internal', label: 'Wewnętrzna' },
+    { value: 'external', label: 'Zewnętrzna' },
+    { value: 'full_vehicle', label: 'Całopojazdowa' }
+  ]
+})
 
 const availablePriceUnits = computed(() => {
   const type = filters.value.type
@@ -620,6 +635,16 @@ const handleClickOutside = (event: MouseEvent) => {
     isStatusMenuOpen.value = false
   }
 }
+
+// Resetuj transportScope gdy wariant się zmieni
+watch(() => filters.value.variant, () => {
+  if (filters.value.type === 'transport') {
+    // Jeśli zmieniliśmy wariant na 'stop' i mamy 'full_vehicle', resetuj
+    if (filters.value.variant === 'stop' && filters.value.transportScope === 'full_vehicle') {
+      filters.value.transportScope = ''
+    }
+  }
+})
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
@@ -1023,12 +1048,12 @@ onBeforeUnmount(() => {
                     <label class="input-label">Zakres reklamy</label>
                     <select v-model="filters.transportScope" class="search-select">
                       <option value="">Wszystkie</option>
-                      <option value="internal">Wewnętrzna</option>
-                      <option value="external">Zewnętrzna</option>
-                      <option value="full_vehicle">Całopojazdowa</option>
+                      <option v-for="option in transportScopeOptions" :key="option.value" :value="option.value">
+                        {{ option.label }}
+                      </option>
                     </select>
                   </div>
-                  <div class="input-group">
+                  <div v-if="filters.variant !== 'stop'" class="input-group">
                     <label class="input-label">Liczba pojazdów</label>
                     <div class="range-input">
                       <input

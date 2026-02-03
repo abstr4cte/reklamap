@@ -418,6 +418,22 @@ const environmentOptions = computed(() => {
   }
 })
 
+const transportScopeOptions = computed(() => {
+  // Dla przystanku (stop) - tylko opcje wewnętrzna i zewnętrzna
+  if (formData.value.variant === 'stop') {
+    return [
+      { value: 'internal', label: 'Wewnętrzna' },
+      { value: 'external', label: 'Zewnętrzna' }
+    ]
+  }
+  // Dla pozostałych wariantów (bus, tram, metro) - wszystkie opcje
+  return [
+    { value: 'internal', label: 'Wewnętrzna' },
+    { value: 'external', label: 'Zewnętrzna' },
+    { value: 'full_vehicle', label: 'Całopojazdowa' }
+  ]
+})
+
 const surface = computed(() => {
   if (formData.value.width && formData.value.height) {
     return (formData.value.width * formData.value.height).toFixed(2)
@@ -1166,6 +1182,16 @@ const mapTypeToUrlFormat = (type: string): string => {
   return typeMapping[type] || 'inne'
 }
 
+// Resetuj transportScope gdy wariant się zmieni
+watch(() => formData.value.variant, () => {
+  if (formData.value.type === 'transport') {
+    // Jeśli zmieniliśmy wariant na 'stop' i mamy 'full_vehicle', resetuj
+    if (formData.value.variant === 'stop' && formData.value.transportScope === 'full_vehicle') {
+      formData.value.transportScope = ''
+    }
+  }
+})
+
 onMounted(() => {
   if (currentStep.value === 3) {
     initMap()
@@ -1715,14 +1741,14 @@ onMounted(() => {
               <label class="form-label">Zakres reklamy <span class="required">*</span></label>
               <select v-model="formData.transportScope" class="form-select" :class="{ 'error': errors.transportScope }">
                 <option value="" disabled>Wybierz zakres</option>
-                <option value="internal">Wewnętrzna</option>
-                <option value="external">Zewnętrzna</option>
-                <option value="full_vehicle">Całopojazdowa</option>
+                <option v-for="option in transportScopeOptions" :key="option.value" :value="option.value">
+                  {{ option.label }}
+                </option>
               </select>
               <span v-if="errors.transportScope" class="error-text">{{ errors.transportScope }}</span>
             </div>
 
-            <div class="form-group">
+            <div v-if="formData.variant !== 'stop'" class="form-group">
               <label class="form-label">Liczba pojazdów</label>
               <input
                 v-model.number="formData.vehicleCount"

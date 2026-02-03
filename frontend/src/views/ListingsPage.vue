@@ -1198,6 +1198,25 @@ const statusLabel = computed(() => {
   return `Wybrano (${labels.length})`
 })
 
+const transportScopeOptions = computed(() => {
+  // Użyj tempFilters jeśli modal jest otwarty, inaczej użyj filters
+  const variant = tempFilters.value?.variant || filters.value.variant
+  
+  // Dla przystanku (stop) - tylko opcje wewnętrzna i zewnętrzna
+  if (variant === 'stop') {
+    return [
+      { value: 'internal', label: 'Wewnętrzna' },
+      { value: 'external', label: 'Zewnętrzna' }
+    ]
+  }
+  // Dla pozostałych wariantów (bus, tram, metro) - wszystkie opcje
+  return [
+    { value: 'internal', label: 'Wewnętrzna' },
+    { value: 'external', label: 'Zewnętrzna' },
+    { value: 'full_vehicle', label: 'Całopojazdowa' }
+  ]
+})
+
 // Funkcja do formatowania ceny w zależności od wybranego sortowania
 const getFormattedPrice = (ad: Advertisement) => {
   const displayUnit = priceDisplay.value || ad.price_unit || 'month'
@@ -2643,13 +2662,13 @@ onBeforeUnmount(() => {
             <label class="filter-label">Zakres reklamy</label>
             <select v-model="tempFilters.transportScope" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>
-              <option value="internal">Wewnętrzna</option>
-              <option value="external">Zewnętrzna</option>
-              <option value="full_vehicle">Całopojazdowa</option>
+              <option v-for="option in transportScopeOptions" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </option>
             </select>
           </div>
 
-          <div v-if="tempFilters && tempFilters.type === 'transport'" class="filter-group">
+          <div v-if="tempFilters && tempFilters.type === 'transport' && tempFilters.variant !== 'stop'" class="filter-group">
             <label class="filter-label">Liczba pojazdów</label>
             <div class="range-inputs">
               <input 
