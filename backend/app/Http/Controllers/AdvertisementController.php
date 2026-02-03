@@ -390,7 +390,6 @@ class AdvertisementController extends Controller
     {
         $ids = explode(',', $request->input('ids'));
         $unit = $request->input('unit', 'month');
-        $fields = $request->has('fields') ? explode(',', $request->input('fields')) : [];
         
         // Pobierz ogłoszenia i zachowaj kolejność z parametru ids
         $ads = Advertisement::whereIn('id', $ids)->get();
@@ -403,6 +402,17 @@ class AdvertisementController extends Controller
                 $adsOrdered->push($ad);
             }
         }
+        
+        // Jeśli fields nie są podane, wyświetl wszystkie pola
+        $fields = $request->has('fields') ? explode(',', $request->input('fields')) : [
+            'price', 'price_per_sqm', 'type', 'variant', 'dimensions', 'surface_area', 
+            'orientation', 'location', 'location_tier', 'road_class', 'traffic_intensity', 
+            'traffic_direction', 'traffic_type', 'environment', 'has_backlight', 
+            'price_includes_print', 'price_includes_mounting', 'graphic_design_help', 
+            'status', 'offer_type', 'has_vat_invoice', 'transport_scope', 'vehicle_count',
+            'mobile_exposure_mode', 'route_area', 'operating_hours', 'resolution', 
+            'pixel_pitch', 'brightness'
+        ];
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.comparison', [
             'advertisements' => $adsOrdered,

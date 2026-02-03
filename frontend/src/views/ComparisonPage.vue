@@ -50,7 +50,14 @@ const downloadPdf = async () => {
   isGeneratingPdf.value = true
   try {
     const ids = comparisonAds.value.map(ad => ad.id).join(',')
-    const fields = comparisonFields.value.map((f: ComparisonField) => f.key).join(',')
+    // Filtruj pola - wyślij tylko te, które są obsługiwane w PDF
+    const supportedPdfFields = ['price', 'price_per_sqm', 'type', 'variant', 'dimensions', 'surface_area', 
+                                'orientation', 'location', 'traffic_intensity', 'has_backlight', 
+                                'price_includes_print', 'graphic_design_help', 'status', 'offer_type', 'has_vat_invoice']
+    const fields = comparisonFields.value
+      .filter((f: ComparisonField) => supportedPdfFields.includes(f.key))
+      .map((f: ComparisonField) => f.key)
+      .join(',')
     const response = await axios.get(`/api/listings/pdf/comparison?ids=${ids}&unit=${priceUnit.value}&fields=${fields}`, {
       responseType: 'blob'
     })
