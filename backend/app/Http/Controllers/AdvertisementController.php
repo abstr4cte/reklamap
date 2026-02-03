@@ -19,10 +19,20 @@ class AdvertisementController extends Controller
     {
         $query = Advertisement::where('is_active', 1);
 
-        // If ids parameter is provided, filter by those IDs
+        // If ids parameter is provided, filter by those IDs and preserve order
         if ($request->has('ids')) {
             $ids = explode(',', $request->input('ids'));
-            $query->whereIn('id', $ids);
+            $ads = $query->whereIn('id', $ids)->get();
+            
+            // Preserve the order from the ids parameter
+            $adsOrdered = collect();
+            foreach ($ids as $id) {
+                $ad = $ads->firstWhere('id', $id);
+                if ($ad) {
+                    $adsOrdered->push($ad);
+                }
+            }
+            return $adsOrdered;
         }
 
         return $query->orderBy('created_at', 'desc')->get();
@@ -380,11 +390,24 @@ class AdvertisementController extends Controller
     {
         $ids = explode(',', $request->input('ids'));
         $unit = $request->input('unit', 'month');
+        $fields = $request->has('fields') ? explode(',', $request->input('fields')) : [];
+        
+        // Pobierz ogłoszenia i zachowaj kolejność z parametru ids
         $ads = Advertisement::whereIn('id', $ids)->get();
+        
+        // Sortuj ogłoszenia w kolejności z parametru ids
+        $adsOrdered = collect();
+        foreach ($ids as $id) {
+            $ad = $ads->firstWhere('id', $id);
+            if ($ad) {
+                $adsOrdered->push($ad);
+            }
+        }
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.comparison', [
-            'advertisements' => $ads,
-            'displayUnit' => $unit
+            'advertisements' => $adsOrdered,
+            'displayUnit' => $unit,
+            'visibleFields' => $fields
         ])->setPaper('a4', 'landscape');
 
         return $pdf->download('porownanie-ogloszen.pdf');

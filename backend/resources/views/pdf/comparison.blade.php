@@ -208,8 +208,8 @@
                 @endforeach
             </tr>
             @php
-                // Pokazuj "Cena za m²" tylko dla typów, które mają wymiary
-                $showPricePerSqm = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'banner', 'wall']));
+                // Pokazuj "Cena za m²" tylko jeśli jest na liście widocznych pól
+                $showPricePerSqm = in_array('price_per_sqm', $visibleFields);
             @endphp
             @if($showPricePerSqm)
             <tr>
@@ -250,8 +250,8 @@
                 @endforeach
             </tr>
             @php
-                // Pokazuj "Wymiary" tylko dla typów, które mają wymiary
-                $showDimensions = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'banner', 'wall', 'citylight', 'led_screen', 'totem']));
+                // Pokazuj "Wymiary" tylko jeśli jest na liście widocznych pól
+                $showDimensions = in_array('dimensions', $visibleFields);
             @endphp
             @if($showDimensions)
             <tr>
@@ -268,8 +268,8 @@
             </tr>
             @endif
             @php
-                // Pokazuj "Powierzchnia" tylko dla typów, które mają wymiary
-                $showSurfaceArea = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'banner', 'wall', 'citylight', 'led_screen', 'totem']));
+                // Pokazuj "Powierzchnia" tylko jeśli jest na liście widocznych pól
+                $showSurfaceArea = in_array('surface_area', $visibleFields);
             @endphp
             @if($showSurfaceArea)
             <tr>
@@ -280,8 +280,8 @@
             </tr>
             @endif
             @php
-                // Pokazuj "Orientacja" tylko dla typów, które mają orientację
-                $showOrientation = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'banner', 'wall', 'citylight', 'totem']));
+                // Pokazuj "Orientacja" tylko jeśli jest na liście widocznych pól
+                $showOrientation = in_array('orientation', $visibleFields);
             @endphp
             @if($showOrientation)
             <tr>
@@ -315,8 +315,8 @@
                 @endforeach
             </tr>
             @php
-                // Pokazuj "Natężenie ruchu" tylko dla typów, które mają natężenie ruchu
-                $showTrafficIntensity = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'banner']));
+                // Pokazuj "Natężenie ruchu" tylko jeśli jest na liście widocznych pól
+                $showTrafficIntensity = in_array('traffic_intensity', $visibleFields);
             @endphp
             @if($showTrafficIntensity)
             <tr>
@@ -332,8 +332,8 @@
             </tr>
             @endif
             @php
-                // Pokazuj "Oświetlenie" tylko dla typów, które mają oświetlenie
-                $showLighting = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'citylight', 'totem']));
+                // Pokazuj "Oświetlenie" tylko jeśli jest na liście widocznych pól
+                $showLighting = in_array('has_backlight', $visibleFields);
             @endphp
             @if($showLighting)
             <tr>
@@ -345,8 +345,8 @@
             </tr>
             @endif
             @php
-                // Pokazuj "Druk w cenie" tylko dla typów, które mają druk w cenie
-                $showPriceIncludesPrint = $advertisements->some(fn($ad) => in_array($ad->type, ['billboard', 'citylight', 'banner']));
+                // Pokazuj "Druk w cenie" tylko jeśli jest na liście widocznych pól
+                $showPriceIncludesPrint = in_array('price_includes_print', $visibleFields);
             @endphp
             @if($showPriceIncludesPrint)
             <tr>
@@ -358,6 +358,11 @@
                 @endforeach
             </tr>
             @endif
+            @php
+                // Pokazuj "Pomoc graficzna" tylko jeśli jest na liście widocznych pól
+                $showGraphicDesignHelp = in_array('graphic_design_help', $visibleFields);
+            @endphp
+            @if($showGraphicDesignHelp)
             <tr>
                 <th>Pomoc graficzna</th>
                 @foreach($advertisements as $ad)
@@ -366,6 +371,7 @@
                     </td>
                 @endforeach
             </tr>
+            @endif
             <tr>
                 <th>Status</th>
                 @foreach($advertisements as $ad)

@@ -47,7 +47,11 @@ export const api = {
         if (ids.length === 0) return []
         const response = await fetch(`${API_URL}/listings?ids=${ids.join(',')}`, { headers: withKey() })
         if (!response.ok) throw new Error('Failed to fetch listings by ids')
-        return response.json()
+        const ads = await response.json()
+        
+        // Preserve the order from the ids parameter
+        const adsMap = new Map(ads.map((ad: Advertisement) => [ad.id, ad]))
+        return ids.map(id => adsMap.get(id)).filter(Boolean) as Advertisement[]
     },
 
     async createAdvertisement(ad: Omit<Advertisement, 'id' | 'created_at' | 'updated_at'>): Promise<Advertisement> {
