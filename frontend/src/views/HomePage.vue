@@ -492,9 +492,15 @@ const handlePageChange = async (page: number) => {
   }
 }
 
-const handleSearch = (searchFilters: Filters) => {
+const handleSearch = (searchFilters: Filters & { _priceDisplayUnit?: string }) => {
   filters.value = searchFilters
   currentPage.value = 1 // Reset to first page on search
+  
+  // Jeśli użytkownik wpisał cenę, ustaw priceDisplay na tę jednostkę
+  // Aby wyniki były przełączone na tę jednostkę (jak przy sortowaniu)
+  if (searchFilters._priceDisplayUnit) {
+    priceDisplay.value = searchFilters._priceDisplayUnit as 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
+  }
   
   // Konwertuj filtry na query params
   const queryParams = filtersToQueryParams(searchFilters)

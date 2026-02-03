@@ -47,6 +47,7 @@ interface Filters {
   mobileExposureMode: string
   campaignDurationFrom: number | null
   campaignDurationTo: number | null
+  _priceDisplayUnit?: string
 }
 
 const emit = defineEmits<{
@@ -99,6 +100,7 @@ const filters = ref<Filters>({
   mobileExposureMode: '',
   campaignDurationFrom: null,
   campaignDurationTo: null,
+  _priceDisplayUnit: undefined,
 })
 
 const adTypes = [
@@ -335,6 +337,13 @@ const handleSearch = () => {
     if (searchFilters.heightTo !== null) {
       searchFilters.heightTo = searchFilters.heightTo / 1000
     }
+  }
+  
+  // Jeśli użytkownik wpisał cenę, dodaj priceUnit do filtrów
+  // Aby wyniki były przełączone na tę jednostkę (jak przy sortowaniu)
+  if ((searchFilters.priceFrom !== null || searchFilters.priceTo !== null) && searchFilters.priceUnit) {
+    // Dodaj specjalny parametr do emitowanego eventu
+    searchFilters._priceDisplayUnit = searchFilters.priceUnit
   }
   
   // Emit the search event with converted filters

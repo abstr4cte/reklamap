@@ -1323,6 +1323,12 @@ const applyFilters = () => {
   // Zastosuj tymczasowe filtry
   filters.value = JSON.parse(JSON.stringify(tempFilters.value))
   
+  // Jeśli użytkownik wpisał cenę, ustaw priceDisplay na tę jednostkę
+  // Aby wyniki były przełączone na tę jednostkę (jak przy sortowaniu)
+  if ((tempFilters.value.priceFrom !== null || tempFilters.value.priceTo !== null) && tempFilters.value.priceUnit) {
+    priceDisplay.value = tempFilters.value.priceUnit as 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
+  }
+  
   // Zamknij modal
   showFiltersModal.value = false
   tempFilters.value = null
