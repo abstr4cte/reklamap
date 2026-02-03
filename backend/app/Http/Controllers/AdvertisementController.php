@@ -459,22 +459,24 @@ class AdvertisementController extends Controller
                 mkdir(dirname($fullPath), 0755, true);
             }
 
-            // Set environment variables for correct Node version
-            $nodePath = '/home/dev/.nvm/versions/node/v21.5.0/bin/node';
-            putenv('PATH=' . dirname($nodePath) . ':' . getenv('PATH'));
-
             $html = view('map-screenshot', [
                 'latitude' => $ad->latitude,
                 'longitude' => $ad->longitude,
                 'title' => $ad->title,
             ])->render();
 
-            \Spatie\Browsershot\Browsershot::html($html)
-                ->setNodeBinary($nodePath)
+            $browsershot = \Spatie\Browsershot\Browsershot::html($html)
                 ->windowSize(860, 400)
                 ->waitUntilNetworkIdle()
-                ->waitForFunction("window.mapReady === true", Polling::RequestAnimationFrame, 10000) // <- poprawione
-                ->save($fullPath);
+                ->waitForFunction("window.mapReady === true", Polling::RequestAnimationFrame, 10000);
+            
+            // Only set Node binary if it exists (for local development)
+            $nodePath = '/home/dev/.nvm/versions/node/v21.5.0/bin/node';
+            if (file_exists($nodePath)) {
+                $browsershot->setNodeBinary($nodePath);
+            }
+            
+            $browsershot->save($fullPath);
 
             // Save path to database
             $ad->map_screenshot_path = $screenshotPath;
