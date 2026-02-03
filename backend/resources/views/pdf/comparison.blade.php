@@ -53,9 +53,11 @@
         .ad-image {
             width: 100%;
             height: 100px;
-            object-fit: cover;
+            object-fit: contain;
+            object-position: center;
             margin-bottom: 5px;
             border-radius: 4px;
+            background-color: #f9fafb;
         }
 
         .ad-title {
