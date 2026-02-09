@@ -462,6 +462,57 @@ const sortedAndFilteredListings = computed(() => {
   return sorted
 })
 
+const activeFiltersCount = computed(() => {
+  let count = 0
+  const f = filters.value
+  
+  if (f.keyword) count++
+  if (f.type) count++
+  if (f.region) count++
+  if (f.city) count++
+  if (f.priceFrom !== null) count++
+  if (f.priceTo !== null) count++
+  // priceUnit: 'month' is default, so only count if it's different
+  if (f.priceUnit !== 'month') count++
+  
+  if (f.rentalPeriod) count++
+  if (f.orientation) count++
+  if (f.widthFrom !== null) count++
+  if (f.widthTo !== null) count++
+  if (f.heightFrom !== null) count++
+  if (f.heightTo !== null) count++
+  if (f.surfaceFrom !== null) count++
+  if (f.surfaceTo !== null) count++
+  if (f.trafficIntensity) count++
+  if (f.status && f.status.length > 0) count++
+  if (f.environment) count++
+  if (f.hasBacklight) count++
+  if (f.onlyWithImage) count++
+  if (f.priceIncludesPrint) count++
+  if (f.priceIncludesMounting) count++
+  if (f.graphicDesignHelp) count++
+  if (f.offerType) count++
+  if (f.hasVatInvoice) count++
+  if (f.selectedLocationCoords) count++
+  
+  // Type-specific
+  if (f.variant) count++
+  if (f.roadClass) count++
+  if (f.resolution) count++
+  if (f.pixelPitchFrom !== null) count++
+  if (f.pixelPitchTo !== null) count++
+  if (f.brightnessFrom !== null) count++
+  if (f.brightnessTo !== null) count++
+  if (f.transportScope) count++
+  if (f.vehicleCountFrom !== null) count++
+  if (f.vehicleCountTo !== null) count++
+  if (f.mobileExposureMode) count++
+  if (f.campaignDurationFrom !== null) count++
+  if (f.campaignDurationTo !== null) count++
+  
+  return count
+})
+
 const totalPages = computed(() => {
   return Math.ceil(sortedAndFilteredListings.value.length / itemsPerPage)
 })
@@ -755,7 +806,7 @@ onMounted(() => {
       <div class="categories-container">
         <h2 class="categories-title">Przeglądaj kategorie powierzchni reklamowych</h2>
         <div class="categories-grid">
-          <template v-for="(category, index) in isMobile && !showAllCategories ? orderedCategories.slice(0, 3) : orderedCategories" :key="category.slug">
+          <template v-for="category in isMobile && !showAllCategories ? orderedCategories.slice(0, 3) : orderedCategories" :key="category.slug">
             <router-link
               :to="`/powierzchnie-reklamowe/${category.slug}`"
               class="category-card"
@@ -838,6 +889,7 @@ onMounted(() => {
       :view-mode="viewMode"
       :sort-by="sortBy"
       :price-display="priceDisplay"
+      :active-filters-count="activeFiltersCount"
       @toggle-favorite="$emit('toggleFavorite', $event)"
       @toggle-comparison="$emit('toggleComparison', $event)"
       @update:view-mode="viewMode = $event"

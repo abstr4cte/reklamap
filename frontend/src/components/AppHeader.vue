@@ -573,6 +573,7 @@ watch(isMobileMenuOpen, (isOpen) => {
   align-items: center;
   justify-content: center;
   border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .add-listing-btn {
@@ -816,6 +817,8 @@ watch(isMobileMenuOpen, (isOpen) => {
   align-items: center;
   justify-content: center;
   padding: 0 0.375rem;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Mobile Categories Toggle */

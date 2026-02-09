@@ -9,6 +9,7 @@ const props = defineProps<{
   viewMode?: 'grid' | 'list'
   sortBy?: string
   priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
+  activeFiltersCount?: number
 }>()
 
 const showSortPanel = ref(false)
@@ -191,6 +192,7 @@ onUnmounted(() => {
               <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
             </svg>
             <span>Filtruj</span>
+            <span v-if="activeFiltersCount && activeFiltersCount > 0" class="filter-badge">{{ activeFiltersCount }}</span>
           </button>
 
           <!-- Mobile Sort and Filter Buttons -->
@@ -208,6 +210,7 @@ onUnmounted(() => {
                 <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
               </svg>
               <span class="btn-text">Filtruj</span>
+              <span v-if="activeFiltersCount && activeFiltersCount > 0" class="filter-badge">{{ activeFiltersCount }}</span>
             </button>
           </div>
           <select v-model="sortBy" @change="emit('update:sortBy', sortBy)" class="sort-select">
@@ -478,6 +481,7 @@ onUnmounted(() => {
   font-size: 0.95rem;
   font-weight: 600;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .desktop-filter-btn:hover {
@@ -515,6 +519,7 @@ onUnmounted(() => {
   font-weight: 600;
   transition: all 0.2s ease;
   height: fit-content;
+  position: relative;
 }
 
 .mobile-header-btn .btn-text {
@@ -628,6 +633,34 @@ onUnmounted(() => {
   .mobile-header-btn svg {
     width: 20px;
     height: 20px;
+  }
+}
+
+.filter-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #EF4444;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
+}
+
+@media (max-width: 768px) {
+  .filter-badge {
+    width: 18px;
+    height: 18px;
+    top: -6px;
+    right: -6px;
+    font-size: 10px;
   }
 }
 

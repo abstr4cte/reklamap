@@ -2879,9 +2879,9 @@ onBeforeUnmount(() => {
 
 .mobile-filter-badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #ef4444;
+  top: -6px;
+  right: -6px;
+  background: #EF4444;
   color: white;
   border-radius: 50%;
   width: 18px;
@@ -2890,7 +2890,9 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
 }
 
 /* Overlay */
@@ -3153,6 +3155,8 @@ onBeforeUnmount(() => {
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
 }
 
 .sort-select {
