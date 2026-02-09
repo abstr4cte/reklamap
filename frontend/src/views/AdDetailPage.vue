@@ -3191,15 +3191,11 @@ onUnmounted(() => {
   justify-content: space-between;
   padding: 1.5rem;
   border-bottom: 1px solid #e5e7eb;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: sticky;
+  top: 0;
   background: white;
-  border-radius: 20px 20px 0 0;
   z-index: 2002;
-  width: auto;
-  min-width: 300px;
+  width: 100%;
 }
 
 .mobile-menu-header h3 {
@@ -3294,7 +3290,6 @@ onUnmounted(() => {
 .mobile-menu-divider {
   height: 1px;
   background: #e5e7eb;
-  margin: 0.5rem 0;
 }
 
 @keyframes slideUp {
