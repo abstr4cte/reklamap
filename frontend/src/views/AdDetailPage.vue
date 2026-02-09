@@ -3339,6 +3339,10 @@ onUnmounted(() => {
     display: none;
   }
 
+  .image-gallery {
+    order: 1;
+  }
+
   /* Pokaż mobile sidebar card w main-content */
   .mobile-sidebar-card {
     display: flex;
@@ -3349,8 +3353,20 @@ onUnmounted(() => {
     order: 3;
   }
 
-  .map-section {
+  .description-section {
     order: 4;
+  }
+
+  .map-section {
+    order: 5;
+  }
+
+  .street-view-section {
+    order: 6;
+  }
+
+  .contact-form-section {
+    order: 7;
   }
 
   .comparison-table-wrapper {
