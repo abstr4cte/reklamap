@@ -111,8 +111,8 @@ class StaticMapGenerator
         $markerCanvasX = (int) floor($tilesX / 2) * $this->tileSize + $offsetX;
         $markerCanvasY = (int) floor($tilesY / 2) * $this->tileSize + $offsetY;
 
-        // Draw marker at the center point
-        $this->drawMarker($canvas, $markerCanvasX, $markerCanvasY);
+        // Draw marker at the center point using the real Leaflet marker icon
+        $this->drawLeafletMarker($canvas, $markerCanvasX, $markerCanvasY, $context);
 
         // Crop the canvas to the desired output size, centered on the marker
         $cropX = max(0, $markerCanvasX - (int) floor($this->width / 2));
@@ -128,21 +128,6 @@ class StaticMapGenerator
 
         $finalImage = imagecreatetruecolor($this->width, $this->height);
         imagecopy($finalImage, $canvas, 0, 0, $cropX, $cropY, $this->width, $this->height);
-
-        // Add subtle OSM attribution text at bottom-right
-        $attrColor = imagecolorallocatealpha($finalImage, 0, 0, 0, 60);
-        $attrBg = imagecolorallocatealpha($finalImage, 255, 255, 255, 40);
-        $attrText = '© OpenStreetMap';
-        $attrWidth = strlen($attrText) * imagefontwidth(2);
-        imagefilledrectangle(
-            $finalImage,
-            $this->width - $attrWidth - 8,
-            $this->height - 16,
-            $this->width,
-            $this->height,
-            $attrBg
-        );
-        imagestring($finalImage, 2, $this->width - $attrWidth - 4, $this->height - 14, $attrText, $attrColor);
 
         // Ensure output directory exists
         $dir = dirname($outputPath);
@@ -160,47 +145,68 @@ class StaticMapGenerator
     }
 
     /**
-     * Draw a map marker pin at the given canvas position.
+     * Draw the real Leaflet marker icon (with shadow) at the given canvas position.
+     * Downloads marker-icon.png and marker-shadow.png from Leaflet CDN.
+     * The marker anchor point is at the bottom-center of the icon (same as Leaflet).
      */
-    private function drawMarker(\GdImage $canvas, int $x, int $y): void
+    private function drawLeafletMarker(\GdImage $canvas, int $x, int $y, $httpContext): void
     {
-        // Marker dimensions
-        $pinHeight = 36;
-        $pinWidth = 24;
-        $circleRadius = 8;
+        $leafletCdn = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images';
+        $cacheDir = storage_path('app/cache/map-icons');
 
-        // Draw drop shadow
-        $shadow = imagecolorallocatealpha($canvas, 0, 0, 0, 100);
-        imagefilledellipse($canvas, $x + 2, $y + 2, 10, 6, $shadow);
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0755, true);
+        }
 
-        // Draw marker pin body (teardrop shape using filled polygon + circle)
-        $pinColor = imagecolorallocate($canvas, 220, 53, 69); // Red pin
-        $pinDark = imagecolorallocate($canvas, 180, 40, 55);
+        // Download and cache the shadow (41x41, anchor: 12,41)
+        $shadowPath = $cacheDir . '/marker-shadow.png';
+        if (!file_exists($shadowPath)) {
+            $shadowData = @file_get_contents($leafletCdn . '/marker-shadow.png', false, $httpContext);
+            if ($shadowData !== false) {
+                file_put_contents($shadowPath, $shadowData);
+            }
+        }
 
-        // Pin point (triangle at bottom)
-        $points = [
-            $x - (int) ($pinWidth / 2) + 2,
-            $y - (int) ($pinHeight / 2) + 4,  // left
-            $x,
-            $y,                                                            // bottom point
-            $x + (int) ($pinWidth / 2) - 2,
-            $y - (int) ($pinHeight / 2) + 4,  // right
-        ];
-        imagefilledpolygon($canvas, $points, $pinColor);
+        // Download and cache the marker icon (25x41, anchor: 12,41)
+        $iconPath = $cacheDir . '/marker-icon.png';
+        if (!file_exists($iconPath)) {
+            $iconData = @file_get_contents($leafletCdn . '/marker-icon.png', false, $httpContext);
+            if ($iconData !== false) {
+                file_put_contents($iconPath, $iconData);
+            }
+        }
 
-        // Pin head (circle at top)
-        $headY = $y - (int) ($pinHeight / 2) + 2;
-        imagefilledellipse($canvas, $x, $headY, $pinWidth, $pinWidth, $pinColor);
+        // Draw shadow first (slightly offset to the right, like Leaflet)
+        if (file_exists($shadowPath)) {
+            $shadow = @imagecreatefrompng($shadowPath);
+            if ($shadow !== false) {
+                $shadowW = imagesx($shadow);
+                $shadowH = imagesy($shadow);
+                // Leaflet shadow anchor: [12, 41] - bottom of shadow aligns with marker bottom
+                $shadowX = $x - 12;
+                $shadowY = $y - $shadowH;
 
-        // Inner circle (white dot)
-        $white = imagecolorallocate($canvas, 255, 255, 255);
-        imagefilledellipse($canvas, $x, $headY, $circleRadius * 2, $circleRadius * 2, $white);
+                imagealphablending($canvas, true);
+                imagecopy($canvas, $shadow, $shadowX, $shadowY, 0, 0, $shadowW, $shadowH);
+                imagedestroy($shadow);
+            }
+        }
 
-        // Inner dot
-        imagefilledellipse($canvas, $x, $headY, 6, 6, $pinColor);
+        // Draw marker icon on top
+        if (file_exists($iconPath)) {
+            $icon = @imagecreatefrompng($iconPath);
+            if ($icon !== false) {
+                $iconW = imagesx($icon);
+                $iconH = imagesy($icon);
+                // Leaflet marker anchor: [12, 41] - center-bottom of icon
+                $iconX = $x - 12;
+                $iconY = $y - $iconH;
 
-        // Border
-        imageellipse($canvas, $x, $headY, $pinWidth, $pinWidth, $pinDark);
+                imagealphablending($canvas, true);
+                imagecopy($canvas, $icon, $iconX, $iconY, 0, 0, $iconW, $iconH);
+                imagedestroy($icon);
+            }
+        }
     }
 
     /**

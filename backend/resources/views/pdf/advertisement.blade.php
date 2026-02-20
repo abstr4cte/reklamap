@@ -112,7 +112,17 @@
             {{ number_format($advertisement->price, 2, ',', ' ') }} PLN
             <span style="font-size: 14px; color: #6b7280; font-weight: normal;">
                 /
-                {{ $advertisement->price_unit === 'day' ? 'dzień' : ($advertisement->price_unit === 'week' ? 'tydzień' : ($advertisement->price_unit === 'month' ? 'miesiąc' : 'rok')) }}
+                @php
+                    $priceUnitLabels = [
+                        'day' => 'dzień',
+                        'week' => 'tydzień',
+                        'month' => 'miesiąc',
+                        'year' => 'rok',
+                        'campaign' => 'kampania',
+                        'sqm' => 'm²'
+                    ];
+                @endphp
+                {{ $priceUnitLabels[$advertisement->price_unit] ?? $advertisement->price_unit }}
             </span>
         </div>
     </div>
@@ -152,49 +162,211 @@
     @endif
 
     <div class="section-title">Szczegóły</div>
+    @php
+        $showDimensions = in_array($advertisement->type, ['billboard', 'citylight', 'banner', 'wall', 'totem', 'led_screen']) && $advertisement->width && $advertisement->height && $advertisement->width > 0 && $advertisement->height > 0;
+        $showTrafficIntensity = in_array($advertisement->type, ['billboard', 'banner', 'wall']) && $advertisement->traffic_intensity;
+        $showTrafficDirection = $advertisement->type === 'billboard' && $advertisement->traffic_direction && count($advertisement->traffic_direction ?? []) > 0;
+        $showRoadClass = $advertisement->type === 'billboard' && $advertisement->road_class;
+        $showLighting = in_array($advertisement->type, ['citylight', 'led_screen', 'totem']) && $advertisement->has_backlight;
+        $showEnvironment = in_array($advertisement->type, ['citylight', 'led_screen', 'totem', 'banner', 'mobile', 'other']) && $advertisement->environment;
+        $showTrafficType = $advertisement->type === 'banner' && $advertisement->traffic_type && count($advertisement->traffic_type ?? []) > 0;
+        $showPrint = in_array($advertisement->type, ['billboard', 'banner', 'citylight']) && $advertisement->price_includes_print;
+        $showMounting = in_array($advertisement->type, ['billboard', 'banner', 'wall', 'citylight']) && $advertisement->price_includes_mounting;
+        $showGraphicDesign = in_array($advertisement->type, ['billboard', 'banner', 'wall', 'citylight']) && $advertisement->graphic_design_help;
+        $showVariant = in_array($advertisement->type, ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile']) && $advertisement->variant && trim($advertisement->variant) !== '';
+        $showResolution = $advertisement->type === 'led_screen' && !empty($advertisement->resolution);
+        $showPixelPitch = $advertisement->type === 'led_screen' && !empty($advertisement->pixel_pitch);
+        $showBrightness = $advertisement->type === 'led_screen' && !empty($advertisement->brightness);
+        $showCampaignDuration = $advertisement->price_unit === 'campaign' && !empty($advertisement->campaign_duration);
+        $showTransportScope = $advertisement->type === 'transport' && !empty($advertisement->transport_scope);
+        $showVehicleCount = $advertisement->type === 'transport' && !empty($advertisement->vehicle_count);
+        $showMobileExposureMode = $advertisement->type === 'mobile' && !empty($advertisement->mobile_exposure_mode);
+        $showOperatingHours = $advertisement->type === 'mobile' && !empty($advertisement->operating_hours);
+        $showRouteArea = $advertisement->type === 'mobile' && !empty($advertisement->route_area);
+
+        $details = [];
+
+        // 1. Location (always)
+        $details[] = [
+            'label' => 'Lokalizacja',
+            'value' => $advertisement->city . ', ' . $advertisement->region,
+            'subtext' => $advertisement->location
+        ];
+
+        // 2. Type (always)
+        $typeLabels = [
+            'billboard' => 'Billboard',
+            'citylight' => 'Citylight',
+            'led_screen' => 'Ekran LED',
+            'banner' => 'Banner',
+            'wall' => 'Ściana reklamowa',
+            'totem' => 'Totem reklamowy',
+            'transport' => 'Reklama w transporcie',
+            'mobile' => 'Reklama mobilna',
+            'other' => 'Inne'
+        ];
+        $details[] = [
+            'label' => 'Typ powierzchni',
+            'value' => $typeLabels[$advertisement->type] ?? $advertisement->type
+        ];
+
+        // 3. Dimensions and Orientation
+        if ($showDimensions) {
+            $dimValue = ($advertisement->type === 'led_screen')
+                ? number_format($advertisement->width * 1000, 0) . 'mm × ' . number_format($advertisement->height * 1000, 0) . 'mm'
+                : $advertisement->width . 'm × ' . $advertisement->height . 'm';
+            $details[] = ['label' => 'Wymiary', 'value' => $dimValue];
+            $details[] = ['label' => 'Orientacja', 'value' => $advertisement->orientation === 'horizontal' ? 'Poziom' : 'Pion'];
+        }
+
+        // 4. Variant
+        if ($showVariant) {
+            $variantLabels = [
+                'standard' => 'Standardowy',
+                'three_sided' => 'Trójstronny',
+                'backlit' => 'Backlit (podświetlany)',
+                'single' => 'Pojedynczy',
+                'double' => 'Podwójny',
+                'digital' => 'Cyfrowy',
+                'outdoor' => 'Zewnętrzny',
+                'indoor' => 'Wewnętrzny',
+                'interactive' => 'Interaktywny',
+                'pvc' => 'PCV',
+                'mesh' => 'Siatkowy/Mesh',
+                'textile' => 'Tekstylny',
+                'mural' => 'Mural',
+                'foil' => 'Folia',
+                'construction' => 'Konstrukcja',
+                'single_sided' => 'Jednostronny',
+                'double_sided' => 'Dwustronny',
+                'multi_sided' => 'Wielostronny',
+                'bus' => 'Autobus',
+                'tram' => 'Tramwaj',
+                'metro' => 'Metro',
+                'stop' => 'Przystanek',
+                'trailer' => 'Przyczepka',
+                'car' => 'Samochód',
+                'bike' => 'Rower',
+                'other' => 'Inna',
+                'static' => 'Statyczny',
+                'dynamic' => 'Dynamiczny'
+            ];
+            $details[] = ['label' => 'Wariant', 'value' => $variantLabels[$advertisement->variant] ?? $advertisement->variant];
+        }
+
+        // 5. Traffic Intensity and Road Class
+        if ($showTrafficIntensity) {
+            $intensity = $advertisement->traffic_intensity === 'low' ? 'Niskie' : ($advertisement->traffic_intensity === 'medium' ? 'Średnie' : 'Wysokie');
+            $details[] = ['label' => 'Natężenie ruchu', 'value' => $intensity];
+        }
+        if ($showRoadClass) {
+            $roadClassLabels = [
+                'highway' => 'Autostrada (A)',
+                'expressway' => 'Droga ekspresowa (S)',
+                'national' => 'Droga krajowa (DK)',
+                'regional' => 'Droga wojewódzka',
+                'local' => 'Droga lokalna',
+                'urban' => 'Droga miejska'
+            ];
+            $details[] = ['label' => 'Klasa drogi', 'value' => $roadClassLabels[$advertisement->road_class] ?? $advertisement->road_class];
+        }
+
+        // 6. Traffic Direction
+        if ($showTrafficDirection) {
+            $directions = $advertisement->traffic_direction ?? [];
+            if (in_array('entry', $directions) && in_array('exit', $directions)) {
+                $dirValue = 'Oba kierunki';
+            } else {
+                $directionLabels = ['entry' => 'Wjazd do miasta', 'exit' => 'Wyjazd z miasta'];
+                $formatted = [];
+                foreach ($directions as $dir) {
+                    $formatted[] = $directionLabels[$dir] ?? $dir;
+                }
+                $dirValue = implode(', ', $formatted);
+            }
+            $details[] = ['label' => 'Kierunek ruchu', 'value' => $dirValue];
+        }
+
+        // 7. Traffic Type
+        if ($showTrafficType) {
+            $trafficTypes = $advertisement->traffic_type ?? [];
+            $tLabels = ['pedestrian' => 'Pieszy', 'vehicular' => 'Samochodowy'];
+            $formatted = [];
+            foreach ($trafficTypes as $t) {
+                $formatted[] = $tLabels[$t] ?? $t;
+            }
+            $details[] = ['label' => 'Rodzaj ruchu', 'value' => implode(', ', $formatted)];
+        }
+
+        // 8. Environment
+        if ($showEnvironment) {
+            $envLabels = ['indoor' => 'Wewnątrz', 'outdoor' => 'Na zewnątrz', 'event' => 'Event / Wydarzenie'];
+            $details[] = ['label' => 'Środowisko', 'value' => $envLabels[$advertisement->environment] ?? $advertisement->environment];
+        }
+
+        // 9. LED Technical specs
+        if ($showResolution)
+            $details[] = ['label' => 'Rozdzielczość', 'value' => $advertisement->resolution];
+        if ($showPixelPitch)
+            $details[] = ['label' => 'Pixel Pitch', 'value' => $advertisement->pixel_pitch . ' mm'];
+        if ($showBrightness)
+            $details[] = ['label' => 'Jasność', 'value' => $advertisement->brightness . ' nits'];
+
+        // 10. Campaign Duration
+        if ($showCampaignDuration)
+            $details[] = ['label' => 'Czas trwania kampanii', 'value' => $advertisement->campaign_duration . ' dni'];
+
+        // 11. Transport Scope and Vehicle Count
+        if ($showTransportScope) {
+            $sLabels = ['internal' => 'Wewnętrzna', 'external' => 'Zewnętrzna', 'full_vehicle' => 'Całopojazdowa'];
+            $details[] = ['label' => 'Zakres', 'value' => $sLabels[$advertisement->transport_scope] ?? $advertisement->transport_scope];
+        }
+        if ($showVehicleCount)
+            $details[] = ['label' => 'Liczba pojazdów', 'value' => $advertisement->vehicle_count];
+
+        // 12. Mobile details
+        if ($showMobileExposureMode) {
+            $mLabels = ['moving' => 'Jeżdżąca', 'stationary' => 'Stojąca', 'mixed' => 'Mieszana'];
+            $details[] = ['label' => 'Tryb ekspozycji', 'value' => $mLabels[$advertisement->mobile_exposure_mode] ?? $advertisement->mobile_exposure_mode];
+        }
+        if ($showOperatingHours)
+            $details[] = ['label' => 'Godziny działania', 'value' => $advertisement->operating_hours];
+        if ($showRouteArea)
+            $details[] = ['label' => 'Trasa / Obszar', 'value' => $advertisement->route_area];
+
+        // 13. Features
+        if ($showLighting)
+            $details[] = ['label' => 'Podświetlenie', 'value' => 'Tak'];
+        if ($showPrint)
+            $details[] = ['label' => 'Druk w cenie', 'value' => 'Tak'];
+        if ($showMounting)
+            $details[] = ['label' => 'Montaż w cenie', 'value' => 'Tak'];
+        if ($showGraphicDesign)
+            $details[] = ['label' => 'Pomoc graficzna', 'value' => 'Dostępna'];
+
+        // 14. Offer type and VAT
+        $details[] = ['label' => 'Rodzaj oferty', 'value' => $advertisement->offer_type === 'owner' ? 'Właściciel' : 'Agencja'];
+        if ($advertisement->has_vat_invoice)
+            $details[] = ['label' => 'Faktura VAT', 'value' => 'Tak'];
+    @endphp
+
     <div class="grid">
-        <div class="row">
-            <div class="col">
-                <div class="label">Lokalizacja</div>
-                <div class="value">{{ $advertisement->city }}, {{ $advertisement->region }}</div>
-                <div class="value" style="font-size: 12px; color: #6b7280;">{{ $advertisement->location }}</div>
+        @foreach(array_chunk($details, 2) as $row)
+            <div class="row">
+                @foreach($row as $item)
+                    <div class="col">
+                        <div class="label">{{ $item['label'] }}</div>
+                        <div class="value">{{ $item['value'] }}</div>
+                        @if(isset($item['subtext']))
+                            <div class="value" style="font-size: 12px; color: #6b7280;">{{ $item['subtext'] }}</div>
+                        @endif
+                    </div>
+                @endforeach
+                @if(count($row) < 2)
+                    <div class="col"></div>
+                @endif
             </div>
-            <div class="col">
-                <div class="label">Wymiary</div>
-                <div class="value">
-                    @if($advertisement->type === 'led_screen')
-                        {{ number_format($advertisement->width * 1000, 0) }}mm x {{ number_format($advertisement->height * 1000, 0) }}mm
-                    @else
-                        {{ $advertisement->width }}m x {{ $advertisement->height }}m
-                    @endif
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div class="label">Typ</div>
-                <div class="value">{{ $advertisement->type }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Natężenie ruchu</div>
-                <div class="value">
-                    @if($advertisement->traffic_intensity === 'low') Niskie
-                    @elseif($advertisement->traffic_intensity === 'medium') Średnie
-                    @else Wysokie
-                    @endif
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div class="label">Oświetlenie</div>
-                <div class="value">{{ $advertisement->has_lighting ? 'Tak' : 'Nie' }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Faktura VAT</div>
-                <div class="value">{{ $advertisement->has_vat_invoice ? 'Tak' : 'Nie' }}</div>
-            </div>
-        </div>
+        @endforeach
     </div>
 
     <div class="section-title">Opis</div>
@@ -203,7 +375,7 @@
     </div>
 
     <div class="section-title">Lokalizacja</div>
-    
+
     @php
         $mapScreenshotBase64 = null;
         if ($advertisement->map_screenshot_path) {
@@ -214,11 +386,11 @@
             }
         }
     @endphp
-    
+
     @if($mapScreenshotBase64)
         <img src="{{ $mapScreenshotBase64 }}" style="width: 100%; height: auto; margin-bottom: 1rem; border-radius: 8px;">
     @endif
-    
+
     <div style="margin-bottom: 1rem;">
         <div class="label">Współrzędne GPS</div>
         <div class="value">{{ number_format($advertisement->latitude, 6) }},

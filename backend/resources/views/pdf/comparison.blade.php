@@ -341,7 +341,7 @@
             <tr>
                 <th>Oświetlenie</th>
                 @foreach($advertisements as $ad)
-                    <td><span class="{{ $ad->has_lighting ? 'yes' : 'no' }}">{{ $ad->has_lighting ? 'Tak' : 'Nie' }}</span>
+                    <td><span class="{{ $ad->has_backlight ? 'yes' : 'no' }}">{{ $ad->has_backlight ? 'Tak' : 'Nie' }}</span>
                     </td>
                 @endforeach
             </tr>
