@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Http;
 use App\Mail\ContactAdvertisementOwner;
 use App\Mail\AdCreatedConfirmationMail;
 use App\Rules\ProfanityRule;
-use Spatie\Browsershot\Enums\Polling;
 
 class AdvertisementController extends Controller
 {
@@ -23,7 +22,7 @@ class AdvertisementController extends Controller
         if ($request->has('ids')) {
             $ids = explode(',', $request->input('ids'));
             $ads = $query->whereIn('id', $ids)->get();
-            
+
             // Preserve the order from the ids parameter
             $adsOrdered = collect();
             foreach ($ids as $id) {
@@ -232,33 +231,33 @@ class AdvertisementController extends Controller
     public function incrementViews(string $id)
     {
         Advertisement::findOrFail($id); // Verify ad exists
-        
+
         // Zapisz statystykę dzienną
         $dailyStat = \App\Models\AdvertisementDailyStat::getTodayOrCreate($id);
         $dailyStat->increment('views');
-        
+
         return response()->json(['message' => 'Views incremented']);
     }
 
     public function incrementPhoneClicks(string $id)
     {
         Advertisement::findOrFail($id); // Verify ad exists
-        
+
         // Zapisz statystykę dzienną
         $dailyStat = \App\Models\AdvertisementDailyStat::getTodayOrCreate($id);
         $dailyStat->increment('phone_clicks');
-        
+
         return response()->json(['message' => 'Phone clicks incremented']);
     }
 
     public function incrementEmailClicks(string $id)
     {
         Advertisement::findOrFail($id); // Verify ad exists
-        
+
         // Zapisz statystykę dzienną
         $dailyStat = \App\Models\AdvertisementDailyStat::getTodayOrCreate($id);
         $dailyStat->increment('email_clicks');
-        
+
         return response()->json(['message' => 'Email clicks incremented']);
     }
 
@@ -390,10 +389,10 @@ class AdvertisementController extends Controller
     {
         $ids = explode(',', $request->input('ids'));
         $unit = $request->input('unit', 'month');
-        
+
         // Pobierz ogłoszenia i zachowaj kolejność z parametru ids
         $ads = Advertisement::whereIn('id', $ids)->get();
-        
+
         // Sortuj ogłoszenia w kolejności z parametru ids
         $adsOrdered = collect();
         foreach ($ids as $id) {
@@ -402,16 +401,38 @@ class AdvertisementController extends Controller
                 $adsOrdered->push($ad);
             }
         }
-        
+
         // Jeśli fields nie są podane, wyświetl wszystkie pola
         $fields = $request->has('fields') ? explode(',', $request->input('fields')) : [
-            'price', 'price_per_sqm', 'type', 'variant', 'dimensions', 'surface_area', 
-            'orientation', 'location', 'location_tier', 'road_class', 'traffic_intensity', 
-            'traffic_direction', 'traffic_type', 'environment', 'has_backlight', 
-            'price_includes_print', 'price_includes_mounting', 'graphic_design_help', 
-            'status', 'offer_type', 'has_vat_invoice', 'transport_scope', 'vehicle_count',
-            'mobile_exposure_mode', 'route_area', 'operating_hours', 'resolution', 
-            'pixel_pitch', 'brightness'
+            'price',
+            'price_per_sqm',
+            'type',
+            'variant',
+            'dimensions',
+            'surface_area',
+            'orientation',
+            'location',
+            'location_tier',
+            'road_class',
+            'traffic_intensity',
+            'traffic_direction',
+            'traffic_type',
+            'environment',
+            'has_backlight',
+            'price_includes_print',
+            'price_includes_mounting',
+            'graphic_design_help',
+            'status',
+            'offer_type',
+            'has_vat_invoice',
+            'transport_scope',
+            'vehicle_count',
+            'mobile_exposure_mode',
+            'route_area',
+            'operating_hours',
+            'resolution',
+            'pixel_pitch',
+            'brightness'
         ];
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.comparison', [
@@ -492,24 +513,16 @@ class AdvertisementController extends Controller
                 mkdir(dirname($fullPath), 0755, true);
             }
 
-            $html = view('map-screenshot', [
-                'latitude' => $ad->latitude,
-                'longitude' => $ad->longitude,
-                'title' => $ad->title,
-            ])->render();
+            $generator = new \App\Services\StaticMapGenerator();
+            $result = $generator->generate(
+                (float) $ad->latitude,
+                (float) $ad->longitude,
+                $fullPath
+            );
 
-            $browsershot = \Spatie\Browsershot\Browsershot::html($html)
-                ->windowSize(860, 400)
-                ->waitUntilNetworkIdle()
-                ->waitForFunction("window.mapReady === true", Polling::RequestAnimationFrame, 10000);
-            
-            // Only set Node binary if it exists (for local development)
-            $nodePath = '/home/dev/.nvm/versions/node/v21.5.0/bin/node';
-            if (file_exists($nodePath)) {
-                $browsershot->setNodeBinary($nodePath);
+            if (!$result) {
+                throw new \RuntimeException('StaticMapGenerator failed to produce the image.');
             }
-            
-            $browsershot->save($fullPath);
 
             // Save path to database
             $ad->map_screenshot_path = $screenshotPath;
@@ -544,15 +557,15 @@ class AdvertisementController extends Controller
     public function getDailyStats(string $id)
     {
         $ad = Advertisement::findOrFail($id);
-        
+
         // Pobierz statystyki za ostatnie 30 dni
         $stats = \App\Models\AdvertisementDailyStat::getStatsForPeriod($id, 30);
-        
+
         // Pobierz sumę wszystkich wyświetleń z daily_stats
         $allTimeStats = \App\Models\AdvertisementDailyStat::where('advertisement_id', $id)
             ->selectRaw('SUM(views) as total_views, SUM(phone_clicks) as total_phone_clicks, SUM(email_clicks) as total_email_clicks')
             ->first();
-        
+
         return response()->json([
             'advertisement_id' => $id,
             'title' => $ad->title,
