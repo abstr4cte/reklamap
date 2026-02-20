@@ -14,7 +14,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias(['app.key' => \App\Http\Middleware\VerifyAppKey::class,]);
         $middleware->appendToGroup('api', 'app.key');
-        $middleware->exclude(['/admin/*']);
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
