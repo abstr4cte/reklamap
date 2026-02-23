@@ -226,6 +226,7 @@ const router = useRouter()
 
 // Flaga zapobiegająca cyklicznemu wywoływaniu watch'ów
 const isResettingFilters = ref(false)
+const isInitialized = ref(false)
 
 // Helper to map type to Polish label
 const getTypeLabel = (type: string): string => {
@@ -398,7 +399,16 @@ const filters = ref({
   vehicleCountTo: null as number | null,
   mobileExposureMode: '',
   campaignDurationFrom: null as number | null,
-  campaignDurationTo: null as number | null
+  campaignDurationTo: null as number | null,
+  // Nowe pola dla rozszerzonych opcji
+  lightingType: '' as string,
+  dailyPassengersFrom: null as number | null,
+  dailyPassengersTo: null as number | null,
+  operatingZone: '' as string,
+  ambientLightControl: false as boolean,
+  // Checkboxy dla podświetlenia
+  hasLightingTypeBanner: false as boolean,
+  hasLightingTypeBillboard: false as boolean,
 })
 
 // Lokalizacja - podobnie jak na stronie głównej
@@ -863,6 +873,24 @@ const getAvailablePriceUnits = (type: string) => {
   ]
 }
 
+const showEquipmentSection = computed(() => {
+  const type = filters.value.type
+  const showPrint = ['billboard', 'banner'].includes(type)
+  const showMounting = ['billboard', 'banner', 'wall'].includes(type)
+  const showGraphicDesign = ['billboard', 'banner', 'wall'].includes(type)
+  return showPrint || showMounting || showGraphicDesign
+})
+
+const showEquipmentSectionInModal = computed(() => {
+  if (!tempFilters.value) return false
+  const type = tempFilters.value.type
+  const showPrint = ['billboard', 'banner'].includes(type)
+  const showMounting = ['billboard', 'banner', 'wall'].includes(type)
+  const showGraphicDesign = ['billboard', 'banner', 'wall'].includes(type)
+  const showBacklight = ['citylight', 'totem', 'led_screen', 'banner', 'wall', 'billboard'].includes(type)
+  return showPrint || showMounting || showGraphicDesign || showBacklight
+})
+
 const filteredListings = computed(() => {
   let filtered = listings.value
   
@@ -962,7 +990,7 @@ const filteredListings = computed(() => {
 
   // Feature filters
   if (filters.value.onlyWithImage) {
-    filtered = filtered.filter(ad => ad.has_image === true)
+    filtered = filtered.filter(ad => ad.has_image)
   }
   if (filters.value.priceIncludesPrint) {
     filtered = filtered.filter(ad => ad.price_includes_print === true)
@@ -1041,6 +1069,39 @@ const filteredListings = computed(() => {
   }
   if (filters.value.campaignDurationTo !== null) {
     filtered = filtered.filter(ad => ad.campaign_duration && ad.campaign_duration <= filters.value.campaignDurationTo!)
+  }
+
+  // Nowe pola dla rozszerzonych opcji
+  if ((filters.value as any).lightingType) {
+    filtered = filtered.filter(ad => (ad as any).lighting_type === (filters.value as any).lightingType)
+  }
+  if ((filters.value as any).dailyPassengersFrom !== null) {
+    filtered = filtered.filter(ad => (ad as any).daily_passengers && (ad as any).daily_passengers >= (filters.value as any).dailyPassengersFrom!)
+  }
+  if ((filters.value as any).dailyPassengersTo !== null) {
+    filtered = filtered.filter(ad => (ad as any).daily_passengers && (ad as any).daily_passengers <= (filters.value as any).dailyPassengersTo!)
+  }
+  if ((filters.value as any).operatingZone) {
+    filtered = filtered.filter(ad => (ad as any).operating_zone === (filters.value as any).operatingZone)
+  }
+  if ((filters.value as any).ambientLightControl) {
+    filtered = filtered.filter(ad => (ad as any).ambient_light_control === true)
+  }
+  if ((filters.value as any).hasLightingTypeBanner === true) {
+    filtered = filtered.filter(ad => {
+      // Tylko dla banerów i ścian
+      if (!['banner', 'wall'].includes(ad.type)) return false
+      const lightingType = (ad as any).lighting_type_banner
+      return lightingType && lightingType !== 'none'
+    })
+  }
+  if ((filters.value as any).hasLightingTypeBillboard === true) {
+    filtered = filtered.filter(ad => {
+      // Tylko dla billboardów
+      if (ad.type !== 'billboard') return false
+      const lightingType = (ad as any).lighting_type
+      return lightingType && lightingType !== 'none'
+    })
   }
 
   // Sortowanie
@@ -1405,7 +1466,16 @@ const clearFilters = () => {
     vehicleCountTo: null,
     mobileExposureMode: '',
     campaignDurationFrom: null,
-    campaignDurationTo: null
+    campaignDurationTo: null,
+    // Nowe pola dla rozszerzonych opcji
+    lightingType: '',
+    dailyPassengersFrom: null,
+    dailyPassengersTo: null,
+    operatingZone: '',
+    ambientLightControl: false,
+    // Checkboxy dla podświetlenia
+    hasLightingTypeBanner: false,
+    hasLightingTypeBillboard: false
   }
   
   // Wyczyść wyszukiwane słowo kluczowe i lokalizację
@@ -1695,6 +1765,11 @@ const loadListings = async () => {
 
 // Watch for URL query parameter changes
 watch(() => route.query, (newQuery, oldQuery) => {
+  // Skip na początkowym załadowaniu - filtry będą ustawione w onMounted
+  if (!isInitialized.value) {
+    return
+  }
+  
   // Jeśli query nie zmienił się faktycznie, nie rób nic
   if (JSON.stringify(newQuery) === JSON.stringify(oldQuery)) {
     return
@@ -1830,8 +1905,27 @@ watch(() => filteredListings.value, () => {
   updateMarkers()
 })
 
-onMounted(() => {
-  loadListings()
+// Block body scroll when modal or panel is open
+watch(() => showFiltersModal.value, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
+
+watch(() => showSortPanel.value, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
+
+onMounted(async () => {
+  // Załaduj dane NAJPIERW
+  await loadListings()
+  
   checkIfMobile()
   window.addEventListener('resize', checkIfMobile)
   window.addEventListener('scroll', handleScroll)
@@ -1917,6 +2011,9 @@ onMounted(() => {
     
     filters.value = { ...filters.value, ...mergedFilters }
   }
+  
+  // Oznacz że inicjalizacja jest ukończona
+  isInitialized.value = true
 })
 
 onBeforeUnmount(() => {
@@ -2705,20 +2802,59 @@ onBeforeUnmount(() => {
               <option value="mixed">Mieszana</option>
             </select>
           </div>
+
+          <!-- Billboard - Lighting Type -->
+          <div v-if="tempFilters && tempFilters.type === 'billboard'" class="filter-group">
+            <label class="filter-label">Typ oświetlenia</label>
+            <select v-model="(tempFilters as any).lightingType" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option value="led">LED</option>
+              <option value="fluorescent">Fluorescencyjne</option>
+              <option value="natural">Naturalne</option>
+              <option value="none">Brak</option>
+            </select>
+          </div>
+
+          <!-- Transport - Daily Passengers -->
+          <div v-if="tempFilters && tempFilters.type === 'transport'" class="filter-group">
+            <label class="filter-label">Liczba pasażerów dziennie</label>
+            <div class="range-inputs">
+              <input 
+                v-model.number="(tempFilters as any).dailyPassengersFrom" 
+                type="number" 
+                step="100"
+                placeholder="Od"
+                class="filter-input"
+                v-if="tempFilters"
+              />
+              <span class="separator">-</span>
+              <input 
+                v-model.number="(tempFilters as any).dailyPassengersTo" 
+                type="number" 
+                step="100"
+                placeholder="Do"
+                class="filter-input"
+                v-if="tempFilters"
+              />
+            </div>
+          </div>
+
+          <!-- Mobile - Operating Zone -->
+          <div v-if="tempFilters && tempFilters.type === 'mobile'" class="filter-group">
+            <label class="filter-label">Strefa operacyjna</label>
+            <select v-model="(tempFilters as any).operatingZone" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option value="center">Centrum</option>
+              <option value="periphery">Peryferia</option>
+              <option value="agglomeration">Cała aglomeracja</option>
+            </select>
+          </div>
         </div>
 
         <!-- SEKCJA: Wyposażenie i dodatki -->
-        <div class="filter-section">
+        <div v-if="showEquipmentSectionInModal" class="filter-section">
           <h4 class="section-title">Wyposażenie i dodatki</h4>
           
-          <!-- Feature Filters -->
-          <div class="filter-group">
-            <label class="checkbox-option">
-              <input v-model="tempFilters.onlyWithImage" type="checkbox" v-if="tempFilters" />
-              <span>Tylko ze zdjęciem</span>
-            </label>
-          </div>
-
           <div v-if="tempFilters && ['billboard', 'banner'].includes(tempFilters.type)" class="filter-group">
             <label class="checkbox-option">
               <input v-model="tempFilters.priceIncludesPrint" type="checkbox" v-if="tempFilters" />
@@ -2744,6 +2880,28 @@ onBeforeUnmount(() => {
             <label class="checkbox-option">
               <input v-model="tempFilters.hasBacklight" type="checkbox" v-if="tempFilters" />
               <span>Podświetlenie</span>
+            </label>
+          </div>
+
+          <div v-if="tempFilters && ['banner', 'wall'].includes(tempFilters.type)" class="filter-group">
+            <label class="checkbox-option">
+              <input v-model="(tempFilters as any).hasLightingTypeBanner" type="checkbox" v-if="tempFilters" />
+              <span>Podświetlenie</span>
+            </label>
+          </div>
+
+          <div v-if="tempFilters && tempFilters.type === 'billboard'" class="filter-group">
+            <label class="checkbox-option">
+              <input v-model="(tempFilters as any).hasLightingTypeBillboard" type="checkbox" v-if="tempFilters" />
+              <span>Podświetlenie</span>
+            </label>
+          </div>
+
+          <!-- LED Screen - Ambient Light Control -->
+          <div v-if="tempFilters && tempFilters.type === 'led_screen'" class="filter-group">
+            <label class="checkbox-option">
+              <input v-model="(tempFilters as any).ambientLightControl" type="checkbox" v-if="tempFilters" />
+              <span>Dostosowanie do otoczenia</span>
             </label>
           </div>
         </div>
@@ -2809,6 +2967,15 @@ onBeforeUnmount(() => {
               <input v-model="tempFilters.hasVatInvoice" type="checkbox" v-if="tempFilters" />
               <span>Faktura VAT</span>
             </label>
+          </div>
+        </div>
+
+        <!-- Only with Image Toggle -->
+        <div class="filter-section">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <input v-model="tempFilters.onlyWithImage" type="checkbox" class="toggle-switch" style="display: none;" v-if="tempFilters" />
+            <span class="toggle-switch-display" :class="{ active: tempFilters.onlyWithImage }" @click="tempFilters.onlyWithImage = !tempFilters.onlyWithImage" v-if="tempFilters"></span>
+            <label style="margin: 0; cursor: pointer; font-size: 0.875rem; color: #4B5563; font-weight: 500;" @click="tempFilters.onlyWithImage = !tempFilters.onlyWithImage">Tylko ze zdjęciem</label>
           </div>
         </div>
         </div>
@@ -3942,6 +4109,54 @@ onBeforeUnmount(() => {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid #e5e7eb;
+}
+
+.toggle-switch {
+  display: none !important;
+}
+
+.toggle-switch-display {
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+  border-radius: 14px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+.toggle-switch-display::before {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: white;
+  top: 3px;
+  left: 3px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-switch-display:hover {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.toggle-switch-display.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.toggle-switch-display.active::before {
+  left: 25px;
+  box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-switch-display.active:hover {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(102, 126, 234, 0.15);
 }
 
 .filter-section:last-child {

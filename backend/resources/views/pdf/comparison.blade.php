@@ -374,6 +374,81 @@
                 @endforeach
             </tr>
             @endif
+            @php
+                // Pokazuj "Typ oświetlenia" tylko jeśli jest na liście widocznych pól
+                $showLightingType = in_array('lighting_type', $visibleFields);
+            @endphp
+            @if($showLightingType)
+            <tr>
+                <th>Typ oświetlenia</th>
+                @foreach($advertisements as $ad)
+                    <td>
+                        @php
+                            $lightingLabels = ['led' => 'LED', 'fluorescent' => 'Fluorescencyjne', 'natural' => 'Naturalne', 'none' => 'Brak'];
+                        @endphp
+                        {{ $lightingLabels[$ad->lighting_type] ?? $ad->lighting_type }}
+                    </td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                // Pokazuj "Liczba pasażerów dziennie" tylko jeśli jest na liście widocznych pól
+                $showDailyPassengers = in_array('daily_passengers', $visibleFields);
+            @endphp
+            @if($showDailyPassengers)
+            <tr>
+                <th>Liczba pasażerów dziennie</th>
+                @foreach($advertisements as $ad)
+                    <td>{{ $ad->daily_passengers ?? '-' }}</td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                // Pokazuj "Strefa operacyjna" tylko jeśli jest na liście widocznych pól
+                $showOperatingZone = in_array('operating_zone', $visibleFields);
+            @endphp
+            @if($showOperatingZone)
+            <tr>
+                <th>Strefa operacyjna</th>
+                @foreach($advertisements as $ad)
+                    <td>
+                        @php
+                            $zoneLabels = ['center' => 'Centrum', 'periphery' => 'Peryferia', 'agglomeration' => 'Cała aglomeracja'];
+                        @endphp
+                        {{ $zoneLabels[$ad->operating_zone] ?? $ad->operating_zone }}
+                    </td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                // Pokazuj "Dostosowanie do otoczenia" tylko jeśli jest na liście widocznych pól
+                $showAmbientLightControl = in_array('ambient_light_control', $visibleFields);
+            @endphp
+            @if($showAmbientLightControl)
+            <tr>
+                <th>Dostosowanie do otoczenia</th>
+                @foreach($advertisements as $ad)
+                    <td><span class="{{ $ad->ambient_light_control ? 'yes' : 'no' }}">{{ $ad->ambient_light_control ? 'Tak' : 'Nie' }}</span>
+                    </td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                // Pokazuj "Typ oświetlenia (Banner/Wall)" tylko jeśli jest na liście widocznych pól
+                $showLightingTypeBanner = in_array('lighting_type_banner', $visibleFields);
+            @endphp
+            @if($showLightingTypeBanner)
+            <tr>
+                <th>Typ oświetlenia</th>
+                @foreach($advertisements as $ad)
+                    @php
+                        $ltbLabels = ['none' => 'Brak podświetlenia', 'backlight' => 'Podświetlenie z tyłu', 'frontlight' => 'Podświetlenie z przodu'];
+                        $ltbValue = $ltbLabels[$ad->lighting_type_banner] ?? $ad->lighting_type_banner;
+                    @endphp
+                    <td>{{ $ltbValue }}</td>
+                @endforeach
+            </tr>
+            @endif
             <tr>
                 <th>Status</th>
                 @foreach($advertisements as $ad)

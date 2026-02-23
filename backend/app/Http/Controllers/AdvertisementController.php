@@ -90,6 +90,13 @@ class AdvertisementController extends Controller
             'resolution' => 'nullable|string',
             'pixel_pitch' => 'nullable|numeric|between:0.1,100',
             'brightness' => 'nullable|integer|between:1000,15000',
+            // Extended surface fields
+            'lighting_type' => 'nullable|in:led,fluorescent,natural,none',
+            'daily_passengers' => 'nullable|integer|min:0',
+            'operating_zone' => 'nullable|in:center,periphery,agglomeration',
+            'ambient_light_control' => 'nullable|boolean',
+            // Lighting type dla banerów i ścian
+            'lighting_type_banner' => 'nullable|in:none,backlight,frontlight',
         ]);
 
 
@@ -176,6 +183,13 @@ class AdvertisementController extends Controller
             'route_area' => 'nullable|string',
             'campaign_duration' => 'nullable|integer',
             'rental_period' => 'nullable|string',
+            // Extended surface fields
+            'lighting_type' => 'nullable|in:led,fluorescent,natural,none',
+            'daily_passengers' => 'nullable|integer|min:0',
+            'operating_zone' => 'nullable|in:center,periphery,agglomeration',
+            'ambient_light_control' => 'nullable|boolean',
+            // Lighting type dla banerów i ścian
+            'lighting_type_banner' => 'nullable|in:none,backlight,frontlight',
         ]);
 
         $ad = Advertisement::findOrFail($id);
@@ -432,7 +446,12 @@ class AdvertisementController extends Controller
             'operating_hours',
             'resolution',
             'pixel_pitch',
-            'brightness'
+            'brightness',
+            'lighting_type',
+            'daily_passengers',
+            'operating_zone',
+            'ambient_light_control',
+            'lighting_type_banner'
         ];
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.comparison', [

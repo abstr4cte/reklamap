@@ -46,6 +46,8 @@ export interface FilterParams {
   offerType?: string
   hasVatInvoice?: boolean
   selectedLocationCoords?: LocationCoords | null
+  hasLightingTypeBanner?: boolean
+  hasLightingTypeBillboard?: boolean
 }
 
 // Mapowanie wartości na polskie odpowiedniki dla URL (bez polskich znaków)
@@ -169,6 +171,8 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.priceIncludesPrint) params.priceIncludesPrint = 'tak'
   if (filters.graphicDesignHelp) params.graphicDesignHelp = 'tak'
   if (filters.hasVatInvoice) params.hasVatInvoice = 'tak'
+  if (filters.hasLightingTypeBanner) params.hasLightingTypeBanner = 'tak'
+  if (filters.hasLightingTypeBillboard) params.hasLightingTypeBillboard = 'tak'
   
   // Konwersja współrzędnych lokalizacji
   if (filters.selectedLocationCoords) {
@@ -234,6 +238,8 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   filters.priceIncludesPrint = query.priceIncludesPrint === 'tak' || query.priceIncludesPrint === 'true'
   filters.graphicDesignHelp = query.graphicDesignHelp === 'tak' || query.graphicDesignHelp === 'true'
   filters.hasVatInvoice = query.hasVatInvoice === 'tak' || query.hasVatInvoice === 'true'
+  filters.hasLightingTypeBanner = query.hasLightingTypeBanner === 'tak' || query.hasLightingTypeBanner === 'true'
+  filters.hasLightingTypeBillboard = query.hasLightingTypeBillboard === 'tak' || query.hasLightingTypeBillboard === 'true'
   
   // Konwersja współrzędnych lokalizacji
   if (query.lat && query.lng) {

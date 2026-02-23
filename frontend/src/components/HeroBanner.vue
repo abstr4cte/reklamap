@@ -47,6 +47,15 @@ interface Filters {
   mobileExposureMode: string
   campaignDurationFrom: number | null
   campaignDurationTo: number | null
+  // Nowe pola dla rozszerzonych opcji
+  lightingType: string
+  dailyPassengersFrom: number | null
+  dailyPassengersTo: number | null
+  operatingZone: string
+  ambientLightControl: boolean
+  // Checkboxy dla podświetlenia
+  hasLightingTypeBanner: boolean
+  hasLightingTypeBillboard: boolean
   _priceDisplayUnit?: string
 }
 
@@ -100,6 +109,15 @@ const filters = ref<Filters>({
   mobileExposureMode: '',
   campaignDurationFrom: null,
   campaignDurationTo: null,
+  // Nowe pola dla rozszerzonych opcji
+  lightingType: '',
+  dailyPassengersFrom: null,
+  dailyPassengersTo: null,
+  operatingZone: '',
+  ambientLightControl: false,
+  // Checkboxy dla podświetlenia
+  hasLightingTypeBanner: false,
+  hasLightingTypeBillboard: false,
   _priceDisplayUnit: undefined,
 })
 
@@ -398,6 +416,15 @@ const resetFilters = () => {
     mobileExposureMode: '',
     campaignDurationFrom: null,
     campaignDurationTo: null,
+    // Nowe pola dla rozszerzonych opcji
+    lightingType: '',
+    dailyPassengersFrom: null,
+    dailyPassengersTo: null,
+    operatingZone: '',
+    ambientLightControl: false,
+    // Checkboxy dla podświetlenia
+    hasLightingTypeBanner: false,
+    hasLightingTypeBillboard: false,
   }
   locationQuery.value = ''
   apiLocationResults.value = []
@@ -421,6 +448,10 @@ const showMountingFilter = computed(() => {
 const showGraphicDesignFilter = computed(() => {
   const type = filters.value.type
   return ['billboard', 'banner', 'wall'].includes(type)
+})
+
+const showEquipmentSection = computed(() => {
+  return showPrintFilter.value || showMountingFilter.value || showGraphicDesignFilter.value
 })
 
 const showTrafficIntensityFilter = computed(() => {
@@ -1094,15 +1125,100 @@ onBeforeUnmount(() => {
                     </select>
                   </div>
                 </div>
+
+                <!-- Billboard - Lighting Type -->
+                <div v-if="filters.type === 'billboard'" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Typ oświetlenia</label>
+                    <select v-model="(filters as any).lightingType" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option value="led">LED</option>
+                      <option value="fluorescent">Fluorescencyjne</option>
+                      <option value="natural">Naturalne</option>
+                      <option value="none">Brak</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Banner - Lighting Type -->
+                <div v-if="filters.type === 'banner'" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Typ oświetlenia</label>
+                    <select v-model="(filters as any).lightingType" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option value="led">LED</option>
+                      <option value="fluorescent">Fluorescencyjne</option>
+                      <option value="natural">Naturalne</option>
+                      <option value="none">Brak</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Wall - Lighting Type -->
+                <div v-if="filters.type === 'wall'" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Typ oświetlenia</label>
+                    <select v-model="(filters as any).lightingType" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option value="led">LED</option>
+                      <option value="fluorescent">Fluorescencyjne</option>
+                      <option value="natural">Naturalne</option>
+                      <option value="none">Brak</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Transport - Daily Passengers -->
+                <div v-if="filters.type === 'transport'" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Liczba pasażerów dziennie</label>
+                    <div class="range-input">
+                      <input
+                        v-model.number="(filters as any).dailyPassengersFrom"
+                        type="number"
+                        placeholder="Od"
+                        step="100"
+                        class="search-input"
+                      />
+                      <span class="separator">-</span>
+                      <input
+                        v-model.number="(filters as any).dailyPassengersTo"
+                        type="number"
+                        placeholder="Do"
+                        step="100"
+                        class="search-input"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Mobile - Operating Zone -->
+                <div v-if="filters.type === 'mobile'" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Strefa operacyjna</label>
+                    <select v-model="(filters as any).operatingZone" class="search-select">
+                      <option value="">Wszystkie</option>
+                      <option value="center">Centrum</option>
+                      <option value="periphery">Peryferia</option>
+                      <option value="agglomeration">Cała aglomeracja</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- LED Screen - Ambient Light Control -->
+                <div v-if="filters.type === 'led_screen'" class="search-row">
+                  <div class="input-group">
+                    <label class="checkbox-label search-select" style="justify-content: flex-start;">
+                      <input type="checkbox" v-model="(filters as any).ambientLightControl" />
+                      <span>Dostosowanie do otoczenia</span>
+                    </label>
+                  </div>
+                </div>
               </div>
 
-              <div class="filter-section">
+              <div v-if="showEquipmentSection" class="filter-section">
                 <h4 class="section-title">Wyposażenie i dodatki</h4>
                 <div class="checkbox-grid">
-                  <label class="checkbox-label search-select" style="justify-content: flex-start;">
-                    <input type="checkbox" v-model="filters.onlyWithImage" />
-                    <span>Tylko ze zdjęciem</span>
-                  </label>
                   <label v-if="showPrintFilter" class="checkbox-label search-select" style="justify-content: flex-start;">
                     <input type="checkbox" v-model="filters.priceIncludesPrint" />
                     <span>Cena zawiera druk</span>
@@ -1117,6 +1233,14 @@ onBeforeUnmount(() => {
                   </label>
                   <label v-if="['citylight', 'totem'].includes(filters.type)" class="checkbox-label search-select" style="justify-content: flex-start;">
                     <input type="checkbox" v-model="filters.hasBacklight" />
+                    <span>Podświetlenie</span>
+                  </label>
+                  <label v-if="['banner', 'wall'].includes(filters.type)" class="checkbox-label search-select" style="justify-content: flex-start;">
+                    <input type="checkbox" v-model="(filters as any).hasLightingTypeBanner" />
+                    <span>Podświetlenie</span>
+                  </label>
+                  <label v-if="filters.type === 'billboard'" class="checkbox-label search-select" style="justify-content: flex-start;">
+                    <input type="checkbox" v-model="(filters as any).hasLightingTypeBillboard" />
                     <span>Podświetlenie</span>
                   </label>
                 </div>
@@ -1183,6 +1307,15 @@ onBeforeUnmount(() => {
               </div>
             </div>
           </transition>
+
+          <!-- Only with Image Toggle -->
+          <div v-if="showAdvanced" class="filter-section">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <input type="checkbox" v-model="filters.onlyWithImage" class="toggle-switch" style="display: none;" />
+              <span class="toggle-switch-display" :class="{ active: filters.onlyWithImage }" @click="filters.onlyWithImage = !filters.onlyWithImage"></span>
+              <label style="margin: 0; cursor: pointer; font-size: 0.875rem; color: #4B5563; font-weight: 500;" @click="filters.onlyWithImage = !filters.onlyWithImage">Tylko ze zdjęciem</label>
+            </div>
+          </div>
 
           <div class="button-row">
             <button type="button" class="reset-button" @click="resetFilters">
@@ -1636,6 +1769,54 @@ onBeforeUnmount(() => {
   padding: 1.25rem;
   background: #F9FAFB;
   border-radius: 10px;
+}
+
+.toggle-switch {
+  display: none !important;
+}
+
+.toggle-switch-display {
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+  border-radius: 14px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+.toggle-switch-display::before {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: white;
+  top: 3px;
+  left: 3px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-switch-display:hover {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.toggle-switch-display.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.toggle-switch-display.active::before {
+  left: 25px;
+  box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-switch-display.active:hover {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(102, 126, 234, 0.15);
 }
 
 .section-title {

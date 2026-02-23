@@ -75,7 +75,14 @@ const formData = ref({
   // Pola techniczne dla LED screens
   resolution: '' as string,
   pixelPitch: null as number | null,
-  brightness: null as number | null
+  brightness: null as number | null,
+  // Nowe pola dla rozszerzonych opcji
+  lightingType: '' as '' | 'led' | 'fluorescent' | 'natural' | 'none',
+  dailyPassengers: null as number | null,
+  operatingZone: '' as '' | 'center' | 'periphery' | 'agglomeration',
+  ambientLightControl: false,
+  // Lighting type dla banerów i ścian
+  lightingTypeBanner: '' as '' | 'none' | 'backlight' | 'frontlight'
 })
 
 const minDate = new Date()
@@ -333,6 +340,11 @@ const showLightingOption = computed(() => {
   return ['citylight', 'totem'].includes(type)
 })
 
+const showLightingTypeBannerField = computed(() => {
+  const type = formData.value.type
+  return ['banner', 'wall'].includes(type)
+})
+
 const showPrintOption = computed(() => {
   const type = formData.value.type
   return ['billboard', 'banner'].includes(type)
@@ -433,6 +445,37 @@ const transportScopeOptions = computed(() => {
     { value: 'full_vehicle', label: 'Całopojazdowa' }
   ]
 })
+
+// Visibility flags dla nowych pól
+const showLightingTypeField = computed(() => {
+  return formData.value.type === 'billboard'
+})
+
+const showDailyPassengersField = computed(() => {
+  return formData.value.type === 'transport'
+})
+
+const showOperatingZoneField = computed(() => {
+  return formData.value.type === 'mobile'
+})
+
+const showAmbientLightControlField = computed(() => {
+  return formData.value.type === 'led_screen'
+})
+
+// Opcje dla nowych pól
+const lightingTypeOptions = [
+  { value: 'led', label: 'LED' },
+  { value: 'fluorescent', label: 'Fluorescencyjne' },
+  { value: 'natural', label: 'Naturalne' },
+  { value: 'none', label: 'Brak' }
+]
+
+const operatingZoneOptions = [
+  { value: 'center', label: 'Centrum' },
+  { value: 'periphery', label: 'Peryferia' },
+  { value: 'agglomeration', label: 'Cała aglomeracja' }
+]
 
 const surface = computed(() => {
   if (formData.value.width && formData.value.height) {
@@ -1085,7 +1128,13 @@ const handleSubmit = async () => {
         operating_hours: formData.value.operatingHours || null,
         route_area: formData.value.routeArea || null,
         price_includes_mounting: formData.value.priceIncludesMounting,
-        campaign_duration: formData.value.campaignDuration || null
+        campaign_duration: formData.value.campaignDuration || null,
+        // Nowe pola dla rozszerzonych opcji
+        lighting_type: formData.value.lightingType || null,
+        daily_passengers: formData.value.dailyPassengers || null,
+        operating_zone: formData.value.operatingZone || null,
+        ambient_light_control: formData.value.ambientLightControl,
+        lighting_type_banner: formData.value.lightingTypeBanner || null
     } as any) // Casting to any to avoid strict type checks for now if interface mismatches
 
     if (newAd && newAd.id) {
@@ -1682,6 +1731,16 @@ onMounted(() => {
             </label>
           </div>
 
+          <!-- Typ oświetlenia dla Banerów i Ścian -->
+          <div v-if="showLightingTypeBannerField" class="form-group">
+            <label class="form-label">Typ oświetlenia</label>
+            <select v-model="formData.lightingTypeBanner" class="form-select">
+              <option value="">Brak podświetlenia</option>
+              <option value="backlight">Podświetlenie z tyłu (backlight)</option>
+              <option value="frontlight">Podświetlenie z przodu (frontlight)</option>
+            </select>
+          </div>
+
           <!-- Środowisko - dla Citylight, LED, Totem, Banner, Mobile, Other -->
           <div v-if="showEnvironmentField" class="form-group">
             <label class="form-label">Środowisko</label>
@@ -1691,6 +1750,47 @@ onMounted(() => {
                 {{ env.label }}
               </option>
             </select>
+          </div>
+
+          <!-- Typ oświetlenia dla Billboardu -->
+          <div v-if="showLightingTypeField">
+            <div class="form-group">
+              <label class="form-label">Typ oświetlenia</label>
+              <select v-model="formData.lightingType" class="form-select">
+                <option value="">Brak</option>
+                <option v-for="option in lightingTypeOptions" :key="option.value" :value="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Liczba pasażerów dla Transportu -->
+          <div v-if="showDailyPassengersField">
+            <div class="form-group">
+              <label class="form-label">Liczba pasażerów dziennie</label>
+              <input
+                v-model.number="formData.dailyPassengers"
+                type="number"
+                step="100"
+                class="form-input"
+                placeholder="np. 5000"
+              />
+              <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Przybliżona liczba pasażerów dziennie dla tego wariantu transportu</p>
+            </div>
+          </div>
+
+          <!-- Strefa operacyjna dla Mobilnej -->
+          <div v-if="showOperatingZoneField">
+            <div class="form-group">
+              <label class="form-label">Strefa operacyjna</label>
+              <select v-model="formData.operatingZone" class="form-select">
+                <option value="">Wybierz strefę</option>
+                <option v-for="option in operatingZoneOptions" :key="option.value" :value="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+            </div>
           </div>
 
           <!-- Parametry techniczne dla LED screens -->
@@ -1732,6 +1832,18 @@ onMounted(() => {
                 />
                 <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Przykład: 5000, 6500, 8000</p>
               </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 1rem;">
+              <label class="form-label">
+                <input
+                  v-model="formData.ambientLightControl"
+                  type="checkbox"
+                  class="form-checkbox"
+                />
+                Ekran dostosowuje jasność do otoczenia
+              </label>
+              <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Czy ekran posiada czujnik światła otoczenia i automatycznie dostosowuje jasność?</p>
             </div>
           </div>
 

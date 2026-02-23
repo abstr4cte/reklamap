@@ -168,6 +168,7 @@
         $showTrafficDirection = $advertisement->type === 'billboard' && $advertisement->traffic_direction && count($advertisement->traffic_direction ?? []) > 0;
         $showRoadClass = $advertisement->type === 'billboard' && $advertisement->road_class;
         $showLighting = in_array($advertisement->type, ['citylight', 'led_screen', 'totem']) && $advertisement->has_backlight;
+        $showLightingTypeBanner = in_array($advertisement->type, ['banner', 'wall']) && !empty($advertisement->lighting_type_banner);
         $showEnvironment = in_array($advertisement->type, ['citylight', 'led_screen', 'totem', 'banner', 'mobile', 'other']) && $advertisement->environment;
         $showTrafficType = $advertisement->type === 'banner' && $advertisement->traffic_type && count($advertisement->traffic_type ?? []) > 0;
         $showPrint = in_array($advertisement->type, ['billboard', 'banner', 'citylight']) && $advertisement->price_includes_print;
@@ -183,6 +184,11 @@
         $showMobileExposureMode = $advertisement->type === 'mobile' && !empty($advertisement->mobile_exposure_mode);
         $showOperatingHours = $advertisement->type === 'mobile' && !empty($advertisement->operating_hours);
         $showRouteArea = $advertisement->type === 'mobile' && !empty($advertisement->route_area);
+        // Nowe pola dla rozszerzonych opcji
+        $showLightingType = $advertisement->type === 'billboard' && !empty($advertisement->lighting_type);
+        $showDailyPassengers = $advertisement->type === 'transport' && !empty($advertisement->daily_passengers);
+        $showOperatingZone = $advertisement->type === 'mobile' && !empty($advertisement->operating_zone);
+        $showAmbientLightControl = $advertisement->type === 'led_screen' && !empty($advertisement->ambient_light_control);
 
         $details = [];
 
@@ -311,20 +317,36 @@
             $details[] = ['label' => 'Pixel Pitch', 'value' => $advertisement->pixel_pitch . ' mm'];
         if ($showBrightness)
             $details[] = ['label' => 'Jasność', 'value' => $advertisement->brightness . ' nits'];
+        if ($showAmbientLightControl)
+            $details[] = ['label' => 'Dostosowanie do otoczenia', 'value' => 'Tak'];
 
         // 10. Campaign Duration
         if ($showCampaignDuration)
             $details[] = ['label' => 'Czas trwania kampanii', 'value' => $advertisement->campaign_duration . ' dni'];
 
-        // 11. Transport Scope and Vehicle Count
+        // 11. Billboard Lighting Type
+        if ($showLightingType) {
+            $lLabels = ['led' => 'LED', 'fluorescent' => 'Fluorescencyjne', 'natural' => 'Naturalne', 'none' => 'Brak'];
+            $details[] = ['label' => 'Typ oświetlenia', 'value' => $lLabels[$advertisement->lighting_type] ?? $advertisement->lighting_type];
+        }
+
+        // 11b. Banner/Wall Lighting Type
+        if ($showLightingTypeBanner) {
+            $ltbLabels = ['none' => 'Brak podświetlenia', 'backlight' => 'Podświetlenie z tyłu', 'frontlight' => 'Podświetlenie z przodu'];
+            $details[] = ['label' => 'Typ oświetlenia', 'value' => $ltbLabels[$advertisement->lighting_type_banner] ?? $advertisement->lighting_type_banner];
+        }
+
+        // 12. Transport Scope, Vehicle Count and Daily Passengers
         if ($showTransportScope) {
             $sLabels = ['internal' => 'Wewnętrzna', 'external' => 'Zewnętrzna', 'full_vehicle' => 'Całopojazdowa'];
             $details[] = ['label' => 'Zakres', 'value' => $sLabels[$advertisement->transport_scope] ?? $advertisement->transport_scope];
         }
         if ($showVehicleCount)
             $details[] = ['label' => 'Liczba pojazdów', 'value' => $advertisement->vehicle_count];
+        if ($showDailyPassengers)
+            $details[] = ['label' => 'Liczba pasażerów dziennie', 'value' => $advertisement->daily_passengers];
 
-        // 12. Mobile details
+        // 13. Mobile details
         if ($showMobileExposureMode) {
             $mLabels = ['moving' => 'Jeżdżąca', 'stationary' => 'Stojąca', 'mixed' => 'Mieszana'];
             $details[] = ['label' => 'Tryb ekspozycji', 'value' => $mLabels[$advertisement->mobile_exposure_mode] ?? $advertisement->mobile_exposure_mode];
@@ -333,8 +355,12 @@
             $details[] = ['label' => 'Godziny działania', 'value' => $advertisement->operating_hours];
         if ($showRouteArea)
             $details[] = ['label' => 'Trasa / Obszar', 'value' => $advertisement->route_area];
+        if ($showOperatingZone) {
+            $zLabels = ['center' => 'Centrum', 'periphery' => 'Peryferia', 'agglomeration' => 'Cała aglomeracja'];
+            $details[] = ['label' => 'Strefa operacyjna', 'value' => $zLabels[$advertisement->operating_zone] ?? $advertisement->operating_zone];
+        }
 
-        // 13. Features
+        // 14. Features
         if ($showLighting)
             $details[] = ['label' => 'Podświetlenie', 'value' => 'Tak'];
         if ($showPrint)

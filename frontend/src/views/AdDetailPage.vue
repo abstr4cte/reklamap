@@ -426,6 +426,27 @@ const getMobileExposureModeLabel = (mode: string): string => {
   return modeLabels[mode] || mode
 }
 
+// Helper to format lighting type label
+const getLightingTypeLabel = (lightingType: string): string => {
+  const lightingLabels: Record<string, string> = {
+    'led': 'LED',
+    'fluorescent': 'Fluorescencyjne',
+    'natural': 'Naturalne',
+    'none': 'Brak'
+  }
+  return lightingLabels[lightingType] || lightingType
+}
+
+// Helper to format operating zone label
+const getOperatingZoneLabel = (zone: string): string => {
+  const zoneLabels: Record<string, string> = {
+    'center': 'Centrum',
+    'periphery': 'Peryferia',
+    'agglomeration': 'Cała aglomeracja'
+  }
+  return zoneLabels[zone] || zone
+}
+
 // Helper to format traffic type
 const formatTrafficType = computed(() => {
   if (!ad.value || !ad.value.traffic_type) return ''
@@ -513,6 +534,27 @@ const showOperatingHours = computed(() => {
 const showRouteArea = computed(() => {
   if (!ad.value) return false
   return ad.value.type === 'mobile' && ad.value.route_area && ad.value.route_area.trim() !== ''
+})
+
+// Computed properties for new extended fields
+const showLightingType = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'billboard' && (ad.value as any).lighting_type && (ad.value as any).lighting_type.trim() !== ''
+})
+
+const showDailyPassengers = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'transport' && (ad.value as any).daily_passengers && (ad.value as any).daily_passengers > 0
+})
+
+const showOperatingZone = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'mobile' && (ad.value as any).operating_zone && (ad.value as any).operating_zone.trim() !== ''
+})
+
+const showAmbientLightControl = computed(() => {
+  if (!ad.value) return false
+  return ad.value.type === 'led_screen' && (ad.value as any).ambient_light_control
 })
 
 // Helper to format variant label
@@ -1725,6 +1767,21 @@ onUnmounted(() => {
                 <div class="spec-value">{{ getEnvironmentLabel(ad.environment!) }}</div>
               </div>
 
+              <div v-if="showLightingType" class="spec-item">
+                <div class="spec-label">Typ oświetlenia</div>
+                <div class="spec-value">{{ getLightingTypeLabel((ad as any).lighting_type!) }}</div>
+              </div>
+
+              <div v-if="showDailyPassengers" class="spec-item">
+                <div class="spec-label">Liczba pasażerów dziennie</div>
+                <div class="spec-value">{{ (ad as any).daily_passengers }}</div>
+              </div>
+
+              <div v-if="showOperatingZone" class="spec-item">
+                <div class="spec-label">Strefa operacyjna</div>
+                <div class="spec-value">{{ getOperatingZoneLabel((ad as any).operating_zone!) }}</div>
+              </div>
+
               <div v-if="showResolution" class="spec-item">
                 <div class="spec-label">Rozdzielczość</div>
                 <div class="spec-value">{{ (ad as any).resolution }}</div>
@@ -1738,6 +1795,11 @@ onUnmounted(() => {
               <div v-if="showBrightness" class="spec-item">
                 <div class="spec-label">Jasność</div>
                 <div class="spec-value">{{ (ad as any).brightness }} nits</div>
+              </div>
+
+              <div v-if="showAmbientLightControl" class="spec-item">
+                <div class="spec-label">Dostosowanie do otoczenia</div>
+                <div class="spec-value">✓ Tak</div>
               </div>
 
               <div v-if="showCampaignDuration" class="spec-item">

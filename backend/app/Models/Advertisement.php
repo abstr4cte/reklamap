@@ -67,6 +67,13 @@ class Advertisement extends Model
         'resolution',
         'pixel_pitch',
         'brightness',
+        // Nowe pola dla rozszerzonych opcji
+        'lighting_type',
+        'daily_passengers',
+        'operating_zone',
+        'ambient_light_control',
+        // Lighting type dla banerów i ścian
+        'lighting_type_banner',
     ];
 
     /**
@@ -96,6 +103,8 @@ class Advertisement extends Model
         'campaign_duration' => 'integer',
         'pixel_pitch' => 'decimal:2',
         'brightness' => 'integer',
+        'daily_passengers' => 'integer',
+        'ambient_light_control' => 'boolean',
     ];
 
     protected $appends = ['display_status', 'full_url'];

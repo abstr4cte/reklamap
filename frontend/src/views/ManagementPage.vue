@@ -428,6 +428,12 @@ const saveChanges = async (id: string) => {
         mobile_exposure_mode: (editingAd.value as any).mobile_exposure_mode || null,
         operating_hours: (editingAd.value as any).operating_hours || null,
         route_area: (editingAd.value as any).route_area || null,
+        // Nowe pola dla rozszerzonych opcji
+        lighting_type: (editingAd.value as any).lighting_type || null,
+        daily_passengers: (editingAd.value as any).daily_passengers || null,
+        operating_zone: (editingAd.value as any).operating_zone || null,
+        ambient_light_control: (editingAd.value as any).ambient_light_control || false,
+        lighting_type_banner: (editingAd.value as any).lighting_type_banner || null,
     })
 
     const ad = listings.value.find(a => a.id === id)
@@ -984,6 +990,11 @@ const showLightingOption = computed(() => {
   return ['citylight', 'totem'].includes(editingAd.value.type)
 })
 
+const showLightingTypeBannerField = computed(() => {
+  if (!editingAd.value) return false
+  return ['banner', 'wall'].includes(editingAd.value.type)
+})
+
 const showPrintOption = computed(() => {
   if (!editingAd.value) return false
   return ['billboard', 'banner'].includes(editingAd.value.type)
@@ -1027,6 +1038,27 @@ const showEnvironmentField = computed(() => {
 const showTransportFields = computed(() => {
   if (!editingAd.value) return false
   return editingAd.value.type === 'transport'
+})
+
+// Nowe computed properties dla rozszerzonych pól
+const showLightingTypeField = computed(() => {
+  if (!editingAd.value) return false
+  return editingAd.value.type === 'billboard'
+})
+
+const showDailyPassengersField = computed(() => {
+  if (!editingAd.value) return false
+  return editingAd.value.type === 'transport'
+})
+
+const showOperatingZoneField = computed(() => {
+  if (!editingAd.value) return false
+  return editingAd.value.type === 'mobile'
+})
+
+const showAmbientLightControlField = computed(() => {
+  if (!editingAd.value) return false
+  return editingAd.value.type === 'led_screen'
 })
 
 const showMobileFields = computed(() => {
@@ -1348,6 +1380,23 @@ onMounted(async () => {
 
 watch(() => [route.params.token, route.query.token], () => {
   loadAdvertisements()
+})
+
+// Block body scroll when modals are open
+watch(() => showDateModal.value, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
+
+watch(() => showMapModal.value, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
 })
 
 onBeforeUnmount(() => {
@@ -2110,6 +2159,45 @@ onBeforeUnmount(() => {
                       <textarea v-model="(editingAd as any).route_area" rows="3" placeholder="Opis trasy lub obszaru działania..."></textarea>
                     </div>
 
+                    <!-- Typ oświetlenia dla Billboardu -->
+                    <div v-if="showLightingTypeField" class="form-group">
+                      <label>Typ oświetlenia</label>
+                      <select v-model="(editingAd as any).lighting_type">
+                        <option value="">Brak</option>
+                        <option value="led">LED</option>
+                        <option value="fluorescent">Fluorescencyjne</option>
+                        <option value="natural">Naturalne</option>
+                        <option value="none">Brak</option>
+                      </select>
+                    </div>
+
+                    <!-- Liczba pasażerów dla Transportu -->
+                    <div v-if="showDailyPassengersField" class="form-group">
+                      <label>Liczba pasażerów dziennie</label>
+                      <input v-model.number="(editingAd as any).daily_passengers" type="number" step="100" placeholder="np. 5000" />
+                    </div>
+
+                    <!-- Strefa operacyjna dla Mobilnej -->
+                    <div v-if="showOperatingZoneField" class="form-group">
+                      <label>Strefa operacyjna</label>
+                      <select v-model="(editingAd as any).operating_zone" class="form-select">
+                        <option value="">Wybierz strefę</option>
+                        <option value="center">Centrum</option>
+                        <option value="periphery">Peryferia</option>
+                        <option value="agglomeration">Cała aglomeracja</option>
+                      </select>
+                    </div>
+
+                    <!-- Typ oświetlenia dla Banerów i Ścian -->
+                    <div v-if="showLightingTypeBannerField" class="form-group">
+                      <label>Typ oświetlenia</label>
+                      <select v-model="(editingAd as any).lighting_type_banner" class="form-select">
+                        <option value="">Brak podświetlenia</option>
+                        <option value="backlight">Podświetlenie z tyłu (backlight)</option>
+                        <option value="frontlight">Podświetlenie z przodu (frontlight)</option>
+                      </select>
+                    </div>
+
                     <!-- SEKCJA: Dostępność i typ oferty -->
                     <div class="form-section-divider">
                       <h4>Dostępność i typ oferty</h4>
@@ -2144,6 +2232,10 @@ onBeforeUnmount(() => {
                       <label v-if="showGraphicDesignOption">
                         <input v-model="editingAd.graphic_design_help" type="checkbox" />
                         <span>Pomoc graficzna</span>
+                      </label>
+                      <label v-if="showAmbientLightControlField">
+                        <input v-model="(editingAd as any).ambient_light_control" type="checkbox" />
+                        <span>Dostosowanie do otoczenia</span>
                       </label>
                       <label>
                         <input v-model="editingAd.has_vat_invoice" type="checkbox" />

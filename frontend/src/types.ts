@@ -61,4 +61,11 @@ export interface Advertisement {
     resolution?: string
     pixel_pitch?: number
     brightness?: number
+    // Nowe pola dla rozszerzonych opcji
+    lighting_type?: string
+    daily_passengers?: number
+    operating_zone?: string
+    ambient_light_control?: boolean
+    // Lighting type dla banerów i ścian
+    lighting_type_banner?: string
 }

@@ -71,6 +71,15 @@ interface Filters {
   mobileExposureMode: string
   campaignDurationFrom: number | null
   campaignDurationTo: number | null
+  // Nowe pola dla rozszerzonych opcji
+  lightingType: string
+  dailyPassengersFrom: number | null
+  dailyPassengersTo: number | null
+  operatingZone: string
+  ambientLightControl: boolean
+  // Checkboxy dla podświetlenia
+  hasLightingTypeBanner: boolean
+  hasLightingTypeBillboard: boolean
 }
 
 const filters = ref<Filters>({
@@ -115,6 +124,15 @@ const filters = ref<Filters>({
   mobileExposureMode: '',
   campaignDurationFrom: null,
   campaignDurationTo: null,
+  // Nowe pola dla rozszerzonych opcji
+  lightingType: '',
+  dailyPassengersFrom: null,
+  dailyPassengersTo: null,
+  operatingZone: '',
+  ambientLightControl: false,
+  // Checkboxy dla podświetlenia
+  hasLightingTypeBanner: false,
+  hasLightingTypeBillboard: false,
 })
 
 const sortedAndFilteredListings = computed(() => {
@@ -211,6 +229,28 @@ const sortedAndFilteredListings = computed(() => {
 
   if (filters.value.hasBacklight) {
     filtered = filtered.filter(ad => ad.has_backlight === true)
+  }
+
+  if (filters.value.lightingType) {
+    filtered = filtered.filter(ad => ad.lighting_type === filters.value.lightingType)
+  }
+
+  if (filters.value.hasLightingTypeBillboard) {
+    filtered = filtered.filter(ad => {
+      // Tylko dla billboardów
+      if (ad.type !== 'billboard') return false
+      const lightingType = (ad as any).lighting_type
+      return lightingType && lightingType !== 'none'
+    })
+  }
+
+  if (filters.value.hasLightingTypeBanner) {
+    filtered = filtered.filter(ad => {
+      // Tylko dla banerów
+      if (ad.type !== 'banner') return false
+      const lightingType = (ad as any).lighting_type
+      return lightingType && lightingType !== 'none'
+    })
   }
 
   if (filters.value.onlyWithImage) {
