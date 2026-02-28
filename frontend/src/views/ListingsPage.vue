@@ -684,6 +684,8 @@ const activeFiltersCount = computed(() => {
   if (filters.value.rentalPeriod) count++
   if (filters.value.orientation) count++
   if (filters.value.trafficIntensity) count++
+  if (filters.value.trafficDirection) count++
+  if (filters.value.trafficType) count++
   if (filters.value.status && filters.value.status.length > 0) count++
   if (filters.value.onlyWithImage) count++
   if (filters.value.priceIncludesPrint) count++
@@ -731,24 +733,11 @@ const getVariantOptions = (type: string) => {
         { value: 'standard', label: 'Standardowy' },
         { value: 'interactive', label: 'Interaktywny' }
       ]
-    case 'banner':
-      return [
-        { value: 'pvc', label: 'PCV' },
-        { value: 'mesh', label: 'Siatkowy/Mesh' },
-        { value: 'textile', label: 'Tekstylny' }
-      ]
-    case 'wall':
-      return [
-        { value: 'mural', label: 'Mural' },
-        { value: 'foil', label: 'Folia' },
-        { value: 'construction', label: 'Konstrukcja' }
-      ]
     case 'totem':
       return [
         { value: 'single_sided', label: 'Jednostronny' },
         { value: 'double_sided', label: 'Dwustronny' },
-        { value: 'multi_sided', label: 'Wielostronny' },
-        { value: 'digital', label: 'Digital' }
+        { value: 'multi_sided', label: 'Wielostronny' }
       ]
     case 'transport':
       return [
@@ -981,6 +970,28 @@ const filteredListings = computed(() => {
   // Traffic intensity filter
   if (filters.value.trafficIntensity) {
     filtered = filtered.filter(ad => ad.traffic_intensity === filters.value.trafficIntensity)
+  }
+
+  // Traffic direction filter
+  if (filters.value.trafficDirection) {
+    filtered = filtered.filter(ad => {
+      if (!ad.traffic_direction) return false
+      if (filters.value.trafficDirection === 'both') {
+        return Array.isArray(ad.traffic_direction) && ad.traffic_direction.length === 2
+      }
+      return Array.isArray(ad.traffic_direction) && ad.traffic_direction.includes(filters.value.trafficDirection)
+    })
+  }
+
+  // Traffic type filter
+  if (filters.value.trafficType) {
+    filtered = filtered.filter(ad => {
+      if (!ad.traffic_type) return false
+      if (filters.value.trafficType === 'both') {
+        return Array.isArray(ad.traffic_type) && ad.traffic_type.length === 2
+      }
+      return Array.isArray(ad.traffic_type) && ad.traffic_type.includes(filters.value.trafficType)
+    })
   }
 
   // Status filter
@@ -2636,7 +2647,7 @@ onBeforeUnmount(() => {
           <h4 class="section-title">Opcje specyficzne dla typu</h4>
           
           <!-- Variant Filter -->
-          <div v-if="tempFilters && tempFilters.type && ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile'].includes(tempFilters.type)" class="filter-group">
+          <div v-if="tempFilters && tempFilters.type && ['billboard', 'citylight', 'led_screen', 'totem', 'transport', 'mobile'].includes(tempFilters.type)" class="filter-group">
             <label class="filter-label">Wariant</label>
             <select v-model="tempFilters.variant" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>
@@ -2660,8 +2671,8 @@ onBeforeUnmount(() => {
             </select>
           </div>
 
-          <!-- Traffic Intensity -->
-          <div v-if="tempFilters && ['billboard', 'banner', 'wall'].includes(tempFilters.type)" class="filter-group">
+          <!-- Traffic Intensity (all outdoor types) -->
+          <div v-if="tempFilters && ['billboard', 'banner', 'wall', 'totem'].includes(tempFilters.type)" class="filter-group">
             <label class="filter-label">Natężenie ruchu</label>
             <select v-model="tempFilters.trafficIntensity" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>
@@ -2671,8 +2682,8 @@ onBeforeUnmount(() => {
             </select>
           </div>
 
-          <!-- Kierunek ruchu (Billboard only) -->
-          <div v-if="tempFilters && tempFilters.type === 'billboard'" class="filter-group">
+          <!-- Kierunek ruchu (all outdoor types) -->
+          <div v-if="tempFilters && ['billboard', 'banner', 'wall', 'totem'].includes(tempFilters.type)" class="filter-group">
             <label class="filter-label">Kierunek ruchu</label>
             <select v-model="tempFilters.trafficDirection" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>
@@ -2682,8 +2693,8 @@ onBeforeUnmount(() => {
             </select>
           </div>
 
-          <!-- Rodzaj ruchu (Banner) -->
-          <div v-if="tempFilters && tempFilters.type === 'banner'" class="filter-group">
+          <!-- Rodzaj ruchu (all outdoor types) -->
+          <div v-if="tempFilters && ['billboard', 'banner', 'wall', 'totem'].includes(tempFilters.type)" class="filter-group">
             <label class="filter-label">Rodzaj ruchu</label>
             <select v-model="tempFilters.trafficType" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>

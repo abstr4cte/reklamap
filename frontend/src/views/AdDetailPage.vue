@@ -279,12 +279,12 @@ const showDimensions = computed(() => {
 
 const showTrafficIntensity = computed(() => {
   if (!ad.value) return false
-  return ['billboard', 'banner', 'wall'].includes(ad.value.type) && ad.value.traffic_intensity
+  return ['billboard', 'banner', 'wall', 'totem'].includes(ad.value.type) && ad.value.traffic_intensity
 })
 
 const showTrafficDirection = computed(() => {
   if (!ad.value) return false
-  return ad.value.type === 'billboard' && ad.value.traffic_direction && ad.value.traffic_direction.length > 0
+  return ['billboard', 'banner', 'wall', 'totem'].includes(ad.value.type) && ad.value.traffic_direction && ad.value.traffic_direction.length > 0
 })
 
 const formatTrafficDirection = computed(() => {
@@ -316,7 +316,7 @@ const showEnvironment = computed(() => {
 
 const showTrafficType = computed(() => {
   if (!ad.value) return false
-  return ad.value.type === 'banner' && ad.value.traffic_type && (ad.value.traffic_type as string[]).length > 0
+  return ['billboard', 'banner', 'wall', 'totem'].includes(ad.value.type) && ad.value.traffic_type && (ad.value.traffic_type as string[]).length > 0
 })
 
 const showPrint = computed(() => {
@@ -336,7 +336,7 @@ const showGraphicDesign = computed(() => {
 
 const showVariant = computed(() => {
   if (!ad.value) return false
-  return ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile'].includes(ad.value.type) && ad.value.variant && ad.value.variant.trim() !== ''
+  return ['billboard', 'citylight', 'led_screen', 'totem', 'transport', 'mobile'].includes(ad.value.type) && ad.value.variant && ad.value.variant.trim() !== ''
 })
 
 const surfaceArea = computed(() => {
@@ -569,17 +569,7 @@ const getVariantLabel = (variant: string): string => {
     'double': 'Podwójny',
     'digital': 'Cyfrowy',
     // LED Screen
-    'outdoor': 'Zewnętrzny',
-    'indoor': 'Wewnętrzny',
     'interactive': 'Interaktywny',
-    // Banner
-    'pvc': 'PCV',
-    'mesh': 'Siatkowy/Mesh',
-    'textile': 'Tekstylny',
-    // Wall
-    'mural': 'Mural',
-    'foil': 'Folia',
-    'construction': 'Konstrukcja',
     // Totem
     'single_sided': 'Jednostronny',
     'double_sided': 'Dwustronny',
@@ -593,10 +583,7 @@ const getVariantLabel = (variant: string): string => {
     'trailer': 'Przyczepka',
     'car': 'Samochód',
     'bike': 'Rower',
-    'other': 'Inna',
-    // Other
-    'static': 'Statyczny',
-    'dynamic': 'Dynamiczny'
+    'other': 'Inna'
   }
   
   return variantLabels[variant] || variant

@@ -164,17 +164,17 @@
     <div class="section-title">Szczegóły</div>
     @php
         $showDimensions = in_array($advertisement->type, ['billboard', 'citylight', 'banner', 'wall', 'totem', 'led_screen']) && $advertisement->width && $advertisement->height && $advertisement->width > 0 && $advertisement->height > 0;
-        $showTrafficIntensity = in_array($advertisement->type, ['billboard', 'banner', 'wall']) && $advertisement->traffic_intensity;
-        $showTrafficDirection = $advertisement->type === 'billboard' && $advertisement->traffic_direction && count($advertisement->traffic_direction ?? []) > 0;
+        $showTrafficIntensity = in_array($advertisement->type, ['billboard', 'banner', 'wall', 'totem']) && $advertisement->traffic_intensity;
+        $showTrafficDirection = in_array($advertisement->type, ['billboard', 'banner', 'wall', 'totem']) && $advertisement->traffic_direction && count($advertisement->traffic_direction ?? []) > 0;
         $showRoadClass = $advertisement->type === 'billboard' && $advertisement->road_class;
         $showLighting = in_array($advertisement->type, ['citylight', 'led_screen', 'totem']) && $advertisement->has_backlight;
         $showLightingTypeBanner = in_array($advertisement->type, ['banner', 'wall']) && !empty($advertisement->lighting_type_banner);
         $showEnvironment = in_array($advertisement->type, ['citylight', 'led_screen', 'totem', 'banner', 'mobile', 'other']) && $advertisement->environment;
-        $showTrafficType = $advertisement->type === 'banner' && $advertisement->traffic_type && count($advertisement->traffic_type ?? []) > 0;
+        $showTrafficType = in_array($advertisement->type, ['billboard', 'banner', 'wall', 'totem']) && $advertisement->traffic_type && count($advertisement->traffic_type ?? []) > 0;
         $showPrint = in_array($advertisement->type, ['billboard', 'banner', 'citylight']) && $advertisement->price_includes_print;
-        $showMounting = in_array($advertisement->type, ['billboard', 'banner', 'wall', 'citylight']) && $advertisement->price_includes_mounting;
-        $showGraphicDesign = in_array($advertisement->type, ['billboard', 'banner', 'wall', 'citylight']) && $advertisement->graphic_design_help;
-        $showVariant = in_array($advertisement->type, ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile']) && $advertisement->variant && trim($advertisement->variant) !== '';
+        $showMounting = in_array($advertisement->type, ['billboard', 'banner', 'wall', 'citylight', 'totem']) && $advertisement->price_includes_mounting;
+        $showGraphicDesign = in_array($advertisement->type, ['billboard', 'banner', 'wall', 'citylight', 'totem']) && $advertisement->graphic_design_help;
+        $showVariant = in_array($advertisement->type, ['billboard', 'citylight', 'led_screen', 'totem', 'transport', 'mobile']) && $advertisement->variant && trim($advertisement->variant) !== '';
         $showResolution = $advertisement->type === 'led_screen' && !empty($advertisement->resolution);
         $showPixelPitch = $advertisement->type === 'led_screen' && !empty($advertisement->pixel_pitch);
         $showBrightness = $advertisement->type === 'led_screen' && !empty($advertisement->brightness);
@@ -234,15 +234,7 @@
                 'single' => 'Pojedynczy',
                 'double' => 'Podwójny',
                 'digital' => 'Cyfrowy',
-                'outdoor' => 'Zewnętrzny',
-                'indoor' => 'Wewnętrzny',
                 'interactive' => 'Interaktywny',
-                'pvc' => 'PCV',
-                'mesh' => 'Siatkowy/Mesh',
-                'textile' => 'Tekstylny',
-                'mural' => 'Mural',
-                'foil' => 'Folia',
-                'construction' => 'Konstrukcja',
                 'single_sided' => 'Jednostronny',
                 'double_sided' => 'Dwustronny',
                 'multi_sided' => 'Wielostronny',
@@ -253,9 +245,7 @@
                 'trailer' => 'Przyczepka',
                 'car' => 'Samochód',
                 'bike' => 'Rower',
-                'other' => 'Inna',
-                'static' => 'Statyczny',
-                'dynamic' => 'Dynamiczny'
+                'other' => 'Inna'
             ];
             $details[] = ['label' => 'Wariant', 'value' => $variantLabels[$advertisement->variant] ?? $advertisement->variant];
         }

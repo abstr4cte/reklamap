@@ -427,21 +427,10 @@ const formatVariant = (variant: string | undefined, type: string) => {
       standard: 'Standardowy',
       interactive: 'Interaktywny'
     },
-    banner: {
-      pvc: 'PCV',
-      mesh: 'Siatkowy/Mesh',
-      textile: 'Tekstylny'
-    },
-    wall: {
-      mural: 'Mural',
-      foil: 'Folia',
-      construction: 'Konstrukcja'
-    },
     totem: {
       single_sided: 'Jednostronny',
       double_sided: 'Dwustronny',
-      multi_sided: 'Wielostronny',
-      digital: 'Digital'
+      multi_sided: 'Wielostronny'
     },
     transport: {
       bus: 'Autobus',

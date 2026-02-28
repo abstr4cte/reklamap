@@ -281,24 +281,11 @@ const variantOptions = computed(() => {
         { value: 'standard', label: 'Standardowy' },
         { value: 'interactive', label: 'Interaktywny' }
       ]
-    case 'banner':
-      return [
-        { value: 'pvc', label: 'PCV' },
-        { value: 'mesh', label: 'Siatkowy/Mesh' },
-        { value: 'textile', label: 'Tekstylny' }
-      ]
-    case 'wall':
-      return [
-        { value: 'mural', label: 'Mural' },
-        { value: 'foil', label: 'Folia' },
-        { value: 'construction', label: 'Konstrukcja' }
-      ]
     case 'totem':
       return [
         { value: 'single_sided', label: 'Jednostronny' },
         { value: 'double_sided', label: 'Dwustronny' },
-        { value: 'multi_sided', label: 'Wielostronny' },
-        { value: 'digital', label: 'Digital' }
+        { value: 'multi_sided', label: 'Wielostronny' }
       ]
     case 'transport':
       return [
@@ -331,7 +318,7 @@ const optionalDimensions = computed(() => {
 
 const hideDimensions = computed(() => {
   const type = formData.value.type
-  return ['transport', 'mobile', 'other', 'totem'].includes(type)
+  return ['transport', 'mobile', 'other'].includes(type)
 })
 
 // Computed properties for option visibility based on ad type
@@ -347,37 +334,37 @@ const showLightingTypeBannerField = computed(() => {
 
 const showPrintOption = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner'].includes(type)
+  return ['billboard', 'banner', 'wall', 'citylight'].includes(type)
 })
 
 const showMountingOption = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall'].includes(type)
+  return ['billboard', 'banner', 'wall', 'citylight', 'totem'].includes(type)
 })
 
 const showGraphicDesignOption = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall'].includes(type)
+  return ['billboard', 'banner', 'wall', 'citylight', 'totem'].includes(type)
 })
 
 const showTrafficIntensity = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall'].includes(type)
+  return ['billboard', 'banner', 'wall', 'totem'].includes(type)
 })
 
 const showTrafficDirection = computed(() => {
   const type = formData.value.type
-  return type === 'billboard'
+  return ['billboard', 'banner', 'wall', 'totem'].includes(type)
 })
 
 const showTrafficType = computed(() => {
   const type = formData.value.type
-  return type === 'banner'
+  return ['billboard', 'banner', 'wall', 'totem'].includes(type)
 })
 
 const showPricePerSqm = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall', 'citylight', 'led_screen'].includes(type)
+  return ['billboard', 'banner', 'wall', 'citylight', 'led_screen', 'totem'].includes(type)
 })
 
 
@@ -931,9 +918,9 @@ const validateStep = (step: number): boolean => {
       if (formData.value.type === 'billboard' && !formData.value.roadClass) {
         errors.value.roadClass = 'Klasa drogi jest wymagana dla billboardów'
       }
-      // Natężenie ruchu wymagane dla billboardów, opcjonalne dla innych
-      if (formData.value.type === 'billboard' && !formData.value.trafficIntensity) {
-        errors.value.trafficIntensity = 'Natężenie ruchu jest wymagane dla billboardów'
+      // Natężenie ruchu wymagane dla wszystkich typów outdoor
+      if (['billboard', 'banner', 'wall', 'totem'].includes(formData.value.type) && !formData.value.trafficIntensity) {
+        errors.value.trafficIntensity = 'Natężenie ruchu jest wymagane'
       }
       if (!formData.value.status) {
         errors.value.status = 'Status dostępności jest wymagany'
@@ -951,7 +938,7 @@ const validateStep = (step: number): boolean => {
         }
       }
       // Walidacja wariantu dla typów które go mają
-      const typesWithVariant = ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile']
+      const typesWithVariant = ['billboard', 'citylight', 'led_screen', 'totem', 'transport', 'mobile']
       if (typesWithVariant.includes(formData.value.type)) {
         if (!formData.value.variant) {
           errors.value.variant = 'Wariant jest wymagany'
@@ -1657,11 +1644,11 @@ onMounted(() => {
             <span v-if="errors.roadClass" class="error-text">{{ errors.roadClass }}</span>
           </div>
 
-          <!-- Natężenie ruchu - REQUIRED dla billboardów, OPTIONAL dla innych outdoor -->
+          <!-- Natężenie ruchu - REQUIRED dla wszystkich outdoor -->
           <div v-if="showTrafficIntensity" class="form-group">
             <label class="form-label">
               Natężenie ruchu 
-              <span v-if="formData.type === 'billboard'" class="required">*</span>
+              <span class="required">*</span>
             </label>
             <select v-model="formData.trafficIntensity" class="form-select" :class="{ 'error': errors.trafficIntensity }">
               <option value="" disabled>Wybierz natężenie ruchu</option>
@@ -1672,7 +1659,7 @@ onMounted(() => {
             <span v-if="errors.trafficIntensity" class="error-text">{{ errors.trafficIntensity }}</span>
           </div>
 
-          <!-- Kierunek ruchu - dla billboard/ściana -->
+          <!-- Kierunek ruchu - dla wszystkich outdoor -->
           <div v-if="showTrafficDirection" class="form-group">
             <label class="form-label">Kierunek ruchu (opcjonalnie)</label>
             <div class="checkbox-group">
@@ -1686,11 +1673,11 @@ onMounted(() => {
               </label>
             </div>
             <p class="help-text" style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
-              Zaznacz oba, jeśli billboard widoczny z obu stron
+              Zaznacz oba, jeśli powierzchnia widoczna z obu stron
             </p>
           </div>
 
-          <!-- Rodzaj ruchu - dla banner -->
+          <!-- Rodzaj ruchu - dla wszystkich outdoor -->
           <div v-if="showTrafficType" class="form-group">
             <label class="form-label">Rodzaj ruchu (opcjonalnie)</label>
             <div class="checkbox-group">

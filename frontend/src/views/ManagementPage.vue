@@ -361,7 +361,7 @@ const saveChanges = async (id: string) => {
   if (!editingAd.value || isSaving.value) return
 
   // Validate variant field for types that require it
-  const typesWithVariant = ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile']
+  const typesWithVariant = ['billboard', 'citylight', 'led_screen', 'totem', 'transport', 'mobile']
   if (typesWithVariant.includes(editingAd.value.type) && !(editingAd.value as any).variant) {
     alert('Wariant jest wymagany dla tego typu powierzchni reklamowej')
     return
@@ -982,7 +982,7 @@ const availablePriceUnits = computed(() => {
 
 const showTrafficIntensity = computed(() => {
   if (!editingAd.value) return false
-  return ['billboard', 'banner', 'wall'].includes(editingAd.value.type)
+  return ['billboard', 'banner', 'wall', 'totem'].includes(editingAd.value.type)
 })
 
 const showLightingOption = computed(() => {
@@ -1012,7 +1012,7 @@ const showGraphicDesignOption = computed(() => {
 
 const showVariantField = computed(() => {
   if (!editingAd.value) return false
-  return ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile'].includes(editingAd.value.type)
+  return ['billboard', 'citylight', 'led_screen', 'totem', 'transport', 'mobile'].includes(editingAd.value.type)
 })
 
 const showRoadClassField = computed(() => {
@@ -1022,12 +1022,12 @@ const showRoadClassField = computed(() => {
 
 const showTrafficDirection = computed(() => {
   if (!editingAd.value) return false
-  return editingAd.value.type === 'billboard'
+  return ['billboard', 'banner', 'wall', 'totem'].includes(editingAd.value.type)
 })
 
 const showTrafficType = computed(() => {
   if (!editingAd.value) return false
-  return editingAd.value.type === 'banner'
+  return ['billboard', 'banner', 'wall', 'totem'].includes(editingAd.value.type)
 })
 
 const showEnvironmentField = computed(() => {
@@ -1085,24 +1085,11 @@ const getVariantOptions = (type: string) => {
         { value: 'standard', label: 'Standardowy' },
         { value: 'interactive', label: 'Interaktywny' }
       ]
-    case 'banner':
-      return [
-        { value: 'pvc', label: 'PCV' },
-        { value: 'mesh', label: 'Siatkowy/Mesh' },
-        { value: 'textile', label: 'Tekstylny' }
-      ]
-    case 'wall':
-      return [
-        { value: 'mural', label: 'Mural' },
-        { value: 'foil', label: 'Folia' },
-        { value: 'construction', label: 'Konstrukcja' }
-      ]
     case 'totem':
       return [
         { value: 'single_sided', label: 'Jednostronny' },
         { value: 'double_sided', label: 'Dwustronny' },
-        { value: 'multi_sided', label: 'Wielostronny' },
-        { value: 'digital', label: 'Digital' }
+        { value: 'multi_sided', label: 'Wielostronny' }
       ]
     case 'transport':
       return [

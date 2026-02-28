@@ -456,7 +456,7 @@ const showEquipmentSection = computed(() => {
 
 const showTrafficIntensityFilter = computed(() => {
   const type = filters.value.type
-  return ['billboard', 'banner', 'wall'].includes(type)
+  return ['billboard', 'banner', 'wall', 'totem'].includes(type)
 })
 
 const showDimensionsFilter = computed(() => {
@@ -483,12 +483,6 @@ const variantOptions = computed(() => {
       return [
         { value: 'standard', label: 'Standardowy' },
         { value: 'interactive', label: 'Interaktywny' }
-      ]
-    case 'banner':
-      return [
-        { value: 'pvc', label: 'PCV' },
-        { value: 'mesh', label: 'Mesh' },
-        { value: 'textile', label: 'Tekstylny' }
       ]
     case 'totem':
       return [
@@ -991,9 +985,8 @@ onBeforeUnmount(() => {
                   </div>
                 </div>
 
-                <!-- Traffic Direction (Billboard only) -->
-                <!-- Kierunek ruchu dla billboard -->
-                <div v-if="filters.type === 'billboard'" class="search-row">
+                <!-- Traffic Direction (all outdoor types) -->
+                <div v-if="['billboard', 'banner', 'wall', 'totem'].includes(filters.type)" class="search-row">
                   <div class="input-group">
                     <label class="input-label">Kierunek ruchu</label>
                     <select v-model="filters.trafficDirection" class="search-select">
@@ -1005,8 +998,8 @@ onBeforeUnmount(() => {
                   </div>
                 </div>
 
-                <!-- Rodzaj ruchu dla banner -->
-                <div v-if="filters.type === 'banner'" class="search-row">
+                <!-- Rodzaj ruchu (all outdoor types) -->
+                <div v-if="['billboard', 'banner', 'wall', 'totem'].includes(filters.type)" class="search-row">
                   <div class="input-group">
                     <label class="input-label">Rodzaj ruchu</label>
                     <select v-model="filters.trafficType" class="search-select">
