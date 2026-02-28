@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { api } from '../services/api'
-import axios from '../api/axios'
+import axios, { setManagementToken } from '../api/axios'
 import type { Advertisement } from '../types'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import ToastNotification from '../components/ToastNotification.vue'
@@ -230,6 +230,8 @@ const loadAdvertisements = async () => {
           tokenExpiresAt.value = new Date(response.data.expires_at).toLocaleString()
           hasToken.value = true
           isTokenInvalid.value = false
+          // Zapisz token do sessionStorage, żeby interceptor dodał go do wrażliwych requestów
+          setManagementToken(token)
           
           // Load daily stats for all listings
           if (listings.value.length > 0) {
@@ -267,12 +269,14 @@ const loadAdvertisements = async () => {
           // Token jest nieprawidłowy
           hasToken.value = false
           isTokenInvalid.value = true
+          setManagementToken(null) // Wyczyść token z sessionStorage
         }
       } catch (error) {
         console.error('Error validating token:', error)
         // W przypadku błędu walidacji
         hasToken.value = false
         isTokenInvalid.value = true
+        setManagementToken(null)
       }
     } else {
       // Brak tokena, pokaż formularz email
@@ -1070,15 +1074,17 @@ const getVariantOptions = (type: string) => {
   switch (type) {
     case 'billboard':
       return [
-        { value: 'standard', label: 'Standardowy' },
-        { value: 'three_sided', label: 'Trójstronny' },
-        { value: 'backlit', label: 'Backlit' }
+        { value: 'standard', label: 'Jednostronny' },
+        { value: 'two_sided', label: 'Dwustronny (back-to-back)' },
+        { value: 'three_sided', label: 'Trójstronny (prismatron)' },
+        { value: 'scrolling', label: 'Scrolling / Rolowany' }
       ]
     case 'citylight':
       return [
-        { value: 'single', label: 'Pojedynczy' },
-        { value: 'double', label: 'Podwójny' },
-        { value: 'digital', label: 'Cyfrowy' }
+        { value: 'single_sided', label: 'Jednostronny' },
+        { value: 'double_sided', label: 'Dwustronny' },
+        { value: 'scrolling', label: 'Scrolling (rotacyjny)' },
+        { value: 'digital', label: 'Cyfrowy (DOOH)' }
       ]
     case 'led_screen':
       return [
@@ -1089,13 +1095,16 @@ const getVariantOptions = (type: string) => {
       return [
         { value: 'single_sided', label: 'Jednostronny' },
         { value: 'double_sided', label: 'Dwustronny' },
-        { value: 'multi_sided', label: 'Wielostronny' }
+        { value: 'multi_sided', label: 'Wielostronny / Kolumna' },
+        { value: 'pylon', label: 'Pylon (przy drodze)' },
+        { value: 'digital', label: 'Cyfrowy (LED)' }
       ]
     case 'transport':
       return [
         { value: 'bus', label: 'Autobus' },
         { value: 'tram', label: 'Tramwaj' },
         { value: 'metro', label: 'Metro' },
+        { value: 'train', label: 'Pociąg / SKM / Kolej' },
         { value: 'stop', label: 'Przystanek' }
       ]
     case 'mobile':
@@ -1406,7 +1415,7 @@ onBeforeUnmount(() => {
           <p class="header-subtitle" v-if="!hasToken">Zarządzaj swoimi ogłoszeniami w jednym miejscu</p>
           <div v-else class="token-info-header">
             <p>Email: <strong>{{ tokenEmail }}</strong></p>
-            <p>Link ważny do: <strong>{{ tokenExpiresAt }}</strong></p>
+            <p>Link zarządzający ważny jeszcze przez wiele dni (do: <strong>{{ tokenExpiresAt }}</strong>)</p>
           </div>
         </div>
       </div>
@@ -1470,7 +1479,7 @@ onBeforeUnmount(() => {
               </button>
               
               <p class="info-text">
-                Link będzie ważny przez 24 godziny
+                Link będzie ważny przez 30 dni
               </p>
             </form>
           </div>
@@ -2042,6 +2051,11 @@ onBeforeUnmount(() => {
                         <option value="high">Wysokie</option>
                       </select>
                     </div>
+                    <!-- OTS / Daily Views -->
+                    <div v-if="['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem'].includes(editingAd.type)" class="form-group">
+                      <label>Dzienny zasięg (OTS)</label>
+                      <input v-model.number="(editingAd as any).estimated_daily_views" type="number" step="100" placeholder="np. 25000" />
+                    </div>
 
                     <!-- Wariant -->
                     <div v-if="showVariantField" class="form-group">
@@ -2193,8 +2207,9 @@ onBeforeUnmount(() => {
                     <div class="form-group">
                       <label>Rodzaj oferty</label>
                       <select v-model="editingAd.offer_type" required>
-                        <option value="owner">Właściciel</option>
-                        <option value="agency">Agencja</option>
+                        <option value="owner">Właściciel (bezpośrednio)</option>
+                        <option value="agency">Agencja reklamowa</option>
+                        <option value="sublease">Podnajmujący</option>
                       </select>
                     </div>
 

@@ -409,6 +409,9 @@ const filters = ref({
   // Checkboxy dla podświetlenia
   hasLightingTypeBanner: false as boolean,
   hasLightingTypeBillboard: false as boolean,
+  // OTS filters
+  estimatedDailyViewsFrom: null as number | null,
+  estimatedDailyViewsTo: null as number | null,
 })
 
 // Lokalizacja - podobnie jak na stronie głównej
@@ -718,15 +721,17 @@ const getVariantOptions = (type: string) => {
   switch (type) {
     case 'billboard':
       return [
-        { value: 'standard', label: 'Standardowy' },
-        { value: 'three_sided', label: 'Trójstronny' },
-        { value: 'backlit', label: 'Backlit' }
+        { value: 'standard', label: 'Jednostronny' },
+        { value: 'two_sided', label: 'Dwustronny (back-to-back)' },
+        { value: 'three_sided', label: 'Trójstronny (prismatron)' },
+        { value: 'scrolling', label: 'Scrolling / Rolowany' }
       ]
     case 'citylight':
       return [
-        { value: 'single', label: 'Pojedynczy' },
-        { value: 'double', label: 'Podwójny' },
-        { value: 'digital', label: 'Cyfrowy' }
+        { value: 'single_sided', label: 'Jednostronny' },
+        { value: 'double_sided', label: 'Dwustronny' },
+        { value: 'scrolling', label: 'Scrolling (rotacyjny)' },
+        { value: 'digital', label: 'Cyfrowy (DOOH)' }
       ]
     case 'led_screen':
       return [
@@ -737,13 +742,16 @@ const getVariantOptions = (type: string) => {
       return [
         { value: 'single_sided', label: 'Jednostronny' },
         { value: 'double_sided', label: 'Dwustronny' },
-        { value: 'multi_sided', label: 'Wielostronny' }
+        { value: 'multi_sided', label: 'Wielostronny / Kolumna' },
+        { value: 'pylon', label: 'Pylon (przy drodze)' },
+        { value: 'digital', label: 'Cyfrowy (LED)' }
       ]
     case 'transport':
       return [
         { value: 'bus', label: 'Autobus' },
         { value: 'tram', label: 'Tramwaj' },
         { value: 'metro', label: 'Metro' },
+        { value: 'train', label: 'Pociąg / SKM / Kolej' },
         { value: 'stop', label: 'Przystanek' }
       ]
     case 'mobile':
@@ -1105,6 +1113,14 @@ const filteredListings = computed(() => {
       const lightingType = (ad as any).lighting_type_banner
       return lightingType && lightingType !== 'none'
     })
+  }
+
+  // OTS filters logic
+  if (filters.value.estimatedDailyViewsFrom !== null) {
+    filtered = filtered.filter(ad => (ad as any).estimated_daily_views && (ad as any).estimated_daily_views >= filters.value.estimatedDailyViewsFrom!)
+  }
+  if (filters.value.estimatedDailyViewsTo !== null) {
+    filtered = filtered.filter(ad => (ad as any).estimated_daily_views && (ad as any).estimated_daily_views <= filters.value.estimatedDailyViewsTo!)
   }
   if ((filters.value as any).hasLightingTypeBillboard === true) {
     filtered = filtered.filter(ad => {
@@ -1486,7 +1502,9 @@ const clearFilters = () => {
     ambientLightControl: false,
     // Checkboxy dla podświetlenia
     hasLightingTypeBanner: false,
-    hasLightingTypeBillboard: false
+    hasLightingTypeBillboard: false,
+    estimatedDailyViewsFrom: null,
+    estimatedDailyViewsTo: null,
   }
   
   // Wyczyść wyszukiwane słowo kluczowe i lokalizację
@@ -1833,7 +1851,17 @@ watch(() => route.query, (newQuery, oldQuery) => {
       vehicleCountTo: null,
       mobileExposureMode: '',
       campaignDurationFrom: null,
-      campaignDurationTo: null
+      campaignDurationTo: null,
+      // Nowe pola dla rozszerzonych opcji
+      lightingType: '',
+      dailyPassengersFrom: null,
+      dailyPassengersTo: null,
+      operatingZone: '',
+      ambientLightControl: false,
+      hasLightingTypeBanner: false,
+      hasLightingTypeBillboard: false,
+      estimatedDailyViewsFrom: null,
+      estimatedDailyViewsTo: null,
     }
     
     // Zastosuj filtry z route.params (type i city)
@@ -2682,6 +2710,30 @@ onBeforeUnmount(() => {
             </select>
           </div>
 
+          <!-- OTS Range (estimatedDailyViews) -->
+          <div v-if="tempFilters && ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem'].includes(tempFilters.type)" class="filter-group">
+            <label class="filter-label">Zasięg dzienny (OTS)</label>
+            <div class="range-inputs">
+              <input 
+                v-model.number="tempFilters.estimatedDailyViewsFrom" 
+                type="number" 
+                step="1000"
+                placeholder="Od"
+                class="filter-input"
+                v-if="tempFilters"
+              />
+              <span>-</span>
+              <input 
+                v-model.number="tempFilters.estimatedDailyViewsTo" 
+                type="number" 
+                step="1000"
+                placeholder="Do"
+                class="filter-input"
+                v-if="tempFilters"
+              />
+            </div>
+          </div>
+
           <!-- Kierunek ruchu (all outdoor types) -->
           <div v-if="tempFilters && ['billboard', 'banner', 'wall', 'totem'].includes(tempFilters.type)" class="filter-group">
             <label class="filter-label">Kierunek ruchu</label>
@@ -2970,6 +3022,7 @@ onBeforeUnmount(() => {
               <option value="">Wszystkie</option>
               <option value="owner">Właściciel</option>
               <option value="agency">Agencja</option>
+              <option value="sublease">Podnajem</option>
             </select>
           </div>
 

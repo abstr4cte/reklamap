@@ -351,6 +351,13 @@ const statusColor = computed(() => {
       <div class="status-badge" :style="{ background: statusColor }">
         {{ statusLabel }}
       </div>
+      <div v-if="(ad as any).estimated_daily_views" class="ots-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+          <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span>OTS: {{ (ad as any).estimated_daily_views.toLocaleString('pl-PL') }}</span>
+      </div>
       <div class="card-actions">
         <button
           @click="handleFavoriteClick"
@@ -502,6 +509,24 @@ const statusColor = computed(() => {
   display: flex;
   align-items: center;
   gap: 0.375rem;
+}
+
+.ots-badge {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(30, 41, 59, 0.7);
+  color: white;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  z-index: 5;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .status-badge::before {

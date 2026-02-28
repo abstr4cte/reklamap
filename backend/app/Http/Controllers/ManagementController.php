@@ -29,7 +29,7 @@ class ManagementController extends Controller
         // Create a new token that expires in 24 hours
         $token = ManagementToken::create([
             'email' => $validated['email'],
-            'expires_at' => Carbon::now()->addHours(24)
+            'expires_at' => Carbon::now()->addDays(30)
         ]);
 
         // Send email with management link

@@ -59,6 +59,7 @@ const formData = ref({
   availableFrom: null as Date | null,
   trafficIntensity: '' as '' | 'low' | 'medium' | 'high',
   imageFiles: [] as { file: File, preview: string, id: string, loading?: boolean }[],
+  estimatedDailyViews: null as number | null,
   acceptTerms: false,
   // Nowe pola specyficzne dla typów
   variant: '' as string,
@@ -266,15 +267,17 @@ const variantOptions = computed(() => {
   switch (type) {
     case 'billboard':
       return [
-        { value: 'standard', label: 'Standardowy' },
-        { value: 'three_sided', label: 'Trójstronny' },
-        { value: 'backlit', label: 'Backlit (podświetlany)' }
+        { value: 'standard', label: 'Jednostronny' },
+        { value: 'two_sided', label: 'Dwustronny (back-to-back)' },
+        { value: 'three_sided', label: 'Trójstronny (prismatron)' },
+        { value: 'scrolling', label: 'Scrolling / Rolowany' }
       ]
     case 'citylight':
       return [
-        { value: 'single', label: 'Pojedynczy' },
-        { value: 'double', label: 'Podwójny' },
-        { value: 'digital', label: 'Cyfrowy' }
+        { value: 'single_sided', label: 'Jednostronny' },
+        { value: 'double_sided', label: 'Dwustronny' },
+        { value: 'scrolling', label: 'Scrolling (rotacyjny)' },
+        { value: 'digital', label: 'Cyfrowy (DOOH)' }
       ]
     case 'led_screen':
       return [
@@ -285,13 +288,16 @@ const variantOptions = computed(() => {
       return [
         { value: 'single_sided', label: 'Jednostronny' },
         { value: 'double_sided', label: 'Dwustronny' },
-        { value: 'multi_sided', label: 'Wielostronny' }
+        { value: 'multi_sided', label: 'Wielostronny / Kolumna' },
+        { value: 'pylon', label: 'Pylon (przy drodze)' },
+        { value: 'digital', label: 'Cyfrowy (LED)' }
       ]
     case 'transport':
       return [
         { value: 'bus', label: 'Autobus' },
         { value: 'tram', label: 'Tramwaj' },
         { value: 'metro', label: 'Metro' },
+        { value: 'train', label: 'Pociąg / SKM / Kolej' },
         { value: 'stop', label: 'Przystanek' }
       ]
     case 'mobile':
@@ -1121,7 +1127,8 @@ const handleSubmit = async () => {
         daily_passengers: formData.value.dailyPassengers || null,
         operating_zone: formData.value.operatingZone || null,
         ambient_light_control: formData.value.ambientLightControl,
-        lighting_type_banner: formData.value.lightingTypeBanner || null
+        lighting_type_banner: formData.value.lightingTypeBanner || null,
+        estimated_daily_views: formData.value.estimatedDailyViews || null
     } as any) // Casting to any to avoid strict type checks for now if interface mismatches
 
     if (newAd && newAd.id) {
@@ -1677,6 +1684,19 @@ onMounted(() => {
             </p>
           </div>
 
+          <!-- OTS / Daily Views -->
+          <div v-if="['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem'].includes(formData.type)" class="form-group">
+            <label class="form-label">Szacowana dzienna liczba odbiorców (OTS)</label>
+            <input
+              v-model.number="formData.estimatedDailyViews"
+              type="number"
+              step="100"
+              class="form-input"
+              placeholder="np. 25000"
+            />
+            <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Przybliżona liczba osób, które dziennie widzą reklamę (Opportunity To See)</p>
+          </div>
+
           <!-- Rodzaj ruchu - dla wszystkich outdoor -->
           <div v-if="showTrafficType" class="form-group">
             <label class="form-label">Rodzaj ruchu (opcjonalnie)</label>
@@ -1942,8 +1962,9 @@ onMounted(() => {
             <label class="form-label">Rodzaj oferty <span class="required">*</span></label>
             <select v-model="formData.offerType" class="form-select" :class="{ 'error': errors.offerType }">
               <option value="" disabled>Wybierz rodzaj oferty</option>
-              <option value="owner">Właściciel</option>
-              <option value="agency">Agencja</option>
+              <option value="owner">Właściciel (bezpośrednio)</option>
+              <option value="agency">Agencja reklamowa</option>
+              <option value="sublease">Podnajmujący</option>
             </select>
             <span v-if="errors.offerType" class="error-text">{{ errors.offerType }}</span>
           </div>

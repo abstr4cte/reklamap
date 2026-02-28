@@ -15,47 +15,108 @@
       <div class="content">
         <section>
           <h2>1. Informacje ogólne</h2>
-          <p>Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazanych przez Użytkowników w związku z korzystaniem przez nich z serwisu ReklaMap.</p>
+          <p>Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazanych przez Użytkowników w związku z korzystaniem przez nich z platformy ReklaMap (dalej: "Serwis"). Serwis jest platformą internetową umożliwiającą publikację i przeglądanie ogłoszeń dotyczących powierzchni reklamowych, łącząc właścicieli i zarządców powierzchni z osobami fizycznymi i firmami poszukującymi miejsc na reklamę.</p>
         </section>
 
         <section>
           <h2>2. Administrator Danych Osobowych</h2>
-          <p>Administratorem danych osobowych zawartych w serwisie jest ReklaMap z siedzibą w Warszawie.</p>
+          <p>Administratorem danych osobowych zawartych w serwisie jest ReklaMap. W sprawach związanych z ochroną danych osobowych można kontaktować się pod adresem e-mail: kontakt@reklamap.pl</p>
         </section>
 
         <section>
-          <h2>3. Zakres i cel zbierania danych</h2>
-          <p>Dane osobowe przetwarzane są w celu:</p>
+          <h2>3. Zakres zbieranych danych osobowych</h2>
+          <p>W związku z korzystaniem z Serwisu zbieramy następujące dane osobowe:</p>
           <ul>
-            <li>Realizacji usług świadczonych drogą elektroniczną</li>
-            <li>Obsługi zapytań i zgłoszeń</li>
-            <li>Kontaktu z Użytkownikiem</li>
-            <li>Marketingu własnych produktów lub usług</li>
+            <li><strong>Dane kontaktowe:</strong> imię, nazwisko (lub nazwa firmy), adres e-mail, numer telefonu</li>
+            <li><strong>Dane lokalizacyjne:</strong> adres IP, informacje o lokalizacji (na podstawie adresu IP)</li>
+            <li><strong>Dane dotyczące ogłoszeń:</strong> informacje zawarte w publikowanych ogłoszeniach (lokalizacja, typ nośnika, wymiary, cena, zdjęcia)</li>
+            <li><strong>Dane techniczne:</strong> informacje o urządzeniu, przeglądarce, systemie operacyjnym, czas i data dostępu</li>
+            <li><strong>Dane analityczne:</strong> informacje o interakcjach z Serwisem (kliknięcia, wyświetlenia, wyszukiwania)</li>
           </ul>
         </section>
 
         <section>
-          <h2>4. Pliki Cookies</h2>
-          <p>Serwis używa plików cookies. Są to niewielkie pliki tekstowe wysyłane przez serwer www i przechowywane przez oprogramowanie komputera przeglądarki. Kiedy przeglądarka ponownie połączy się ze stroną, witryna rozpoznaje rodzaj urządzenia, z którego łączy się użytkownik. Parametry pozwalają na odczytanie informacji w nich zawartych jedynie serwerowi, który je utworzył. Cookies ułatwiają więc korzystanie z wcześniej odwiedzonych witryn.</p>
+          <h2>4. Cele przetwarzania danych</h2>
+          <p>Dane osobowe przetwarzane są w następujących celach:</p>
+          <ul>
+            <li><strong>Świadczenie usług:</strong> umożliwienie dodawania, edycji, usuwania i przeglądania ogłoszeń</li>
+            <li><strong>Komunikacja:</strong> kontakt z Użytkownikami w sprawie ogłoszeń, odpowiedzi na zapytania, wysyłanie powiadomień</li>
+            <li><strong>Weryfikacja:</strong> sprawdzenie autentyczności danych kontaktowych i zapobieganie nadużyciom</li>
+            <li><strong>Statystyka i analiza:</strong> analiza korzystania z Serwisu, poprawa funkcjonalności i doświadczenia użytkownika</li>
+            <li><strong>Obowiązki prawne:</strong> realizacja obowiązków wynikających z przepisów prawa, w tym podatkowymi i rachunkowymi</li>
+            <li><strong>Bezpieczeństwo:</strong> ochrona przed nieautoryzowanym dostępem, oszustwami i innymi zagrożeniami</li>
+          </ul>
         </section>
 
         <section>
-          <h2>5. Prawa Użytkownika</h2>
+          <h2>5. Podstawa prawna przetwarzania</h2>
+          <p>Przetwarzanie danych osobowych odbywa się na podstawie:</p>
+          <ul>
+            <li>Zgody Użytkownika (art. 6 ust. 1 lit. a RODO) - dla danych zbieranych za pośrednictwem formularzy</li>
+            <li>Wykonania umowy (art. 6 ust. 1 lit. b RODO) - dla danych niezbędnych do świadczenia usług</li>
+            <li>Obowiązku prawnego (art. 6 ust. 1 lit. c RODO) - dla danych wymaganych przepisami prawa</li>
+            <li>Uzasadnionego interesu (art. 6 ust. 1 lit. f RODO) - dla danych analitycznych i bezpieczeństwa</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>6. Udostępnianie danych osobowych</h2>
+          <p>Dane osobowe Użytkownika (imię, nazwisko, email, telefon) są widoczne dla innych Użytkowników w celu umożliwienia kontaktu w sprawie ogłoszeń. Dane nie są udostępniane stronom trzecim, z wyjątkiem:</p>
+          <ul>
+            <li>Dostawców usług technicznych (hosting, bazy danych) - na podstawie umów przetwarzania danych</li>
+            <li>Organów publicznych - na podstawie obowiązku prawnego</li>
+            <li>Firm zajmujących się bezpieczeństwem - w celu ochrony przed oszustwami</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>7. Pliki Cookies i technologie śledzące</h2>
+          <p>Serwis używa plików cookies i podobnych technologii śledzących:</p>
+          <ul>
+            <li><strong>Cookies niezbędne:</strong> umożliwiają funkcjonowanie Serwisu (sesja, bezpieczeństwo)</li>
+            <li><strong>Cookies analityczne:</strong> zbierają informacje o korzystaniu z Serwisu (Google Analytics)</li>
+            <li><strong>Cookies funkcjonalne:</strong> zapamiętują preferencje użytkownika (język, filtry wyszukiwania)</li>
+            <li><strong>Cookies marketingowe:</strong> śledzą aktywność użytkownika w celu personalizacji treści</li>
+          </ul>
+          <p>Użytkownik może zarządzać cookies w ustawieniach przeglądarki. Odmowa akceptacji cookies może ograniczyć funkcjonalność Serwisu.</p>
+        </section>
+
+        <section>
+          <h2>8. Okres przechowywania danych</h2>
+          <p>Dane osobowe przechowywane są przez okres:</p>
+          <ul>
+            <li><strong>Dane kontaktowe:</strong> przez czas korzystania z Serwisu i 3 lata po usunięciu konta</li>
+            <li><strong>Dane ogłoszeń:</strong> przez 90 dni od publikacji (okres aktywności ogłoszenia)</li>
+            <li><strong>Dane analityczne:</strong> przez 26 miesięcy</li>
+            <li><strong>Dane techniczne:</strong> przez 30 dni</li>
+            <li><strong>Dane wymagane prawem:</strong> zgodnie z obowiązującymi przepisami (np. 5 lat dla danych podatkowych)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>9. Prawa Użytkownika</h2>
           <p>Użytkownikowi przysługuje prawo do:</p>
           <ul>
-            <li>Dostępu do treści swoich danych</li>
-            <li>Ich sprostowania</li>
-            <li>Usunięcia</li>
-            <li>Ograniczenia przetwarzania</li>
-            <li>Przenoszenia danych</li>
-            <li>Wniesienia sprzeciwu</li>
-            <li>Cofnięcia zgody w dowolnym momencie</li>
+            <li><strong>Dostępu do danych:</strong> prawo do uzyskania kopii swoich danych osobowych</li>
+            <li><strong>Sprostowania:</strong> prawo do poprawy nieprawidłowych danych</li>
+            <li><strong>Usunięcia:</strong> prawo do usunięcia danych (prawo do bycia zapomnianym)</li>
+            <li><strong>Ograniczenia przetwarzania:</strong> prawo do ograniczenia przetwarzania danych</li>
+            <li><strong>Przenoszenia danych:</strong> prawo do otrzymania danych w strukturyzowanym formacie</li>
+            <li><strong>Sprzeciwu:</strong> prawo do wniesienia sprzeciwu wobec przetwarzania danych</li>
+            <li><strong>Wycofania zgody:</strong> prawo do wycofania wcześniej udzielonej zgody</li>
           </ul>
+          <p>Aby skorzystać z powyższych praw, Użytkownik powinien skontaktować się z Administratorem na adres: kontakt@reklamap.pl</p>
         </section>
 
         <section>
-          <h2>6. Kontakt</h2>
+          <h2>10. Bezpieczeństwo danych</h2>
+          <p>Administrator podejmuje odpowiednie środki techniczne i organizacyjne w celu ochrony danych osobowych przed nieautoryzowanym dostępem, zmianą, ujawnieniem lub zniszczeniem. Dane są przechowywane na zabezpieczonych serwerach z szyfrowaniem SSL/TLS.</p>
+        </section>
+
+        <section>
+          <h2>11. Kontakt i skargi</h2>
           <p>W sprawach związanych z ochroną danych osobowych prosimy o kontakt pod adresem e-mail: kontakt@reklamap.pl</p>
+          <p>Użytkownik ma prawo do złożenia skargi do Prezesa Urzędu Ochrony Danych Osobowych, jeśli uważa, że przetwarzanie jego danych narusza przepisy RODO.</p>
         </section>
       </div>
     </div>

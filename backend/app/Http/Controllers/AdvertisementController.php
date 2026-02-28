@@ -489,6 +489,21 @@ class AdvertisementController extends Controller
                 )
             );
 
+            // Send confirmation copy to the sender
+            try {
+                Mail::send('emails.contact_confirmation', [
+                    'adTitle' => $ad->title,
+                    'adUrl' => $advertisementUrl,
+                    'message' => $validated['message'],
+                ], function ($mail) use ($validated) {
+                    $mail->to($validated['email'])
+                        ->subject('Potwierdzenie: Twoje zapytanie zostało wysłane — ReklaMap');
+                });
+            } catch (\Exception $e) {
+                // Log but don't fail the main response — confirmation is secondary
+                \Log::warning('Could not send contact confirmation to sender: ' . $e->getMessage());
+            }
+
             return response()->json([
                 'message' => 'Wiadomość została wysłana pomyślnie'
             ], 200);
@@ -499,6 +514,7 @@ class AdvertisementController extends Controller
                 'message' => 'Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie później.'
             ], 500);
         }
+
     }
 
     private function mapTypeToUrlFormat($type)

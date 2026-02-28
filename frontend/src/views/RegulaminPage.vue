@@ -32,7 +32,7 @@
           <main class="main-content">
             <section id="postanowienia-ogolne" class="section">
               <h2>1. Postanowienia ogólne</h2>
-              <p>Niniejszy Regulamin określa zasady korzystania z platformy ReklaMap, serwisu internetowego umożliwiającego publikację i przeglądanie ogłoszeń dotyczących powierzchni reklamowych.</p>
+              <p>Niniejszy Regulamin określa zasady korzystania z platformy ReklaMap, serwisu internetowego umożliwiającego publikację i przeglądanie ogłoszeń dotyczących powierzchni reklamowych, łączącego właścicieli i zarządców powierzchni z osobami fizycznymi i firmami poszukującymi miejsc na reklamę.</p>
               <p>Korzystanie z serwisu oznacza akceptację postanowień niniejszego Regulaminu.</p>
               <p>Regulamin dostępny jest nieodpłatnie na stronie internetowej serwisu w formie umożliwiającej jego pobranie, utrwalenie i wydrukowanie.</p>
             </section>
@@ -49,8 +49,8 @@
                 <dt>Ogłoszenie</dt>
                 <dd>Treść publikowana przez Użytkownika w Serwisie, zawierająca informacje o dostępnej powierzchni reklamowej.</dd>
 
-                <dt>Administrator</dt>
-                <dd>Podmiot prowadzący Serwis, odpowiedzialny za jego funkcjonowanie i rozwój.</dd>
+                <dt>Administrator Serwisu</dt>
+                <dd>ReklaMap - podmiot prowadzący Serwis, odpowiedzialny za jego funkcjonowanie i rozwój.</dd>
 
                 <dt>Regulamin</dt>
                 <dd>Niniejszy dokument określający zasady korzystania z Serwisu.</dd>
@@ -78,17 +78,28 @@
             <section id="dodawanie-ogloszen" class="section">
               <h2>4. Dodawanie ogłoszeń</h2>
               <ol class="numbered-list">
-                <li>Każdy Użytkownik może dodawać ogłoszenia po podaniu wymaganych danych kontaktowych.</li>
-                <li>Ogłoszenie powinno zawierać prawdziwe i aktualne informacje o oferowanej powierzchni reklamowej.</li>
-                <li>Użytkownik jest zobowiązany do aktualizowania informacji w ogłoszeniu, w szczególności do oznaczania powierzchni jako niedostępnych.</li>
+                <li>Każdy Użytkownik może dodawać ogłoszenia po podaniu wymaganych danych kontaktowych (imię, nazwisko/nazwa firmy, email, telefon).</li>
+                <li>Ogłoszenie powinno zawierać prawdziwe i aktualne informacje o oferowanej powierzchni reklamowej, w tym:
+                  <ul>
+                    <li>Typ nośnika (billboard, citylight, ekran LED, baner, ściana, totem, transport, mobile, inne)</li>
+                    <li>Dokładną lokalizację (miasto, adres)</li>
+                    <li>Wymiary powierzchni (dla typów, które je wymagają)</li>
+                    <li>Cenę i jednostkę ceny (dzień, tydzień, miesiąc, rok, kampania, m²)</li>
+                    <li>Dostępne zdjęcia wysokiej jakości</li>
+                    <li>Opis i szczegóły techniczne (oświetlenie, orientacja, natężenie ruchu, itp.)</li>
+                  </ul>
+                </li>
+                <li>Użytkownik jest zobowiązany do aktualizowania informacji w ogłoszeniu, w szczególności do oznaczania powierzchni jako niedostępnych lub usuwania ogłoszeń, które nie są już aktualne.</li>
+                <li>Ogłoszenie może zawierać maksymalnie 10 zdjęć prezentujących powierzchnię reklamową. Zdjęcia powinny być wysokiej jakości i czytelne.</li>
+                <li>Ogłoszenie pozostaje aktywne przez 90 dni od daty publikacji. Po tym okresie Użytkownik może je przedłużyć bezpłatnie.</li>
                 <li>Administrator zastrzega sobie prawo do:
                   <ul>
                     <li>Moderacji treści ogłoszeń</li>
-                    <li>Usuwania ogłoszeń niezgodnych z Regulaminem</li>
+                    <li>Usuwania ogłoszeń niezgodnych z Regulaminem lub zawierających nieprawdziwe informacje</li>
                     <li>Żądania weryfikacji danych kontaktowych</li>
+                    <li>Usuwania ogłoszeń, które nie zostały zaktualizowane przez 90 dni</li>
                   </ul>
                 </li>
-                <li>Ogłoszenie może zawierać maksymalnie 10 zdjęć prezentujących powierzchnię reklamową.</li>
               </ol>
             </section>
 
@@ -112,24 +123,27 @@
             <section id="dane-osobowe" class="section">
               <h2>6. Ochrona danych osobowych</h2>
               <ol class="numbered-list">
-                <li>Administrator przetwarza dane osobowe Użytkowników zgodnie z przepisami RODO.</li>
+                <li>Administrator przetwarza dane osobowe Użytkowników zgodnie z przepisami RODO (Rozporządzenie (UE) 2016/679).</li>
                 <li>Dane osobowe są przetwarzane w celu:
                   <ul>
-                    <li>Świadczenia usług Serwisu</li>
-                    <li>Komunikacji z Użytkownikami</li>
-                    <li>Realizacji obowiązków prawnych</li>
+                    <li>Świadczenia usług Serwisu (dodawanie, edycja, usuwanie ogłoszeń)</li>
+                    <li>Komunikacji z Użytkownikami (odpowiedzi na zapytania, powiadomienia o ogłoszeniach)</li>
+                    <li>Realizacji obowiązków prawnych i podatkowych</li>
+                    <li>Statystyki i analiza korzystania z Serwisu</li>
                   </ul>
                 </li>
+                <li>Dane osobowe Użytkownika (imię, nazwisko, email, telefon) są widoczne dla innych Użytkowników w celu umożliwienia kontaktu w sprawie ogłoszeń.</li>
                 <li>Użytkownik ma prawo do:
                   <ul>
                     <li>Dostępu do swoich danych osobowych</li>
                     <li>Sprostowania danych</li>
-                    <li>Usunięcia danych</li>
+                    <li>Usunięcia danych (prawo do bycia zapomnianym)</li>
                     <li>Ograniczenia przetwarzania</li>
                     <li>Przenoszenia danych</li>
                     <li>Wniesienia sprzeciwu wobec przetwarzania</li>
                   </ul>
                 </li>
+                <li>Aby skorzystać z powyższych praw, Użytkownik powinien skontaktować się z Administratorem na adres: kontakt@reklamap.pl</li>
                 <li>Szczegółowe informacje dotyczące przetwarzania danych osobowych znajdują się w Polityce Prywatności.</li>
               </ol>
             </section>
@@ -173,12 +187,11 @@
               <p>Jeśli masz pytania dotyczące Regulaminu, skontaktuj się z nami:</p>
               <ul>
                 <li>Email: kontakt@reklamap.pl</li>
-                <li>Telefon: +48 123 456 789</li>
               </ul>
             </div>
 
             <div class="date-info">
-              Data ostatniej aktualizacji: 24 listopada 2025
+              Data ostatniej aktualizacji: 28 lutego 2026
             </div>
           </main>
         </div>

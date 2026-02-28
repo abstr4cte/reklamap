@@ -106,7 +106,7 @@ const handleClose = () => {
           </form>
 
           <p class="info-text">
-            Link będzie ważny przez 24 godziny
+            Link będzie ważny przez 30 dni
           </p>
 
 

@@ -557,27 +557,33 @@ const showAmbientLightControl = computed(() => {
   return ad.value.type === 'led_screen' && (ad.value as any).ambient_light_control
 })
 
+const showEstimatedDailyViews = computed(() => {
+  if (!ad.value) return false
+  return (ad.value as any).estimated_daily_views && (ad.value as any).estimated_daily_views > 0
+})
+
 // Helper to format variant label
 const getVariantLabel = (variant: string): string => {
   const variantLabels: Record<string, string> = {
     // Billboard
-    'standard': 'Standardowy',
-    'three_sided': 'Trójstronny',
-    'backlit': 'Backlit (podświetlany)',
+    'standard': 'Jednostronny',
+    'two_sided': 'Dwustronny (back-to-back)',
+    'three_sided': 'Trójstronny (prismatron)',
+    'scrolling': 'Scrolling / Rolowany',
     // Citylight
-    'single': 'Pojedynczy',
-    'double': 'Podwójny',
-    'digital': 'Cyfrowy',
+    'single_sided': 'Jednostronny',
+    'double_sided': 'Dwustronny',
+    'digital': 'Cyfrowy (DOOH)',
     // LED Screen
     'interactive': 'Interaktywny',
     // Totem
-    'single_sided': 'Jednostronny',
-    'double_sided': 'Dwustronny',
-    'multi_sided': 'Wielostronny',
+    'multi_sided': 'Wielostronny / Kolumna',
+    'pylon': 'Pylon (przy drodze)',
     // Transport
     'bus': 'Autobus',
     'tram': 'Tramwaj',
     'metro': 'Metro',
+    'train': 'Pociąg / SKM / Kolej',
     'stop': 'Przystanek',
     // Mobile
     'trailer': 'Przyczepka',
@@ -1719,12 +1725,16 @@ onUnmounted(() => {
                 <div class="spec-label">Lokalizacja</div>
                 <div class="spec-value">{{ formatLocation(ad.location, ad.city) }}</div>
               </div>
-
               <div v-if="showTrafficIntensity" class="spec-item">
                 <div class="spec-label">Natężenie ruchu</div>
                 <div class="spec-value">
                   {{ ad.traffic_intensity === 'low' ? 'Niskie' : ad.traffic_intensity === 'medium' ? 'Średnie' : 'Wysokie' }}
                 </div>
+              </div>
+
+              <div v-if="showEstimatedDailyViews" class="spec-item">
+                <div class="spec-label">Zasięg dzienny (OTS)</div>
+                <div class="spec-value spec-premium">{{ (ad as any).estimated_daily_views }} osób</div>
               </div>
 
               <div v-if="showRoadClass" class="spec-item">
@@ -1841,7 +1851,7 @@ onUnmounted(() => {
 
               <div class="spec-item">
                 <div class="spec-label">Rodzaj oferty</div>
-                <div class="spec-value">{{ ad.offer_type === 'owner' ? 'Właściciel' : 'Agencja' }}</div>
+                <div class="spec-value">{{ ad.offer_type === 'owner' ? 'Właściciel (bezpośrednio)' : ad.offer_type === 'agency' ? 'Agencja reklamowa' : ad.offer_type === 'sublease' ? 'Podnajmujący' : ad.offer_type }}</div>
               </div>
 
               <div class="spec-item" v-if="ad.has_vat_invoice">

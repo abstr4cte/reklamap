@@ -335,7 +335,7 @@ const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
     case 'status':
       return getStatusLabel(ad.display_status || ad.status)
     case 'offer_type':
-      return ad.offer_type === 'owner' ? 'Właściciel' : 'Agencja'
+      return ad.offer_type === 'owner' ? 'Właściciel (bezpośrednio)' : ad.offer_type === 'agency' ? 'Agencja reklamowa' : ad.offer_type === 'sublease' ? 'Podnajmujący' : ad.offer_type
     case 'has_vat_invoice':
       return ad.has_vat_invoice ? 'Tak' : 'Nie'
     case 'transport_scope':
@@ -414,14 +414,16 @@ const formatVariant = (variant: string | undefined, type: string) => {
   if (!variant) return '—'
   const labels: Record<string, Record<string, string>> = {
     billboard: {
-      standard: 'Standardowy',
-      three_sided: 'Trójstronny',
-      backlit: 'Backlit (podświetlany)'
+      standard: 'Jednostronny',
+      two_sided: 'Dwustronny (back-to-back)',
+      three_sided: 'Trójstronny (prismatron)',
+      scrolling: 'Scrolling / Rolowany'
     },
     citylight: {
-      single: 'Pojedynczy',
-      double: 'Podwójny',
-      digital: 'Cyfrowy'
+      single_sided: 'Jednostronny',
+      double_sided: 'Dwustronny',
+      scrolling: 'Scrolling (rotacyjny)',
+      digital: 'Cyfrowy (DOOH)'
     },
     led_screen: {
       standard: 'Standardowy',
@@ -430,12 +432,15 @@ const formatVariant = (variant: string | undefined, type: string) => {
     totem: {
       single_sided: 'Jednostronny',
       double_sided: 'Dwustronny',
-      multi_sided: 'Wielostronny'
+      multi_sided: 'Wielostronny / Kolumna',
+      pylon: 'Pylon (przy drodze)',
+      digital: 'Cyfrowy (LED)'
     },
     transport: {
       bus: 'Autobus',
       tram: 'Tramwaj',
       metro: 'Metro',
+      train: 'Pociąg / SKM / Kolej',
       stop: 'Przystanek'
     },
     mobile: {

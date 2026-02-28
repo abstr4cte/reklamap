@@ -7,7 +7,7 @@ import { LocationCoords } from '../types'
  */
 export function normalizePolishChars(text: string): string {
   if (!text) return text
-  
+
   const polishChars: Record<string, string> = {
     'ą': 'a', 'Ą': 'A',  // ą, Ą
     'ć': 'c', 'Ć': 'C',  // ć, Ć
@@ -19,7 +19,7 @@ export function normalizePolishChars(text: string): string {
     'ź': 'z', 'Ź': 'Z',  // ź, Ź
     'ż': 'z', 'Ż': 'Z'   // ż, Ż
   }
-  
+
   return text.split('').map(char => polishChars[char] || char).join('')
 }
 
@@ -48,6 +48,28 @@ export interface FilterParams {
   selectedLocationCoords?: LocationCoords | null
   hasLightingTypeBanner?: boolean
   hasLightingTypeBillboard?: boolean
+  estimatedDailyViewsFrom?: number | null
+  estimatedDailyViewsTo?: number | null
+  // Extended filters
+  lightingType?: string
+  dailyPassengersFrom?: number | null
+  dailyPassengersTo?: number | null
+  operatingZone?: string
+  ambientLightControl?: boolean
+  transportScope?: string
+  vehicleCountFrom?: number | null
+  vehicleCountTo?: number | null
+  mobileExposureMode?: string
+  campaignDurationFrom?: number | null
+  campaignDurationTo?: number | null
+  resolution?: string
+  pixelPitchFrom?: number | null
+  pixelPitchTo?: number | null
+  brightnessFrom?: number | null
+  brightnessTo?: number | null
+  variant?: string
+  roadClass?: string
+  environment?: string
 }
 
 // Mapowanie wartości na polskie odpowiedniki dla URL (bez polskich znaków)
@@ -74,7 +96,8 @@ const valueMapping: Record<string, Record<string, string>> = {
   },
   offerType: {
     owner: 'wlasciciel',
-    agency: 'agencja'
+    agency: 'agencja',
+    sublease: 'podnajem'
   },
   status: {
     active: 'wolne',
@@ -115,13 +138,13 @@ Object.entries(valueMapping).forEach(([category, mappings]) => {
  */
 export function filtersToQueryParams(filters: FilterParams): Record<string, string> {
   const params: Record<string, string> = {}
-  
+
   // Dodaj tylko niepuste wartości do parametrów URL
   if (filters.keyword) params.q = normalizePolishChars(filters.keyword)
   if (filters.type) params.type = filters.type
   if (filters.region) params.region = normalizePolishChars(filters.region)
   if (filters.city) params.city = normalizePolishChars(filters.city)
-  
+
   // Wartości liczbowe
   if (filters.priceFrom !== null && filters.priceFrom !== undefined) {
     params.priceFrom = filters.priceFrom.toString()
@@ -141,7 +164,13 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.heightTo !== null && filters.heightTo !== undefined) {
     params.heightTo = filters.heightTo.toString()
   }
-  
+  if (filters.estimatedDailyViewsFrom !== null && filters.estimatedDailyViewsFrom !== undefined) {
+    params.otsFrom = filters.estimatedDailyViewsFrom.toString()
+  }
+  if (filters.estimatedDailyViewsTo !== null && filters.estimatedDailyViewsTo !== undefined) {
+    params.otsTo = filters.estimatedDailyViewsTo.toString()
+  }
+
   // Wartości z mapowaniem na polskie odpowiedniki bez polskich znaków
   if (filters.priceUnit) {
     params.priceUnit = valueMapping.priceUnit[filters.priceUnit] || normalizePolishChars(filters.priceUnit)
@@ -158,13 +187,13 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.offerType) {
     params.offerType = valueMapping.offerType[filters.offerType] || normalizePolishChars(filters.offerType)
   }
-  
+
   // Konwersja tablicy statusów na string z polskimi nazwami bez polskich znaków
   if (filters.status && filters.status.length > 0) {
     const polishStatuses = filters.status.map(status => valueMapping.status[status] || status)
     params.status = polishStatuses.join(',')
   }
-  
+
   // Konwersja wartości boolean na polskie odpowiedniki
   if (filters.hasBacklight) params.hasBacklight = 'tak'
   if (filters.onlyWithImage) params.onlyWithImage = 'tak'
@@ -173,13 +202,14 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.hasVatInvoice) params.hasVatInvoice = 'tak'
   if (filters.hasLightingTypeBanner) params.hasLightingTypeBanner = 'tak'
   if (filters.hasLightingTypeBillboard) params.hasLightingTypeBillboard = 'tak'
-  
+  if (filters.ambientLightControl) params.ambientLightControl = 'tak'
+
   // Konwersja współrzędnych lokalizacji
   if (filters.selectedLocationCoords) {
     params.lat = filters.selectedLocationCoords.lat.toString()
     params.lng = filters.selectedLocationCoords.lng.toString()
   }
-  
+
   return params
 }
 
@@ -190,13 +220,13 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
  */
 export function queryParamsToFilters(query: Record<string, string>): FilterParams {
   const filters: FilterParams = {}
-  
+
   // Konwersja parametrów URL na odpowiednie typy danych
   if (query.q) filters.keyword = query.q
   if (query.type) filters.type = query.type
   if (query.region) filters.region = query.region
   if (query.city) filters.city = query.city
-  
+
   // Wartości liczbowe
   if (query.priceFrom) filters.priceFrom = parseFloat(query.priceFrom) || null
   if (query.priceTo) filters.priceTo = parseFloat(query.priceTo) || null
@@ -204,7 +234,9 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   if (query.widthTo) filters.widthTo = parseFloat(query.widthTo) || null
   if (query.heightFrom) filters.heightFrom = parseFloat(query.heightFrom) || null
   if (query.heightTo) filters.heightTo = parseFloat(query.heightTo) || null
-  
+  if (query.otsFrom) filters.estimatedDailyViewsFrom = parseFloat(query.otsFrom) || null
+  if (query.otsTo) filters.estimatedDailyViewsTo = parseFloat(query.otsTo) || null
+
   // Wartości z mapowaniem - konwersja polskich wartości na angielskie klucze
   if (query.priceUnit) {
     filters.priceUnit = reverseValueMapping.priceUnit[query.priceUnit] || query.priceUnit
@@ -221,7 +253,7 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   if (query.offerType) {
     filters.offerType = reverseValueMapping.offerType[query.offerType] || query.offerType
   }
-  
+
   // Konwersja string na tablicę statusów z tłumaczeniem
   if (query.status) {
     const statuses = query.status.split(',')
@@ -231,7 +263,7 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   } else {
     filters.status = []
   }
-  
+
   // Konwersja string na wartości boolean
   filters.hasBacklight = query.hasBacklight === 'tak' || query.hasBacklight === 'true'
   filters.onlyWithImage = query.onlyWithImage === 'tak' || query.onlyWithImage === 'true'
@@ -240,7 +272,8 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   filters.hasVatInvoice = query.hasVatInvoice === 'tak' || query.hasVatInvoice === 'true'
   filters.hasLightingTypeBanner = query.hasLightingTypeBanner === 'tak' || query.hasLightingTypeBanner === 'true'
   filters.hasLightingTypeBillboard = query.hasLightingTypeBillboard === 'tak' || query.hasLightingTypeBillboard === 'true'
-  
+  filters.ambientLightControl = query.ambientLightControl === 'tak' || query.ambientLightControl === 'true'
+
   // Konwersja współrzędnych lokalizacji
   if (query.lat && query.lng) {
     filters.selectedLocationCoords = {
@@ -250,6 +283,6 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   } else {
     filters.selectedLocationCoords = null
   }
-  
+
   return filters
 }

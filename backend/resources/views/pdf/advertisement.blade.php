@@ -228,20 +228,26 @@
         // 4. Variant
         if ($showVariant) {
             $variantLabels = [
-                'standard' => 'Standardowy',
-                'three_sided' => 'Trójstronny',
-                'backlit' => 'Backlit (podświetlany)',
-                'single' => 'Pojedynczy',
-                'double' => 'Podwójny',
-                'digital' => 'Cyfrowy',
-                'interactive' => 'Interaktywny',
+                // Billboard
+                'standard' => 'Jednostronny',
+                'two_sided' => 'Dwustronny (back-to-back)',
+                'three_sided' => 'Trójstronny (prismatron)',
+                'scrolling' => 'Scrolling / Rolowany',
+                // Citylight
                 'single_sided' => 'Jednostronny',
                 'double_sided' => 'Dwustronny',
-                'multi_sided' => 'Wielostronny',
+                'digital' => 'Cyfrowy (DOOH)',
+                'interactive' => 'Interaktywny',
+                // Totem
+                'multi_sided' => 'Wielostronny / Kolumna',
+                'pylon' => 'Pylon / Przydrożny',
+                // Transport
                 'bus' => 'Autobus',
                 'tram' => 'Tramwaj',
+                'train' => 'Pociąg / SKM / Kolej',
                 'metro' => 'Metro',
                 'stop' => 'Przystanek',
+                // Mobile
                 'trailer' => 'Przyczepka',
                 'car' => 'Samochód',
                 'bike' => 'Rower',
@@ -254,6 +260,10 @@
         if ($showTrafficIntensity) {
             $intensity = $advertisement->traffic_intensity === 'low' ? 'Niskie' : ($advertisement->traffic_intensity === 'medium' ? 'Średnie' : 'Wysokie');
             $details[] = ['label' => 'Natężenie ruchu', 'value' => $intensity];
+        }
+
+        if ($advertisement->estimated_daily_views) {
+            $details[] = ['label' => 'Dzienny zasięg (OTS)', 'value' => number_format($advertisement->estimated_daily_views, 0, ',', ' ') . ' osób'];
         }
         if ($showRoadClass) {
             $roadClassLabels = [
@@ -361,9 +371,19 @@
             $details[] = ['label' => 'Pomoc graficzna', 'value' => 'Dostępna'];
 
         // 14. Offer type and VAT
-        $details[] = ['label' => 'Rodzaj oferty', 'value' => $advertisement->offer_type === 'owner' ? 'Właściciel' : 'Agencja'];
+        $offerTypeLabel = 'Nieznany';
+        if ($advertisement->offer_type === 'owner')
+            $offerTypeLabel = 'Właściciel (bezpośrednio)';
+        elseif ($advertisement->offer_type === 'agency')
+            $offerTypeLabel = 'Agencja reklamowa';
+        elseif ($advertisement->offer_type === 'sublease')
+            $offerTypeLabel = 'Podnajmujący';
+
+        $details[] = ['label' => 'Rodzaj oferty', 'value' => $offerTypeLabel];
+
         if ($advertisement->has_vat_invoice)
             $details[] = ['label' => 'Faktura VAT', 'value' => 'Tak'];
+
     @endphp
 
     <div class="grid">

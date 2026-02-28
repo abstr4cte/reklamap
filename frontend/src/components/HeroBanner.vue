@@ -470,14 +470,17 @@ const variantOptions = computed(() => {
   switch (type) {
     case 'billboard':
       return [
-        { value: 'standard', label: 'Standardowy' },
-        { value: 'three_sided', label: 'Trójstronny' },
-        { value: 'backlit', label: 'Backlit' }
+        { value: 'standard', label: 'Jednostronny' },
+        { value: 'two_sided', label: 'Dwustronny (back-to-back)' },
+        { value: 'three_sided', label: 'Trójstronny (prismatron)' },
+        { value: 'scrolling', label: 'Scrolling / Rolowany' }
       ]
     case 'citylight':
       return [
-        { value: 'single', label: 'Pojedynczy' },
-        { value: 'double', label: 'Podwójny' }
+        { value: 'single_sided', label: 'Jednostronny' },
+        { value: 'double_sided', label: 'Dwustronny' },
+        { value: 'scrolling', label: 'Scrolling (rotacyjny)' },
+        { value: 'digital', label: 'Cyfrowy (DOOH)' }
       ]
     case 'led_screen':
       return [
@@ -486,15 +489,18 @@ const variantOptions = computed(() => {
       ]
     case 'totem':
       return [
-        { value: 'single', label: 'Jednostronny' },
-        { value: 'double', label: 'Dwustronny' },
-        { value: 'multi', label: 'Wielostronny' }
+        { value: 'single_sided', label: 'Jednostronny' },
+        { value: 'double_sided', label: 'Dwustronny' },
+        { value: 'multi_sided', label: 'Wielostronny / Kolumna' },
+        { value: 'pylon', label: 'Pylon (przy drodze)' },
+        { value: 'digital', label: 'Cyfrowy (LED)' }
       ]
     case 'transport':
       return [
         { value: 'bus', label: 'Autobus' },
         { value: 'tram', label: 'Tramwaj' },
         { value: 'metro', label: 'Metro' },
+        { value: 'train', label: 'Pociąg / SKM / Kolej' },
         { value: 'stop', label: 'Przystanek' }
       ]
     case 'mobile':
