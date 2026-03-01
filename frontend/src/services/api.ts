@@ -48,13 +48,13 @@ export const api = {
         const response = await fetch(`${API_URL}/listings?ids=${ids.join(',')}`, { headers: withKey() })
         if (!response.ok) throw new Error('Failed to fetch listings by ids')
         const ads = await response.json()
-        
+
         // Preserve the order from the ids parameter
         const adsMap = new Map(ads.map((ad: Advertisement) => [ad.id, ad]))
         return ids.map(id => adsMap.get(id)).filter(Boolean) as Advertisement[]
     },
 
-    async createAdvertisement(ad: Omit<Advertisement, 'id' | 'created_at' | 'updated_at'>): Promise<Advertisement> {
+    async createAdvertisement(ad: Omit<Advertisement, 'id' | 'created_at' | 'updated_at'> & { recaptcha_token?: string }): Promise<Advertisement> {
         const response = await fetch(`${API_URL}/listings`, {
             method: 'POST',
             headers: {
@@ -164,7 +164,7 @@ export const api = {
         return response.json()
     },
 
-    async submitReport(report: { advertisement_id: string; reason: string; details: string }): Promise<void> {
+    async submitReport(report: { advertisement_id: string; reason: string; details: string; recaptcha_token?: string }): Promise<void> {
         const response = await fetch(`${API_URL}/reports`, {
             method: 'POST',
             headers: {
@@ -178,7 +178,7 @@ export const api = {
         if (!response.ok) throw new Error('Failed to submit report')
     },
 
-    async contactAdvertisementOwner(id: string, contact: { email: string; message: string }): Promise<{ message: string }> {
+    async contactAdvertisementOwner(id: string, contact: { email: string; message: string; recaptcha_token?: string }): Promise<{ message: string }> {
         const response = await fetch(`${API_URL}/listings/${id}/contact`, {
             method: 'POST',
             headers: {
@@ -196,7 +196,7 @@ export const api = {
         return response.json()
     },
 
-    async submitFeedback(feedback: { type: string; email: string; message: string; url: string; userAgent: string }): Promise<{ message: string }> {
+    async submitFeedback(feedback: { type: string; email: string; message: string; url: string; userAgent: string; recaptcha_token?: string }): Promise<{ message: string }> {
         const response = await fetch(`${API_URL}/feedback`, {
             method: 'POST',
             headers: {
@@ -214,7 +214,7 @@ export const api = {
         return response.json()
     },
 
-    async submitContact(contact: { name: string; email: string; phone: string; subject: string; message: string }): Promise<{ message: string }> {
+    async submitContact(contact: { name: string; email: string; phone: string; subject: string; message: string; recaptcha_token?: string }): Promise<{ message: string }> {
         const response = await fetch(`${API_URL}/contact`, {
             method: 'POST',
             headers: {
@@ -232,7 +232,7 @@ export const api = {
         return response.json()
     },
 
-    async subscribeNewsletter(email: string): Promise<{ message: string }> {
+    async subscribeNewsletter(email: string, recaptcha_token?: string): Promise<{ message: string }> {
         const response = await fetch(`${API_URL}/newsletter/subscribe`, {
             method: 'POST',
             headers: {
@@ -241,7 +241,7 @@ export const api = {
                     'Accept': 'application/json',
                 })
             },
-            body: JSON.stringify({ email }),
+            body: JSON.stringify({ email, recaptcha_token }),
         })
         if (!response.ok) {
             const error = await response.json()

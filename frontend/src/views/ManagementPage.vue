@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { api } from '../services/api'
+import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 import axios, { setManagementToken } from '../api/axios'
 import type { Advertisement } from '../types'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
@@ -1169,9 +1170,16 @@ const handleSubmit = async () => {
   isSubmitting.value = true
 
   try {
+    // Get reCAPTCHA token
+    let recaptchaToken = ''
+    if (isRecaptchaAvailable()) {
+      recaptchaToken = await getRecaptchaToken('management_link')
+    }
+
     // Send request to backend API
     await axios.post('/api/management/send-link', {
-      email: email.value
+      email: email.value,
+      recaptcha_token: recaptchaToken
     })
 
     isSuccess.value = true

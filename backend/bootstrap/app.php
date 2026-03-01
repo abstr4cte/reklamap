@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'app.key' => \App\Http\Middleware\VerifyAppKey::class,
             'management.token' => \App\Http\Middleware\VerifyManagementToken::class,
+            'verify.recaptcha' => \App\Http\Middleware\VerifyRecaptcha::class,
         ]);
         $middleware->appendToGroup('api', 'app.key');
         //

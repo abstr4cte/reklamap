@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api, getFullImageUrl } from '../services/api'
+import axios from '../api/axios'
 import type { Advertisement } from '../types'
+import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
+import ToastNotification from '../components/ToastNotification.vue'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import WebPImage from '../components/WebPImage.vue'
@@ -10,7 +13,6 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-import ToastNotification from '../components/ToastNotification.vue'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import { useSeo } from '../composables/useSeo'
 
@@ -617,10 +619,28 @@ watch(ad, (newAd) => {
     const imageUrl = newAd.image_url ? getFullImageUrl(newAd.image_url) : undefined
     const url = typeof window !== 'undefined' ? window.location.href : ''
     
+    // Budujemy dynamiczny tytuł
+    let title = `${newAd.title} - ${newAd.city}`
+    if (newAd.type === 'billboard' && locationTier.value === 'PREMIUM') {
+      title = `[PREMIUM] ${title}`
+    }
+    title += ' | ReklaMap'
+
+    // Budujemy bogaty opis
+    let extraDetails = ''
+    if (newAd.variant) extraDetails += `${getVariantLabel(newAd.variant)}. `
+    if (newAd.has_backlight) extraDetails += 'Oświetlenie LED. '
+    if (newAd.traffic_intensity === 'high') extraDetails += 'Wysokie natężenie ruchu. '
+    
+    const description = `${getTypeLabel(newAd.type)} ${newAd.city}. ${extraDetails}Wymiary: ${newAd.width}x${newAd.height}m. Cena: ${newAd.price} zł/mies. ${newAd.description.substring(0, 100)}...`
+    
+    // Słowa kluczowe
+    const keywords = `${getTypeLabel(newAd.type)}, ${newAd.city}, powierzchnia reklamowa ${newAd.city}, wynajem ${getTypeLabel(newAd.type)}, reklama zewnętrzna, ${newAd.type} ${newAd.city}`
+
     useSeo({
-      title: `${newAd.title} - ${newAd.city} | ReklaMap`,
-      description: `${getTypeLabel(newAd.type)} w ${newAd.city}. Wymiary: ${newAd.width}x${newAd.height}m. Cena: ${newAd.price} zł/mies. ${newAd.description.substring(0, 150)}...`,
-      keywords: `${getTypeLabel(newAd.type)}, powierzchnia reklamowa ${newAd.city}, wynajem ${getTypeLabel(newAd.type)}, reklama ${newAd.city}`,
+      title,
+      description,
+      keywords,
       ogType: 'product',
       ogImage: imageUrl,
       ogUrl: url,
@@ -641,26 +661,19 @@ watch(ad, (newAd) => {
             'price': newAd.price,
             'priceCurrency': 'PLN',
             'availability': newAd.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-            'priceValidUntil': new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            'url': url,
+            'priceValidUntil': new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             'itemCondition': 'https://schema.org/NewCondition'
           },
           'category': getTypeLabel(newAd.type),
           'additionalProperty': [
-            {
-              '@type': 'PropertyValue',
-              'name': 'Szerokość',
-              'value': `${newAd.width}m`
-            },
-            {
-              '@type': 'PropertyValue',
-              'name': 'Wysokość',
-              'value': `${newAd.height}m`
-            },
-            {
-              '@type': 'PropertyValue',
-              'name': 'Lokalizacja',
-              'value': newAd.city
-            }
+            { '@type': 'PropertyValue', 'name': 'Szerokość', 'value': `${newAd.width}m` },
+            { '@type': 'PropertyValue', 'name': 'Wysokość', 'value': `${newAd.height}m` },
+            { '@type': 'PropertyValue', 'name': 'Powierzchnia', 'value': `${surfaceArea.value}m²` },
+            { '@type': 'PropertyValue', 'name': 'Lokalizacja', 'value': newAd.city },
+            ...(newAd.variant ? [{ '@type': 'PropertyValue', 'name': 'Wariant', 'value': getVariantLabel(newAd.variant) }] : []),
+            ...(locationTier.value ? [{ '@type': 'PropertyValue', 'name': 'Klasa lokalizacji', 'value': locationTier.value }] : []),
+            { '@type': 'PropertyValue', 'name': 'Oświetlenie', 'value': newAd.has_backlight ? 'Tak' : 'Nie' }
           ]
         },
         {
@@ -1093,9 +1106,16 @@ const submitContactForm = async () => {
   try {
     isSubmittingContact.value = true
 
+    // Get reCAPTCHA token
+    let recaptchaToken = ''
+    if (isRecaptchaAvailable()) {
+      recaptchaToken = await getRecaptchaToken('contact_owner')
+    }
+
     await api.contactAdvertisementOwner(ad.value.id, {
       email: contactForm.value.email,
-      message: contactForm.value.message
+      message: contactForm.value.message,
+      recaptcha_token: recaptchaToken
     })
 
     // Track email click statistics
@@ -1195,7 +1215,7 @@ const getFullPhone = (phone: string | undefined) => {
   return `+48 ${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6)}`
 }
 
-import axios from '../api/axios'
+// Move axios import to top (removed from here)
 
 const showReportModal = ref(false)
 const reportForm = ref({
@@ -1396,10 +1416,17 @@ const submitReport = async () => {
   try {
     isSubmittingReport.value = true
     
+    // Get reCAPTCHA token
+    let recaptchaToken = ''
+    if (isRecaptchaAvailable()) {
+      recaptchaToken = await getRecaptchaToken('report_advertisement')
+    }
+
     await api.submitReport({
       advertisement_id: ad.value.id,
       reason: reportForm.value.reason,
-      details: reportForm.value.details
+      details: reportForm.value.details,
+      recaptcha_token: recaptchaToken
     })
 
     closeReportModal()
@@ -1952,6 +1979,10 @@ onUnmounted(() => {
 
             <div v-if="contactSuccess" class="success-message">
               Wiadomość została wysłana pomyślnie!
+            </div>
+            
+            <div v-if="contactErrors.submit" class="submit-error-message">
+              {{ contactErrors.submit }}
             </div>
 
             <form @submit.prevent="submitContactForm" class="contact-form">
@@ -2903,6 +2934,17 @@ onUnmounted(() => {
   border-radius: 8px;
   color: #065f46;
   font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.submit-error-message {
+  padding: 1rem 1.5rem;
+  background: #fee2e2;
+  border: 2px solid #fca5a5;
+  border-radius: 8px;
+  color: #991b1b;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
 }
 
 .btn {

@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
+import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 import ToastNotification from '../components/ToastNotification.vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -23,7 +24,6 @@ import { nsfwService } from '../services/nsfwService'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { slugify } from '../utils/slugify'
-import axios from 'axios'
 import { Filter } from 'bad-words'
 
 const router = useRouter()
@@ -317,11 +317,6 @@ const requiresDimensions = computed(() => {
   return ['billboard', 'banner', 'wall', 'led_screen'].includes(type)
 })
 
-const optionalDimensions = computed(() => {
-  const type = formData.value.type
-  return ['totem', 'citylight'].includes(type)
-})
-
 const hideDimensions = computed(() => {
   const type = formData.value.type
   return ['transport', 'mobile', 'other'].includes(type)
@@ -450,10 +445,6 @@ const showDailyPassengersField = computed(() => {
 
 const showOperatingZoneField = computed(() => {
   return formData.value.type === 'mobile'
-})
-
-const showAmbientLightControlField = computed(() => {
-  return formData.value.type === 'led_screen'
 })
 
 // Opcje dla nowych pól
@@ -1046,6 +1037,12 @@ const handleSubmit = async () => {
 
   try {
     isSubmitting.value = true
+    
+    // Get reCAPTCHA token
+    let recaptchaToken = ''
+    if (isRecaptchaAvailable()) {
+      recaptchaToken = await getRecaptchaToken('add_advertisement')
+    }
 
     console.log('Starting image upload...')
     const imageUrls = await uploadImages()
@@ -1064,6 +1061,7 @@ const handleSubmit = async () => {
     }
     
     const newAd = await api.createAdvertisement({
+        recaptcha_token: recaptchaToken,
         owner_email: formData.value.email,
         title: formData.value.title,
         description: formData.value.description,

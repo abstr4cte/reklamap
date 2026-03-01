@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { api } from '../services/api'
+import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 
 const formData = ref({
   name: '',
@@ -24,12 +25,19 @@ const handleSubmit = async () => {
   error.value = ''
 
   try {
+    // Get reCAPTCHA token
+    let recaptchaToken = ''
+    if (isRecaptchaAvailable()) {
+      recaptchaToken = await getRecaptchaToken('contact_us')
+    }
+
     await api.submitContact({
       name: formData.value.name,
       email: formData.value.email,
       phone: formData.value.phone,
       subject: formData.value.subject,
-      message: formData.value.message
+      message: formData.value.message,
+      recaptcha_token: recaptchaToken
     })
 
     submitSuccess.value = true

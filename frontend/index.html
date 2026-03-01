@@ -1,31 +1,49 @@
 <!doctype html>
 <html lang="pl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link rel="apple-touch-icon" href="/vite.svg" />
-    
-    <!-- Theme Color for Mobile Browsers -->
-    <meta name="theme-color" content="#667eea" />
-    <meta name="msapplication-TileColor" content="#667eea" />
-    
-    <!-- Preconnect for Performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Znajdź i wynajmij powierzchnie reklamowe w całej Polsce. Billboardy, citylighty, banery i więcej. Szybko, wygodnie i bezpiecznie." />
-    <meta name="keywords" content="powierzchnie reklamowe, billboardy, citylighty, banery reklamowe, wynajem billboardu, reklama zewnętrzna" />
-    <meta name="author" content="ReklaMap" />
-    <meta name="robots" content="index, follow" />
-    
-    <title>ReklaMap - Platforma Powierzchni Reklamowych</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="apple-touch-icon" href="/vite.svg" />
+
+  <!-- Theme Color for Mobile Browsers -->
+  <meta name="theme-color" content="#667eea" />
+  <meta name="msapplication-TileColor" content="#667eea" />
+
+  <!-- Preconnect for Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+
+  <!-- SEO Meta Tags -->
+  <meta name="description"
+    content="Znajdź i wynajmij powierzchnie reklamowe w całej Polsce. Billboardy, citylighty, banery i więcej. Szybko, wygodnie i bezpiecznie." />
+  <meta name="keywords"
+    content="powierzchnie reklamowe, billboardy, citylighty, banery reklamowe, wynajem billboardu, reklama zewnętrzna" />
+  <meta name="author" content="ReklaMap" />
+  <meta name="robots" content="index, follow" />
+
+  <title>ReklaMap - Platforma Powierzchni Reklamowych</title>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0ZL0NS8F9W"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-0ZL0NS8F9W');
+  </script>
+
+  <!-- Google reCAPTCHA v3 -->
+  <script src="https://www.google.com/recaptcha/api.js?render=%VITE_RECAPTCHA_SITE_KEY%"></script>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>

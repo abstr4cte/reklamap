@@ -149,4 +149,14 @@ const router = createRouter({
   }
 })
 
+// Google Analytics Page Tracking
+router.afterEach((to) => {
+  if ((window as any).gtag) {
+    (window as any).gtag('config', 'G-0ZL0NS8F9W', {
+      page_path: to.fullPath,
+      page_title: document.title
+    });
+  }
+});
+
 export default router

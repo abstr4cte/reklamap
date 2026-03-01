@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
+import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 
 const router = useRouter()
 
@@ -107,7 +108,13 @@ const handleNewsletterSubmit = async () => {
   newsletterError.value = ''
 
   try {
-    await api.subscribeNewsletter(newsletterEmail.value)
+    // Get reCAPTCHA token
+    let recaptchaToken = ''
+    if (isRecaptchaAvailable()) {
+      recaptchaToken = await getRecaptchaToken('newsletter_subscribe')
+    }
+
+    await api.subscribeNewsletter(newsletterEmail.value, recaptchaToken)
     
     newsletterSuccess.value = true
     newsletterEmail.value = ''

@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 
 import axios from '../api/axios'
+import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 
 defineProps<{
   isOpen: boolean
@@ -28,9 +29,16 @@ const handleSubmit = async () => {
   isSubmitting.value = true
 
   try {
+    // Get reCAPTCHA token
+    let recaptchaToken = ''
+    if (isRecaptchaAvailable()) {
+      recaptchaToken = await getRecaptchaToken('management_link')
+    }
+
     // Send request to backend API
     await axios.post('/api/management/send-link', {
-      email: email.value
+      email: email.value,
+      recaptcha_token: recaptchaToken
     })
 
     isSuccess.value = true

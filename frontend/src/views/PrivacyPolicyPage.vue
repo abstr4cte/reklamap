@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import { useSeo } from '../composables/useSeo'
+
+useSeo({
+  title: 'Polityka Prywatności | ReklaMap',
+  description: 'Zasady przetwarzania i ochrony danych osobowych na platformie ReklaMap.',
+  keywords: 'prywatność, RODO, dane osobowe, polityka prywatności, ReklaMap',
+  noindex: true // Typically we don't need privacy policy to compete in search results, but it should be indexable if desired. Actually, 'noindex' is safer if you want to focus SEO on main pages, but usually it's fine to leave it. Let's keep it indexable but with low priority in sitemap.
+})
 </script>
 
 <template>

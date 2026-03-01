@@ -14,7 +14,7 @@ Route::get('/user', function (Request $request) {
 // ─── Publiczne endpointy (tylko X-App-Key) ────────────────────────────────────
 Route::get('listings', [AdvertisementController::class, 'index']);
 Route::get('listings/{id}', [AdvertisementController::class, 'show']);
-Route::post('listings', [AdvertisementController::class, 'store']);
+Route::post('listings', [AdvertisementController::class, 'store'])->middleware('verify.recaptcha');
 Route::get('listings/{id}/similar', [AdvertisementController::class, 'similar']);
 Route::get('listings/{id}/pdf', [AdvertisementController::class, 'generatePdf']);
 Route::get('listings/pdf/comparison', [AdvertisementController::class, 'generateComparisonPdf']);
@@ -29,19 +29,19 @@ Route::post('listings/daily-stats/multiple', [AdvertisementController::class, 'g
 Route::get('blog', [BlogController::class, 'index']);
 Route::get('blog/{slug}', [BlogController::class, 'show']);
 
-Route::post('reports', [AdvertisementController::class, 'report']);
-Route::post('feedback', [AdvertisementController::class, 'submitFeedback']);
+Route::post('reports', [AdvertisementController::class, 'report'])->middleware('verify.recaptcha');
+Route::post('feedback', [AdvertisementController::class, 'submitFeedback'])->middleware('verify.recaptcha');
 
-// Rate limit na endpointy wysyłające maile (max 10 na 60 minut z jednego IP)
-Route::middleware('throttle:10,60')->group(function () {
+// Rate limit na endpointy wysyłające maile (max 10 na 60 minut z jednego IP) + reCAPTCHA
+Route::middleware(['throttle:10,60', 'verify.recaptcha'])->group(function () {
     Route::post('listings/{id}/contact', [AdvertisementController::class, 'contactOwner']);
     Route::post('contact', [AdvertisementController::class, 'submitContact']);
     Route::post('newsletter/subscribe', [AdvertisementController::class, 'subscribeNewsletter']);
 });
 
 // ─── Zarządzanie tokenami ─────────────────────────────────────────────────────
-// Rate limit na wysyłanie linku (max 5 prób na godzinę z jednego IP)
-Route::middleware('throttle:5,60')->post('management/send-link', [ManagementController::class, 'sendManagementLink']);
+// Rate limit na wysyłanie linku (max 5 prób na godzinę z jednego IP) + reCAPTCHA
+Route::middleware(['throttle:5,60', 'verify.recaptcha'])->post('management/send-link', [ManagementController::class, 'sendManagementLink']);
 Route::get('management/validate/{token}', [ManagementController::class, 'validateToken']);
 
 // ─── Wrażliwe operacje — wymagają X-App-Key + ważnego tokena zarządzającego ──

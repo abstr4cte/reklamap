@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../services/api'
+import { useSeo } from '../composables/useSeo'
 
 const route = useRoute()
 const router = useRouter()
@@ -40,6 +41,44 @@ const loadBlogPost = async () => {
 onMounted(() => {
   loadBlogPost()
 })
+
+// SEO Meta Tags
+watch(post, (newPost) => {
+  if (newPost) {
+    const url = typeof window !== 'undefined' ? window.location.href : ''
+    
+    useSeo({
+      title: `${newPost.title} | Blog ReklaMap`,
+      description: newPost.excerpt,
+      keywords: `blog, reklama, outdoor, ${newPost.category}, ${newPost.title}`,
+      ogType: 'article',
+      ogImage: newPost.image || undefined,
+      ogUrl: url,
+      canonical: url,
+      publishedTime: newPost.date ? new Date(newPost.date).toISOString() : undefined,
+      structuredData: {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        'headline': newPost.title,
+        'description': newPost.excerpt,
+        'image': newPost.image,
+        'author': {
+          '@type': 'Person',
+          'name': newPost.author
+        },
+        'datePublished': newPost.date ? new Date(newPost.date).toISOString() : undefined,
+        'publisher': {
+          '@type': 'Organization',
+          'name': 'ReklaMap',
+          'logo': {
+            '@type': 'ImageObject',
+            'url': `${typeof window !== 'undefined' ? window.location.origin : ''}/vite.svg`
+          }
+        }
+      }
+    })
+  }
+}, { immediate: true })
 
 // Mock data - fallback if API fails
 const blogPosts: BlogPost[] = [

@@ -725,6 +725,7 @@ useSeo({
   description: 'Znajdź i wynajmij powierzchnie reklamowe w całej Polsce. Billboardy, citylighty, banery, ściany reklamowe. Porównuj oferty, sprawdzaj ceny i lokalizacje na mapie.',
   keywords: 'powierzchnie reklamowe, billboardy, citylighty, banery reklamowe, wynajem billboardu, reklama zewnętrzna, outdoor, powierzchnie OOH',
   ogType: 'website',
+  canonical: typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl',
   structuredData: {
     '@context': 'https://schema.org',
     '@type': 'WebSite',

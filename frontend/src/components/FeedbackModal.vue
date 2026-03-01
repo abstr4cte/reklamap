@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onUnmounted } from 'vue'
 import { api } from '../services/api'
+import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 
 const isOpen = ref(false)
 const feedbackType = ref('suggestion')
@@ -99,12 +100,19 @@ const handleSubmit = async () => {
   error.value = ''
 
   try {
+    // Get reCAPTCHA token
+    let recaptchaToken = ''
+    if (isRecaptchaAvailable()) {
+      recaptchaToken = await getRecaptchaToken('feedback')
+    }
+
     const feedbackData = {
       type: feedbackType.value,
       email: emailTrimmed,
       message: messageTrimmed,
       url: typeof window !== 'undefined' ? window.location.href : '',
-      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : ''
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+      recaptcha_token: recaptchaToken
     }
 
     await api.submitFeedback(feedbackData)

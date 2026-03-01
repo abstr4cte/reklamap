@@ -320,8 +320,8 @@ const currentDescription = computed(() => {
   return categoryDescriptions['']
 })
 
-// SEO Meta Tags
-watch([() => route.params.type, () => route.params.city, listings], () => {
+// SEO Page Info (Title, Description, Keywords)
+const seoInfo = computed(() => {
   const type = route.params.type as string | undefined
   const city = route.params.city as string | undefined
   
@@ -347,12 +347,33 @@ watch([() => route.params.type, () => route.params.city, listings], () => {
     keywords = `powierzchnie reklamowe ${cityName}, billboardy ${cityName}, reklama ${cityName}`
   }
   
+  return { title, description, keywords }
+})
+
+// SEO Meta Tags
+watch([seoInfo, listings], () => {
+  const { title, description, keywords } = seoInfo.value
+  const url = typeof window !== 'undefined' ? window.location.origin + route.path : 'https://reklamap.pl' + route.path
+  
   useSeo({
     title,
     description,
     keywords,
     ogType: 'website',
-    canonical: typeof window !== 'undefined' ? window.location.href.split('?')[0] : undefined
+    canonical: url,
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      'name': title,
+      'description': description,
+      'itemListElement': listings.value.slice(0, 5).map((ad, index) => ({
+        '@type': 'ListItem',
+        'position': index + 1,
+        'url': typeof window !== 'undefined' 
+          ? `${window.location.origin}/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`
+          : `https://reklamap.pl/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`
+      }))
+    }
   })
 }, { immediate: true, deep: true })
 
@@ -2072,6 +2093,8 @@ onBeforeUnmount(() => {
     <div class="listings-page">
     <!-- SEO Breadcrumbs -->
     <Breadcrumbs :items="breadcrumbs" />
+
+    <h1 class="listings-title">{{ seoInfo.title.split(' | ')[0] }}</h1>
     
     <!-- Search and Filters Bar -->
     <div class="search-bar">
@@ -3310,6 +3333,15 @@ onBeforeUnmount(() => {
 }
 
 /* Search Bar */
+.listings-title {
+  font-size: 2.25rem;
+  color: #111827;
+  font-weight: 800;
+  margin: 1.5rem 0 2rem 0;
+  letter-spacing: -0.025em;
+  padding: 0 1rem;
+}
+
 .search-bar {
   background: white;
   border-bottom: 2px solid #e5e7eb;
