@@ -613,31 +613,39 @@ const getTypeUrlFormat = (type: string): string => {
   return typeMapping[type] || 'inne'
 }
 
-// SEO Meta Tags
+// SEO Refactor: Call useSeo once at top level
+const seoOptions = ref<any>({
+  title: 'ReklaMap - Platforma Powierzchni Reklamowych',
+  description: 'Trwa ładowanie ogłoszenia...'
+})
+const { updateMetaTags } = useSeo(seoOptions)
+
+// Update seoOptions when ad changes
 watch(ad, (newAd) => {
   if (newAd) {
     const imageUrl = newAd.image_url ? getFullImageUrl(newAd.image_url) : undefined
     const url = typeof window !== 'undefined' ? window.location.href : ''
     
-    // Budujemy dynamiczny tytuł
-    let title = `${newAd.title} - ${newAd.city}`
-    if (newAd.type === 'billboard' && locationTier.value === 'PREMIUM') {
-      title = `[PREMIUM] ${title}`
-    }
-    title += ' | ReklaMap'
+    // Budujemy dynamiczny tytuł SEO
+    const typeLabel = getTypeLabel(newAd.type)
+    const dims = (newAd.width && newAd.height) ? ` ${newAd.width}×${newAd.height}m` : ''
+    const tier = (newAd.type === 'billboard' && locationTier.value === 'PREMIUM') ? ' [PREMIUM]' : ''
+    const shortAdTitle = newAd.title.length > 28 ? newAd.title.substring(0, 25) + '…' : newAd.title
+    const title = `${shortAdTitle} – ${typeLabel}${dims}, ${newAd.city}${tier} | ReklaMap`
 
     // Budujemy bogaty opis
     let extraDetails = ''
     if (newAd.variant) extraDetails += `${getVariantLabel(newAd.variant)}. `
     if (newAd.has_backlight) extraDetails += 'Oświetlenie LED. '
     if (newAd.traffic_intensity === 'high') extraDetails += 'Wysokie natężenie ruchu. '
+    if (newAd.offer_type === 'rent') extraDetails += 'Do wynajęcia. '
     
-    const description = `${getTypeLabel(newAd.type)} ${newAd.city}. ${extraDetails}Wymiary: ${newAd.width}x${newAd.height}m. Cena: ${newAd.price} zł/mies. ${newAd.description.substring(0, 100)}...`
-    
-    // Słowa kluczowe
-    const keywords = `${getTypeLabel(newAd.type)}, ${newAd.city}, powierzchnia reklamowa ${newAd.city}, wynajem ${getTypeLabel(newAd.type)}, reklama zewnętrzna, ${newAd.type} ${newAd.city}`
+    const description = `${newAd.title} – ${typeLabel} w ${newAd.city}. ${extraDetails}Wymiary: ${newAd.width}×${newAd.height}m. Cena od ${newAd.price} zł/${newAd.price_unit === 'day' ? 'dzień' : newAd.price_unit === 'week' ? 'tydzień' : 'mies.'}. ${newAd.description.substring(0, 60)}...`
 
-    useSeo({
+    const keywords = `${typeLabel} ${newAd.city}, ${typeLabel}${dims} ${newAd.city}, wynajem ${typeLabel.toLowerCase()}, powierzchnia reklamowa ${newAd.city}, reklama zewnętrzna ${newAd.city}`
+
+    // Update the reactive seoOptions and trigger manual update
+    seoOptions.value = {
       title,
       description,
       keywords,
@@ -652,10 +660,7 @@ watch(ad, (newAd) => {
           'name': newAd.title,
           'description': newAd.description,
           'image': imageUrl,
-          'brand': {
-            '@type': 'Brand',
-            'name': 'ReklaMap'
-          },
+          'brand': { '@type': 'Brand', 'name': 'ReklaMap' },
           'offers': {
             '@type': 'Offer',
             'price': newAd.price,
@@ -693,7 +698,7 @@ watch(ad, (newAd) => {
           }
         }
       ]
-    })
+    }
   }
 }, { immediate: true })
 
@@ -1006,6 +1011,29 @@ const loadAd = async () => {
   try {
     isLoading.value = true
     notFound.value = false
+
+    // Ustaw tymczasowy tytuł z URL od razu (zanim załadują się dane)
+    // dzięki temu karta przeglądarki nie pokazuje domyślnego "ReklaMap - Platforma..."
+    const typeFromUrl = route.params.type as string
+    const cityFromUrl = route.params.city as string
+    const typeUrlMap: Record<string, string> = {
+      'billboardy': 'Billboard', 'citylighty': 'Citylight',
+      'ekrany-led': 'Ekran LED', 'banery': 'Baner',
+      'sciany-reklamowe': 'Ściana reklamowa', 'totemy-reklamowe': 'Totem reklamowy',
+      'reklama-w-transporcie': 'Reklama w transporcie', 'reklama-mobilna': 'Reklama mobilna'
+    }
+    const typeLabelPrelim = typeUrlMap[typeFromUrl] || 'Powierzchnia reklamowa'
+    const cityPrelim = cityFromUrl
+      ? cityFromUrl.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+      : ''
+    if (cityPrelim) {
+      const prelimTitle = `${typeLabelPrelim} – ${cityPrelim} | ReklaMap`
+      document.title = prelimTitle
+      // Also update seoOptions to prevent overwrite
+      seoOptions.value.title = prelimTitle
+      updateMetaTags()
+    }
+
     // Pobierz ID z parametru URL - może być w formacie slug-id
     const idParam = route.params.id as string
     const adId = idParam.includes('-') ? idParam.split('-').pop() || idParam : idParam
@@ -1051,7 +1079,8 @@ const loadAd = async () => {
     const currentPath = router.currentRoute.value.path
     
     if (currentPath !== correctPath && !currentPath.includes('/ogloszenie/')) {
-      router.replace(correctPath)
+      await router.replace(correctPath)
+      window.scrollTo({ top: 0, behavior: 'instant' })
       return
     }
     
@@ -1070,6 +1099,8 @@ const loadAd = async () => {
     notFound.value = true
   } finally {
     isLoading.value = false
+    // Scroll to top after content loads, counteracting any layout shifts
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
 }
 

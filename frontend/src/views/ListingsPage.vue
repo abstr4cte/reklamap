@@ -2094,7 +2094,7 @@ onBeforeUnmount(() => {
     <!-- SEO Breadcrumbs -->
     <Breadcrumbs :items="breadcrumbs" />
 
-    <h1 class="listings-title">{{ seoInfo.title.split(' | ')[0] }}</h1>
+    <h1 class="listings-title sr-only">{{ seoInfo.title.split(' | ')[0] }}</h1>
     
     <!-- Search and Filters Bar -->
     <div class="search-bar">
@@ -3340,6 +3340,19 @@ onBeforeUnmount(() => {
   margin: 1.5rem 0 2rem 0;
   letter-spacing: -0.025em;
   padding: 0 1rem;
+}
+
+/* Visually hidden but readable by search engines and screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .search-bar {

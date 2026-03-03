@@ -120,32 +120,25 @@ const router = createRouter({
       component: () => import('./views/NotFoundPage.vue')
     }
   ],
-  scrollBehavior(to, from, savedPosition) {
-    // If the user is navigating back/forward and has a saved position, use it
-    if (savedPosition) {
-      return savedPosition
-    }
-    // If there's a hash in the URL, scroll to it with offset
-    else if (to.hash) {
-      // Wait for the DOM to be updated before scrolling
+  scrollBehavior(to, from, _savedPosition) {
+    // If there's a hash in the URL, scroll to it with offset for the header
+    if (to.hash) {
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve({
             el: to.hash,
             behavior: 'smooth',
-            top: 80 // Add some offset to account for the header height
+            top: 80
           })
         }, 100)
       })
     }
-    // If it's the same route with different query parameters, don't scroll
-    else if (from.path === to.path && JSON.stringify(from.query) !== JSON.stringify(to.query)) {
+    // If it's the same route but only query params changed (e.g. filters), don't scroll
+    if (from.path === to.path && JSON.stringify(from.query) !== JSON.stringify(to.query)) {
       return false
     }
-    // Otherwise, scroll to top
-    else {
-      return { top: 0 }
-    }
+    // Always scroll to top on any navigation (including back/forward)
+    return { top: 0, behavior: 'instant' }
   }
 })
 

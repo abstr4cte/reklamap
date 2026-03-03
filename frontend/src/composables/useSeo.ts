@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, watch, ref } from 'vue'
+import { onMounted, onUnmounted, watch, ref, unref, type Ref } from 'vue'
 
 interface SeoOptions {
   title?: string
@@ -21,13 +21,15 @@ interface SeoOptions {
  * Composable do zarządzania meta tagami SEO
  * Automatycznie aktualizuje meta tagi w <head> dokumentu
  */
-export function useSeo(options: SeoOptions) {
+export function useSeo(options: SeoOptions | Ref<SeoOptions>) {
   const metaTags = ref<HTMLMetaElement[]>([])
   const linkTags = ref<HTMLLinkElement[]>([])
   const scriptTags = ref<HTMLScriptElement[]>([])
 
   const updateMetaTags = () => {
     if (typeof window === 'undefined') return
+
+    const opts = unref(options)
 
     // Usuń poprzednie meta tagi
     metaTags.value.forEach(tag => {
@@ -51,24 +53,24 @@ export function useSeo(options: SeoOptions) {
     scriptTags.value = []
 
     // Title
-    if (options.title) {
-      document.title = options.title
+    if (opts.title) {
+      document.title = opts.title
     }
 
     // Description
-    if (options.description) {
+    if (opts.description) {
       const descTag = document.createElement('meta')
       descTag.setAttribute('name', 'description')
-      descTag.setAttribute('content', options.description)
+      descTag.setAttribute('content', opts.description)
       document.head.appendChild(descTag)
       metaTags.value.push(descTag)
     }
 
     // Keywords
-    if (options.keywords) {
+    if (opts.keywords) {
       const keywordsTag = document.createElement('meta')
       keywordsTag.setAttribute('name', 'keywords')
-      keywordsTag.setAttribute('content', options.keywords)
+      keywordsTag.setAttribute('content', opts.keywords)
       document.head.appendChild(keywordsTag)
       metaTags.value.push(keywordsTag)
     }
@@ -88,106 +90,106 @@ export function useSeo(options: SeoOptions) {
     metaTags.value.push(ogSiteNameTag)
 
     // Open Graph Type
-    if (options.ogType) {
+    if (opts.ogType) {
       const ogTypeTag = document.createElement('meta')
       ogTypeTag.setAttribute('property', 'og:type')
-      ogTypeTag.setAttribute('content', options.ogType)
+      ogTypeTag.setAttribute('content', opts.ogType)
       document.head.appendChild(ogTypeTag)
       metaTags.value.push(ogTypeTag)
     }
 
     // Open Graph Title
-    if (options.title) {
+    if (opts.title) {
       const ogTitleTag = document.createElement('meta')
       ogTitleTag.setAttribute('property', 'og:title')
-      ogTitleTag.setAttribute('content', options.title)
+      ogTitleTag.setAttribute('content', opts.title)
       document.head.appendChild(ogTitleTag)
       metaTags.value.push(ogTitleTag)
     }
 
     // Open Graph Description
-    if (options.description) {
+    if (opts.description) {
       const ogDescTag = document.createElement('meta')
       ogDescTag.setAttribute('property', 'og:description')
-      ogDescTag.setAttribute('content', options.description)
+      ogDescTag.setAttribute('content', opts.description)
       document.head.appendChild(ogDescTag)
       metaTags.value.push(ogDescTag)
     }
 
     // Open Graph Image
-    if (options.ogImage) {
+    if (opts.ogImage) {
       const ogImageTag = document.createElement('meta')
       ogImageTag.setAttribute('property', 'og:image')
-      ogImageTag.setAttribute('content', options.ogImage)
+      ogImageTag.setAttribute('content', opts.ogImage)
       document.head.appendChild(ogImageTag)
       metaTags.value.push(ogImageTag)
-      
+
       // OG Image Width
-      if (options.ogImageWidth) {
+      if (opts.ogImageWidth) {
         const ogImageWidthTag = document.createElement('meta')
         ogImageWidthTag.setAttribute('property', 'og:image:width')
-        ogImageWidthTag.setAttribute('content', options.ogImageWidth)
+        ogImageWidthTag.setAttribute('content', opts.ogImageWidth)
         document.head.appendChild(ogImageWidthTag)
         metaTags.value.push(ogImageWidthTag)
       }
-      
+
       // OG Image Height
-      if (options.ogImageHeight) {
+      if (opts.ogImageHeight) {
         const ogImageHeightTag = document.createElement('meta')
         ogImageHeightTag.setAttribute('property', 'og:image:height')
-        ogImageHeightTag.setAttribute('content', options.ogImageHeight)
+        ogImageHeightTag.setAttribute('content', opts.ogImageHeight)
         document.head.appendChild(ogImageHeightTag)
         metaTags.value.push(ogImageHeightTag)
       }
-      
+
       // OG Image Alt
-      if (options.ogImageAlt) {
+      if (opts.ogImageAlt) {
         const ogImageAltTag = document.createElement('meta')
         ogImageAltTag.setAttribute('property', 'og:image:alt')
-        ogImageAltTag.setAttribute('content', options.ogImageAlt)
+        ogImageAltTag.setAttribute('content', opts.ogImageAlt)
         document.head.appendChild(ogImageAltTag)
         metaTags.value.push(ogImageAltTag)
       }
     }
 
     // Open Graph URL
-    if (options.ogUrl) {
+    if (opts.ogUrl) {
       const ogUrlTag = document.createElement('meta')
       ogUrlTag.setAttribute('property', 'og:url')
-      ogUrlTag.setAttribute('content', options.ogUrl)
+      ogUrlTag.setAttribute('content', opts.ogUrl)
       document.head.appendChild(ogUrlTag)
       metaTags.value.push(ogUrlTag)
     }
 
     // Canonical URL
-    if (options.canonical) {
+    if (opts.canonical) {
       const canonicalTag = document.createElement('link')
       canonicalTag.setAttribute('rel', 'canonical')
-      canonicalTag.setAttribute('href', options.canonical)
+      canonicalTag.setAttribute('href', opts.canonical)
       document.head.appendChild(canonicalTag)
       linkTags.value.push(canonicalTag)
     }
-    
+
     // Article Published Time
-    if (options.publishedTime) {
+    if (opts.publishedTime) {
       const publishedTag = document.createElement('meta')
       publishedTag.setAttribute('property', 'article:published_time')
-      publishedTag.setAttribute('content', options.publishedTime)
+      publishedTag.setAttribute('content', opts.publishedTime)
       document.head.appendChild(publishedTag)
       metaTags.value.push(publishedTag)
     }
-    
+
     // Article Modified Time
-    if (options.modifiedTime) {
+    if (opts.modifiedTime) {
       const modifiedTag = document.createElement('meta')
       modifiedTag.setAttribute('property', 'article:modified_time')
-      modifiedTag.setAttribute('content', options.modifiedTime)
+      modifiedTag.setAttribute('content', opts.modifiedTime)
       document.head.appendChild(modifiedTag)
       metaTags.value.push(modifiedTag)
     }
-    
+
     // Robots meta tag (noindex if specified)
-    if (options.noindex) {
+    if (opts.noindex) {
       const robotsTag = document.createElement('meta')
       robotsTag.setAttribute('name', 'robots')
       robotsTag.setAttribute('content', 'noindex, follow')
@@ -196,45 +198,45 @@ export function useSeo(options: SeoOptions) {
     }
 
     // Twitter Card
-    if (options.title || options.description || options.ogImage) {
+    if (opts.title || opts.description || opts.ogImage) {
       const twitterCardTag = document.createElement('meta')
       twitterCardTag.setAttribute('name', 'twitter:card')
       twitterCardTag.setAttribute('content', 'summary_large_image')
       document.head.appendChild(twitterCardTag)
       metaTags.value.push(twitterCardTag)
 
-      if (options.title) {
+      if (opts.title) {
         const twitterTitleTag = document.createElement('meta')
         twitterTitleTag.setAttribute('name', 'twitter:title')
-        twitterTitleTag.setAttribute('content', options.title)
+        twitterTitleTag.setAttribute('content', opts.title)
         document.head.appendChild(twitterTitleTag)
         metaTags.value.push(twitterTitleTag)
       }
 
-      if (options.description) {
+      if (opts.description) {
         const twitterDescTag = document.createElement('meta')
         twitterDescTag.setAttribute('name', 'twitter:description')
-        twitterDescTag.setAttribute('content', options.description)
+        twitterDescTag.setAttribute('content', opts.description)
         document.head.appendChild(twitterDescTag)
         metaTags.value.push(twitterDescTag)
       }
 
-      if (options.ogImage) {
+      if (opts.ogImage) {
         const twitterImageTag = document.createElement('meta')
         twitterImageTag.setAttribute('name', 'twitter:image')
-        twitterImageTag.setAttribute('content', options.ogImage)
+        twitterImageTag.setAttribute('content', opts.ogImage)
         document.head.appendChild(twitterImageTag)
         metaTags.value.push(twitterImageTag)
       }
     }
 
     // Structured Data (JSON-LD)
-    if (options.structuredData) {
-      const structuredDataArray = Array.isArray(options.structuredData) 
-        ? options.structuredData 
-        : [options.structuredData]
+    if (opts.structuredData) {
+      const structuredDataArray = Array.isArray(opts.structuredData)
+        ? opts.structuredData
+        : [opts.structuredData]
 
-      structuredDataArray.forEach(data => {
+      structuredDataArray.forEach((data: any) => {
         const scriptTag = document.createElement('script')
         scriptTag.setAttribute('type', 'application/ld+json')
         scriptTag.textContent = JSON.stringify(data)
@@ -244,12 +246,15 @@ export function useSeo(options: SeoOptions) {
     }
   }
 
+  // Call immediately to handle cases where it's called after onMounted (e.g. inside a watch)
+  updateMetaTags()
+
   onMounted(() => {
     updateMetaTags()
   })
 
   // Watch for changes in options
-  watch(() => options, () => {
+  watch(() => unref(options), () => {
     updateMetaTags()
   }, { deep: true })
 
