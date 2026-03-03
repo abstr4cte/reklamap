@@ -152,3 +152,8 @@ img {
   position: relative !important;
   width: 100% !important;
 }
+
+/* Hide reCAPTCHA Badge */
+.grecaptcha-badge {
+  visibility: hidden;
+}

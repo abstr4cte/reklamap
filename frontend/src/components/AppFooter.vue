@@ -214,6 +214,13 @@ const popularSearches = [
 
       <div class="footer-bottom">
         <p>&copy; {{ currentYear }} ReklaMap. Wszelkie prawa zastrzeżone.</p>
+        <p class="recaptcha-notice">
+          Ta strona jest chroniona przez reCAPTCHA i podlega
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Polityce prywatności</a>
+          oraz
+          <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Warunkom usługi</a>
+          Google.
+        </p>
       </div>
     </div>
   </footer>
@@ -372,6 +379,24 @@ const popularSearches = [
   margin: 0;
   color: #9ca3af;
   font-size: 0.9rem;
+}
+
+.recaptcha-notice {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.recaptcha-notice a {
+  color: #a5b4fc;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.recaptcha-notice a:hover {
+  color: #10B981;
+  text-decoration: underline;
 }
 
 .chevron {
