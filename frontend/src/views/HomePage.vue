@@ -515,14 +515,10 @@ const activeFiltersCount = computed(() => {
   let count = 0
   const f = filters.value
   
-  if (f.keyword) count++
+  if (f.keyword || f.city || f.region || f.selectedLocationCoords) count++
   if (f.type) count++
-  if (f.region) count++
-  if (f.city) count++
   if (f.priceFrom !== null) count++
   if (f.priceTo !== null) count++
-  // priceUnit: 'month' is default, so only count if it's different
-  if (f.priceUnit !== 'month') count++
   
   if (f.rentalPeriod) count++
   if (f.orientation) count++
@@ -542,7 +538,6 @@ const activeFiltersCount = computed(() => {
   if (f.graphicDesignHelp) count++
   if (f.offerType) count++
   if (f.hasVatInvoice) count++
-  if (f.selectedLocationCoords) count++
   
   // Type-specific
   if (f.variant) count++
@@ -618,6 +613,14 @@ const handleSearch = (searchFilters: Filters & { _priceDisplayUnit?: string }) =
 const isResettingFilters = ref(false)
 
 // Zmienne do zarządzania widocznością kafelków na urządzeniach mobilnych
+watch(showSearchAlertModal, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
+
 const showAllCategories = ref(false)
 const showAllCities = ref(false)
 const isMobile = ref(false)
@@ -660,6 +663,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', checkIfMobile)
+  document.body.style.overflow = ''
 })
 
 const handleReset = (resetFilters: Filters) => {
@@ -832,6 +836,21 @@ onMounted(() => {
     const queryFilters = queryParamsToFilters(route.query as Record<string, string>)
     // Połącz z domyślnymi filtrami
     filters.value = { ...filters.value, ...queryFilters }
+  } else {
+    // Jeśli nie ma parametrów w URL, spróbuj załadować z localStorage
+    try {
+      const saved = localStorage.getItem('reklamap_last_search')
+      if (saved) {
+        const lastSearch = JSON.parse(saved)
+        filters.value = { ...filters.value, ...lastSearch }
+        
+        if (lastSearch._priceDisplayUnit) {
+          priceDisplay.value = lastSearch._priceDisplayUnit as any
+        }
+      }
+    } catch (error) {
+      console.error('Error loading search from localStorage:', error)
+    }
   }
 
   // Logic for showing the search alert modal after 20 seconds

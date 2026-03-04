@@ -434,7 +434,9 @@ const getLightingTypeLabel = (lightingType: string): string => {
     'led': 'LED',
     'fluorescent': 'Fluorescencyjne',
     'natural': 'Naturalne',
-    'none': 'Brak'
+    'none': 'Brak',
+    'backlight': 'Podświetlenie z tyłu',
+    'frontlight': 'Podświetlenie z przodu'
   }
   return lightingLabels[lightingType] || lightingType
 }
@@ -542,6 +544,11 @@ const showRouteArea = computed(() => {
 const showLightingType = computed(() => {
   if (!ad.value) return false
   return ad.value.type === 'billboard' && (ad.value as any).lighting_type && (ad.value as any).lighting_type.trim() !== ''
+})
+
+const showLightingTypeBanner = computed(() => {
+  if (!ad.value) return false
+  return ['banner', 'wall'].includes(ad.value.type) && (ad.value as any).lighting_type_banner && (ad.value as any).lighting_type_banner.trim() !== ''
 })
 
 const showDailyPassengers = computed(() => {
@@ -1792,7 +1799,7 @@ onUnmounted(() => {
 
               <div v-if="showEstimatedDailyViews" class="spec-item">
                 <div class="spec-label">Zasięg dzienny (OTS)</div>
-                <div class="spec-value spec-premium">{{ (ad as any).estimated_daily_views }} osób</div>
+                <div class="spec-value spec-premium">{{ (ad as any).estimated_daily_views.toLocaleString('pl-PL') }} osób</div>
               </div>
 
               <div v-if="showRoadClass" class="spec-item">
@@ -1825,6 +1832,11 @@ onUnmounted(() => {
               <div v-if="showLightingType" class="spec-item">
                 <div class="spec-label">Typ oświetlenia</div>
                 <div class="spec-value">{{ getLightingTypeLabel((ad as any).lighting_type!) }}</div>
+              </div>
+
+              <div v-if="showLightingTypeBanner" class="spec-item">
+                <div class="spec-label">Typ oświetlenia</div>
+                <div class="spec-value">{{ getLightingTypeLabel((ad as any).lighting_type_banner!) }}</div>
               </div>
 
               <div v-if="showDailyPassengers" class="spec-item">

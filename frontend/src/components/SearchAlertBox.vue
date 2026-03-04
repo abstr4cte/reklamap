@@ -21,7 +21,7 @@ const emit = defineEmits<{
         <div class="alert-text">
           <h3 class="alert-title">Nic nie wpadło Ci w oko?</h3>
           <p class="alert-desc">
-            Zapisz to wyszukiwanie, a wyślemy Ci wiadomość, gdy tylko pojawi się nowe
+            Zapisz to wyszukiwanie, a wyślemy Ci wiadomość, gdy tylko pojawią się nowe
             <strong>{{ adTypeLabel || 'ogłoszenie' }}</strong> 
             {{ locationLabel ? 'w: ' + locationLabel : 'w tej okolicy' }}.
           </p>

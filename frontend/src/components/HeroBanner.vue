@@ -357,6 +357,16 @@ const loadLastSearch = () => {
         ...filters.value,
         ...lastSearch
       }
+
+      // Ustaw lokalizację do wyświetlenia w polu tekstowym
+      if (lastSearch.city) {
+        locationQuery.value = lastSearch.city
+      } else if (lastSearch.region) {
+        const region = polishLocations.voivodeships.find(v => v.id === lastSearch.region)
+        if (region) {
+          locationQuery.value = region.name
+        }
+      }
     }
   } catch (error) {
     console.error('Error loading search filters:', error)

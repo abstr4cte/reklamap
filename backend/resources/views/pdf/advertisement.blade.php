@@ -124,6 +124,11 @@
                 @endphp
                 {{ $priceUnitLabels[$advertisement->price_unit] ?? $advertisement->price_unit }}
             </span>
+            @if($advertisement->price_negotiable)
+                <span
+                    style="font-size: 14px; color: #4f46e5; border: 1px solid #4f46e5; padding: 2px 6px; border-radius: 4px; margin-left: 10px; font-weight: normal;">Do
+                    negocjacji</span>
+            @endif
         </div>
     </div>
 
@@ -189,6 +194,8 @@
         $showDailyPassengers = $advertisement->type === 'transport' && !empty($advertisement->daily_passengers);
         $showOperatingZone = $advertisement->type === 'mobile' && !empty($advertisement->operating_zone);
         $showAmbientLightControl = $advertisement->type === 'led_screen' && !empty($advertisement->ambient_light_control);
+        $showAvailableFrom = !empty($advertisement->available_from);
+        $showLocationTier = $advertisement->type === 'billboard';
 
         $details = [];
 
@@ -275,6 +282,11 @@
                 'urban' => 'Droga miejska'
             ];
             $details[] = ['label' => 'Klasa drogi', 'value' => $roadClassLabels[$advertisement->road_class] ?? $advertisement->road_class];
+        }
+
+        if ($showLocationTier) {
+            $isPremium = ($advertisement->traffic_intensity === 'high' && in_array($advertisement->road_class, ['highway', 'expressway', 'national']));
+            $details[] = ['label' => 'Klasa lokalizacji', 'value' => $isPremium ? 'PREMIUM' : 'STANDARD'];
         }
 
         // 6. Traffic Direction
@@ -383,6 +395,12 @@
 
         if ($advertisement->has_vat_invoice)
             $details[] = ['label' => 'Faktura VAT', 'value' => 'Tak'];
+
+        if ($showAvailableFrom) {
+            $details[] = ['label' => 'Dostępne od', 'value' => date('d.m.Y', strtotime($advertisement->available_from))];
+        } else {
+            $details[] = ['label' => 'Dostępność', 'value' => 'Od zaraz'];
+        }
 
     @endphp
 

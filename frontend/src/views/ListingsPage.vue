@@ -234,6 +234,21 @@ const router = useRouter()
 const isResettingFilters = ref(false)
 const isInitialized = ref(false)
 
+const LAST_SEARCH_KEY = 'reklamap_last_search'
+
+const saveLastSearch = () => {
+  try {
+    const searchFilters = { 
+      ...filters.value,
+      keyword: searchQuery.value,
+      _priceDisplayUnit: priceDisplay.value
+    }
+    localStorage.setItem(LAST_SEARCH_KEY, JSON.stringify(searchFilters))
+  } catch (error) {
+    console.error('Error saving search filters:', error)
+  }
+}
+
 // Helper to map type to Polish label
 const getTypeLabel = (type: string): string => {
   // Mapowanie zarówno wartości z bazy danych jak i z URL
@@ -727,6 +742,7 @@ const getStatusColor = (ad: Advertisement) => {
 
 const activeFiltersCount = computed(() => {
   let count = 0
+  if (searchQuery.value || filters.value.city || filters.value.region || filters.value.selectedLocationCoords || locationQuery.value) count++
   if (filters.value.type) count++
   if (filters.value.priceFrom !== null) count++
   if (filters.value.priceTo !== null) count++
@@ -736,7 +752,6 @@ const activeFiltersCount = computed(() => {
   if (filters.value.heightTo !== null) count++
   if (filters.value.surfaceFrom !== null) count++
   if (filters.value.surfaceTo !== null) count++
-  if (filters.value.city || filters.value.region || locationQuery.value) count++
   if (filters.value.rentalPeriod) count++
   if (filters.value.orientation) count++
   if (filters.value.trafficIntensity) count++
@@ -1501,6 +1516,9 @@ const applyFilters = () => {
   
   // Aktualizuj URL z nowymi parametrami
   router.push({ query: queryParams }).then(() => {
+    // Zapisz filtry do localStorage
+    saveLastSearch()
+    
     setTimeout(() => {
       isResettingFilters.value = false
     }, 100)
@@ -1578,6 +1596,13 @@ const clearFilters = () => {
   // Zamknij modal
   showFiltersModal.value = false
   tempFilters.value = null
+  
+  // Usuń zapisane wyszukiwanie
+  try {
+    localStorage.removeItem(LAST_SEARCH_KEY)
+  } catch (error) {
+    console.error('Error clearing search filters:', error)
+  }
   
   // Przekieruj na stronę główną powierzchni reklamowych (bez filtrów)
   router.push('/powierzchnie-reklamowe').then(() => {
@@ -2044,9 +2069,41 @@ onMounted(async () => {
     window.addEventListener('storage', handleStorageChange)
   }
   
-  // Sprawdź parametry z URL path
+  // 1. Najpierw załaduj filtry z localStorage (jako baza)
+  try {
+    const saved = localStorage.getItem(LAST_SEARCH_KEY)
+    if (saved) {
+      const lastSearch = JSON.parse(saved)
+      
+      // Ustaw searchQuery jeśli jest keyword w zapisanych filtrach
+      if (lastSearch.keyword) {
+        searchQuery.value = lastSearch.keyword
+      }
+      
+      // Ustaw lokalizację do wyświetlenia w polu tekstowym
+      if (lastSearch.city) {
+        locationQuery.value = lastSearch.city
+      } else if (lastSearch.region) {
+        const region = polishLocations.voivodeships.find(v => v.id === lastSearch.region)
+        if (region) {
+          locationQuery.value = region.name
+        }
+      }
+      
+      // Scal filtry
+      filters.value = { ...filters.value, ...lastSearch }
+      
+      // Jeśli był zapisany priceDisplayUnit, ustaw go
+      if (lastSearch._priceDisplayUnit) {
+        priceDisplay.value = lastSearch._priceDisplayUnit
+      }
+    }
+  } catch (error) {
+    console.error('Error loading search from localStorage:', error)
+  }
+
+  // 2. Nadpisz parametrami z URL path (type i city mają najwyższy priorytet ścieżki)
   if (route.params.type) {
-    // Mapowanie typów z URL na wartości w filtrach (wartości w bazie danych)
     const typeMapping: Record<string, string> = {
       'billboardy': 'billboard',
       'citylighty': 'citylight',
@@ -2066,29 +2123,26 @@ onMounted(async () => {
   }
   
   if (route.params.city) {
-    // Dekoduj miasto z URL - użyj deslugify do konwersji
     const citySlug = route.params.city as string
     const city = deslugify(citySlug)
     filters.value.city = city
     locationQuery.value = city
   }
   
-  // Jeśli są parametry w URL query, zastosuj je jako filtry
+  // 3. Nadpisz parametrami z URL query
   if (Object.keys(route.query).length > 0) {
     const queryFilters = queryParamsToFilters(route.query as Record<string, string>)
     
-    // Ustaw searchQuery jeśli jest keyword
     if (queryFilters.keyword) {
       searchQuery.value = queryFilters.keyword
-      delete queryFilters.keyword // Usuń, żeby nie dodać do filters
+      delete queryFilters.keyword
     }
     
-    // Ustaw sortBy jeśli jest sort
     if (route.query.sort) {
       sortBy.value = route.query.sort as string
     }
     
-    // Ustaw lokalizację jeśli jest city lub region (tylko jeśli nie ma już z parametrów ścieżki)
+    // Nadpisz lokalizację z query tylko jeśli nie ma jej w path
     if (!route.params.city) {
       if (queryFilters.city) {
         locationQuery.value = queryFilters.city
@@ -2100,7 +2154,7 @@ onMounted(async () => {
       }
     }
     
-    // Połącz z domyślnymi filtrami (ale nie nadpisuj typ i miasto jeśli są już ustawione z parametrów ścieżki)
+    // Połącz, ale zachowaj priorytet ścieżki dla typu i miasta
     const mergedFilters = { ...queryFilters }
     if (route.params.type && filters.value.type) {
       delete mergedFilters.type
@@ -2114,6 +2168,9 @@ onMounted(async () => {
   
   // Oznacz że inicjalizacja jest ukończona
   isInitialized.value = true
+
+  // Zapisz zainicjalizowane filtry (np. z URL) do localStorage
+  saveLastSearch()
 
   // Logic for showing the search alert modal after 20 seconds
   if (!hasShownAlertModal.value && activeFiltersCount.value > 0) {
@@ -2137,6 +2194,9 @@ const handleSearchAlertSubmit = (email: string) => {
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
   window.removeEventListener('scroll', handleScroll)
+  
+  // Reset body overflow in case modal was open
+  document.body.style.overflow = ''
   
   // Remove localStorage listeners
   if (typeof window !== 'undefined') {

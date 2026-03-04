@@ -20,7 +20,6 @@ const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
 const headerScrollRef = ref<HTMLElement | null>(null)
 const isMobile = ref(window.innerWidth <= 1180)
 const isTableZoomed = ref(false)
-const tableWrapperRef = ref<HTMLElement | null>(null)
 
 const updateIsMobile = () => {
   isMobile.value = window.innerWidth <= 1180
@@ -51,9 +50,16 @@ const downloadPdf = async () => {
   try {
     const ids = comparisonAds.value.map(ad => ad.id).join(',')
     // Filtruj pola - wyślij tylko te, które są obsługiwane w PDF
-    const supportedPdfFields = ['price', 'price_per_sqm', 'type', 'variant', 'dimensions', 'surface_area', 
-                                'orientation', 'location', 'traffic_intensity', 'has_backlight', 
-                                'price_includes_print', 'graphic_design_help', 'status', 'offer_type', 'has_vat_invoice']
+    const supportedPdfFields = [
+      'price', 'price_negotiable', 'price_per_sqm', 'type', 'variant', 'dimensions', 'surface_area', 
+      'orientation', 'location', 'traffic_intensity', 'estimated_daily_views', 
+      'traffic_direction', 'traffic_type', 'road_class', 'has_backlight', 
+      'lighting_type', 'lighting_type_banner', 'environment', 'daily_passengers', 
+      'transport_scope', 'vehicle_count', 'mobile_exposure_mode', 'operating_hours', 
+      'route_area', 'operating_zone', 'resolution', 'pixel_pitch', 'brightness', 
+      'ambient_light_control', 'campaign_duration', 'price_includes_print', 'price_includes_mounting', 
+      'graphic_design_help', 'status', 'available_from', 'offer_type', 'has_vat_invoice'
+    ]
     const fields = comparisonFields.value
       .filter((f: ComparisonField) => supportedPdfFields.includes(f.key))
       .map((f: ComparisonField) => f.key)
@@ -348,12 +354,31 @@ const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
       return (ad as any).route_area || '—'
     case 'operating_hours':
       return (ad as any).operating_hours || '—'
+    case 'brightness':
+      return (ad as any).brightness ? `${(ad as any).brightness} nits` : '—'
     case 'resolution':
       return (ad as any).resolution || '—'
     case 'pixel_pitch':
       return (ad as any).pixel_pitch ? `${(ad as any).pixel_pitch} mm` : '—'
-    case 'brightness':
-      return (ad as any).brightness ? `${(ad as any).brightness} nits` : '—'
+    case 'estimated_daily_views':
+      return (ad as any).estimated_daily_views ? `${(ad as any).estimated_daily_views.toLocaleString('pl-PL')} osób` : '—'
+    case 'lighting_type':
+      return formatLightingType((ad as any).lighting_type)
+    case 'lighting_type_banner':
+      return formatLightingTypeBanner((ad as any).lighting_type_banner)
+    case 'daily_passengers':
+      return (ad as any).daily_passengers ? (ad as any).daily_passengers.toLocaleString('pl-PL') : '—'
+    case 'operating_zone':
+      return formatOperatingZone((ad as any).operating_zone)
+    case 'ambient_light_control':
+      return (ad as any).ambient_light_control ? 'Tak' : 'Nie'
+    case 'price_negotiable':
+      return ad.price_negotiable ? 'Tak' : 'Nie'
+    case 'available_from':
+      if (!ad.available_from) return 'Od zaraz'
+      return new Date(ad.available_from).toLocaleDateString('pl-PL')
+    case 'campaign_duration':
+      return (ad as any).campaign_duration ? `${(ad as any).campaign_duration} dni` : '—'
     default:
       return '—'
   }
@@ -483,11 +508,43 @@ const formatMobileExposureMode = (mode: string | undefined) => {
   return labels[mode] || mode
 }
 
+const formatLightingType = (type: string | undefined) => {
+  if (!type) return '—'
+  const labels: Record<string, string> = {
+    led: 'LED',
+    fluorescent: 'Fluorescencyjne',
+    natural: 'Naturalne',
+    none: 'Brak'
+  }
+  return labels[type] || type
+}
+
+const formatLightingTypeBanner = (type: string | undefined) => {
+  if (!type) return '—'
+  const labels: Record<string, string> = {
+    none: 'Brak podświetlenia',
+    backlight: 'Podświetlenie z tyłu',
+    frontlight: 'Podświetlenie z przodu'
+  }
+  return labels[type] || type
+}
+
+const formatOperatingZone = (zone: string | undefined) => {
+  if (!zone) return '—'
+  const labels: Record<string, string> = {
+    center: 'Centrum',
+    periphery: 'Peryferia',
+    agglomeration: 'Cała aglomeracja'
+  }
+  return labels[zone] || zone
+}
+
 // Funkcja sprawdzająca czy wartość jest pozytywna (dla kolorowania)
 const isPositiveValue = (field: ComparisonField, value: any): boolean => {
   if (field.key === 'has_backlight' || field.key === 'price_includes_print' || 
       field.key === 'price_includes_mounting' || field.key === 'graphic_design_help' || 
-      field.key === 'has_vat_invoice') {
+      field.key === 'has_vat_invoice' || field.key === 'ambient_light_control' ||
+      field.key === 'price_negotiable') {
     return value === 'Tak'
   }
   return false

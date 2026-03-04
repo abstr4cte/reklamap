@@ -210,6 +210,18 @@
                 @endforeach
             </tr>
             @php
+                $showPriceNegotiable = in_array('price_negotiable', $visibleFields);
+            @endphp
+            @if($showPriceNegotiable)
+            <tr>
+                <th>Cena do negocjacji</th>
+                @foreach($advertisements as $ad)
+                    <td><span class="{{ $ad->price_negotiable ? 'yes' : 'no' }}">{{ $ad->price_negotiable ? 'Tak' : 'Nie' }}</span>
+                    </td>
+                @endforeach
+            </tr>
+            @endif
+            @php
                 // Pokazuj "Cena za m²" tylko jeśli jest na liście widocznych pól
                 $showPricePerSqm = in_array('price_per_sqm', $visibleFields);
             @endphp
@@ -251,6 +263,60 @@
                     </td>
                 @endforeach
             </tr>
+            @php
+                $showVariant = in_array('variant', $visibleFields);
+            @endphp
+            @if($showVariant)
+            <tr>
+                <th>Wariant</th>
+                @foreach($advertisements as $ad)
+                    <td>
+                        @php
+                            $variantLabels = [
+                                'billboard' => [
+                                    'standard' => 'Jednostronny',
+                                    'two_sided' => 'Dwustronny (back-to-back)',
+                                    'three_sided' => 'Trójstronny (prismatron)',
+                                    'scrolling' => 'Scrolling / Rolowany'
+                                ],
+                                'citylight' => [
+                                    'single_sided' => 'Jednostronny',
+                                    'double_sided' => 'Dwustronny',
+                                    'scrolling' => 'Scrolling (rotacyjny)',
+                                    'digital' => 'Cyfrowy (DOOH)'
+                                ],
+                                'led_screen' => [
+                                    'standard' => 'Standardowy',
+                                    'interactive' => 'Interaktywny'
+                                ],
+                                'totem' => [
+                                    'single_sided' => 'Jednostronny',
+                                    'double_sided' => 'Dwustronny',
+                                    'multi_sided' => 'Wielostronny / Kolumna',
+                                    'pylon' => 'Pylon (przy drodze)',
+                                    'digital' => 'Cyfrowy (LED)'
+                                ],
+                                'transport' => [
+                                    'bus' => 'Autobus',
+                                    'tram' => 'Tramwaj',
+                                    'metro' => 'Metro',
+                                    'train' => 'Pociąg / SKM / Kolej',
+                                    'stop' => 'Przystanek'
+                                ],
+                                'mobile' => [
+                                    'trailer' => 'Przyczepka',
+                                    'car' => 'Samochód',
+                                    'bike' => 'Rower',
+                                    'other' => 'Inna'
+                                ]
+                            ];
+                            $vLabel = $variantLabels[$ad->type][$ad->variant] ?? $ad->variant;
+                        @endphp
+                        {{ $vLabel ?? '-' }}
+                    </td>
+                @endforeach
+            </tr>
+            @endif
             @php
                 // Pokazuj "Wymiary" tylko jeśli jest na liście widocznych pól
                 $showDimensions = in_array('dimensions', $visibleFields);
@@ -317,6 +383,48 @@
                 @endforeach
             </tr>
             @php
+                $showLocationTier = in_array('location_tier', $visibleFields);
+            @endphp
+            @if($showLocationTier)
+            <tr>
+                <th>Klasa lokalizacji</th>
+                @foreach($advertisements as $ad)
+                    <td>
+                        @php
+                            $tier = '-';
+                            if ($ad->type === 'billboard') {
+                                $tier = ($ad->traffic_intensity === 'high' && in_array($ad->road_class, ['highway', 'expressway', 'national'])) ? 'PREMIUM' : 'STANDARD';
+                            }
+                        @endphp
+                        {{ $tier }}
+                    </td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                $showRoadClass = in_array('road_class', $visibleFields);
+            @endphp
+            @if($showRoadClass)
+            <tr>
+                <th>Klasa drogi</th>
+                @foreach($advertisements as $ad)
+                    <td>
+                        @php
+                            $roadLabels = [
+                                'highway' => 'Autostrada',
+                                'expressway' => 'Droga ekspresowa',
+                                'national' => 'Droga krajowa',
+                                'regional' => 'Droga wojewódzka',
+                                'local' => 'Droga lokalna',
+                                'urban' => 'Droga miejska'
+                            ];
+                        @endphp
+                        {{ $roadLabels[$ad->road_class] ?? ($ad->road_class ?? '-') }}
+                    </td>
+                @endforeach
+            </tr>
+            @endif
+            @php
                 // Pokazuj "Natężenie ruchu" tylko jeśli jest na liście widocznych pól
                 $showTrafficIntensity = in_array('traffic_intensity', $visibleFields);
             @endphp
@@ -329,6 +437,81 @@
                         @elseif($ad->traffic_intensity === 'medium') Średnie
                         @else Wysokie
                         @endif
+                    </td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                $showOTS = in_array('estimated_daily_views', $visibleFields);
+            @endphp
+            @if($showOTS)
+            <tr>
+                <th>Zasięg dzienny (OTS)</th>
+                @foreach($advertisements as $ad)
+                    <td>{{ $ad->estimated_daily_views ? number_format($ad->estimated_daily_views, 0, ',', ' ') . ' osób' : '-' }}</td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                $showTrafficDirection = in_array('traffic_direction', $visibleFields);
+            @endphp
+            @if($showTrafficDirection)
+            <tr>
+                <th>Kierunek ruchu</th>
+                @foreach($advertisements as $ad)
+                    <td>
+                        @php
+                            $directions = $ad->traffic_direction ?? [];
+                            if (in_array('entry', $directions) && in_array('exit', $directions)) {
+                                $dirValue = 'Oba kierunki';
+                            } else {
+                                $directionLabels = ['entry' => 'Wjazd do miasta', 'exit' => 'Wyjazd z miasta'];
+                                $formatted = [];
+                                foreach ($directions as $dir) {
+                                    $formatted[] = $directionLabels[$dir] ?? $dir;
+                                }
+                                $dirValue = !empty($formatted) ? implode(', ', $formatted) : '-';
+                            }
+                        @endphp
+                        {{ $dirValue }}
+                    </td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                $showTrafficType = in_array('traffic_type', $visibleFields);
+            @endphp
+            @if($showTrafficType)
+            <tr>
+                <th>Rodzaj ruchu</th>
+                @foreach($advertisements as $ad)
+                    <td>
+                        @php
+                            $tTypes = $ad->traffic_type ?? [];
+                            $tLabels = ['pedestrian' => 'Pieszy', 'vehicular' => 'Samochodowy'];
+                            $formatted = [];
+                            foreach ($tTypes as $t) {
+                                $formatted[] = $tLabels[$t] ?? $t;
+                            }
+                            $tValue = !empty($formatted) ? implode(', ', $formatted) : '-';
+                        @endphp
+                        {{ $tValue }}
+                    </td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                $showEnvironment = in_array('environment', $visibleFields);
+            @endphp
+            @if($showEnvironment)
+            <tr>
+                <th>Środowisko</th>
+                @foreach($advertisements as $ad)
+                    <td>
+                        @php
+                            $envLabels = ['indoor' => 'Wewnątrz', 'outdoor' => 'Na zewnątrz', 'event' => 'Event / Wydarzenie'];
+                        @endphp
+                        {{ $envLabels[$ad->environment] ?? ($ad->environment ?? '-') }}
                     </td>
                 @endforeach
             </tr>
@@ -370,6 +553,19 @@
                 @foreach($advertisements as $ad)
                     <td><span
                             class="{{ $ad->graphic_design_help ? 'yes' : 'no' }}">{{ $ad->graphic_design_help ? 'Tak' : 'Nie' }}</span>
+                    </td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                $showMounting = in_array('price_includes_mounting', $visibleFields);
+            @endphp
+            @if($showMounting)
+            <tr>
+                <th>Montaż w cenie</th>
+                @foreach($advertisements as $ad)
+                    <td><span
+                            class="{{ $ad->price_includes_mounting ? 'yes' : 'no' }}">{{ $ad->price_includes_mounting ? 'Tak' : 'Nie' }}</span>
                     </td>
                 @endforeach
             </tr>
@@ -420,16 +616,100 @@
                 @endforeach
             </tr>
             @endif
-            @php
-                // Pokazuj "Dostosowanie do otoczenia" tylko jeśli jest na liście widocznych pól
-                $showAmbientLightControl = in_array('ambient_light_control', $visibleFields);
-            @endphp
             @if($showAmbientLightControl)
             <tr>
                 <th>Dostosowanie do otoczenia</th>
                 @foreach($advertisements as $ad)
                     <td><span class="{{ $ad->ambient_light_control ? 'yes' : 'no' }}">{{ $ad->ambient_light_control ? 'Tak' : 'Nie' }}</span>
                     </td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                $showResolution = in_array('resolution', $visibleFields);
+                $showPixelPitch = in_array('pixel_pitch', $visibleFields);
+                $showBrightness = in_array('brightness', $visibleFields);
+            @endphp
+            @if($showResolution)
+            <tr>
+                <th>Rozdzielczość</th>
+                @foreach($advertisements as $ad)
+                    <td>{{ $ad->resolution ?? '-' }}</td>
+                @endforeach
+            </tr>
+            @endif
+            @if($showPixelPitch)
+            <tr>
+                <th>Pixel Pitch</th>
+                @foreach($advertisements as $ad)
+                    <td>{{ $ad->pixel_pitch ? $ad->pixel_pitch . ' mm' : '-' }}</td>
+                @endforeach
+            </tr>
+            @endif
+            @if($showBrightness)
+            <tr>
+                <th>Jasność</th>
+                @foreach($advertisements as $ad)
+                    <td>{{ $ad->brightness ? $ad->brightness . ' nits' : '-' }}</td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                $showTransportScope = in_array('transport_scope', $visibleFields);
+                $showVehicleCount = in_array('vehicle_count', $visibleFields);
+            @endphp
+            @if($showTransportScope)
+            <tr>
+                <th>Zakres reklamy</th>
+                @foreach($advertisements as $ad)
+                    <td>
+                        @php
+                            $sLabels = ['internal' => 'Wewnętrzna', 'external' => 'Zewnętrzna', 'full_vehicle' => 'Całopojazdowa'];
+                        @endphp
+                        {{ $sLabels[$ad->transport_scope] ?? ($ad->transport_scope ?? '-') }}
+                    </td>
+                @endforeach
+            </tr>
+            @endif
+            @if($showVehicleCount)
+            <tr>
+                <th>Liczba pojazdów</th>
+                @foreach($advertisements as $ad)
+                    <td>{{ $ad->vehicle_count ?? '-' }}</td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                $showMobileExposureMode = in_array('mobile_exposure_mode', $visibleFields);
+                $showOperatingHours = in_array('operating_hours', $visibleFields);
+                $showRouteArea = in_array('route_area', $visibleFields);
+            @endphp
+            @if($showMobileExposureMode)
+            <tr>
+                <th>Tryb ekspozycji</th>
+                @foreach($advertisements as $ad)
+                    <td>
+                        @php
+                            $mLabels = ['moving' => 'Jeżdżąca', 'stationary' => 'Stojąca', 'mixed' => 'Mieszana'];
+                        @endphp
+                        {{ $mLabels[$ad->mobile_exposure_mode] ?? ($ad->mobile_exposure_mode ?? '-') }}
+                    </td>
+                @endforeach
+            </tr>
+            @endif
+            @if($showOperatingHours)
+            <tr>
+                <th>Godziny działania</th>
+                @foreach($advertisements as $ad)
+                    <td>{{ $ad->operating_hours ?? '-' }}</td>
+                @endforeach
+            </tr>
+            @endif
+            @if($showRouteArea)
+            <tr>
+                <th>Trasa / Obszar</th>
+                @foreach($advertisements as $ad)
+                    <td>{{ $ad->route_area ?? '-' }}</td>
                 @endforeach
             </tr>
             @endif
@@ -462,6 +742,28 @@
                     </td>
                 @endforeach
             </tr>
+            @php
+                $showAvailableFrom = in_array('available_from', $visibleFields);
+            @endphp
+            @if($showAvailableFrom)
+            <tr>
+                <th>Dostępne od</th>
+                @foreach($advertisements as $ad)
+                    <td>{{ $ad->available_from ? date('d.m.Y', strtotime($ad->available_from)) : 'Od zaraz' }}</td>
+                @endforeach
+            </tr>
+            @endif
+            @php
+                $showCampaignDuration = in_array('campaign_duration', $visibleFields);
+            @endphp
+            @if($showCampaignDuration)
+            <tr>
+                <th>Czas kampanii</th>
+                @foreach($advertisements as $ad)
+                    <td>{{ $ad->campaign_duration ? $ad->campaign_duration . ' dni' : '-' }}</td>
+                @endforeach
+            </tr>
+            @endif
             <tr>
                 <th>Rodzaj oferty</th>
                 @foreach($advertisements as $ad)

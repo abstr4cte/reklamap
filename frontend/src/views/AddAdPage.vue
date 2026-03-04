@@ -967,15 +967,20 @@ const validateStep = (step: number): boolean => {
 }
 
 const nextStep = () => {
+  // Zawsze przewijaj do góry przy próbie przejścia dalej
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+  
   if (validateStep(currentStep.value)) {
     if (currentStep.value < totalSteps) {
       currentStep.value++
-      window.scrollTo({ top: 0, behavior: 'smooth' })
 
       if (currentStep.value === 3) {
         setTimeout(() => initMap(), 100)
       }
     }
+  } else {
+    // Jeśli walidacja się nie powiodła, pokaż toast (scroll do góry już wykonany)
+    toast.value?.add('Proszę uzupełnić wymagane pola', 'error')
   }
 }
 
@@ -1035,7 +1040,11 @@ const uploadImages = async (): Promise<string[]> => {
 }
 
 const handleSubmit = async () => {
-  if (!validateStep(currentStep.value)) return
+  if (!validateStep(currentStep.value)) {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    toast.value?.add('Proszę uzupełnić wymagane pola', 'error')
+    return
+  }
 
   try {
     isSubmitting.value = true
@@ -1692,7 +1701,7 @@ onMounted(() => {
             <input
               v-model.number="formData.estimatedDailyViews"
               type="number"
-              step="100"
+              step="1"
               class="form-input"
               placeholder="np. 25000"
             />

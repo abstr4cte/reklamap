@@ -9,9 +9,11 @@ export interface ComparisonField {
 // Wspólne pola dla wszystkich typów
 const commonFields: ComparisonField[] = [
   { key: 'price', label: 'Cena', required: true },
+  { key: 'price_negotiable', label: 'Cena do negocjacji', required: false },
   { key: 'type', label: 'Typ powierzchni', required: true },
   { key: 'location', label: 'Lokalizacja', required: true },
   { key: 'status', label: 'Status', required: true },
+  { key: 'available_from', label: 'Dostępne od', required: false },
   { key: 'offer_type', label: 'Rodzaj oferty', required: true },
   { key: 'has_vat_invoice', label: 'Faktura VAT', required: true }
 ]
@@ -20,6 +22,7 @@ const commonFields: ComparisonField[] = [
 export const typeFieldsConfig: Record<string, ComparisonField[]> = {
   billboard: [
     { key: 'price', label: 'Cena', required: true },
+    { key: 'price_negotiable', label: 'Cena do negocjacji', required: false },
     { key: 'price_per_sqm', label: 'Cena za m²', required: true },
     { key: 'type', label: 'Typ powierzchni', required: true },
     { key: 'variant', label: 'Wariant', required: true },
@@ -30,16 +33,21 @@ export const typeFieldsConfig: Record<string, ComparisonField[]> = {
     { key: 'location_tier', label: 'Klasa lokalizacji', required: false },
     { key: 'road_class', label: 'Klasa drogi', required: false },
     { key: 'traffic_intensity', label: 'Natężenie ruchu', required: true },
+    { key: 'estimated_daily_views', label: 'Zasięg dzienny (OTS)', required: true },
     { key: 'traffic_direction', label: 'Kierunek ruchu', required: false },
+    { key: 'traffic_type', label: 'Rodzaj ruchu', required: true },
+    { key: 'lighting_type', label: 'Typ oświetlenia', required: false },
     { key: 'price_includes_print', label: 'Druk w cenie', required: false },
     { key: 'price_includes_mounting', label: 'Montaż w cenie', required: false },
     { key: 'graphic_design_help', label: 'Pomoc graficzna', required: false },
     { key: 'status', label: 'Status', required: true },
+    { key: 'available_from', label: 'Dostępne od', required: false },
     { key: 'offer_type', label: 'Rodzaj oferty', required: true },
     { key: 'has_vat_invoice', label: 'Faktura VAT', required: true }
   ],
   citylight: [
     { key: 'price', label: 'Cena', required: true },
+    { key: 'price_negotiable', label: 'Cena do negocjacji', required: false },
     { key: 'type', label: 'Typ powierzchni', required: true },
     { key: 'variant', label: 'Wariant', required: true },
     { key: 'dimensions', label: 'Wymiary (szer × wys)', required: false },
@@ -47,16 +55,19 @@ export const typeFieldsConfig: Record<string, ComparisonField[]> = {
     { key: 'orientation', label: 'Orientacja', required: true },
     { key: 'location', label: 'Lokalizacja', required: true },
     { key: 'environment', label: 'Środowisko', required: false },
+    { key: 'estimated_daily_views', label: 'Zasięg dzienny (OTS)', required: false },
     { key: 'has_backlight', label: 'Podświetlenie', required: false },
     { key: 'price_includes_print', label: 'Druk w cenie', required: false },
     { key: 'price_includes_mounting', label: 'Montaż w cenie', required: false },
     { key: 'graphic_design_help', label: 'Pomoc graficzna', required: false },
     { key: 'status', label: 'Status', required: true },
+    { key: 'available_from', label: 'Dostępne od', required: false },
     { key: 'offer_type', label: 'Rodzaj oferty', required: true },
     { key: 'has_vat_invoice', label: 'Faktura VAT', required: true }
   ],
   led_screen: [
     { key: 'price', label: 'Cena', required: true },
+    { key: 'price_negotiable', label: 'Cena do negocjacji', required: false },
     { key: 'price_per_sqm', label: 'Cena za m²', required: true },
     { key: 'type', label: 'Typ powierzchni', required: true },
     { key: 'variant', label: 'Wariant', required: true },
@@ -64,16 +75,21 @@ export const typeFieldsConfig: Record<string, ComparisonField[]> = {
     { key: 'surface_area', label: 'Powierzchnia', required: false },
     { key: 'location', label: 'Lokalizacja', required: true },
     { key: 'environment', label: 'Środowisko', required: false },
+    { key: 'estimated_daily_views', label: 'Zasięg dzienny (OTS)', required: false },
     { key: 'resolution', label: 'Rozdzielczość', required: false },
     { key: 'pixel_pitch', label: 'Pixel Pitch (mm)', required: false },
     { key: 'brightness', label: 'Jasność (nits)', required: false },
+    { key: 'ambient_light_control', label: 'Dostosowanie do jasności', required: false },
     { key: 'has_backlight', label: 'Podświetlenie', required: false },
+    { key: 'campaign_duration', label: 'Czas kampanii (dni)', required: false },
     { key: 'status', label: 'Status', required: true },
+    { key: 'available_from', label: 'Dostępne od', required: false },
     { key: 'offer_type', label: 'Rodzaj oferty', required: true },
     { key: 'has_vat_invoice', label: 'Faktura VAT', required: true }
   ],
   banner: [
     { key: 'price', label: 'Cena', required: true },
+    { key: 'price_negotiable', label: 'Cena do negocjacji', required: false },
     { key: 'price_per_sqm', label: 'Cena za m²', required: true },
     { key: 'type', label: 'Typ powierzchni', required: true },
     { key: 'dimensions', label: 'Wymiary (szer × wys)', required: true },
@@ -82,17 +98,21 @@ export const typeFieldsConfig: Record<string, ComparisonField[]> = {
     { key: 'location', label: 'Lokalizacja', required: true },
     { key: 'environment', label: 'Środowisko', required: false },
     { key: 'traffic_intensity', label: 'Natężenie ruchu', required: false },
+    { key: 'estimated_daily_views', label: 'Zasięg dzienny (OTS)', required: true },
     { key: 'traffic_direction', label: 'Kierunek ruchu', required: false },
-    { key: 'traffic_type', label: 'Rodzaj ruchu', required: false },
+    { key: 'traffic_type', label: 'Rodzaj ruchu', required: true },
+    { key: 'lighting_type_banner', label: 'Typ oświetlenia', required: false },
     { key: 'price_includes_print', label: 'Druk w cenie', required: false },
     { key: 'price_includes_mounting', label: 'Montaż w cenie', required: false },
     { key: 'graphic_design_help', label: 'Pomoc graficzna', required: false },
     { key: 'status', label: 'Status', required: true },
+    { key: 'available_from', label: 'Dostępne od', required: false },
     { key: 'offer_type', label: 'Rodzaj oferty', required: true },
     { key: 'has_vat_invoice', label: 'Faktura VAT', required: true }
   ],
   wall: [
     { key: 'price', label: 'Cena', required: true },
+    { key: 'price_negotiable', label: 'Cena do negocjacji', required: false },
     { key: 'price_per_sqm', label: 'Cena za m²', required: true },
     { key: 'type', label: 'Typ powierzchni', required: true },
     { key: 'dimensions', label: 'Wymiary (szer × wys)', required: true },
@@ -100,16 +120,20 @@ export const typeFieldsConfig: Record<string, ComparisonField[]> = {
     { key: 'orientation', label: 'Orientacja', required: true },
     { key: 'location', label: 'Lokalizacja', required: true },
     { key: 'traffic_intensity', label: 'Natężenie ruchu', required: false },
+    { key: 'estimated_daily_views', label: 'Zasięg dzienny (OTS)', required: true },
     { key: 'traffic_direction', label: 'Kierunek ruchu', required: false },
-    { key: 'traffic_type', label: 'Rodzaj ruchu', required: false },
+    { key: 'traffic_type', label: 'Rodzaj ruchu', required: true },
+    { key: 'lighting_type_banner', label: 'Typ oświetlenia', required: false },
     { key: 'price_includes_mounting', label: 'Montaż w cenie', required: false },
     { key: 'graphic_design_help', label: 'Pomoc graficzna', required: false },
     { key: 'status', label: 'Status', required: true },
+    { key: 'available_from', label: 'Dostępne od', required: false },
     { key: 'offer_type', label: 'Rodzaj oferty', required: true },
     { key: 'has_vat_invoice', label: 'Faktura VAT', required: true }
   ],
   totem: [
     { key: 'price', label: 'Cena', required: true },
+    { key: 'price_negotiable', label: 'Cena do negocjacji', required: false },
     { key: 'type', label: 'Typ powierzchni', required: true },
     { key: 'variant', label: 'Wariant', required: true },
     { key: 'dimensions', label: 'Wymiary (szer × wys)', required: false },
@@ -118,36 +142,46 @@ export const typeFieldsConfig: Record<string, ComparisonField[]> = {
     { key: 'location', label: 'Lokalizacja', required: true },
     { key: 'environment', label: 'Środowisko', required: false },
     { key: 'traffic_intensity', label: 'Natężenie ruchu', required: false },
+    { key: 'estimated_daily_views', label: 'Zasięg dzienny (OTS)', required: false },
     { key: 'traffic_direction', label: 'Kierunek ruchu', required: false },
     { key: 'traffic_type', label: 'Rodzaj ruchu', required: false },
     { key: 'has_backlight', label: 'Podświetlenie', required: false },
     { key: 'status', label: 'Status', required: true },
+    { key: 'available_from', label: 'Dostępne od', required: false },
     { key: 'offer_type', label: 'Rodzaj oferty', required: true },
     { key: 'has_vat_invoice', label: 'Faktura VAT', required: true }
   ],
   transport: [
     { key: 'price', label: 'Cena', required: true },
+    { key: 'price_negotiable', label: 'Cena do negocjacji', required: false },
     { key: 'type', label: 'Typ powierzchni', required: true },
     { key: 'variant', label: 'Wariant', required: true },
     { key: 'location', label: 'Lokalizacja', required: true },
     { key: 'transport_scope', label: 'Zakres reklamy', required: true },
     { key: 'vehicle_count', label: 'Liczba pojazdów', required: false },
+    { key: 'daily_passengers', label: 'Liczba pasażerów dziennie', required: false },
     { key: 'route_area', label: 'Obszar trasy', required: false },
     { key: 'operating_hours', label: 'Godziny operacyjne', required: false },
+    { key: 'campaign_duration', label: 'Czas kampanii (dni)', required: false },
     { key: 'status', label: 'Status', required: true },
+    { key: 'available_from', label: 'Dostępne od', required: false },
     { key: 'offer_type', label: 'Rodzaj oferty', required: true },
     { key: 'has_vat_invoice', label: 'Faktura VAT', required: true }
   ],
   mobile: [
     { key: 'price', label: 'Cena', required: true },
+    { key: 'price_negotiable', label: 'Cena do negocjacji', required: false },
     { key: 'type', label: 'Typ powierzchni', required: true },
     { key: 'variant', label: 'Wariant', required: true },
     { key: 'location', label: 'Lokalizacja', required: true },
     { key: 'environment', label: 'Środowisko', required: false },
     { key: 'mobile_exposure_mode', label: 'Tryb ekspozycji', required: true },
+    { key: 'operating_zone', label: 'Strefa operacyjna', required: false },
     { key: 'route_area', label: 'Obszar trasy', required: false },
     { key: 'operating_hours', label: 'Godziny operacyjne', required: false },
+    { key: 'campaign_duration', label: 'Czas kampanii (dni)', required: false },
     { key: 'status', label: 'Status', required: true },
+    { key: 'available_from', label: 'Dostępne od', required: false },
     { key: 'offer_type', label: 'Rodzaj oferty', required: true },
     { key: 'has_vat_invoice', label: 'Faktura VAT', required: true }
   ],
@@ -173,7 +207,7 @@ export function shouldShowField(field: ComparisonField, ads: any[]): boolean {
   if (field.required) {
     return true
   }
-  
+
   // Dla opcjonalnych pól, sprawdź czy którekolwiek ogłoszenie ma wypełnioną wartość
   return ads.some(ad => {
     const value = getFieldValue(field.key, ad)
