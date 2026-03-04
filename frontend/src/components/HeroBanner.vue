@@ -337,6 +337,32 @@ const goToPolandMap = () => {
   }
 }
 
+const LAST_SEARCH_KEY = 'reklamap_last_search'
+
+const saveLastSearch = (searchFilters: Filters) => {
+  try {
+    localStorage.setItem(LAST_SEARCH_KEY, JSON.stringify(searchFilters))
+  } catch (error) {
+    console.error('Error saving search filters:', error)
+  }
+}
+
+const loadLastSearch = () => {
+  try {
+    const saved = localStorage.getItem(LAST_SEARCH_KEY)
+    if (saved) {
+      const lastSearch = JSON.parse(saved)
+      // Scalaj zapisane filtry z domyślnymi (na wypadek dodania nowych pól)
+      filters.value = {
+        ...filters.value,
+        ...lastSearch
+      }
+    }
+  } catch (error) {
+    console.error('Error loading search filters:', error)
+  }
+}
+
 const handleSearch = () => {
   // Konwertuj wymiary LED z mm na metry przed wysłaniem
   const searchFilters = { ...filters.value }
@@ -363,6 +389,9 @@ const handleSearch = () => {
     // Dodaj specjalny parametr do emitowanego eventu
     searchFilters._priceDisplayUnit = searchFilters.priceUnit
   }
+  
+  // Zapisz ostatnie wyszukiwanie do localStorage
+  saveLastSearch(searchFilters)
   
   // Emit the search event with converted filters
   emit('search', searchFilters)
@@ -428,6 +457,12 @@ const resetFilters = () => {
   }
   locationQuery.value = ''
   apiLocationResults.value = []
+  // Usuń zapisane wyszukiwanie
+  try {
+    localStorage.removeItem(LAST_SEARCH_KEY)
+  } catch (error) {
+    console.error('Error clearing search filters:', error)
+  }
   emit('reset', { ...filters.value })
 }
 
@@ -688,6 +723,7 @@ watch(() => filters.value.variant, () => {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  loadLastSearch()
 })
 
 onBeforeUnmount(() => {

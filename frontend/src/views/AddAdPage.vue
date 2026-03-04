@@ -83,8 +83,10 @@ const formData = ref({
   operatingZone: '' as '' | 'center' | 'periphery' | 'agglomeration',
   ambientLightControl: false,
   // Lighting type dla banerów i ścian
-  lightingTypeBanner: '' as '' | 'none' | 'backlight' | 'frontlight'
+  lightingTypeBanner: '' as '' | 'none' | 'backlight' | 'frontlight',
+  subscribeNewsletter: false
 })
+
 
 const minDate = new Date()
 minDate.setHours(0, 0, 0, 0)
@@ -1126,7 +1128,9 @@ const handleSubmit = async () => {
         operating_zone: formData.value.operatingZone || null,
         ambient_light_control: formData.value.ambientLightControl,
         lighting_type_banner: formData.value.lightingTypeBanner || null,
-        estimated_daily_views: formData.value.estimatedDailyViews || null
+        estimated_daily_views: formData.value.estimatedDailyViews || null,
+        subscribe_newsletter: formData.value.subscribeNewsletter
+
     } as any) // Casting to any to avoid strict type checks for now if interface mismatches
 
     if (newAd && newAd.id) {
@@ -2063,7 +2067,15 @@ onMounted(() => {
             </label>
             <span v-if="errors.acceptTerms" class="error-text">{{ errors.acceptTerms }}</span>
           </div>
+
+          <div class="form-group" style="margin-top: 1rem;">
+            <label class="checkbox-option large">
+              <input type="checkbox" v-model="formData.subscribeNewsletter" />
+              <span>Chcę otrzymywać newsletter z nowościami i informacjami o rynku reklamy (opcjonalnie)</span>
+            </label>
+          </div>
         </div>
+
 
         <div v-if="errors.submit" class="submit-error">{{ errors.submit }}</div>
 

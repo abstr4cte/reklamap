@@ -30,7 +30,7 @@ class EditBlogPost extends EditRecord
         // Send newsletter email if status changed to published
         $blogPost = $this->record;
         $originalStatus = $blogPost->getOriginal('status');
-        
+
         if ($originalStatus !== 'published' && $blogPost->status === 'published') {
             $subscribers = Newsletter::all();
 
@@ -39,7 +39,9 @@ class EditBlogPost extends EditRecord
                     Mail::send('emails.blog-notification', [
                         'blogPost' => $blogPost,
                         'blogUrl' => config('app.frontend_url') . '/blog/' . $blogPost->slug,
+                        'unsubscribeToken' => $subscriber->unsubscribe_token,
                     ], function ($message) use ($subscriber) {
+
                         $message->to($subscriber->email)
                             ->subject('Nowy artykuł na blogu Reklamap');
                     });

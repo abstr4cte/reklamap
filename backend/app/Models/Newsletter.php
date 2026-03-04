@@ -10,6 +10,7 @@ class Newsletter extends Model
     use HasFactory;
 
     protected $table = 'newsletter_subscribers';
-    protected $fillable = ['email'];
+    protected $fillable = ['email', 'unsubscribe_token'];
+
     public $timestamps = true;
 }

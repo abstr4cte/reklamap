@@ -100,7 +100,9 @@
 
         <div class="blog-preview">
             <div class="blog-title">{{ $blogPost->title }}</div>
-            <div class="blog-excerpt">{{ $blogPost->content ? substr(strip_tags($blogPost->content), 0, 150) . '...' : 'Przeczytaj artykuł aby dowiedzieć się więcej.' }}</div>
+            <div class="blog-excerpt">
+                {{ $blogPost->content ? substr(strip_tags($blogPost->content), 0, 150) . '...' : 'Przeczytaj artykuł aby dowiedzieć się więcej.' }}
+            </div>
         </div>
 
         <p>Kliknij poniżej, aby przeczytać pełny artykuł:</p>
@@ -115,7 +117,12 @@
     <div class="footer">
         <p>&copy; {{ date('Y') }} ReklaMap. Wszelkie prawa zastrzeżone.</p>
         <p>To jest wiadomość automatyczna, prosimy na nią nie odpowiadać.</p>
+        @if(isset($unsubscribeToken))
+            <p class="unsubscribe">Nie chcesz otrzymywać tych wiadomości? <a
+                    href="{{ route('newsletter.unsubscribe', ['token' => $unsubscribeToken]) }}">Wypisz się tutaj</a></p>
+        @endif
     </div>
 </body>
+
 
 </html>

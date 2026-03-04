@@ -22,7 +22,7 @@ class CreateBlogPost extends CreateRecord
     {
         // Send newsletter email only if blog post is published
         $blogPost = $this->record;
-        
+
         if ($blogPost->status === 'published') {
             $subscribers = Newsletter::all();
 
@@ -31,7 +31,9 @@ class CreateBlogPost extends CreateRecord
                     Mail::send('emails.blog-notification', [
                         'blogPost' => $blogPost,
                         'blogUrl' => config('app.frontend_url') . '/blog/' . $blogPost->slug,
+                        'unsubscribeToken' => $subscriber->unsubscribe_token,
                     ], function ($message) use ($subscriber) {
+
                         $message->to($subscriber->email)
                             ->subject('Nowy artykuł na blogu Reklamap');
                     });

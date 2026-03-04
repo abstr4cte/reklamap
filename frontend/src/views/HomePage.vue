@@ -10,6 +10,11 @@ import { api } from '../services/api'
 import type { Advertisement } from '../types'
 import { filtersToQueryParams, queryParamsToFilters, normalizePolishChars } from '../utils/filterUtils'
 import { useSeo } from '../composables/useSeo'
+import SearchAlertModal from '../components/SearchAlertModal.vue'
+import SearchAlertBox from '../components/SearchAlertBox.vue'
+import { mapTypeToUrlFormat as getTypeLabel } from '../utils/typeMapping'
+
+
 
 const emit = defineEmits<{
   toggleFavorite: [id: string]
@@ -28,6 +33,10 @@ const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign' 
 const currentPage = ref(1)
 const itemsPerPage = 18
 const hoveredAdId = ref<string | null>(null)
+
+const showSearchAlertModal = ref(false)
+const hasShownAlertModal = ref(localStorage.getItem('search_alert_shown') === 'true')
+
 
 interface Filters {
   keyword: string
@@ -824,7 +833,24 @@ onMounted(() => {
     // Połącz z domyślnymi filtrami
     filters.value = { ...filters.value, ...queryFilters }
   }
+
+  // Logic for showing the search alert modal after 20 seconds
+  if (!hasShownAlertModal.value) {
+    setTimeout(() => {
+      // Show only if user has active filters and hasn't seen it yet
+      if (!hasShownAlertModal.value && activeFiltersCount.value > 0) {
+        showSearchAlertModal.value = true
+        hasShownAlertModal.value = true
+        localStorage.setItem('search_alert_shown', 'true')
+      }
+    }, 20000) // 20 seconds
+  }
 })
+
+const handleSearchAlertSubmit = (email: string) => {
+  console.log('Saving alert on Home for:', email, filters.value)
+}
+
 </script>
 
 <template>
@@ -947,8 +973,30 @@ onMounted(() => {
       :scroll-to-top="false"
       @update:current-page="handlePageChange"
     />
+
+    <!-- End of List Search Alert CTA -->
+    <div class="home-alert-container">
+      <SearchAlertBox 
+        v-if="activeFiltersCount > 0 && paginatedListings.length > 0"
+        :location-label="filters.city || filters.region || ''"
+        :ad-type-label="filters.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
+        @click="showSearchAlertModal = true"
+      />
+    </div>
+
+    <!-- Search Alert Global Modal -->
+    <Teleport to="body">
+      <SearchAlertModal 
+        v-if="showSearchAlertModal"
+        :active-filters="filters"
+        :location-label="filters.city || filters.region || ''"
+        @close="showSearchAlertModal = false"
+        @submit="handleSearchAlertSubmit"
+      />
+    </Teleport>
   </div>
 </template>
+
 
 <style scoped>
 .categories-section {
@@ -1182,8 +1230,17 @@ onMounted(() => {
   }
   
   .category-icon {
-    font-size: 2.2rem;
+    width: 60px;
+    height: 60px;
     margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-radius: 16px;
+    padding: 0.75rem;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+  }
+  
+  .category-icon img {
+    filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(224deg) brightness(102%) contrast(97%);
   }
   
   .category-name {
@@ -1513,5 +1570,13 @@ onMounted(() => {
     transform: translate(30px, 30px);
   }
 }
+
+.home-alert-container {
+  max-width: 1400px;
+  margin: 0 auto 4rem auto;
+  padding: 0 2rem;
+}
 </style>
+
+
 

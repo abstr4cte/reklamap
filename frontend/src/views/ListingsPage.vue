@@ -15,6 +15,9 @@ import CategoryDescription from '../components/CategoryDescription.vue'
 import { useSeo } from '../composables/useSeo'
 import { categoryDescriptions, cityDescriptions } from '../data/categoryDescriptions'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
+import SearchAlertModal from '../components/SearchAlertModal.vue'
+import SearchAlertBox from '../components/SearchAlertBox.vue'
+
 
 // Funkcja formatująca adres i miasto, taka sama jak w AdCard
 const formatLocation = (location: string, city: string) => {
@@ -72,6 +75,9 @@ const showMapOnMobile = ref(false)
 const showSortPanel = ref(false)
 const isLegendVisible = ref(false)
 const showMapButton = ref(false)
+const showSearchAlertModal = ref(false)
+const hasShownAlertModal = ref(localStorage.getItem('search_alert_shown') === 'true')
+
 
 const sortOptions = [
   { value: 'newest', label: 'Najnowsze', description: 'Od najnowszych' },
@@ -437,9 +443,11 @@ const filters = ref({
 
 // Lokalizacja - podobnie jak na stronie głównej
 const locationQuery = ref('')
+const tempLocationQuery = ref('')
 const isLocationMenuOpen = ref(false)
 const apiLocationResults = ref<LocationResult[]>([])
 const isLoadingLocations = ref(false)
+
 
 interface LocationSuggestion {
   type: 'region' | 'city'
@@ -461,11 +469,13 @@ const popularLocations: LocationSuggestion[] = [
 ]
 
 const locationSuggestions = computed(() => {
-  if (!locationQuery.value) {
+  const currentQuery = showFiltersModal.value ? tempLocationQuery.value : locationQuery.value
+  
+  if (!currentQuery) {
     return popularLocations
   }
 
-  const query = locationQuery.value.toLowerCase()
+  const query = currentQuery.toLowerCase()
   const suggestions: LocationSuggestion[] = []
 
   // Filter regions from JSON (instant)
@@ -555,25 +565,32 @@ const locationSuggestions = computed(() => {
 })
 
 const selectLocation = (suggestion: LocationSuggestion) => {
-  locationQuery.value = suggestion.label
+  if (showFiltersModal.value) {
+    tempLocationQuery.value = suggestion.label
+  } else {
+    locationQuery.value = suggestion.label
+  }
+  
+  const targetFilters = showFiltersModal.value ? tempFilters.value : filters.value
   
   if (suggestion.type === 'region') {
     // Find the matching region ID from polishLocations
     const matchingRegion = polishLocations.voivodeships.find(
       v => v.name === suggestion.label
     )
-    filters.value.region = matchingRegion?.id || suggestion.value
-    filters.value.city = ''
-    filters.value.selectedLocationCoords = null
+    targetFilters.region = matchingRegion?.id || suggestion.value
+    targetFilters.city = ''
+    targetFilters.selectedLocationCoords = null
   } else {
-    filters.value.city = suggestion.value
-    filters.value.region = ''
+    targetFilters.city = suggestion.value
+    targetFilters.region = ''
     // Store coordinates if available from API
-    filters.value.selectedLocationCoords = suggestion.coords || null
+    targetFilters.selectedLocationCoords = suggestion.coords || null
   }
   
   isLocationMenuOpen.value = false
 }
+
 
 const handleLocationFocus = () => {
   isLocationMenuOpen.value = true
@@ -586,10 +603,12 @@ const handleLocationBlur = () => {
 }
 
 const handleLocationInput = () => {
+  const currentQuery = showFiltersModal.value ? tempLocationQuery.value : locationQuery.value
+  
   // Trigger API search when user types
-  if (locationQuery.value.length >= 2) {
+  if (currentQuery.length >= 2) {
     isLoadingLocations.value = true
-    debouncedSearchLocations(locationQuery.value, (results) => {
+    debouncedSearchLocations(currentQuery, (results) => {
       apiLocationResults.value = results
       isLoadingLocations.value = false
     })
@@ -597,19 +616,32 @@ const handleLocationInput = () => {
     apiLocationResults.value = []
   }
   
+  const targetFilters = showFiltersModal.value ? tempFilters.value : filters.value
+  
   // If user types custom text without selecting, treat as city search
-  filters.value.city = locationQuery.value
-  filters.value.region = ''
-  filters.value.selectedLocationCoords = null
+  targetFilters.city = currentQuery
+  targetFilters.region = ''
+  targetFilters.selectedLocationCoords = null
 }
 
+
 const clearLocation = () => {
-  locationQuery.value = ''
-  filters.value.city = ''
-  filters.value.region = ''
-  filters.value.selectedLocationCoords = null
+  if (showFiltersModal.value) {
+    tempLocationQuery.value = ''
+    if (tempFilters.value) {
+      tempFilters.value.city = ''
+      tempFilters.value.region = ''
+      tempFilters.value.selectedLocationCoords = null
+    }
+  } else {
+    locationQuery.value = ''
+    filters.value.city = ''
+    filters.value.region = ''
+    filters.value.selectedLocationCoords = null
+  }
   apiLocationResults.value = []
 }
+
 
 const typeColors: Record<string, string> = {
   billboard: '#EF4444',
@@ -1415,8 +1447,10 @@ const handleClickOutside = (event: MouseEvent) => {
 const openFiltersModal = () => {
   // Skopiuj aktualne filtry do tymczasowych
   tempFilters.value = JSON.parse(JSON.stringify(filters.value))
+  tempLocationQuery.value = locationQuery.value
   showFiltersModal.value = true
 }
+
 
 // Funkcja zamykająca modal bez stosowania zmian
 const closeFiltersModal = () => {
@@ -1426,11 +1460,15 @@ const closeFiltersModal = () => {
 
 // Funkcja stosująca filtry z modalu
 const applyFilters = () => {
+  if (!tempFilters.value) return
+  
   // Ustaw flagę resetowania
   isResettingFilters.value = true
+
   
   // Zastosuj tymczasowe filtry
   filters.value = JSON.parse(JSON.stringify(tempFilters.value))
+  locationQuery.value = tempLocationQuery.value
   
   // Jeśli użytkownik wpisał cenę, ustaw priceDisplay na tę jednostkę
   // Aby wyniki były przełączone na tę jednostkę (jak przy sortowaniu)
@@ -1441,6 +1479,8 @@ const applyFilters = () => {
   // Zamknij modal
   showFiltersModal.value = false
   tempFilters.value = null
+  tempLocationQuery.value = ''
+
   
   // Reset to page 1
   currentPage.value = 1
@@ -2074,7 +2114,25 @@ onMounted(async () => {
   
   // Oznacz że inicjalizacja jest ukończona
   isInitialized.value = true
+
+  // Logic for showing the search alert modal after 20 seconds
+  if (!hasShownAlertModal.value && activeFiltersCount.value > 0) {
+    setTimeout(() => {
+      // Check again if we haven't shown it yet in this session
+      if (!hasShownAlertModal.value) {
+        showSearchAlertModal.value = true
+        hasShownAlertModal.value = true
+        localStorage.setItem('search_alert_shown', 'true')
+      }
+    }, 20000) // 20 seconds
+  }
 })
+
+const handleSearchAlertSubmit = (email: string) => {
+  console.log('Saving alert for:', email, filters.value)
+  // Here we would call the API to save the alert
+}
+
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
@@ -2268,7 +2326,16 @@ onBeforeUnmount(() => {
           </svg>
           <h3>Brak ogłoszeń</h3>
           <p>Nie znaleziono ogłoszeń pasujących do wyszukiwania</p>
+          
+          <SearchAlertBox 
+            v-if="activeFiltersCount > 0"
+            :location-label="locationQuery || (route.params.city ? deslugify(route.params.city as string) : '')"
+            :ad-type-label="filters && filters.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
+            @click="showSearchAlertModal = true"
+          />
+
         </div>
+
 
         <div v-else class="listings-list" :class="viewMode">
           <router-link
@@ -2368,7 +2435,16 @@ onBeforeUnmount(() => {
           @update:current-page="onPageChange"
           class="pagination-bottom"
         />
+
+        <SearchAlertBox 
+          v-if="activeFiltersCount > 0 && filteredListings.length > 0"
+          :location-label="locationQuery || (route.params.city ? deslugify(route.params.city as string) : '')"
+          :ad-type-label="filters && filters.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
+          @click="showSearchAlertModal = true"
+        />
+
       </div>
+
 
       <!-- Mobile toggle button (shows either list or map) -->
       <button v-if="isMobile && showMapButton" @click="toggleMobileMap" class="mobile-map-toggle">
@@ -2500,7 +2576,7 @@ onBeforeUnmount(() => {
               <div class="location-autocomplete">
                 <div class="input-with-clear">
                   <input
-                    v-model="locationQuery"
+                    v-model="tempLocationQuery"
                     type="text"
                     placeholder="Wpisz region, miasto lub ulicę"
                     class="filter-input"
@@ -2510,7 +2586,7 @@ onBeforeUnmount(() => {
                     autocomplete="off"
                   />
                   <button 
-                    v-if="locationQuery" 
+                    v-if="tempLocationQuery" 
                     type="button" 
                     class="clear-button" 
                     @click.stop="clearLocation"
@@ -2526,7 +2602,7 @@ onBeforeUnmount(() => {
                     <div class="loading-spinner"></div>
                     <span>Szukam...</span>
                   </div>
-                  <div v-else-if="!locationQuery" class="suggestion-section">
+                  <div v-else-if="!tempLocationQuery" class="suggestion-section">
                     <div class="suggestion-header">Popularne lokalizacje</div>
                     <div
                       v-for="suggestion in locationSuggestions"
@@ -3075,6 +3151,19 @@ onBeforeUnmount(() => {
     </div>
     </Teleport>
 
+    <!-- Search Alert Global Modal -->
+    <Teleport to="body">
+      <SearchAlertModal 
+        v-if="showSearchAlertModal && filters"
+        :active-filters="filters"
+        :location-label="locationQuery || (route.params.city ? deslugify(route.params.city as string) : '')"
+        @close="showSearchAlertModal = false"
+        @submit="handleSearchAlertSubmit"
+      />
+
+    </Teleport>
+
+
     <!-- Category/City Description for SEO - poza listings-page -->
     <div class="description-wrapper">
       <CategoryDescription 
@@ -3353,6 +3442,13 @@ onBeforeUnmount(() => {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Hide h1 on mobile */
+@media (max-width: 768px) {
+  .listings-title {
+    display: none;
+  }
 }
 
 .search-bar {

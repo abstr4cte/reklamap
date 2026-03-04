@@ -37,7 +37,13 @@ Route::middleware(['throttle:10,60', 'verify.recaptcha'])->group(function () {
     Route::post('listings/{id}/contact', [AdvertisementController::class, 'contactOwner']);
     Route::post('contact', [AdvertisementController::class, 'submitContact']);
     Route::post('newsletter/subscribe', [AdvertisementController::class, 'subscribeNewsletter']);
+    Route::post('search-alerts', [\App\Http\Controllers\SearchAlertController::class, 'store']);
 });
+
+Route::get('search-alerts/unsubscribe/{token}', [\App\Http\Controllers\SearchAlertController::class, 'unsubscribe'])->name('search-alerts.unsubscribe');
+Route::get('newsletter/unsubscribe/{token}', [\App\Http\Controllers\NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
+
+
 
 // ─── Zarządzanie tokenami ─────────────────────────────────────────────────────
 // Rate limit na wysyłanie linku (max 5 prób na godzinę z jednego IP) + reCAPTCHA

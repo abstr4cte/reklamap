@@ -249,6 +249,24 @@ export const api = {
         }
         return response.json()
     },
+    async saveSearchAlert(data: { email: string, type?: string, city?: string, region?: string, filters?: any, recaptcha_token?: string }): Promise<{ message: string }> {
+        const response = await fetch(`${API_URL}/search-alerts`, {
+            method: 'POST',
+            headers: {
+                ...withKey({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                })
+            },
+            body: JSON.stringify(data),
+        })
+        if (!response.ok) {
+            const error = await response.json()
+            throw new Error(error.message || 'Failed to save search alert')
+        }
+        return response.json()
+    },
+
 
     storage: {
         async upload(file: File): Promise<string> {

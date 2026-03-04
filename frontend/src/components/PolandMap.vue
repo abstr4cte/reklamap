@@ -77,9 +77,9 @@ const isMobile = ref(window.innerWidth < 768)
 const headerHeight = ref(80)
 const mapSection = ref<HTMLElement | null>(null)
 const showMobileToggle = ref(false)
-const toggleButtonTop = ref(0)
+const isMobileClamped = ref(false)
 const showDesktopToggle = ref(false)
-const desktopToggleTop = ref(0)
+const isDesktopClamped = ref(false)
 
 const typeColors: Record<string, string> = {
   billboard: '#EF4444',
@@ -433,9 +433,8 @@ onMounted(() => {
       
       // Position button at bottom of viewport, but clamp it to stay within map bounds
       if (showMobileToggle.value) {
-        const buttonY = window.innerHeight - 80
-        // Don't let button go below the map (with 60px margin from bottom)
-        toggleButtonTop.value = Math.min(buttonY, mapBottom - 60)
+        // Clamp when map bottom is closer than viewport bottom - offset
+        isMobileClamped.value = mapBottom < window.innerHeight - 20
       }
     } else {
       // Desktop version
@@ -443,9 +442,7 @@ onMounted(() => {
       
       // Position button at bottom of viewport, but clamp it to stay within map bounds
       if (showDesktopToggle.value) {
-        const buttonY = window.innerHeight - 80
-        // Don't let button go below the map (with 60px margin from bottom)
-        desktopToggleTop.value = Math.min(buttonY, mapBottom - 60)
+        isDesktopClamped.value = mapBottom < window.innerHeight - 20
       }
     }
   }
@@ -561,13 +558,12 @@ onMounted(() => {
         @click="isLegendVisible = false"
       ></div>
 
-      <!-- Desktop toggle button (shows list) -->
       <button 
         v-if="!isMobile" 
         @click="scrollToAdGrid" 
         class="desktop-list-toggle"
+        :class="{ 'is-clamped': isDesktopClamped }"
         :style="{
-          top: showDesktopToggle ? `${desktopToggleTop}px` : 'auto',
           opacity: showDesktopToggle ? 0.9 : 0,
           visibility: showDesktopToggle ? 'visible' : 'hidden',
           pointerEvents: showDesktopToggle ? 'auto' : 'none'
@@ -581,13 +577,12 @@ onMounted(() => {
         </svg>
       </button>
 
-      <!-- Mobile toggle button (shows list) -->
       <button 
         v-if="isMobile" 
         @click="scrollToAdGrid" 
         class="mobile-list-toggle"
+        :class="{ 'is-clamped': isMobileClamped }"
         :style="{
-          top: showMobileToggle ? `${toggleButtonTop}px` : 'auto',
           opacity: showMobileToggle ? 0.9 : 0,
           visibility: showMobileToggle ? 'visible' : 'hidden',
           pointerEvents: showMobileToggle ? 'auto' : 'none'
@@ -888,6 +883,7 @@ onMounted(() => {
 /* Desktop List Toggle Button */
 .desktop-list-toggle {
   position: fixed;
+  bottom: 38px;
   left: 50%;
   transform: translateX(-50%);
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -902,7 +898,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   opacity: 0.9;
@@ -910,6 +906,11 @@ onMounted(() => {
   white-space: nowrap;
   z-index: 100;
   pointer-events: none;
+}
+
+.desktop-list-toggle.is-clamped {
+  position: absolute;
+  bottom: 18px;
 }
 
 .desktop-list-toggle:hover {
@@ -1000,6 +1001,7 @@ onMounted(() => {
 
   .mobile-list-toggle {
     position: fixed;
+    bottom: 38px;
     left: 50%;
     transform: translateX(-50%);
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1014,7 +1016,7 @@ onMounted(() => {
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: opacity 0.2s ease, visibility 0.2s ease;
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     opacity: 0.9;
@@ -1022,6 +1024,11 @@ onMounted(() => {
     white-space: nowrap;
     z-index: 100;
     pointer-events: none;
+  }
+
+  .mobile-list-toggle.is-clamped {
+    position: absolute;
+    bottom: 18px;
   }
 
   .mobile-list-toggle:hover {

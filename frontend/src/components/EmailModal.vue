@@ -20,10 +20,21 @@ const isSuccess = ref(false)
 const errorMessage = ref('')
 
 const handleSubmit = async () => {
-  if (!email.value || !email.value.includes('@')) {
-    errorMessage.value = 'Proszę podać poprawny adres email'
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return re.test(email)
+  }
+
+  if (!email.value) {
+    errorMessage.value = 'Email jest wymagany'
     return
   }
+  
+  if (!validateEmail(email.value)) {
+    errorMessage.value = 'Proszę podać poprawny adres e-mail'
+    return
+  }
+
 
   errorMessage.value = ''
   isSubmitting.value = true
@@ -96,11 +107,14 @@ const handleClose = () => {
               </svg>
               <input
                 v-model="email"
-                type="email"
+                type="text"
                 placeholder="twoj@email.com"
                 required
                 class="email-input"
+                :class="{ 'error': errorMessage }"
+                @input="errorMessage = ''"
               />
+
             </div>
             
             <div v-if="errorMessage" class="error-message">
@@ -240,9 +254,15 @@ const handleClose = () => {
 
 .email-input:focus {
   outline: none;
-  border-color: #4F46E5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
+
+.email-input.error {
+  border-color: #EF4444;
+  background-color: #FEF2F2;
+}
+
 
 .submit-btn {
   width: 100%;

@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Http;
 use App\Mail\ContactAdvertisementOwner;
 use App\Mail\AdCreatedConfirmationMail;
 use App\Rules\ProfanityRule;
+use App\Services\SearchAlertService;
+use App\Models\Newsletter;
+
+
 
 class AdvertisementController extends Controller
 {
@@ -123,10 +127,34 @@ class AdvertisementController extends Controller
             \Log::error('Error sending ad creation confirmation email: ' . $e->getMessage());
         }
 
+        // Check for search alerts
+        try {
+            (new SearchAlertService())->checkAlerts($ad);
+        } catch (\Exception $e) {
+            \Log::error('Error checking search alerts: ' . $e->getMessage());
+        }
+
+
+        // Handle newsletter subscription
+        if ($request->input('subscribe_newsletter')) {
+            try {
+                // Check if already subscribed
+                if (!Newsletter::where('email', $ad->owner_email)->exists()) {
+                    Newsletter::create([
+                        'email' => $ad->owner_email,
+                        'unsubscribe_token' => \Illuminate\Support\Str::random(40),
+                    ]);
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error creating newsletter subscription from ad creation: ' . $e->getMessage());
+            }
+        }
+
         // Clear sitemap cache and notify Google
         $this->notifySearchEngines();
 
         return response()->json($ad, 201);
+
     }
 
     public function show(string $id)
@@ -368,7 +396,9 @@ class AdvertisementController extends Controller
         try {
             \App\Models\Newsletter::create([
                 'email' => $validated['email'],
+                'unsubscribe_token' => \Illuminate\Support\Str::random(40),
             ]);
+
 
             return response()->json(['message' => 'Dziękujemy za zapisanie się do newslettera!']);
         } catch (\Illuminate\Database\QueryException $e) {
