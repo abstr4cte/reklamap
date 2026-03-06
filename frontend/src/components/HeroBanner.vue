@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
-import bannerImage from '../assets/banner-section.png'
+import bannerImage from '../assets/banner.jpg'
 
 interface Filters {
   keyword: string
