@@ -1290,9 +1290,14 @@ const handleSearchAlertSubmit = (email: string) => {
     border-radius: 16px;
     padding: 0.75rem;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .category-icon img {
+    width: 100%;
+    height: 100%;
     filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(224deg) brightness(102%) contrast(97%);
   }
   
