@@ -1669,17 +1669,17 @@ const initMap = () => {
   // Współrzędne centrum Polski
   const polandCenter: [number, number] = [52.0, 19.0]
   
-  // Granice Polski (przybliżone) - z marginesem
+  // Granice Polski (bardziej rozszerzone) - aby markery/popupy nie były ucinane
   const polandBounds = L.latLngBounds(
-    [48.5, 13.5],  // południowo-zachodni róg (z marginesem)
-    [55.5, 24.5]   // północno-wschodni róg (z marginesem)
+    [47.5, 12.0],  // południowo-zachodni róg
+    [57.5, 26.0]   // północno-wschodni róg
   )
   
   // Tworzymy mapę z widokiem na całą Polskę i ograniczeniami
   map = L.map(mapContainer.value, {
     maxBounds: polandBounds,        // Nie można przesunąć mapy poza te granice
     maxBoundsViscosity: 1.0,        // Twarde ograniczenie (nie można przeciągnąć poza)
-    minZoom: 5,                      // Minimalne przybliżenie (cała Polska + więcej)
+    minZoom: 4.5,                      // Minimalne przybliżenie (cała Polska + więcej)
     maxZoom: 18,                     // Maksymalne przybliżenie
     scrollWheelZoom: false,          // Disable scroll wheel zoom until activated
     dragging: !isMobile.value,       // Disable dragging on mobile until activated

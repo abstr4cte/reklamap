@@ -551,17 +551,17 @@ const isInPoland = (lat: number, lng: number): boolean => {
 const initMap = () => {
   if (!mapContainer.value || map) return
 
-  // Granice Polski (przybliżone) - z marginesem
+  // Granice Polski (bardziej rozszerzone) - aby markery/popupy nie były ucinane
   const polandBounds = L.latLngBounds(
-    [48.5, 13.5],  // południowo-zachodni róg (z marginesem)
-    [55.5, 24.5]   // północno-wschodni róg (z marginesem)
+    [47.5, 12.0],  // południowo-zachodni róg
+    [57.5, 26.0]   // północno-wschodni róg
   )
 
   // Center on Poland (approximate geographic center)
   map = L.map(mapContainer.value, {
     maxBounds: polandBounds,        // Nie można przesunąć mapy poza te granice
     maxBoundsViscosity: 1.0,        // Twarde ograniczenie (nie można przeciągnąć poza)
-    minZoom: 6,                      // Minimalne przybliżenie (cała Polska)
+    minZoom: 4.5,                      // Minimalne przybliżenie (cała Polska)
     maxZoom: 18                      // Maksymalne przybliżenie
   }).setView([52.0, 19.0], 6)
 
