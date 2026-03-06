@@ -24,6 +24,20 @@
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
         }
 
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
+
+        .header img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-right: 15px;
+        }
+
         .header h1 {
             color: white;
             margin: 0;
@@ -103,7 +117,10 @@
 
 <body>
     <div class="header">
-        <h1>ReklaMap</h1>
+        <div class="header-content">
+            <img src="https://reklamap.pl/logo.png" alt="ReklaMap" />
+            <h1>ReklaMap</h1>
+        </div>
     </div>
 
     <div class="content">

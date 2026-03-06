@@ -14,7 +14,7 @@ class BlogController extends Controller
     {
         $query = BlogPost::where('status', 'published')
             ->with('user')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('published_at', 'desc');
 
         // Filter by category if provided
         if ($request->has('category') && $request->category !== 'wszystkie') {
@@ -25,9 +25,13 @@ class BlogController extends Controller
             // Return image URL only if file exists
             $imageUrl = null;
             if ($post->image) {
-                $imagePath = storage_path('app/public/' . $post->image);
-                if (file_exists($imagePath)) {
-                    $imageUrl = url('storage/' . $post->image);
+                if (filter_var($post->image, FILTER_VALIDATE_URL)) {
+                    $imageUrl = $post->image;
+                } else {
+                    $imagePath = storage_path('app/public/' . $post->image);
+                    if (file_exists($imagePath)) {
+                        $imageUrl = url('storage/' . $post->image);
+                    }
                 }
             }
             
@@ -61,9 +65,13 @@ class BlogController extends Controller
         // Return image URL only if file exists
         $imageUrl = null;
         if ($post->image) {
-            $imagePath = storage_path('app/public/' . $post->image);
-            if (file_exists($imagePath)) {
-                $imageUrl = url('storage/' . $post->image);
+            if (filter_var($post->image, FILTER_VALIDATE_URL)) {
+                $imageUrl = $post->image;
+            } else {
+                $imagePath = storage_path('app/public/' . $post->image);
+                if (file_exists($imagePath)) {
+                    $imageUrl = url('storage/' . $post->image);
+                }
             }
         }
 

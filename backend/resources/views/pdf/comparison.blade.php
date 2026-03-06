@@ -20,6 +20,16 @@
             margin-bottom: 20px;
             border-bottom: 2px solid #e5e7eb;
             padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header-logo {
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
         }
 
         .header h1 {
@@ -99,6 +109,7 @@
 
 <body>
     <div class="header">
+        <img src="https://reklamap.pl/logo.png" alt="ReklaMap" class="header-logo" />
         <h1>Porównanie ogłoszeń</h1>
     </div>
 

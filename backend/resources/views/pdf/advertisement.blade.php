@@ -14,6 +14,19 @@
             margin-bottom: 2rem;
             border-bottom: 2px solid #e5e7eb;
             padding-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .header-logo {
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+        }
+
+        .header-content {
+            flex: 1;
         }
 
         .title {
@@ -21,6 +34,7 @@
             font-weight: bold;
             margin-bottom: 0.5rem;
             color: #111827;
+            margin-top: 0;
         }
 
         .price {
@@ -107,8 +121,10 @@
 
 <body>
     <div class="header">
-        <div class="title">{{ $advertisement->title }}</div>
-        <div class="price">
+        <img src="https://reklamap.pl/logo.png" alt="ReklaMap" class="header-logo" />
+        <div class="header-content">
+            <div class="title">{{ $advertisement->title }}</div>
+            <div class="price">
             {{ number_format($advertisement->price, 2, ',', ' ') }} PLN
             <span style="font-size: 14px; color: #6b7280; font-weight: normal;">
                 /
@@ -129,6 +145,7 @@
                     style="font-size: 14px; color: #4f46e5; border: 1px solid #4f46e5; padding: 2px 6px; border-radius: 4px; margin-left: 10px; font-weight: normal;">Do
                     negocjacji</span>
             @endif
+            </div>
         </div>
     </div>
 

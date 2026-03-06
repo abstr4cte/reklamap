@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import logoImage from '../assets/logo.png'
 
 const currentYear = new Date().getFullYear()
 
@@ -111,7 +112,10 @@ const popularSearches = [
     <div class="footer-container">
       <div class="footer-content">
         <div class="footer-section brand-section">
-          <h3>ReklaMap</h3>
+          <div class="brand-header">
+            <img :src="logoImage" alt="ReklaMap" class="brand-logo" />
+            <h3>ReklaMap</h3>
+          </div>
           <p class="footer-description">
             Platforma do wynajmu powierzchni reklamowych w całej Polsce.
             Szybko, wygodnie i bezpiecznie.
@@ -250,6 +254,18 @@ const popularSearches = [
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.brand-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
 }
 
 .footer-section h3 {

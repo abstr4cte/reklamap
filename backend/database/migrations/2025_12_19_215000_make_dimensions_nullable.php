@@ -23,9 +23,9 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('advertisements', function (Blueprint $table) {
-            // Make width and height required again
-            $table->decimal('width', 8, 2)->nullable(false)->change();
-            $table->decimal('height', 8, 2)->nullable(false)->change();
+            // Keep width and height nullable for rollback compatibility
+            $table->decimal('width', 8, 2)->nullable()->change();
+            $table->decimal('height', 8, 2)->nullable()->change();
         });
     }
 };

@@ -3,6 +3,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { useSeo } from '../composables/useSeo'
+import logoImage from '../assets/logo.png'
 
 const route = useRoute()
 const router = useRouter()
@@ -72,7 +73,7 @@ watch(post, (newPost) => {
           'name': 'ReklaMap',
           'logo': {
             '@type': 'ImageObject',
-            'url': `${typeof window !== 'undefined' ? window.location.origin : ''}/vite.svg`
+            'url': logoImage
           }
         }
       }
@@ -298,7 +299,6 @@ const shareToSocial = (platform: 'facebook' | 'twitter' | 'whatsapp' | 'linkedin
         </button>
 
         <article class="post-content">
-          <p class="lead">{{ post.excerpt }}</p>
           <div v-html="post.content || '<p>Treść artykułu w przygotowaniu...</p>'"></div>
         </article>
 

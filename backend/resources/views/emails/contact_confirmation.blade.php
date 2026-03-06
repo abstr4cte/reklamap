@@ -26,6 +26,20 @@
             text-align: center;
         }
 
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
+
+        .logo-image {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-right: 15px;
+        }
+
         .logo {
             font-size: 32px;
             font-weight: 800;
@@ -179,7 +193,10 @@
     <div class="email-container">
         <!-- Header -->
         <div class="header">
-            <h1 class="logo">ReklaMap</h1>
+            <div class="header-content">
+                <img src="https://reklamap.pl/logo.png" alt="ReklaMap" class="logo-image" />
+                <h1 class="logo">ReklaMap</h1>
+            </div>
             <p class="tagline">Portal powierzchni reklamowych</p>
         </div>
 

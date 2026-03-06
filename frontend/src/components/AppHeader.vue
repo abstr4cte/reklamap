@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import logoImage from '../assets/logo.png'
 
 const props = defineProps<{
   favoritesCount: number
@@ -91,11 +92,7 @@ watch(isMobileMenuOpen, (isOpen) => {
     <div class="container">
       <div class="header-left">
         <router-link to="/" class="logo" @click="closeMobileMenu">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="40" height="40" rx="8" fill="#4F46E5"/>
-            <path d="M12 15L20 10L28 15V25L20 30L12 25V15Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="20" cy="20" r="3" fill="white"/>
-          </svg>
+          <img :src="logoImage" alt="ReklaMap" class="logo-image" />
           <span class="logo-text">ReklaMap</span>
         </router-link>
       </div>
@@ -368,7 +365,13 @@ watch(isMobileMenuOpen, (isOpen) => {
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.25rem;
+}
+
+.logo-image {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
 }
 
 .logo-text {

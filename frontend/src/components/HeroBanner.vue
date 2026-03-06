@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
+import bannerImage from '../assets/banner.jpg'
 
 interface Filters {
   keyword: string
@@ -746,12 +747,13 @@ onBeforeUnmount(() => {
     <div class="hero-background">
       <div class="gradient-overlay"></div>
       <img
-        src="https://images.pexels.com/photos/220365/pexels-photo-220365.jpeg?auto=compress&cs=tinysrgb&w=1920"
+        :src="bannerImage"
         alt="Advertising surfaces"
         class="hero-image"
       />
     </div>
 
+    <!-- ... rest of the code remains the same ... -->
     <div class="hero-content">
       <div class="hero-text">
         <h1 class="hero-title animate-title">Znajdź idealną powierzchnię reklamową</h1>

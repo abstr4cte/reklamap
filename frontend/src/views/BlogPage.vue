@@ -498,9 +498,9 @@ const handleNewsletterSubmit = async () => {
 
 .newsletter-btn {
   padding: 1rem 2rem;
-  background: white;
-  color: #667eea;
-  border: none;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+  color: white;
+  border: 2px solid rgba(255,255,255,0.4);
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
@@ -511,6 +511,8 @@ const handleNewsletterSubmit = async () => {
 }
 
 .newsletter-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.2) 100%);
+  border-color: rgba(255,255,255,0.6);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
