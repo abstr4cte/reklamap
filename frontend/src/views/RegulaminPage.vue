@@ -207,7 +207,10 @@
 }
 
 .hero-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%), url('../assets/banner-section.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   padding: 4rem 0;
   color: white;
   text-align: center;
