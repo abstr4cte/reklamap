@@ -627,6 +627,10 @@
                 @endforeach
             </tr>
             @endif
+            @php
+                // Pokazuj "Dostosowanie do otoczenia" tylko jeśli jest na liście widocznych pól
+                $showAmbientLightControl = in_array('ambient_light_control', $visibleFields);
+            @endphp
             @if($showAmbientLightControl)
             <tr>
                 <th>Dostosowanie do otoczenia</th>
