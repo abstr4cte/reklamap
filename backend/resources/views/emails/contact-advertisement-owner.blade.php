@@ -40,6 +40,7 @@
             color: #ffffff;
             margin: 0;
             letter-spacing: -0.5px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
         .tagline {
             color: rgba(255, 255, 255, 0.9);
@@ -170,7 +171,7 @@
         <!-- Header -->
         <div class="header">
             <div class="header-content">
-                <img src="https://reklamap.pl/logo.png" alt="ReklaMap" class="logo-image" />
+                <img src="{{ asset('logo.png') }}" alt="ReklaMap" class="logo-image" />
                 <h1 class="logo">ReklaMap</h1>
             </div>
             <p class="tagline">Portal powierzchni reklamowych</p>

@@ -39,6 +39,7 @@
         }
 
         .header h1 {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             color: white;
             margin: 0;
             font-size: 28px;
@@ -118,7 +119,7 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <img src="https://reklamap.pl/logo.png" alt="ReklaMap" />
+            <img src="{{ asset('logo.png') }}" alt="ReklaMap" />
             <h1>ReklaMap</h1>
         </div>
     </div>

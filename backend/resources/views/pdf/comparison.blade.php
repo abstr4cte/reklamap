@@ -109,7 +109,7 @@
 
 <body>
     <div class="header">
-        <img src="https://reklamap.pl/logo.png" alt="ReklaMap" class="header-logo" />
+        <img src="{{ asset('logo.png') }}" alt="ReklaMap" class="header-logo" />
         <h1>Porównanie ogłoszeń</h1>
     </div>
 

@@ -121,7 +121,7 @@
 
 <body>
     <div class="header">
-        <img src="https://reklamap.pl/logo.png" alt="ReklaMap" class="header-logo" />
+        <img src="{{ asset('logo.png') }}" alt="ReklaMap" class="header-logo" />
         <div class="header-content">
             <div class="title">{{ $advertisement->title }}</div>
             <div class="price">
