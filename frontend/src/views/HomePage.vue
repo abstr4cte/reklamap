@@ -12,7 +12,7 @@ import { filtersToQueryParams, queryParamsToFilters, normalizePolishChars } from
 import { useSeo } from '../composables/useSeo'
 import SearchAlertModal from '../components/SearchAlertModal.vue'
 import SearchAlertBox from '../components/SearchAlertBox.vue'
-import { mapTypeToUrlFormat as getTypeLabel } from '../utils/typeMapping'
+import polishLocations from '../data/polishLocations.json'
 
 
 
@@ -20,6 +20,22 @@ const emit = defineEmits<{
   toggleFavorite: [id: string]
   toggleComparison: [id: string]
 }>()
+
+// Helper to map type to Polish label
+const getTypeLabel = (type: string): string => {
+  const typeLabels: Record<string, string> = {
+    'billboard': 'Billboardy',
+    'citylight': 'Citylighty',
+    'led_screen': 'Ekrany LED',
+    'banner': 'Banery',
+    'wall': 'Ściany reklamowe',
+    'totem': 'Totemy reklamowe',
+    'transport': 'Reklama w transporcie',
+    'mobile': 'Reklama mobilna',
+    'other': 'Inne'
+  }
+  return typeLabels[type] || 'ogłoszenie'
+}
 
 const route = useRoute()
 const router = useRouter()
@@ -650,6 +666,15 @@ const checkIfMobile = () => {
   isMobile.value = window.innerWidth <= 768
 }
 
+const getCurrentLocationLabel = computed(() => {
+  if (filters.value.city) return filters.value.city
+  if (filters.value.region) {
+    const region = (polishLocations as any).voivodeships.find((v: any) => v.id === filters.value.region)
+    return region ? region.name : filters.value.region
+  }
+  return ''
+})
+
 // Przełącz widoczność wszystkich kategorii
 const toggleShowAllCategories = () => {
   showAllCategories.value = !showAllCategories.value
@@ -981,7 +1006,16 @@ const handleSearchAlertSubmit = (email: string) => {
       @update:view-mode="viewMode = $event"
       @update:sort-by="sortBy = $event"
       @update:hovered-ad-id="hoveredAdId = $event"
-    />
+    >
+      <template #empty-content>
+        <SearchAlertBox 
+          v-if="activeFiltersCount > 0"
+          :location-label="getCurrentLocationLabel"
+          :ad-type-label="filters.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
+          @click="showSearchAlertModal = true"
+        />
+      </template>
+    </AdGrid>
     <Pagination
       v-if="!isLoading && paginatedListings.length > 0"
       :current-page="currentPage"
@@ -997,7 +1031,7 @@ const handleSearchAlertSubmit = (email: string) => {
     <div class="home-alert-container">
       <SearchAlertBox 
         v-if="activeFiltersCount > 0 && paginatedListings.length > 0"
-        :location-label="filters.city || filters.region || ''"
+        :location-label="getCurrentLocationLabel"
         :ad-type-label="filters.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
         @click="showSearchAlertModal = true"
       />

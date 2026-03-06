@@ -289,6 +289,7 @@ onUnmounted(() => {
         </svg>
         <h3>Nie znaleziono ogłoszeń</h3>
         <p>Spróbuj zmienić kryteria wyszukiwania</p>
+        <slot name="empty-content"></slot>
       </div>
 
       <div v-else :class="viewMode === 'grid' ? 'listings-grid' : 'listings-list'">
