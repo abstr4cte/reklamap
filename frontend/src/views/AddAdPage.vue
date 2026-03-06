@@ -25,6 +25,7 @@ import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { slugify } from '../utils/slugify'
 import { Filter } from 'bad-words'
+import { analytics } from '../utils/analytics'
 
 const router = useRouter()
 
@@ -191,6 +192,9 @@ const resolveAddressFromInput = async (query: string) => {
 }
 
 onMounted(() => {
+  // Track start of adding an advertisement
+  analytics.startAddAd()
+
   if (currentStep.value === 3) {
     initMap()
   }
@@ -1143,6 +1147,9 @@ const handleSubmit = async () => {
     } as any) // Casting to any to avoid strict type checks for now if interface mismatches
 
     if (newAd && newAd.id) {
+      // Track conversion in GA4
+      analytics.finishAddAd(formData.value.type, formData.value.city)
+      
       toast.value?.add('Ogłoszenie zostało dodane pomyślnie!', 'success')
       setTimeout(() => {
         // Generowanie linku w nowym formacie SEO-friendly

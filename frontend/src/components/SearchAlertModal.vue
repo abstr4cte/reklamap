@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { api } from '../services/api'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
+import { analytics } from '../utils/analytics'
 
 const props = defineProps<{
   activeFilters: any
@@ -53,6 +54,9 @@ const handleSubmit = async () => {
       filters: props.activeFilters,
       recaptcha_token: recaptchaToken
     })
+
+    // Track search alert creation in GA4
+    analytics.searchAlertCreate(props.activeFilters.city || 'all', props.activeFilters.type || 'all')
 
     emit('submit', email.value)
     isSuccess.value = true

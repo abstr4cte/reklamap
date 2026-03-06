@@ -15,6 +15,7 @@ import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import { useSeo } from '../composables/useSeo'
+import { analytics } from '../utils/analytics'
 
 // Fix Leaflet icon paths
 const DefaultIcon = L.icon({
@@ -749,6 +750,12 @@ const toggleFavorite = () => {
 
   localStorage.setItem('favorites', JSON.stringify(favorites))
   checkFavoriteStatus()
+  
+  // Track favorite event
+  if (favorites.includes(ad.value.id)) {
+    analytics.trackEvent('add_to_favorites', { ad_id: ad.value.id, ad_title: ad.value.title })
+  }
+
   // Użyj niestandardowego zdarzenia, które działa w ramach tej samej karty
   window.dispatchEvent(new CustomEvent('localStorageChange'))
 }
@@ -786,6 +793,12 @@ const toggleComparison = async () => {
 
   localStorage.setItem('comparison', JSON.stringify(comparison))
   checkComparisonStatus()
+  
+  // Track comparison event
+  if (comparison.includes(ad.value.id)) {
+    analytics.addToComparison(ad.value.id)
+  }
+
   // Użyj niestandardowego zdarzenia, które działa w ramach tej samej karty
   window.dispatchEvent(new CustomEvent('localStorageChange'))
 }
@@ -1070,6 +1083,9 @@ const loadAd = async () => {
 
     ad.value = data
     
+    // Track GA4 view event
+    analytics.viewAd(data.id, data.title, data.city)
+    
     // Load daily stats for views
     try {
       const response = await api.getDailyStats(adId)
@@ -1158,6 +1174,7 @@ const submitContactForm = async () => {
 
     // Track email click statistics
     api.incrementEmailClicks(ad.value.id)
+    analytics.sendAdMessage(ad.value.id)
 
     contactSuccess.value = true
     contactForm.value.email = ''
@@ -1221,6 +1238,7 @@ const handleShowPhone = () => {
   showPhone.value = true
   // Track phone click statistics
   api.incrementPhoneClicks(ad.value.id)
+  analytics.clickPhone(ad.value.id, ad.value.title)
 }
 
 const getMaskedPhone = (phone: string | undefined) => {

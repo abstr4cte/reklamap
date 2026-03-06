@@ -17,6 +17,7 @@ import { categoryDescriptions, cityDescriptions } from '../data/categoryDescript
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import SearchAlertModal from '../components/SearchAlertModal.vue'
 import SearchAlertBox from '../components/SearchAlertBox.vue'
+import { analytics } from '../utils/analytics'
 
 
 // Funkcja formatująca adres i miasto, taka sama jak w AdCard
@@ -1491,6 +1492,17 @@ const applyFilters = () => {
     priceDisplay.value = tempFilters.value.priceUnit as 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
   }
   
+  // Track search/filter in GA4
+  if (searchQuery.value) {
+    analytics.search(searchQuery.value)
+  }
+  if (filters.value.type) {
+    analytics.filterUsed('ad_type', filters.value.type)
+  }
+  if (filters.value.city) {
+    analytics.filterUsed('city', filters.value.city)
+  }
+  
   // Zamknij modal
   showFiltersModal.value = false
   tempFilters.value = null
@@ -1589,6 +1601,9 @@ const clearFilters = () => {
   // Wyczyść wyszukiwane słowo kluczowe i lokalizację
   searchQuery.value = ''
   locationQuery.value = ''
+  
+  // Track reset in GA4
+  analytics.trackEvent('filters_reset')
   
   // Resetuj sortowanie
   sortBy.value = 'newest'
