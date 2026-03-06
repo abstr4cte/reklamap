@@ -381,7 +381,7 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .section-header-wrapper {
-    top: 70px;
+    top: 80px;
   }
 }
 
