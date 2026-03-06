@@ -631,8 +631,10 @@ const isResettingFilters = ref(false)
 // Zmienne do zarządzania widocznością kafelków na urządzeniach mobilnych
 watch(showSearchAlertModal, (isOpen) => {
   if (isOpen) {
+    document.documentElement.style.overflow = 'hidden'
     document.body.style.overflow = 'hidden'
   } else {
+    document.documentElement.style.overflow = ''
     document.body.style.overflow = ''
   }
 })

@@ -2062,6 +2062,16 @@ watch(() => showSortPanel.value, (isOpen) => {
   }
 })
 
+watch(() => showSearchAlertModal.value, (isOpen) => {
+  if (isOpen) {
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.documentElement.style.overflow = ''
+    document.body.style.overflow = ''
+  }
+})
+
 onMounted(async () => {
   // Załaduj dane NAJPIERW
   await loadListings()
