@@ -29,15 +29,15 @@
             gap: 0;
         }
         .logo-image {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             object-fit: contain;
             margin-right: 15px;
         }
         .logo {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 800;
-            color: #ffffff;
+            color: #111827;
             margin: 0;
             letter-spacing: -0.5px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;

@@ -30,14 +30,16 @@
         }
 
         .header img {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             object-fit: contain;
             margin-right: 15px;
         }
 
         .header h1 {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: #111827 !important;
+            font-size: 28px;
         }
 
         .content {

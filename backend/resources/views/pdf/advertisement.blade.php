@@ -46,7 +46,7 @@
         .main-image {
             width: 100%;
             max-height: 400px;
-            object-fit: cover;
+            object-fit: contain;
             border-radius: 8px;
             margin-bottom: 2rem;
         }
