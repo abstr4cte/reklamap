@@ -4,6 +4,11 @@ import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 import bannerImage from '../assets/banner.jpg'
 
+const scrollY = ref(0)
+const handleScroll = () => {
+  scrollY.value = typeof window !== 'undefined' ? window.scrollY : 0
+}
+
 interface Filters {
   keyword: string
   type: string
@@ -735,10 +740,16 @@ watch(() => filters.value.variant, () => {
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   loadLastSearch()
+  if (typeof window !== 'undefined') {
+    window.addEventListener('scroll', handleScroll, { passive: true })
+  }
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('scroll', handleScroll)
+  }
 })
 </script>
 
@@ -746,11 +757,13 @@ onBeforeUnmount(() => {
   <section class="hero-section">
     <div class="hero-background">
       <div class="gradient-overlay"></div>
-      <img
-        :src="bannerImage"
-        alt="Advertising surfaces"
+      <div
         class="hero-image"
-      />
+        :style="{ 
+          backgroundImage: `url(${bannerImage})`,
+          transform: `translateY(${scrollY * 0.4}px)`
+        }"
+      ></div>
     </div>
 
     <!-- ... rest of the code remains the same ... -->
@@ -1394,14 +1407,20 @@ onBeforeUnmount(() => {
   top: 0;
   left: 0;
   right: 0;
-  height: 100%;
+  height: 600px;
   overflow: hidden;
 }
 
 .hero-image {
+  position: absolute;
+  top: -200px;
+  left: 0;
+  right: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: calc(100% + 200px);
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
 }
 
 .gradient-overlay {
