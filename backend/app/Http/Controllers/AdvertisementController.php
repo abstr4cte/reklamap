@@ -270,15 +270,26 @@ class AdvertisementController extends Controller
         return response()->noContent();
     }
 
-    public function incrementViews(string $id)
+    public function incrementViews(Request $request, string $id)
     {
         Advertisement::findOrFail($id); // Verify ad exists
 
-        // Zapisz statystykę dzienną
-        $dailyStat = \App\Models\AdvertisementDailyStat::getTodayOrCreate($id);
-        $dailyStat->increment('views');
+        $ip = $request->ip();
+        $cacheKey = "ad_{$id}_view_{$ip}";
 
-        return response()->json(['message' => 'Views incremented']);
+        // Sprawdzamy czy ten IP oglądał to ogłoszenie w ciągu ostatniej godziny
+        if (!Cache::has($cacheKey)) {
+            // Zapisz statystykę dzienną
+            $dailyStat = \App\Models\AdvertisementDailyStat::getTodayOrCreate($id);
+            $dailyStat->increment('views');
+
+            // Zablokuj kolejne naliczanie na 1 godzinę (3600 sekund) po czym cache wygaśnie
+            Cache::put($cacheKey, true, now()->addHour());
+
+            return response()->json(['message' => 'Views incremented']);
+        }
+
+        return response()->json(['message' => 'View already counted for this IP recently']);
     }
 
     public function incrementPhoneClicks(string $id)

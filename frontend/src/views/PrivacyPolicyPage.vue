@@ -140,8 +140,8 @@ useSeo({
 /* Hero Section */
 .hero-section {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%), url('../assets/banner-section.png');
-  background-size: cover;
-  background-position: center;
+  background-size: auto;
+  background-repeat: repeat;
   background-attachment: fixed;
   padding: 6rem 2rem;
   text-align: center;

@@ -382,10 +382,12 @@ defineExpose({
   margin-right: 0.5rem;
   vertical-align: middle;
   filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(224deg) brightness(94%) contrast(91%);
+  -webkit-filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(224deg) brightness(94%) contrast(91%);
 }
 
 .type-btn.active .type-icon {
   filter: brightness(0) invert(1); /* Białe ikonki dla aktywnego przycisku */
+  -webkit-filter: brightness(0) invert(1);
 }
 
 .input-wrapper {
@@ -529,16 +531,42 @@ defineExpose({
 
 @media (max-width: 640px) {
   .modal-content {
-    padding: 2rem 1.5rem;
+    padding: 1.5rem 1.25rem;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   .modal-title,
   .success-title {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-description {
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
   }
 
   .type-selector {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .type-btn {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .type-icon {
+    margin-right: 0;
+    width: 20px;
+    height: 20px;
+  }
+
+  .icon-wrapper {
+    margin-bottom: 1rem;
   }
 }
 </style>

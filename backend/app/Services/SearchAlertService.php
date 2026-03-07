@@ -27,6 +27,11 @@ class SearchAlertService
         })->get();
 
         foreach ($matchingAlerts as $alert) {
+            // Skip if the alert subscriber is the author of the advertisement
+            if (strtolower($alert->email) === strtolower($ad->owner_email)) {
+                continue;
+            }
+
             // 2. Check advanced filters (if present)
             if (!$this->matchesAdvancedFilters($ad, $alert->filters)) {
                 continue;
