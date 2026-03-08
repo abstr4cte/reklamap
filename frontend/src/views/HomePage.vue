@@ -1189,9 +1189,11 @@ const handleSearchAlertSubmit = (email: string) => {
 .category-icon img {
   width: 100%;
   height: 100%;
-  /* Apply gradient color to SVG stroke */
-  filter: brightness(0) saturate(100%) invert(32%) sepia(79%) saturate(1100%) hue-rotate(242deg) brightness(98%) contrast(101%);
-  transition: filter 0.3s ease;
+  /* Apply gradient color to SVG - Safari compatible */
+  opacity: 0.85;
+  mix-blend-mode: multiply;
+  filter: hue-rotate(242deg) saturate(1.2) brightness(0.95);
+  transition: all 0.3s ease;
 }
 
 .category-card:hover .category-icon {
@@ -1202,7 +1204,8 @@ const handleSearchAlertSubmit = (email: string) => {
 
 .category-card:hover .category-icon img {
   /* Brighter gradient on hover */
-  filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(242deg) brightness(110%) contrast(105%) drop-shadow(0 0 8px rgba(102, 126, 234, 0.6));
+  opacity: 1;
+  filter: hue-rotate(242deg) saturate(1.4) brightness(1.05) drop-shadow(0 0 8px rgba(102, 126, 234, 0.4));
 }
 
 .category-name {
@@ -1300,7 +1303,9 @@ const handleSearchAlertSubmit = (email: string) => {
   .category-icon img {
     width: 100%;
     height: 100%;
-    filter: brightness(0) saturate(100%) invert(32%) sepia(79%) saturate(1100%) hue-rotate(242deg) brightness(98%) contrast(101%);
+    opacity: 0.85;
+    mix-blend-mode: multiply;
+    filter: hue-rotate(242deg) saturate(1.2) brightness(0.95);
   }
   
   .category-name {
