@@ -1000,10 +1000,6 @@ onUnmounted(() => {
   background: #f8fafc;
 }
 
-.comparison-table tbody {
-  overscroll-behavior-x: contain;
-}
-
 .comparison-table thead th {
   padding: 1.5rem 1rem;
   text-align: left;
