@@ -26,7 +26,7 @@ class ManagementController extends Controller
         // Delete any existing tokens for this email
         ManagementToken::where('email', $validated['email'])->delete();
 
-        // Create a new token that expires in 24 hours
+        // Create a new token that expires in 30 days
         $token = ManagementToken::create([
             'email' => $validated['email'],
             'expires_at' => Carbon::now()->addDays(30)

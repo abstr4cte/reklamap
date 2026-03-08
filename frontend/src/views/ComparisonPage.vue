@@ -966,6 +966,7 @@ onUnmounted(() => {
   overflow-y: visible;
   position: relative;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
 }
 
 .comparison-table-wrapper.header-only {
@@ -974,7 +975,7 @@ onUnmounted(() => {
 
 .comparison-header-sticky {
   position: sticky;
-  top: 72px;
+  top: 81px;
   z-index: 1000;
   background: white;
   border-bottom: 2px solid #f1f5f9;

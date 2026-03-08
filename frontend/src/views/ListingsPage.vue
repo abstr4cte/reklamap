@@ -2072,6 +2072,17 @@ watch(() => showSearchAlertModal.value, (isOpen) => {
   }
 })
 
+// Block body scroll when legend is visible on mobile
+watch(isLegendVisible, (newVal) => {
+  if (typeof window !== 'undefined') {
+    if (newVal && isMobile.value) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+  }
+})
+
 onMounted(async () => {
   // Załaduj dane NAJPIERW
   await loadListings()
@@ -4089,20 +4100,20 @@ onBeforeUnmount(() => {
 .legend-side-panel {
   position: fixed;
   top: 0;
-  right: -320px;
-  width: 300px;
-  height: 100%;
+  right: 0;
+  width: 280px;
+  height: 100vh;
   background: white;
-  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
   z-index: 1100;
   transition: transform 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  transform: translateX(100%);
 }
 
 .legend-side-panel.is-visible {
-  transform: translateX(-100%);
+  transform: translateX(0);
 }
 
 .legend-header {
@@ -4110,39 +4121,38 @@ onBeforeUnmount(() => {
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #E5E7EB;
   background: #f9fafb;
 }
 
 .legend-header h3 {
   margin: 0;
-  font-size: 1.125rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: #1f2937;
+  color: #111827;
 }
 
 .close-legend {
   background: none;
   border: none;
-  padding: 0.5rem;
-  color: #6b7280;
+  color: #6B7280;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
+  padding: 0.25rem;
+  border-radius: 4px;
   transition: all 0.2s ease;
+  z-index: 1;
+  position: relative;
 }
 
 .close-legend:hover {
-  background-color: #e5e7eb;
-  color: #1f2937;
+  background: #F3F4F6;
+  color: #111827;
 }
 
 .legend-content {
-  padding: 1.25rem;
-  overflow-y: auto;
   flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem 1.5rem;
 }
 
 .legend-items {
@@ -4155,19 +4165,27 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 0;
+  padding: 0.5rem 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.legend-item:hover {
+  background-color: #F9FAFB;
 }
 
 .legend-marker {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   flex-shrink: 0;
 }
 
 .legend-label {
-  font-size: 0.9375rem;
-  color: #4b5563;
+  font-size: 0.9rem;
+  color: #374151;
   line-height: 1.4;
 }
 
@@ -4176,18 +4194,17 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: white;
-  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(229, 231, 235, 0.8);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  max-width: 240px;
-  width: 100%;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem 1rem;
+  z-index: 1001;
+  backdrop-filter: blur(4px);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-10px);
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
   pointer-events: none;
 }
 
@@ -4196,47 +4213,6 @@ onBeforeUnmount(() => {
   visibility: visible;
   transform: translateY(0);
   pointer-events: auto;
-}
-
-.legend-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.25rem;
-  padding: 0.25rem 1rem 0.5rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  background: transparent;
-}
-
-.legend-header .legend-title {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #1F2937;
-}
-
-.close-legend {
-  background: rgba(255, 255, 255, 0.75);
-  border: none;
-  color: #6B7280;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(4px);
-}
-
-.close-legend:hover {
-  background: rgba(255, 255, 255, 0.9);
-  color: #111827;
-}
-
-.close-legend svg {
-  width: 16px;
-  height: 16px;
 }
 
 @media (min-width: 768px) {
@@ -4280,6 +4256,18 @@ onBeforeUnmount(() => {
   
   .legend-side-panel .legend-label {
     white-space: normal;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .legend-header {
+    padding: 1rem 0.75rem;
+  }
+  
+  .close-legend {
+    padding: 0.5rem;
+    flex-shrink: 0;
   }
 }
 

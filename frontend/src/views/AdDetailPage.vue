@@ -1517,6 +1517,13 @@ watch(showActionsMenu, (isOpen) => {
   }
 })
 
+// Block body scroll when report modal is open
+watch(showReportModal, (isOpen) => {
+  if (typeof window !== 'undefined') {
+    document.body.style.overflow = isOpen ? 'hidden' : 'auto'
+  }
+})
+
 onMounted(() => {
   // Dodatkowe sprawdzenie stanu po zamontowaniu komponentu
   setTimeout(() => {
@@ -3651,6 +3658,40 @@ onUnmounted(() => {
     top: 0.5rem;
     right: 0.5rem;
   }
+
+  .modal-overlay {
+    padding: 0.5rem;
+    top: 80px;
+  }
+
+  .modal-content {
+    width: calc(100vw - 1rem);
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100vh - 115px);
+    border-radius: 16px;
+    margin: auto;
+  }
+
+  .modal-header {
+    padding: 1rem;
+  }
+
+  .modal-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .report-form {
+    padding: 1rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
 }
 
 /* Toast Notifications */
@@ -3736,7 +3777,7 @@ onUnmounted(() => {
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
-  top: 0;
+  top: 80px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -3748,7 +3789,7 @@ onUnmounted(() => {
   padding: 1rem;
   backdrop-filter: blur(8px);
   animation: fadeIn 0.2s ease-out;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .modal-content {
@@ -3756,12 +3797,13 @@ onUnmounted(() => {
   border-radius: 20px;
   width: 100%;
   max-width: 500px;
-  max-height: 90vh;
+  max-height: calc(100vh - 115px);
   display: flex;
   flex-direction: column;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  margin: auto;
 }
 
 .modal-header {

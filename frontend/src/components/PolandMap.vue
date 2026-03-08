@@ -396,6 +396,17 @@ watch(() => props.hoveredAdId, (newId) => {
   })
 })
 
+// Block body scroll when legend is visible on mobile
+watch(isLegendVisible, (newVal) => {
+  if (typeof window !== 'undefined') {
+    if (newVal && isMobile.value) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+  }
+})
+
 onMounted(() => {
   initMap()
   
@@ -694,7 +705,7 @@ onMounted(() => {
   font-weight: 600;
   color: #374151;
   cursor: pointer;
-  z-index: 1001;
+  z-index: 900;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
   backdrop-filter: blur(4px);
@@ -729,7 +740,7 @@ onMounted(() => {
 .legend-side-panel {
   position: fixed;
   top: 0;
-  right: -300px;
+  right: 0;
   width: 280px;
   height: 100vh;
   background: white;
@@ -738,10 +749,11 @@ onMounted(() => {
   transition: transform 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
+  transform: translateX(100%);
 }
 
 .legend-side-panel.is-visible {
-  transform: translateX(-300px);
+  transform: translateX(0);
 }
 
 .legend-header {
@@ -768,6 +780,8 @@ onMounted(() => {
   padding: 0.25rem;
   border-radius: 4px;
   transition: all 0.2s ease;
+  z-index: 1;
+  position: relative;
 }
 
 .close-legend:hover {
@@ -928,13 +942,8 @@ onMounted(() => {
 /* Responsive adjustments */
 @media (max-width: 480px) {
   .legend-side-panel {
-    right: -100%;
     width: 90%;
     max-width: 320px;
-  }
-  
-  .legend-side-panel.is-visible {
-    transform: translateX(-100%);
   }
   
   .legend-toggle-button {
@@ -946,6 +955,15 @@ onMounted(() => {
   
   .legend-toggle-button span {
     display: none;
+  }
+  
+  .legend-header {
+    padding: 1rem 0.75rem;
+  }
+  
+  .close-legend {
+    padding: 0.5rem;
+    flex-shrink: 0;
   }
 }
 

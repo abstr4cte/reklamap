@@ -101,7 +101,7 @@
         </div>
 
         <div class="expiry">
-            <strong>Uwaga:</strong> Ten link wygaśnie za 24 godziny ({{ $token->expires_at->format('d.m.Y H:i') }}).
+            <strong>Uwaga:</strong> Ten link wygaśnie za 30 dni ({{ $token->expires_at->format('d.m.Y H:i') }}).
         </div>
 
         <p>Jeśli nie prosiłeś o ten link, możesz zignorować tę wiadomość.</p>

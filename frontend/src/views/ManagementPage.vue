@@ -753,7 +753,7 @@ const initModalMap = () => {
 
   // Check if coordinates are default (center of Poland) or actual location
   const isDefaultLocation = editingAd.value.latitude === 52.0 && editingAd.value.longitude === 19.0
-  const zoomLevel = isDefaultLocation ? 6 : 13
+  const zoomLevel = isDefaultLocation ? 5 : 12
   
   modalMap = L.map(modalMapContainer.value, {
     maxBounds: polandBounds,
@@ -4638,6 +4638,7 @@ onBeforeUnmount(() => {
   height: 500px;
   border-radius: 0;
   overflow: hidden;
+  margin-bottom: 1rem;
 }
 
 :deep(.leaflet-control-attribution) {
