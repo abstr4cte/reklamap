@@ -2896,6 +2896,18 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  padding: 1.25rem;
+  background: #fcfdfe;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.spec-item:hover {
+  background: #f5f7ff;
+  border-color: #e2e8f0;
+  box-shadow: inset 4px 0 0 0 #667eea;
 }
 
 .spec-label {
@@ -2911,7 +2923,27 @@ onUnmounted(() => {
 }
 
 .spec-yes {
-  color: #10B981;
+  color: #059669;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #ecfdf5;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  width: fit-content;
+}
+
+.spec-yes:hover {
+  background: #d1fae5;
+  transform: translateY(-1px);
+}
+
+.spec-yes::before {
+  content: '✓';
+  font-weight: 800;
 }
 
 .spec-premium {

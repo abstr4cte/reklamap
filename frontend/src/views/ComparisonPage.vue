@@ -967,6 +967,8 @@ onUnmounted(() => {
   position: relative;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0;
 }
 
 .comparison-table-wrapper.header-only {
@@ -994,6 +996,7 @@ onUnmounted(() => {
   border-spacing: 0;
   table-layout: fixed;
   border-radius: 0 0 16px 16px;
+  scroll-snap-align: start;
 }
 
 .comparison-table thead {
