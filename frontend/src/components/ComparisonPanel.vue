@@ -247,6 +247,8 @@ onUnmounted(() => {
   flex-direction: column;
   transform: translateX(100%);
   transition: transform 0.3s ease;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 .comparison-panel.open {
@@ -295,6 +297,7 @@ onUnmounted(() => {
   flex: 1;
   overflow-y: auto;
   padding: 1.5rem;
+  overflow-x: hidden;
 }
 
 .loading-state,
@@ -446,9 +449,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
+  flex-shrink: 0;
 }
 
 .comparison-hint {
