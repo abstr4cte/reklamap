@@ -1200,10 +1200,6 @@ const handleSearchAlertSubmit = (email: string) => {
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.25);
 }
 
-.category-card:hover .category-icon img {
-  /* Brighter gradient on hover */
-  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(260deg) brightness(108%) contrast(106%) drop-shadow(0 0 8px rgba(102, 126, 234, 0.6));
-}
 
 .category-name {
   font-size: 1.5rem;
