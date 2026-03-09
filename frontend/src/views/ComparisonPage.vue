@@ -966,7 +966,7 @@ onUnmounted(() => {
   overflow-y: visible;
   position: relative;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
+  overscroll-behavior-x: none;
 }
 
 .comparison-table-wrapper.header-only {

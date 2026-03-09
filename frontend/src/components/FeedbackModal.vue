@@ -96,6 +96,11 @@ const handleSubmit = async () => {
     return
   }
 
+  if (messageTrimmed.length > 5000) {
+    error.value = 'Wiadomość nie może być dłuższa niż 5000 znaków'
+    return
+  }
+
   isSubmitting.value = true
   error.value = ''
 

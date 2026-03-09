@@ -92,6 +92,30 @@ const isTokenInvalid = ref(false)
 const activeTab = ref<'listings' | 'statistics'>('listings')
 const engagementChartRef = ref<any>(null)
 
+// Funkcja do walidacji i konwersji liczb
+const handleNumberInput = (value: string, allowDecimals: boolean = false): string => {
+  if (value === '') return ''
+  
+  // Pozwól tylko na cyfry i opcjonalnie na przecinek/kropkę
+  let filtered = value.replace(/[^\d.,]/g, '')
+  
+  // Zamień przecinek na kropkę dla spójności
+  filtered = filtered.replace(',', '.')
+  
+  // Jeśli nie pozwalamy na decimals, usuń je
+  if (!allowDecimals) {
+    filtered = filtered.replace(/\./g, '')
+  } else {
+    // Pozwól tylko na jedną kropkę
+    const parts = filtered.split('.')
+    if (parts.length > 2) {
+      filtered = parts[0] + '.' + parts.slice(1).join('')
+    }
+  }
+  
+  return filtered
+}
+
 const searchAddress = (query: string) => {
   if (searchTimeout) {
     clearTimeout(searchTimeout)
@@ -1945,7 +1969,7 @@ onBeforeUnmount(() => {
 
                     <div class="form-group">
                       <label>Cena</label>
-                      <input v-model.number="editingAd.price" type="number" required />
+                      <input :value="editingAd.price" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); editingAd.price = val ? parseFloat(val) : null }" type="text" required />
                     </div>
 
                     <div class="form-group">
@@ -2036,12 +2060,12 @@ onBeforeUnmount(() => {
 
                     <div v-if="showDimensionsFields" class="form-group">
                       <label>Szerokość (m)</label>
-                      <input v-model.number="editingAd.width" type="number" step="0.1" :required="showDimensionsFields" />
+                      <input :value="editingAd.width" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); editingAd.width = val ? parseFloat(val) : null }" type="text" :required="showDimensionsFields" />
                     </div>
 
                     <div v-if="showDimensionsFields" class="form-group">
                       <label>Wysokość (m)</label>
-                      <input v-model.number="editingAd.height" type="number" step="0.1" :required="showDimensionsFields" />
+                      <input :value="editingAd.height" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); editingAd.height = val ? parseFloat(val) : null }" type="text" :required="showDimensionsFields" />
                     </div>
 
                     <!-- SEKCJA: Opcje specyficzne dla typu -->
@@ -2062,7 +2086,7 @@ onBeforeUnmount(() => {
                     <!-- OTS / Daily Views -->
                     <div v-if="['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem'].includes(editingAd.type)" class="form-group">
                       <label>Dzienny zasięg (OTS)</label>
-                      <input v-model.number="(editingAd as any).estimated_daily_views" type="number" step="100" placeholder="np. 25000" />
+                      <input :value="(editingAd as any).estimated_daily_views" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); (editingAd as any).estimated_daily_views = val ? parseInt(val) : null }" type="text" placeholder="np. 25000" />
                     </div>
 
                     <!-- Wariant -->
@@ -2144,7 +2168,7 @@ onBeforeUnmount(() => {
 
                     <div v-if="showTransportFields" class="form-group">
                       <label>Liczba pojazdów</label>
-                      <input v-model.number="(editingAd as any).vehicle_count" type="number" step="1" placeholder="1" />
+                      <input :value="(editingAd as any).vehicle_count" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); (editingAd as any).vehicle_count = val ? parseInt(val) : null }" type="text" placeholder="1" />
                     </div>
 
                     <!-- Pola Mobile -->
@@ -2183,7 +2207,7 @@ onBeforeUnmount(() => {
                     <!-- Liczba pasażerów dla Transportu -->
                     <div v-if="showDailyPassengersField" class="form-group">
                       <label>Liczba pasażerów dziennie</label>
-                      <input v-model.number="(editingAd as any).daily_passengers" type="number" step="100" placeholder="np. 5000" />
+                      <input :value="(editingAd as any).daily_passengers" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); (editingAd as any).daily_passengers = val ? parseInt(val) : null }" type="text" placeholder="np. 5000" />
                     </div>
 
                     <!-- Strefa operacyjna dla Mobilnej -->

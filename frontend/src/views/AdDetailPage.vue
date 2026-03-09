@@ -1149,6 +1149,8 @@ const validateContactForm = (): boolean => {
 
   if (!contactForm.value.message) {
     contactErrors.value.message = 'Wiadomość jest wymagana'
+  } else if (contactForm.value.message.length > 5000) {
+    contactErrors.value.message = 'Wiadomość nie może być dłuższa niż 5000 znaków'
   }
 
   return Object.keys(contactErrors.value).length === 0

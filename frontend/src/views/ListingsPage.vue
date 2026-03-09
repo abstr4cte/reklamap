@@ -166,6 +166,31 @@ const changeViewMode = (mode: 'grid' | 'list') => {
   }
 }
 const sortBy = ref('newest')
+
+// Funkcja do walidacji i konwersji liczb
+const handleNumberInput = (value: string, allowDecimals: boolean = false): string => {
+  if (value === '') return ''
+  
+  // Pozwól tylko na cyfry i opcjonalnie na przecinek/kropkę
+  let filtered = value.replace(/[^\d.,]/g, '')
+  
+  // Zamień przecinek na kropkę dla spójności
+  filtered = filtered.replace(',', '.')
+  
+  // Jeśli nie pozwalamy na decimals, usuń je
+  if (!allowDecimals) {
+    filtered = filtered.replace(/\./g, '')
+  } else {
+    // Pozwól tylko na jedną kropkę
+    const parts = filtered.split('.')
+    if (parts.length > 2) {
+      filtered = parts[0] + '.' + parts.slice(1).join('')
+    }
+  }
+  
+  return filtered
+}
+
 // Funkcja do pobierania ceny w zależności od wybranego okresu
 const getPrice = (ad: Advertisement, period: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign') => {
   const basePrice = ad.price
@@ -2745,16 +2770,18 @@ onBeforeUnmount(() => {
               <div class="price-filter-group">
                 <div class="range-inputs">
                   <input 
-                    v-model.number="tempFilters.priceFrom" 
-                    type="number" 
+                    :value="tempFilters?.priceFrom"
+                    @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, true); tempFilters.priceFrom = val ? parseFloat(val) : null } }"
+                    type="text" 
                     placeholder="Od"
                     class="filter-input"
                     v-if="tempFilters"
                   />
                   <span>-</span>
                   <input 
-                    v-model.number="tempFilters.priceTo" 
-                    type="number" 
+                    :value="tempFilters?.priceTo"
+                    @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, true); tempFilters.priceTo = val ? parseFloat(val) : null } }"
+                    type="text" 
                     placeholder="Do"
                     class="filter-input"
                     v-if="tempFilters"
@@ -2777,21 +2804,19 @@ onBeforeUnmount(() => {
               <label class="filter-label">Szerokość ({{ tempFilters && tempFilters.type === 'led_screen' ? 'mm' : 'm' }})</label>
               <div class="range-inputs">
                 <input 
-                  v-model.number="tempFilters.widthFrom" 
-                  type="number" 
+                  :value="tempFilters?.widthFrom"
+                  @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, tempFilters.type === 'led_screen' ? false : true); tempFilters.widthFrom = val ? parseFloat(val) : null } }"
+                  type="text" 
                   placeholder="Od"
-                  :step="tempFilters && tempFilters.type === 'led_screen' ? '1' : '0.1'"
                   class="filter-input"
-                  v-if="tempFilters"
                 />
                 <span>-</span>
                 <input 
-                  v-model.number="tempFilters.widthTo" 
-                  type="number" 
+                  :value="tempFilters?.widthTo"
+                  @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, tempFilters.type === 'led_screen' ? false : true); tempFilters.widthTo = val ? parseFloat(val) : null } }"
+                  type="text" 
                   placeholder="Do"
-                  :step="tempFilters && tempFilters.type === 'led_screen' ? '1' : '0.1'"
                   class="filter-input"
-                  v-if="tempFilters"
                 />
               </div>
             </div>
@@ -2800,21 +2825,19 @@ onBeforeUnmount(() => {
               <label class="filter-label">Wysokość ({{ tempFilters && tempFilters.type === 'led_screen' ? 'mm' : 'm' }})</label>
               <div class="range-inputs">
                 <input 
-                  v-model.number="tempFilters.heightFrom" 
-                  type="number" 
+                  :value="tempFilters?.heightFrom"
+                  @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, tempFilters.type === 'led_screen' ? false : true); tempFilters.heightFrom = val ? parseFloat(val) : null } }"
+                  type="text" 
                   placeholder="Od"
-                  :step="tempFilters && tempFilters.type === 'led_screen' ? '1' : '0.1'"
                   class="filter-input"
-                  v-if="tempFilters"
                 />
                 <span>-</span>
                 <input 
-                  v-model.number="tempFilters.heightTo" 
-                  type="number" 
+                  :value="tempFilters?.heightTo"
+                  @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, tempFilters.type === 'led_screen' ? false : true); tempFilters.heightTo = val ? parseFloat(val) : null } }"
+                  type="text" 
                   placeholder="Do"
-                  :step="tempFilters && tempFilters.type === 'led_screen' ? '1' : '0.1'"
                   class="filter-input"
-                  v-if="tempFilters"
                 />
               </div>
             </div>
@@ -2835,21 +2858,19 @@ onBeforeUnmount(() => {
               <label class="filter-label">Powierzchnia (m²)</label>
               <div class="range-inputs">
                 <input 
-                  v-model.number="tempFilters.surfaceFrom" 
-                  type="number" 
+                  :value="tempFilters?.surfaceFrom"
+                  @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, true); tempFilters.surfaceFrom = val ? parseFloat(val) : null } }"
+                  type="text" 
                   placeholder="Od"
-                  step="0.1"
                   class="filter-input"
-                  v-if="tempFilters"
                 />
                 <span>-</span>
                 <input 
-                  v-model.number="tempFilters.surfaceTo" 
-                  type="number" 
+                  :value="tempFilters?.surfaceTo"
+                  @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, true); tempFilters.surfaceTo = val ? parseFloat(val) : null } }"
+                  type="text" 
                   placeholder="Do"
-                  step="0.1"
                   class="filter-input"
-                  v-if="tempFilters"
                 />
               </div>
             </div>
@@ -2910,21 +2931,19 @@ onBeforeUnmount(() => {
             <label class="filter-label">Zasięg dzienny (OTS)</label>
             <div class="range-inputs">
               <input 
-                v-model.number="tempFilters.estimatedDailyViewsFrom" 
-                type="number" 
-                step="1000"
+                :value="tempFilters?.estimatedDailyViewsFrom"
+                @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, false); tempFilters.estimatedDailyViewsFrom = val ? parseInt(val) : null } }"
+                type="text" 
                 placeholder="Od"
                 class="filter-input"
-                v-if="tempFilters"
               />
               <span>-</span>
               <input 
-                v-model.number="tempFilters.estimatedDailyViewsTo" 
-                type="number" 
-                step="1000"
+                :value="tempFilters?.estimatedDailyViewsTo"
+                @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, false); tempFilters.estimatedDailyViewsTo = val ? parseInt(val) : null } }"
+                type="text" 
                 placeholder="Do"
                 class="filter-input"
-                v-if="tempFilters"
               />
             </div>
           </div>
@@ -2978,21 +2997,19 @@ onBeforeUnmount(() => {
             <label class="filter-label">Pixel Pitch (mm)</label>
             <div class="range-inputs">
               <input 
-                v-model.number="tempFilters.pixelPitchFrom" 
-                type="number" 
-                step="0.1"
+                :value="tempFilters?.pixelPitchFrom"
+                @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, true); tempFilters.pixelPitchFrom = val ? parseFloat(val) : null } }"
+                type="text" 
                 placeholder="Od"
                 class="filter-input"
-                v-if="tempFilters"
               />
               <span>-</span>
               <input 
-                v-model.number="tempFilters.pixelPitchTo" 
-                type="number" 
-                step="0.1"
+                :value="tempFilters?.pixelPitchTo"
+                @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, true); tempFilters.pixelPitchTo = val ? parseFloat(val) : null } }"
+                type="text" 
                 placeholder="Do"
                 class="filter-input"
-                v-if="tempFilters"
               />
             </div>
           </div>
@@ -3001,19 +3018,19 @@ onBeforeUnmount(() => {
             <label class="filter-label">Jasność (nits)</label>
             <div class="range-inputs">
               <input 
-                v-model.number="tempFilters.brightnessFrom" 
-                type="number" 
+                :value="tempFilters?.brightnessFrom"
+                @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, false); tempFilters.brightnessFrom = val ? parseInt(val) : null } }"
+                type="text" 
                 placeholder="Od"
                 class="filter-input"
-                v-if="tempFilters"
               />
               <span>-</span>
               <input 
-                v-model.number="tempFilters.brightnessTo" 
-                type="number" 
+                :value="tempFilters?.brightnessTo"
+                @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, false); tempFilters.brightnessTo = val ? parseInt(val) : null } }"
+                type="text" 
                 placeholder="Do"
                 class="filter-input"
-                v-if="tempFilters"
               />
             </div>
           </div>
@@ -3033,19 +3050,19 @@ onBeforeUnmount(() => {
             <label class="filter-label">Liczba pojazdów</label>
             <div class="range-inputs">
               <input 
-                v-model.number="tempFilters.vehicleCountFrom" 
-                type="number" 
+                :value="tempFilters?.vehicleCountFrom"
+                @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, false); tempFilters.vehicleCountFrom = val ? parseInt(val) : null } }"
+                type="text" 
                 placeholder="Od"
                 class="filter-input"
-                v-if="tempFilters"
               />
               <span>-</span>
               <input 
-                v-model.number="tempFilters.vehicleCountTo" 
-                type="number" 
+                :value="tempFilters?.vehicleCountTo"
+                @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, false); tempFilters.vehicleCountTo = val ? parseInt(val) : null } }"
+                type="text" 
                 placeholder="Do"
                 class="filter-input"
-                v-if="tempFilters"
               />
             </div>
           </div>
@@ -3078,21 +3095,19 @@ onBeforeUnmount(() => {
             <label class="filter-label">Liczba pasażerów dziennie</label>
             <div class="range-inputs">
               <input 
-                v-model.number="(tempFilters as any).dailyPassengersFrom" 
-                type="number" 
-                step="100"
+                :value="(tempFilters as any)?.dailyPassengersFrom"
+                @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, false); (tempFilters as any).dailyPassengersFrom = val ? parseInt(val) : null } }"
+                type="text" 
                 placeholder="Od"
                 class="filter-input"
-                v-if="tempFilters"
               />
               <span class="separator">-</span>
               <input 
-                v-model.number="(tempFilters as any).dailyPassengersTo" 
-                type="number" 
-                step="100"
+                :value="(tempFilters as any)?.dailyPassengersTo"
+                @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, false); (tempFilters as any).dailyPassengersTo = val ? parseInt(val) : null } }"
+                type="text" 
                 placeholder="Do"
                 class="filter-input"
-                v-if="tempFilters"
               />
             </div>
           </div>

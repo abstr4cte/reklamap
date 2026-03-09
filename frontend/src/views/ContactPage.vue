@@ -21,6 +21,36 @@ const handleSubmit = async () => {
     return
   }
 
+  // Walidacja imienia i nazwiska (tylko litery, spacje, myślniki)
+  if (!/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s\-]{2,100}$/.test(formData.value.name)) {
+    error.value = 'Imię i nazwisko może zawierać tylko litery, spacje i myślniki (2-100 znaków)'
+    return
+  }
+
+  // Walidacja emaila
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)) {
+    error.value = 'Nieprawidłowy format adresu e-mail'
+    return
+  }
+
+  // Walidacja telefonu (jeśli podany)
+  if (formData.value.phone && !/^[\d\s\-\+()]{9,20}$/.test(formData.value.phone.replace(/\s/g, ''))) {
+    error.value = 'Nieprawidłowy format numeru telefonu'
+    return
+  }
+
+  // Walidacja tematu (max 200 znaków)
+  if (formData.value.subject.length > 200) {
+    error.value = 'Temat nie może być dłuższy niż 200 znaków'
+    return
+  }
+
+  // Walidacja wiadomości (max 5000 znaków)
+  if (formData.value.message.length > 5000) {
+    error.value = 'Wiadomość nie może być dłuższa niż 5000 znaków'
+    return
+  }
+
   isSubmitting.value = true
   error.value = ''
 

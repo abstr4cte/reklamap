@@ -153,6 +153,30 @@ const isLocationMenuOpen = ref(false)
 const apiLocationResults = ref<LocationResult[]>([])
 const isLoadingLocations = ref(false)
 
+// Funkcja do walidacji i konwersji liczb
+const handleNumberInput = (value: string, allowDecimals: boolean = false): string => {
+  if (value === '') return ''
+  
+  // Pozwól tylko na cyfry i opcjonalnie na przecinek/kropkę
+  let filtered = value.replace(/[^\d.,]/g, '')
+  
+  // Zamień przecinek na kropkę dla spójności
+  filtered = filtered.replace(',', '.')
+  
+  // Jeśli nie pozwalamy na decimals, usuń je
+  if (!allowDecimals) {
+    filtered = filtered.replace(/\./g, '')
+  } else {
+    // Pozwól tylko na jedną kropkę
+    const parts = filtered.split('.')
+    if (parts.length > 2) {
+      filtered = parts[0] + '.' + parts.slice(1).join('')
+    }
+  }
+  
+  return filtered
+}
+
 const popularLocations: LocationSuggestion[] = [
   { type: 'city', value: 'Warszawa', label: 'Warszawa' },
   { type: 'city', value: 'Kraków', label: 'Kraków' },
@@ -892,15 +916,17 @@ onBeforeUnmount(() => {
                 <label class="input-label">Cena</label>
                 <div class="price-filter">
                   <input
-                    v-model.number="filters.priceFrom"
-                    type="number"
+                    :value="filters.priceFrom"
+                    @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); filters.priceFrom = val ? parseFloat(val) : null }"
+                    type="text"
                     placeholder="Od"
                     class="search-input price-input"
                   />
                   <span class="separator">-</span>
                   <input
-                    v-model.number="filters.priceTo"
-                    type="number"
+                    :value="filters.priceTo"
+                    @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); filters.priceTo = val ? parseFloat(val) : null }"
+                    type="text"
                     placeholder="Do"
                     class="search-input price-input"
                   />
@@ -937,18 +963,18 @@ onBeforeUnmount(() => {
                     <label class="input-label">Szerokość ({{ filters.type === 'led_screen' ? 'mm' : 'm' }})</label>
                     <div class="range-input">
                       <input
-                        v-model.number="filters.widthFrom"
-                        type="number"
+                        :value="filters.widthFrom"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, filters.type === 'led_screen' ? false : true); filters.widthFrom = val ? parseFloat(val) : null }"
+                        type="text"
                         placeholder="Od"
-                        :step="filters.type === 'led_screen' ? '1' : '0.1'"
                         class="search-input"
                       />
                       <span class="separator">-</span>
                       <input
-                        v-model.number="filters.widthTo"
-                        type="number"
+                        :value="filters.widthTo"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, filters.type === 'led_screen' ? false : true); filters.widthTo = val ? parseFloat(val) : null }"
+                        type="text"
                         placeholder="Do"
-                        :step="filters.type === 'led_screen' ? '1' : '0.1'"
                         class="search-input"
                       />
                     </div>
@@ -957,18 +983,18 @@ onBeforeUnmount(() => {
                     <label class="input-label">Wysokość ({{ filters.type === 'led_screen' ? 'mm' : 'm' }})</label>
                     <div class="range-input">
                       <input
-                        v-model.number="filters.heightFrom"
-                        type="number"
+                        :value="filters.heightFrom"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, filters.type === 'led_screen' ? false : true); filters.heightFrom = val ? parseFloat(val) : null }"
+                        type="text"
                         placeholder="Od"
-                        :step="filters.type === 'led_screen' ? '1' : '0.1'"
                         class="search-input"
                       />
                       <span class="separator">-</span>
                       <input
-                        v-model.number="filters.heightTo"
-                        type="number"
+                        :value="filters.heightTo"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, filters.type === 'led_screen' ? false : true); filters.heightTo = val ? parseFloat(val) : null }"
+                        type="text"
                         placeholder="Do"
-                        :step="filters.type === 'led_screen' ? '1' : '0.1'"
                         class="search-input"
                       />
                     </div>
@@ -987,18 +1013,18 @@ onBeforeUnmount(() => {
                     <label class="input-label">Powierzchnia (m²)</label>
                     <div class="range-input">
                       <input
-                        v-model.number="filters.surfaceFrom"
-                        type="number"
+                        :value="filters.surfaceFrom"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); filters.surfaceFrom = val ? parseFloat(val) : null }"
+                        type="text"
                         placeholder="Od"
-                        step="0.1"
                         class="search-input"
                       />
                       <span class="separator">-</span>
                       <input
-                        v-model.number="filters.surfaceTo"
-                        type="number"
+                        :value="filters.surfaceTo"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); filters.surfaceTo = val ? parseFloat(val) : null }"
+                        type="text"
                         placeholder="Do"
-                        step="0.1"
                         class="search-input"
                       />
                     </div>
@@ -1106,17 +1132,17 @@ onBeforeUnmount(() => {
                     <label class="input-label">Pixel Pitch (mm)</label>
                     <div class="range-input">
                       <input
-                        v-model.number="filters.pixelPitchFrom"
-                        type="number"
-                        step="0.1"
+                        :value="filters.pixelPitchFrom"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); filters.pixelPitchFrom = val ? parseFloat(val) : null }"
+                        type="text"
                         placeholder="Od"
                         class="search-input"
                       />
                       <span class="separator">-</span>
                       <input
-                        v-model.number="filters.pixelPitchTo"
-                        type="number"
-                        step="0.1"
+                        :value="filters.pixelPitchTo"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); filters.pixelPitchTo = val ? parseFloat(val) : null }"
+                        type="text"
                         placeholder="Do"
                         class="search-input"
                       />
@@ -1126,15 +1152,17 @@ onBeforeUnmount(() => {
                     <label class="input-label">Jasność (nits)</label>
                     <div class="range-input">
                       <input
-                        v-model.number="filters.brightnessFrom"
-                        type="number"
+                        :value="filters.brightnessFrom"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); filters.brightnessFrom = val ? parseInt(val) : null }"
+                        type="text"
                         placeholder="Od"
                         class="search-input"
                       />
                       <span class="separator">-</span>
                       <input
-                        v-model.number="filters.brightnessTo"
-                        type="number"
+                        :value="filters.brightnessTo"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); filters.brightnessTo = val ? parseInt(val) : null }"
+                        type="text"
                         placeholder="Do"
                         class="search-input"
                       />
@@ -1157,15 +1185,17 @@ onBeforeUnmount(() => {
                     <label class="input-label">Liczba pojazdów</label>
                     <div class="range-input">
                       <input
-                        v-model.number="filters.vehicleCountFrom"
-                        type="number"
+                        :value="filters.vehicleCountFrom"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); filters.vehicleCountFrom = val ? parseInt(val) : null }"
+                        type="text"
                         placeholder="Od"
                         class="search-input"
                       />
                       <span class="separator">-</span>
                       <input
-                        v-model.number="filters.vehicleCountTo"
-                        type="number"
+                        :value="filters.vehicleCountTo"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); filters.vehicleCountTo = val ? parseInt(val) : null }"
+                        type="text"
                         placeholder="Do"
                         class="search-input"
                       />
@@ -1234,18 +1264,18 @@ onBeforeUnmount(() => {
                     <label class="input-label">Liczba pasażerów dziennie</label>
                     <div class="range-input">
                       <input
-                        v-model.number="(filters as any).dailyPassengersFrom"
-                        type="number"
+                        :value="(filters as any).dailyPassengersFrom"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); (filters as any).dailyPassengersFrom = val ? parseInt(val) : null }"
+                        type="text"
                         placeholder="Od"
-                        step="100"
                         class="search-input"
                       />
                       <span class="separator">-</span>
                       <input
-                        v-model.number="(filters as any).dailyPassengersTo"
-                        type="number"
+                        :value="(filters as any).dailyPassengersTo"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); (filters as any).dailyPassengersTo = val ? parseInt(val) : null }"
+                        type="text"
                         placeholder="Do"
-                        step="100"
                         class="search-input"
                       />
                     </div>

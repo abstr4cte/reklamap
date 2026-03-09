@@ -138,6 +138,30 @@ const displayToast = (message: string) => {
   }, 3000)
 }
 
+// Funkcja do walidacji i konwersji liczb
+const handleNumberInput = (value: string, allowDecimals: boolean = false): string => {
+  if (value === '') return ''
+  
+  // Pozwól tylko na cyfry i opcjonalnie na przecinek/kropkę
+  let filtered = value.replace(/[^\d.,]/g, '')
+  
+  // Zamień przecinek na kropkę dla spójności
+  filtered = filtered.replace(',', '.')
+  
+  // Jeśli nie pozwalamy na decimals, usuń je
+  if (!allowDecimals) {
+    filtered = filtered.replace(/\./g, '')
+  } else {
+    // Pozwól tylko na jedną kropkę
+    const parts = filtered.split('.')
+    if (parts.length > 2) {
+      filtered = parts[0] + '.' + parts.slice(1).join('')
+    }
+  }
+  
+  return filtered
+}
+
 const clearLocation = () => {
   formData.value.location = ''
   formData.value.city = ''
@@ -1029,9 +1053,13 @@ const validateStep = (step: number): boolean => {
       }
       if (!formData.value.title) {
         errors.value.title = 'Tytuł jest wymagany'
+      } else if (formData.value.title.length > 200) {
+        errors.value.title = 'Tytuł nie może być dłuższy niż 200 znaków'
       }
       if (!formData.value.description) {
         errors.value.description = 'Opis jest wymagany'
+      } else if (formData.value.description.length > 5000) {
+        errors.value.description = 'Opis nie może być dłuższy niż 5000 znaków'
       }
       if (!formData.value.type) {
         errors.value.type = 'Rodzaj powierzchni jest wymagany'
@@ -1112,6 +1140,12 @@ const validateStep = (step: number): boolean => {
       if (formData.value.type === 'mobile') {
         if (!formData.value.mobileExposureMode) {
           errors.value.mobileExposureMode = 'Tryb ekspozycji jest wymagany'
+        }
+      }
+      // Walidacja resolution dla LED screens (format: WxH)
+      if (formData.value.type === 'led_screen' && formData.value.resolution) {
+        if (!/^\d+x\d+$/i.test(formData.value.resolution)) {
+          errors.value.resolution = 'Rozdzielczość musi być w formacie WxH (np. 1920x1080)'
         }
       }
       break
@@ -1531,9 +1565,9 @@ onMounted(() => {
             <div class="form-group">
               <label class="form-label">Cena <span class="required">*</span></label>
               <input
-                v-model.number="formData.price"
-                type="number"
-                step="0.01"
+                :value="formData.price"
+                @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); formData.price = val ? parseFloat(val) : null }"
+                type="text"
                 class="form-input"
                 :class="{ 'error': errors.price }"
                 placeholder="1000"
@@ -1555,9 +1589,9 @@ onMounted(() => {
           <div v-if="formData.priceUnit === 'campaign'" class="form-group">
             <label class="form-label">Czas trwania kampanii (dni) <span class="required">*</span></label>
             <input
-              v-model.number="formData.campaignDuration"
-              type="number"
-              step="1"
+              :value="formData.campaignDuration"
+              @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); formData.campaignDuration = val ? parseInt(val) : null }"
+              type="text"
               class="form-input"
               :class="{ 'error': errors.campaignDuration }"
               placeholder="30"
@@ -1657,9 +1691,9 @@ onMounted(() => {
             <div class="form-group">
               <label class="form-label">Szerokość (mm) <span class="required">*</span></label>
               <input
-                v-model.number="formData.width"
-                type="number"
-                step="1"
+                :value="formData.width"
+                @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); formData.width = val ? parseInt(val) : null }"
+                type="text"
                 class="form-input"
                 :class="{ 'error': errors.width }"
                 placeholder="2000"
@@ -1671,9 +1705,9 @@ onMounted(() => {
             <div class="form-group">
               <label class="form-label">Wysokość (mm) <span class="required">*</span></label>
               <input
-                v-model.number="formData.height"
-                type="number"
-                step="1"
+                :value="formData.height"
+                @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); formData.height = val ? parseInt(val) : null }"
+                type="text"
                 class="form-input"
                 :class="{ 'error': errors.height }"
                 placeholder="1000"
@@ -1691,28 +1725,25 @@ onMounted(() => {
                 <span v-if="requiresDimensions" class="required">*</span>
               </label>
               <input
-                v-model.number="formData.width"
-                type="number"
-                step="0.01"
+                :value="formData.width"
+                @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); formData.width = val ? parseFloat(val) : null }"
+                type="text"
                 class="form-input"
                 :class="{ 'error': errors.width }"
-                placeholder="5.0"
+                placeholder="2"
               />
               <span v-if="errors.width" class="error-text">{{ errors.width }}</span>
             </div>
 
             <div class="form-group">
-              <label class="form-label">
-                Wysokość (m) 
-                <span v-if="requiresDimensions" class="required">*</span>
-              </label>
+              <label class="form-label">Wysokość (m) <span class="required">*</span></label>
               <input
-                v-model.number="formData.height"
-                type="number"
-                step="0.01"
+                :value="formData.height"
+                @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); formData.height = val ? parseFloat(val) : null }"
+                type="text"
                 class="form-input"
                 :class="{ 'error': errors.height }"
-                placeholder="3.0"
+                placeholder="1"
               />
               <span v-if="errors.height" class="error-text">{{ errors.height }}</span>
             </div>
@@ -1873,9 +1904,9 @@ onMounted(() => {
           <div v-if="['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem'].includes(formData.type)" class="form-group">
             <label class="form-label">Szacowana dzienna liczba odbiorców (OTS)</label>
             <input
-              v-model.number="formData.estimatedDailyViews"
-              type="number"
-              step="1"
+              :value="formData.estimatedDailyViews"
+              @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); formData.estimatedDailyViews = val ? parseInt(val) : null }"
+              type="text"
               class="form-input"
               placeholder="np. 25000"
             />
@@ -1962,9 +1993,9 @@ onMounted(() => {
             <div class="form-group">
               <label class="form-label">Liczba pasażerów dziennie</label>
               <input
-                v-model.number="formData.dailyPassengers"
-                type="number"
-                step="100"
+                :value="formData.dailyPassengers"
+                @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); formData.dailyPassengers = val ? parseInt(val) : null }"
+                type="text"
                 class="form-input"
                 placeholder="np. 5000"
               />
@@ -2004,9 +2035,9 @@ onMounted(() => {
               <div class="form-group">
                 <label class="form-label">Pixel Pitch (mm)</label>
                 <input
-                  v-model.number="formData.pixelPitch"
-                  type="number"
-                  step="0.1"
+                  :value="formData.pixelPitch"
+                  @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); formData.pixelPitch = val ? parseFloat(val) : null }"
+                  type="text"
                   class="form-input"
                   placeholder="np. 3.9"
                 />
@@ -2016,9 +2047,9 @@ onMounted(() => {
               <div class="form-group">
                 <label class="form-label">Jasność (nits)</label>
                 <input
-                  v-model.number="formData.brightness"
-                  type="number"
-                  step="100"
+                  :value="formData.brightness"
+                  @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); formData.brightness = val ? parseInt(val) : null }"
+                  type="text"
                   class="form-input"
                   placeholder="np. 5000"
                 />
@@ -2055,9 +2086,9 @@ onMounted(() => {
             <div v-if="formData.variant !== 'stop'" class="form-group">
               <label class="form-label">Liczba pojazdów</label>
               <input
-                v-model.number="formData.vehicleCount"
-                type="number"
-                step="1"
+                :value="formData.vehicleCount"
+                @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); formData.vehicleCount = val ? parseInt(val) : null }"
+                type="text"
                 class="form-input"
                 placeholder="1"
               />
@@ -3280,6 +3311,10 @@ onMounted(() => {
   border: 2px solid #e5e7eb;
 }
 
+.map-container-desktop :deep(.leaflet-control-attribution) {
+  display: none !important;
+}
+
 .map-hint-desktop {
   text-align: center;
   color: #6b7280;
@@ -3598,9 +3633,13 @@ onMounted(() => {
     min-height: 250px;
   }
 
-  .modal-map :deep(.leaflet-bottom),
-  .modal-map :deep(.leaflet-right) {
-    display: none;
+  .leaflet-container :deep(.leaflet-bottom),
+  .leaflet-container :deep(.leaflet-right) {
+    display: none !important;
+  }
+
+  :deep(.leaflet-control-attribution) {
+    display: none !important;
   }
 
   .modal-hint {
