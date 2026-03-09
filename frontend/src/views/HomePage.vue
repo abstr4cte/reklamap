@@ -1190,7 +1190,6 @@ const handleSearchAlertSubmit = (email: string) => {
   width: 100%;
   height: 100%;
   /* Apply gradient color to SVG - Safari compatible */
-  filter: invert(32%) sepia(79%) saturate(1100%) hue-rotate(260deg) brightness(95%) contrast(102%);
   transition: filter 0.3s ease;
 }
 
