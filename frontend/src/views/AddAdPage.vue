@@ -782,7 +782,7 @@ const initModalMap = () => {
   modalMap = L.map(modalMapContainer.value, {
     maxBounds: polandBounds,
     maxBoundsViscosity: 1.0,
-    minZoom: 6,
+    minZoom: 4.5,
     maxZoom: 18,
     zoomControl: true
   }).setView([formData.value.latitude || 52.0, formData.value.longitude || 19.0], zoomLevel)

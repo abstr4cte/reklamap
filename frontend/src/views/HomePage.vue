@@ -1190,7 +1190,7 @@ const handleSearchAlertSubmit = (email: string) => {
   width: 100%;
   height: 100%;
   /* Apply gradient color to SVG - Safari compatible */
-  filter: invert(32%) sepia(79%) saturate(1100%) hue-rotate(242deg) brightness(98%) contrast(101%);
+  filter: invert(32%) sepia(79%) saturate(1100%) hue-rotate(260deg) brightness(95%) contrast(102%);
   transition: filter 0.3s ease;
 }
 
@@ -1202,7 +1202,7 @@ const handleSearchAlertSubmit = (email: string) => {
 
 .category-card:hover .category-icon img {
   /* Brighter gradient on hover */
-  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(242deg) brightness(110%) contrast(105%) drop-shadow(0 0 8px rgba(102, 126, 234, 0.6));
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(260deg) brightness(108%) contrast(106%) drop-shadow(0 0 8px rgba(102, 126, 234, 0.6));
 }
 
 .category-name {
@@ -1300,7 +1300,7 @@ const handleSearchAlertSubmit = (email: string) => {
   .category-icon img {
     width: 100%;
     height: 100%;
-    filter: invert(32%) sepia(79%) saturate(1100%) hue-rotate(242deg) brightness(98%) contrast(101%);
+    filter: invert(32%) sepia(79%) saturate(1100%) hue-rotate(260deg) brightness(95%) contrast(102%);
   }
   
   .category-name {
