@@ -14,7 +14,6 @@ class StorageController extends Controller
     {
         Log::info('Upload request received');
 
-        // Accept also HEIC/HEIF from iPhones and other mobile formats
         $request->validate([
             'file' => [
                 'required',
@@ -22,20 +21,23 @@ class StorageController extends Controller
                 'max:10240', // 10MB max
                 function ($attribute, $value, $fail) {
                     $mimeType = $value->getMimeType();
-                    $allowedMimes = [
-                        'image/jpeg', 'image/jpg', 'image/png', 'image/gif',
-                        'image/webp', 'image/bmp', 'image/tiff',
-                        'image/heic', 'image/heif', // iPhone formats
-                        'image/x-ci-raw', 'image/avif',
-                    ];
-                    if (!in_array($mimeType, $allowedMimes)) {
-                        // Also check by extension as fallback
-                        $ext = strtolower($value->getClientOriginalExtension());
-                        $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'heic', 'heif', 'avif'];
-                        if (!in_array($ext, $allowedExts)) {
-                            $fail('Plik musi być obrazem (JPG, PNG, WebP, HEIC itp.)');
-                        }
+                    $ext = strtolower($value->getClientOriginalExtension());
+
+                    Log::info("Validating file - MIME: {$mimeType}, Extension: {$ext}");
+
+                    // Accept if MIME type starts with 'image/'
+                    if (str_starts_with($mimeType, 'image/')) {
+                        return; // Valid
                     }
+
+                    // Accept common image extensions as fallback (some mobile browsers send wrong MIME)
+                    $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'heic', 'heif', 'avif'];
+                    if (in_array($ext, $allowedExts)) {
+                        return; // Valid by extension
+                    }
+
+                    // Reject everything else
+                    $fail("Nieobsługiwany format pliku (typ: {$mimeType}, rozszerzenie: .{$ext}). Dodaj zdjęcie w formacie JPG, PNG lub HEIC.");
                 },
             ],
         ]);
@@ -48,7 +50,7 @@ class StorageController extends Controller
             Log::info('File MIME type: ' . $file->getMimeType());
             Log::info('Generated base filename: ' . $baseFilename);
 
-            $jpgFilename = $baseFilename . '.jpg';
+            $jpgFilename  = $baseFilename . '.jpg';
             $webpFilename = $baseFilename . '.webp';
 
             $advertisementsPath = storage_path('app/public/advertisements/');
@@ -59,8 +61,8 @@ class StorageController extends Controller
             }
 
             try {
-                // Read image through Intervention Image - this handles EXIF orientation
-                // auto-correction is configured in config/image.php (autoOrientation: true)
+                // Read image through Intervention Image
+                // autoOrientation: true in config/image.php corrects EXIF rotation from mobile phones
                 $img = Image::read($file->getRealPath());
 
                 // Resize if too large (max 1920px width), preserve aspect ratio
@@ -68,7 +70,7 @@ class StorageController extends Controller
                     $img->scale(width: 1920);
                 }
 
-                // Save as JPG (fallback)
+                // Save as JPG
                 $jpgFullPath = $advertisementsPath . $jpgFilename;
                 $img->toJpeg(90)->save($jpgFullPath);
                 Log::info('JPG stored at: advertisements/' . $jpgFilename);
@@ -78,7 +80,6 @@ class StorageController extends Controller
                 $img->toWebp(85)->save($webpFullPath);
                 Log::info('WebP created: advertisements/' . $webpFilename);
 
-                // Return both paths
                 return response()->json([
                     'jpg'     => 'advertisements/' . $jpgFilename,
                     'webp'    => 'advertisements/' . $webpFilename,
@@ -89,10 +90,10 @@ class StorageController extends Controller
                 Log::error('Image processing failed: ' . $e->getMessage());
                 Log::error('Stack trace: ' . $e->getTraceAsString());
 
-                // Fallback: try to store original file if Intervention Image fails
+                // Fallback: store original file if Intervention Image fails
                 try {
                     $jpgPath = $file->storeAs('advertisements', $jpgFilename, 'public');
-                    Log::info('Fallback JPG stored at: ' . $jpgPath);
+                    Log::info('Fallback raw file stored at: ' . $jpgPath);
 
                     return response()->json([
                         'jpg'     => 'advertisements/' . $jpgFilename,

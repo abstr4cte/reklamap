@@ -280,7 +280,18 @@ export const api = {
             })
 
             if (!response.ok) {
-                throw new Error('Failed to upload file')
+                // Try to extract meaningful error message from server response
+                try {
+                    const errData = await response.json()
+                    // Laravel validation errors: { message: '...', errors: { file: ['...'] } }
+                    const message = errData?.errors?.file?.[0] || errData?.message || errData?.error || 'Nie udało się przesłać zdjęcia'
+                    throw new Error(message)
+                } catch (parseError: any) {
+                    if (parseError?.message && parseError.message !== 'Unexpected token') {
+                        throw parseError
+                    }
+                    throw new Error(`Nie udało się przesłać zdjęcia (HTTP ${response.status})`)
+                }
             }
 
             const responseText = await response.text()

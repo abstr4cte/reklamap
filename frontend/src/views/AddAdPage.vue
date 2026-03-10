@@ -1218,7 +1218,7 @@ const uploadImages = async (): Promise<string[]> => {
   }
 
   console.log(`Uploading ${formData.value.imageFiles.length} images...`)
-  let failedCount = 0
+  const failedErrors: string[] = []
   
   const uploadPromises = formData.value.imageFiles.map(async (item, index) => {
     try {
@@ -1227,8 +1227,9 @@ const uploadImages = async (): Promise<string[]> => {
       console.log(`Image ${index + 1} uploaded successfully:`, url)
       return url
     } catch (error: any) {
-      console.error(`Error uploading image ${index + 1} (${item.file.name}):`, error)
-      failedCount++
+      const msg = error?.message || 'Nieznany błąd'
+      console.error(`Error uploading image ${index + 1} (${item.file.name}):`, msg)
+      failedErrors.push(`"${item.file.name}": ${msg}`)
       return ''
     }
   })
@@ -1238,11 +1239,11 @@ const uploadImages = async (): Promise<string[]> => {
   console.log(`Upload complete. ${validUrls.length}/${results.length} images uploaded successfully`)
   console.log('Image URLs:', validUrls)
 
-  if (failedCount > 0) {
-    toast.value?.add(
-      `Uwaga: ${failedCount} z ${formData.value.imageFiles.length} zdjęć nie udało się przesłać. Sprawdź format pliku (zalecane: JPG, PNG, HEIC).`,
-      'error'
-    )
+  if (failedErrors.length > 0) {
+    const errorMsg = failedErrors.length === 1
+      ? `Nie udało się przesłać zdjęcia: ${failedErrors[0]}`
+      : `Nie udało się przesłać ${failedErrors.length} zdjęć. Sprawdź format pliku (JPG, PNG, HEIC).`
+    toast.value?.add(errorMsg, 'error')
   }
 
   return validUrls
