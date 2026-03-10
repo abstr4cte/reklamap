@@ -16,7 +16,6 @@
     "axios": "^1.13.2",
     "bad-words": "^4.0.0",
     "chart.js": "^4.4.1",
-    "heic2any": "^0.0.4",
     "leaflet": "^1.9.4",
     "nsfwjs": "^4.2.1",
     "puppeteer": "^24.34.0",

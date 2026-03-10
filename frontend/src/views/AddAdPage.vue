@@ -1218,15 +1218,17 @@ const uploadImages = async (): Promise<string[]> => {
   }
 
   console.log(`Uploading ${formData.value.imageFiles.length} images...`)
+  let failedCount = 0
   
   const uploadPromises = formData.value.imageFiles.map(async (item, index) => {
     try {
-      console.log(`Uploading image ${index + 1}/${formData.value.imageFiles.length}`)
+      console.log(`Uploading image ${index + 1}/${formData.value.imageFiles.length}: ${item.file.name} (type: ${item.file.type}, size: ${item.file.size})`)
       const url = await api.storage.upload(item.file)
       console.log(`Image ${index + 1} uploaded successfully:`, url)
       return url
-    } catch (error) {
-      console.error(`Error uploading image ${index + 1}:`, error)
+    } catch (error: any) {
+      console.error(`Error uploading image ${index + 1} (${item.file.name}):`, error)
+      failedCount++
       return ''
     }
   })
@@ -1235,6 +1237,14 @@ const uploadImages = async (): Promise<string[]> => {
   const validUrls = results.filter(url => url !== '')
   console.log(`Upload complete. ${validUrls.length}/${results.length} images uploaded successfully`)
   console.log('Image URLs:', validUrls)
+
+  if (failedCount > 0) {
+    toast.value?.add(
+      `Uwaga: ${failedCount} z ${formData.value.imageFiles.length} zdjęć nie udało się przesłać. Sprawdź format pliku (zalecane: JPG, PNG, HEIC).`,
+      'error'
+    )
+  }
+
   return validUrls
 }
 
