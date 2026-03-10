@@ -1290,12 +1290,12 @@ const handleSearchAlertSubmit = (email: string) => {
     display: flex;
     align-items: center;
     justify-content: center;
+    filter: brightness(0) saturate(100%) invert(32%) sepia(79%) saturate(1100%) hue-rotate(260deg) brightness(95%) contrast(102%);
   }
   
   .category-icon img {
     width: 100%;
     height: 100%;
-    filter: invert(32%) sepia(79%) saturate(1100%) hue-rotate(260deg) brightness(95%) contrast(102%);
   }
   
   .category-name {
