@@ -63,19 +63,24 @@ class StorageController extends Controller
             try {
                 // Read image through Intervention Image
                 // autoOrientation: true in config/image.php corrects EXIF rotation from mobile phones
+                Log::info('Reading image with Intervention Image...');
                 $img = Image::read($file->getRealPath());
+                Log::info('Image read successfully. Dimensions: ' . $img->width() . 'x' . $img->height());
 
                 // Resize if too large (max 1920px width), preserve aspect ratio
                 if ($img->width() > 1920) {
+                    Log::info('Resizing image from ' . $img->width() . 'px to 1920px width');
                     $img->scale(width: 1920);
                 }
 
                 // Save as JPG
+                Log::info('Converting to JPG...');
                 $jpgFullPath = $advertisementsPath . $jpgFilename;
                 $img->toJpeg(90)->save($jpgFullPath);
                 Log::info('JPG stored at: advertisements/' . $jpgFilename);
 
                 // Save as WebP for better performance
+                Log::info('Converting to WebP...');
                 $webpFullPath = $advertisementsPath . $webpFilename;
                 $img->toWebp(85)->save($webpFullPath);
                 Log::info('WebP created: advertisements/' . $webpFilename);
@@ -88,6 +93,7 @@ class StorageController extends Controller
 
             } catch (\Exception $e) {
                 Log::error('Image processing failed: ' . $e->getMessage());
+                Log::error('File info: name=' . $file->getClientOriginalName() . ', mime=' . $file->getMimeType() . ', size=' . $file->getSize());
                 Log::error('Stack trace: ' . $e->getTraceAsString());
 
                 // Fallback: store original file if Intervention Image fails

@@ -928,8 +928,13 @@ const processFiles = async (files: FileList | null | undefined) => {
       continue
     }
 
-    if (!file.type.startsWith('image/')) {
-      errors.value.image = `Plik ${file.name} nie jest obrazem`
+    // Sprawdź MIME type lub rozszerzenie pliku (telefony czasami nie wysyłają prawidłowego MIME)
+    const fileExt = file.name.split('.').pop()?.toLowerCase() || ''
+    const allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif', 'avif']
+    const isValidImage = file.type.startsWith('image/') || allowedExts.includes(fileExt)
+    
+    if (!isValidImage) {
+      errors.value.image = `Plik ${file.name} nie jest obrazem (obsługiwane: JPG, PNG, HEIC)`
       continue
     }
     
@@ -1240,10 +1245,15 @@ const uploadImages = async (): Promise<string[]> => {
   console.log('Image URLs:', validUrls)
 
   if (failedErrors.length > 0) {
-    const errorMsg = failedErrors.length === 1
-      ? `Nie udało się przesłać zdjęcia: ${failedErrors[0]}`
-      : `Nie udało się przesłać ${failedErrors.length} zdjęć. Sprawdź format pliku (JPG, PNG, HEIC).`
-    toast.value?.add(errorMsg, 'error')
+    // Pokaż szczegółowy błąd dla pojedynczego zdjęcia
+    if (failedErrors.length === 1) {
+      toast.value?.add(`Nie udało się przesłać zdjęcia: ${failedErrors[0]}`, 'error')
+    } else {
+      // Dla wielu zdjęć pokaż ogólny komunikat
+      toast.value?.add(`Nie udało się przesłać ${failedErrors.length} zdjęć. Sprawdź format pliku (JPG, PNG, HEIC).`, 'error')
+      // Loguj szczegóły do konsoli
+      console.error('Failed uploads:', failedErrors)
+    }
   }
 
   return validUrls
