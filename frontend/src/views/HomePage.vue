@@ -926,59 +926,7 @@ const handleSearchAlertSubmit = (email: string) => {
               :class="{ 'mobile-category': isMobile }"
             >
               <div class="category-icon">
-                <svg class="category-icon-svg" width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <!-- Billboard -->
-                  <template v-if="category.slug === 'billboardy'">
-                    <rect x="2" y="4" width="20" height="16" rx="2" fill="#667eea" stroke="#667eea" stroke-width="1.5"/>
-                    <line x1="12" y1="4" x2="12" y2="20" stroke="white" stroke-width="1"/>
-                  </template>
-                  <!-- Banner -->
-                  <template v-else-if="category.slug === 'banery'">
-                    <rect x="1" y="6" width="22" height="12" rx="1.5" fill="#667eea" stroke="#667eea" stroke-width="1.5"/>
-                  </template>
-                  <!-- Citylight -->
-                  <template v-else-if="category.slug === 'citylighty'">
-                    <rect x="3" y="2" width="18" height="20" rx="2" fill="#667eea" stroke="#667eea" stroke-width="1.5"/>
-                    <circle cx="12" cy="12" r="6" fill="white" opacity="0.3"/>
-                  </template>
-                  <!-- LED Screen -->
-                  <template v-else-if="category.slug === 'ekrany-led'">
-                    <rect x="2" y="3" width="20" height="18" rx="2" fill="#667eea" stroke="#667eea" stroke-width="1.5"/>
-                    <circle cx="7" cy="8" r="1.5" fill="white"/>
-                    <circle cx="12" cy="8" r="1.5" fill="white"/>
-                    <circle cx="17" cy="8" r="1.5" fill="white"/>
-                    <circle cx="7" cy="12" r="1.5" fill="white"/>
-                    <circle cx="12" cy="12" r="1.5" fill="white"/>
-                    <circle cx="17" cy="12" r="1.5" fill="white"/>
-                  </template>
-                  <!-- Wall -->
-                  <template v-else-if="category.slug === 'sciany-reklamowe'">
-                    <path d="M2 20h20V4H2v16z" fill="#667eea" stroke="#667eea" stroke-width="1.5"/>
-                    <line x1="8" y1="4" x2="8" y2="20" stroke="white" stroke-width="0.8" opacity="0.4"/>
-                    <line x1="16" y1="4" x2="16" y2="20" stroke="white" stroke-width="0.8" opacity="0.4"/>
-                  </template>
-                  <!-- Totem -->
-                  <template v-else-if="category.slug === 'totemy-reklamowe'">
-                    <rect x="7" y="2" width="10" height="20" rx="1" fill="#667eea" stroke="#667eea" stroke-width="1.5"/>
-                    <circle cx="12" cy="12" r="4" fill="white" opacity="0.3"/>
-                  </template>
-                  <!-- Transport -->
-                  <template v-else-if="category.slug === 'reklama-w-transporcie'">
-                    <rect x="3" y="8" width="18" height="10" rx="1" fill="#667eea" stroke="#667eea" stroke-width="1.5"/>
-                    <circle cx="7" cy="18" r="1.5" fill="white"/>
-                    <circle cx="17" cy="18" r="1.5" fill="white"/>
-                  </template>
-                  <!-- Mobile -->
-                  <template v-else-if="category.slug === 'reklama-mobilna'">
-                    <rect x="5" y="3" width="14" height="18" rx="1.5" fill="#667eea" stroke="#667eea" stroke-width="1.5"/>
-                    <rect x="7" y="5" width="10" height="12" fill="white" opacity="0.2"/>
-                  </template>
-                  <!-- Other -->
-                  <template v-else>
-                    <circle cx="12" cy="12" r="9" fill="#667eea" stroke="#667eea" stroke-width="1.5"/>
-                    <path d="M12 8v8M8 12h8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                  </template>
-                </svg>
+                <img :src="`/icons/${category.icon}`" :alt="category.name" />
               </div>
               <h3 class="category-name">{{ category.name }}</h3>
               <p class="category-description">{{ category.description }}</p>
@@ -1238,10 +1186,13 @@ const handleSearchAlertSubmit = (email: string) => {
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
 }
 
-.category-icon-svg {
+.category-icon img {
   width: 100%;
   height: 100%;
-  transition: transform 0.3s ease;
+  /* Same filter as FeedbackModal - works consistently across all browsers/devices */
+  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(224deg) brightness(94%) contrast(91%);
+  -webkit-filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(224deg) brightness(94%) contrast(91%);
+  transition: filter 0.3s ease;
 }
 
 .category-card:hover .category-icon {
