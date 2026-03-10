@@ -1189,7 +1189,8 @@ const handleSearchAlertSubmit = (email: string) => {
 .category-icon img {
   width: 100%;
   height: 100%;
-  /* Apply gradient color to SVG - Safari compatible */
+  /* Consistent color across all browsers - simpler filter that works on iPhone */
+  filter: brightness(0) saturate(100%) invert(40%) sepia(60%) saturate(1200%) hue-rotate(250deg);
   transition: filter 0.3s ease;
 }
 
@@ -1295,6 +1296,7 @@ const handleSearchAlertSubmit = (email: string) => {
   .category-icon img {
     width: 100%;
     height: 100%;
+    filter: invert(32%) sepia(79%) saturate(1100%) hue-rotate(260deg) brightness(95%) contrast(102%);
   }
   
   .category-name {
