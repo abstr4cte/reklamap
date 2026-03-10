@@ -1189,6 +1189,9 @@ const handleSearchAlertSubmit = (email: string) => {
 .category-icon img {
   width: 100%;
   height: 100%;
+  /* Apply purple color directly - same on all devices */
+  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(224deg) brightness(94%) contrast(91%);
+  -webkit-filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(224deg) brightness(94%) contrast(91%);
 }
 
 .category-card:hover .category-icon {
