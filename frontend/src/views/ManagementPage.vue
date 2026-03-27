@@ -407,9 +407,12 @@ const updateActiveStatus = async (id: string, isActive: boolean) => {
 
     ad.is_active = isActive
     toast.value?.add(isActive ? 'Ogłoszenie zostało aktywowane' : 'Ogłoszenie zostało dezaktywowane', 'success')
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error updating active status:', error)
-    toast.value?.add('Błąd podczas zmiany stanu aktywności', 'error')
+    console.error('Error response:', error.response?.data)
+    console.error('Error status:', error.response?.status)
+    const errorMessage = error.response?.data?.message || 'Błąd podczas zmiany stanu aktywności'
+    toast.value?.add(errorMessage, 'error')
   }
 }
 

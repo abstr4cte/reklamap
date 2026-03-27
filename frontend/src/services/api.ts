@@ -21,6 +21,16 @@ export const getFullImageUrl = (path: string): string => {
 const APP_KEY = import.meta.env.VITE_INTERNAL_APP_KEY as string
 const withKey = (headers: HeadersInit = {}): HeadersInit => ({ ...(headers as any), 'X-App-Key': APP_KEY })
 
+// Helper function to add both X-App-Key and X-Management-Token
+const withManagementToken = (headers: HeadersInit = {}): HeadersInit => {
+    const token = sessionStorage.getItem('management_token')
+    return {
+        ...(headers as any),
+        'X-App-Key': APP_KEY,
+        ...(token ? { 'X-Management-Token': token } : {})
+    }
+}
+
 export const api = {
     async get(endpoint: string): Promise<any> {
         const response = await fetch(`${API_URL}${endpoint}`, { headers: withKey() })
@@ -78,7 +88,7 @@ export const api = {
         const response = await fetch(`${API_URL}/listings/${id}/status`, {
             method: 'PATCH',
             headers: {
-                ...withKey({
+                ...withManagementToken({
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                 })
@@ -100,7 +110,7 @@ export const api = {
         const response = await fetch(`${API_URL}/listings/${id}`, {
             method: 'PUT',
             headers: {
-                ...withKey({
+                ...withManagementToken({
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                 })
@@ -113,7 +123,7 @@ export const api = {
     async deleteAdvertisement(id: string): Promise<void> {
         const response = await fetch(`${API_URL}/listings/${id}`, {
             method: 'DELETE',
-            headers: withKey(),
+            headers: withManagementToken(),
         })
         if (!response.ok) throw new Error('Failed to delete advertisement')
     },
