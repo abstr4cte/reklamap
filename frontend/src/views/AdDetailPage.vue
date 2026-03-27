@@ -340,9 +340,18 @@ const handleDownloadPDF = async () => {
   }
 }
 
-// Lifecycle
-onMounted(async () => {
+// Load advertisement data
+const loadAd = async () => {
   const id = route.params.id as string
+  isLoading.value = true
+  notFound.value = false
+  
+  // Reset state
+  showPhone.value = false
+  showStreetView.value = false
+  streetViewError.value = false
+  streetViewLoading.value = false
+  
   try {
     const lastPart = id.split('-').pop()
     const adId = lastPart || id
@@ -373,14 +382,34 @@ onMounted(async () => {
     isLoading.value = false
     await nextTick()
     
+    // Scroll to top when loading new ad
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    
     // Check if container exists after DOM update
     if (mapContainer.value) {
+      // Remove old map if exists
+      if (map) {
+        map.remove()
+        map = null
+      }
       initMap()
     }
   } catch (e: any) {
     if (e.response?.status === 404) notFound.value = true
     isLoading.value = false
   }
+}
+
+// Watch for route changes (when clicking similar ads)
+watch(() => route.params.id, (newId, oldId) => {
+  if (newId && newId !== oldId) {
+    loadAd()
+  }
+})
+
+// Lifecycle
+onMounted(() => {
+  loadAd()
 })
 
 onUnmounted(() => {

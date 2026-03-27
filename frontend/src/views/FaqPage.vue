@@ -85,7 +85,7 @@ const faqItems: FaqItem[] = [
     id: 11,
     category: 'ogloszenia',
     question: 'Jak ustalić cenę?',
-    answer: 'Cena zależy od wielu czynników: typu nośnika, lokalizacji, wymiarów, natężenia ruchu, oświetlenia, czasu trwania kampanii i popytu na rynku. Możesz podać cenę w różnych jednostkach: dzień, tydzień, miesiąc, rok, kampania (dla transportu) lub m² (dla większych powierzchni). Warto porównać ceny podobnych nośników w okolicy, aby ustalić konkurencyjną ofertę.'
+    answer: 'Cena zależy od wielu czynników: typu nośnika, lokalizacji, wymiarów, natężenia ruchu, oświetlenia, czasu trwania kampanii i popytu na rynku. Możesz podać cenę w różnych jednostkach: dzień, tydzień, miesiąc, rok lub kampania (dla transportu). Platforma automatycznie przelicza ceny między jednostkami, aby ułatwić porównywanie ofert. Warto porównać ceny podobnych nośników w okolicy, aby ustalić konkurencyjną ofertę.'
   },
   {
     id: 12,

@@ -4,11 +4,19 @@ import { slugify } from '../../utils/slugify'
 import { mapTypeToUrlFormat } from '../../utils/typeMapping'
 import { formatPrice } from '../../utils/formatPrice'
 import type { Advertisement } from '../../types'
+import { useSearchStore } from '../../stores/useSearchStore'
 
 const props = defineProps<{
   similarAds: Advertisement[]
   getTypeLabel: (type: string) => string
 }>()
+
+const searchStore = useSearchStore()
+
+const getPriceWithUnit = (ad: Advertisement) => {
+  const priceLabel = searchStore.getPriceLabel(ad.price_unit || 'month', ad)
+  return `${formatPrice(ad.price)} PLN${priceLabel}`
+}
 
 </script>
 
@@ -34,8 +42,14 @@ const props = defineProps<{
         </div>
         <div class="similar-listing-content">
           <h4>{{ similarAd.title }}</h4>
-          <div class="similar-listing-price">{{ formatPrice(similarAd.price) }} PLN</div>
-          <div class="similar-listing-location">{{ similarAd.city }}</div>
+          <div class="similar-listing-price">{{ getPriceWithUnit(similarAd) }}</div>
+          <div class="similar-listing-location">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 8C9.1 8 10 7.1 10 6C10 4.9 9.1 4 8 4C6.9 4 6 4.9 6 6C6 7.1 6.9 8 8 8Z" stroke="#6B7280" stroke-width="1.3"/>
+              <path d="M8 14C8 14 12 10.5 12 6C12 3.79 10.21 2 8 2C5.79 2 4 3.79 4 6C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.3"/>
+            </svg>
+            <span>{{ similarAd.city }}</span>
+          </div>
         </div>
       </router-link>
     </div>
@@ -139,12 +153,11 @@ const props = defineProps<{
   color: var(--text-muted, #6b7280);
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.35rem;
 }
 
-.similar-listing-location::before {
-  content: '📍';
-  font-size: 0.75rem;
+.similar-listing-location svg {
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {

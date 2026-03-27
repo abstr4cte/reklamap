@@ -14,6 +14,12 @@ const surfaceArea = computed(() => {
   return (props.ad.width * props.ad.height).toFixed(2)
 })
 
+const showDimensions = computed(() => {
+  // Wymiary są ukryte dla transport, mobile, other
+  const hideDimensionsTypes = ['transport', 'mobile', 'other']
+  return !hideDimensionsTypes.includes(props.ad.type) && props.ad.width && props.ad.height
+})
+
 const showSurfaceArea = computed(() => {
   return props.ad.type !== 'citylight' && props.ad.width && props.ad.height && parseFloat(surfaceArea.value) > 0
 })
@@ -48,12 +54,12 @@ const getVariantLabel = (variant: string, type: string) => searchStore.getVarian
 
 <template>
   <div class="specifications-grid">
-    <div v-if="ad.width && ad.height" class="spec-item">
+    <div v-if="showDimensions" class="spec-item">
       <div class="spec-label">Wymiary</div>
       <div class="spec-value">{{ ad.width }}m × {{ ad.height }}m</div>
     </div>
 
-    <div v-if="showSurfaceArea" class="spec-item">
+    <div v-if="showDimensions && showSurfaceArea" class="spec-item">
       <div class="spec-label">Powierzchnia</div>
       <div class="spec-value">{{ surfaceArea }} m²</div>
     </div>

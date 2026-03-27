@@ -345,18 +345,20 @@ export const useSearchStore = defineStore('search', () => {
   ]
 
   const getAvailablePriceUnits = (type: string) => {
-    if (!type) return priceUnitOptions
+    if (!type) return priceUnitOptions.filter(o => o.value !== 'sqm')
     
     const disabled: Record<string, string[]> = {
-      citylight: ['day', 'week', 'year', 'campaign'],
-      billboard: ['campaign'],
-      wall: ['day', 'week', 'campaign'],
-      banner: ['year', 'campaign'],
-      led_screen: ['week', 'year', 'sqm'],
-      transport: ['week', 'year', 'sqm'],
-      mobile: ['week', 'month', 'year', 'sqm']
+      citylight: ['day', 'week', 'campaign', 'sqm'],
+      billboard: ['campaign', 'sqm'],
+      wall: ['campaign', 'sqm'],
+      banner: ['year', 'campaign', 'sqm'],
+      led_screen: ['week', 'sqm'],
+      transport: ['week', 'sqm'],
+      mobile: ['week', 'month', 'year', 'sqm'],
+      totem: ['sqm'],
+      other: ['sqm']
     }
-    const skip = disabled[type] || []
+    const skip = disabled[type] || ['sqm']
     return priceUnitOptions.filter(o => !skip.includes(o.value))
   }
 

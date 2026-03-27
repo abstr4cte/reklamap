@@ -75,7 +75,7 @@ const formData = ref({
   description: '',
   type: '',
   price: null as number | null,
-  priceUnit: 'day' as 'day' | 'week' | 'month' | 'year' | 'campaign',
+  priceUnit: 'month' as 'day' | 'week' | 'month' | 'year' | 'campaign',
   priceNegotiable: false,
   width: null as number | null,
   height: null as number | null,
@@ -269,13 +269,10 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 
-// Automatyczne ustawienie environment dla typów, które zawsze są outdoor
+// Automatyczne ustawienie jednostki ceny przy zmianie typu
 watch(() => formData.value.type, (newType: string) => {
-  // Billboard, Ściana, Transport - zawsze outdoor
-  if (['billboard', 'wall', 'transport'].includes(newType)) {
-    formData.value.environment = 'outdoor'
-  } else if (!showEnvironmentField.value) {
-    // Jeśli pole nie jest widoczne dla tego typu, wyczyść wartość
+  // Wyczyść environment jeśli pole nie jest widoczne dla tego typu
+  if (!showEnvironmentField.value) {
     formData.value.environment = ''
   }
 
@@ -741,6 +738,20 @@ const initModalMap = async () => {
       modalMarker!.setLatLng([formData.value.latitude, formData.value.longitude])
       return
     }
+    
+    // Reverse geocode to get address and update modal search input
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.lat}&lon=${position.lng}&zoom=18&addressdetails=1`
+      )
+      const data = await response.json()
+      
+      if (data.display_name) {
+        modalSearchQuery.value = data.display_name
+      }
+    } catch (error) {
+      console.error('Error reverse geocoding:', error)
+    }
   })
 
   modalMap!.on('click', async (e: LType.LeafletMouseEvent) => {
@@ -750,6 +761,20 @@ const initModalMap = async () => {
       return
     }
     modalMarker!.setLatLng(e.latlng)
+    
+    // Reverse geocode to get address and update modal search input
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}&zoom=18&addressdetails=1`
+      )
+      const data = await response.json()
+      
+      if (data.display_name) {
+        modalSearchQuery.value = data.display_name
+      }
+    } catch (error) {
+      console.error('Error reverse geocoding:', error)
+    }
   })
 }
 
