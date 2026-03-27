@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, watch, onUnmounted } from 'vue'
+import { ref, watch } from 'vue'
 import { api } from '../services/api'
 import WebPImage from './WebPImage.vue'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
+import { usePreferencesStore } from '../stores/usePreferencesStore'
 
 const props = defineProps<{
   isOpen: boolean
@@ -18,29 +19,18 @@ const emit = defineEmits<{
 const favoriteAds = ref<Advertisement[]>([])
 const isLoading = ref(false)
 
-const loadFavorites = async () => {
-  const favoriteIds = JSON.parse(localStorage.getItem('favorites') || '[]')
+const prefStore = usePreferencesStore()
 
-  if (favoriteIds.length === 0) {
+const loadFavorites = async () => {
+  if (prefStore.favorites.length === 0) {
     favoriteAds.value = []
     return
   }
 
   try {
     isLoading.value = true
-    const data = await api.getAdvertisementsByIds(favoriteIds)
-    
-    // Filter to only include active listings
-    const activeAds = data.filter(ad => ad.is_active)
-    favoriteAds.value = activeAds || []
-    
-    // Update localStorage if there are inactive/deleted ads
-    if (activeAds.length < favoriteIds.length) {
-      const activeIds = activeAds.map(ad => ad.id)
-      localStorage.setItem('favorites', JSON.stringify(activeIds))
-      // Trigger a custom event to update the counter
-      window.dispatchEvent(new CustomEvent('localStorageChange'))
-    }
+    const data = await api.getAdvertisementsByIds(prefStore.favorites)
+    favoriteAds.value = data.filter(ad => ad.is_active)
   } catch (error) {
     console.error('Error loading favorites:', error)
   } finally {
@@ -48,29 +38,17 @@ const loadFavorites = async () => {
   }
 }
 
-const removeFavorite = (id: string) => {
+const removeFavorite = async (id: string) => {
   emit('removeFavorite', id)
   favoriteAds.value = favoriteAds.value.filter(ad => ad.id !== id)
 }
 
-// Funkcja zwracająca etykietę jednostki ceny
-const getPriceUnitLabel = (ad: Advertisement): string => {
-  const unit = ad.price_unit || 'month'
-  switch (unit) {
-    case 'day': return '/ dzień'
-    case 'week': return '/ tydzień'
-    case 'month': return '/ miesiąc'
-    case 'year': return '/ rok'
-    case 'campaign': return '/ kampania'
-    default: return '/ miesiąc'
-  }
-}
+import { useSearchStore } from '../stores/useSearchStore'
 
-const handleStorageChange = () => {
-  if (props.isOpen) {
-    loadFavorites()
-  }
-}
+const searchStore = useSearchStore()
+
+// Funkcja zwracająca etykietę jednostki ceny
+const getPriceUnitLabel = (ad: Advertisement): string => searchStore.getPriceUnitLabel(ad)
 
 watch(() => props.isOpen, (newValue) => {
   if (newValue) {
@@ -78,19 +56,11 @@ watch(() => props.isOpen, (newValue) => {
   }
 })
 
-if (typeof window !== 'undefined') {
-  // Nasłuchuj niestandardowego zdarzenia
-  window.addEventListener('localStorageChange', handleStorageChange)
-  // Zachowaj również nasłuchiwanie standardowego zdarzenia 'storage' dla kompatybilności
-  window.addEventListener('storage', handleStorageChange)
-}
-
-onUnmounted(() => {
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('localStorageChange', handleStorageChange)
-    window.removeEventListener('storage', handleStorageChange)
+watch(() => prefStore.favorites, () => {
+  if (props.isOpen) {
+    loadFavorites()
   }
-})
+}, { deep: true })
 </script>
 
 <template>

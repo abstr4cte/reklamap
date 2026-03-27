@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import logoImage from '../assets/logo.png'
+import { usePreferencesStore } from '../stores/usePreferencesStore'
 
 const props = defineProps<{
   favoritesCount: number
@@ -17,6 +18,7 @@ const emit = defineEmits<{
 const isMobileMenuOpen = ref(false)
 const isCategoriesDropdownOpen = ref(false)
 const isMobileCategoriesOpen = ref(false)
+const prefStore = usePreferencesStore()
 
 const categories = [
   { name: 'Wszystkie powierzchnie', slug: '', icon: '🗺️' },
@@ -169,17 +171,35 @@ watch(isMobileMenuOpen, (isOpen) => {
             </svg>
             <span class="badge-count" v-if="comparisonCount > 0">{{ comparisonCount }}</span>
           </button>
-          <button @click="handleAddAdClick" class="add-listing-btn">
+          <button @click="handleAddAdClick" class="add-listing-btn btn-interactive">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
             Dodaj ogłoszenie
           </button>
-          <button @click="handleManagementClick" class="manage-btn">
+          <button @click="handleManagementClick" class="manage-btn btn-interactive">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 4h14M3 10h14M3 16h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
             Zarządzaj
+          </button>
+
+          <!-- Theme Toggle -->
+          <button @click="prefStore.toggleDarkMode" class="theme-toggle-btn btn-interactive" :title="prefStore.isDarkMode ? 'Tryb jasny' : 'Tryb ciemny'">
+            <svg v-if="prefStore.isDarkMode" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
           </button>
         </div>
 
@@ -497,7 +517,7 @@ watch(isMobileMenuOpen, (isOpen) => {
   display: flex;
   align-items: center;
   padding: 0.75rem 1rem;
-  color: #1f2937;
+  color: var(--text-main, #1f2937);
   text-decoration: none;
   border-radius: 8px;
   transition: all 0.2s ease;
@@ -540,8 +560,8 @@ watch(isMobileMenuOpen, (isOpen) => {
 .comparison-btn,
 .add-listing-btn,
 .manage-btn {
-  background: white;
-  color: #4F46E5;
+  background: var(--card-bg, white);
+  color: var(--primary-color, #4F46E5);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -552,7 +572,7 @@ watch(isMobileMenuOpen, (isOpen) => {
   align-items: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.1));
   position: relative;
 }
 
@@ -575,14 +595,34 @@ watch(isMobileMenuOpen, (isOpen) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid white;
+  border: 2px solid var(--card-bg, white);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .add-listing-btn {
-  background: #10B981;
+  background: var(--accent-color);
   color: white;
   white-space: nowrap;
+}
+
+.theme-toggle-btn {
+  display: none; /* Temporarily disabled - dark mode not ready */
+  background: white;
+  color: #4B5563;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle-btn:hover {
+  background: #f3f4f6;
+  color: #111827;
+  transform: scale(1.1);
 }
 
 .favorites-btn:hover,
@@ -889,11 +929,11 @@ watch(isMobileMenuOpen, (isOpen) => {
 
 @media (max-width: 1180px) {
   .header-center.desktop-nav {
-    display: none;
+    display: none !important;
   }
 
   .desktop-buttons {
-    display: none;
+    display: none !important;
   }
 
   .hamburger-btn {
@@ -911,7 +951,9 @@ watch(isMobileMenuOpen, (isOpen) => {
 
   .container {
     padding: 0 1rem;
-    gap: 1rem;
+    gap: 0.75rem;
+    max-width: 100vw;
+    overflow: hidden;
   }
 
   .logo-text {
@@ -931,6 +973,12 @@ watch(isMobileMenuOpen, (isOpen) => {
 
   .logo-text {
     font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .logo-text {
+    display: none;
   }
 }
 </style>

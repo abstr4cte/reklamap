@@ -318,12 +318,39 @@ class AdvertisementController extends Controller
     {
         $ad = Advertisement::findOrFail($id);
 
+        // Priority 1: Same city AND same type
         $similar = Advertisement::where('city', $ad->city)
             ->where('type', $ad->type)
             ->where('id', '!=', $id)
             ->where('is_active', 1)
             ->limit(4)
             ->get();
+
+        // If we have less than 4, add same type from other cities
+        if ($similar->count() < 4) {
+            $excludeIds = $similar->pluck('id')->push($id)->toArray();
+            
+            $sameType = Advertisement::where('type', $ad->type)
+                ->whereNotIn('id', $excludeIds)
+                ->where('is_active', 1)
+                ->limit(4 - $similar->count())
+                ->get();
+            
+            $similar = $similar->merge($sameType);
+        }
+
+        // If still less than 4, add same city (any type)
+        if ($similar->count() < 4) {
+            $excludeIds = $similar->pluck('id')->push($id)->toArray();
+            
+            $sameCity = Advertisement::where('city', $ad->city)
+                ->whereNotIn('id', $excludeIds)
+                ->where('is_active', 1)
+                ->limit(4 - $similar->count())
+                ->get();
+            
+            $similar = $similar->merge($sameCity);
+        }
 
         return $similar;
     }

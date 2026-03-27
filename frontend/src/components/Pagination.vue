@@ -147,7 +147,7 @@ const goToPage = (page: number) => {
 }
 
 .pagination-info {
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
   font-size: 0.95rem;
   font-weight: 500;
 }
@@ -163,10 +163,10 @@ const goToPage = (page: number) => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.625rem 1rem;
-  background: white;
-  border: 2px solid #e5e7eb;
+  background: var(--card-bg, white);
+  border: 2px solid var(--border-color, #e5e7eb);
   border-radius: 8px;
-  color: #374151;
+  color: var(--text-main, #374151);
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
@@ -193,10 +193,10 @@ const goToPage = (page: number) => {
   min-width: 40px;
   height: 40px;
   padding: 0.5rem;
-  background: white;
-  border: 2px solid #e5e7eb;
+  background: var(--card-bg, white);
+  border: 2px solid var(--border-color, #e5e7eb);
   border-radius: 8px;
-  color: #374151;
+  color: var(--text-main, #374151);
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;

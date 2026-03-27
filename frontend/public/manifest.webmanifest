@@ -1,0 +1,31 @@
+{
+  "name": "ReklaMap - Platforma Powierzchni Reklamowych",
+  "short_name": "ReklaMap",
+  "description": "Znajdź i wynajmij powierzchnie reklamowe w całej Polsce. Billboardy, citylighty, banery i więcej.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/pwa-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Moje Ogłoszenia",
+      "url": "/zarzadzanie",
+      "description": "Przejdź do panelu zarządzania swoimi ogłoszeniami"
+    },
+    {
+      "name": "Dodaj Ogłoszenie",
+      "url": "/dodaj-ogloszenie",
+      "description": "Dodaj nową powierzchnię reklamową"
+    }
+  ]
+}

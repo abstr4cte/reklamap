@@ -228,7 +228,7 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .feedback-container {
     bottom: 1rem;
     right: 1rem;

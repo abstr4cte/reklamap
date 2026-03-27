@@ -158,13 +158,13 @@ const handleSubmit = async () => {
 }
 
 .modal-content {
-  background: white;
+  background: var(--card-bg, white);
   border-radius: 24px;
   width: 100%;
   max-width: 480px;
   padding: 3rem 2rem;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--card-shadow, 0 25px 50px -12px rgba(0, 0, 0, 0.25));
   animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -177,7 +177,7 @@ const handleSubmit = async () => {
   position: absolute;
   top: 1.5rem;
   right: 1.5rem;
-  background: #f3f4f6;
+  background: var(--bg-tertiary, #f3f4f6);
   border: none;
   width: 36px;
   height: 36px;
@@ -186,13 +186,13 @@ const handleSubmit = async () => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
   transition: all 0.2s;
 }
 
 .close-btn:hover {
-  background: #e5e7eb;
-  color: #1f2937;
+  background: var(--border-color, #e5e7eb);
+  color: var(--text-main, #1f2937);
   transform: rotate(90deg);
 }
 
@@ -216,13 +216,13 @@ const handleSubmit = async () => {
 .modal-title {
   font-size: 1.75rem;
   font-weight: 800;
-  color: #111827;
+  color: var(--text-main, #111827);
   text-align: center;
   margin-bottom: 1rem;
 }
 
 .modal-desc {
-  color: #4b5563;
+  color: var(--text-muted, #4b5563);
   text-align: center;
   line-height: 1.6;
   margin-bottom: 2rem;
@@ -246,7 +246,9 @@ const handleSubmit = async () => {
 .email-input {
   width: 100%;
   padding: 1rem 1.25rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color, #e5e7eb);
+  background: var(--input-bg, white);
+  color: var(--text-main, #111827);
   border-radius: 12px;
   font-size: 1rem;
   transition: all 0.2s;

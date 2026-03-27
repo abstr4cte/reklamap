@@ -10,6 +10,7 @@ export interface LocationResult {
     osmClass?: string  // Original OSM class
     addresstype?: string  // Address type from Nominatim
     city?: string // City/Town/Village name
+    road?: string // Specific road name
 }
 
 const NOMINATIM_BASE_URL = 'https://nominatim.openstreetmap.org'
@@ -75,7 +76,8 @@ export async function searchLocations(query: string): Promise<LocationResult[]> 
                 osmType: item.type,  // Store original OSM type
                 osmClass: item.class,  // Store original OSM class
                 addresstype: item.addresstype,  // Store addresstype
-                city: item.address?.city || item.address?.town || item.address?.village || ''
+                city: item.address?.city || item.address?.town || item.address?.village || '',
+                road: item.address?.road || '' // Store specific road name
             }
         }).filter((loc: LocationResult) => loc.name) // Filter out invalid results
     } catch (error) {
@@ -100,5 +102,5 @@ export function debouncedSearchLocations(
     searchTimeout = setTimeout(async () => {
         const results = await searchLocations(query)
         callback(results)
-    }, 1000) // 1 second debounce to respect rate limits
+    }, 500) // 500ms debounce for better UX while respecting limits
 }

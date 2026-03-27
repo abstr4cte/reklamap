@@ -1,1660 +1,353 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { api, getFullImageUrl } from '../services/api'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useSearchStore, typeColors, typeLabels, type LocationSuggestion, popularLocations } from '../stores/useSearchStore'
+import { usePreferencesStore } from '../stores/usePreferencesStore'
+import { getFullImageUrl } from '../services/api'
+import { type LocationResult, debouncedSearchLocations } from '../services/locationService'
 import { slugify, deslugify } from '../utils/slugify'
-import type { Advertisement } from '../types'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-import { filtersToQueryParams, queryParamsToFilters, normalizePolishChars } from '../utils/filterUtils'
+import { mapTypeToUrlFormat } from '../utils/typeMapping'
+import { filtersToQueryParams } from '../utils/filterUtils'
 import polishLocations from '../data/polishLocations.json'
-import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
+import { categoryDescriptions, cityDescriptions } from '../data/categoryDescriptions'
+import type { Advertisement } from '../types'
+import type * as LType from 'leaflet'
+
 import Pagination from '../components/Pagination.vue'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import CategoryDescription from '../components/CategoryDescription.vue'
-import { useSeo } from '../composables/useSeo'
-import { categoryDescriptions, cityDescriptions } from '../data/categoryDescriptions'
-import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import SearchAlertModal from '../components/SearchAlertModal.vue'
 import SearchAlertBox from '../components/SearchAlertBox.vue'
-import { analytics } from '../utils/analytics'
+import SkeletonCard from '../components/SkeletonCard.vue'
+import AdCard from '../components/AdCard.vue'
 
+// Store and Routing
+const searchStore = useSearchStore()
+const prefStore = usePreferencesStore()
+const route = useRoute()
+const {
+  filters,
+  sortBy,
+  viewMode,
+  currentPage,
+  isLoading,
+  listings,
+  sortedAndFilteredListings: filteredListings,
+  totalPages,
+  activeFiltersCount,
+  itemsPerPage
+} = storeToRefs(searchStore)
 
-// Funkcja formatująca adres i miasto, taka sama jak w AdCard
-const formatLocation = (location: string, city: string) => {
-  // Extract street and number from full address
-  const parts = location.split(',').map(p => p.trim())
-  
-  let streetWithNumber = ''
-  
-  if (parts.length >= 2) {
-    const firstPart = parts[0]
-    const secondPart = parts[1]
-    
-    // Check if first part is a number
-    if (/^\d+/.test(firstPart)) {
-      streetWithNumber = `${secondPart} ${firstPart}`
-    } else {
-      streetWithNumber = firstPart
-    }
-  } else {
-    streetWithNumber = parts[0] || location
-  }
-  
-  return `${streetWithNumber}, ${city}`
-}
-
-// Funkcja zwracająca etykietę jednostki ceny
-const getPriceUnitLabel = (ad: Advertisement): string => {
-  const unit = (ad.price_unit as 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign') || 'month'
-  switch (unit) {
-    case 'day': return 'zł/dzień'
-    case 'week': return 'zł/tydzień'
-    case 'month': return 'zł/mies.'
-    case 'year': return 'zł/rok'
-    case 'campaign': return 'zł/kampania'
-    default: return 'zł/mies.'
-  }
-}
-
-const listings = ref<Advertisement[]>([])
-const isLoading = ref(true)
-const hoveredAdId = ref<string | null>(null)
-const selectedAdId = ref<string | null>(null)
-const searchQuery = ref('')
+// UI State
+const isInitialized = ref(false)
 const showFiltersModal = ref(false)
-const tempFilters = ref<any>(null) // Tymczasowe filtry do edycji w modalu
+const tempFilters = ref<any>(null)
 const mapContainer = ref<HTMLElement | null>(null)
-let map: L.Map | null = null
-const markers: Map<string, L.Marker> = new Map()
-const isMapActive = ref(false)
-// Get saved view mode from localStorage or default to grid
-const savedViewMode = typeof window !== 'undefined' ? window.localStorage.getItem('adsViewMode') : null
-const viewMode = ref<'grid' | 'list'>(savedViewMode === 'list' ? 'list' : 'grid')
-const isMobile = ref(false)
+let map: LType.Map | null = null
+const markers: Map<string, LType.Marker> = new Map()
+// let markerClusterGroup: any = null
 const showMapOnMobile = ref(false)
 const showSortPanel = ref(false)
-const isLegendVisible = ref(false)
-const showMapButton = ref(false)
 const showSearchAlertModal = ref(false)
-const hasShownAlertModal = ref(localStorage.getItem('search_alert_shown') === 'true')
-
-
-const sortOptions = [
-  { value: 'newest', label: 'Najnowsze', description: 'Od najnowszych' },
-  { value: 'oldest', label: 'Najstarsze', description: 'Od najstarszych' },
-  { value: 'name-asc', label: 'Nazwa A-Z', description: 'Alfabetycznie rosnąco' },
-  { value: 'name-desc', label: 'Nazwa Z-A', description: 'Alfabetycznie malejąco' },
-  { value: 'price-day-asc', label: 'Cena za dzień', description: 'Od najtańszych' },
-  { value: 'price-day-desc', label: 'Cena za dzień', description: 'Od najdroższych' },
-  { value: 'price-month-asc', label: 'Cena za miesiąc', description: 'Od najtańszych' },
-  { value: 'price-month-desc', label: 'Cena za miesiąc', description: 'Od najdroższych' },
-  { value: 'price-sqm-asc', label: 'Cena za m²', description: 'Od najtańszych' },
-  { value: 'price-sqm-desc', label: 'Cena za m²', description: 'Od najdroższych' },
-  { value: 'price-campaign-asc', label: 'Cena za kampanię', description: 'Od najtańszych' },
-  { value: 'price-campaign-desc', label: 'Cena za kampanię', description: 'Od najdroższych' }
-]
-
-const handleSortButtonClick = () => {
-  showSortPanel.value = true
-}
-
-const handleSortOptionClick = (value: string) => {
-  selectSortOption(value)
-}
-
-const selectSortOption = (value: string) => {
-  // Update the sortBy ref with the new value
-  sortBy.value = value
-  // Close the sort panel
-  showSortPanel.value = false
-  
-  // Force Vue to recognize the change immediately
-  nextTick(() => {
-    // This ensures the UI updates with the new sort
-  })
-}
-
-// Check if mobile on mount and on resize
-const checkIfMobile = () => {
-  isMobile.value = window.innerWidth < 768
-  if (!isMobile.value) {
-    showMapOnMobile.value = false
-  }
-}
-
-const handleScroll = () => {
-  const listingsContainer = document.querySelector('.listings-list-container')
-  const mapContainer = document.querySelector('.map-container-wrapper')
-  const footer = document.querySelector('footer')
-  
-  if (listingsContainer && mapContainer) {
-    const listingsRect = listingsContainer.getBoundingClientRect()
-    const mapRect = mapContainer.getBoundingClientRect()
-    const footerRect = footer?.getBoundingClientRect()
-    
-    // Show button when:
-    // 1. We're in listings or map section (not at footer)
-    // 2. Footer is not visible
-    const inListingsSection = listingsRect.top < window.innerHeight && listingsRect.bottom > 0
-    const inMapSection = mapRect.top < window.innerHeight && mapRect.bottom > 0
-    const footerIsVisible = footerRect && footerRect.top < window.innerHeight
-    
-    const shouldShowButton = (inListingsSection || inMapSection) && !footerIsVisible
-    
-    if (isMobile.value) {
-      showMapButton.value = shouldShowButton
-    }
-  }
-}
-
-// Toggle between list and map on mobile
-const toggleMobileMap = () => {
-  showMapOnMobile.value = !showMapOnMobile.value
-  if (showMapOnMobile.value && mapContainer.value && !map) {
-    nextTick(() => {
-      initMap()
-    })
-  }
-}
-
-// Function to change view mode and save to localStorage
-const changeViewMode = (mode: 'grid' | 'list') => {
-  viewMode.value = mode
-  if (typeof window !== 'undefined') {
-    window.localStorage.setItem('adsViewMode', mode)
-  }
-}
-const sortBy = ref('newest')
-
-// Funkcja do walidacji i konwersji liczb
-const handleNumberInput = (value: string, allowDecimals: boolean = false): string => {
-  if (value === '') return ''
-  
-  // Pozwól tylko na cyfry i opcjonalnie na przecinek/kropkę
-  let filtered = value.replace(/[^\d.,]/g, '')
-  
-  // Zamień przecinek na kropkę dla spójności
-  filtered = filtered.replace(',', '.')
-  
-  // Jeśli nie pozwalamy na decimals, usuń je
-  if (!allowDecimals) {
-    filtered = filtered.replace(/\./g, '')
-  } else {
-    // Pozwól tylko na jedną kropkę
-    const parts = filtered.split('.')
-    if (parts.length > 2) {
-      filtered = parts[0] + '.' + parts.slice(1).join('')
-    }
-  }
-  
-  return filtered
-}
-
-// Funkcja do pobierania ceny w zależności od wybranego okresu
-const getPrice = (ad: Advertisement, period: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign') => {
-  const basePrice = ad.price
-  const adPriceUnit = ad.price_unit || 'month'
-
-  // If the ad's unit matches the requested period, return the price as-is
-  if (adPriceUnit === period) {
-    return basePrice
-  }
-
-  // Convert from ad's unit to requested period
-  let pricePerMonth = basePrice
-  
-  // First convert to monthly price
-  switch (adPriceUnit) {
-    case 'day':
-      pricePerMonth = basePrice * 30
-      break
-    case 'week':
-      pricePerMonth = basePrice * 4
-      break
-    case 'month':
-      pricePerMonth = basePrice
-      break
-    case 'year':
-      pricePerMonth = basePrice / 12
-      break
-    case 'campaign':
-      pricePerMonth = basePrice
-      break
-  }
-
-  // Then convert from monthly to requested period
-  switch (period) {
-    case 'day':
-      return pricePerMonth / 30
-    case 'week':
-      return pricePerMonth / 4
-    case 'month':
-      return pricePerMonth
-    case 'year':
-      return pricePerMonth * 12
-    case 'campaign':
-      // If ad has campaign_duration, calculate based on days
-      if (ad.campaign_duration) {
-        return pricePerMonth * (ad.campaign_duration / 30)
-      }
-      // If no duration, return a very high number to sort at the end
-      return Number.MAX_SAFE_INTEGER
-    case 'sqm':
-      const area = ad.width * ad.height
-      return area > 0 ? pricePerMonth / area : Number.MAX_SAFE_INTEGER
-    default:
-      return pricePerMonth
-  }
-}
-const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign' | null>(null)
 const isStatusMenuOpen = ref(false)
 const statusMultiselect = ref<HTMLElement | null>(null)
-const currentPage = ref(1)
-const itemsPerPage = 20
+const hoveredAdId = ref<string | null>(null)
+const selectedAdId = ref<string | null>(null)
+const isMobile = ref(false)
+const isLegendVisible = ref(false)
+const showMapButton = ref(true)
+const listContainerRef = ref<HTMLElement | null>(null)
+const showListScrollTop = ref(false)
+const isProgrammaticMove = ref(false)
+const regionCoordinates: Record<string, { lat: number; lng: number; zoom: number }> = {
+  'dolnoslaskie': { lat: 51.1079, lng: 17.0385, zoom: 8 },
+  'kujawsko-pomorskie': { lat: 53.1235, lng: 18.0084, zoom: 8 },
+  'lubelskie': { lat: 51.2465, lng: 22.5684, zoom: 8 },
+  'lubuskie': { lat: 52.2297, lng: 15.2365, zoom: 8 },
+  'lodzkie': { lat: 51.7592, lng: 19.4560, zoom: 8 },
+  'malopolskie': { lat: 49.85, lng: 20.2, zoom: 8 },
+  'mazowieckie': { lat: 52.2297, lng: 21.0122, zoom: 8 },
+  'opolskie': { lat: 50.6751, lng: 17.9213, zoom: 9 },
+  'podkarpackie': { lat: 50.0412, lng: 21.9991, zoom: 8 },
+  'podlaskie': { lat: 53.1325, lng: 23.1688, zoom: 8 },
+  'pomorskie': { lat: 54.3520, lng: 18.6466, zoom: 8 },
+  'slaskie': { lat: 50.2649, lng: 19.0238, zoom: 9 },
+  'swietokrzyskie': { lat: 50.8661, lng: 20.6286, zoom: 9 },
+  'warminsko-mazurskie': { lat: 53.7784, lng: 20.4801, zoom: 8 },
+  'wielkopolskie': { lat: 52.4064, lng: 16.9252, zoom: 8 },
+  'zachodniopomorskie': { lat: 53.4285, lng: 14.5528, zoom: 8 }
+}
 
-const route = useRoute()
-const router = useRouter()
-
-// Flaga zapobiegająca cyklicznemu wywoływaniu watch'ów
-const isResettingFilters = ref(false)
-const isInitialized = ref(false)
-
-const LAST_SEARCH_KEY = 'reklamap_last_search'
-
-const saveLastSearch = () => {
-  try {
-    const searchFilters = { 
-      ...filters.value,
-      keyword: searchQuery.value,
-      _priceDisplayUnit: priceDisplay.value
-    }
-    localStorage.setItem(LAST_SEARCH_KEY, JSON.stringify(searchFilters))
-  } catch (error) {
-    console.error('Error saving search filters:', error)
+const handleListScroll = () => {
+  if (listContainerRef.value) {
+    showListScrollTop.value = listContainerRef.value.scrollTop > 500
   }
 }
 
-// Helper to map type to Polish label
-const getTypeLabel = (type: string): string => {
-  // Mapowanie zarówno wartości z bazy danych jak i z URL
-  const typeLabels: Record<string, string> = {
-    // Wartości z bazy danych
-    'billboard': 'Billboardy',
-    'citylight': 'Citylighty',
-    'led_screen': 'Ekrany LED',
-    'banner': 'Banery',
-    'wall': 'Ściany reklamowe',
-    'totem': 'Totemy reklamowe',
-    'transport': 'Reklama w transporcie',
-    'mobile': 'Reklama mobilna',
-    'other': 'Inne',
-    // Wartości z URL (dla breadcrumbs i SEO)
-    'billboardy': 'Billboardy',
-    'citylighty': 'Citylighty',
-    'ekrany-led': 'Ekrany LED',
-    'banery': 'Banery',
-    'sciany-reklamowe': 'Ściany reklamowe',
-    'totemy-reklamowe': 'Totemy reklamowe',
-    'reklama-w-transporcie': 'Reklama w transporcie',
-    'reklama-mobilna': 'Reklama mobilna',
-    'inne': 'Inne'
-  }
-  
-  // Jeśli typ jest w mapie, zwróć go
-  if (typeLabels[type]) {
-    return typeLabels[type]
-  }
-  
-  // W przeciwnym razie kapitalizuj pierwszą literę
-  return type.charAt(0).toUpperCase() + type.slice(1)
+const scrollListToTop = () => {
+  listContainerRef.value?.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-// Breadcrumbs for SEO
+// Leaflet
+let L: typeof LType | null = null
+const loadLeaflet = async () => {
+  if (L) return L
+  const LModule = await import('leaflet')
+  L = LModule.default || LModule
+  await import('leaflet/dist/leaflet.css')
+  // @ts-ignore
+  // await import('leaflet.markercluster')
+  // await import('leaflet.markercluster/dist/MarkerCluster.css')
+  // await import('leaflet.markercluster/dist/MarkerCluster.Default.css')
+  return L
+}
+
+// Helpers from store
+const formatLocation = (loc: string, city: string) => searchStore.formatLocation(loc, city)
+const getTypeLabel = (type: string) => searchStore.getTypeLabel(type)
+const getPriceUnitLabel = (ad: Advertisement) => searchStore.getPriceUnitLabel(ad)
+
+
+
 const breadcrumbs = computed(() => {
-  const items = [
-    {
-      label: 'Strona główna',
-      path: '/'
-    },
-    {
-      label: 'Powierzchnie reklamowe'
-    }
-  ]
-  
-  // Add type if filtered
+  const items = [{ label: 'Strona główna', path: '/' }, { label: 'Powierzchnie reklamowe' }]
   if (route.params.type) {
-    const type = route.params.type as string
     items[items.length - 1].path = '/powierzchnie-reklamowe'
-    items.push({
-      label: getTypeLabel(type)
-    })
+    items.push({ label: getTypeLabel(route.params.type as string) })
   }
-  
-  // Add city if filtered
   if (route.params.city) {
-    const city = route.params.city as string
-    if (route.params.type) {
-      // Jeśli jest typ i miasto: Strona główna > Powierzchnie > Typ > Miasto
-      items[items.length - 1].path = `/powierzchnie-reklamowe/${route.params.type}`
-    } else {
-      // Jeśli jest tylko miasto: Strona główna > Powierzchnie > Miasto
-      items[items.length - 1].path = '/powierzchnie-reklamowe'
-    }
-    items.push({
-      label: deslugify(city)
-    })
+    items[items.length - 1].path = route.params.type ? `/powierzchnie-reklamowe/${route.params.type}` : '/powierzchnie-reklamowe'
+    items.push({ label: deslugify(route.params.city as string) })
   }
-  
   return items
 })
 
-// Category/City Description for SEO
 const currentDescription = computed(() => {
-  const city = route.params.city as string | undefined
-  const type = route.params.type as string | undefined
-  
-  // Priorytet: miasto > kategoria > domyślny
-  if (city && cityDescriptions[city]) {
-    return cityDescriptions[city]
-  }
-  
-  if (type && categoryDescriptions[type]) {
-    return categoryDescriptions[type]
-  }
-  
-  // Domyślny opis dla wszystkich powierzchni
-  return categoryDescriptions['']
+  const city = route.params.city as string
+  const type = route.params.type as string
+  return (city && cityDescriptions[city]) || (type && categoryDescriptions[type]) || categoryDescriptions['']
 })
 
-// SEO Page Info (Title, Description, Keywords)
 const seoInfo = computed(() => {
-  const type = route.params.type as string | undefined
-  const city = route.params.city as string | undefined
-  
+  const type = route.params.type as string
+  const city = route.params.city as string
   let title = 'Powierzchnie Reklamowe w Polsce'
-  let description = 'Przeglądaj oferty powierzchni reklamowych w całej Polsce. Billboardy, citylighty, banery i więcej.'
-  let keywords = 'powierzchnie reklamowe, billboardy, citylighty, banery, reklama zewnętrzna'
-  
+  let description = 'Billboardy, citylighty i inne.'
   if (type && city) {
-    const typeLabel = getTypeLabel(type)
-    const cityName = deslugify(city)
-    title = `${typeLabel} ${cityName} - Wynajem Powierzchni Reklamowych | ReklaMap`
-    description = `Znajdź i wynajmij ${typeLabel.toLowerCase()} w ${cityName}. Porównuj oferty, ceny i lokalizacje na mapie. ${listings.value.length} ofert dostępnych.`
-    keywords = `${typeLabel} ${cityName}, powierzchnie reklamowe ${cityName}, wynajem ${typeLabel.toLowerCase()} ${cityName}`
+    const tl = getTypeLabel(type); const cn = deslugify(city)
+    title = `${tl} ${cn} - Wynajem | ReklaMap`; description = `Wynajmij ${tl.toLowerCase()} w ${cn}. ${listings.value.length} ofert.`
   } else if (type) {
-    const typeLabel = getTypeLabel(type)
-    title = `${typeLabel} - Wynajem w Całej Polsce | ReklaMap`
-    description = `Przeglądaj oferty ${typeLabel.toLowerCase()} w całej Polsce. ${listings.value.length} ofert dostępnych. Porównuj ceny i lokalizacje.`
-    keywords = `${typeLabel}, wynajem ${typeLabel.toLowerCase()}, powierzchnie reklamowe`
+    const tl = getTypeLabel(type)
+    title = `${tl} - Wynajem w Polsce | ReklaMap`; description = `Promuj się na ${tl.toLowerCase()}. ${listings.value.length} ofert.`
   } else if (city) {
-    const cityName = deslugify(city)
-    title = `Powierzchnie Reklamowe ${cityName} - Billboardy, Citylighty | ReklaMap`
-    description = `Wszystkie powierzchnie reklamowe w ${cityName}. ${listings.value.length} ofert. Porównuj ceny billboardy, citylighty, banery.`
-    keywords = `powierzchnie reklamowe ${cityName}, billboardy ${cityName}, reklama ${cityName}`
+    const cn = deslugify(city)
+    title = `Powierzchnie Reklamowe ${cn} | ReklaMap`; description = `Oferty z ${cn}. ${listings.value.length} ofert.`
   }
-  
-  return { title, description, keywords }
+  return { title, description, keywords: 'powierzchnie reklamowe' }
 })
 
-// SEO Meta Tags
-watch([seoInfo, listings], () => {
-  const { title, description, keywords } = seoInfo.value
-  const url = typeof window !== 'undefined' ? window.location.origin + route.path : 'https://reklamap.pl' + route.path
-  
-  useSeo({
-    title,
-    description,
-    keywords,
-    ogType: 'website',
-    canonical: url,
-    structuredData: {
-      '@context': 'https://schema.org',
-      '@type': 'ItemList',
-      'name': title,
-      'description': description,
-      'itemListElement': listings.value.slice(0, 5).map((ad, index) => ({
-        '@type': 'ListItem',
-        'position': index + 1,
-        'url': typeof window !== 'undefined' 
-          ? `${window.location.origin}/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`
-          : `https://reklamap.pl/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`
-      }))
-    }
-  })
-}, { immediate: true, deep: true })
-
-// Filters
-const filters = ref({
-  type: '',
-  priceFrom: null as number | null,
-  priceTo: null as number | null,
-  priceUnit: 'month',
-  widthFrom: null as number | null,
-  widthTo: null as number | null,
-  heightFrom: null as number | null,
-  heightTo: null as number | null,
-  surfaceFrom: null as number | null,
-  surfaceTo: null as number | null,
-  city: '',
-  region: '',
-  rentalPeriod: '',
-  orientation: '',
-  trafficIntensity: '',
-  trafficDirection: '',
-  trafficType: '',
-  status: [] as string[],
-  onlyWithImage: false,
-  priceIncludesPrint: false,
-  priceIncludesMounting: false,
-  graphicDesignHelp: false,
-  offerType: '',
-  hasVatInvoice: false,
-  hasBacklight: false,
-  selectedLocationCoords: null as { lat: number; lng: number } | null,
-  // Type-specific filters
-  variant: '',
-  roadClass: '',
-  environment: '',
-  // LED screen filters
-  resolution: '',
-  pixelPitchFrom: null as number | null,
-  pixelPitchTo: null as number | null,
-  brightnessFrom: null as number | null,
-  brightnessTo: null as number | null,
-  transportScope: '',
-  vehicleCountFrom: null as number | null,
-  vehicleCountTo: null as number | null,
-  mobileExposureMode: '',
-  campaignDurationFrom: null as number | null,
-  campaignDurationTo: null as number | null,
-  // Nowe pola dla rozszerzonych opcji
-  lightingType: '' as string,
-  dailyPassengersFrom: null as number | null,
-  dailyPassengersTo: null as number | null,
-  operatingZone: '' as string,
-  ambientLightControl: false as boolean,
-  // Checkboxy dla podświetlenia
-  hasLightingTypeBanner: false as boolean,
-  hasLightingTypeBillboard: false as boolean,
-  // OTS filters
-  estimatedDailyViewsFrom: null as number | null,
-  estimatedDailyViewsTo: null as number | null,
-})
-
-// Lokalizacja - podobnie jak na stronie głównej
+// Location suggestions
 const locationQuery = ref('')
 const tempLocationQuery = ref('')
 const isLocationMenuOpen = ref(false)
 const apiLocationResults = ref<LocationResult[]>([])
 const isLoadingLocations = ref(false)
 
-
-interface LocationSuggestion {
-  type: 'region' | 'city'
-  value: string
-  label: string
-  subtitle?: string
-  coords?: { lat: number; lng: number }
-  addresstype?: string
-  osmType?: string
-  osmClass?: string
-}
-
-const popularLocations: LocationSuggestion[] = [
-  { type: 'city', value: 'Warszawa', label: 'Warszawa' },
-  { type: 'city', value: 'Kraków', label: 'Kraków' },
-  { type: 'city', value: 'Wrocław', label: 'Wrocław' },
-  { type: 'city', value: 'Poznań', label: 'Poznań' },
-  { type: 'city', value: 'Gdańsk', label: 'Gdańsk' },
-]
+// popularLocations imported from store
 
 const locationSuggestions = computed(() => {
-  const currentQuery = showFiltersModal.value ? tempLocationQuery.value : locationQuery.value
+  const query = (showFiltersModal.value ? tempLocationQuery.value : locationQuery.value).toLowerCase()
+  if (!query) return popularLocations
   
-  if (!currentQuery) {
-    return popularLocations
-  }
-
-  const query = currentQuery.toLowerCase()
-  const suggestions: LocationSuggestion[] = []
-
-  // Filter regions from JSON (instant)
   const matchingRegions = polishLocations.voivodeships
-    .filter(r => r.name.toLowerCase().includes(query))
-    .map(r => ({ type: 'region' as const, value: r.id, label: r.name }))
-
-  // Add API results (cities, towns, villages)
-  const apiSuggestions = apiLocationResults.value
-    .map(loc => {
-      // Use state from Nominatim address
-      const voivodeship = loc.state || ''
-      
-      // Extract detailed location from displayName
-      const parts = loc.displayName.split(', ')
-      let detailedLocation = ''
-      
-      if (parts.length >= 2) {
-        // If first part is different from city name, it's a district/suburb
-        if (parts[0] !== loc.name && parts[1] === loc.name) {
-          detailedLocation = `${parts[0]}, ${loc.name}`
-        } else {
-          detailedLocation = loc.name
-        }
-      } else {
-        detailedLocation = loc.name
-      }
-      
-      // Construct subtitle with city if available and different from name
-      let subtitleParts: string[] = []
-      
-      // Add city to subtitle if it exists, is different from the main name, 
-      // and isn't already part of the detailed location label
-      if (loc.city && loc.city !== loc.name && !detailedLocation.includes(loc.city)) {
-        subtitleParts.push(loc.city)
-      }
-      
-      if (voivodeship) {
-        subtitleParts.push(voivodeship)
-      }
-      
-      subtitleParts.push('Polska')
-      
-      return {
-        type: 'city' as const,
-        value: loc.name,
-        label: detailedLocation,
-        subtitle: subtitleParts.join(', '),
-        coords: { lat: loc.lat, lng: loc.lng },
-        addresstype: loc.addresstype,
-        osmType: loc.osmType,
-        osmClass: loc.osmClass
-      }
-    })
-
-  // Deduplicate by city + state, preferring place/city over boundary
-  const uniqueCities = new Map<string, LocationSuggestion>()
-  apiSuggestions.forEach(suggestion => {
-    // Create key with city name and voivodeship to show cities from different voivodeships
-    const cityKey = `${suggestion.value}|${suggestion.subtitle?.split(', ').slice(-2)[0] || ''}`
-    const existing = uniqueCities.get(cityKey)
-    if (!existing) {
-      uniqueCities.set(cityKey, suggestion)
-    } else {
-      // Calculate priority for current and existing
-      // Priority: place/city > place/town > addresstype=city > others
-      const getPriority = (s: LocationSuggestion) => {
-        if (s.osmClass === 'place' && s.osmType === 'city') return 4
-        if (s.osmClass === 'place' && s.osmType === 'town') return 3
-        if (s.addresstype === 'city') return 2
-        if (s.type === 'city') return 1
-        return 0
-      }
-      
-      const currentPriority = getPriority(suggestion)
-      const existingPriority = getPriority(existing)
-      
-      if (currentPriority > existingPriority) {
-        uniqueCities.set(cityKey, suggestion)
-      }
-    }
-  })
-  const deduplicatedSuggestions = Array.from(uniqueCities.values())
-
-  suggestions.push(...matchingRegions, ...deduplicatedSuggestions)
-  return suggestions.slice(0, 10)
+    .filter((r: any) => r.name.toLowerCase().includes(query))
+    .map((r: any) => ({ type: 'region' as const, value: r.id, label: r.name }))
+  
+  const apiSuggestions = searchStore.processLocationSuggestions(apiLocationResults.value)
+  
+  return [...matchingRegions, ...apiSuggestions].slice(0, 10)
 })
 
 const selectLocation = (suggestion: LocationSuggestion) => {
+  const target = showFiltersModal.value ? tempFilters.value : filters.value
+  const displayLabel = searchStore.selectLocationSuggestion(suggestion, target)
+  
   if (showFiltersModal.value) {
-    tempLocationQuery.value = suggestion.label
+    tempLocationQuery.value = displayLabel
   } else {
-    locationQuery.value = suggestion.label
-  }
-  
-  const targetFilters = showFiltersModal.value ? tempFilters.value : filters.value
-  
-  if (suggestion.type === 'region') {
-    // Find the matching region ID from polishLocations
-    const matchingRegion = polishLocations.voivodeships.find(
-      v => v.name === suggestion.label
-    )
-    targetFilters.region = matchingRegion?.id || suggestion.value
-    targetFilters.city = ''
-    targetFilters.selectedLocationCoords = null
-  } else {
-    targetFilters.city = suggestion.value
-    targetFilters.region = ''
-    // Store coordinates if available from API
-    targetFilters.selectedLocationCoords = suggestion.coords || null
+    locationQuery.value = displayLabel
   }
   
   isLocationMenuOpen.value = false
 }
 
-
-const handleLocationFocus = () => {
-  isLocationMenuOpen.value = true
-}
-
-const handleLocationBlur = () => {
-  window.setTimeout(() => {
-    isLocationMenuOpen.value = false
-  }, 200)
-}
-
 const handleLocationInput = () => {
-  const currentQuery = showFiltersModal.value ? tempLocationQuery.value : locationQuery.value
-  
-  // Trigger API search when user types
-  if (currentQuery.length >= 2) {
+  const query = showFiltersModal.value ? tempLocationQuery.value : locationQuery.value
+  if (query.length >= 2) {
     isLoadingLocations.value = true
-    debouncedSearchLocations(currentQuery, (results) => {
-      apiLocationResults.value = results
-      isLoadingLocations.value = false
-    })
+    debouncedSearchLocations(query, (res) => { apiLocationResults.value = res; isLoadingLocations.value = false })
   } else {
     apiLocationResults.value = []
+    isLoadingLocations.value = false
   }
-  
-  const targetFilters = showFiltersModal.value ? tempFilters.value : filters.value
-  
-  // If user types custom text without selecting, treat as city search
-  targetFilters.city = currentQuery
-  targetFilters.region = ''
-  targetFilters.selectedLocationCoords = null
+  const target = showFiltersModal.value ? tempFilters.value : filters.value
+  if (target) {
+    target.city = query;
+    target.locationLabel = query;
+    target.region = '';
+    target.street = '';
+    target.selectedLocationCoords = null;
+    target.cityStrict = false
+  }
 }
-
 
 const clearLocation = () => {
-  if (showFiltersModal.value) {
-    tempLocationQuery.value = ''
-    if (tempFilters.value) {
-      tempFilters.value.city = ''
-      tempFilters.value.region = ''
-      tempFilters.value.selectedLocationCoords = null
-    }
+  const target = showFiltersModal.value ? tempFilters.value : filters.value
+  if (showFiltersModal.value) tempLocationQuery.value = ''
+  else locationQuery.value = ''
+  
+  if (target) {
+    target.city = ''
+    target.region = ''
+    target.street = ''
+    target.locationLabel = ''
+    target.selectedLocationCoords = null
+    target.cityStrict = false
+  }
+}
+
+const handleLocationFocus = () => { isLocationMenuOpen.value = true }
+const handleLocationBlur = () => { setTimeout(() => { isLocationMenuOpen.value = false }, 200) }
+
+const syncLocationQuery = () => {
+  if (filters.value.locationLabel) {
+    locationQuery.value = filters.value.locationLabel
+  } else if (filters.value.city) {
+    locationQuery.value = filters.value.city
+  } else if (filters.value.region) {
+    const region = polishLocations.voivodeships.find(v => v.id === filters.value.region)
+    if (region) locationQuery.value = region.name
   } else {
     locationQuery.value = ''
-    filters.value.city = ''
-    filters.value.region = ''
-    filters.value.selectedLocationCoords = null
-  }
-  apiLocationResults.value = []
-}
-
-
-const typeColors: Record<string, string> = {
-  billboard: '#EF4444',
-  citylight: '#F59E0B',
-  led_screen: '#10B981',
-  banner: '#8B5CF6',
-  wall: '#EC4899',
-  totem: '#3B82F6',
-  transport: '#14B8A6',
-  mobile: '#F97316',
-  other: '#6B7280'
-}
-
-const typeLabels: Record<string, string> = {
-  billboard: 'Billboardy',
-  citylight: 'Citylighty',
-  led_screen: 'Ekrany LED',
-  banner: 'Banery',
-  wall: 'Ściany reklamowe',
-  totem: 'Totemy reklamowe',
-  transport: 'Reklama w transporcie',
-  mobile: 'Reklama mobilna',
-  other: 'Inne'
-}
-
-const getStatusLabel = (ad: Advertisement) => {
-  let currentStatus = ad.display_status || ad.status
-  
-  // Jeśli status to soon_available, sprawdź czy data dostępności już minęła
-  if (currentStatus === 'soon_available' && ad.available_from) {
-    const availableDate = new Date(ad.available_from)
-    const today = new Date()
-    // Ustaw czas na początek dnia dla porównania
-    today.setHours(0, 0, 0, 0)
-    availableDate.setHours(0, 0, 0, 0)
-    
-    // Jeśli data dostępności to dzisiaj lub wcześniej, zmień status na active
-    if (availableDate <= today) {
-      currentStatus = 'active'
-    }
-  }
-  
-  switch (currentStatus) {
-    case 'active':
-      return 'Wolne'
-    case 'reserved':
-      return 'Zarezerwowane'
-    case 'soon_available':
-      return 'Wkrótce dostępne'
-    default:
-      return 'Nieznany'
   }
 }
 
-const getStatusColor = (ad: Advertisement) => {
-  let currentStatus = ad.display_status || ad.status
-  
-  // Jeśli status to soon_available, sprawdź czy data dostępności już minęła
-  if (currentStatus === 'soon_available' && ad.available_from) {
-    const availableDate = new Date(ad.available_from)
-    const today = new Date()
-    // Ustaw czas na początek dnia dla porównania
-    today.setHours(0, 0, 0, 0)
-    availableDate.setHours(0, 0, 0, 0)
-    
-    // Jeśli data dostępności to dzisiaj lub wcześniej, zmień status na active
-    if (availableDate <= today) {
-      currentStatus = 'active'
-    }
-  }
-  
-  switch (currentStatus) {
-    case 'active':
-      return '#10B981'
-    case 'reserved':
-      return '#F59E0B'
-    case 'soon_available':
-      return '#3B82F6'
-    default:
-      return '#6B7280'
-  }
-}
+watch([() => filters.value.city, () => filters.value.region], () => {
+  syncLocationQuery()
+}, { immediate: true })
 
-const activeFiltersCount = computed(() => {
-  let count = 0
-  if (searchQuery.value || filters.value.city || filters.value.region || filters.value.selectedLocationCoords || locationQuery.value) count++
-  if (filters.value.type) count++
-  if (filters.value.priceFrom !== null) count++
-  if (filters.value.priceTo !== null) count++
-  if (filters.value.widthFrom !== null) count++
-  if (filters.value.widthTo !== null) count++
-  if (filters.value.heightFrom !== null) count++
-  if (filters.value.heightTo !== null) count++
-  if (filters.value.surfaceFrom !== null) count++
-  if (filters.value.surfaceTo !== null) count++
-  if (filters.value.rentalPeriod) count++
-  if (filters.value.orientation) count++
-  if (filters.value.trafficIntensity) count++
-  if (filters.value.trafficDirection) count++
-  if (filters.value.trafficType) count++
-  if (filters.value.status && filters.value.status.length > 0) count++
-  if (filters.value.onlyWithImage) count++
-  if (filters.value.priceIncludesPrint) count++
-  if (filters.value.priceIncludesMounting) count++
-  if (filters.value.graphicDesignHelp) count++
-  if (filters.value.offerType) count++
-  if (filters.value.hasVatInvoice) count++
-  if (filters.value.hasBacklight) count++
-  // Type-specific filters
-  if (filters.value.variant) count++
-  if (filters.value.roadClass) count++
-  if (filters.value.environment) count++
-  if (filters.value.resolution) count++
-  if (filters.value.pixelPitchFrom !== null) count++
-  if (filters.value.pixelPitchTo !== null) count++
-  if (filters.value.brightnessFrom !== null) count++
-  if (filters.value.brightnessTo !== null) count++
-  if (filters.value.transportScope) count++
-  if (filters.value.vehicleCountFrom !== null) count++
-  if (filters.value.vehicleCountTo !== null) count++
-  if (filters.value.mobileExposureMode) count++
-  if (filters.value.campaignDurationFrom !== null) count++
-  if (filters.value.campaignDurationTo !== null) count++
-  return count
-})
-
-// Computed properties for filter visibility based on selected ad type
-// Type-specific filter visibility
-const getVariantOptions = (type: string) => {
-  switch (type) {
-    case 'billboard':
-      return [
-        { value: 'standard', label: 'Jednostronny' },
-        { value: 'two_sided', label: 'Dwustronny (back-to-back)' },
-        { value: 'three_sided', label: 'Trójstronny (prismatron)' },
-        { value: 'scrolling', label: 'Scrolling / Rolowany' }
-      ]
-    case 'citylight':
-      return [
-        { value: 'single_sided', label: 'Jednostronny' },
-        { value: 'double_sided', label: 'Dwustronny' },
-        { value: 'scrolling', label: 'Scrolling (rotacyjny)' },
-        { value: 'digital', label: 'Cyfrowy (DOOH)' }
-      ]
-    case 'led_screen':
-      return [
-        { value: 'standard', label: 'Standardowy' },
-        { value: 'interactive', label: 'Interaktywny' }
-      ]
-    case 'totem':
-      return [
-        { value: 'single_sided', label: 'Jednostronny' },
-        { value: 'double_sided', label: 'Dwustronny' },
-        { value: 'multi_sided', label: 'Wielostronny / Kolumna' },
-        { value: 'pylon', label: 'Pylon (przy drodze)' },
-        { value: 'digital', label: 'Cyfrowy (LED)' }
-      ]
-    case 'transport':
-      return [
-        { value: 'bus', label: 'Autobus' },
-        { value: 'tram', label: 'Tramwaj' },
-        { value: 'metro', label: 'Metro' },
-        { value: 'train', label: 'Pociąg / SKM / Kolej' },
-        { value: 'stop', label: 'Przystanek' }
-      ]
-    case 'mobile':
-      return [
-        { value: 'trailer', label: 'Przyczepka' },
-        { value: 'car', label: 'Samochód' },
-        { value: 'bike', label: 'Rower' },
-        { value: 'other', label: 'Inna' }
-      ]
-    default:
-      return []
-  }
-}
-
-const getEnvironmentOptions = (type: string) => {
-  switch (type) {
-    case 'citylight':
-      return [
-        { value: 'indoor', label: 'Wewnątrz' },
-        { value: 'outdoor', label: 'Na zewnątrz' }
-      ]
-    case 'led_screen':
-      return [
-        { value: 'indoor', label: 'Wewnątrz' },
-        { value: 'outdoor', label: 'Na zewnątrz' },
-        { value: 'event', label: 'Event / Wydarzenie' }
-      ]
-    case 'totem':
-      return [
-        { value: 'indoor', label: 'Wewnątrz' },
-        { value: 'outdoor', label: 'Na zewnątrz' },
-        { value: 'event', label: 'Event / Wydarzenie' }
-      ]
-    case 'mobile':
-      return [
-        { value: 'indoor', label: 'Wewnątrz' },
-        { value: 'outdoor', label: 'Na zewnątrz' },
-        { value: 'event', label: 'Event / Wydarzenie' }
-      ]
-    case 'other':
-      return [
-        { value: 'indoor', label: 'Wewnątrz' },
-        { value: 'outdoor', label: 'Na zewnątrz' },
-        { value: 'event', label: 'Event / Wydarzenie' }
-      ]
-    default:
-      return []
-  }
-}
-
-const getAvailablePriceUnits = (type: string) => {
-  // Citylight - tylko miesiąc i m²
-  if (type === 'citylight') {
-    return [
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'sqm', label: 'za m²' }
-    ]
-  }
-  // Billboard - dzień, tydzień, miesiąc, rok, m²
-  if (type === 'billboard') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'week', label: 'za tydzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'year', label: 'za rok' },
-      { value: 'sqm', label: 'za m²' }
-    ]
-  }
-  // Wall - miesiąc, rok, m²
-  if (type === 'wall') {
-    return [
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'year', label: 'za rok' },
-      { value: 'sqm', label: 'za m²' }
-    ]
-  }
-  // Banner - dzień, tydzień, miesiąc, m²
-  if (type === 'banner') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'week', label: 'za tydzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'sqm', label: 'za m²' }
-    ]
-  }
-  // Ekran LED - dzień, miesiąc, kampania
-  if (type === 'led_screen') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  }
-  // Transport - dzień, miesiąc, kampania
-  if (type === 'transport') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  }
-  // Mobile - dzień i kampania
-  if (type === 'mobile') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  }
-  // Dla pozostałych typów z m²
-  return [
-    { value: 'day', label: 'za dzień' },
-    { value: 'week', label: 'za tydzień' },
-    { value: 'month', label: 'za miesiąc' },
-    { value: 'year', label: 'za rok' },
-    { value: 'sqm', label: 'za m²' }
-  ]
-}
-
-const showEquipmentSection = computed(() => {
-  const type = filters.value.type
-  const showPrint = ['billboard', 'banner'].includes(type)
-  const showMounting = ['billboard', 'banner', 'wall'].includes(type)
-  const showGraphicDesign = ['billboard', 'banner', 'wall'].includes(type)
-  return showPrint || showMounting || showGraphicDesign
-})
-
-const showEquipmentSectionInModal = computed(() => {
-  if (!tempFilters.value) return false
-  const type = tempFilters.value.type
-  const showPrint = ['billboard', 'banner'].includes(type)
-  const showMounting = ['billboard', 'banner', 'wall'].includes(type)
-  const showGraphicDesign = ['billboard', 'banner', 'wall'].includes(type)
-  const showBacklight = ['citylight', 'totem', 'led_screen', 'banner', 'wall', 'billboard'].includes(type)
-  return showPrint || showMounting || showGraphicDesign || showBacklight
-})
-
-const filteredListings = computed(() => {
-  let filtered = listings.value
-  
-  // Search query
-  if (searchQuery.value) {
-    const query = normalizePolishChars(searchQuery.value.toLowerCase())
-    filtered = filtered.filter(ad => 
-      normalizePolishChars(ad.title.toLowerCase()).includes(query) ||
-      normalizePolishChars(ad.city.toLowerCase()).includes(query) ||
-      normalizePolishChars(ad.location.toLowerCase()).includes(query)
-    )
-  }
-
-  // Type filter
-  if (filters.value.type) {
-    filtered = filtered.filter(ad => ad.type === filters.value.type)
-  }
-
-  // Price filters
-  if (filters.value.priceFrom !== null) {
-    filtered = filtered.filter(ad => ad.price >= filters.value.priceFrom!)
-  }
-  if (filters.value.priceTo !== null) {
-    filtered = filtered.filter(ad => ad.price <= filters.value.priceTo!)
-  }
-
-  // Width filters
-  if (filters.value.widthFrom !== null) {
-    // Konwertuj wartość filtru z mm na metry dla LED screens
-    const widthFrom = filters.value.type === 'led_screen' ? filters.value.widthFrom / 1000 : filters.value.widthFrom
-    filtered = filtered.filter(ad => ad.width >= widthFrom)
-  }
-  if (filters.value.widthTo !== null) {
-    // Konwertuj wartość filtru z mm na metry dla LED screens
-    const widthTo = filters.value.type === 'led_screen' ? filters.value.widthTo / 1000 : filters.value.widthTo
-    filtered = filtered.filter(ad => ad.width <= widthTo)
-  }
-
-  // Height filters
-  if (filters.value.heightFrom !== null) {
-    // Konwertuj wartość filtru z mm na metry dla LED screens
-    const heightFrom = filters.value.type === 'led_screen' ? filters.value.heightFrom / 1000 : filters.value.heightFrom
-    filtered = filtered.filter(ad => ad.height >= heightFrom)
-  }
-  if (filters.value.heightTo !== null) {
-    // Konwertuj wartość filtru z mm na metry dla LED screens
-    const heightTo = filters.value.type === 'led_screen' ? filters.value.heightTo / 1000 : filters.value.heightTo
-    filtered = filtered.filter(ad => ad.height <= heightTo)
-  }
-
-  // Surface area filters
-  if (filters.value.surfaceFrom !== null) {
-    filtered = filtered.filter(ad => {
-      const surface = ad.width * ad.height
-      return surface >= filters.value.surfaceFrom!
-    })
-  }
-  if (filters.value.surfaceTo !== null) {
-    filtered = filtered.filter(ad => {
-      const surface = ad.width * ad.height
-      return surface <= filters.value.surfaceTo!
-    })
-  }
-
-  // Location filters
-  if (filters.value.city) {
-    // Normalizuj obie strony porównania używając slugify (usuwa polskie znaki)
-    const normalizedFilterCity = slugify(filters.value.city)
-    filtered = filtered.filter(ad => {
-      const normalizedAdCity = slugify(ad.city)
-      return normalizedAdCity.includes(normalizedFilterCity)
-    })
-  }
-  if (filters.value.region) {
-    filtered = filtered.filter(ad => ad.region === filters.value.region)
-  }
-
-  // Rental period filter
-  if (filters.value.rentalPeriod) {
-    filtered = filtered.filter(ad => ad.rental_period === filters.value.rentalPeriod)
-  }
-
-  // Orientation filter
-  if (filters.value.orientation) {
-    filtered = filtered.filter(ad => ad.orientation === filters.value.orientation)
-  }
-
-  // Traffic intensity filter
-  if (filters.value.trafficIntensity) {
-    filtered = filtered.filter(ad => ad.traffic_intensity === filters.value.trafficIntensity)
-  }
-
-  // Traffic direction filter
-  if (filters.value.trafficDirection) {
-    filtered = filtered.filter(ad => {
-      if (!ad.traffic_direction) return false
-      if (filters.value.trafficDirection === 'both') {
-        return Array.isArray(ad.traffic_direction) && ad.traffic_direction.length === 2
-      }
-      return Array.isArray(ad.traffic_direction) && ad.traffic_direction.includes(filters.value.trafficDirection)
-    })
-  }
-
-  // Traffic type filter
-  if (filters.value.trafficType) {
-    filtered = filtered.filter(ad => {
-      if (!ad.traffic_type) return false
-      if (filters.value.trafficType === 'both') {
-        return Array.isArray(ad.traffic_type) && ad.traffic_type.length === 2
-      }
-      return Array.isArray(ad.traffic_type) && ad.traffic_type.includes(filters.value.trafficType)
-    })
-  }
-
-  // Status filter
-  if (filters.value.status && filters.value.status.length > 0) {
-    filtered = filtered.filter(ad => filters.value.status.includes(ad.display_status || ad.status))
-  }
-
-  // Feature filters
-  if (filters.value.onlyWithImage) {
-    filtered = filtered.filter(ad => ad.has_image)
-  }
-  if (filters.value.priceIncludesPrint) {
-    filtered = filtered.filter(ad => ad.price_includes_print === true)
-  }
-  if (filters.value.priceIncludesMounting) {
-    filtered = filtered.filter(ad => ad.price_includes_mounting === true)
-  }
-  if (filters.value.graphicDesignHelp) {
-    filtered = filtered.filter(ad => ad.graphic_design_help === true)
-  }
-
-  // Offer type filter
-  if (filters.value.offerType) {
-    filtered = filtered.filter(ad => ad.offer_type === filters.value.offerType)
-  }
-
-  // VAT invoice filter
-  if (filters.value.hasVatInvoice) {
-    filtered = filtered.filter(ad => ad.has_vat_invoice === true)
-  }
-
-  // Backlight filter
-  if (filters.value.hasBacklight) {
-    filtered = filtered.filter(ad => ad.has_backlight === true)
-  }
-
-  // Type-specific filters
-  if (filters.value.variant) {
-    filtered = filtered.filter(ad => ad.variant === filters.value.variant)
-  }
-
-  if (filters.value.roadClass) {
-    filtered = filtered.filter(ad => ad.road_class === filters.value.roadClass)
-  }
-
-  if (filters.value.environment) {
-    filtered = filtered.filter(ad => ad.environment === filters.value.environment)
-  }
-
-  // LED-specific filters
-  if (filters.value.resolution) {
-    filtered = filtered.filter(ad => ad.resolution && ad.resolution.toLowerCase().includes(filters.value.resolution.toLowerCase()))
-  }
-  if (filters.value.pixelPitchFrom !== null) {
-    filtered = filtered.filter(ad => (ad as any).pixel_pitch && (ad as any).pixel_pitch >= filters.value.pixelPitchFrom!)
-  }
-  if (filters.value.pixelPitchTo !== null) {
-    filtered = filtered.filter(ad => (ad as any).pixel_pitch && (ad as any).pixel_pitch <= filters.value.pixelPitchTo!)
-  }
-  if (filters.value.brightnessFrom !== null) {
-    filtered = filtered.filter(ad => (ad as any).brightness && (ad as any).brightness >= filters.value.brightnessFrom!)
-  }
-  if (filters.value.brightnessTo !== null) {
-    filtered = filtered.filter(ad => (ad as any).brightness && (ad as any).brightness <= filters.value.brightnessTo!)
-  }
-
-  // Transport-specific filters
-  if (filters.value.transportScope) {
-    filtered = filtered.filter(ad => ad.transport_scope === filters.value.transportScope)
-  }
-  if (filters.value.vehicleCountFrom !== null) {
-    filtered = filtered.filter(ad => ad.vehicle_count && ad.vehicle_count >= filters.value.vehicleCountFrom!)
-  }
-  if (filters.value.vehicleCountTo !== null) {
-    filtered = filtered.filter(ad => ad.vehicle_count && ad.vehicle_count <= filters.value.vehicleCountTo!)
-  }
-
-  // Mobile-specific filters
-  if (filters.value.mobileExposureMode) {
-    filtered = filtered.filter(ad => ad.mobile_exposure_mode === filters.value.mobileExposureMode)
-  }
-
-  // Campaign duration filter
-  if (filters.value.campaignDurationFrom !== null) {
-    filtered = filtered.filter(ad => ad.campaign_duration && ad.campaign_duration >= filters.value.campaignDurationFrom!)
-  }
-  if (filters.value.campaignDurationTo !== null) {
-    filtered = filtered.filter(ad => ad.campaign_duration && ad.campaign_duration <= filters.value.campaignDurationTo!)
-  }
-
-  // Nowe pola dla rozszerzonych opcji
-  if ((filters.value as any).lightingType) {
-    filtered = filtered.filter(ad => (ad as any).lighting_type === (filters.value as any).lightingType)
-  }
-  if ((filters.value as any).dailyPassengersFrom !== null) {
-    filtered = filtered.filter(ad => (ad as any).daily_passengers && (ad as any).daily_passengers >= (filters.value as any).dailyPassengersFrom!)
-  }
-  if ((filters.value as any).dailyPassengersTo !== null) {
-    filtered = filtered.filter(ad => (ad as any).daily_passengers && (ad as any).daily_passengers <= (filters.value as any).dailyPassengersTo!)
-  }
-  if ((filters.value as any).operatingZone) {
-    filtered = filtered.filter(ad => (ad as any).operating_zone === (filters.value as any).operatingZone)
-  }
-  if ((filters.value as any).ambientLightControl) {
-    filtered = filtered.filter(ad => (ad as any).ambient_light_control === true)
-  }
-  if ((filters.value as any).hasLightingTypeBanner === true) {
-    filtered = filtered.filter(ad => {
-      // Tylko dla banerów i ścian
-      if (!['banner', 'wall'].includes(ad.type)) return false
-      const lightingType = (ad as any).lighting_type_banner
-      return lightingType && lightingType !== 'none'
-    })
-  }
-
-  // OTS filters logic
-  if (filters.value.estimatedDailyViewsFrom !== null) {
-    filtered = filtered.filter(ad => (ad as any).estimated_daily_views && (ad as any).estimated_daily_views >= filters.value.estimatedDailyViewsFrom!)
-  }
-  if (filters.value.estimatedDailyViewsTo !== null) {
-    filtered = filtered.filter(ad => (ad as any).estimated_daily_views && (ad as any).estimated_daily_views <= filters.value.estimatedDailyViewsTo!)
-  }
-  if ((filters.value as any).hasLightingTypeBillboard === true) {
-    filtered = filtered.filter(ad => {
-      // Tylko dla billboardów
-      if (ad.type !== 'billboard') return false
-      const lightingType = (ad as any).lighting_type
-      return lightingType && lightingType !== 'none'
-    })
-  }
-
-  // Sortowanie
-  const sorted = [...filtered]
-
-  switch (sortBy.value) {
-    case 'newest':
-      sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      break
-    case 'oldest':
-      sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-      break
-    case 'name-asc':
-      sorted.sort((a, b) => a.title.localeCompare(b.title, 'pl'))
-      break
-    case 'name-desc':
-      sorted.sort((a, b) => b.title.localeCompare(a.title, 'pl'))
-      break
-    case 'price-day-asc':
-      priceDisplay.value = 'day'
-      sorted.sort((a, b) => getPrice(a, 'day') - getPrice(b, 'day'))
-      break
-    case 'price-day-desc':
-      priceDisplay.value = 'day'
-      sorted.sort((a, b) => {
-        const priceA = getPrice(a, 'day')
-        const priceB = getPrice(b, 'day')
-        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
-        if (priceA === Number.MAX_SAFE_INTEGER) return 1
-        if (priceB === Number.MAX_SAFE_INTEGER) return -1
-        return priceB - priceA
-      })
-      break
-    case 'price-week-asc':
-      priceDisplay.value = 'week'
-      sorted.sort((a, b) => getPrice(a, 'week') - getPrice(b, 'week'))
-      break
-    case 'price-week-desc':
-      priceDisplay.value = 'week'
-      sorted.sort((a, b) => {
-        const priceA = getPrice(a, 'week')
-        const priceB = getPrice(b, 'week')
-        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
-        if (priceA === Number.MAX_SAFE_INTEGER) return 1
-        if (priceB === Number.MAX_SAFE_INTEGER) return -1
-        return priceB - priceA
-      })
-      break
-    case 'price-month-asc':
-      priceDisplay.value = 'month'
-      sorted.sort((a, b) => getPrice(a, 'month') - getPrice(b, 'month'))
-      break
-    case 'price-month-desc':
-      priceDisplay.value = 'month'
-      sorted.sort((a, b) => {
-        const priceA = getPrice(a, 'month')
-        const priceB = getPrice(b, 'month')
-        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
-        if (priceA === Number.MAX_SAFE_INTEGER) return 1
-        if (priceB === Number.MAX_SAFE_INTEGER) return -1
-        return priceB - priceA
-      })
-      break
-    case 'price-year-asc':
-      priceDisplay.value = 'year'
-      sorted.sort((a, b) => getPrice(a, 'year') - getPrice(b, 'year'))
-      break
-    case 'price-year-desc':
-      priceDisplay.value = 'year'
-      sorted.sort((a, b) => {
-        const priceA = getPrice(a, 'year')
-        const priceB = getPrice(b, 'year')
-        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
-        if (priceA === Number.MAX_SAFE_INTEGER) return 1
-        if (priceB === Number.MAX_SAFE_INTEGER) return -1
-        return priceB - priceA
-      })
-      break
-    case 'price-sqm-asc':
-      priceDisplay.value = 'sqm'
-      sorted.sort((a, b) => getPrice(a, 'sqm') - getPrice(b, 'sqm'))
-      break
-    case 'price-sqm-desc':
-      priceDisplay.value = 'sqm'
-      sorted.sort((a, b) => {
-        const priceA = getPrice(a, 'sqm')
-        const priceB = getPrice(b, 'sqm')
-        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
-        if (priceA === Number.MAX_SAFE_INTEGER) return 1
-        if (priceB === Number.MAX_SAFE_INTEGER) return -1
-        return priceB - priceA
-      })
-      break
-    case 'price-campaign-asc':
-      priceDisplay.value = 'campaign'
-      sorted.sort((a, b) => getPrice(a, 'campaign') - getPrice(b, 'campaign'))
-      break
-    case 'price-campaign-desc':
-      priceDisplay.value = 'campaign'
-      sorted.sort((a, b) => {
-        const priceA = getPrice(a, 'campaign')
-        const priceB = getPrice(b, 'campaign')
-        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
-        if (priceA === Number.MAX_SAFE_INTEGER) return 1
-        if (priceB === Number.MAX_SAFE_INTEGER) return -1
-        return priceB - priceA
-      })
-      break
-    default:
-      priceDisplay.value = null
-  }
-
-  return sorted
-})
-
-const totalPages = computed(() => {
-  return Math.ceil(filteredListings.value.length / itemsPerPage)
-})
-
-// Pobierz ogłoszenia dla aktualnej strony
-const getCurrentPageAds = () => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return filteredListings.value.slice(start, end)
-}
-
-// Obsługa zmiany strony
-const onPageChange = (page: number) => {
-  currentPage.value = page
-  router.push({ query: { ...route.query, page: page.toString() } })
-  
-  // Scroll to top of ads list
-  const adsListContainer = document.querySelector('.ads-list-container')
-  if (adsListContainer) {
-    adsListContainer.scrollTop = 0
-  }
-}
+const sortOptions = searchStore.sortOptions
 
 const statusLabel = computed(() => {
   if (filters.value.status.length === 0) return 'Wszystkie'
-  if (filters.value.status.length === 3) return 'Wszystkie'
-  
-  const labels: string[] = []
-  const map: Record<string, string> = { 
-    active: 'Wolne', 
-    reserved: 'Zarezerwowane', 
-    soon: 'Wkrótce dostępne' 
-  }
-  
-  for (const s of filters.value.status) {
-    if (map[s]) labels.push(map[s])
-  }
-  
-  if (labels.length <= 1) return labels.join(', ')
-  return `Wybrano (${labels.length})`
+  const map: Record<string, string> = { active: 'Wolne', reserved: 'Zarezerwowane', soon_available: 'Wkrótce' }
+  return filters.value.status.map(s => map[s] || s).join(', ')
 })
+
+const paginatedAds = computed(() => searchStore.paginatedListings)
+const getCurrentPageAds = () => paginatedAds.value
 
 const transportScopeOptions = computed(() => {
-  // Użyj tempFilters jeśli modal jest otwarty, inaczej użyj filters
-  const variant = tempFilters.value?.variant || filters.value.variant
-  
-  // Dla przystanku (stop) - tylko opcje wewnętrzna i zewnętrzna
-  if (variant === 'stop') {
-    return [
-      { value: 'internal', label: 'Wewnętrzna' },
-      { value: 'external', label: 'Zewnętrzna' }
-    ]
-  }
-  // Dla pozostałych wariantów (bus, tram, metro) - wszystkie opcje
-  return [
-    { value: 'internal', label: 'Wewnętrzna' },
-    { value: 'external', label: 'Zewnętrzna' },
-    { value: 'full_vehicle', label: 'Całopojazdowa' }
-  ]
+  const v = tempFilters.value?.variant || filters.value.variant
+  if (v === 'stop') return [{ value: 'internal', label: 'Wewnętrzna' }, { value: 'external', label: 'Zewnętrzna' }]
+  return [{ value: 'internal', label: 'Wewnętrzna' }, { value: 'external', label: 'Zewnętrzna' }, { value: 'full_vehicle', label: 'Całopojazdowa' }]
 })
 
-// Funkcja do formatowania ceny w zależności od wybranego sortowania
-const getFormattedPrice = (ad: Advertisement) => {
-  const displayUnit = priceDisplay.value || ad.price_unit || 'month'
-  const price = getPrice(ad, displayUnit as any)
-  let suffix = ''
-  
-  switch (displayUnit) {
-    case 'day':
-      suffix = ' zł/dzień'
-      break
-    case 'week':
-      suffix = ' zł/tydzień'
-      break
-    case 'month':
-      suffix = ' zł/mies.'
-      break
-    case 'year':
-      suffix = ' zł/rok'
-      break
-    case 'sqm':
-      suffix = ' zł/m²'
-      break
-  }
-  
-  return price.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + suffix
-}
-
-// Helper function to check if price is estimated for a specific ad
-const isEstimatedPrice = (ad: Advertisement) => {
-  // If priceDisplay is null, use original ad.price_unit (not estimated)
-  if (priceDisplay.value === null) {
-    return false
-  }
-  const displayUnit = priceDisplay.value || ad.price_unit || 'month'
-  const adPriceUnit = ad.price_unit || 'month'
-  return displayUnit !== adPriceUnit
-}
-
-// Helper function to check if data is missing for a specific ad
-const isMissingData = (ad: Advertisement) => {
-  const displayUnit = priceDisplay.value || ad.price_unit || 'month'
-  
-  if (displayUnit === 'sqm') {
-    const area = ad.width && ad.height ? ad.width * ad.height : 0
-    return area === 0
-  }
-  
-  if (displayUnit === 'campaign') {
-    return !ad.campaign_duration
-  }
-  
-  return false
-}
-
-// Funkcja do pobierania etykiety okresu cenowego
-const getPriceLabel = (period: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign', ad?: Advertisement) => {
-  switch (period) {
-    case 'day':
-      return '/dzień'
-    case 'week':
-      return '/tydzień'
-    case 'month':
-      return '/miesiąc'
-    case 'year':
-      return '/rok'
-    case 'campaign':
-      // For campaign, add duration in days if available
-      if (ad && ad.campaign_duration) {
-        return `/kampanię (${ad.campaign_duration} dni)`
-      }
-      return '/kampanię'
-    case 'sqm':
-      return '/m²'
-    default:
-      return '/miesiąc'
-  }
-}
-
-const handleClickOutside = (event: MouseEvent) => {
-  if (statusMultiselect.value && !statusMultiselect.value.contains(event.target as Node)) {
-    isStatusMenuOpen.value = false
-  }
+const getVariantOptions = (type: string) => {
+  if (type === 'transport') return [{ value: 'bus', label: 'Autobus' }, { value: 'tram', label: 'Tramwaj' }, { value: 'metro', label: 'Metro' }, { value: 'stop', label: 'Przystanek' }]
+  return []
 }
 
 
-// Funkcja otwierająca modal z kopiowaniem aktualnych filtrów
-const openFiltersModal = () => {
-  // Skopiuj aktualne filtry do tymczasowych
-  tempFilters.value = JSON.parse(JSON.stringify(filters.value))
-  tempLocationQuery.value = locationQuery.value
-  showFiltersModal.value = true
+const getEnvironmentOptions = (type: string): { value: string, label: string }[] => {
+  if (type === 'citylight') return [{ value: 'street', label: 'Ulica' }, { value: 'mall', label: 'Galeria' }, { value: 'station', label: 'Dworzec' }]
+  return []
 }
 
+// Actions
 
-// Funkcja zamykająca modal bez stosowania zmian
-const closeFiltersModal = () => {
-  showFiltersModal.value = false
-  tempFilters.value = null
-}
-
-// Funkcja stosująca filtry z modalu
-const applyFilters = () => {
-  if (!tempFilters.value) return
-  
-  // Ustaw flagę resetowania
-  isResettingFilters.value = true
-
-  
-  // Zastosuj tymczasowe filtry
-  filters.value = JSON.parse(JSON.stringify(tempFilters.value))
+const openFiltersModal = () => { tempFilters.value = JSON.parse(JSON.stringify(filters.value)); tempLocationQuery.value = locationQuery.value; showFiltersModal.value = true }
+const closeFiltersModal = () => { showFiltersModal.value = false; tempFilters.value = null }
+const applyFilters = () => { 
+  // Wyczyść mapBounds przy aplikowaniu filtrów, aby mapa mogła przybliżyć się do miasta/regionu
+  const filtersWithoutMapBounds = { ...tempFilters.value, mapBounds: null }
+  searchStore.applyFilters(filtersWithoutMapBounds)
   locationQuery.value = tempLocationQuery.value
-  
-  // Jeśli użytkownik wpisał cenę, ustaw priceDisplay na tę jednostkę
-  // Aby wyniki były przełączone na tę jednostkę (jak przy sortowaniu)
-  if ((tempFilters.value.priceFrom !== null || tempFilters.value.priceTo !== null) && tempFilters.value.priceUnit) {
-    priceDisplay.value = tempFilters.value.priceUnit as 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
-  }
-  
-  // Track search/filter in GA4
-  if (searchQuery.value) {
-    analytics.search(searchQuery.value)
-  }
-  if (filters.value.type) {
-    analytics.filterUsed('ad_type', filters.value.type)
-  }
-  if (filters.value.city) {
-    analytics.filterUsed('city', filters.value.city)
-  }
-  
-  // Zamknij modal
   showFiltersModal.value = false
-  tempFilters.value = null
-  tempLocationQuery.value = ''
-
   
-  // Reset to page 1
-  currentPage.value = 1
-  
-  // Konwertuj filtry na query params
-  const queryParams = filtersToQueryParams({
-    ...filters.value,
-    keyword: searchQuery.value
-  })
-  
-  // Dodaj parametr sortowania
-  if (sortBy.value !== 'newest') {
-    queryParams.sort = sortBy.value
-  }
-  
-  // Dodaj parametr strony
+  // Synchronizuj filtry z URL
+  const queryParams = filtersToQueryParams(filtersWithoutMapBounds)
   queryParams.page = '1'
+  const queryString = new URLSearchParams(queryParams).toString()
+  const newUrl = queryString ? window.location.pathname + '?' + queryString : window.location.pathname
+  window.history.replaceState({}, document.title, newUrl)
+}
+const resetFilters = () => { 
+  searchStore.resetFilters()
+  locationQuery.value = ''
+  showFiltersModal.value = false
   
-  // Aktualizuj URL z nowymi parametrami
-  router.push({ query: queryParams }).then(() => {
-    // Zapisz filtry do localStorage
-    saveLastSearch()
-    
-    setTimeout(() => {
-      isResettingFilters.value = false
-    }, 100)
+  // Wyczyść URL
+  const newUrl = window.location.pathname
+  window.history.replaceState({}, document.title, newUrl)
+}
+const clearFilters = resetFilters
+
+const handleSortOptionClick = (val: string) => { searchStore.sortBy = val; showSortPanel.value = false; searchStore.applyFilters({}) }
+const toggleMobileMap = () => { showMapOnMobile.value = !showMapOnMobile.value; if (showMapOnMobile.value) nextTick(() => initMap()) }
+
+const scrollToAd = (adId: string) => {
+  const element = document.getElementById(`ad-${adId}`)
+  const container = document.querySelector('.listings-list-container')
+  if (element && container) {
+    const containerRect = container.getBoundingClientRect()
+    const elementRect = element.getBoundingClientRect()
+    container.scrollBy({ top: (elementRect.top - containerRect.top) - (containerRect.height / 2) + (elementRect.height / 2), behavior: 'smooth' })
+  }
+}
+
+const handleAdHover = (adId: string | null) => {
+  hoveredAdId.value = adId
+  if (adId && markers.has(adId)) {
+    const ad = listings.value.find(a => a.id === adId)
+    if (ad) {
+      const marker = markers.get(adId)!
+      const icon = createCustomIcon(ad.type, true, selectedAdId.value === adId)
+      if (icon) marker.setIcon(icon)
+    }
+  }
+  markers.forEach((marker, id) => {
+    if (id !== adId) {
+      const ad = listings.value.find(a => a.id === id)
+      if (ad) {
+        const icon = createCustomIcon(ad.type, false, selectedAdId.value === id)
+        if (icon) marker.setIcon(icon)
+      }
+    }
   })
 }
 
-const clearFilters = () => {
-  // Ustaw flagę resetowania
-  isResettingFilters.value = true
-  
-  // Wyczyść wszystkie filtry
-  filters.value = {
-    type: '',
-    priceFrom: null,
-    priceTo: null,
-    priceUnit: 'month',
-    widthFrom: null,
-    widthTo: null,
-    heightFrom: null,
-    heightTo: null,
-    surfaceFrom: null,
-    surfaceTo: null,
-    city: '',
-    region: '',
-    rentalPeriod: '',
-    orientation: '',
-    trafficIntensity: '',
-    trafficDirection: '',
-    trafficType: '',
-    status: [],
-    onlyWithImage: false,
-    priceIncludesPrint: false,
-    priceIncludesMounting: false,
-    graphicDesignHelp: false,
-    offerType: '',
-    hasVatInvoice: false,
-    hasBacklight: false,
-    selectedLocationCoords: null,
-    // Type-specific filters
-    variant: '',
-    roadClass: '',
-    environment: '',
-    // LED screen filters
-    resolution: '',
-    pixelPitchFrom: null,
-    pixelPitchTo: null,
-    brightnessFrom: null,
-    brightnessTo: null,
-    transportScope: '',
-    vehicleCountFrom: null,
-    vehicleCountTo: null,
-    mobileExposureMode: '',
-    campaignDurationFrom: null,
-    campaignDurationTo: null,
-    // Nowe pola dla rozszerzonych opcji
-    lightingType: '',
-    dailyPassengersFrom: null,
-    dailyPassengersTo: null,
-    operatingZone: '',
-    ambientLightControl: false,
-    // Checkboxy dla podświetlenia
-    hasLightingTypeBanner: false,
-    hasLightingTypeBillboard: false,
-    estimatedDailyViewsFrom: null,
-    estimatedDailyViewsTo: null,
-  }
-  
-  // Wyczyść wyszukiwane słowo kluczowe i lokalizację
-  searchQuery.value = ''
-  locationQuery.value = ''
-  
-  // Track reset in GA4
-  analytics.trackEvent('filters_reset')
-  
-  // Resetuj sortowanie
-  sortBy.value = 'newest'
-  
-  // Zamknij modal
-  showFiltersModal.value = false
-  tempFilters.value = null
-  
-  // Usuń zapisane wyszukiwanie
-  try {
-    localStorage.removeItem(LAST_SEARCH_KEY)
-  } catch (error) {
-    console.error('Error clearing search filters:', error)
-  }
-  
-  // Przekieruj na stronę główną powierzchni reklamowych (bez filtrów)
-  router.push('/powierzchnie-reklamowe').then(() => {
-    setTimeout(() => {
-      isResettingFilters.value = false
-    }, 100)
-  })
+const handleAdLeave = () => handleAdHover(null)
+const handleSortButtonClick = () => { showSortPanel.value = true }
+const changeViewMode = (mode: 'grid' | 'list') => { searchStore.setViewMode(mode) }
+
+// Favorites and Comparison handlers
+const handleToggleFavorite = async (id: string) => {
+  await prefStore.toggleFavorite(id)
 }
-const createCustomIcon = (type: string, isHovered: boolean = false, isSelected: boolean = false) => {
+
+const handleToggleComparison = async (id: string) => {
+  await prefStore.toggleComparison(id)
+}
+
+// Map Logic
+const createCustomIcon = (type: string, hovered: boolean = false, selected: boolean = false) => {
+  if (!L || !L.divIcon) return null
   const color = typeColors[type] || '#6B7280'
-  const scale = isHovered || isSelected ? 1.3 : 1
-  const zIndex = isHovered || isSelected ? 1000 : 500
+  const isHovered = hovered || selected
+  const scale = isHovered ? 1.3 : 1
+  const zIndex = isHovered ? 1000 : 500
   
   return L.divIcon({
     className: 'custom-marker',
@@ -1688,583 +381,258 @@ const createCustomIcon = (type: string, isHovered: boolean = false, isSelected: 
   })
 }
 
-const initMap = () => {
-  if (!mapContainer.value) return
-
-  // Współrzędne centrum Polski
-  const polandCenter: [number, number] = [52.0, 19.0]
-  
-  // Granice Polski (bardziej rozszerzone) - aby markery/popupy nie były ucinane
-  const polandBounds = L.latLngBounds(
-    [47.5, 12.0],  // południowo-zachodni róg
-    [57.5, 26.0]   // północno-wschodni róg
-  )
-  
-  // Tworzymy mapę z widokiem na całą Polskę i ograniczeniami
-  map = L.map(mapContainer.value, {
-    maxBounds: polandBounds,        // Nie można przesunąć mapy poza te granice
-    maxBoundsViscosity: 1.0,        // Twarde ograniczenie (nie można przeciągnąć poza)
-    minZoom: 4.5,                      // Minimalne przybliżenie (cała Polska + więcej)
-    maxZoom: 18,                     // Maksymalne przybliżenie
-    scrollWheelZoom: false,          // Disable scroll wheel zoom until activated
-    dragging: !isMobile.value,       // Disable dragging on mobile until activated
-    touchZoom: false,                // Disable touch zoom until activated
-    doubleClickZoom: false           // Disable double click zoom until activated
-  }).setView(polandCenter, 6)
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map)
-  
-  // Function to enable all interactions
-  const enableMapInteractions = () => {
-    if (!map) return
-    
-    map.scrollWheelZoom.enable()
-    map.dragging.enable()
-    map.touchZoom.enable()
-    map.doubleClickZoom.enable()
-    
-    isMapActive.value = true
-  }
-
-  // Enable interactions on click and hide hint
-  map.on('click', () => {
-    if (map && !isMapActive.value) {
-      enableMapInteractions()
-    }
-  })
-  
-  // Ustaw widok na całą Polskę
-  map.fitBounds(polandBounds)
-
-  updateMarkers()
-}
-
 const updateMarkers = () => {
   if (!map) return
-
+  
   // Clear existing markers
-  markers.forEach(marker => marker.remove())
+  markers.forEach(marker => map?.removeLayer(marker))
   markers.clear()
 
-  filteredListings.value.forEach((ad) => {
-    const marker = L.marker([ad.latitude, ad.longitude], {
-      icon: createCustomIcon(ad.type, hoveredAdId.value === ad.id, selectedAdId.value === ad.id)
-    })
-
+  filteredListings.value.forEach(ad => {
+    const icon = createCustomIcon(ad.type, hoveredAdId.value === ad.id, selectedAdId.value === ad.id)
+    if (!icon) return
+    const marker = L!.marker([ad.latitude, ad.longitude], { icon })
     const citySlug = slugify(ad.city)
     const titleSlug = slugify(ad.title)
-    const adUrl = `/ogloszenie/${citySlug}/${titleSlug}/${ad.id}`
+    const typeSlug = mapTypeToUrlFormat(ad.type)
+    const adUrl = `/powierzchnia-reklamowa/${typeSlug}/${citySlug}/${titleSlug}-${ad.id}`
 
     const imageUrl = ad.image_url ? getFullImageUrl(ad.image_url) : ''
     
-    marker.bindPopup(`
-      <div style="width: 250px;">
-        <a href="${adUrl}" style="text-decoration: none; color: inherit; display: block;">
+    const popupContent = `
+      <div style="width: 220px;">
+        <a href="${adUrl}" style="text-decoration: none; color: inherit; display: block; padding: 4px;">
           ${imageUrl ? `
-            <div style="margin: -20px -20px 12px -20px; overflow: hidden; border-radius: 12px 12px 0 0;">
-              <img src="${imageUrl}" alt="${ad.title}" style="width: 100%; height: 140px; object-fit: cover; display: block;" />
+            <div style="margin: -10px -10px 10px -10px; overflow: hidden; border-radius: 8px 8px 0 0;">
+              <img src="${imageUrl}" alt="${ad.title}" style="width: 100%; height: 110px; object-fit: cover; display: block;" />
             </div>
           ` : ''}
-          <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: #1F2937;">
+          <h4 style="margin: 0 0 6px 0; font-size: 1rem; font-weight: 700; color: var(--text-main, #1F2937); line-height: 1.3;">
             ${ad.title}
-          </h3>
-          <div style="color: #6B7280; font-size: 0.9rem; margin-bottom: 8px;">
-            📍 ${formatLocation(ad.location, ad.city)}
-          </div>
-          <div style="font-weight: 700; color: #4F46E5; font-size: 1.1rem;">
-            ${Math.round(ad.price).toLocaleString('pl-PL')} ${getPriceUnitLabel(ad)}
+          </h4>
+          <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem;">
+            <div style="color: var(--text-muted, #6B7280); display: flex; align-items: flex-start; gap: 4px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-top: 2px; flex-shrink: 0;">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span>${formatLocation(ad.location, ad.city)}</span>
+            </div>
+            <div style="font-weight: 800; color: #667eea; font-size: 1rem; margin-top: 4px; display: flex; align-items: baseline; gap: 4px;">
+              <span>${Math.round(ad.price).toLocaleString('pl-PL')} PLN</span>
+              <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">/ ${getPriceUnitLabel(ad)}</span>
+            </div>
           </div>
         </a>
       </div>
-    `, { 
-      maxWidth: 250,
-      autoPan: true,    // Automatyczne przesunięcie mapy, aby popup był widoczny
-      autoPanPadding: [50, 50]  // Padding przy autopan
-    })
+    `
 
-    marker.on('click', () => {
-      // On mobile, prevent popup from opening until map is activated
-      if (isMobile.value && !isMapActive.value) {
-        // Activate map interactions on first marker click
-        if (map) {
-          map.scrollWheelZoom.enable()
-          map.dragging.enable()
-          map.touchZoom.enable()
-          map.doubleClickZoom.enable()
-          isMapActive.value = true
-        }
-        // Don't open popup on first click, wait for second click
-        return
-      }
-      
-      selectedAdId.value = ad.id
-      scrollToAd(ad.id)
-    })
-
-    marker.on('mouseover', () => {
-      marker.setIcon(createCustomIcon(ad.type, true, selectedAdId.value === ad.id))
-    })
-
-    marker.on('mouseout', () => {
-      if (hoveredAdId.value !== ad.id) {
-        marker.setIcon(createCustomIcon(ad.type, false, selectedAdId.value === ad.id))
-      }
-    })
-
+    marker.bindPopup(popupContent, { maxWidth: 220 })
+    marker.on('click', () => { selectedAdId.value = ad.id; scrollToAd(ad.id) })
+    marker.on('mouseover', () => { const i = createCustomIcon(ad.type, true, selectedAdId.value === ad.id); if (i) marker.setIcon(i) })
+    marker.on('mouseout', () => { if (hoveredAdId.value !== ad.id) { const i = createCustomIcon(ad.type, false, selectedAdId.value === ad.id); if (i) marker.setIcon(i) } })
+    
     marker.addTo(map!)
     markers.set(ad.id, marker)
   })
-
-  // Fit bounds if there are markers and active filters
-  if (markers.size > 0 && activeFiltersCount.value > 0) {
-    const group = new L.FeatureGroup(Array.from(markers.values()))
-    map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 12 })
-  } else if (markers.size > 0 && !map.getBounds().equals(L.latLngBounds([[0,0],[0,0]]))) {
-    // Jeśli nie ma filtrów i mapa już ma ustawione granice, nie zmieniaj widoku
-    // Pozwala to zachować widok całej Polski przy pierwszym ładowaniu
-  }
 }
 
-const handleAdHover = (adId: string | null) => {
-  hoveredAdId.value = adId
+const initMap = async () => {
+  if (!mapContainer.value) return
+  await loadLeaflet(); if (!L) return
+  const pCenter: [number, number] = [52.0, 19.0]; const pBounds = L.latLngBounds([45.5, 10.0], [58.5, 28.0])
+  isProgrammaticMove.value = true
+  map = L.map(mapContainer.value, { scrollWheelZoom: false, maxBounds: pBounds, minZoom: 5 }).setView(pCenter, 6)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
   
-  if (adId && markers.has(adId)) {
-    const ad = listings.value.find(a => a.id === adId)
-    if (ad) {
-      const marker = markers.get(adId)!
-      marker.setIcon(createCustomIcon(ad.type, true, selectedAdId.value === adId))
+  // markerClusterGroup = (L as any).markerClusterGroup({
+  //   showCoverageOnHover: false,
+  //   spiderfyOnMaxZoom: true,
+  //   zoomToBoundsOnClick: true,
+  //   maxClusterRadius: 50
+  // })
+  // map.addLayer(markerClusterGroup)
+
+  // Enable scroll wheel zoom on click
+  map.on('click', () => {
+    if (map && !map.scrollWheelZoom.enabled()) {
+      map.scrollWheelZoom.enable()
     }
+  })
+
+  // Disable scroll wheel zoom when mouse leaves (desktop only)
+  if (mapContainer.value && !isMobile.value) {
+    mapContainer.value.addEventListener('mouseleave', () => {
+      if (map && map.scrollWheelZoom.enabled()) {
+        map.scrollWheelZoom.disable()
+      }
+    })
   }
-  
-  // Reset other markers
-  markers.forEach((marker, id) => {
-    if (id !== adId) {
-      const ad = listings.value.find(a => a.id === id)
-      if (ad) {
-        marker.setIcon(createCustomIcon(ad.type, false, selectedAdId.value === id))
+
+  updateMarkers()
+  syncMapToFilters()
+
+  map.on('moveend', () => {
+    if (!map) return
+    
+    // Skip updating mapBounds if this was a programmatic move (e.g., zoom to city)
+    if (isProgrammaticMove.value) {
+      isProgrammaticMove.value = false
+      return
+    }
+    
+    const bounds = map.getBounds()
+    
+    // Update map bounds to filter results, but keep text filter values intact
+    const updates: any = {
+      mapBounds: {
+        northEast: { lat: bounds.getNorthEast().lat, lng: bounds.getNorthEast().lng },
+        southWest: { lat: bounds.getSouthWest().lat, lng: bounds.getSouthWest().lng }
       }
     }
+
+    // Don't clear text filters - keep user's input visible
+    // The mapBounds will still narrow down results geographically
+    
+    searchStore.applyFilters(updates)
   })
 }
 
-const handleAdLeave = () => {
-  handleAdHover(null)
-}
-
-const favoritesRefresh = ref(0)
-const comparisonRefresh = ref(0)
-
-const isFavorite = (id: string) => {
-  favoritesRefresh.value // Dependency to trigger reactivity
-  const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
-  return favorites.includes(id)
-}
-
-const isInComparison = (id: string) => {
-  comparisonRefresh.value // Dependency to trigger reactivity
-  const comparison = JSON.parse(localStorage.getItem('comparison') || '[]')
-  return comparison.includes(id)
-}
-
-const handleStorageChange = () => {
-  favoritesRefresh.value++
-  comparisonRefresh.value++
-}
-
-const handleAdClick = (adId: string) => {
-  selectedAdId.value = adId
+const syncMapToFilters = () => {
+  if (!map || !L) return
   
-  if (markers.has(adId) && map) {
-    const marker = markers.get(adId)!
-    const latLng = marker.getLatLng()
-    map.setView(latLng, 13, { animate: true })
-    marker.openPopup()
-  }
-}
-
-const scrollToAd = (adId: string) => {
-  const element = document.getElementById(`ad-${adId}`)
-  const container = document.querySelector('.listings-list-container')
-  if (element && container) {
-    // Przewijamy tylko kontener z ogłoszeniami, a nie całą stronę
-    // Obliczamy pozycję elementu względem kontenera
-    const containerRect = container.getBoundingClientRect()
-    const elementRect = element.getBoundingClientRect()
-    const relativeTop = elementRect.top - containerRect.top
-    
-    // Przewijamy kontener, aby element był widoczny na środku
-    container.scrollBy({
-      top: relativeTop - (containerRect.height / 2) + (elementRect.height / 2),
-      behavior: 'smooth'
-    })
-  }
-}
-
-const loadListings = async () => {
-  try {
-    isLoading.value = true
-    const data = await api.getAdvertisements()
-    // Backend returns only active advertisements
-    listings.value = data
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    
-    setTimeout(() => updateMarkers(), 100)
-  } catch (error) {
-    console.error('Error loading advertisements:', error)
-  } finally {
-    isLoading.value = false
-  }
-}
-
-// Watch for URL query parameter changes
-watch(() => route.query, (newQuery, oldQuery) => {
-  // Skip na początkowym załadowaniu - filtry będą ustawione w onMounted
-  if (!isInitialized.value) {
-    return
-  }
-  
-  // Jeśli query nie zmienił się faktycznie, nie rób nic
-  if (JSON.stringify(newQuery) === JSON.stringify(oldQuery)) {
-    return
-  }
-  
-  // Jeśli query params są puste (breadcrumb navigation), resetuj filtry do wartości z route.params
-  if (Object.keys(newQuery).length === 0) {
-    isResettingFilters.value = true
-    
-    // Resetuj wszystkie filtry do domyślnych wartości
-    filters.value = {
-      type: '',
-      priceFrom: null,
-      priceTo: null,
-      priceUnit: 'month',
-      widthFrom: null,
-      widthTo: null,
-      heightFrom: null,
-      heightTo: null,
-      surfaceFrom: null,
-      surfaceTo: null,
-      city: '',
-      region: '',
-      rentalPeriod: '',
-      orientation: '',
-      trafficIntensity: '',
-      trafficDirection: '',
-      trafficType: '',
-      status: [],
-      onlyWithImage: false,
-      priceIncludesPrint: false,
-      priceIncludesMounting: false,
-      graphicDesignHelp: false,
-      offerType: '',
-      hasVatInvoice: false,
-      hasBacklight: false,
-      selectedLocationCoords: null,
-      // Type-specific filters
-      variant: '',
-      roadClass: '',
-      environment: '',
-      // LED screen filters
-      resolution: '',
-      pixelPitchFrom: null,
-      pixelPitchTo: null,
-      brightnessFrom: null,
-      brightnessTo: null,
-      transportScope: '',
-      vehicleCountFrom: null,
-      vehicleCountTo: null,
-      mobileExposureMode: '',
-      campaignDurationFrom: null,
-      campaignDurationTo: null,
-      // Nowe pola dla rozszerzonych opcji
-      lightingType: '',
-      dailyPassengersFrom: null,
-      dailyPassengersTo: null,
-      operatingZone: '',
-      ambientLightControl: false,
-      hasLightingTypeBanner: false,
-      hasLightingTypeBillboard: false,
-      estimatedDailyViewsFrom: null,
-      estimatedDailyViewsTo: null,
+  if (filters.value.selectedLocationCoords) {
+    // Priority 1: If exact coordinates are provided, zoom to them
+    const zoomLevel = isMobile.value ? 12 : 13
+    isProgrammaticMove.value = true
+    map.setView([filters.value.selectedLocationCoords.lat, filters.value.selectedLocationCoords.lng], zoomLevel)
+  } else if (filters.value.city && markers.size > 0) {
+    // Priority 2: If city is selected, fit bounds to markers (likely clustered in that city)
+    const bounds = new (L as any).FeatureGroup(Array.from(markers.values())).getBounds()
+    if (bounds.isValid()) {
+      const maxZoom = isMobile.value ? 11 : 12
+      isProgrammaticMove.value = true
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom })
     }
-    
-    // Zastosuj filtry z route.params (type i city)
-    if (route.params.type) {
-      const typeMapping: Record<string, string> = {
-        'billboardy': 'billboard',
-        'citylighty': 'citylight',
-        'ekrany-led': 'led_screen',
-        'banery': 'banner',
-        'sciany-reklamowe': 'wall',
-        'totemy-reklamowe': 'totem',
-        'reklama-w-transporcie': 'transport',
-        'reklama-mobilna': 'mobile',
-        'inne': 'other'
-      }
-      const type = typeMapping[route.params.type as string] || ''
-      if (type) {
-        filters.value.type = type
-      }
-    }
-    
-    if (route.params.city) {
-      const citySlug = route.params.city as string
-      const city = deslugify(citySlug)
-      filters.value.city = city
-      locationQuery.value = city
-    } else {
-      locationQuery.value = ''
-    }
-    
-    // Resetuj search query i sortowanie
-    searchQuery.value = ''
-    sortBy.value = 'newest'
-    currentPage.value = 1
-    
-    // Resetuj flagę po krótkiej chwili
-    setTimeout(() => {
-      isResettingFilters.value = false
-    }, 100)
-    
-    return
+  } else if (filters.value.region && regionCoordinates[filters.value.region]) {
+    // Priority 3: If region is selected (and no city), zoom to region center
+    const region = regionCoordinates[filters.value.region]
+    const zoomLevel = isMobile.value ? region.zoom - 1 : region.zoom
+    isProgrammaticMove.value = true
+    map.setView([region.lat, region.lng], zoomLevel)
+  } else if (!searchStore.filters.mapBounds) {
+    // Default: Always show full Poland ONLY when no mapBounds are set
+    const defaultZoom = isMobile.value ? 5 : 6
+    isProgrammaticMove.value = true
+    map.setView([52.0, 19.0], defaultZoom)
   }
-  
-  // Aktualizuj numer strony
-  const page = parseInt(newQuery.page as string) || 1
-  if (page !== currentPage.value && page >= 1 && page <= totalPages.value) {
-    currentPage.value = page
-  }
-  
-  // Aktualizuj sortowanie
-  if (newQuery.sort && newQuery.sort !== sortBy.value) {
-    sortBy.value = newQuery.sort as string
-  }
-  
-  // Aktualizuj wyszukiwane słowo kluczowe
-  if (newQuery.q && newQuery.q !== searchQuery.value) {
-    searchQuery.value = newQuery.q as string
-  }
-  
-  // Aktualizuj filtry na podstawie query params
-  const queryFilters = queryParamsToFilters(newQuery as Record<string, string>)
-  
-  // Aktualizuj tylko jeśli są różnice w filtrach
-  if (JSON.stringify(queryFilters) !== JSON.stringify(filters.value)) {
-    // Ustaw tylko niepuste wartości, aby nie nadpisywać domyślnych
-    Object.entries(queryFilters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '' && 
-          (Array.isArray(value) ? value.length > 0 : true) &&
-          key !== 'keyword') { // Pomijamy keyword, bo jest obsługiwane przez searchQuery
-        // @ts-ignore - dynamiczny dostęp do właściwości
-        filters.value[key] = value
-      }
-    })
-  }
-}, { immediate: true })
+}
 
-// Usunięto watch - filtry aktualizują się tylko po kliknięciu "Zastosuj"
+watch(() => filters.value.selectedLocationCoords, () => {
+  // Only sync map if mapBounds is not active (user hasn't scrolled/zoomed manually)
+  if (!searchStore.filters.mapBounds) {
+    syncMapToFilters()
+  }
+}, { deep: true })
 
-watch(() => filteredListings.value, () => {
+watch(() => filters.value.city, () => {
+  // Only sync map if mapBounds is not active (user hasn't scrolled/zoomed manually)
+  if (!searchStore.filters.mapBounds) {
+    syncMapToFilters()
+  }
+})
+
+watch(() => filters.value.region, () => {
+  // Only sync map if mapBounds is not active (user hasn't scrolled/zoomed manually)
+  if (!searchStore.filters.mapBounds) {
+    syncMapToFilters()
+  }
+})
+
+// Watch for mapBounds being cleared (e.g., when user clicks "Apply filters")
+watch(() => searchStore.filters.mapBounds, (newBounds, oldBounds) => {
+  // If mapBounds was cleared (null) and we have location filters, zoom to them
+  if (!newBounds && oldBounds && (filters.value.city || filters.value.region || filters.value.selectedLocationCoords)) {
+    syncMapToFilters()
+  }
+})
+
+watch(filteredListings, () => {
   updateMarkers()
-})
-
-// Block body scroll when modal or panel is open
-watch(() => showFiltersModal.value, (isOpen) => {
-  if (isOpen) {
-    document.body.style.overflow = 'hidden'
-  } else {
-    document.body.style.overflow = ''
+  // If we have a location filter but haven't zoomed/panned manually, ensure map view matches
+  if ((filters.value.city || filters.value.region || filters.value.selectedLocationCoords) && !searchStore.filters.mapBounds) {
+    syncMapToFilters()
   }
-})
+}, { deep: true })
 
-watch(() => showSortPanel.value, (isOpen) => {
-  if (isOpen) {
-    document.body.style.overflow = 'hidden'
-  } else {
-    document.body.style.overflow = ''
+const checkIfMobile = () => { isMobile.value = window.innerWidth < 768 }
+const handleScroll = () => { /* Logic for scroll-based UI adjustments */ }
+
+const handleClickOutside = (e: MouseEvent) => {
+  if (statusMultiselect.value && !statusMultiselect.value.contains(e.target as Node)) {
+    isStatusMenuOpen.value = false
   }
-})
+}
 
-watch(() => showSearchAlertModal.value, (isOpen) => {
-  if (isOpen) {
-    document.documentElement.style.overflow = 'hidden'
-    document.body.style.overflow = 'hidden'
-  } else {
-    document.documentElement.style.overflow = ''
-    document.body.style.overflow = ''
-  }
-})
+const handleNumberInput = (val: string, allowFloat: boolean = true) => {
+  let cleaned = val.replace(/[^0-9.,]/g, '').replace(',', '.')
+  if (!allowFloat) cleaned = cleaned.replace(/\..*/, '')
+  return cleaned
+}
 
-// Block body scroll when legend is visible on mobile
-watch(isLegendVisible, (newVal) => {
-  if (typeof window !== 'undefined') {
-    if (newVal && isMobile.value) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-  }
-})
+const getAvailablePriceUnits = (type: string) => searchStore.getAvailablePriceUnits(type)
 
+const showEquipmentSectionInModal = computed(() => tempFilters.value && ['billboard', 'citylight', 'banner', 'wall', 'led_screen'].includes(tempFilters.value.type))
+
+// Lifecycle
 onMounted(async () => {
-  // Załaduj dane NAJPIERW
-  await loadListings()
-  
+  await searchStore.fetchListings()
   checkIfMobile()
   window.addEventListener('resize', checkIfMobile)
   window.addEventListener('scroll', handleScroll)
-  handleScroll() // Initial check
-  
-  // Initialize map only on desktop or if mobile and map is shown
-  if (!isMobile.value) {
-    setTimeout(() => initMap(), 100)
-  }
-  
+  if (!isMobile.value) { setTimeout(() => initMap(), 100) }
   document.addEventListener('click', handleClickOutside)
   
-  // Listen to localStorage changes
-  if (typeof window !== 'undefined') {
-    window.addEventListener('localStorageChange', handleStorageChange)
-    window.addEventListener('storage', handleStorageChange)
-  }
-  
-  // 1. Najpierw załaduj filtry z localStorage (jako baza)
+  // 1. Najpierw spróbuj załadować filtry z localStorage jako bazę
   try {
-    const saved = localStorage.getItem(LAST_SEARCH_KEY)
+    const saved = localStorage.getItem('reklamap_last_search')
     if (saved) {
       const lastSearch = JSON.parse(saved)
+      searchStore.applyFilters(lastSearch)
       
-      // Ustaw searchQuery jeśli jest keyword w zapisanych filtrach
-      if (lastSearch.keyword) {
-        searchQuery.value = lastSearch.keyword
-      }
-      
-      // Ustaw lokalizację do wyświetlenia w polu tekstowym
-      if (lastSearch.city) {
-        locationQuery.value = lastSearch.city
-      } else if (lastSearch.region) {
-        const region = polishLocations.voivodeships.find(v => v.id === lastSearch.region)
-        if (region) {
-          locationQuery.value = region.name
-        }
-      }
-      
-      // Scal filtry
-      filters.value = { ...filters.value, ...lastSearch }
-      
-      // Jeśli był zapisany priceDisplayUnit, ustaw go
       if (lastSearch._priceDisplayUnit) {
-        priceDisplay.value = lastSearch._priceDisplayUnit
+        searchStore.priceDisplay = lastSearch._priceDisplayUnit
       }
     }
   } catch (error) {
     console.error('Error loading search from localStorage:', error)
   }
 
-  // 2. Nadpisz parametrami z URL path (type i city mają najwyższy priorytet ścieżki)
-  if (route.params.type) {
-    const typeMapping: Record<string, string> = {
-      'billboardy': 'billboard',
-      'citylighty': 'citylight',
-      'ekrany-led': 'led_screen',
-      'banery': 'banner',
-      'sciany-reklamowe': 'wall',
-      'totemy-reklamowe': 'totem',
-      'reklama-w-transporcie': 'transport',
-      'reklama-mobilna': 'mobile',
-      'inne': 'other'
-    }
-    
-    const type = typeMapping[route.params.type as string] || ''
-    if (type) {
-      filters.value.type = type
+  // 2. Nadpisz filtrami z URL (oś czasu / query params mają priorytet)
+  searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
+
+  // 3. Jeśli URL nie ma query params, ale filtry są ustawione (z localStorage), zaktualizuj URL
+  const hasQueryParams = Object.keys(route.query).length > 0
+  if (!hasQueryParams && filters.value) {
+    const queryParams = filtersToQueryParams(filters.value)
+    if (Object.keys(queryParams).length > 0) {
+      const newUrl = window.location.pathname + '?' + new URLSearchParams(queryParams).toString()
+      window.history.replaceState({}, document.title, newUrl)
     }
   }
-  
-  if (route.params.city) {
-    const citySlug = route.params.city as string
-    const city = deslugify(citySlug)
-    filters.value.city = city
-    locationQuery.value = city
-  }
-  
-  // 3. Nadpisz parametrami z URL query
-  if (Object.keys(route.query).length > 0) {
-    const queryFilters = queryParamsToFilters(route.query as Record<string, string>)
-    
-    if (queryFilters.keyword) {
-      searchQuery.value = queryFilters.keyword
-      delete queryFilters.keyword
-    }
-    
-    if (route.query.sort) {
-      sortBy.value = route.query.sort as string
-    }
-    
-    // Nadpisz lokalizację z query tylko jeśli nie ma jej w path
-    if (!route.params.city) {
-      if (queryFilters.city) {
-        locationQuery.value = queryFilters.city
-      } else if (queryFilters.region) {
-        const region = polishLocations.voivodeships.find(v => v.id === queryFilters.region)
-        if (region) {
-          locationQuery.value = region.name
-        }
-      }
-    }
-    
-    // Połącz, ale zachowaj priorytet ścieżki dla typu i miasta
-    const mergedFilters = { ...queryFilters }
-    if (route.params.type && filters.value.type) {
-      delete mergedFilters.type
-    }
-    if (route.params.city && filters.value.city) {
-      delete mergedFilters.city
-    }
-    
-    filters.value = { ...filters.value, ...mergedFilters }
-  }
-  
-  // Oznacz że inicjalizacja jest ukończona
+
+  syncLocationQuery()
   isInitialized.value = true
-
-  // Zapisz zainicjalizowane filtry (np. z URL) do localStorage
-  saveLastSearch()
-
-  // Logic for showing the search alert modal after 20 seconds
-  if (!hasShownAlertModal.value && activeFiltersCount.value > 0) {
-    setTimeout(() => {
-      // Check again if we haven't shown it yet in this session
-      if (!hasShownAlertModal.value) {
-        showSearchAlertModal.value = true
-        hasShownAlertModal.value = true
-        localStorage.setItem('search_alert_shown', 'true')
-      }
-    }, 20000) // 20 seconds
-  }
 })
-
-const handleSearchAlertSubmit = (email: string) => {
-  console.log('Saving alert for:', email, filters.value)
-  // Here we would call the API to save the alert
-}
-
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
+  window.removeEventListener('resize', checkIfMobile)
   window.removeEventListener('scroll', handleScroll)
-  
-  // Reset body overflow in case modal was open
   document.body.style.overflow = ''
-  
-  // Remove localStorage listeners
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('localStorageChange', handleStorageChange)
-    window.removeEventListener('storage', handleStorageChange)
-  }
 })
+
+const handleSearchAlertSubmit = () => { /* Alert logic */ }
 </script>
 
 <template>
@@ -2285,7 +653,7 @@ onBeforeUnmount(() => {
             <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
           <input 
-            v-model="searchQuery" 
+            v-model="filters.keyword" 
             type="text" 
             placeholder="Szukaj po tytule..."
             class="search-input"
@@ -2369,7 +737,7 @@ onBeforeUnmount(() => {
             <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
           <input 
-            v-model="searchQuery" 
+            v-model="filters.keyword" 
             type="text" 
             placeholder="Szukaj..."
             class="search-input"
@@ -2433,10 +801,15 @@ onBeforeUnmount(() => {
 
     <!-- Main Content -->
     <div class="content-wrapper">
-      <div class="listings-list-container" :class="{ 'mobile-hidden': isMobile && showMapOnMobile }">
-        <div v-if="isLoading" class="loading-state">
-          <div class="spinner"></div>
-          <p>Ładowanie ogłoszeń...</p>
+      <!-- List Sidebar -->
+      <div 
+        ref="listContainerRef" 
+        class="listings-list-container" 
+        :class="{ 'hidden-mobile': showMapOnMobile }"
+        @scroll="handleListScroll"
+      >
+        <div v-if="isLoading" class="listings-list" :class="viewMode">
+          <SkeletonCard v-for="i in itemsPerPage" :key="i" />
         </div>
 
         <div v-else-if="filteredListings.length === 0" class="empty-state">
@@ -2450,124 +823,59 @@ onBeforeUnmount(() => {
           
           <SearchAlertBox 
             v-if="activeFiltersCount > 0"
-            :location-label="locationQuery || (route.params.city ? deslugify(route.params.city as string) : '')"
-            :ad-type-label="filters && filters.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
+            :location-label="filters?.city || (route.params.city ? deslugify(route.params.city as string) : '')"
+            :ad-type-label="filters?.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
             @click="showSearchAlertModal = true"
           />
-
         </div>
 
+        <template v-else>
+          <div class="listings-list" :class="viewMode">
+            <AdCard 
+              v-for="ad in getCurrentPageAds()"
+              :key="ad.id"
+              :ad="ad"
+              :view-mode="viewMode"
+              @toggle-favorite="handleToggleFavorite"
+              @toggle-comparison="handleToggleComparison"
+              @hover-start="handleAdHover"
+              @hover-end="handleAdLeave"
+            />
+          </div>
+          
+          <Pagination 
+            v-if="!isLoading && filteredListings.length > 0"
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            :total-items="filteredListings.length"
+            :items-per-page="itemsPerPage"
+            @update:current-page="searchStore.setCurrentPage($event); scrollListToTop()"
+          />
+          
+          <SearchAlertBox 
+            v-if="!isLoading && listings.length > 0 && activeFiltersCount > 0" 
+            class="listings-alert" 
+            :location-label="filters?.city || (route.params.city ? deslugify(route.params.city as string) : '')"
+            :ad-type-label="filters?.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
+            @click="showSearchAlertModal = true"
+          />
+        </template>
 
-        <div v-else class="listings-list" :class="viewMode">
-          <router-link
-            v-for="ad in getCurrentPageAds()"
-            :key="ad.id"
-            :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`"
-            class="listing-card"
-            :class="{ hovered: hoveredAdId === ad.id, selected: selectedAdId === ad.id }"
-            @mouseenter="handleAdHover(ad.id)"
-            @mouseleave="handleAdLeave()"
+        <!-- List Scroll to Top Button -->
+        <Transition name="fade">
+          <button 
+            v-if="showListScrollTop" 
+            @click="scrollListToTop" 
+            class="list-scroll-top"
           >
-            <div class="card-image">
-              <img 
-                v-if="ad.image_url" 
-                :src="getFullImageUrl(ad.image_url)" 
-                :alt="ad.title"
-              />
-              <div v-else class="no-image-placeholder">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
-                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
-                  <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <span>Brak zdjęcia</span>
-              </div>
-              <div class="card-badge" :style="{ background: typeColors[ad.type] || '#6B7280' }">
-                {{ typeLabels[ad.type] || ad.type }}
-              </div>
-              <div class="status-badge" :style="{ background: getStatusColor(ad) }">
-                {{ getStatusLabel(ad) }}
-              </div>
-              <div class="card-actions">
-                <button 
-                  @click.prevent.stop="$emit('toggleFavorite', ad.id)"
-                  class="action-btn favorite-btn"
-                  :class="{ active: isFavorite(ad.id) }"
-                  title="Dodaj do ulubionych"
-                >
-                  <svg width="22" height="22" viewBox="0 0 24 24" :fill="isFavorite(ad.id) ? '#EF4444' : 'none'">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" :stroke="isFavorite(ad.id) ? '#EF4444' : 'white'" stroke-width="2"/>
-                  </svg>
-                </button>
-                <button 
-                  @click.prevent.stop="$emit('toggleComparison', ad.id)"
-                  class="action-btn comparison-btn"
-                  :class="{ active: isInComparison(ad.id) }"
-                  title="Dodaj do porównania"
-                >
-                  <svg width="22" height="22" viewBox="0 0 24 24" :fill="isInComparison(ad.id) ? '#667eea' : 'none'">
-                    <rect x="3" y="3" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
-                    <rect x="14" y="3" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
-                    <rect x="3" y="14" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
-                    <rect x="14" y="14" width="7" height="7" :stroke="isInComparison(ad.id) ? '#667eea' : 'white'" stroke-width="2" rx="1"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <h3 class="card-title">{{ ad.title }}</h3>
-
-              <div class="card-location">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M8 8C9.1 8 10 7.1 10 6C10 4.9 9.1 4 8 4C6.9 4 6 4.9 6 6C6 7.1 6.9 8 8 8Z" stroke="#6B7280" stroke-width="1.3"/>
-                  <path d="M8 14C8 14 12 10.5 12 6C12 3.79 10.21 2 8 2C5.79 2 4 3.79 4 6C4 10.5 8 14 8 14Z" stroke="#6B7280" stroke-width="1.3"/>
-                </svg>
-                <span>{{ formatLocation(ad.location, ad.city) }}</span>
-              </div>
-
-              <div class="card-footer">
-                <div class="card-price">
-                  <span v-if="isMissingData(ad)" class="missing-data-badge">Brak danych</span>
-                  <template v-else>
-                    <span class="price-amount">
-                      <span v-if="isEstimatedPrice(ad)" class="estimated-label">~</span>{{ Math.round(getPrice(ad, (priceDisplay || ad.price_unit || 'month') as any)).toLocaleString('pl-PL') }} zł
-                    </span>
-                    <span class="price-period">
-                      {{ getPriceLabel((priceDisplay || ad.price_unit || 'month') as any, ad) }}<span v-if="isEstimatedPrice(ad)" class="estimated-info"> (szacunkowo)</span>
-                    </span>
-                    <span v-if="ad.price_negotiable" class="negotiable-badge">do negocjacji</span>
-                  </template>
-                </div>
-              </div>
-            </div>
-          </router-link>
-        </div>
-        
-        <!-- Pagination (na samym dole) -->
-        <Pagination
-          v-if="filteredListings.length > 0"
-          :current-page="currentPage"
-          :total-pages="totalPages"
-          :total-items="filteredListings.length"
-          :items-per-page="itemsPerPage"
-          :show-info="true"
-          :scroll-to-top="true"
-          @update:current-page="onPageChange"
-          class="pagination-bottom"
-        />
-
-        <SearchAlertBox 
-          v-if="activeFiltersCount > 0 && filteredListings.length > 0"
-          :location-label="locationQuery || (route.params.city ? deslugify(route.params.city as string) : '')"
-          :ad-type-label="filters && filters.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
-          @click="showSearchAlertModal = true"
-        />
-
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 15l-6-6-6 6"/>
+            </svg>
+          </button>
+        </Transition>
       </div>
 
-
-      <!-- Mobile toggle button (shows either list or map) -->
+      <!-- Mobile toggle button -->
       <button v-if="isMobile && showMapButton" @click="toggleMobileMap" class="mobile-map-toggle">
         <span>{{ showMapOnMobile ? 'Pokaż listę' : 'Pokaż mapę' }}</span>
         <svg v-if="!showMapOnMobile" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2581,6 +889,7 @@ onBeforeUnmount(() => {
         </svg>
       </button>
 
+      <!-- Map Container -->
       <div class="map-container-wrapper" :class="{ 'mobile-visible': showMapOnMobile, 'mobile-hidden': isMobile && !showMapOnMobile }">
         <div ref="mapContainer" class="map-container">
           <!-- Legend Toggle Button -->
@@ -2590,47 +899,19 @@ onBeforeUnmount(() => {
             :aria-expanded="isLegendVisible"
             :class="{ 'is-active': isLegendVisible }"
           >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span>Legenda</span>
-        </button>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Legenda</span>
+          </button>
         </div>
         
-        <!-- Side panel legend -->
-        <div class="legend-side-panel" :class="{ 'is-visible': isLegendVisible && isMobile }">
-          <div class="legend-header">
-            <h3>Legenda</h3>
-            <button class="close-legend" @click="isLegendVisible = false" aria-label="Zamknij legendę">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-          </div>
-          <div class="legend-content">
-            <div class="legend-items">
-              <div v-for="(color, type) in typeColors" :key="type" class="legend-item">
-                <div class="legend-marker" :style="{ background: color }"></div>
-                <span class="legend-label">
-                  {{ type === 'billboard' ? 'Billboardy' :
-                      type === 'citylight' ? 'Citylighty' :
-                      type === 'led_screen' ? 'Ekrany LED' :
-                      type === 'banner' ? 'Banery' :
-                      type === 'wall' ? 'Ściany reklamowe' :
-                      type === 'totem' ? 'Totemy reklamowe' :
-                      type === 'transport' ? 'Reklama w transporcie' :
-                      type === 'mobile' ? 'Reklama mobilna' : 'Inne' }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Desktop Legend -->
-        <div v-if="!isMobile" class="map-legend" :class="{ 'is-visible': isLegendVisible }">
+        <!-- Legend Overlay/Panel here if needed, but we used the one in PolandMap or local? -->
+        <!-- The original code had local legend here -->
+        <div class="map-legend" :class="{ 'is-visible': isLegendVisible }">
           <div class="legend-header">
             <h3 class="legend-title">Legenda</h3>
-            <button class="close-legend" @click="isLegendVisible = false" aria-label="Zamknij legendę">
+            <button class="close-legend" @click="isLegendVisible = false">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -2639,16 +920,7 @@ onBeforeUnmount(() => {
           <div class="legend-items">
             <div v-for="(color, type) in typeColors" :key="type" class="legend-item">
               <div class="legend-marker" :style="{ background: color }"></div>
-              <span class="legend-label">
-                {{ type === 'billboard' ? 'Billboardy' :
-                    type === 'citylight' ? 'Citylighty' :
-                    type === 'led_screen' ? 'Ekrany LED' :
-                    type === 'banner' ? 'Banery' :
-                    type === 'wall' ? 'Ściany' :
-                    type === 'totem' ? 'Totemy' :
-                    type === 'transport' ? 'Transport' :
-                    type === 'mobile' ? 'Mobilna' : 'Inne' }}
-              </span>
+              <span class="legend-label">{{ typeLabels[type] || type }}</span>
             </div>
           </div>
         </div>
@@ -3375,7 +1647,7 @@ onBeforeUnmount(() => {
   bottom: 0;
   left: 0;
   right: 0;
-  background: white;
+  background: var(--card-bg, white);
   border-radius: 16px 16px 0 0;
   padding: 20px;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
@@ -3518,7 +1790,7 @@ onBeforeUnmount(() => {
 /* Existing styles below */
 .listings-page {
   height: 100vh;
-  background: #f9fafb;
+  background: var(--bg-secondary, #f9fafb);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -3527,7 +1799,7 @@ onBeforeUnmount(() => {
 /* Description Wrapper - poza głównym kontenerem */
 .description-wrapper {
   padding: 2rem;
-  background: white;
+  background: var(--card-bg, white);
   width: 100%;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
 }
@@ -3535,7 +1807,7 @@ onBeforeUnmount(() => {
 /* Search Bar */
 .listings-title {
   font-size: 2.25rem;
-  color: #111827;
+  color: var(--text-main, #111827);
   font-weight: 800;
   margin: 1.5rem 0 2rem 0;
   letter-spacing: -0.025em;
@@ -3563,8 +1835,8 @@ onBeforeUnmount(() => {
 }
 
 .search-bar {
-  background: white;
-  border-bottom: 2px solid #e5e7eb;
+  background: var(--card-bg, white);
+  border-bottom: 2px solid var(--border-color, #e5e7eb);
   padding: 1rem 2rem;
   display: flex;
   align-items: center;
@@ -3591,10 +1863,12 @@ onBeforeUnmount(() => {
 .search-input {
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 3rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color, #e5e7eb);
   border-radius: 10px;
   font-size: 1rem;
   transition: all 0.2s;
+  background: var(--card-bg, white);
+  color: var(--text-main, #111827);
 }
 
 .search-input:focus {
@@ -3644,11 +1918,11 @@ onBeforeUnmount(() => {
 
 .sort-select {
   padding: 0.75rem 1rem;
-  background: white;
-  border: 2px solid #e5e7eb;
+  background: var(--card-bg, white);
+  border: 2px solid var(--border-color, #e5e7eb);
   border-radius: 10px;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-main, #374151);
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.95rem;
@@ -3666,7 +1940,7 @@ onBeforeUnmount(() => {
 }
 
 .results-count {
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
   font-weight: 600;
   white-space: nowrap;
 }
@@ -3674,8 +1948,8 @@ onBeforeUnmount(() => {
 .view-toggle {
   display: flex;
   gap: 0.25rem;
-  background: white;
-  border: 2px solid #e5e7eb;
+  background: var(--card-bg, white);
+  border: 2px solid var(--border-color, #e5e7eb);
   border-radius: 10px;
   padding: 0.25rem;
 }
@@ -3694,8 +1968,8 @@ onBeforeUnmount(() => {
 }
 
 .view-btn:hover {
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--bg-tertiary, #f3f4f6);
+  color: var(--text-main, #374151);
 }
 
 .view-btn.active {
@@ -3718,13 +1992,56 @@ onBeforeUnmount(() => {
 }
 
 .listings-list-container {
-  background: white;
-  border-right: 2px solid #e5e7eb;
+  background: var(--card-bg, white);
+  border-right: 2px solid var(--border-color, #e5e7eb);
   overflow-y: auto;
   height: 100%;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  position: relative; /* Add relative for child positioning */
+}
+
+.list-scroll-top {
+  position: sticky;
+  bottom: 1.5rem;
+  align-self: flex-end;
+  right: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--primary-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  z-index: 10;
+  margin-top: -44px; /* Pull it up to overlay if possible, or use absolute */
+  transition: all 0.3s ease;
+}
+
+.list-scroll-top:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+}
+
+/* Use absolute for the button relative to the container if sticky doesn't work as expected */
+.listings-list-container .list-scroll-top {
+  position: fixed;
+  bottom: 2rem;
+  left: calc(50vw - 60px); /* Position it near the divider on desktop if needed, or adjust for mobile */
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .listings-list-container .list-scroll-top {
+    left: auto;
+    right: 1.5rem;
+    bottom: 5.5rem; /* Avoid overlap with map button if present */
+  }
 }
 
 .loading-state,
@@ -3741,7 +2058,7 @@ onBeforeUnmount(() => {
 .spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #f3f4f6;
+  border: 4px solid var(--bg-tertiary, #f3f4f6);
   border-top-color: #667eea;
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -3759,7 +2076,7 @@ onBeforeUnmount(() => {
 
 .empty-state h3 {
   margin: 0 0 0.5rem 0;
-  color: #1f2937;
+  color: var(--text-main, #1f2937);
   font-size: 1.25rem;
 }
 
@@ -3827,16 +2144,16 @@ onBeforeUnmount(() => {
 }
 
 .listing-card {
-  background: white;
+  background: var(--card-bg, white);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.08));
   transition: all 0.3s ease;
   height: 100%;
   display: flex;
   flex-direction: column;
   text-decoration: none;
-  color: inherit;
+  color: var(--text-main, inherit);
   border: 2px solid transparent;
 }
 
@@ -3876,8 +2193,8 @@ onBeforeUnmount(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #f3f4f6;
-  color: #9ca3af;
+  background-color: var(--bg-tertiary, #f3f4f6);
+  color: var(--text-light, #9ca3af);
 }
 
 .no-image-placeholder svg {
@@ -4053,7 +2370,7 @@ onBeforeUnmount(() => {
 .map-container-wrapper {
   height: 100%;
   position: relative;
-  background: #f3f4f6;
+  background: var(--bg-tertiary, #f3f4f6);
   display: flex;
   flex-direction: column;
 }
@@ -4072,13 +2389,13 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.75);
-  border: 2px solid rgba(229, 231, 235, 0.75);
+  background: var(--card-bg, rgba(255, 255, 255, 0.75));
+  border: 2px solid var(--border-color, rgba(229, 231, 235, 0.75));
   border-radius: 8px;
   padding: 0.75rem 1.25rem;
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-main, #374151);
   cursor: pointer;
   z-index: 1000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -4118,7 +2435,7 @@ onBeforeUnmount(() => {
   right: 0;
   width: 280px;
   height: 100vh;
-  background: white;
+  background: var(--card-bg, white);
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
   z-index: 1100;
   transition: transform 0.3s ease-in-out;
@@ -4136,15 +2453,15 @@ onBeforeUnmount(() => {
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem;
-  border-bottom: 1px solid #E5E7EB;
-  background: #f9fafb;
+  border-bottom: 1px solid var(--border-color, #E5E7EB);
+  background: var(--bg-secondary, #f9fafb);
 }
 
 .legend-header h3 {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-main, #111827);
 }
 
 .close-legend {
@@ -4209,8 +2526,8 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(229, 231, 235, 0.8);
+  background: var(--card-bg, rgba(255, 255, 255, 0.8));
+  border: 1px solid var(--border-color, rgba(229, 231, 235, 0.8));
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 0.75rem 1rem;
@@ -4307,7 +2624,7 @@ onBeforeUnmount(() => {
 
 .legend-label {
   font-size: 0.8rem;
-  color: #4B5563;
+  color: var(--text-muted, #4B5563);
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
@@ -4337,14 +2654,14 @@ onBeforeUnmount(() => {
 }
 
 .modal-content {
-  background: white;
+  background: var(--card-bg, white);
   border-radius: 16px;
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
   animation: slideUp 0.3s ease;
 }
 
@@ -4361,7 +2678,7 @@ onBeforeUnmount(() => {
 
 .modal-header {
   padding: 1.5rem 2rem;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid var(--border-color, #e5e7eb);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -4371,7 +2688,7 @@ onBeforeUnmount(() => {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text-main, #1f2937);
 }
 
 .close-btn {
@@ -4401,7 +2718,7 @@ onBeforeUnmount(() => {
 .filter-section {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
 }
 
 .toggle-switch {
@@ -4412,7 +2729,7 @@ onBeforeUnmount(() => {
   display: inline-block;
   width: 50px;
   height: 28px;
-  background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+  background: var(--bg-tertiary, linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%));
   border-radius: 14px;
   cursor: pointer;
   position: relative;
@@ -4463,10 +2780,10 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
-  background: #EFF6FF;
-  border: 1px solid #BFDBFE;
+  background: var(--bg-tertiary, #EFF6FF);
+  border: 1px solid var(--border-color, #BFDBFE);
   border-radius: 8px;
-  color: #1E40AF;
+  color: var(--text-main, #1E40AF);
   font-size: 0.95rem;
   line-height: 1.5;
   margin-bottom: 1.5rem;
@@ -4507,7 +2824,7 @@ onBeforeUnmount(() => {
 .filter-label {
   display: block;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-main, #374151);
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
 }
@@ -4516,11 +2833,12 @@ onBeforeUnmount(() => {
 .filter-select {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color, #e5e7eb);
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.2s;
-  background: white;
+  background: var(--input-bg, white);
+  color: var(--text-main, #111827);
 }
 
 .filter-input:focus,
@@ -4722,7 +3040,7 @@ onBeforeUnmount(() => {
 .suggestion-header {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
   padding: 0.5rem;
 }
 
@@ -4737,7 +3055,7 @@ onBeforeUnmount(() => {
 }
 
 .location-suggestion:hover {
-  background-color: #f3f4f6;
+  background-color: var(--bg-tertiary, #f3f4f6);
 }
 
 .suggestion-text {
@@ -4747,13 +3065,13 @@ onBeforeUnmount(() => {
 
 .suggestion-name {
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--text-main, #1f2937);
   font-weight: 500;
 }
 
 .suggestion-type {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: var(--text-light, #9ca3af);
   font-weight: 500;
 }
 
@@ -4788,7 +3106,7 @@ onBeforeUnmount(() => {
 
 .modal-footer {
   padding: 1.5rem 2rem;
-  border-top: 2px solid #e5e7eb;
+  border-top: 2px solid var(--border-color, #e5e7eb);
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
@@ -4815,14 +3133,14 @@ onBeforeUnmount(() => {
 }
 
 .btn-secondary {
-  background: white;
-  color: #374151;
-  border: 2px solid #e5e7eb;
+  background: var(--input-bg, white);
+  color: var(--text-main, #374151);
+  border: 2px solid var(--border-color, #e5e7eb);
 }
 
 .btn-secondary:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
+  background: var(--bg-secondary, #f9fafb);
+  border-color: var(--text-light, #d1d5db);
 }
 
 /* Leaflet Overrides */

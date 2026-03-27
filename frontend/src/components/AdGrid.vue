@@ -2,33 +2,23 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import AdCard from './AdCard.vue'
 import type { Advertisement } from '../types'
+import { useSearchStore } from '../stores/useSearchStore'
+
+const searchStore = useSearchStore()
 
 const props = defineProps<{
   listings: Advertisement[]
   isLoading?: boolean
   viewMode?: 'grid' | 'list'
   sortBy?: string
-  priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
+  priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign' | null
   activeFiltersCount?: number
 }>()
 
 const showSortPanel = ref(false)
 const localSortBy = ref(props.sortBy || 'newest')
 
-const sortOptions = [
-  { value: 'newest', label: 'Najnowsze', description: 'Od najnowszych' },
-  { value: 'oldest', label: 'Najstarsze', description: 'Od najstarszych' },
-  { value: 'name-asc', label: 'Nazwa A-Z', description: 'Alfabetycznie rosnąco' },
-  { value: 'name-desc', label: 'Nazwa Z-A', description: 'Alfabetycznie malejąco' },
-  { value: 'price-day-asc', label: 'Cena za dzień', description: 'Od najtańszych' },
-  { value: 'price-day-desc', label: 'Cena za dzień', description: 'Od najdroższych' },
-  { value: 'price-month-asc', label: 'Cena za miesiąc', description: 'Od najtańszych' },
-  { value: 'price-month-desc', label: 'Cena za miesiąc', description: 'Od najdroższych' },
-  { value: 'price-sqm-asc', label: 'Cena za m²', description: 'Od najtańszych' },
-  { value: 'price-sqm-desc', label: 'Cena za m²', description: 'Od najdroższych' },
-  { value: 'price-campaign-asc', label: 'Cena za kampanię', description: 'Od najtańszych' },
-  { value: 'price-campaign-desc', label: 'Cena za kampanię', description: 'Od najdroższych' }
-]
+const sortOptions = searchStore.sortOptions
 
 const handleSortButtonClick = () => {
   showSortPanel.value = true
@@ -123,30 +113,9 @@ const emit = defineEmits<{
 }>()
 
 const sortBy = ref(props.sortBy || 'newest')
-const favoritesRefresh = ref(0)
-const comparisonRefresh = ref(0)
-
-const isFavorite = (id: string) => {
-  favoritesRefresh.value // Dependency to trigger reactivity
-  const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
-  return favorites.includes(id)
-}
-
-const isInComparison = (id: string) => {
-  comparisonRefresh.value // Dependency to trigger reactivity
-  const comparison = JSON.parse(localStorage.getItem('comparison') || '[]')
-  return comparison.includes(id)
-}
-
-const handleStorageChange = () => {
-  favoritesRefresh.value++
-  comparisonRefresh.value++
-}
 
 onMounted(() => {
   if (typeof window !== 'undefined') {
-    window.addEventListener('localStorageChange', handleStorageChange)
-    window.addEventListener('storage', handleStorageChange)
     checkIfMobile()
     window.addEventListener('resize', checkIfMobile)
     window.addEventListener('scroll', handleScroll)
@@ -156,8 +125,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (typeof window !== 'undefined') {
-    window.removeEventListener('localStorageChange', handleStorageChange)
-    window.removeEventListener('storage', handleStorageChange)
     window.removeEventListener('resize', checkIfMobile)
     window.removeEventListener('scroll', handleScroll)
   }
@@ -297,8 +264,6 @@ onUnmounted(() => {
           v-for="ad in listings"
           :key="ad.id"
           :ad="ad"
-          :is-favorite="isFavorite(ad.id)"
-          :is-in-comparison="isInComparison(ad.id)"
           :view-mode="viewMode"
           :price-display="priceDisplay"
           @toggle-favorite="emit('toggleFavorite', $event)"
@@ -373,7 +338,7 @@ onUnmounted(() => {
 
 .section-header-wrapper {
   position: sticky;
-  top: 70px;
+  top: 80px;
   background: white;
   z-index: 50;
   box-shadow: 0 8px 12px -6px rgba(0, 0, 0, 0.15);

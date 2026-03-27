@@ -5,43 +5,19 @@ import 'leaflet/dist/leaflet.css'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 import { getFullImageUrl } from '../services/api'
+import { useSearchStore, typeColors } from '../stores/useSearchStore'
+import { mapTypeToUrlFormat } from '../utils/typeMapping'
+// import 'leaflet.markercluster'
+// import 'leaflet.markercluster/dist/MarkerCluster.css'
+// import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+
+const searchStore = useSearchStore()
 
 // Funkcja formatująca adres i miasto, taka sama jak w AdCard
-const formatLocation = (location: string, city: string) => {
-  // Extract street and number from full address
-  const parts = location.split(',').map(p => p.trim())
-  
-  let streetWithNumber = ''
-  
-  if (parts.length >= 2) {
-    const firstPart = parts[0]
-    const secondPart = parts[1]
-    
-    // Check if first part is a number
-    if (/^\d+/.test(firstPart)) {
-      streetWithNumber = `${secondPart} ${firstPart}`
-    } else {
-      streetWithNumber = firstPart
-    }
-  } else {
-    streetWithNumber = parts[0] || location
-  }
-  
-  return `${streetWithNumber}, ${city}`
-}
+const formatLocation = (location: string, city: string) => searchStore.formatLocation(location, city)
 
 // Funkcja zwracająca etykietę jednostki ceny
-const getPriceUnitLabel = (ad: Advertisement): string => {
-  const unit = ad.price_unit || 'month'
-  switch (unit) {
-    case 'day': return 'zł/dzień'
-    case 'week': return 'zł/tydzień'
-    case 'month': return 'zł/mies.'
-    case 'year': return 'zł/rok'
-    case 'campaign': return 'zł/kampania'
-    default: return 'zł/mies.'
-  }
-}
+const getPriceUnitLabel = (ad: Advertisement): string => searchStore.getPriceUnitLabel(ad)
 
 const scrollToAdGrid = () => {
   const adGrid = document.querySelector('.listings-section')
@@ -70,6 +46,7 @@ const emit = defineEmits<{
 
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
+// let markerClusterGroup: any = null
 const markers: Map<string, L.Marker> = new Map()
 const isMapActive = ref(false)
 const isLegendVisible = ref(false)
@@ -80,18 +57,9 @@ const showMobileToggle = ref(false)
 const isMobileClamped = ref(false)
 const showDesktopToggle = ref(false)
 const isDesktopClamped = ref(false)
+const isProgrammaticMove = ref(false)
 
-const typeColors: Record<string, string> = {
-  billboard: '#EF4444',
-  citylight: '#F59E0B',
-  led_screen: '#10B981',
-  banner: '#8B5CF6',
-  wall: '#EC4899',
-  totem: '#3B82F6',
-  transport: '#14B8A6',
-  mobile: '#F97316',
-  other: '#6B7280'
-}
+
 
 const regionCoordinates: Record<string, { lat: number; lng: number; zoom: number }> = {
   'dolnoslaskie': { lat: 51.1079, lng: 17.0385, zoom: 8 },
@@ -158,6 +126,7 @@ const initMap = () => {
     [57.5, 26.0]   // północno-wschodni róg
   )
 
+  isProgrammaticMove.value = true
   map = L.map(mapContainer.value, {
     scrollWheelZoom: false,
     dragging: !isMobile.value, // Disable dragging on mobile until activated
@@ -173,6 +142,15 @@ const initMap = () => {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map)
+
+  // Initialize marker cluster group - DISABLED
+  // markerClusterGroup = (L as any).markerClusterGroup({
+  //   showCoverageOnHover: false,
+  //   spiderfyOnMaxZoom: true,
+  //   zoomToBoundsOnClick: true,
+  //   maxClusterRadius: 50
+  // })
+  // map.addLayer(markerClusterGroup)
 
   // Function to enable all interactions
   const enableMapInteractions = () => {
@@ -202,8 +180,56 @@ const initMap = () => {
       }
     })
   }
+  
+  map.on('moveend', () => {
+    if (!map) return
+    const bounds = map.getBounds()
+    
+    // Update map bounds to filter results, but keep text filter values intact
+    const updates: any = {
+      mapBounds: {
+        northEast: { lat: bounds.getNorthEast().lat, lng: bounds.getNorthEast().lng },
+        southWest: { lat: bounds.getSouthWest().lat, lng: bounds.getSouthWest().lng }
+      }
+    }
+
+    // Don't clear text filters - keep user's input visible
+    // The mapBounds will still narrow down results geographically
+    
+    searchStore.applyFilters(updates)
+    isProgrammaticMove.value = false
+  })
 
   updateMarkers()
+  syncMapToFilters()
+}
+
+const syncMapToFilters = () => {
+  if (!map) return
+  
+  if (props.selectedLocationCoords) {
+    // Priority 1: If exact coordinates are provided, zoom to them
+    const zoomLevel = isMobile.value ? 12 : 13
+    isProgrammaticMove.value = true
+    map.setView([props.selectedLocationCoords.lat, props.selectedLocationCoords.lng], zoomLevel)
+  } else if (props.selectedCity && markers.size > 0) {
+    // Priority 2: If city is selected, fit bounds to markers (likely clustered in that city)
+    const group = new L.FeatureGroup(Array.from(markers.values()))
+    const maxZoom = isMobile.value ? 11 : 12
+    isProgrammaticMove.value = true
+    map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom })
+  } else if (props.selectedRegion && regionCoordinates[props.selectedRegion]) {
+    // Priority 3: If region is selected (and no city), zoom to region center
+    const region = regionCoordinates[props.selectedRegion]
+    const zoomLevel = isMobile.value ? region.zoom - 1 : region.zoom
+    isProgrammaticMove.value = true
+    map.setView([region.lat, region.lng], zoomLevel)
+  } else if (!searchStore.filters.mapBounds) {
+    // Default: Always show full Poland ONLY when no mapBounds are set yet
+    const defaultZoom = isMobile.value ? 5 : 6
+    isProgrammaticMove.value = true
+    map.setView([52.0, 19.0], defaultZoom)
+  }
 }
 
 const updateMarkers = () => {
@@ -212,7 +238,7 @@ const updateMarkers = () => {
   // Usuń markery, których nie ma już w danych
   markers.forEach((marker, id) => {
     if (!props.listings.find(ad => ad.id === id)) {
-      marker.remove()
+      map?.removeLayer(marker)
       markers.delete(id)
     }
   })
@@ -231,33 +257,6 @@ const updateMarkers = () => {
         icon: createCustomIcon(ad.type, isHovered)
       })
 
-    const typeLabels: Record<string, string> = {
-      billboard: 'Billboardy',
-      citylight: 'Citylighty',
-      led_screen: 'Ekrany LED',
-      banner: 'Banery',
-      wall: 'Ściany reklamowe',
-      totem: 'Totemy reklamowe',
-      transport: 'Reklama w transporcie',
-      mobile: 'Reklama mobilna',
-      other: 'Inne'
-    }
-
-    const mapTypeToUrlFormat = (type: string): string => {
-      const typeMapping: Record<string, string> = {
-        'billboard': 'billboardy',
-        'citylight': 'citylighty',
-        'led_screen': 'ekrany-led',
-        'banner': 'banery',
-        'wall': 'sciany-reklamowe',
-        'totem': 'totemy-reklamowe',
-        'transport': 'reklama-w-transporcie',
-        'mobile': 'reklama-mobilna',
-        'other': 'inne'
-      }
-      return typeMapping[type] || 'inne'
-    }
-    
     const citySlug = slugify(ad.city)
     const titleSlug = slugify(ad.title)
     const typeSlug = mapTypeToUrlFormat(ad.type)
@@ -286,7 +285,7 @@ const updateMarkers = () => {
                 font-size: 0.75rem;
                 font-weight: 600;
               ">
-                ${typeLabels[ad.type] || ad.type}
+                ${searchStore.getTypeLabel(ad.type)}
               </span>
             </div>
             <div style="color: #6B7280;">
@@ -345,26 +344,6 @@ const updateMarkers = () => {
       markers.set(ad.id, marker)
     }
   })
-
-  if (props.selectedLocationCoords) {
-    // Priority 1: If exact coordinates are provided, zoom to them
-    const zoomLevel = isMobile.value ? 12 : 13
-    map.setView([props.selectedLocationCoords.lat, props.selectedLocationCoords.lng], zoomLevel)
-  } else if (props.selectedCity && markers.size > 0) {
-    // Priority 2: If city is selected, fit bounds to markers (likely clustered in that city)
-    const group = new L.FeatureGroup(Array.from(markers.values()))
-    const maxZoom = isMobile.value ? 11 : 12
-    map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom })
-  } else if (props.selectedRegion && regionCoordinates[props.selectedRegion]) {
-    // Priority 3: If region is selected (and no city), zoom to region center
-    const region = regionCoordinates[props.selectedRegion]
-    const zoomLevel = isMobile.value ? region.zoom - 1 : region.zoom
-    map.setView([region.lat, region.lng], zoomLevel)
-  } else {
-    // Default: Always show full Poland when no specific filters are active
-    const defaultZoom = isMobile.value ? 5 : 6
-    map.setView([52.0, 19.0], defaultZoom)
-  }
 }
 
 watch(() => props.listings, () => {
@@ -372,14 +351,26 @@ watch(() => props.listings, () => {
 }, { deep: true })
 
 watch(() => props.selectedRegion, () => {
+  // Only sync map if mapBounds is not active (user hasn't scrolled/zoomed manually)
+  if (!searchStore.filters.mapBounds) {
+    syncMapToFilters()
+  }
   updateMarkers()
 })
 
 watch(() => props.selectedCity, () => {
+  // Only sync map if mapBounds is not active (user hasn't scrolled/zoomed manually)
+  if (!searchStore.filters.mapBounds) {
+    syncMapToFilters()
+  }
   updateMarkers()
 })
 
 watch(() => props.selectedLocationCoords, () => {
+  // Only sync map if mapBounds is not active (user hasn't scrolled/zoomed manually)
+  if (!searchStore.filters.mapBounds) {
+    syncMapToFilters()
+  }
   updateMarkers()
 }, { deep: true })
 
@@ -394,6 +385,14 @@ watch(() => props.hoveredAdId, (newId) => {
       marker.setIcon(createCustomIcon(ad.type, isHovered))
     }
   })
+})
+
+// Watch for mapBounds being cleared (e.g., when user clicks "Search" again)
+watch(() => searchStore.filters.mapBounds, (newBounds, oldBounds) => {
+  // If mapBounds was cleared (null) and we have location filters, zoom to them
+  if (!newBounds && oldBounds && (props.selectedCity || props.selectedRegion || props.selectedLocationCoords)) {
+    syncMapToFilters()
+  }
 })
 
 // Block body scroll when legend is visible on mobile
@@ -522,14 +521,7 @@ onMounted(() => {
             <div v-for="(color, type) in typeColors" :key="type" class="legend-item">
               <div class="legend-marker" :style="{ background: color }"></div>
               <span class="legend-label">
-                {{ type === 'billboard' ? 'Billboardy' :
-                    type === 'citylight' ? 'Citylighty' :
-                    type === 'led_screen' ? 'Ekrany LED' :
-                    type === 'banner' ? 'Banery' :
-                    type === 'wall' ? 'Ściany reklamowe' :
-                    type === 'totem' ? 'Totemy reklamowe' :
-                    type === 'transport' ? 'Reklama w transporcie' :
-                    type === 'mobile' ? 'Reklama mobilna' : 'Inne' }}
+                {{ searchStore.getTypeLabel(type) }}
               </span>
             </div>
           </div>
@@ -549,14 +541,7 @@ onMounted(() => {
           <div v-for="(color, type) in typeColors" :key="type" class="legend-item">
             <div class="legend-marker" :style="{ background: color }"></div>
             <span class="legend-label">
-              {{ type === 'billboard' ? 'Billboardy' :
-                  type === 'citylight' ? 'Citylighty' :
-                  type === 'led_screen' ? 'Ekrany LED' :
-                  type === 'banner' ? 'Banery' :
-                  type === 'wall' ? 'Ściany' :
-                  type === 'totem' ? 'Totemy' :
-                  type === 'transport' ? 'Transport' :
-                  type === 'mobile' ? 'Mobilna' : 'Inne' }}
+              {{ searchStore.getTypeLabel(type) }}
             </span>
           </div>
         </div>
@@ -613,7 +598,7 @@ onMounted(() => {
 <style scoped>
 .map-section {
   padding: 4rem 0 0 0;
-  background: linear-gradient(to bottom, #F9FAFB 0%, white 100%);
+  background: var(--bg-secondary, linear-gradient(to bottom, #F9FAFB 0%, white 100%));
   scroll-margin-top: 120px; /* Increased to ensure header visibility */
   scroll-behavior: smooth;
   display: flex;
@@ -634,13 +619,13 @@ onMounted(() => {
 .section-title {
   font-size: 2.5rem;
   font-weight: 800;
-  color: #1F2937;
+  color: var(--text-main, #1F2937);
   margin: 0 0 1rem 0;
 }
 
 .section-subtitle {
   font-size: 1.1rem;
-  color: #6B7280;
+  color: var(--text-muted, #6B7280);
   margin: 0;
 }
 
@@ -825,7 +810,7 @@ onMounted(() => {
 
 .legend-label {
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--text-main, #374151);
   line-height: 1.4;
 }
 
@@ -833,10 +818,10 @@ onMounted(() => {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(229, 231, 235, 0.8);
+  background: var(--card-bg, rgba(255, 255, 255, 0.8));
+  border: 1px solid var(--border-color, rgba(229, 231, 235, 0.8));
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow, 0 4px 12px rgba(0, 0, 0, 0.1));
   padding: 0.75rem 1rem;
   z-index: 1001;
   backdrop-filter: blur(4px);

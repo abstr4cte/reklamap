@@ -1,13 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from './views/HomePage.vue'
-import AddAdPage from './views/AddAdPage.vue'
-import AdDetailPage from './views/AdDetailPage.vue'
-import ComparisonPage from './views/ComparisonPage.vue'
-import ManagementPage from './views/ManagementPage.vue'
-import RegulaminPage from './views/RegulaminPage.vue'
-import FaqPage from './views/FaqPage.vue'
-import BlogPage from './views/BlogPage.vue'
-import ContactPage from './views/ContactPage.vue'
+// Some components are lazy-loaded within the router definition
 
 const router = createRouter({
   history: createWebHistory(),
@@ -20,7 +13,7 @@ const router = createRouter({
     {
       path: '/dodaj-powierzchnie-reklamowa',
       name: 'add-ad',
-      component: AddAdPage
+      component: () => import('./views/AddAdPage.vue')
     },
     // Zachowaj starą ścieżkę dla kompatybilności wstecznej
     {
@@ -56,9 +49,9 @@ const router = createRouter({
       redirect: '/powierzchnie-reklamowe'
     },
     {
-      path: '/powierzchnia-reklamowa/:type/:city/:slug-:id',
+      path: '/powierzchnia-reklamowa/:type/:city/:id',
       name: 'ad-detail',
-      component: AdDetailPage
+      component: () => import('./views/AdDetailPage.vue')
     },
     // Zachowaj starą ścieżkę dla kompatybilności wstecznej
     {
@@ -72,32 +65,32 @@ const router = createRouter({
     {
       path: '/porownaj',
       name: 'comparison',
-      component: ComparisonPage
+      component: () => import('./views/ComparisonPage.vue')
     },
     {
       path: '/zarzadzaj/:token',
       name: 'management-with-token',
-      component: ManagementPage
+      component: () => import('./views/ManagementPage.vue')
     },
     {
       path: '/zarzadzaj',
       name: 'management',
-      component: ManagementPage
+      component: () => import('./views/ManagementPage.vue')
     },
     {
       path: '/regulamin',
       name: 'regulamin',
-      component: RegulaminPage
+      component: () => import('./views/RegulaminPage.vue')
     },
     {
       path: '/faq',
       name: 'faq',
-      component: FaqPage
+      component: () => import('./views/FaqPage.vue')
     },
     {
       path: '/blog',
       name: 'blog',
-      component: BlogPage
+      component: () => import('./views/BlogPage.vue')
     },
     {
       path: '/blog/:slug',
@@ -107,7 +100,7 @@ const router = createRouter({
     {
       path: '/kontakt',
       name: 'contact',
-      component: ContactPage
+      component: () => import('./views/ContactPage.vue')
     },
     {
       path: '/polityka-prywatnosci',
@@ -133,8 +126,8 @@ const router = createRouter({
         }, 100)
       })
     }
-    // If it's the same route but only query params changed (e.g. filters), don't scroll
-    if (from.path === to.path && JSON.stringify(from.query) !== JSON.stringify(to.query)) {
+    // If it's the same route (path), don't scroll - even if query params changed
+    if (from.path === to.path) {
       return false
     }
     // Always scroll to top on any navigation (including back/forward)

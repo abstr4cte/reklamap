@@ -10,12 +10,16 @@ import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import { getFieldsForType, shouldShowField, type ComparisonField } from '../utils/comparisonFields'
 
 import axios from '../api/axios'
+import { usePreferencesStore } from '../stores/usePreferencesStore'
+import { useSearchStore } from '../stores/useSearchStore'
 
+const searchStore = useSearchStore()
 const router = useRouter()
+const prefStore = usePreferencesStore()
 const comparisonAds = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const isGeneratingPdf = ref(false)
-const priceUnit = ref<'original' | 'day' | 'week' | 'month' | 'year'>('original')
+const priceUnit = ref<'original' | 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'>('original')
 const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
 const headerScrollRef = ref<HTMLElement | null>(null)
 const isMobile = ref(window.innerWidth <= 1180)
@@ -83,16 +87,14 @@ const downloadPdf = async () => {
 }
 
 const loadComparison = async () => {
-  const comparisonIds = JSON.parse(localStorage.getItem('comparison') || '[]')
-
-  if (comparisonIds.length === 0) {
+  if (prefStore.comparison.length === 0) {
     isLoading.value = false
     return
   }
 
   try {
     isLoading.value = true
-    const data = await api.getAdvertisementsByIds(comparisonIds)
+    const data = await api.getAdvertisementsByIds(prefStore.comparison)
     comparisonAds.value = data || []
     
     // Ustaw domyślną jednostkę na 'original'
@@ -104,13 +106,9 @@ const loadComparison = async () => {
   }
 }
 
-const removeFromComparison = (id: string) => {
-  const comparison = JSON.parse(localStorage.getItem('comparison') || '[]')
-  const filtered = comparison.filter((adId: string) => adId !== id)
-  localStorage.setItem('comparison', JSON.stringify(filtered))
+const removeFromComparison = async (id: string) => {
+  await prefStore.toggleComparison(id)
   comparisonAds.value = comparisonAds.value.filter(ad => ad.id !== id)
-  // Trigger custom event to update header counter
-  window.dispatchEvent(new CustomEvent('localStorageChange'))
 }
 
 const clearAll = () => {
@@ -118,10 +116,8 @@ const clearAll = () => {
 }
 
 const handleConfirmClear = () => {
-  localStorage.setItem('comparison', JSON.stringify([]))
+  prefStore.clearComparison()
   comparisonAds.value = []
-  // Trigger custom event to update header counter
-  window.dispatchEvent(new CustomEvent('localStorageChange'))
 }
 
 const getSurfaceArea = (ad: Advertisement) => {
@@ -140,80 +136,16 @@ const getPricePerSqm = (ad: Advertisement) => {
   return '0'
 }
 
-const getPrice = (ad: Advertisement) => {
-  const basePrice = ad.price
-  const originalUnit = ad.price_unit || 'month'
-  
-  // Jeśli wybrana jednostka to 'original' lub oryginalna jednostka ogłoszenia, zwróć cenę bez przeliczania
-  if (priceUnit.value === 'original' || priceUnit.value === originalUnit) {
-    return Math.round(basePrice).toLocaleString('pl-PL')
-  }
-  
-  // Przelicz cenę z oryginalnej jednostki na wybraną
-  let priceInDay = basePrice
-  
-  // Najpierw przelicz na dzień (jako bazę)
-  switch (originalUnit) {
-    case 'day':
-      priceInDay = basePrice
-      break
-    case 'week':
-      priceInDay = basePrice / 7
-      break
-    case 'month':
-      priceInDay = basePrice / 30
-      break
-    case 'year':
-      priceInDay = basePrice / 365
-      break
-    case 'campaign':
-      // Dla kampanii używamy campaign_duration (ilość dni)
-      const campaignDays = (ad as any).campaign_duration || 30 // domyślnie 30 dni jeśli nie podano
-      priceInDay = basePrice / campaignDays
-      break
-  }
-  
-  // Następnie przelicz z dnia na wybraną jednostkę
-  let convertedPrice = priceInDay
-  switch (priceUnit.value) {
-    case 'day':
-      convertedPrice = priceInDay
-      break
-    case 'week':
-      convertedPrice = priceInDay * 7
-      break
-    case 'month':
-      convertedPrice = priceInDay * 30
-      break
-    case 'year':
-      convertedPrice = priceInDay * 365
-      break
-  }
-  
-  return Math.round(convertedPrice).toLocaleString('pl-PL')
+const getFormattedPrice = (ad: Advertisement) => {
+  const unit = priceUnit.value === 'original' ? (ad.price_unit || 'month') : priceUnit.value
+  const price = searchStore.getPrice(ad, unit as any)
+  return Math.round(price).toLocaleString('pl-PL')
 }
 
-const priceUnitLabel = computed(() => {
-  switch (priceUnit.value) {
-    case 'original': return ''
-    case 'day': return '/ dzień'
-    case 'week': return '/ tydzień'
-    case 'month': return '/ miesiąc'
-    case 'year': return '/ rok'
-  }
-})
+const priceUnitLabel = computed(() => searchStore.getPriceLabel(priceUnit.value))
 
-// Funkcja zwracająca etykietę jednostki dla konkretnego ogłoszenia
 const getPriceUnitLabelForAd = (ad: Advertisement): string => {
-  const unit = ad.price_unit || 'month'
-  switch (unit) {
-    case 'day': return '/ dzień'
-    case 'week': return '/ tydzień'
-    case 'month': return '/ miesiąc'
-    case 'year': return '/ rok'
-    case 'campaign': return '/ kampania'
-    default: return '/ miesiąc'
-  }
+  return searchStore.getPriceLabel(ad.price_unit || 'month', ad)
 }
 
 // Funkcja sprawdzająca czy cena została przeliczona
@@ -226,56 +158,20 @@ const isPriceConverted = (ad: Advertisement): boolean => {
   return true
 }
 
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'active':
-      return 'Wolne'
-    case 'reserved':
-      return 'Zarezerwowane'
-    case 'soon_available':
-      return 'Wkrótce dostępne'
-    default:
-      return 'Nieznany'
-  }
-}
-
-const getTypeLabel = (type: string) => {
-  const labels: Record<string, string> = {
-    billboard: 'Billboardy',
-    citylight: 'Citylighty',
-    led_screen: 'Ekrany LED',
-    banner: 'Banery',
-    wall: 'Ściany reklamowe',
-    totem: 'Totemy reklamowe',
-    transport: 'Reklama w transporcie',
-    mobile: 'Reklama mobilna',
-    other: 'Inne'
-  }
-  return labels[type] || type
-}
-
-const formatLocation = (location: string, city: string) => {
-  // Extract street and number from full address
-  const parts = location.split(',').map(p => p.trim())
-  
-  let streetWithNumber = ''
-  
-  if (parts.length >= 2) {
-    const firstPart = parts[0]
-    const secondPart = parts[1]
-    
-    // Check if first part is a number
-    if (/^\d+/.test(firstPart)) {
-      streetWithNumber = `${secondPart} ${firstPart}`
-    } else {
-      streetWithNumber = firstPart
-    }
-  } else {
-    streetWithNumber = parts[0] || location
-  }
-  
-  return `${streetWithNumber}, ${city}`
-}
+// Helpers from store
+const getTypeLabel = (type: string) => searchStore.getTypeLabel(type)
+const getStatusLabel = (ad: Advertisement) => searchStore.getStatusLabel(ad)
+const formatLocation = (loc: string, city: string) => searchStore.formatLocation(loc, city)
+const formatTrafficDirectionValue = (dirs: string[] | undefined) => searchStore.formatTrafficDirection(dirs)
+const formatTrafficType = (types: string[] | undefined) => searchStore.formatTrafficType(types)
+const formatRoadClass = (roadClass: string | undefined) => roadClass ? searchStore.getRoadClassLabel(roadClass) : '—'
+const formatVariant = (variant: string | undefined, type: string) => variant ? searchStore.getVariantLabel(variant, type) : '—'
+const formatEnvironment = (env: string | undefined) => searchStore.formatEnvironment(env)
+const formatTransportScope = (scope: string | undefined) => searchStore.formatTransportScope(scope)
+const formatMobileExposureMode = (mode: string | undefined) => searchStore.formatMobileExposureMode(mode)
+const formatLightingType = (type: string | undefined) => searchStore.formatLightingType(type)
+const formatLightingTypeBanner = (type: string | undefined) => searchStore.formatLightingTypeBanner(type)
+const formatOperatingZone = (zone: string | undefined) => searchStore.formatOperatingZone(zone)
 
 // Dynamiczne pola do wyświetlenia w porównywarce
 const comparisonFields = computed(() => {
@@ -296,9 +192,7 @@ const comparisonFields = computed(() => {
 const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
   switch (field.key) {
     case 'price':
-      const price = getPrice(ad)
-      const isConverted = isPriceConverted(ad)
-      return isConverted ? price : price
+      return getFormattedPrice(ad)
     case 'price_per_sqm':
       return `${getPricePerSqm(ad)} PLN/m² (szacunkowo)`
     case 'type':
@@ -317,7 +211,8 @@ const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
     case 'location':
       return formatLocation(ad.location, ad.city)
     case 'traffic_intensity':
-      return ad.traffic_intensity === 'low' ? 'Niskie' : ad.traffic_intensity === 'medium' ? 'Średnie' : ad.traffic_intensity === 'high' ? 'Wysokie' : '—'
+      const ti: Record<string, string> = { low: 'Niskie', medium: 'Średnie', high: 'Wysokie' }
+      return ti[ad.traffic_intensity] || '—'
     case 'traffic_direction':
       return formatTrafficDirectionValue(ad.traffic_direction)
     case 'traffic_type':
@@ -339,9 +234,10 @@ const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
     case 'graphic_design_help':
       return ad.graphic_design_help ? 'Tak' : 'Nie'
     case 'status':
-      return getStatusLabel(ad.display_status || ad.status)
+      return getStatusLabel(ad)
     case 'offer_type':
-      return ad.offer_type === 'owner' ? 'Właściciel (bezpośrednio)' : ad.offer_type === 'agency' ? 'Agencja reklamowa' : ad.offer_type === 'sublease' ? 'Podnajmujący' : ad.offer_type
+      const ot: Record<string, string> = { owner: 'Właściciel (bezpośrednio)', agency: 'Agencja reklamowa', sublease: 'Podnajmujący' }
+      return ot[ad.offer_type] || ad.offer_type
     case 'has_vat_invoice':
       return ad.has_vat_invoice ? 'Tak' : 'Nie'
     case 'transport_scope':
@@ -387,157 +283,10 @@ const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
 // Funkcja obliczająca klasę lokalizacji dla billboardu
 const getLocationTier = (ad: Advertisement): string => {
   if (ad.type !== 'billboard') return '—'
-  
-  const trafficIntensity = ad.traffic_intensity
-  const roadClass = (ad as any).road_class
-  
-  // PREMIUM: wysokie natężenie ruchu + autostrada/droga ekspresowa/droga krajowa
-  if (trafficIntensity === 'high' && ['highway', 'expressway', 'national'].includes(roadClass || '')) {
-    return 'PREMIUM'
-  }
-  
-  // STANDARD: wszystkie inne kombinacje
-  return 'STANDARD'
+  return ad.traffic_intensity === 'high' && ['highway', 'expressway', 'national'].includes((ad as any).road_class || '') ? 'PREMIUM' : 'STANDARD'
 }
 
-// Funkcje formatujące
-const formatTrafficDirectionValue = (directions: string[] | undefined) => {
-  if (!directions || !Array.isArray(directions) || directions.length === 0) return '—'
-  if (directions.includes('entry') && directions.includes('exit')) return 'Oba kierunki'
-  const formatted = directions.map(dir => {
-    if (dir === 'entry') return 'Wjazd do miasta'
-    if (dir === 'exit') return 'Wyjazd z miasta'
-    return dir
-  })
-  return formatted.join(', ')
-}
-
-const formatTrafficType = (types: string[] | undefined) => {
-  if (!types || !Array.isArray(types) || types.length === 0) return '—'
-  const formatted = types.map(type => {
-    if (type === 'pedestrian') return 'Pieszy'
-    if (type === 'vehicular') return 'Samochodowy'
-    return type
-  })
-  return formatted.join(', ')
-}
-
-const formatRoadClass = (roadClass: string | undefined) => {
-  if (!roadClass) return '—'
-  const labels: Record<string, string> = {
-    highway: 'Autostrada',
-    expressway: 'Droga ekspresowa',
-    national: 'Droga krajowa',
-    regional: 'Droga wojewódzka',
-    local: 'Droga lokalna',
-    urban: 'Droga miejska'
-  }
-  return labels[roadClass] || roadClass
-}
-
-const formatVariant = (variant: string | undefined, type: string) => {
-  if (!variant) return '—'
-  const labels: Record<string, Record<string, string>> = {
-    billboard: {
-      standard: 'Jednostronny',
-      two_sided: 'Dwustronny (back-to-back)',
-      three_sided: 'Trójstronny (prismatron)',
-      scrolling: 'Scrolling / Rolowany'
-    },
-    citylight: {
-      single_sided: 'Jednostronny',
-      double_sided: 'Dwustronny',
-      scrolling: 'Scrolling (rotacyjny)',
-      digital: 'Cyfrowy (DOOH)'
-    },
-    led_screen: {
-      standard: 'Standardowy',
-      interactive: 'Interaktywny'
-    },
-    totem: {
-      single_sided: 'Jednostronny',
-      double_sided: 'Dwustronny',
-      multi_sided: 'Wielostronny / Kolumna',
-      pylon: 'Pylon (przy drodze)',
-      digital: 'Cyfrowy (LED)'
-    },
-    transport: {
-      bus: 'Autobus',
-      tram: 'Tramwaj',
-      metro: 'Metro',
-      train: 'Pociąg / SKM / Kolej',
-      stop: 'Przystanek'
-    },
-    mobile: {
-      trailer: 'Przyczepka',
-      car: 'Samochód',
-      bike: 'Rower',
-      other: 'Inna'
-    }
-  }
-  return labels[type]?.[variant] || variant
-}
-
-const formatEnvironment = (environment: string | undefined) => {
-  if (!environment) return '—'
-  const labels: Record<string, string> = {
-    indoor: 'Wewnątrz',
-    outdoor: 'Na zewnątrz',
-    event: 'Event / Wydarzenie'
-  }
-  return labels[environment] || environment
-}
-
-const formatTransportScope = (scope: string | undefined) => {
-  if (!scope) return '—'
-  const labels: Record<string, string> = {
-    internal: 'Wewnętrzna',
-    external: 'Zewnętrzna',
-    full_vehicle: 'Całopojazdowa'
-  }
-  return labels[scope] || scope
-}
-
-const formatMobileExposureMode = (mode: string | undefined) => {
-  if (!mode) return '—'
-  const labels: Record<string, string> = {
-    moving: 'Jeżdżąca',
-    stationary: 'Stojąca',
-    mixed: 'Mieszana'
-  }
-  return labels[mode] || mode
-}
-
-const formatLightingType = (type: string | undefined) => {
-  if (!type) return '—'
-  const labels: Record<string, string> = {
-    led: 'LED',
-    fluorescent: 'Fluorescencyjne',
-    natural: 'Naturalne',
-    none: 'Brak'
-  }
-  return labels[type] || type
-}
-
-const formatLightingTypeBanner = (type: string | undefined) => {
-  if (!type) return '—'
-  const labels: Record<string, string> = {
-    none: 'Brak podświetlenia',
-    backlight: 'Podświetlenie z tyłu',
-    frontlight: 'Podświetlenie z przodu'
-  }
-  return labels[type] || type
-}
-
-const formatOperatingZone = (zone: string | undefined) => {
-  if (!zone) return '—'
-  const labels: Record<string, string> = {
-    center: 'Centrum',
-    periphery: 'Peryferia',
-    agglomeration: 'Cała aglomeracja'
-  }
-  return labels[zone] || zone
-}
+// Funkcje formatujące przeniesione do store
 
 // Funkcja sprawdzająca czy wartość jest pozytywna (dla kolorowania)
 const isPositiveValue = (field: ComparisonField, value: any): boolean => {
@@ -561,8 +310,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="comparison-page">
-    <div class="page-header">
+  <div>
+    <div class="comparison-page">
+      <div class="page-header">
       <div class="container">
         <div class="header-nav">
           <button @click="router.back()" class="back-button">
@@ -590,9 +340,16 @@ onUnmounted(() => {
 
     <div class="page-content">
       <div class="container">
-        <div v-if="isLoading" class="loading-state">
-          <div class="spinner"></div>
-          <p>Ładowanie porównania...</p>
+        <div v-if="isLoading" class="skeleton-comparison">
+          <div class="skeleton-comp-header">
+            <div v-for="i in 4" :key="i" class="skeleton-comp-col">
+              <div class="skeleton-comp-img skeleton"></div>
+              <div class="skeleton-comp-title skeleton"></div>
+            </div>
+          </div>
+          <div class="skeleton-comp-rows">
+            <div v-for="i in 10" :key="i" class="skeleton-comp-row skeleton"></div>
+          </div>
         </div>
 
         <div v-else-if="comparisonAds.length === 0" class="empty-state">
@@ -734,16 +491,16 @@ onUnmounted(() => {
       </div>
     </div>
   </div>
-
   <ConfirmDialog
-    ref="confirmDialog"
-    title="Wyczyść porównanie"
-    message="Czy na pewno chcesz wyczyścić wszystkie ogłoszenia z porównania?"
-    type="warning"
-    confirm-text="Wyczyść"
-    cancel-text="Anuluj"
-    @confirm="handleConfirmClear"
-  />
+      ref="confirmDialog"
+      title="Wyczyść porównanie"
+      message="Czy na pewno chcesz wyczyścić wszystkie ogłoszenia z porównania?"
+      type="warning"
+      confirm-text="Wyczyść"
+      cancel-text="Anuluj"
+      @confirm="handleConfirmClear"
+    />
+  </div>
 </template>
 
 <style scoped>

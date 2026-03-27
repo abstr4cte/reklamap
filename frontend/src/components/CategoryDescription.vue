@@ -65,12 +65,12 @@ const toggleExpanded = () => {
 
 <style scoped>
 .category-description {
-  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  background: var(--card-bg, linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%));
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 2rem;
-  border: 1px solid rgba(102, 126, 234, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color, rgba(102, 126, 234, 0.1));
+  box-shadow: var(--card-shadow, 0 4px 12px rgba(0, 0, 0, 0.05));
 }
 
 .description-content {
@@ -80,7 +80,7 @@ const toggleExpanded = () => {
 .description-title {
   font-size: 2rem;
   font-weight: 800;
-  color: #1f2937;
+  color: var(--text-main, #1f2937);
   margin: 0 0 1rem 0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
@@ -93,13 +93,13 @@ const toggleExpanded = () => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
   font-size: 0.95rem;
   margin-bottom: 1.5rem;
   padding: 0.75rem 1rem;
-  background: white;
+  background: var(--bg-secondary, white);
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color, #e5e7eb);
   width: fit-content;
 }
 
@@ -127,20 +127,20 @@ const toggleExpanded = () => {
 .description-text p {
   font-size: 1.05rem;
   line-height: 1.7;
-  color: #4b5563;
+  color: var(--text-muted, #4b5563);
   margin: 0 0 1.5rem 0;
 }
 
 .benefits {
   margin-top: 1.5rem;
   padding-top: 1.5rem;
-  border-top: 2px solid rgba(102, 126, 234, 0.1);
+  border-top: 2px solid var(--border-color, rgba(102, 126, 234, 0.1));
 }
 
 .benefits h3 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text-main, #1f2937);
   margin: 0 0 1rem 0;
 }
 
@@ -157,7 +157,7 @@ const toggleExpanded = () => {
   align-items: flex-start;
   gap: 0.75rem;
   font-size: 0.95rem;
-  color: #4b5563;
+  color: var(--text-muted, #4b5563);
   line-height: 1.6;
 }
 

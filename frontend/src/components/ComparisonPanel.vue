@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, watch, onUnmounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 import WebPImage from './WebPImage.vue'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
+import { usePreferencesStore } from '../stores/usePreferencesStore'
 
 const props = defineProps<{
   isOpen: boolean
@@ -20,29 +21,18 @@ const router = useRouter()
 const comparisonAds = ref<Advertisement[]>([])
 const isLoading = ref(false)
 
-const loadComparison = async () => {
-  const comparisonIds = JSON.parse(localStorage.getItem('comparison') || '[]')
+const prefStore = usePreferencesStore()
 
-  if (comparisonIds.length === 0) {
+const loadComparison = async () => {
+  if (prefStore.comparison.length === 0) {
     comparisonAds.value = []
     return
   }
 
   try {
     isLoading.value = true
-    const data = await api.getAdvertisementsByIds(comparisonIds)
-    
-    // Filter to only include active listings
-    const activeAds = data.filter(ad => ad.is_active)
-    comparisonAds.value = activeAds || []
-    
-    // Update localStorage if there are inactive/deleted ads
-    if (activeAds.length < comparisonIds.length) {
-      const activeIds = activeAds.map(ad => ad.id)
-      localStorage.setItem('comparison', JSON.stringify(activeIds))
-      // Trigger a custom event to update the counter
-      window.dispatchEvent(new CustomEvent('localStorageChange'))
-    }
+    const data = await api.getAdvertisementsByIds(prefStore.comparison)
+    comparisonAds.value = data.filter(ad => ad.is_active)
   } catch (error) {
     console.error('Error loading comparison:', error)
   } finally {
@@ -50,7 +40,7 @@ const loadComparison = async () => {
   }
 }
 
-const removeComparison = (id: string) => {
+const removeComparison = async (id: string) => {
   emit('removeComparison', id)
   comparisonAds.value = comparisonAds.value.filter(ad => ad.id !== id)
 }
@@ -62,24 +52,12 @@ const goToComparison = () => {
 
 const canCompare = computed(() => comparisonAds.value.length >= 2)
 
-// Funkcja zwracająca etykietę jednostki ceny
-const getPriceUnitLabel = (ad: Advertisement): string => {
-  const unit = ad.price_unit || 'month'
-  switch (unit) {
-    case 'day': return '/ dzień'
-    case 'week': return '/ tydzień'
-    case 'month': return '/ miesiąc'
-    case 'year': return '/ rok'
-    case 'campaign': return '/ kampania'
-    default: return '/ miesiąc'
-  }
-}
+import { useSearchStore } from '../stores/useSearchStore'
 
-const handleStorageChange = () => {
-  if (props.isOpen) {
-    loadComparison()
-  }
-}
+const searchStore = useSearchStore()
+
+// Funkcja zwracająca etykietę jednostki ceny
+const getPriceUnitLabel = (ad: Advertisement): string => searchStore.getPriceUnitLabel(ad)
 
 watch(() => props.isOpen, (newValue) => {
   if (newValue) {
@@ -87,19 +65,11 @@ watch(() => props.isOpen, (newValue) => {
   }
 })
 
-if (typeof window !== 'undefined') {
-  // Nasłuchuj niestandardowego zdarzenia
-  window.addEventListener('localStorageChange', handleStorageChange)
-  // Zachowaj również nasłuchiwanie standardowego zdarzenia 'storage' dla kompatybilności
-  window.addEventListener('storage', handleStorageChange)
-}
-
-onUnmounted(() => {
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('localStorageChange', handleStorageChange)
-    window.removeEventListener('storage', handleStorageChange)
+watch(() => prefStore.comparison, () => {
+  if (props.isOpen) {
+    loadComparison()
   }
-})
+}, { deep: true })
 </script>
 
 <template>

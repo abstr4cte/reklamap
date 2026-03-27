@@ -28,6 +28,7 @@ export interface FilterParams {
   type?: string
   region?: string
   city?: string
+  cityStrict?: boolean
   priceFrom?: number | null
   priceTo?: number | null
   priceUnit?: string
@@ -38,6 +39,8 @@ export interface FilterParams {
   heightFrom?: number | null
   heightTo?: number | null
   trafficIntensity?: string
+  trafficDirection?: string[]
+  trafficType?: string[]
   status?: string[]
   hasBacklight?: boolean
   onlyWithImage?: boolean
@@ -70,6 +73,7 @@ export interface FilterParams {
   variant?: string
   roadClass?: string
   environment?: string
+  locationLabel?: string
 }
 
 // Mapowanie wartości na polskie odpowiedniki dla URL (bez polskich znaków)
@@ -144,6 +148,8 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.type) params.type = filters.type
   if (filters.region) params.region = normalizePolishChars(filters.region)
   if (filters.city) params.city = normalizePolishChars(filters.city)
+  if (filters.cityStrict) params.cityStrict = 'tak'
+  if (filters.locationLabel) params.loc = normalizePolishChars(filters.locationLabel)
 
   // Wartości liczbowe
   if (filters.priceFrom !== null && filters.priceFrom !== undefined) {
@@ -172,7 +178,8 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   }
 
   // Wartości z mapowaniem na polskie odpowiedniki bez polskich znaków
-  if (filters.priceUnit) {
+  // Dodaj priceUnit TYLKO gdy użytkownik wpisał cenę
+  if (filters.priceUnit && (filters.priceFrom !== null && filters.priceFrom !== undefined || filters.priceTo !== null && filters.priceTo !== undefined)) {
     params.priceUnit = valueMapping.priceUnit[filters.priceUnit] || normalizePolishChars(filters.priceUnit)
   }
   if (filters.rentalPeriod) {
@@ -210,6 +217,56 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
     params.lng = filters.selectedLocationCoords.lng.toString()
   }
 
+  // Dodatkowe filtry
+  if (filters.variant) params.variant = filters.variant
+  if (filters.roadClass) params.roadClass = filters.roadClass
+  if (filters.environment) params.environment = filters.environment
+  
+  // Traffic direction i traffic type (tablice)
+  if (filters.trafficDirection && filters.trafficDirection.length > 0) {
+    params.trafficDirection = filters.trafficDirection.join(',')
+  }
+  if (filters.trafficType && filters.trafficType.length > 0) {
+    params.trafficType = filters.trafficType.join(',')
+  }
+  if (filters.transportScope) params.transportScope = filters.transportScope
+  if (filters.mobileExposureMode) params.mobileExposureMode = filters.mobileExposureMode
+  if (filters.operatingZone) params.operatingZone = filters.operatingZone
+  if (filters.lightingType) params.lightingType = filters.lightingType
+  if (filters.resolution) params.resolution = filters.resolution
+  
+  // Wartości liczbowe - extended
+  if (filters.vehicleCountFrom !== null && filters.vehicleCountFrom !== undefined) {
+    params.vehicleCountFrom = filters.vehicleCountFrom.toString()
+  }
+  if (filters.vehicleCountTo !== null && filters.vehicleCountTo !== undefined) {
+    params.vehicleCountTo = filters.vehicleCountTo.toString()
+  }
+  if (filters.dailyPassengersFrom !== null && filters.dailyPassengersFrom !== undefined) {
+    params.dailyPassengersFrom = filters.dailyPassengersFrom.toString()
+  }
+  if (filters.dailyPassengersTo !== null && filters.dailyPassengersTo !== undefined) {
+    params.dailyPassengersTo = filters.dailyPassengersTo.toString()
+  }
+  if (filters.pixelPitchFrom !== null && filters.pixelPitchFrom !== undefined) {
+    params.pixelPitchFrom = filters.pixelPitchFrom.toString()
+  }
+  if (filters.pixelPitchTo !== null && filters.pixelPitchTo !== undefined) {
+    params.pixelPitchTo = filters.pixelPitchTo.toString()
+  }
+  if (filters.brightnessFrom !== null && filters.brightnessFrom !== undefined) {
+    params.brightnessFrom = filters.brightnessFrom.toString()
+  }
+  if (filters.brightnessTo !== null && filters.brightnessTo !== undefined) {
+    params.brightnessTo = filters.brightnessTo.toString()
+  }
+  if (filters.campaignDurationFrom !== null && filters.campaignDurationFrom !== undefined) {
+    params.campaignDurationFrom = filters.campaignDurationFrom.toString()
+  }
+  if (filters.campaignDurationTo !== null && filters.campaignDurationTo !== undefined) {
+    params.campaignDurationTo = filters.campaignDurationTo.toString()
+  }
+
   return params
 }
 
@@ -226,6 +283,7 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   if (query.type) filters.type = query.type
   if (query.region) filters.region = query.region
   if (query.city) filters.city = query.city
+  if (query.loc) filters.locationLabel = query.loc
 
   // Wartości liczbowe
   if (query.priceFrom) filters.priceFrom = parseFloat(query.priceFrom) || null
@@ -273,6 +331,7 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   filters.hasLightingTypeBanner = query.hasLightingTypeBanner === 'tak' || query.hasLightingTypeBanner === 'true'
   filters.hasLightingTypeBillboard = query.hasLightingTypeBillboard === 'tak' || query.hasLightingTypeBillboard === 'true'
   filters.ambientLightControl = query.ambientLightControl === 'tak' || query.ambientLightControl === 'true'
+  filters.cityStrict = query.cityStrict === 'tak' || query.cityStrict === 'true'
 
   // Konwersja współrzędnych lokalizacji
   if (query.lat && query.lng) {
@@ -283,6 +342,36 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   } else {
     filters.selectedLocationCoords = null
   }
+
+  // Dodatkowe filtry
+  if (query.variant) filters.variant = query.variant
+  if (query.roadClass) filters.roadClass = query.roadClass
+  if (query.environment) filters.environment = query.environment
+  
+  // Traffic direction i traffic type (konwersja string na tablice)
+  if (query.trafficDirection) {
+    filters.trafficDirection = query.trafficDirection.split(',')
+  }
+  if (query.trafficType) {
+    filters.trafficType = query.trafficType.split(',')
+  }
+  if (query.transportScope) filters.transportScope = query.transportScope
+  if (query.mobileExposureMode) filters.mobileExposureMode = query.mobileExposureMode
+  if (query.operatingZone) filters.operatingZone = query.operatingZone
+  if (query.lightingType) filters.lightingType = query.lightingType
+  if (query.resolution) filters.resolution = query.resolution
+  
+  // Wartości liczbowe - extended
+  if (query.vehicleCountFrom) filters.vehicleCountFrom = parseFloat(query.vehicleCountFrom) || null
+  if (query.vehicleCountTo) filters.vehicleCountTo = parseFloat(query.vehicleCountTo) || null
+  if (query.dailyPassengersFrom) filters.dailyPassengersFrom = parseFloat(query.dailyPassengersFrom) || null
+  if (query.dailyPassengersTo) filters.dailyPassengersTo = parseFloat(query.dailyPassengersTo) || null
+  if (query.pixelPitchFrom) filters.pixelPitchFrom = parseFloat(query.pixelPitchFrom) || null
+  if (query.pixelPitchTo) filters.pixelPitchTo = parseFloat(query.pixelPitchTo) || null
+  if (query.brightnessFrom) filters.brightnessFrom = parseFloat(query.brightnessFrom) || null
+  if (query.brightnessTo) filters.brightnessTo = parseFloat(query.brightnessTo) || null
+  if (query.campaignDurationFrom) filters.campaignDurationFrom = parseFloat(query.campaignDurationFrom) || null
+  if (query.campaignDurationTo) filters.campaignDurationTo = parseFloat(query.campaignDurationTo) || null
 
   return filters
 }

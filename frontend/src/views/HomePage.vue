@@ -6,586 +6,50 @@ import HeroBanner from '../components/HeroBanner.vue'
 import PolandMap from '../components/PolandMap.vue'
 import AdGrid from '../components/AdGrid.vue'
 import Pagination from '../components/Pagination.vue'
-import { api } from '../services/api'
-import type { Advertisement } from '../types'
-import { filtersToQueryParams, queryParamsToFilters, normalizePolishChars } from '../utils/filterUtils'
-import { useSeo } from '../composables/useSeo'
-import SearchAlertModal from '../components/SearchAlertModal.vue'
 import SearchAlertBox from '../components/SearchAlertBox.vue'
+import SearchAlertModal from '../components/SearchAlertModal.vue'
+import { filtersToQueryParams, queryParamsToFilters } from '../utils/filterUtils'
+import { useSeo } from '../composables/useSeo'
 import polishLocations from '../data/polishLocations.json'
+import { useSearchStore } from '../stores/useSearchStore'
+import { usePreferencesStore } from '../stores/usePreferencesStore'
+import { storeToRefs } from 'pinia'
+import type { FilterParams } from '../types/filters'
 
-
-
-const emit = defineEmits<{
-  toggleFavorite: [id: string]
-  toggleComparison: [id: string]
-}>()
+const searchStore = useSearchStore()
+const prefStore = usePreferencesStore()
+const { filters, sortBy, priceDisplay, isLoading, currentPage, itemsPerPage } = storeToRefs(searchStore)
 
 // Helper to map type to Polish label
-const getTypeLabel = (type: string): string => {
-  const typeLabels: Record<string, string> = {
-    'billboard': 'Billboardy',
-    'citylight': 'Citylighty',
-    'led_screen': 'Ekrany LED',
-    'banner': 'Banery',
-    'wall': 'Ściany reklamowe',
-    'totem': 'Totemy reklamowe',
-    'transport': 'Reklama w transporcie',
-    'mobile': 'Reklama mobilna',
-    'other': 'Inne'
-  }
-  return typeLabels[type] || 'ogłoszenie'
-}
+const getTypeLabel = (type: string): string => searchStore.getTypeLabel(type)
 
 const route = useRoute()
 const router = useRouter()
 
 const isModalOpen = ref(false)
-const listings = ref<Advertisement[]>([])
-const isLoading = ref(true)
-const viewMode = ref<'grid' | 'list'>('grid')
-const sortBy = ref('newest')
-const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign' | undefined>(undefined)
-const currentPage = ref(1)
-const itemsPerPage = 18
+const viewMode = searchStore.viewMode
 const hoveredAdId = ref<string | null>(null)
 
 const showSearchAlertModal = ref(false)
 const hasShownAlertModal = ref(localStorage.getItem('search_alert_shown') === 'true')
 
-
-interface Filters {
-  keyword: string
-  type: string
-  region: string
-  city: string
-  priceFrom: number | null
-  priceTo: number | null
-  priceUnit: string
-  rentalPeriod: string
-  orientation: string
-  widthFrom: number | null
-  widthTo: number | null
-  heightFrom: number | null
-  heightTo: number | null
-  surfaceFrom: number | null
-  surfaceTo: number | null
-  trafficIntensity: string
-  status: string[]
-  environment: string
-  hasBacklight: boolean
-  onlyWithImage: boolean
-  priceIncludesPrint: boolean
-  priceIncludesMounting: boolean
-  graphicDesignHelp: boolean
-  offerType: string
-  hasVatInvoice: boolean
-  selectedLocationCoords?: { lat: number; lng: number } | null
-  // Type-specific filters
-  variant: string
-  roadClass: string
-  // LED screen filters
-  resolution: string
-  pixelPitchFrom: number | null
-  pixelPitchTo: number | null
-  brightnessFrom: number | null
-  brightnessTo: number | null
-  transportScope: string
-  vehicleCountFrom: number | null
-  vehicleCountTo: number | null
-  mobileExposureMode: string
-  campaignDurationFrom: number | null
-  campaignDurationTo: number | null
-  // Nowe pola dla rozszerzonych opcji
-  lightingType: string
-  dailyPassengersFrom: number | null
-  dailyPassengersTo: number | null
-  operatingZone: string
-  ambientLightControl: boolean
-  // Checkboxy dla podświetlenia
-  hasLightingTypeBanner: boolean
-  hasLightingTypeBillboard: boolean
+// Favorites and Comparison handlers
+const handleToggleFavorite = async (id: string) => {
+  await prefStore.toggleFavorite(id)
 }
 
-const filters = ref<Filters>({
-  keyword: '',
-  type: '',
-  region: '',
-  city: '',
-  priceFrom: null,
-  priceTo: null,
-  priceUnit: 'month',
-  rentalPeriod: '',
-  orientation: '',
-  widthFrom: null,
-  widthTo: null,
-  heightFrom: null,
-  heightTo: null,
-  surfaceFrom: null,
-  surfaceTo: null,
-  trafficIntensity: '',
-  status: [],
-  environment: '',
-  hasBacklight: false,
-  onlyWithImage: false,
-  priceIncludesPrint: false,
-  priceIncludesMounting: false,
-  graphicDesignHelp: false,
-  offerType: '',
-  hasVatInvoice: false,
-  selectedLocationCoords: null,
-  // Type-specific filters
-  variant: '',
-  roadClass: '',
-  // LED screen filters
-  resolution: '',
-  pixelPitchFrom: null,
-  pixelPitchTo: null,
-  brightnessFrom: null,
-  brightnessTo: null,
-  transportScope: '',
-  vehicleCountFrom: null,
-  vehicleCountTo: null,
-  mobileExposureMode: '',
-  campaignDurationFrom: null,
-  campaignDurationTo: null,
-  // Nowe pola dla rozszerzonych opcji
-  lightingType: '',
-  dailyPassengersFrom: null,
-  dailyPassengersTo: null,
-  operatingZone: '',
-  ambientLightControl: false,
-  // Checkboxy dla podświetlenia
-  hasLightingTypeBanner: false,
-  hasLightingTypeBillboard: false,
-})
+const handleToggleComparison = async (id: string) => {
+  await prefStore.toggleComparison(id)
+}
 
-const sortedAndFilteredListings = computed(() => {
-  let filtered = listings.value
-  
-  // Dodanie zależności od sortBy i priceDisplay, aby computed się przeliczał
-  
-  if (filters.value.keyword) {
-    const keyword = normalizePolishChars(filters.value.keyword.toLowerCase())
-    filtered = filtered.filter(ad =>
-      normalizePolishChars(ad.title.toLowerCase()).includes(keyword) ||
-      normalizePolishChars(ad.description.toLowerCase()).includes(keyword) ||
-      normalizePolishChars(ad.location.toLowerCase()).includes(keyword)
-    )
-  }
+const sortedAndFilteredListings = computed(() => searchStore.sortedAndFilteredListings)
 
-  if (filters.value.type) {
-    filtered = filtered.filter(ad => ad.type === filters.value.type)
-  }
-
-  if (filters.value.region) {
-    filtered = filtered.filter(ad => ad.region === filters.value.region)
-  }
-
-  if (filters.value.city) {
-    const city = filters.value.city.toLowerCase()
-    filtered = filtered.filter(ad =>
-      ad.city.toLowerCase().includes(city) ||
-      ad.location.toLowerCase().includes(city)
-    )
-  }
-
-  if (filters.value.priceFrom !== null) {
-    filtered = filtered.filter(ad => ad.price >= filters.value.priceFrom!)
-  }
-
-  if (filters.value.priceTo !== null) {
-    filtered = filtered.filter(ad => ad.price <= filters.value.priceTo!)
-  }
-
-  if (filters.value.rentalPeriod) {
-    filtered = filtered.filter(ad => ad.rental_period === filters.value.rentalPeriod)
-  }
-
-  if (filters.value.orientation) {
-    filtered = filtered.filter(ad => ad.orientation === filters.value.orientation)
-  }
-
-  if (filters.value.widthFrom !== null) {
-    filtered = filtered.filter(ad => ad.width >= filters.value.widthFrom!)
-  }
-
-  if (filters.value.widthTo !== null) {
-    filtered = filtered.filter(ad => ad.width <= filters.value.widthTo!)
-  }
-
-  if (filters.value.heightFrom !== null) {
-    filtered = filtered.filter(ad => ad.height >= filters.value.heightFrom!)
-  }
-
-  if (filters.value.heightTo !== null) {
-    filtered = filtered.filter(ad => ad.height <= filters.value.heightTo!)
-  }
-
-  // Surface area filters
-  if (filters.value.surfaceFrom !== null) {
-    filtered = filtered.filter(ad => {
-      let surface = ad.width * ad.height
-      // Convert mm² to m² for LED screens
-      if (ad.type === 'led_screen') {
-        surface = surface / 1000000 // mm² to m²
-      }
-      return surface >= filters.value.surfaceFrom!
-    })
-  }
-  if (filters.value.surfaceTo !== null) {
-    filtered = filtered.filter(ad => {
-      let surface = ad.width * ad.height
-      // Convert mm² to m² for LED screens
-      if (ad.type === 'led_screen') {
-        surface = surface / 1000000 // mm² to m²
-      }
-      return surface <= filters.value.surfaceTo!
-    })
-  }
-
-  if (filters.value.trafficIntensity) {
-    filtered = filtered.filter(ad => ad.traffic_intensity === filters.value.trafficIntensity)
-  }
-
-  if (filters.value.status && filters.value.status.length > 0) {
-    filtered = filtered.filter(ad => filters.value.status.includes(ad.display_status || ad.status))
-  }
-
-  if (filters.value.hasBacklight) {
-    filtered = filtered.filter(ad => ad.has_backlight === true)
-  }
-
-  if (filters.value.lightingType) {
-    filtered = filtered.filter(ad => ad.lighting_type === filters.value.lightingType)
-  }
-
-  if (filters.value.hasLightingTypeBillboard) {
-    filtered = filtered.filter(ad => {
-      // Tylko dla billboardów
-      if (ad.type !== 'billboard') return false
-      const lightingType = (ad as any).lighting_type
-      return lightingType && lightingType !== 'none'
-    })
-  }
-
-  if (filters.value.hasLightingTypeBanner) {
-    filtered = filtered.filter(ad => {
-      // Tylko dla banerów
-      if (ad.type !== 'banner') return false
-      const lightingType = (ad as any).lighting_type
-      return lightingType && lightingType !== 'none'
-    })
-  }
-
-  if (filters.value.onlyWithImage) {
-    filtered = filtered.filter(ad => ad.has_image === true)
-  }
-
-  if (filters.value.priceIncludesPrint) {
-    filtered = filtered.filter(ad => ad.price_includes_print === true)
-  }
-
-  if (filters.value.priceIncludesMounting) {
-    filtered = filtered.filter(ad => ad.price_includes_mounting === true)
-  }
-
-  if (filters.value.graphicDesignHelp) {
-    filtered = filtered.filter(ad => ad.graphic_design_help === true)
-  }
-
-  if (filters.value.offerType) {
-    filtered = filtered.filter(ad => ad.offer_type === filters.value.offerType)
-  }
-
-  if (filters.value.hasVatInvoice) {
-    filtered = filtered.filter(ad => ad.has_vat_invoice === true)
-  }
-
-  // Type-specific filters
-  if (filters.value.variant) {
-    filtered = filtered.filter(ad => ad.variant === filters.value.variant)
-  }
-
-  if (filters.value.roadClass) {
-    filtered = filtered.filter(ad => ad.road_class === filters.value.roadClass)
-  }
-
-  if (filters.value.environment) {
-    filtered = filtered.filter(ad => ad.environment === filters.value.environment)
-  }
-
-  // LED-specific filters
-  if (filters.value.resolution) {
-    filtered = filtered.filter(ad => ad.resolution && ad.resolution.toLowerCase().includes(filters.value.resolution.toLowerCase()))
-  }
-  if (filters.value.pixelPitchFrom !== null) {
-    filtered = filtered.filter(ad => (ad as any).pixel_pitch && (ad as any).pixel_pitch >= filters.value.pixelPitchFrom!)
-  }
-  if (filters.value.pixelPitchTo !== null) {
-    filtered = filtered.filter(ad => (ad as any).pixel_pitch && (ad as any).pixel_pitch <= filters.value.pixelPitchTo!)
-  }
-  if (filters.value.brightnessFrom !== null) {
-    filtered = filtered.filter(ad => (ad as any).brightness && (ad as any).brightness >= filters.value.brightnessFrom!)
-  }
-  if (filters.value.brightnessTo !== null) {
-    filtered = filtered.filter(ad => (ad as any).brightness && (ad as any).brightness <= filters.value.brightnessTo!)
-  }
-
-  // Transport-specific filters
-  if (filters.value.transportScope) {
-    filtered = filtered.filter(ad => ad.transport_scope === filters.value.transportScope)
-  }
-  if (filters.value.vehicleCountFrom !== null) {
-    filtered = filtered.filter(ad => ad.vehicle_count && ad.vehicle_count >= filters.value.vehicleCountFrom!)
-  }
-  if (filters.value.vehicleCountTo !== null) {
-    filtered = filtered.filter(ad => ad.vehicle_count && ad.vehicle_count <= filters.value.vehicleCountTo!)
-  }
-
-  // Mobile-specific filters
-  if (filters.value.mobileExposureMode) {
-    filtered = filtered.filter(ad => ad.mobile_exposure_mode === filters.value.mobileExposureMode)
-  }
-
-  // Campaign duration filter
-  if (filters.value.campaignDurationFrom !== null) {
-    filtered = filtered.filter(ad => ad.campaign_duration && ad.campaign_duration >= filters.value.campaignDurationFrom!)
-  }
-  if (filters.value.campaignDurationTo !== null) {
-    filtered = filtered.filter(ad => ad.campaign_duration && ad.campaign_duration <= filters.value.campaignDurationTo!)
-  }
-
-  // Sortowanie
-  const sorted = [...filtered]
-
-  const getPrice = (ad: Advertisement, period: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign') => {
-    const basePrice = ad.price
-    // Use the ad's price_unit as the base, not always 'month'
-    const adPriceUnit = ad.price_unit || 'month'
-
-    // If the ad's unit matches the requested period, return the price as-is
-    if (adPriceUnit === period) {
-      return basePrice
-    }
-
-    // Convert from ad's unit to requested period
-    let pricePerMonth = basePrice
-    
-    // First convert to monthly price
-    switch (adPriceUnit) {
-      case 'day':
-        pricePerMonth = basePrice * 30
-        break
-      case 'week':
-        pricePerMonth = basePrice * 4
-        break
-      case 'month':
-        pricePerMonth = basePrice
-        break
-      case 'year':
-        pricePerMonth = basePrice / 12
-        break
-      case 'campaign':
-        pricePerMonth = basePrice
-        break
-    }
-
-    // Then convert from monthly to requested period
-    switch (period) {
-      case 'day':
-        return pricePerMonth / 30
-      case 'week':
-        return pricePerMonth / 4
-      case 'month':
-        return pricePerMonth
-      case 'year':
-        return pricePerMonth * 12
-      case 'campaign':
-        // If ad has campaign_duration, calculate based on days
-        if (ad.campaign_duration) {
-          return pricePerMonth * (ad.campaign_duration / 30)
-        }
-        // If no duration, return a very high number to sort at the end
-        return Number.MAX_SAFE_INTEGER
-      case 'sqm':
-        const area = ad.width * ad.height
-        return area > 0 ? pricePerMonth / area : Number.MAX_SAFE_INTEGER
-      default:
-        return pricePerMonth
-    }
-  }
-
-  switch (sortBy.value) {
-    case 'newest':
-      sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      break
-    case 'oldest':
-      sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-      break
-    case 'name-asc':
-      sorted.sort((a, b) => a.title.localeCompare(b.title, 'pl'))
-      break
-    case 'name-desc':
-      sorted.sort((a, b) => b.title.localeCompare(a.title, 'pl'))
-      break
-    case 'price-day-asc':
-      priceDisplay.value = 'day'
-      sorted.sort((a, b) => getPrice(a, 'day') - getPrice(b, 'day'))
-      break
-    case 'price-day-desc':
-      priceDisplay.value = 'day'
-      sorted.sort((a, b) => {
-        const priceA = getPrice(a, 'day')
-        const priceB = getPrice(b, 'day')
-        // Keep items with MAX_SAFE_INTEGER at the end
-        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
-        if (priceA === Number.MAX_SAFE_INTEGER) return 1
-        if (priceB === Number.MAX_SAFE_INTEGER) return -1
-        return priceB - priceA
-      })
-      break
-    case 'price-week-asc':
-      priceDisplay.value = 'week'
-      sorted.sort((a, b) => getPrice(a, 'week') - getPrice(b, 'week'))
-      break
-    case 'price-week-desc':
-      priceDisplay.value = 'week'
-      sorted.sort((a, b) => {
-        const priceA = getPrice(a, 'week')
-        const priceB = getPrice(b, 'week')
-        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
-        if (priceA === Number.MAX_SAFE_INTEGER) return 1
-        if (priceB === Number.MAX_SAFE_INTEGER) return -1
-        return priceB - priceA
-      })
-      break
-    case 'price-month-asc':
-      priceDisplay.value = 'month'
-      sorted.sort((a, b) => getPrice(a, 'month') - getPrice(b, 'month'))
-      break
-    case 'price-month-desc':
-      priceDisplay.value = 'month'
-      sorted.sort((a, b) => {
-        const priceA = getPrice(a, 'month')
-        const priceB = getPrice(b, 'month')
-        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
-        if (priceA === Number.MAX_SAFE_INTEGER) return 1
-        if (priceB === Number.MAX_SAFE_INTEGER) return -1
-        return priceB - priceA
-      })
-      break
-    case 'price-year-asc':
-      priceDisplay.value = 'year'
-      sorted.sort((a, b) => getPrice(a, 'year') - getPrice(b, 'year'))
-      break
-    case 'price-year-desc':
-      priceDisplay.value = 'year'
-      sorted.sort((a, b) => {
-        const priceA = getPrice(a, 'year')
-        const priceB = getPrice(b, 'year')
-        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
-        if (priceA === Number.MAX_SAFE_INTEGER) return 1
-        if (priceB === Number.MAX_SAFE_INTEGER) return -1
-        return priceB - priceA
-      })
-      break
-    case 'price-sqm-asc':
-      priceDisplay.value = 'sqm'
-      sorted.sort((a, b) => getPrice(a, 'sqm') - getPrice(b, 'sqm'))
-      break
-    case 'price-sqm-desc':
-      priceDisplay.value = 'sqm'
-      sorted.sort((a, b) => {
-        const priceA = getPrice(a, 'sqm')
-        const priceB = getPrice(b, 'sqm')
-        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
-        if (priceA === Number.MAX_SAFE_INTEGER) return 1
-        if (priceB === Number.MAX_SAFE_INTEGER) return -1
-        return priceB - priceA
-      })
-      break
-    case 'price-campaign-asc':
-      priceDisplay.value = 'campaign'
-      sorted.sort((a, b) => getPrice(a, 'campaign') - getPrice(b, 'campaign'))
-      break
-    case 'price-campaign-desc':
-      priceDisplay.value = 'campaign'
-      sorted.sort((a, b) => {
-        const priceA = getPrice(a, 'campaign')
-        const priceB = getPrice(b, 'campaign')
-        if (priceA === Number.MAX_SAFE_INTEGER && priceB === Number.MAX_SAFE_INTEGER) return 0
-        if (priceA === Number.MAX_SAFE_INTEGER) return 1
-        if (priceB === Number.MAX_SAFE_INTEGER) return -1
-        return priceB - priceA
-      })
-      break
-    default:
-      priceDisplay.value = undefined
-  }
-
-  return sorted
-})
-
-const activeFiltersCount = computed(() => {
-  let count = 0
-  const f = filters.value
-  
-  if (f.keyword || f.city || f.region || f.selectedLocationCoords) count++
-  if (f.type) count++
-  if (f.priceFrom !== null) count++
-  if (f.priceTo !== null) count++
-  
-  if (f.rentalPeriod) count++
-  if (f.orientation) count++
-  if (f.widthFrom !== null) count++
-  if (f.widthTo !== null) count++
-  if (f.heightFrom !== null) count++
-  if (f.heightTo !== null) count++
-  if (f.surfaceFrom !== null) count++
-  if (f.surfaceTo !== null) count++
-  if (f.trafficIntensity) count++
-  if (f.status && f.status.length > 0) count++
-  if (f.environment) count++
-  if (f.hasBacklight) count++
-  if (f.onlyWithImage) count++
-  if (f.priceIncludesPrint) count++
-  if (f.priceIncludesMounting) count++
-  if (f.graphicDesignHelp) count++
-  if (f.offerType) count++
-  if (f.hasVatInvoice) count++
-  
-  // Type-specific
-  if (f.variant) count++
-  if (f.roadClass) count++
-  if (f.resolution) count++
-  if (f.pixelPitchFrom !== null) count++
-  if (f.pixelPitchTo !== null) count++
-  if (f.brightnessFrom !== null) count++
-  if (f.brightnessTo !== null) count++
-  if (f.transportScope) count++
-  if (f.vehicleCountFrom !== null) count++
-  if (f.vehicleCountTo !== null) count++
-  if (f.mobileExposureMode) count++
-  if (f.campaignDurationFrom !== null) count++
-  if (f.campaignDurationTo !== null) count++
-  
-  return count
-})
-
-const totalPages = computed(() => {
-  return Math.ceil(sortedAndFilteredListings.value.length / itemsPerPage)
-})
-
-const paginatedListings = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return sortedAndFilteredListings.value.slice(start, end)
-})
+const activeFiltersCount = computed(() => searchStore.activeFiltersCount)
+const totalPages = computed(() => searchStore.totalPages)
+const paginatedListings = computed(() => searchStore.paginatedListings)
 
 const handlePageChange = async (page: number) => {
-  currentPage.value = page
-  await router.push({ query: { ...route.query, page: page.toString() } })
+  searchStore.setCurrentPage(page)
   
   // Poczekaj na aktualizację DOM przed scrollowaniem
   await nextTick()
@@ -603,24 +67,22 @@ const handlePageChange = async (page: number) => {
   }
 }
 
-const handleSearch = (searchFilters: Filters & { _priceDisplayUnit?: string }) => {
-  filters.value = searchFilters
-  currentPage.value = 1 // Reset to first page on search
+const handleSearch = (searchFilters: FilterParams & { _priceDisplayUnit?: string }) => {
+  // Wyczyść mapBounds przy nowym wyszukiwaniu, aby mapa mogła przybliżyć się do miasta/regionu
+  const filtersWithoutMapBounds = { ...searchFilters, mapBounds: null }
+  searchStore.applyFilters(filtersWithoutMapBounds)
   
-  // Jeśli użytkownik wpisał cenę, ustaw priceDisplay na tę jednostkę
-  // Aby wyniki były przełączone na tę jednostkę (jak przy sortowaniu)
   if (searchFilters._priceDisplayUnit) {
-    priceDisplay.value = searchFilters._priceDisplayUnit as 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
+    priceDisplay.value = searchFilters._priceDisplayUnit as any
   }
   
   // Konwertuj filtry na query params
   const queryParams = filtersToQueryParams(searchFilters)
   
-  // Dodaj parametr strony
-  queryParams.page = '1'
-  
   // Use history.replaceState to update URL without triggering navigation
-  const newUrl = window.location.pathname + '?' + new URLSearchParams(queryParams).toString()
+  // Dodaj ? tylko jeśli są jakieś query params
+  const queryString = new URLSearchParams(queryParams).toString()
+  const newUrl = queryString ? window.location.pathname + '?' + queryString : window.location.pathname
   window.history.replaceState({}, document.title, newUrl)
   
   // No need to scroll here as HeroBanner component will handle scrolling
@@ -693,22 +155,19 @@ onBeforeUnmount(() => {
   document.body.style.overflow = ''
 })
 
-const handleReset = (resetFilters: Filters) => {
-  // Ustaw flagę, że resetujemy filtry
-  isResettingFilters.value = true
-  
-  // Zresetuj filtry
-  filters.value = { ...resetFilters }
+const handleReset = () => {
+  // Wyczyść filtry w store
+  searchStore.resetFilters()
   
   // Zresetuj sortowanie do domyślnego
   sortBy.value = 'newest'
-  priceDisplay.value = undefined
+  priceDisplay.value = null
   
   // Wyczyść parametry URL
   router.replace({ query: {} })
   
-  // Zapobiegaj przewijaniu do góry
-  window.scrollTo(0, window.scrollY)
+  // Smooth scroll do góry
+  window.scrollTo({ top: 0, behavior: 'smooth' })
   
   // Zresetuj flagę po zakończeniu
   setTimeout(() => {
@@ -717,17 +176,7 @@ const handleReset = (resetFilters: Filters) => {
 }
 
 const loadAdvertisements = async () => {
-  try {
-    isLoading.value = true
-    const data = await api.getAdvertisements()
-    // Backend returns only active listings
-    listings.value = data
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-  } catch (error) {
-    console.error('Error loading listings:', error)
-  } finally {
-    isLoading.value = false
-  }
+  await searchStore.fetchListings()
 }
 
 // Watch for URL query parameter changes
@@ -740,7 +189,7 @@ watch(() => route.query, (newQuery) => {
   // Aktualizuj numer strony
   const page = parseInt(newQuery.page as string) || 1
   if (page !== currentPage.value && page >= 1 && page <= totalPages.value) {
-    currentPage.value = page
+    searchStore.setCurrentPage(page)
   }
   
   // Aktualizuj filtry na podstawie query params
@@ -874,6 +323,13 @@ onMounted(() => {
         if (lastSearch._priceDisplayUnit) {
           priceDisplay.value = lastSearch._priceDisplayUnit as any
         }
+        
+        // Zaktualizuj URL filtrami z localStorage
+        const queryParams = filtersToQueryParams(lastSearch)
+        if (Object.keys(queryParams).length > 0) {
+          const newUrl = window.location.pathname + '?' + new URLSearchParams(queryParams).toString()
+          window.history.replaceState({}, document.title, newUrl)
+        }
       }
     } catch (error) {
       console.error('Error loading search from localStorage:', error)
@@ -1003,8 +459,8 @@ const handleSearchAlertSubmit = (email: string) => {
       :sort-by="sortBy"
       :price-display="priceDisplay"
       :active-filters-count="activeFiltersCount"
-      @toggle-favorite="$emit('toggleFavorite', $event)"
-      @toggle-comparison="$emit('toggleComparison', $event)"
+      @toggle-favorite="handleToggleFavorite"
+      @toggle-comparison="handleToggleComparison"
       @update:view-mode="viewMode = $event"
       @update:sort-by="sortBy = $event"
       @update:hovered-ad-id="hoveredAdId = $event"
@@ -1055,11 +511,12 @@ const handleSearchAlertSubmit = (email: string) => {
 
 <style scoped>
 .categories-section {
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  background: var(--bg-secondary, linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%));
   padding: 5rem 0;
   margin: 0;
   position: relative;
   overflow: hidden;
+  transition: background 0.3s ease;
 }
 
 .categories-section::before {
@@ -1098,7 +555,7 @@ const handleSearchAlertSubmit = (email: string) => {
   font-size: 2.5rem;
   font-weight: 800;
   text-align: center;
-  color: #1f2937;
+  color: var(--text-main, #1f2937);
   margin-bottom: 3.5rem;
   animation: fadeInDown 0.6s ease-out;
 }
@@ -1110,21 +567,21 @@ const handleSearchAlertSubmit = (email: string) => {
 }
 
 .category-card {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+  background: var(--card-bg, rgba(255, 255, 255, 0.9));
   backdrop-filter: blur(10px);
   border-radius: 24px;
   padding: 2.5rem;
   text-decoration: none;
-  color: inherit;
+  color: var(--text-main, inherit);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15), 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--card-shadow, 0 8px 30px rgba(102, 126, 234, 0.15));
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   animation: fadeInUp 0.6s ease-out backwards;
-  border: 1px solid rgba(102, 126, 234, 0.15);
+  border: 1px solid var(--border-color, rgba(102, 126, 234, 0.15));
 }
 
 .category-card:nth-child(1) { animation-delay: 0.1s; }
@@ -1204,7 +661,7 @@ const handleSearchAlertSubmit = (email: string) => {
 .category-name {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text-main, #1f2937);
   margin: 0;
   position: relative;
   z-index: 1;
@@ -1221,7 +678,7 @@ const handleSearchAlertSubmit = (email: string) => {
 
 .category-description {
   font-size: 0.95rem;
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
   margin: 0;
   flex: 1;
   position: relative;
@@ -1231,7 +688,7 @@ const handleSearchAlertSubmit = (email: string) => {
 }
 
 .category-card:hover .category-description {
-  color: #4b5563;
+  color: var(--text-main, #4b5563);
 }
 
 .category-arrow {
@@ -1293,12 +750,6 @@ const handleSearchAlertSubmit = (email: string) => {
     justify-content: center;
   }
   
-  .category-icon img {
-    width: 100%;
-    height: 100%;
-    filter: invert(32%) sepia(79%) saturate(1100%) hue-rotate(260deg) brightness(95%) contrast(102%);
-  }
-  
   .category-name {
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
@@ -1317,10 +768,10 @@ const handleSearchAlertSubmit = (email: string) => {
     justify-content: center;
     gap: 0.5rem;
     padding: 1rem;
-    background: rgba(102, 126, 234, 0.1);
-    border: 1px solid rgba(102, 126, 234, 0.2);
+    background: var(--bg-tertiary, rgba(102, 126, 234, 0.1));
+    border: 1px solid var(--border-color, rgba(102, 126, 234, 0.2));
     border-radius: 12px;
-    color: #4F46E5;
+    color: var(--text-main, #4F46E5);
     font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
@@ -1395,21 +846,21 @@ const handleSearchAlertSubmit = (email: string) => {
 }
 
 .city-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(249, 250, 255, 0.9) 100%);
+  background: var(--card-bg, rgba(255, 255, 255, 0.9));
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2.25rem 2rem;
   text-decoration: none;
-  color: inherit;
+  color: var(--text-main, #1f2937);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--card-shadow, 0 8px 30px rgba(102, 126, 234, 0.15));
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
   animation: fadeInUp 0.6s ease-out backwards;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.4));
   min-height: 120px;
 }
 

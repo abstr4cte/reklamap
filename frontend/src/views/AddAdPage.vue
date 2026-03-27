@@ -4,30 +4,67 @@ import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 import ToastNotification from '../components/ToastNotification.vue'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-import icon from 'leaflet/dist/images/marker-icon.png'
-import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
-
-// Fix Leaflet icon paths
-const DefaultIcon = L.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41]
-})
-L.Marker.prototype.options.icon = DefaultIcon
-import { point } from '@turf/helpers'
-import polandGeoJson from '../assets/poland_highres.json'
-import { nsfwService } from '../services/nsfwService'
-import { VueDatePicker } from '@vuepic/vue-datepicker'
-import '@vuepic/vue-datepicker/dist/main.css'
+import { defineAsyncComponent } from 'vue'
+import type * as LType from 'leaflet'
 import { slugify } from '../utils/slugify'
-import { Filter } from 'bad-words'
 import { analytics } from '../utils/analytics'
+import { useSearchStore, defaultPriceUnitsByType, variantLabels } from '../stores/useSearchStore'
+import { mapTypeToUrlFormat } from '../utils/typeMapping'
+
+const VueDatePicker = defineAsyncComponent(() => import('@vuepic/vue-datepicker').then(m => m.VueDatePicker))
+import '@vuepic/vue-datepicker/dist/main.css'
+
+let L: typeof LType | null = null
+
+const loadLeaflet = async () => {
+  if (L) return L
+  const LModule = await import('leaflet')
+  L = LModule.default || LModule
+  await import('leaflet/dist/leaflet.css')
+  
+  const [icon, iconShadow] = await Promise.all([
+    import('leaflet/dist/images/marker-icon.png'),
+    import('leaflet/dist/images/marker-shadow.png')
+  ])
+  
+  const DefaultIcon = L!.icon({
+    iconUrl: icon.default,
+    shadowUrl: iconShadow.default,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+  })
+  L!.Marker.prototype.options.icon = DefaultIcon
+  return L
+}
+
+let turfPoint: any = null
+let turfBooleanPointInPolygon: any = null
+let polandGeoJsonData: any = null
+
+const loadGeoUtils = async () => {
+  if (turfPoint && turfBooleanPointInPolygon && polandGeoJsonData) return
+  const [pointModule, polygonModule, geojsonData] = await Promise.all([
+    import('@turf/helpers'),
+    import('@turf/boolean-point-in-polygon'),
+    import('../assets/poland_highres.json')
+  ])
+  turfPoint = pointModule.point
+  turfBooleanPointInPolygon = polygonModule.default
+  polandGeoJsonData = geojsonData.default
+}
+
+let profanityFilterInstance: any = null;
+const getProfanityFilter = async () => {
+  if (profanityFilterInstance) return profanityFilterInstance;
+  const { Filter } = await import('bad-words');
+  profanityFilterInstance = new Filter();
+  const polishBadWords = ['kurwa', 'chuj', 'pizda', 'jebac', 'pierdolic', 'spierdalaj', 'cipa', 'dupa', 'skurwysyn', 'cholera', 'gowno'];
+  profanityFilterInstance.addWords(...polishBadWords);
+  return profanityFilterInstance;
+}
 
 const router = useRouter()
+const searchStore = useSearchStore()
 
 const currentStep = ref(1)
 const totalSteps = 6
@@ -103,9 +140,6 @@ const formatDate = (date: Date | null): string => {
 
 const errors = ref<Record<string, string>>({})
 const isSubmitting = ref(false)
-const profanityFilter = new Filter();
-const polishBadWords = ['kurwa', 'chuj', 'pizda', 'jebac', 'pierdolic', 'spierdalaj', 'cipa', 'dupa', 'skurwysyn', 'cholera', 'gowno'];
-profanityFilter.addWords(...polishBadWords);
 const addressSuggestions = ref<any[]>([])
 const showAddressSuggestions = ref(false)
 const mapContainer = ref<HTMLElement | null>(null)
@@ -114,8 +148,8 @@ const toastMessage = ref('')
 const isResolvingAddress = ref(false)
 const showMapModal = ref(false)
 const modalMapContainer = ref<HTMLElement | null>(null)
-let modalMap: L.Map | null = null
-let modalMarker: L.Marker | null = null
+let modalMap: LType.Map | null = null
+let modalMarker: LType.Marker | null = null
 const modalSearchQuery = ref('')
 const modalSearchSuggestions = ref<any[]>([])
 const showModalSearchSuggestions = ref(false)
@@ -126,8 +160,8 @@ const isDragging = ref(false)
 const draggedImageIndex = ref<number | null>(null)
 const dragOverTarget = ref<number | null>(null)
 const isLoadingImages = ref(false)
-let map: L.Map | null = null
-let marker: L.Marker | null = null
+let map: LType.Map | null = null
+let marker: LType.Marker | null = null
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
 const displayToast = (message: string) => {
@@ -245,124 +279,19 @@ watch(() => formData.value.type, (newType: string) => {
     formData.value.environment = ''
   }
 
-  // Automatyczne ustawienie domyślnej jednostki ceny na podstawie typu
-  const defaultPriceUnits: { [key: string]: string } = {
-    'billboard': 'month',
-    'wall': 'month',
-    'banner': 'day',
-    'citylight': 'month',
-    'led_screen': 'month',
-    'totem': 'month',
-    'transport': 'month',
-    'mobile': 'day',
-    'other': 'day'
-  }
-  
-  if (defaultPriceUnits[newType]) {
-    formData.value.priceUnit = defaultPriceUnits[newType] as 'day' | 'week' | 'month' | 'year' | 'campaign'
+  if (defaultPriceUnitsByType[newType]) {
+    formData.value.priceUnit = defaultPriceUnitsByType[newType] as 'day' | 'week' | 'month' | 'year' | 'campaign'
   }
 })
 
 // Computed properties dla dynamicznych opcji
-const availablePriceUnits = computed(() => {
-  const type = formData.value.type
-  if (type === 'billboard') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'month', label: 'za miesiąc' }
-    ]
-  } else if (type === 'wall') {
-    return [
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'year', label: 'za rok' }
-    ]
-  } else if (type === 'banner') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'week', label: 'za tydzień' },
-      { value: 'month', label: 'za miesiąc' }
-    ]
-  } else if (type === 'citylight') {
-    return [{ value: 'month', label: 'za miesiąc' }]
-  } else if (type === 'led_screen') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  } else if (type === 'totem') {
-    return [{ value: 'month', label: 'za miesiąc' }]
-  } else if (type === 'transport') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  } else if (type === 'mobile') {
-    return [{ value: 'day', label: 'za dzień' }, { value: 'campaign', label: 'za kampanię' }]
-  } else if (type === 'other') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  }
-  return [
-    { value: 'day', label: 'za dzień' },
-    { value: 'week', label: 'za tydzień' },
-    { value: 'month', label: 'za miesiąc' },
-    { value: 'year', label: 'za rok' }
-  ]
-})
+const availablePriceUnits = computed(() => searchStore.getAvailablePriceUnits(formData.value.type))
 
 const variantOptions = computed(() => {
   const type = formData.value.type
-  switch (type) {
-    case 'billboard':
-      return [
-        { value: 'standard', label: 'Jednostronny' },
-        { value: 'two_sided', label: 'Dwustronny (back-to-back)' },
-        { value: 'three_sided', label: 'Trójstronny (prismatron)' },
-        { value: 'scrolling', label: 'Scrolling / Rolowany' }
-      ]
-    case 'citylight':
-      return [
-        { value: 'single_sided', label: 'Jednostronny' },
-        { value: 'double_sided', label: 'Dwustronny' },
-        { value: 'scrolling', label: 'Scrolling (rotacyjny)' },
-        { value: 'digital', label: 'Cyfrowy (DOOH)' }
-      ]
-    case 'led_screen':
-      return [
-        { value: 'standard', label: 'Standardowy' },
-        { value: 'interactive', label: 'Interaktywny' }
-      ]
-    case 'totem':
-      return [
-        { value: 'single_sided', label: 'Jednostronny' },
-        { value: 'double_sided', label: 'Dwustronny' },
-        { value: 'multi_sided', label: 'Wielostronny / Kolumna' },
-        { value: 'pylon', label: 'Pylon (przy drodze)' },
-        { value: 'digital', label: 'Cyfrowy (LED)' }
-      ]
-    case 'transport':
-      return [
-        { value: 'bus', label: 'Autobus' },
-        { value: 'tram', label: 'Tramwaj' },
-        { value: 'metro', label: 'Metro' },
-        { value: 'train', label: 'Pociąg / SKM / Kolej' },
-        { value: 'stop', label: 'Przystanek' }
-      ]
-    case 'mobile':
-      return [
-        { value: 'trailer', label: 'Przyczepka' },
-        { value: 'car', label: 'Samochód' },
-        { value: 'bike', label: 'Rower' },
-        { value: 'other', label: 'Inna' }
-      ]
-    default:
-      return []
-  }
+  if (!type) return []
+  const typeLabels = variantLabels[type] || {}
+  return Object.entries(typeLabels).map(([value, label]) => ({ value, label: label as string }))
 })
 
 const requiresDimensions = computed(() => {
@@ -583,20 +512,23 @@ const calculateCampaignPrice = (unit: 'day' | 'total') => {
   }
 }
 
-const isInPoland = (lat: number, lng: number): boolean => {
-  const pt = point([lng, lat])
-  // Iterate over all features (voivodeships) to check if point is in Poland
+const isInPoland = async (lat: number, lng: number): Promise<boolean> => {
+  await loadGeoUtils()
+  const pt = turfPoint([lng, lat])
   // @ts-ignore
-  for (const feature of polandGeoJson.features) {
-    if (booleanPointInPolygon(pt, feature.geometry as any)) {
+  for (const feature of polandGeoJsonData.features) {
+    if (turfBooleanPointInPolygon(pt, feature.geometry as any)) {
       return true
     }
   }
   return false
 }
 
-const initMap = () => {
+const initMap = async () => {
   if (!mapContainer.value || map) return
+
+  await loadLeaflet()
+  if (!L) return
 
   // Granice Polski (bardziej rozszerzone) - aby markery/popupy nie były ucinane
   const polandBounds = L.latLngBounds(
@@ -623,7 +555,8 @@ const initMap = () => {
   marker.on('dragend', async () => {
     const position = marker!.getLatLng()
     // First check client-side GeoJSON
-    if (!isInPoland(position.lat, position.lng)) {
+    const isInside = await isInPoland(position.lat, position.lng)
+    if (!isInside) {
       displayToast('Lokalizacja musi być w Polsce')
       marker!.setLatLng([formData.value.latitude, formData.value.longitude])
       return
@@ -641,9 +574,10 @@ const initMap = () => {
     formData.value.longitude = position.lng
   })
 
-  map.on('click', async (e: L.LeafletMouseEvent) => {
+  map!.on('click', async (e: LType.LeafletMouseEvent) => {
     // First check client-side GeoJSON
-    if (!isInPoland(e.latlng.lat, e.latlng.lng)) {
+    const isInside = await isInPoland(e.latlng.lat, e.latlng.lng)
+    if (!isInside) {
       displayToast('Lokalizacja musi być w Polsce')
       return
     }
@@ -722,13 +656,14 @@ const searchAddress = (query: string) => {
   }, 500)
 }
 
-const selectAddress = (suggestion: any) => {
+const selectAddress = async (suggestion: any) => {
   const address = suggestion.address
   const lat = parseFloat(suggestion.lat)
   const lng = parseFloat(suggestion.lon)
 
   // Check if location is in Poland
-  if (!isInPoland(lat, lng)) {
+  const isInside = await isInPoland(lat, lng)
+  if (!isInside) {
     displayToast('Lokalizacja musi być w Polsce')
     showAddressSuggestions.value = false
     return
@@ -770,8 +705,11 @@ const closeMapModal = () => {
   }
 }
 
-const initModalMap = () => {
+const initModalMap = async () => {
   if (!modalMapContainer.value || modalMap) return
+
+  await loadLeaflet()
+  if (!L) return
 
   const polandBounds = L.latLngBounds([48.5, 13.5], [55.5, 24.5])
 
@@ -797,15 +735,17 @@ const initModalMap = () => {
 
   modalMarker.on('dragend', async () => {
     const position = modalMarker!.getLatLng()
-    if (!isInPoland(position.lat, position.lng)) {
+    const isInside = await isInPoland(position.lat, position.lng)
+    if (!isInside) {
       displayToast('Lokalizacja musi być w Polsce')
       modalMarker!.setLatLng([formData.value.latitude, formData.value.longitude])
       return
     }
   })
 
-  modalMap.on('click', async (e: L.LeafletMouseEvent) => {
-    if (!isInPoland(e.latlng.lat, e.latlng.lng)) {
+  modalMap!.on('click', async (e: LType.LeafletMouseEvent) => {
+    const isInside = await isInPoland(e.latlng.lat, e.latlng.lng)
+    if (!isInside) {
       displayToast('Lokalizacja musi być w Polsce')
       return
     }
@@ -838,11 +778,12 @@ const searchModalLocation = () => {
   }, 500)
 }
 
-const selectModalLocation = (suggestion: any) => {
+const selectModalLocation = async (suggestion: any) => {
   const lat = parseFloat(suggestion.lat)
   const lng = parseFloat(suggestion.lon)
   
-  if (!isInPoland(lat, lng)) {
+  const isInside = await isInPoland(lat, lng)
+  if (!isInside) {
     displayToast('Lokalizacja musi być w Polsce')
     return
   }
@@ -874,7 +815,8 @@ const confirmModalLocation = async () => {
 
   const position = modalMarker.getLatLng()
   
-  if (!isInPoland(position.lat, position.lng)) {
+  const isInside = await isInPoland(position.lat, position.lng)
+  if (!isInside) {
     displayToast('Lokalizacja musi być w Polsce')
     return
   }
@@ -949,6 +891,7 @@ const processFiles = async (files: FileList | null | undefined) => {
 
     // NSFW Check
     try {
+      const { nsfwService } = await import('../services/nsfwService')
       const nsfwResult = await nsfwService.checkImage(file)
       if (!nsfwResult.isSafe) {
         // Usuń placeholder jeśli zdjęcie nie przeszło weryfikacji
@@ -1188,7 +1131,7 @@ const nextStep = () => {
   }
 }
 
-const validateField = (field: 'title' | 'description') => {
+const validateField = async (field: 'title' | 'description') => {
   console.log(`Validating field: ${field}`);
   const value = formData.value[field];
   if (!value) return; // Don't validate empty fields on blur
@@ -1200,6 +1143,7 @@ const validateField = (field: 'title' | 'description') => {
   }
 
   // Check for profanity
+  const profanityFilter = await getProfanityFilter();
   if (profanityFilter.isProfane(value)) {
     errors.value[field] = `Pole ${field === 'title' ? 'Tytuł' : 'Opis'} zawiera niedozwolone słowa.`;
     return;
@@ -1430,34 +1374,7 @@ const handleSubmit = async () => {
 }
 
 
-const surfaceTypes = [
-  { value: 'billboard', label: 'Billboardy' },
-  { value: 'citylight', label: 'Citylighty' },
-  { value: 'led_screen', label: 'Ekrany LED' },
-  { value: 'banner', label: 'Banery' },
-  { value: 'wall', label: 'Ściany reklamowe' },
-  { value: 'totem', label: 'Totemy reklamowe' },
-  { value: 'transport', label: 'Reklama w transporcie' },
-  { value: 'mobile', label: 'Reklama mobilna' },
-  { value: 'other', label: 'Inne' }
-]
-
-// Mapowanie typów powierzchni reklamowych do formatu URL
-const mapTypeToUrlFormat = (type: string): string => {
-  const typeMapping: Record<string, string> = {
-    'billboard': 'billboardy',
-    'citylight': 'citylighty',
-    'led_screen': 'ekrany-led',
-    'banner': 'banery',
-    'wall': 'sciany-reklamowe',
-    'totem': 'totemy-reklamowe',
-    'transport': 'reklama-w-transporcie',
-    'mobile': 'reklama-mobilna',
-    'other': 'inne'
-  }
-  
-  return typeMapping[type] || 'inne'
-}
+// Mapowanie typów powierzchni reklamowych pobieramy z narzędzia typeMapping
 
 // Resetuj transportScope gdy wariant się zmieni
 watch(() => formData.value.variant, () => {
@@ -1477,7 +1394,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="add-listing-page">
+  <div>
+    <div class="add-listing-page">
     <!-- Toast Notification -->
     <ToastNotification ref="toast" />
     
@@ -1537,7 +1455,7 @@ onMounted(() => {
             <label class="form-label">Rodzaj powierzchni <span class="required">*</span></label>
             <select v-model="formData.type" class="form-select" :class="{ 'error': errors.type }">
               <option value="">Wybierz rodzaj</option>
-              <option v-for="type in surfaceTypes" :key="type.value" :value="type.value">
+              <option v-for="type in searchStore.adTypes" :key="type.value" :value="type.value">
                 {{ type.label }}
               </option>
             </select>
@@ -2408,6 +2326,7 @@ onMounted(() => {
       <div class="modal-footer">
         <button type="button" @click="closeMapModal" class="btn-cancel-modal">Anuluj</button>
         <button type="button" @click="confirmModalLocation" class="btn-primary-modal">Potwierdź lokalizację</button>
+      </div>
       </div>
     </div>
   </div>

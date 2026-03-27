@@ -36,18 +36,19 @@ const emit = defineEmits<{
 
 <style scoped>
 .alert-box {
-  background: white;
+  background: var(--card-bg, white);
   border-radius: 16px;
   padding: 2rem;
-  border: 2px dashed #e5e7eb;
+  border: 2px dashed var(--border-color, #e5e7eb);
   margin-top: 2rem;
   margin-bottom: 4rem;
   transition: all 0.3s ease;
+  color: var(--text-main, #111827);
 }
 
 .alert-box:hover {
-  border-color: #667eea;
-  background: #f8faff;
+  border-color: var(--primary-color, #667eea);
+  background: var(--bg-secondary, #f8faff);
 }
 
 
@@ -67,12 +68,12 @@ const emit = defineEmits<{
 .alert-icon {
   width: 48px;
   height: 48px;
-  background: #f3f4f6;
+  background: var(--bg-tertiary, #f3f4f6);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #667eea;
+  color: var(--primary-color, #667eea);
   flex-shrink: 0;
 }
 
@@ -80,12 +81,12 @@ const emit = defineEmits<{
 .alert-title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--text-main, #111827);
   margin-bottom: 0.25rem;
 }
 
 .alert-desc {
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
   font-size: 0.95rem;
   margin: 0;
   line-height: 1.5;

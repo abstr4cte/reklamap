@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import type { Advertisement } from '../types'
 import { slugify } from '../utils/slugify'
+import { usePreferencesStore } from '../stores/usePreferencesStore'
+import { useSearchStore, typeColors } from '../stores/useSearchStore'
+import { mapTypeToUrlFormat } from '../utils/typeMapping'
 
 import WebPImage from './WebPImage.vue'
 
@@ -10,42 +13,14 @@ const props = defineProps<{
   isFavorite?: boolean
   isInComparison?: boolean
   viewMode?: 'grid' | 'list'
-  priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
+  priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign' | null
 }>()
 
-const localIsFavorite = ref(props.isFavorite)
-const localIsInComparison = ref(props.isInComparison)
+const prefStore = usePreferencesStore()
+const searchStore = useSearchStore()
 
-// Watch props changes
-watch(() => props.isFavorite, (newVal) => {
-  localIsFavorite.value = newVal
-})
-
-watch(() => props.isInComparison, (newVal) => {
-  localIsInComparison.value = newVal
-})
-
-// Listen to localStorage changes
-const handleStorageChange = () => {
-  const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
-  const comparison = JSON.parse(localStorage.getItem('comparison') || '[]')
-  localIsFavorite.value = favorites.includes(props.ad.id)
-  localIsInComparison.value = comparison.includes(props.ad.id)
-}
-
-onMounted(() => {
-  if (typeof window !== 'undefined') {
-    window.addEventListener('localStorageChange', handleStorageChange)
-    window.addEventListener('storage', handleStorageChange)
-  }
-})
-
-onUnmounted(() => {
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('localStorageChange', handleStorageChange)
-    window.removeEventListener('storage', handleStorageChange)
-  }
-})
+const localIsFavorite = computed(() => prefStore.isFavorite(props.ad.id))
+const localIsInComparison = computed(() => prefStore.isCompared(props.ad.id))
 
 const emit = defineEmits<{
   toggleFavorite: [id: string]
@@ -54,21 +29,7 @@ const emit = defineEmits<{
   hoverEnd: [id: null]
 }>()
 
-const mapTypeToUrlFormat = (type: string): string => {
-  const typeMapping: Record<string, string> = {
-    'billboard': 'billboardy',
-    'citylight': 'citylighty',
-    'led_screen': 'ekrany-led',
-    'banner': 'banery',
-    'wall': 'sciany-reklamowe',
-    'totem': 'totemy-reklamowe',
-    'transport': 'reklama-w-transporcie',
-    'mobile': 'reklama-mobilna',
-    'other': 'inne'
-  }
-  return typeMapping[type] || 'inne'
-}
-
+// Link helper
 const adLink = computed(() => {
   const city = slugify(props.ad.city)
   const title = slugify(props.ad.title)
@@ -76,29 +37,11 @@ const adLink = computed(() => {
   return `/powierzchnia-reklamowa/${type}/${city}/${title}-${props.ad.id}`
 })
 
-const typeColors: Record<string, string> = {
-  billboard: '#EF4444',
-  citylight: '#F59E0B',
-  led_screen: '#10B981',
-  banner: '#8B5CF6',
-  wall: '#EC4899',
-  totem: '#3B82F6',
-  transport: '#14B8A6',
-  mobile: '#F97316',
-  other: '#6B7280'
-}
-
-const typeLabels: Record<string, string> = {
-  billboard: 'Billboardy',
-  citylight: 'Citylighty',
-  led_screen: 'Ekrany LED',
-  banner: 'Banery',
-  wall: 'Ściany reklamowe',
-  totem: 'Totemy reklamowe',
-  transport: 'Reklama w transporcie',
-  mobile: 'Reklama mobilna',
-  other: 'Inne'
-}
+// Helpers from store
+const getTypeLabel = (type: string) => searchStore.getTypeLabel(type)
+const getStatusLabel = (ad: Advertisement) => searchStore.getStatusLabel(ad)
+const getStatusColor = (ad: Advertisement) => searchStore.getStatusColor(ad)
+const formatLocation = (loc: string, city: string) => searchStore.formatLocation(loc, city)
 
 const handleFavoriteClick = (e: Event) => {
   e.preventDefault()
@@ -113,71 +56,13 @@ const handleComparisonClick = (e: Event) => {
 }
 
 const imageAlt = computed(() => {
-  const typeLabel = typeLabels[props.ad.type] || 'Powierzchnia reklamowa'
+  const typeLabel = searchStore.getTypeLabel(props.ad.type)
   return `${typeLabel} ${props.ad.city} - ${props.ad.title}`
 })
 
-// Funkcja do pobierania ceny - taka sama jak w AdvertisementsPage
-const getPrice = (period: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign') => {
-  const basePrice = props.ad.price
-  const adPriceUnit = props.ad.price_unit || 'month'
-
-  // If the ad's unit matches the requested period, return the price as-is
-  if (adPriceUnit === period) {
-    return basePrice
-  }
-
-  // Convert from ad's unit to requested period
-  let pricePerMonth = basePrice
-  
-  // First convert to monthly price
-  switch (adPriceUnit) {
-    case 'day':
-      pricePerMonth = basePrice * 30
-      break
-    case 'week':
-      pricePerMonth = basePrice * 4
-      break
-    case 'month':
-      pricePerMonth = basePrice
-      break
-    case 'year':
-      pricePerMonth = basePrice / 12
-      break
-    case 'campaign':
-      pricePerMonth = basePrice
-      break
-  }
-
-  // Then convert from monthly to requested period
-  switch (period) {
-    case 'day':
-      return pricePerMonth / 30
-    case 'week':
-      return pricePerMonth / 4
-    case 'month':
-      return pricePerMonth
-    case 'year':
-      return pricePerMonth * 12
-    case 'campaign':
-      // If ad has campaign_duration, calculate based on days
-      if (props.ad.campaign_duration) {
-        return pricePerMonth * (props.ad.campaign_duration / 30)
-      }
-      // If no duration, return a very high number to sort at the end
-      return Number.MAX_SAFE_INTEGER
-    case 'sqm':
-      const area = props.ad.width && props.ad.height ? props.ad.width * props.ad.height : 1
-      return area > 0 ? pricePerMonth / area : Number.MAX_SAFE_INTEGER
-    default:
-      return pricePerMonth
-  }
-}
-
 const displayPrice = computed(() => {
-  // Use priceDisplay if provided (from sorting), otherwise use ad's price_unit
-  const displayUnit = props.priceDisplay || props.ad.price_unit || 'month'
-  return Math.round(getPrice(displayUnit as any))
+  const unit = props.priceDisplay || props.ad.price_unit || 'month'
+  return Math.round(searchStore.getPrice(props.ad, unit as any))
 })
 
 // Clean description without image data
@@ -210,126 +95,46 @@ const isMissingData = computed(() => {
 })
 
 const priceLabel = computed(() => {
-  // Use priceDisplay if provided (from sorting), otherwise use ad's price_unit
   const displayUnit = props.priceDisplay || props.ad.price_unit || 'month'
+  return searchStore.getPriceLabel(displayUnit as any, props.ad)
+})
 
-  switch (displayUnit) {
-    case 'day':
-      return '/dzień'
-    case 'week':
-      return '/tydzień'
-    case 'month':
-      return '/miesiąc'
-    case 'year':
-      return '/rok'
-    case 'campaign':
-      // For campaign, add duration in days if available
-      if (props.ad.campaign_duration) {
-        return `/kampanię (${props.ad.campaign_duration} dni)`
+
+// Entrance animation via IntersectionObserver
+const cardRef = ref<any>(null)
+const isVisible = ref(false)
+
+onMounted(() => {
+  if (typeof IntersectionObserver === 'undefined') {
+    isVisible.value = true
+    return
+  }
+  
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting) {
+        isVisible.value = true
+        observer.disconnect()
       }
-      return '/kampanię'
-    case 'sqm':
-      return '/m²'
-    default:
-      return '/miesiąc'
-  }
-})
+    },
+    { threshold: 0.1 }
+  )
 
-const formatLocation = (location: string, city: string) => {
-  // Extract street and number from full address
-  const parts = location.split(',').map(p => p.trim())
+  // cardRef might be the component proxy (router-link) or the DOM element itself
+  // we check for $el (component) or the element itself
+  const target = cardRef.value?.$el || cardRef.value
   
-  let streetWithNumber = ''
-  
-  if (parts.length >= 2) {
-    const firstPart = parts[0]
-    const secondPart = parts[1]
-    
-    // Check if first part is a number
-    if (/^\d+/.test(firstPart)) {
-      streetWithNumber = `${secondPart} ${firstPart}`
-    } else {
-      streetWithNumber = firstPart
-    }
+  if (target && target instanceof Element) {
+    observer.observe(target)
   } else {
-    streetWithNumber = parts[0] || location
-  }
-  
-  return `${streetWithNumber}, ${city}`
-}
-
-const statusLabel = computed(() => {
-  let currentStatus = props.ad.display_status || props.ad.status
-  
-  // Debug log
-  console.log('📊 Ogłoszenie ID:', props.ad.id, {
-    'Status z bazy': props.ad.status,
-    'Display status': props.ad.display_status,
-    'Data dostępności': props.ad.available_from || 'brak',
-    'Używany status': currentStatus
-  })
-  
-  // Jeśli status to soon_available, sprawdź czy data dostępności już minęła
-  if (currentStatus === 'soon_available' && props.ad.available_from) {
-    const availableDate = new Date(props.ad.available_from)
-    const today = new Date()
-    // Ustaw czas na początek dnia dla porównania
-    today.setHours(0, 0, 0, 0)
-    availableDate.setHours(0, 0, 0, 0)
-    
-    // Jeśli data dostępności to dzisiaj lub wcześniej, zmień status na active
-    if (availableDate <= today) {
-      currentStatus = 'active'
-    }
-  }
-  
-  switch (currentStatus) {
-    case 'active':
-      return 'Wolne'
-    case 'reserved':
-      return 'Zarezerwowane'
-    case 'soon_available':
-      return 'Wkrótce dostępne'
-    default:
-      return 'Nieznany'
+    // If we can't observe (e.g. no element found), fallback to visible
+    isVisible.value = true
   }
 })
-
-const statusColor = computed(() => {
-  let currentStatus = props.ad.display_status || props.ad.status
-  
-  // Jeśli status to soon_available, sprawdź czy data dostępności już minęła
-  if (currentStatus === 'soon_available' && props.ad.available_from) {
-    const availableDate = new Date(props.ad.available_from)
-    const today = new Date()
-    // Ustaw czas na początek dnia dla porównania
-    today.setHours(0, 0, 0, 0)
-    availableDate.setHours(0, 0, 0, 0)
-    
-    // Jeśli data dostępności to dzisiaj lub wcześniej, zmień status na active
-    if (availableDate <= today) {
-      currentStatus = 'active'
-    }
-  }
-  
-  switch (currentStatus) {
-    case 'active':
-      return '#10B981'
-    case 'reserved':
-      return '#F59E0B'
-    case 'soon_available':
-      return '#3B82F6'
-    default:
-      return '#6B7280'
-  }
-})
-
-
-
 </script>
 
 <template>
-  <router-link :to="adLink" class="listing-card" :class="{ 'list-view': viewMode === 'list' }" @mouseenter="emit('hoverStart', ad.id)" @mouseleave="emit('hoverEnd', null)">
+  <router-link ref="cardRef" :to="adLink" class="listing-card" :class="{ 'list-view': viewMode === 'list', 'is-visible': isVisible }" @mouseenter="emit('hoverStart', ad.id)" @mouseleave="emit('hoverEnd', null)">
     <div class="card-image">
       <WebPImage
         v-if="ad.image_url"
@@ -346,10 +151,10 @@ const statusColor = computed(() => {
         <span>Brak zdjęcia</span>
       </div>
       <div class="card-badge" :style="{ background: typeColors[ad.type] || '#6B7280' }">
-        {{ typeLabels[ad.type] || ad.type }}
+        {{ getTypeLabel(ad.type) }}
       </div>
-      <div class="status-badge" :style="{ background: statusColor }">
-        {{ statusLabel }}
+      <div class="status-badge" :style="{ background: getStatusColor(ad) }">
+        {{ getStatusLabel(ad) }}
       </div>
       <div v-if="(ad as any).estimated_daily_views" class="ots-badge">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -429,21 +234,29 @@ const statusColor = computed(() => {
 
 <style scoped>
 .listing-card {
-  background: white;
+  background: var(--card-bg, white);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  box-shadow: var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.08));
+  transition: all 0.3s ease, opacity 0.5s ease, transform 0.5s ease;
   height: 100%;
   display: flex;
   flex-direction: column;
   text-decoration: none;
-  color: inherit;
+  color: var(--text-main, inherit);
+  /* Entrance animation */
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.listing-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .listing-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
 }
 
 .card-image {
@@ -467,8 +280,8 @@ const statusColor = computed(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #f3f4f6;
-  color: #9ca3af;
+  background-color: var(--bg-tertiary, #f3f4f6);
+  color: var(--text-light, #9ca3af);
 }
 
 .no-image-placeholder svg {
@@ -594,7 +407,7 @@ const statusColor = computed(() => {
 .card-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1F2937;
+  color: var(--text-main, #1F2937);
   margin: 0;
   line-height: 1.3;
 }
@@ -604,12 +417,12 @@ const statusColor = computed(() => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #6B7280;
+  color: var(--text-muted, #6B7280);
   font-size: 0.9rem;
 }
 
 .card-description {
-  color: #6B7280;
+  color: var(--text-muted, #6b7280);
   font-size: 0.9rem;
   line-height: 1.5;
   display: -webkit-box;
@@ -625,7 +438,7 @@ const statusColor = computed(() => {
   align-items: center;
   margin-top: auto;
   padding-top: 1rem;
-  border-top: 1px solid #F3F4F6;
+  border-top: 1px solid var(--border-color, #F3F4F6);
 }
 
 .card-price {

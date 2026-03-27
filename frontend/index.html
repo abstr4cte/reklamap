@@ -13,6 +13,17 @@
   <meta name="theme-color" content="#667eea" />
   <meta name="msapplication-TileColor" content="#667eea" />
 
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+  
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
+
   <!-- Preconnect for Performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="dns-prefetch" href="https://fonts.googleapis.com" />

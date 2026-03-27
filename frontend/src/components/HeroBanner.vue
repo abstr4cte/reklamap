@@ -3,142 +3,30 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 import bannerImage from '../assets/banner.jpg'
+import { useSearchStore, type LocationSuggestion, popularLocations } from '../stores/useSearchStore'
+import { type FilterParams, DEFAULT_FILTERS } from '../types/filters'
 
 const scrollY = ref(0)
 const handleScroll = () => {
   scrollY.value = typeof window !== 'undefined' ? window.scrollY : 0
 }
 
-interface Filters {
-  keyword: string
-  type: string
-  region: string
-  city: string
-  priceFrom: number | null
-  priceTo: number | null
-  priceUnit: string
-  rentalPeriod: string
-  orientation: string
-  widthFrom: number | null
-  widthTo: number | null
-  heightFrom: number | null
-  heightTo: number | null
-  surfaceFrom: number | null
-  surfaceTo: number | null
-  trafficIntensity: string
-  trafficDirection: string
-  trafficType: string
-  status: string[]
-  environment: string
-  onlyWithImage: boolean
-  priceIncludesPrint: boolean
-  priceIncludesMounting: boolean
-  graphicDesignHelp: boolean
-  offerType: string
-  hasVatInvoice: boolean
-  hasBacklight: boolean
-  selectedLocationCoords?: { lat: number; lng: number } | null
-  // Type-specific filters
-  variant: string
-  roadClass: string
-  // LED screen filters
-  resolution: string
-  pixelPitchFrom: number | null
-  pixelPitchTo: number | null
-  brightnessFrom: number | null
-  brightnessTo: number | null
-  transportScope: string
-  vehicleCountFrom: number | null
-  vehicleCountTo: number | null
-  mobileExposureMode: string
-  campaignDurationFrom: number | null
-  campaignDurationTo: number | null
-  // Nowe pola dla rozszerzonych opcji
-  lightingType: string
-  dailyPassengersFrom: number | null
-  dailyPassengersTo: number | null
-  operatingZone: string
-  ambientLightControl: boolean
-  // Checkboxy dla podświetlenia
-  hasLightingTypeBanner: boolean
-  hasLightingTypeBillboard: boolean
-  _priceDisplayUnit?: string
-}
+
 
 const emit = defineEmits<{
-  search: [filters: Filters]
-  reset: [filters: Filters]
+  search: [filters: FilterParams & { _priceDisplayUnit?: string }]
+  reset: [filters: FilterParams]
 }>()
 
 const showAdvanced = ref(false)
+const searchStore = useSearchStore()
 
-const filters = ref<Filters>({
-  keyword: '',
-  type: '',
-  region: '',
-  city: '',
-  priceFrom: null,
-  priceTo: null,
-  priceUnit: 'month',
-  rentalPeriod: '',
-  orientation: '',
-  widthFrom: null,
-  widthTo: null,
-  heightFrom: null,
-  heightTo: null,
-  surfaceFrom: null,
-  surfaceTo: null,
-  trafficIntensity: '',
-  trafficDirection: '',
-  trafficType: '',
-  status: [],
-  environment: '',
-  onlyWithImage: false,
-  priceIncludesPrint: false,
-  priceIncludesMounting: false,
-  graphicDesignHelp: false,
-  offerType: '',
-  hasVatInvoice: false,
-  hasBacklight: false,
-  // Type-specific filters
-  variant: '',
-  roadClass: '',
-  // LED screen filters
-  resolution: '',
-  pixelPitchFrom: null,
-  pixelPitchTo: null,
-  brightnessFrom: null,
-  brightnessTo: null,
-  transportScope: '',
-  vehicleCountFrom: null,
-  vehicleCountTo: null,
-  mobileExposureMode: '',
-  campaignDurationFrom: null,
-  campaignDurationTo: null,
-  // Nowe pola dla rozszerzonych opcji
-  lightingType: '',
-  dailyPassengersFrom: null,
-  dailyPassengersTo: null,
-  operatingZone: '',
-  ambientLightControl: false,
-  // Checkboxy dla podświetlenia
-  hasLightingTypeBanner: false,
-  hasLightingTypeBillboard: false,
-  _priceDisplayUnit: undefined,
+const filters = ref<FilterParams & { _priceDisplayUnit?: string }>({
+  ...searchStore.filters,
+  _priceDisplayUnit: undefined
 })
 
-const adTypes = [
-  { value: '', label: 'Wszystkie typy' },
-  { value: 'billboard', label: 'Billboardy' },
-  { value: 'citylight', label: 'Citylighty' },
-  { value: 'led_screen', label: 'Ekrany LED' },
-  { value: 'banner', label: 'Banery' },
-  { value: 'wall', label: 'Ściany reklamowe' },
-  { value: 'totem', label: 'Totemy reklamowe' },
-  { value: 'transport', label: 'Reklama w transporcie' },
-  { value: 'mobile', label: 'Reklama mobilna' },
-  { value: 'other', label: 'Inne' }
-]
+const adTypes = searchStore.adTypes
 
 const regions = [
   { value: '', label: 'Wszystkie' },
@@ -156,45 +44,20 @@ const isLoadingLocations = ref(false)
 // Funkcja do walidacji i konwersji liczb
 const handleNumberInput = (value: string, allowDecimals: boolean = false): string => {
   if (value === '') return ''
-  
-  // Pozwól tylko na cyfry i opcjonalnie na przecinek/kropkę
   let filtered = value.replace(/[^\d.,]/g, '')
-  
-  // Zamień przecinek na kropkę dla spójności
   filtered = filtered.replace(',', '.')
-  
-  // Jeśli nie pozwalamy na decimals, usuń je
   if (!allowDecimals) {
     filtered = filtered.replace(/\./g, '')
   } else {
-    // Pozwól tylko na jedną kropkę
     const parts = filtered.split('.')
     if (parts.length > 2) {
       filtered = parts[0] + '.' + parts.slice(1).join('')
     }
   }
-  
   return filtered
 }
 
-const popularLocations: LocationSuggestion[] = [
-  { type: 'city', value: 'Warszawa', label: 'Warszawa' },
-  { type: 'city', value: 'Kraków', label: 'Kraków' },
-  { type: 'city', value: 'Wrocław', label: 'Wrocław' },
-  { type: 'city', value: 'Poznań', label: 'Poznań' },
-  { type: 'city', value: 'Gdańsk', label: 'Gdańsk' },
-]
-
-interface LocationSuggestion {
-  type: 'region' | 'city'
-  value: string
-  label: string
-  subtitle?: string
-  coords?: { lat: number; lng: number }
-  addresstype?: string
-  osmType?: string
-  osmClass?: string
-}
+// popularLocations imported from store
 
 const locationSuggestions = computed(() => {
   if (!locationQuery.value) {
@@ -202,113 +65,18 @@ const locationSuggestions = computed(() => {
   }
 
   const query = locationQuery.value.toLowerCase()
-  const suggestions: LocationSuggestion[] = []
-
-  // Filter regions from JSON (instant)
   const matchingRegions = regions
     .filter(r => r.value && r.label.toLowerCase().includes(query))
     .map(r => ({ type: 'region' as const, value: r.value, label: r.label }))
 
-  // Add API results (cities, towns, villages)
-  const apiSuggestions = apiLocationResults.value
-    .map(loc => {
-    // Use state from Nominatim address
-    const voivodeship = loc.state || ''
-    
-    // Extract detailed location from displayName
-    // displayName format: "Jelitkowo, Gdańsk, Pomorskie, Polska"
-    const parts = loc.displayName.split(', ')
-    let detailedLocation = ''
-    
-    if (parts.length >= 2) {
-      // If first part is different from city name, it's a district/suburb
-      if (parts[0] !== loc.name && parts[1] === loc.name) {
-        detailedLocation = `${parts[0]}, ${loc.name}`
-      } else {
-        detailedLocation = loc.name
-      }
-    } else {
-      detailedLocation = loc.name
-    }
-    
-    // Construct subtitle with city if available and different from name
-    let subtitleParts: string[] = []
-    
-    // Add city to subtitle if it exists, is different from the main name, 
-    // and isn't already part of the detailed location label
-    if (loc.city && loc.city !== loc.name && !detailedLocation.includes(loc.city)) {
-      subtitleParts.push(loc.city)
-    }
-    
-    if (voivodeship) {
-      subtitleParts.push(voivodeship)
-    }
-    
-    subtitleParts.push('Polska')
-    
-    return {
-      type: 'city' as const,
-      value: loc.name,
-      label: detailedLocation,
-      subtitle: subtitleParts.join(', '),
-      coords: { lat: loc.lat, lng: loc.lng },
-      addresstype: loc.addresstype,
-      osmType: loc.osmType,
-      osmClass: loc.osmClass
-    }
-  })
-
-  // Deduplicate by city + state, preferring place/city over boundary
-  const uniqueCities = new Map<string, LocationSuggestion>()
-  apiSuggestions.forEach(suggestion => {
-    // Create key with city name and voivodeship to show cities from different voivodeships
-    const cityKey = `${suggestion.value}|${suggestion.subtitle.split(', ').slice(-2)[0] || ''}`
-    const existing = uniqueCities.get(cityKey)
-    if (!existing) {
-      uniqueCities.set(cityKey, suggestion)
-    } else {
-      // Calculate priority for current and existing
-      // Priority: place/city > place/town > addresstype=city > others
-      const getPriority = (s: LocationSuggestion) => {
-        if (s.osmClass === 'place' && s.osmType === 'city') return 4
-        if (s.osmClass === 'place' && s.osmType === 'town') return 3
-        if (s.addresstype === 'city') return 2
-        if (s.type === 'city') return 1
-        return 0
-      }
-      
-      const currentPriority = getPriority(suggestion)
-      const existingPriority = getPriority(existing)
-      
-      if (currentPriority > existingPriority) {
-        uniqueCities.set(cityKey, suggestion)
-      }
-    }
-  })
-  const deduplicatedSuggestions = Array.from(uniqueCities.values())
-
-  suggestions.push(...matchingRegions, ...deduplicatedSuggestions)
-  return suggestions.slice(0, 10)
+  const apiSuggestions = searchStore.processLocationSuggestions(apiLocationResults.value)
+  
+  return [...matchingRegions, ...apiSuggestions].slice(0, 10)
 })
 
 const selectLocation = (suggestion: LocationSuggestion) => {
-  locationQuery.value = suggestion.label
-  
-  if (suggestion.type === 'region') {
-    // Find the matching region ID from polishLocations
-    const matchingRegion = polishLocations.voivodeships.find(
-      v => v.name === suggestion.label
-    )
-    filters.value.region = matchingRegion?.id || suggestion.value
-    filters.value.city = ''
-    filters.value.selectedLocationCoords = null
-  } else {
-    filters.value.city = suggestion.value
-    filters.value.region = ''
-    // Store coordinates if available from API
-    filters.value.selectedLocationCoords = suggestion.coords || null
-  }
-  
+  const displayLabel = searchStore.selectLocationSuggestion(suggestion, filters.value)
+  locationQuery.value = displayLabel
   isLocationMenuOpen.value = false
 }
 
@@ -332,19 +100,26 @@ const handleLocationInput = () => {
     })
   } else {
     apiLocationResults.value = []
+    isLoadingLocations.value = false
   }
   
   // If user types custom text without selecting, treat as city search
   filters.value.city = locationQuery.value
+  filters.value.locationLabel = locationQuery.value
   filters.value.region = ''
+  filters.value.street = ''
   filters.value.selectedLocationCoords = null
+  filters.value.cityStrict = false
 }
 
 const clearLocation = () => {
   locationQuery.value = ''
   filters.value.city = ''
   filters.value.region = ''
+  filters.value.street = ''
+  filters.value.locationLabel = ''
   filters.value.selectedLocationCoords = null
+  filters.value.cityStrict = false
   apiLocationResults.value = []
 }
 
@@ -369,7 +144,7 @@ const goToPolandMap = () => {
 
 const LAST_SEARCH_KEY = 'reklamap_last_search'
 
-const saveLastSearch = (searchFilters: Filters) => {
+const saveLastSearch = (searchFilters: FilterParams) => {
   try {
     localStorage.setItem(LAST_SEARCH_KEY, JSON.stringify(searchFilters))
   } catch (error) {
@@ -389,7 +164,9 @@ const loadLastSearch = () => {
       }
 
       // Ustaw lokalizację do wyświetlenia w polu tekstowym
-      if (lastSearch.city) {
+      if (lastSearch.locationLabel) {
+        locationQuery.value = lastSearch.locationLabel
+      } else if (lastSearch.city) {
         locationQuery.value = lastSearch.city
       } else if (lastSearch.region) {
         const region = polishLocations.voivodeships.find(v => v.id === lastSearch.region)
@@ -428,6 +205,9 @@ const handleSearch = () => {
   if ((searchFilters.priceFrom !== null || searchFilters.priceTo !== null) && searchFilters.priceUnit) {
     // Dodaj specjalny parametr do emitowanego eventu
     searchFilters._priceDisplayUnit = searchFilters.priceUnit
+  } else {
+    // Jeśli nie ma ceny, wyczyść priceUnit (nie ma sensu go wysyłać w query params)
+    searchFilters.priceUnit = ''
   }
   
   // Zapisz ostatnie wyszukiwanie do localStorage
@@ -442,68 +222,18 @@ const handleSearch = () => {
 
 const resetFilters = () => {
   filters.value = {
-    keyword: '',
-    type: '',
-    region: '',
-    city: '',
-    priceFrom: null,
-    priceTo: null,
-    priceUnit: 'month',
-    rentalPeriod: '',
-    orientation: '',
-    widthFrom: null,
-    widthTo: null,
-    heightFrom: null,
-    heightTo: null,
-    surfaceFrom: null,
-    surfaceTo: null,
-    trafficIntensity: '',
-    trafficDirection: '',
-    trafficType: '',
-    status: [],
-    environment: '',
-    onlyWithImage: false,
-    priceIncludesPrint: false,
-    priceIncludesMounting: false,
-    graphicDesignHelp: false,
-    offerType: '',
-    hasVatInvoice: false,
-    hasBacklight: false,
-    selectedLocationCoords: null,
-    // Type-specific filters
-    variant: '',
-    roadClass: '',
-    // LED screen filters
-    resolution: '',
-    pixelPitchFrom: null,
-    pixelPitchTo: null,
-    brightnessFrom: null,
-    brightnessTo: null,
-    transportScope: '',
-    vehicleCountFrom: null,
-    vehicleCountTo: null,
-    mobileExposureMode: '',
-    campaignDurationFrom: null,
-    campaignDurationTo: null,
-    // Nowe pola dla rozszerzonych opcji
-    lightingType: '',
-    dailyPassengersFrom: null,
-    dailyPassengersTo: null,
-    operatingZone: '',
-    ambientLightControl: false,
-    // Checkboxy dla podświetlenia
-    hasLightingTypeBanner: false,
-    hasLightingTypeBillboard: false,
+    ...DEFAULT_FILTERS,
+    _priceDisplayUnit: undefined
   }
   locationQuery.value = ''
   apiLocationResults.value = []
   // Usuń zapisane wyszukiwanie
   try {
-    localStorage.removeItem(LAST_SEARCH_KEY)
+    localStorage.removeItem(LAST_SEARCH_KEY || 'reklamap_last_search')
   } catch (error) {
     console.error('Error clearing search filters:', error)
   }
-  emit('reset', { ...filters.value })
+  emit('reset', DEFAULT_FILTERS)
 }
 
 const isStatusMenuOpen = ref(false)
@@ -539,54 +269,19 @@ const showDimensionsFilter = computed(() => {
   return ['billboard', 'citylight', 'banner', 'wall', 'led_screen'].includes(type)
 })
 
-// Type-specific filter visibility
 const variantOptions = computed(() => {
   const type = filters.value.type
-  switch (type) {
-    case 'billboard':
-      return [
-        { value: 'standard', label: 'Jednostronny' },
-        { value: 'two_sided', label: 'Dwustronny (back-to-back)' },
-        { value: 'three_sided', label: 'Trójstronny (prismatron)' },
-        { value: 'scrolling', label: 'Scrolling / Rolowany' }
-      ]
-    case 'citylight':
-      return [
-        { value: 'single_sided', label: 'Jednostronny' },
-        { value: 'double_sided', label: 'Dwustronny' },
-        { value: 'scrolling', label: 'Scrolling (rotacyjny)' },
-        { value: 'digital', label: 'Cyfrowy (DOOH)' }
-      ]
-    case 'led_screen':
-      return [
-        { value: 'standard', label: 'Standardowy' },
-        { value: 'interactive', label: 'Interaktywny' }
-      ]
-    case 'totem':
-      return [
-        { value: 'single_sided', label: 'Jednostronny' },
-        { value: 'double_sided', label: 'Dwustronny' },
-        { value: 'multi_sided', label: 'Wielostronny / Kolumna' },
-        { value: 'pylon', label: 'Pylon (przy drodze)' },
-        { value: 'digital', label: 'Cyfrowy (LED)' }
-      ]
-    case 'transport':
-      return [
-        { value: 'bus', label: 'Autobus' },
-        { value: 'tram', label: 'Tramwaj' },
-        { value: 'metro', label: 'Metro' },
-        { value: 'train', label: 'Pociąg / SKM / Kolej' },
-        { value: 'stop', label: 'Przystanek' }
-      ]
-    case 'mobile':
-      return [
-        { value: 'trailer', label: 'Przyczepka' },
-        { value: 'car', label: 'Samochód' },
-        { value: 'other', label: 'Inna' }
-      ]
-    default:
-      return []
+  if (!type) return []
+  const labels: any = {
+    billboard: { standard: 'Jednostronny', two_sided: 'Dwustronny (back-to-back)', three_sided: 'Trójstronny (prismatron)', scrolling: 'Scrolling / Rolowany' },
+    citylight: { single_sided: 'Jednostronny', double_sided: 'Dwustronny', scrolling: 'Scrolling (rotacyjny)', digital: 'Cyfrowy (DOOH)' },
+    led_screen: { standard: 'Standardowy', interactive: 'Interaktywny' },
+    totem: { single_sided: 'Jednostronny', double_sided: 'Dwustronny', multi_sided: 'Wielostronny / Kolumna', pylon: 'Pylon (przy drodze)', digital: 'Cyfrowy (LED)' },
+    transport: { bus: 'Autobus', tram: 'Tramwaj', metro: 'Metro', train: 'Pociąg / SKM / Kolej', stop: 'Przystanek' },
+    mobile: { trailer: 'Przyczepka', car: 'Samochód', other: 'Inna' }
   }
+  const typeLabels = labels[type] || {}
+  return Object.entries(typeLabels).map(([value, label]) => ({ value, label: label as string }))
 })
 
 const showRoadClassFilter = computed(() => {
@@ -663,86 +358,13 @@ const transportScopeOptions = computed(() => {
   ]
 })
 
-const availablePriceUnits = computed(() => {
-  const type = filters.value.type
-  if (!type) {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'week', label: 'za tydzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'year', label: 'za rok' },
-      { value: 'sqm', label: 'za m²' }
-    ]
-  }
-  
-  if (type === 'citylight') {
-    return [
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'sqm', label: 'za m²' }
-    ]
-  } else if (type === 'billboard') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'week', label: 'za tydzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'year', label: 'za rok' },
-      { value: 'sqm', label: 'za m²' }
-    ]
-  } else if (type === 'wall') {
-    return [
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'year', label: 'za rok' },
-      { value: 'sqm', label: 'za m²' }
-    ]
-  } else if (type === 'banner') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'week', label: 'za tydzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'sqm', label: 'za m²' }
-    ]
-  } else if (type === 'led_screen') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  } else if (type === 'transport') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  } else if (type === 'mobile') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  }
-  
-  return [
-    { value: 'day', label: 'za dzień' },
-    { value: 'month', label: 'za miesiąc' }
-  ]
-})
+const availablePriceUnits = computed(() => searchStore.getAvailablePriceUnits(filters.value.type))
 
 const statusLabel = computed(() => {
-  if (filters.value.status.length === 0) return 'Wszystkie'
-  if (filters.value.status.length === 3) return 'Wszystkie'
-  
-  const labels: string[] = []
-  const map: Record<string, string> = { 
-    active: 'Wolne', 
-    reserved: 'Zarezerwowane', 
-    soon: 'Wkrótce dostępne' 
-  }
-  
-  for (const s of filters.value.status) {
-    if (map[s]) labels.push(map[s])
-  }
-  
-  if (labels.length <= 1) return labels.join(', ')
-  return `Wybrano (${labels.length})`
+  if (filters.value.status.length === 0 || filters.value.status.length === 3) return 'Wszystkie'
+  const map: any = { active: 'Wolne', reserved: 'Zarezerwowane', soon: 'Wkrótce dostępne', soon_available: 'Wkrótce dostępne' }
+  const labels = filters.value.status.map(s => map[s]).filter(Boolean)
+  return labels.length === 1 ? labels[0] : `Wybrano (${labels.length})`
 })
 
 const handleClickOutside = (event: MouseEvent) => {
@@ -768,6 +390,30 @@ onMounted(() => {
     window.addEventListener('scroll', handleScroll, { passive: true })
   }
 })
+
+// Synchronize with searchStore filters
+watch(() => searchStore.filters, (newStoreFilters) => {
+  // Update local filters
+  Object.keys(newStoreFilters).forEach(key => {
+    const k = key as keyof FilterParams
+    if (filters.value[k] !== newStoreFilters[k]) {
+      // @ts-ignore
+      filters.value[k] = newStoreFilters[k]
+    }
+  })
+
+  // Update location query display
+  if (newStoreFilters.locationLabel) {
+    locationQuery.value = newStoreFilters.locationLabel
+  } else if (newStoreFilters.city) {
+    locationQuery.value = newStoreFilters.city
+  } else if (newStoreFilters.region) {
+    const region = polishLocations.voivodeships.find(v => v.id === newStoreFilters.region)
+    locationQuery.value = region ? region.name : ''
+  } else {
+    locationQuery.value = ''
+  }
+}, { deep: true })
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
@@ -1507,10 +1153,10 @@ onBeforeUnmount(() => {
 }
 
 .search-card {
-  background: white;
+  background: var(--card-bg, white);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--card-shadow, 0 20px 60px rgba(0, 0, 0, 0.3));
   width: 100%;
   max-width: 1100px;
   transform: translateY(60px);
@@ -1551,18 +1197,19 @@ onBeforeUnmount(() => {
   gap: 0.5rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #4B5563;
+  color: var(--text-muted, #4B5563);
 }
 
 .search-input,
 .search-select {
   width: 100%;
   padding: 0.875rem 1rem;
-  border: 2px solid #E5E7EB;
+  border: 2px solid var(--border-color, #E5E7EB);
   border-radius: 10px;
   font-size: 0.95rem;
   transition: all 0.2s ease;
-  background: white;
+  background: var(--card-bg, white);
+  color: var(--text-main, #111827);
 }
 
 .search-input:focus,
@@ -1613,16 +1260,17 @@ onBeforeUnmount(() => {
   position: relative;
 }
 
-.city-suggestions {
+.city-suggestions,
+.suggestion-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
-  border: 2px solid #E5E7EB;
+  background: var(--card-bg, white);
+  border: 2px solid var(--border-color, #E5E7EB);
   border-radius: 10px;
   margin-top: 0.25rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow, 0 4px 12px rgba(0, 0, 0, 0.1));
   z-index: 10;
   max-height: 200px;
   overflow-y: auto;
@@ -1633,11 +1281,11 @@ onBeforeUnmount(() => {
   cursor: pointer;
   transition: background-color 0.2s ease;
   font-size: 0.95rem;
-  color: #1F2937;
+  color: var(--text-main, #1F2937);
 }
 
 .city-suggestion:hover {
-  background-color: #F3F4F6;
+  background-color: var(--bg-secondary, #F3F4F6);
 }
 
 .city-suggestion:first-child {
@@ -1713,14 +1361,14 @@ onBeforeUnmount(() => {
   cursor: pointer;
   transition: background-color 0.2s ease;
   font-size: 0.95rem;
-  color: #1F2937;
+  color: var(--text-main, #1F2937);
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
 .location-suggestion:hover {
-  background-color: #F3F4F6;
+  background-color: var(--bg-secondary, #F3F4F6);
 }
 
 .location-suggestion svg {
@@ -1863,7 +1511,7 @@ onBeforeUnmount(() => {
 
 .filter-section {
   padding: 1.25rem;
-  background: #F9FAFB;
+  background: var(--bg-secondary, #F9FAFB);
   border-radius: 10px;
 }
 
@@ -1890,7 +1538,7 @@ onBeforeUnmount(() => {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: white;
+  background: var(--card-bg, white);
   top: 3px;
   left: 3px;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1918,7 +1566,7 @@ onBeforeUnmount(() => {
 .section-title {
   font-size: 1rem;
   font-weight: 700;
-  color: #1F2937;
+  color: var(--text-main, #1F2937);
   margin: 0 0 1rem 0;
 }
 
@@ -1934,7 +1582,7 @@ onBeforeUnmount(() => {
   gap: 0.5rem;
   cursor: pointer;
   font-size: 0.875rem;
-  color: #4B5563;
+  color: var(--text-muted, #4B5563);
   font-weight: 500;
 }
 
@@ -1957,19 +1605,19 @@ onBeforeUnmount(() => {
 
 .reset-button {
   padding: 0.875rem 2rem;
-  background: white;
-  border: 2px solid #E5E7EB;
+  background: var(--card-bg, white);
+  border: 2px solid var(--border-color, #E5E7EB);
   border-radius: 10px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #6B7280;
+  color: var(--text-muted, #6B7280);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .reset-button:hover {
-  background: #F9FAFB;
-  border-color: #9CA3AF;
+  background: var(--bg-secondary, #F9FAFB);
+  border-color: var(--text-muted, #9CA3AF);
 }
 
 .search-button {
@@ -2100,12 +1748,12 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   padding: 0.875rem 1rem;
-  border: 2px solid #E5E7EB;
+  border: 2px solid var(--border-color, #E5E7EB);
   border-radius: 10px;
-  background: white;
+  background: var(--card-bg, white);
   cursor: pointer;
   font-size: 0.95rem;
-  color: #1F2937;
+  color: var(--text-main, #1F2937);
   transition: all 0.2s ease;
 }
 
@@ -2118,12 +1766,12 @@ onBeforeUnmount(() => {
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
-  border: 2px solid #E5E7EB;
+  background: var(--card-bg, white);
+  border: 2px solid var(--border-color, #E5E7EB);
   border-radius: 10px;
   margin-top: 0.25rem;
   padding: 0.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow, 0 4px 12px rgba(0, 0, 0, 0.1));
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -2141,7 +1789,7 @@ onBeforeUnmount(() => {
 }
 
 .checkbox-option:hover {
-  background-color: #F3F4F6;
+  background-color: var(--bg-secondary, #F3F4F6);
 }
 
 .checkbox-option input[type="checkbox"] {

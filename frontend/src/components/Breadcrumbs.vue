@@ -116,11 +116,11 @@ onUnmounted(() => {
   padding: 0;
   margin: 0;
   gap: 0.5rem;
-  background: white;
+  background: var(--card-bg, white);
   padding: 0.875rem 1.25rem;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
+  box-shadow: var(--card-shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--border-color, #e5e7eb);
 }
 
 .breadcrumb-item {
@@ -131,7 +131,7 @@ onUnmounted(() => {
 }
 
 .breadcrumb-link {
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
   text-decoration: none;
   transition: all 0.2s;
   cursor: pointer;
@@ -140,7 +140,7 @@ onUnmounted(() => {
 }
 
 .breadcrumb-link:hover {
-  color: #667eea;
+  color: var(--primary-color, #667eea);
 }
 
 .breadcrumb-link::after {
@@ -150,7 +150,7 @@ onUnmounted(() => {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--primary-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
   transition: width 0.3s ease;
 }
 
@@ -159,12 +159,12 @@ onUnmounted(() => {
 }
 
 .breadcrumb-current {
-  color: #374151;
+  color: var(--text-main, #374151);
   font-weight: 600;
 }
 
 .breadcrumb-separator {
-  color: #d1d5db;
+  color: var(--text-light, #d1d5db);
   flex-shrink: 0;
 }
 

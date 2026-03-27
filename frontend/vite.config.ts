@@ -7,9 +7,15 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        // Add hash to chunk filenames for cache busting
+        // Hash to chunk filenames for cache busting
         chunkFileNames: 'js/[name]-[hash].js',
         entryFileNames: 'js/[name]-[hash].js',
+        manualChunks: {
+          'leaflet-vendor': ['leaflet', 'leaflet.markercluster'],
+          'chart-vendor': ['chart.js', 'vue-chartjs'],
+          'tensorflow-vendor': ['@tensorflow/tfjs', 'nsfwjs'],
+          'date-utils': ['@vuepic/vue-datepicker'],
+        },
         assetFileNames: (assetInfo) => {
           const name = assetInfo.name || ''
           const info = name.split('.')

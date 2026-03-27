@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { api } from '../services/api'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
@@ -8,31 +8,58 @@ import type { Advertisement } from '../types'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import ToastNotification from '../components/ToastNotification.vue'
 import WebPImage from '../components/WebPImage.vue'
-import EngagementChart from '../components/EngagementChart.vue'
+import ManagementStats from '../components/management/ManagementStats.vue'
 import { nsfwService } from '../services/nsfwService'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-import icon from 'leaflet/dist/images/marker-icon.png'
-import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
-import { point } from '@turf/helpers'
-import polandGeoJson from '../assets/poland_highres.json'
+import type * as LType from 'leaflet'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
+import { useSearchStore } from '../stores/useSearchStore'
 
-// Fix Leaflet icon paths
-const DefaultIcon = L.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41]
-})
-L.Marker.prototype.options.icon = DefaultIcon
+let L: typeof LType | null = null
+
+const loadLeaflet = async () => {
+  if (L) return L
+  const LModule = await import('leaflet')
+  L = LModule.default || LModule
+  await import('leaflet/dist/leaflet.css')
+  
+  const [icon, iconShadow] = await Promise.all([
+    import('leaflet/dist/images/marker-icon.png'),
+    import('leaflet/dist/images/marker-shadow.png')
+  ])
+  
+  const DefaultIcon = L!.icon({
+    iconUrl: icon.default,
+    shadowUrl: iconShadow.default,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+  })
+  L!.Marker.prototype.options.icon = DefaultIcon
+  return L
+}
+
+let turfPoint: any = null
+let turfBooleanPointInPolygon: any = null
+let polandGeoJsonData: any = null
+
+const loadGeoUtils = async () => {
+  if (turfPoint && turfBooleanPointInPolygon && polandGeoJsonData) return
+  const [pointModule, polygonModule, geojsonData] = await Promise.all([
+    import('@turf/helpers'),
+    import('@turf/boolean-point-in-polygon'),
+    import('../assets/poland_highres.json')
+  ])
+  turfPoint = pointModule.point
+  turfBooleanPointInPolygon = polygonModule.default
+  polandGeoJsonData = geojsonData.default
+}
+
 
 const router = useRouter()
 const route = useRoute()
+const searchStore = useSearchStore()
 const listings = ref<Advertisement[]>([])
 const isLoading = ref(true)
 const tokenEmail = ref('')
@@ -66,8 +93,8 @@ const isResolvingAddress = ref(false)
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 const showMapModal = ref(false)
 const modalMapContainer = ref<HTMLElement | null>(null)
-let modalMap: L.Map | null = null
-let modalMarker: L.Marker | null = null
+let modalMap: LType.Map | null = null
+let modalMarker: LType.Marker | null = null
 const modalSearchQuery = ref('')
 const modalSearchSuggestions = ref<any[]>([])
 const showModalSearchSuggestions = ref(false)
@@ -76,13 +103,10 @@ let modalSearchTimeout: ReturnType<typeof setTimeout> | null = null
 const minDate = new Date()
 minDate.setHours(0, 0, 0, 0)
 
-const formatDate = (date: Date | null): string => {
+const formatDate = (date: any) => {
   if (!date) return ''
   const d = new Date(date)
-  const day = String(d.getDate()).padStart(2, '0')
-  const month = String(d.getMonth() + 1).padStart(2, '0')
-  const year = d.getFullYear()
-  return `${day}.${month}.${year}`
+  return d.toLocaleDateString('pl-PL')
 }
 
 const dragOverTarget = ref<{ index: number, type: 'existing' | 'new' } | null>(null)
@@ -91,6 +115,17 @@ const isSaving = ref(false)
 const isTokenInvalid = ref(false)
 const activeTab = ref<'listings' | 'statistics'>('listings')
 const engagementChartRef = ref<any>(null)
+const managementStatsRef = ref<any>(null)
+const pendingTopAdsMetric = ref<'views' | 'clicks' | undefined>(undefined)
+
+const handleStatsConfirmRequest = (title: string, message: string, type: 'info' | 'warning' | 'danger', adIds: string[], metric?: 'views' | 'clicks') => {
+  pendingTopAdsToAdd.value = adIds
+  pendingTopAdsMetric.value = metric
+  confirmDialogTitle.value = title
+  confirmDialogMessage.value = message
+  confirmDialogType.value = type
+  confirmDialog.value?.open()
+}
 
 // Funkcja do walidacji i konwersji liczb
 const handleNumberInput = (value: string, allowDecimals: boolean = false): string => {
@@ -521,26 +556,13 @@ const handleConfirmDialog = () => {
   }
 
   if (pendingTopAdsToAdd.value.length > 0) {
-    executeAddTopAdsToChart(pendingTopAdsToAdd.value, pendingTopAdsMetric.value)
+    managementStatsRef.value?.executeAddTopAdsToChart(pendingTopAdsToAdd.value, pendingTopAdsMetric.value)
     pendingTopAdsToAdd.value = []
     pendingTopAdsMetric.value = undefined
   }
 }
 
-const getTypeLabel = (type: string) => {
-  const labels: Record<string, string> = {
-    billboard: 'Billboardy',
-    citylight: 'Citylighty',
-    led_screen: 'Ekrany LED',
-    banner: 'Banery',
-    wall: 'Ściany reklamowe',
-    totem: 'Totemy reklamowe',
-    transport: 'Reklama w transporcie',
-    mobile: 'Reklama mobilna',
-    other: 'Inne'
-  }
-  return labels[type] || type
-}
+const getTypeLabel = (type: string) => searchStore.getTypeLabel(type)
 
 const openPreview = (id: string) => {
   const ad = listings.value.find(a => a.id === id)
@@ -742,11 +764,12 @@ const handleDrop = (event: DragEvent) => {
   isDragging.value = false
 }
 
-const isInPoland = (lat: number, lng: number): boolean => {
-  const pt = point([lng, lat])
+const isInPoland = async (lat: number, lng: number): Promise<boolean> => {
+  await loadGeoUtils()
+  const pt = turfPoint([lng, lat])
   // @ts-ignore
-  for (const feature of polandGeoJson.features) {
-    if (booleanPointInPolygon(pt, feature.geometry as any)) {
+  for (const feature of polandGeoJsonData.features) {
+    if (turfBooleanPointInPolygon(pt, feature.geometry as any)) {
       return true
     }
   }
@@ -770,8 +793,11 @@ const closeMapModal = () => {
   }
 }
 
-const initModalMap = () => {
+const initModalMap = async () => {
   if (!modalMapContainer.value || modalMap || !editingAd.value) return
+
+  await loadLeaflet()
+  if (!L) return
 
   const polandBounds = L.latLngBounds([48.5, 13.5], [55.5, 24.5])
 
@@ -797,15 +823,17 @@ const initModalMap = () => {
 
   modalMarker.on('dragend', async () => {
     const position = modalMarker!.getLatLng()
-    if (!isInPoland(position.lat, position.lng)) {
+    const isInside = await isInPoland(position.lat, position.lng)
+    if (!isInside) {
       toast.value?.add('Lokalizacja musi być w Polsce', 'error')
       modalMarker!.setLatLng([editingAd.value!.latitude, editingAd.value!.longitude])
       return
     }
   })
 
-  modalMap.on('click', async (e: L.LeafletMouseEvent) => {
-    if (!isInPoland(e.latlng.lat, e.latlng.lng)) {
+  modalMap!.on('click', async (e: LType.LeafletMouseEvent) => {
+    const isInside = await isInPoland(e.latlng.lat, e.latlng.lng)
+    if (!isInside) {
       toast.value?.add('Lokalizacja musi być w Polsce', 'error')
       return
     }
@@ -870,14 +898,15 @@ const searchModalLocation = () => {
   }, 500)
 }
 
-const selectModalLocation = (suggestion: any) => {
+const selectModalLocation = async (suggestion: any) => {
   const lat = suggestion.lat
   const lng = suggestion.lng
   
   // Handle both LocationResult and raw Nominatim response
   const isLocationResult = suggestion.name !== undefined && suggestion.displayName !== undefined
 
-  if (!isInPoland(lat, lng)) {
+  const isInside = await isInPoland(lat, lng)
+  if (!isInside) {
     toast.value?.add('Lokalizacja musi być w Polsce', 'error')
     return
   }
@@ -928,7 +957,8 @@ const confirmModalLocation = async () => {
 
   const position = modalMarker.getLatLng()
   
-  if (!isInPoland(position.lat, position.lng)) {
+  const isInside = await isInPoland(position.lat, position.lng)
+  if (!isInside) {
     toast.value?.add('Lokalizacja musi być w Polsce', 'error')
     return
   }
@@ -952,62 +982,7 @@ const showDimensionsFields = computed(() => {
 })
 
 // Computed property for available price units based on ad type
-const availablePriceUnits = computed(() => {
-  if (!editingAd.value) return []
-  const type = editingAd.value.type
-  
-  if (type === 'billboard') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'month', label: 'za miesiąc' }
-    ]
-  } else if (type === 'wall') {
-    return [
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'year', label: 'za rok' }
-    ]
-  } else if (type === 'banner') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'week', label: 'za tydzień' },
-      { value: 'month', label: 'za miesiąc' }
-    ]
-  } else if (type === 'citylight') {
-    return [{ value: 'month', label: 'za miesiąc' }]
-  } else if (type === 'led_screen') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  } else if (type === 'totem') {
-    return [{ value: 'month', label: 'za miesiąc' }]
-  } else if (type === 'transport') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  } else if (type === 'mobile') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  } else if (type === 'other') {
-    return [
-      { value: 'day', label: 'za dzień' },
-      { value: 'month', label: 'za miesiąc' },
-      { value: 'campaign', label: 'za kampanię' }
-    ]
-  }
-  
-  return [
-    { value: 'day', label: 'za dzień' },
-    { value: 'week', label: 'za tydzień' },
-    { value: 'month', label: 'za miesiąc' },
-    { value: 'year', label: 'za rok' }
-  ]
-})
+const availablePriceUnits = computed(() => editingAd.value ? searchStore.getAvailablePriceUnits(editingAd.value.type) : [])
 
 const showTrafficIntensity = computed(() => {
   if (!editingAd.value) return false
@@ -1220,186 +1195,8 @@ const handleSubmit = async () => {
   }
 }
 
-// Sprawdź czy ogłoszenie jest już na wykresie
-const isAdOnChart = (adId: string): boolean => {
-  if (!engagementChartRef.value) return false
-  const chartComponent = engagementChartRef.value as any
-  let selectedAds: string[] = []
-  
-  if (chartComponent.selectedAds?.value) {
-    selectedAds = chartComponent.selectedAds.value
-  } else if (Array.isArray(chartComponent.selectedAds)) {
-    selectedAds = chartComponent.selectedAds
-  }
-  
-  return selectedAds.includes(adId)
-}
 
-// Dodaj ogłoszenie do wykresu i scroll (lub pokaż komunikat jeśli max)
-const addAdToChart = (adId: string) => {
-  if (engagementChartRef.value) {
-    // Sprawdź czy jest miejsce
-    const chartComponent = engagementChartRef.value as any
-    let selectedAds: string[] = []
-    
-    // Spróbuj różne sposoby dostępu do selectedAds
-    if (chartComponent.selectedAds?.value) {
-      selectedAds = chartComponent.selectedAds.value
-    } else if (Array.isArray(chartComponent.selectedAds)) {
-      selectedAds = chartComponent.selectedAds
-    }
-    
-    // Sprawdź czy jest maksimum i ogłoszenie nie jest już dodane
-    if (selectedAds.length >= 5 && !selectedAds.includes(adId)) {
-      // Pokaż toast/komunikat - NIE scrolluj
-      if (toast.value) {
-        toast.value.add('Maksymalna ilość ogłoszeń (5) już dodana do wykresu', 'error')
-      }
-      return
-    }
-    
-    // Dodaj ogłoszenie
-    engagementChartRef.value.addAdsToChart([adId])
-    
-    // Scroll do wykresu z offsetem dla headera
-    nextTick(() => {
-      const chartElement = document.querySelector('.engagement-chart-container')
-      if (chartElement) {
-        const headerHeight = 80 // Przybliżona wysokość headera
-        const elementPosition = chartElement.getBoundingClientRect().top + window.scrollY
-        window.scrollTo({
-          top: elementPosition - headerHeight,
-          behavior: 'smooth'
-        })
-      }
-    })
-  }
-}
 
-const pendingTopAdsMetric = ref<'views' | 'clicks' | undefined>(undefined)
-
-// Dodaj top ogłoszenia do wykresu (nadpisz wszystkie)
-const addTopAdsToChart = (adIds: string[], metric?: 'views' | 'clicks') => {
-  if (engagementChartRef.value) {
-    const chartComponent = engagementChartRef.value as any
-    let selectedAds: string[] = []
-    
-    // Pobierz aktualnie wybrane ogłoszenia
-    if (chartComponent.selectedAds?.value) {
-      selectedAds = chartComponent.selectedAds.value
-    } else if (Array.isArray(chartComponent.selectedAds)) {
-      selectedAds = chartComponent.selectedAds
-    }
-    
-    // Jeśli są już wybrane ogłoszenia, pokaż potwierdzenie
-    if (selectedAds.length > 0) {
-      pendingTopAdsToAdd.value = adIds
-      pendingTopAdsMetric.value = metric
-      confirmDialogTitle.value = 'Nadpisać wybrane ogłoszenia?'
-      confirmDialogMessage.value = `Masz już dodane ogłoszenia na wykresie. Nadpisać i dodać nowe z wybranej tabeli?`
-      confirmDialogType.value = 'warning'
-      confirmDialog.value?.open()
-      return
-    }
-    
-    // Jeśli nie ma poprzednich wyborów, dodaj od razu
-    executeAddTopAdsToChart(adIds, metric)
-  }
-}
-
-// Wykonaj dodanie top ogłoszeń
-const executeAddTopAdsToChart = (adIds: string[], metric?: 'views' | 'clicks') => {
-  if (engagementChartRef.value) {
-    const chartComponent = engagementChartRef.value as any
-    
-    // Wyczyść poprzednie wybory i dodaj nowe
-    if (chartComponent.selectedAds) {
-      // Wyczyść wszystko
-      chartComponent.selectedAds.length = 0
-      // Dodaj nowe top 5
-      adIds.forEach((id: string) => {
-        chartComponent.selectedAds.push(id)
-      })
-    }
-    
-    // Ustaw metrykę jeśli podana
-    if (metric && typeof chartComponent.setMetric === 'function') {
-      chartComponent.setMetric(metric)
-    }
-
-    // Scroll do wykresu z offsetem dla headera
-    nextTick(() => {
-      const chartElement = document.querySelector('.engagement-chart-container')
-      if (chartElement) {
-        const headerHeight = 80 // Przybliżona wysokość headera
-        const elementPosition = chartElement.getBoundingClientRect().top + window.scrollY
-        window.scrollTo({
-          top: elementPosition - headerHeight,
-          behavior: 'smooth'
-        })
-      }
-    })
-  }
-}
-
-// Statistics computed properties
-const totalViews = computed(() => {
-  return listings.value.reduce((sum, ad) => sum + (ad.views_30d || 0), 0)
-})
-
-const totalPhoneClicks = computed(() => {
-  return listings.value.reduce((sum, ad) => sum + (ad.phone_clicks_30d || 0), 0)
-})
-
-const totalEmailClicks = computed(() => {
-  return listings.value.reduce((sum, ad) => sum + (ad.email_clicks_30d || 0), 0)
-})
-
-const totalEngagement = computed(() => {
-  return totalPhoneClicks.value + totalEmailClicks.value
-})
-
-const engagementRate = computed(() => {
-  if (totalViews.value === 0) return 0
-  return ((totalEngagement.value / totalViews.value) * 100).toFixed(2)
-})
-
-const topPerformingAds = computed(() => {
-  return [...listings.value]
-    .sort((a, b) => ((b.views_30d || 0) - (a.views_30d || 0)))
-    .slice(0, 5)
-})
-
-const mostEngagingAds = computed(() => {
-  return [...listings.value]
-    .sort((a, b) => {
-      const aEngagement = (a.phone_clicks_30d || 0) + (a.email_clicks_30d || 0)
-      const bEngagement = (b.phone_clicks_30d || 0) + (b.email_clicks_30d || 0)
-      return bEngagement - aEngagement
-    })
-    .slice(0, 5)
-})
-
-const adsByType = computed(() => {
-  const types: Record<string, number> = {}
-  listings.value.forEach(ad => {
-    types[ad.type] = (types[ad.type] || 0) + 1
-  })
-  return Object.entries(types).map(([type, count]) => ({
-    type,
-    label: getTypeLabel(type),
-    count
-  }))
-})
-
-const adsByStatus = computed(() => {
-  const statuses = {
-    active: listings.value.filter(ad => ad.status === 'active').length,
-    reserved: listings.value.filter(ad => ad.status === 'reserved').length,
-    soon_available: listings.value.filter(ad => ad.status === 'soon_available').length
-  }
-  return statuses
-})
 
 onMounted(async () => {
   await loadAdvertisements()
@@ -1576,222 +1373,15 @@ onBeforeUnmount(() => {
             </div>
 
             <!-- Statistics Dashboard -->
-            <div v-if="activeTab === 'statistics'" class="statistics-dashboard">
-              <!-- Summary Cards -->
-              <div class="stats-grid">
-                <div class="stat-card">
-                  <div class="stat-icon views">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
-                      <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                  </div>
-                  <div class="stat-content">
-                    <div class="stat-label">Łączne wyświetlenia</div>
-                    <div class="stat-value">{{ totalViews.toLocaleString('pl-PL') }}</div>
-                  </div>
-                </div>
-
-                <div class="stat-card">
-                  <div class="stat-icon phone">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                  </div>
-                  <div class="stat-content">
-                    <div class="stat-label">Kliknięcia w telefon</div>
-                    <div class="stat-value">{{ totalPhoneClicks.toLocaleString('pl-PL') }}</div>
-                  </div>
-                </div>
-
-                <div class="stat-card">
-                  <div class="stat-icon email">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
-                      <path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                  </div>
-                  <div class="stat-content">
-                    <div class="stat-label">Wysłane wiadomości</div>
-                    <div class="stat-value">{{ totalEmailClicks.toLocaleString('pl-PL') }}</div>
-                  </div>
-                </div>
-
-                <div class="stat-card">
-                  <div class="stat-icon engagement">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </div>
-                  <div class="stat-content">
-                    <div class="stat-label">Wskaźnik zaangażowania</div>
-                    <div class="stat-value">{{ engagementRate }}%</div>
-                    <div class="stat-sublabel">{{ totalEngagement }} z {{ totalViews }} wyświetleń</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Charts Section -->
-              <div class="charts-section">
-                <!-- Top Performing Ads -->
-                <div class="chart-card">
-                  <div class="chart-card-header">
-                    <h3>Najczęściej wyświetlane ogłoszenia</h3>
-                    <button 
-                      v-if="topPerformingAds.length > 0"
-                      @click="addTopAdsToChart(topPerformingAds.slice(0, 5).map(ad => ad.id), 'views')"
-                      class="chart-quick-add-btn"
-                      title="Dodaj top 5 do wykresu"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                      </svg>
-                      Porównaj wszystkie
-                    </button>
-                  </div>
-                  <div class="chart-list">
-                    <div v-for="(ad, index) in topPerformingAds" :key="ad.id" class="chart-item">
-                      <div class="chart-item-rank">{{ index + 1 }}</div>
-                      <div class="chart-item-info">
-                        <div class="chart-item-title">{{ ad.title }}</div>
-                        <div class="chart-item-meta">{{ ad.city }} • {{ getTypeLabel(ad.type) }}</div>
-                      </div>
-                      <div class="chart-item-value">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
-                          <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                        {{ ad.views_30d || 0 }}
-                      </div>
-                      <div class="chart-item-bar">
-                        <div 
-                          class="chart-item-bar-fill" 
-                          :style="{ width: `${(ad.views_30d || 0) / (topPerformingAds[0]?.views_30d || 1) * 100}%` }"
-                        ></div>
-                      </div>
-                      <button 
-                        @click="addAdToChart(ad.id)" 
-                        :disabled="isAdOnChart(ad.id)"
-                        class="chart-item-btn" 
-                        :title="isAdOnChart(ad.id) ? 'Ogłoszenie już na wykresie' : 'Porównaj na wykresie'"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                          <path d="M3 3v18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                          <path d="M7 16v-6M12 16V8M17 16v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                      </button>
-                    </div>
-                    <div v-if="topPerformingAds.length === 0" class="chart-empty">
-                      Brak danych do wyświetlenia
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Most Engaging Ads -->
-                <div class="chart-card">
-                  <div class="chart-card-header">
-                    <h3>Najbardziej angażujące ogłoszenia</h3>
-                    <button 
-                      v-if="mostEngagingAds.length > 0"
-                      @click="addTopAdsToChart(mostEngagingAds.slice(0, 5).map(ad => ad.id), 'clicks')"
-                      class="chart-quick-add-btn"
-                      title="Dodaj top 5 do wykresu"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                      </svg>
-                      Porównaj wszystkie
-                    </button>
-                  </div>
-                  <div class="chart-list">
-                    <div v-for="(ad, index) in mostEngagingAds" :key="ad.id" class="chart-item">
-                      <div class="chart-item-rank">{{ index + 1 }}</div>
-                      <div class="chart-item-info">
-                        <div class="chart-item-title">{{ ad.title }}</div>
-                        <div class="chart-item-meta">{{ ad.city }} • {{ getTypeLabel(ad.type) }}</div>
-                      </div>
-                      <div class="chart-item-value">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        {{ (ad.phone_clicks_30d || 0) + (ad.email_clicks_30d || 0) }}
-                      </div>
-                      <div class="chart-item-bar">
-                        <div 
-                          class="chart-item-bar-fill engagement" 
-                          :style="{ width: `${((ad.phone_clicks_30d || 0) + (ad.email_clicks_30d || 0)) / Math.max(((mostEngagingAds[0]?.phone_clicks_30d || 0) + (mostEngagingAds[0]?.email_clicks_30d || 0)), 1) * 100}%` }"
-                        ></div>
-                      </div>
-                      <button 
-                        @click="addAdToChart(ad.id)" 
-                        :disabled="isAdOnChart(ad.id)"
-                        class="chart-item-btn" 
-                        :title="isAdOnChart(ad.id) ? 'Ogłoszenie już na wykresie' : 'Porównaj na wykresie'"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                          <path d="M3 3v18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                          <path d="M7 16v-6M12 16V8M17 16v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                      </button>
-                    </div>
-                    <div v-if="mostEngagingAds.length === 0" class="chart-empty">
-                      Brak danych do wyświetlenia
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Engagement Chart -->
-              <EngagementChart ref="engagementChartRef" :ads="listings" />
-
-              <!-- Additional Stats -->
-              <div class="additional-stats">
-                <!-- Ads by Type -->
-                <div class="stat-breakdown-card">
-                  <h3>Ogłoszenia według typu</h3>
-                  <div class="breakdown-list">
-                    <div v-for="item in adsByType" :key="item.type" class="breakdown-item">
-                      <div class="breakdown-label">{{ item.label }}</div>
-                      <div class="breakdown-value">{{ item.count }}</div>
-                      <div class="breakdown-bar">
-                        <div 
-                          class="breakdown-bar-fill" 
-                          :style="{ width: `${(item.count / listings.length) * 100}%` }"
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Ads by Status -->
-                <div class="stat-breakdown-card">
-                  <h3>Ogłoszenia według statusu</h3>
-                  <div class="breakdown-list">
-                    <div class="breakdown-item">
-                      <div class="breakdown-label">
-                        <span class="status-dot active"></span>
-                        Wolne
-                      </div>
-                      <div class="breakdown-value">{{ adsByStatus.active }}</div>
-                    </div>
-                    <div class="breakdown-item">
-                      <div class="breakdown-label">
-                        <span class="status-dot reserved"></span>
-                        Zarezerwowane
-                      </div>
-                      <div class="breakdown-value">{{ adsByStatus.reserved }}</div>
-                    </div>
-                    <div class="breakdown-item">
-                      <div class="breakdown-label">
-                        <span class="status-dot soon"></span>
-                        Wkrótce dostępne
-                      </div>
-                      <div class="breakdown-value">{{ adsByStatus.soon_available }}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <!-- Statistics Dashboard -->
+            <ManagementStats
+              v-if="activeTab === 'statistics'"
+              ref="managementStatsRef"
+              :listings="listings"
+              :engagement-chart-ref="engagementChartRef"
+              @show-toast="(msg, type) => toast?.add(msg, type)"
+              @open-confirm-dialog="handleStatsConfirmRequest"
+            />
 
             <!-- Listings View -->
             <div v-else class="listings-list">
@@ -1969,7 +1559,7 @@ onBeforeUnmount(() => {
 
                     <div class="form-group">
                       <label>Cena</label>
-                      <input :value="editingAd.price" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); editingAd.price = val ? parseFloat(val) : null }" type="text" required />
+                      <input :value="editingAd.price" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); if(editingAd) editingAd.price = val ? parseFloat(val) : 0 }" type="text" required />
                     </div>
 
                     <div class="form-group">
@@ -2060,12 +1650,12 @@ onBeforeUnmount(() => {
 
                     <div v-if="showDimensionsFields" class="form-group">
                       <label>Szerokość (m)</label>
-                      <input :value="editingAd.width" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); editingAd.width = val ? parseFloat(val) : null }" type="text" :required="showDimensionsFields" />
+                      <input :value="editingAd.width" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); if(editingAd) editingAd.width = val ? parseFloat(val) : 0 }" type="text" :required="showDimensionsFields" />
                     </div>
 
                     <div v-if="showDimensionsFields" class="form-group">
                       <label>Wysokość (m)</label>
-                      <input :value="editingAd.height" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); editingAd.height = val ? parseFloat(val) : null }" type="text" :required="showDimensionsFields" />
+                      <input :value="editingAd.height" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); if(editingAd) editingAd.height = val ? parseFloat(val) : 0 }" type="text" :required="showDimensionsFields" />
                     </div>
 
                     <!-- SEKCJA: Opcje specyficzne dla typu -->
