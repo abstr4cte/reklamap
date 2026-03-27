@@ -14,7 +14,10 @@ Route::get('/user', function (Request $request) {
 // ─── Publiczne endpointy (tylko X-App-Key) ────────────────────────────────────
 Route::get('listings', [AdvertisementController::class, 'index']);
 Route::get('listings/{id}', [AdvertisementController::class, 'show']);
-Route::post('listings', [AdvertisementController::class, 'store'])->middleware('verify.recaptcha');
+
+// Dodawanie ogłoszeń - rate limit 20/h (dla agencji), bez reCAPTCHA
+Route::middleware('throttle:20,60')->post('listings', [AdvertisementController::class, 'store']);
+
 Route::get('listings/{id}/similar', [AdvertisementController::class, 'similar']);
 Route::get('listings/{id}/pdf', [AdvertisementController::class, 'generatePdf']);
 Route::get('listings/pdf/comparison', [AdvertisementController::class, 'generateComparisonPdf']);
@@ -29,8 +32,9 @@ Route::post('listings/daily-stats/multiple', [AdvertisementController::class, 'g
 Route::get('blog', [BlogController::class, 'index']);
 Route::get('blog/{slug}', [BlogController::class, 'show']);
 
-Route::post('reports', [AdvertisementController::class, 'report'])->middleware('verify.recaptcha');
-Route::post('feedback', [AdvertisementController::class, 'submitFeedback'])->middleware('verify.recaptcha');
+// Zgłoszenia i feedback - rate limit 10/h, bez reCAPTCHA (wystarczy email verification)
+Route::middleware('throttle:10,60')->post('reports', [AdvertisementController::class, 'report']);
+Route::middleware('throttle:10,60')->post('feedback', [AdvertisementController::class, 'submitFeedback']);
 
 // Rate limit na endpointy wysyłające maile (max 10 na 60 minut z jednego IP) + reCAPTCHA
 Route::middleware(['throttle:10,60', 'verify.recaptcha'])->group(function () {

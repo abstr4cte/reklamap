@@ -16,6 +16,7 @@ import type * as LType from 'leaflet'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import { useSearchStore } from '../stores/useSearchStore'
+import { filterWaterFeatures } from '../services/locationService'
 
 let L: typeof LType | null = null
 
@@ -171,8 +172,12 @@ const searchAddress = (query: string) => {
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=10&addressdetails=1`
       )
       const data = await response.json()
-      addressSuggestions.value = data
-      showAddressSuggestions.value = data.length > 0
+      
+      // Filter out water features (rivers, lakes, etc.)
+      const filteredData = filterWaterFeatures(data)
+      
+      addressSuggestions.value = filteredData
+      showAddressSuggestions.value = filteredData.length > 0
     } catch (error) {
       console.error('Error searching address:', error)
     } finally {
@@ -890,8 +895,12 @@ const searchModalLocation = () => {
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(modalSearchQuery.value)}&countrycodes=pl&limit=10&addressdetails=1`
       )
       const data = await response.json()
-      modalSearchSuggestions.value = data
-      showModalSearchSuggestions.value = data.length > 0
+      
+      // Filter out water features (rivers, lakes, etc.)
+      const filteredData = filterWaterFeatures(data)
+      
+      modalSearchSuggestions.value = filteredData
+      showModalSearchSuggestions.value = filteredData.length > 0
     } catch (error) {
       console.error('Error searching location:', error)
     }

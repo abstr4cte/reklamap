@@ -21,6 +21,12 @@ class VerifyRecaptcha
             return $next($request);
         }
 
+        // Skip verification in local development environment
+        if (app()->environment('local')) {
+            \Log::info('reCAPTCHA verification skipped (local environment)');
+            return $next($request);
+        }
+
         // Get the reCAPTCHA token from request
         $token = $request->input('recaptcha_token') ?? $request->header('X-Recaptcha-Token');
 
@@ -39,9 +45,25 @@ class VerifyRecaptcha
             ]);
 
             $data = $response->json();
+            $score = $data['score'] ?? 0;
+
+            // Log the score for debugging
+            \Log::info('reCAPTCHA verification', [
+                'success' => $data['success'] ?? false,
+                'score' => $score,
+                'action' => $data['action'] ?? 'unknown',
+                'hostname' => $data['hostname'] ?? 'unknown'
+            ]);
 
             // Check if verification was successful
-            if (!$data['success'] || ($data['score'] ?? 1) < 0.5) {
+            // Lowered threshold from 0.5 to 0.3 for better UX (Google recommends 0.5, but can be adjusted)
+            if (!$data['success'] || $score < 0.3) {
+                \Log::warning('reCAPTCHA verification failed', [
+                    'score' => $score,
+                    'success' => $data['success'] ?? false,
+                    'error-codes' => $data['error-codes'] ?? []
+                ]);
+
                 return response()->json([
                     'message' => 'reCAPTCHA verification failed',
                     'errors' => ['recaptcha' => ['Verification failed. Please try again.']]

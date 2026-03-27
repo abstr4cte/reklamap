@@ -2,7 +2,6 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
-import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 import ToastNotification from '../components/ToastNotification.vue'
 import { defineAsyncComponent } from 'vue'
 import type * as LType from 'leaflet'
@@ -10,6 +9,7 @@ import { slugify } from '../utils/slugify'
 import { analytics } from '../utils/analytics'
 import { useSearchStore, defaultPriceUnitsByType, variantLabels } from '../stores/useSearchStore'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
+import { filterWaterFeatures } from '../services/locationService'
 
 const VueDatePicker = defineAsyncComponent(() => import('@vuepic/vue-datepicker').then(m => m.VueDatePicker))
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -643,8 +643,12 @@ const searchAddress = (query: string) => {
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=pl&limit=5&addressdetails=1`
       )
       const data = await response.json()
-      addressSuggestions.value = data
-      showAddressSuggestions.value = data.length > 0
+      
+      // Filter out water features (rivers, lakes, etc.)
+      const filteredData = filterWaterFeatures(data)
+      
+      addressSuggestions.value = filteredData
+      showAddressSuggestions.value = filteredData.length > 0
     } catch (error) {
       console.error('Error searching address:', error)
     } finally {
@@ -795,8 +799,12 @@ const searchModalLocation = () => {
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(modalSearchQuery.value)}&countrycodes=pl&limit=10&addressdetails=1`
       )
       const data = await response.json()
-      modalSearchSuggestions.value = data
-      showModalSearchSuggestions.value = data.length > 0
+      
+      // Filter out water features (rivers, lakes, etc.)
+      const filteredData = filterWaterFeatures(data)
+      
+      modalSearchSuggestions.value = filteredData
+      showModalSearchSuggestions.value = filteredData.length > 0
     } catch (error) {
       console.error('Error searching location:', error)
     }
@@ -1237,12 +1245,6 @@ const handleSubmit = async () => {
 
   try {
     isSubmitting.value = true
-    
-    // Get reCAPTCHA token
-    let recaptchaToken = ''
-    if (isRecaptchaAvailable()) {
-      recaptchaToken = await getRecaptchaToken('add_advertisement')
-    }
 
     console.log('Starting image upload...')
     const imageUrls = await uploadImages()
@@ -1261,7 +1263,6 @@ const handleSubmit = async () => {
     }
     
     const newAd = await api.createAdvertisement({
-        recaptcha_token: recaptchaToken,
         owner_email: formData.value.email,
         title: formData.value.title,
         description: formData.value.description,
@@ -1383,7 +1384,29 @@ const handleSubmit = async () => {
 
       for (const key in serverErrors) {
         const translatedField = fieldTranslations[key] || key;
-        const message = serverErrors[key][0].replace(key, translatedField);
+        let message = serverErrors[key][0];
+        
+        // Tłumaczenie kluczy walidacji Laravel
+        if (message === 'validation.required') {
+          message = `Pole ${translatedField} jest wymagane`;
+        } else if (message === 'validation.email') {
+          message = `Pole ${translatedField} musi być prawidłowym adresem e-mail`;
+        } else if (message === 'validation.numeric') {
+          message = `Pole ${translatedField} musi być liczbą`;
+        } else if (message === 'validation.string') {
+          message = `Pole ${translatedField} musi być tekstem`;
+        } else if (message.startsWith('validation.min.')) {
+          message = `Pole ${translatedField} jest za krótkie`;
+        } else if (message.startsWith('validation.max.')) {
+          message = `Pole ${translatedField} jest za długie`;
+        } else if (message.includes('validation.')) {
+          // Inne klucze walidacji - zamień nazwę pola
+          message = message.replace(key, translatedField);
+        } else {
+          // Jeśli backend zwrócił pełny komunikat, zamień nazwę pola
+          message = message.replace(key, translatedField);
+        }
+        
         newErrors[key] = message;
         toastMessage += `\n- ${message}`;
       }
