@@ -44,7 +44,7 @@ class AdvertisementController extends Controller
     public function store(Request $request)
     {
         // Types that require variant field
-        $typesWithVariant = ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile'];
+        $typesWithVariant = ['billboard', 'citylight', 'led_screen', 'totem', 'transport', 'mobile'];
         $requiresVariant = in_array($request->input('type'), $typesWithVariant);
 
         $validated = $request->validate([
@@ -165,7 +165,7 @@ class AdvertisementController extends Controller
     public function update(Request $request, string $id)
     {
         // Types that require variant field
-        $typesWithVariant = ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem', 'transport', 'mobile'];
+        $typesWithVariant = ['billboard', 'citylight', 'led_screen', 'totem', 'transport', 'mobile'];
         $requiresVariant = in_array($request->input('type'), $typesWithVariant);
 
         $validated = $request->validate([
