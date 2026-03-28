@@ -21,14 +21,13 @@ export const getFullImageUrl = (path: string): string => {
 const APP_KEY = import.meta.env.VITE_INTERNAL_APP_KEY as string
 const withKey = (headers: HeadersInit = {}): HeadersInit => ({ ...(headers as any), 'X-App-Key': APP_KEY })
 
-// Helper function to add both X-App-Key and X-Management-Token
+// Helper to include management token for sensitive operations (PATCH, PUT, DELETE)
 const withManagementToken = (headers: HeadersInit = {}): HeadersInit => {
     const token = sessionStorage.getItem('management_token')
-    return {
-        ...(headers as any),
-        'X-App-Key': APP_KEY,
-        ...(token ? { 'X-Management-Token': token } : {})
+    if (token) {
+        return { ...(headers as any), 'X-Management-Token': token }
     }
+    return headers as any
 }
 
 export const api = {
@@ -88,10 +87,10 @@ export const api = {
         const response = await fetch(`${API_URL}/listings/${id}/status`, {
             method: 'PATCH',
             headers: {
-                ...withManagementToken({
+                ...withManagementToken(withKey({
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                })
+                }))
             },
             body: JSON.stringify({ status, available_from }),
         });
@@ -110,10 +109,10 @@ export const api = {
         const response = await fetch(`${API_URL}/listings/${id}`, {
             method: 'PUT',
             headers: {
-                ...withManagementToken({
+                ...withManagementToken(withKey({
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                })
+                }))
             },
             body: JSON.stringify(updates),
         })
@@ -123,7 +122,7 @@ export const api = {
     async deleteAdvertisement(id: string): Promise<void> {
         const response = await fetch(`${API_URL}/listings/${id}`, {
             method: 'DELETE',
-            headers: withManagementToken(),
+            headers: withManagementToken(withKey()),
         })
         if (!response.ok) throw new Error('Failed to delete advertisement')
     },
