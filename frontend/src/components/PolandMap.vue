@@ -314,7 +314,7 @@ const updateMarkers = () => {
         autoPanPadding: [50, 50]  // Padding przy autopan
       })
       
-      // On mobile, prevent popup from opening until map is activated
+      // On mobile, activate map interactions if inactive
       marker.on('click', () => {
         if (isMobile.value && !isMapActive.value) {
           // Activate map interactions on first marker click
@@ -325,17 +325,17 @@ const updateMarkers = () => {
             map.doubleClickZoom.enable()
             isMapActive.value = true
           }
-          // Don't open popup on first click, wait for second click
-          return
         }
       })
       
       marker.on('mouseover', () => {
-        marker.setIcon(createCustomIcon(ad.type, true))
+        if (!isMobile.value) {
+          marker.setIcon(createCustomIcon(ad.type, true))
+        }
       })
 
       marker.on('mouseout', () => {
-        if (props.hoveredAdId !== ad.id) {
+        if (!isMobile.value && props.hoveredAdId !== ad.id) {
           marker.setIcon(createCustomIcon(ad.type, false))
         }
       })

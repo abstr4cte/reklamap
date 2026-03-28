@@ -159,7 +159,7 @@ class AdvertisementController extends Controller
 
     public function show(string $id)
     {
-        return Advertisement::findOrFail($id);
+        return Advertisement::where('is_active', 1)->findOrFail($id);
     }
 
     public function update(Request $request, string $id)

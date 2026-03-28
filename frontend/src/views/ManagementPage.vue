@@ -115,7 +115,6 @@ const isSaving = ref(false)
 
 const isTokenInvalid = ref(false)
 const activeTab = ref<'listings' | 'statistics'>('listings')
-const engagementChartRef = ref<any>(null)
 const managementStatsRef = ref<any>(null)
 const pendingTopAdsMetric = ref<'views' | 'clicks' | undefined>(undefined)
 
@@ -1387,7 +1386,6 @@ onBeforeUnmount(() => {
               v-if="activeTab === 'statistics'"
               ref="managementStatsRef"
               :listings="listings"
-              :engagement-chart-ref="engagementChartRef"
               @show-toast="(msg, type) => toast?.add(msg, type)"
               @open-confirm-dialog="handleStatsConfirmRequest"
             />
@@ -1472,7 +1470,12 @@ onBeforeUnmount(() => {
                     <span>{{ ad.views_30d || 0 }}</span>
                   </div>
 
-                  <button @click.stop="openPreview(ad.id)" class="preview-btn" title="Zobacz ogłoszenie">
+                  <button 
+                    @click.stop="ad.is_active ? openPreview(ad.id) : null" 
+                    :class="['preview-btn', { 'disabled': !ad.is_active }]" 
+                    :disabled="!ad.is_active"
+                    :title="ad.is_active ? 'Zobacz ogłoszenie' : 'Ogłoszenie nieaktywne'"
+                  >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                       <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                       <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -2584,10 +2587,16 @@ onBeforeUnmount(() => {
   transition: all 0.2s;
 }
 
-.preview-btn:hover {
+.preview-btn:hover:not(:disabled) {
   border-color: #667eea;
   color: #667eea;
   transform: scale(1.1);
+}
+
+.preview-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f3f4f6;
 }
 
 .delete-btn {

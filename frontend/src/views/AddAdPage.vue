@@ -1348,6 +1348,7 @@ const handleSubmit = async () => {
       router.push('/')
     }
   } catch (error: any) {
+    isSubmitting.value = false;
     console.error('Error submitting form:', error);
     console.log('Full error object:', JSON.stringify(error, null, 2));
     if (error.response) {
@@ -1416,8 +1417,6 @@ const handleSubmit = async () => {
     } else {
       toast.value?.add(error.message || 'Wystąpił nieoczekiwany błąd. Spróbuj ponownie.', 'error');
     }
-  } finally {
-    isSubmitting.value = false
   }
 }
 

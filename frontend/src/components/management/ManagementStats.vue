@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { computed, nextTick } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import type { Advertisement } from '../../types'
 import EngagementChart from '../EngagementChart.vue'
 import { useSearchStore } from '../../stores/useSearchStore'
 
 const props = defineProps<{
   listings: Advertisement[]
-  engagementChartRef: any
 }>()
+
+const chartRef = ref<InstanceType<typeof EngagementChart> | null>(null)
 
 const emit = defineEmits<{
   'show-toast': [message: string, type: 'success' | 'error']
@@ -54,8 +55,8 @@ const mostEngagingAds = computed(() => {
 })
 
 const isAdOnChart = (adId: string): boolean => {
-  if (props.engagementChartRef) {
-    const chartComponent = props.engagementChartRef as any
+  if (chartRef.value) {
+    const chartComponent = chartRef.value as any
     if (chartComponent.selectedAds?.value) {
       return chartComponent.selectedAds.value.includes(adId)
     } else if (Array.isArray(chartComponent.selectedAds)) {
@@ -66,8 +67,8 @@ const isAdOnChart = (adId: string): boolean => {
 }
 
 const addAdToChart = (adId: string) => {
-  if (props.engagementChartRef) {
-    const chartComponent = props.engagementChartRef as any
+  if (chartRef.value) {
+    const chartComponent = chartRef.value as any
     let selectedAds: string[] = []
     
     if (chartComponent.selectedAds?.value) {
@@ -81,7 +82,7 @@ const addAdToChart = (adId: string) => {
       return
     }
     
-    props.engagementChartRef.addAdsToChart([adId])
+    chartRef.value.addAdsToChart([adId])
     
     nextTick(() => {
       const chartElement = document.querySelector('.engagement-chart-container')
@@ -98,8 +99,8 @@ const addAdToChart = (adId: string) => {
 }
 
 const addTopAdsToChart = (adIds: string[], metric?: 'views' | 'clicks') => {
-  if (props.engagementChartRef) {
-    const chartComponent = props.engagementChartRef as any
+  if (chartRef.value) {
+    const chartComponent = chartRef.value as any
     let selectedAds: string[] = []
     
     if (chartComponent.selectedAds?.value) {
@@ -118,8 +119,8 @@ const addTopAdsToChart = (adIds: string[], metric?: 'views' | 'clicks') => {
 }
 
 const executeAddTopAdsToChart = (adIds: string[], metric?: 'views' | 'clicks') => {
-  if (props.engagementChartRef) {
-    const chartComponent = props.engagementChartRef as any
+  if (chartRef.value) {
+    const chartComponent = chartRef.value as any
     
     if (chartComponent.selectedAds) {
       chartComponent.selectedAds.length = 0
@@ -342,7 +343,7 @@ defineExpose({
 
     <!-- Main Chart -->
     <EngagementChart
-      ref="props.engagementChartRef"
+      ref="chartRef"
       :ads="props.listings"
     />
 

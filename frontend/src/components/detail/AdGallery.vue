@@ -13,43 +13,95 @@ const currentImageIndex = ref(0)
 const showImagePreview = ref(false)
 const isZoomed = ref(false)
 const touchStartX = ref(0)
+const touchStartY = ref(0)
 const touchEndX = ref(0)
 const touchStartTime = ref(0)
+
+const panX = ref(0)
+const panY = ref(0)
+const dragStartX = ref(0)
+const dragStartY = ref(0)
+const isDragging = ref(false)
+const hasDragged = ref(false)
+
+const resetZoom = () => {
+  isZoomed.value = false
+  panX.value = 0
+  panY.value = 0
+}
 
 const nextImage = () => {
   if (props.images.length === 0) return
   currentImageIndex.value = (currentImageIndex.value + 1) % props.images.length
+  resetZoom()
 }
 
 const prevImage = () => {
   if (props.images.length === 0) return
   currentImageIndex.value = (currentImageIndex.value - 1 + props.images.length) % props.images.length
+  resetZoom()
 }
 
 const openImagePreview = () => {
   if (props.images.length > 0) {
     showImagePreview.value = true
-    isZoomed.value = false
+    resetZoom()
     document.body.style.overflow = 'hidden'
   }
 }
 
 const closeImagePreview = () => {
   showImagePreview.value = false
-  isZoomed.value = false
+  resetZoom()
   document.body.style.overflow = 'auto'
 }
 
 const toggleZoom = () => {
-  isZoomed.value = !isZoomed.value
+  if (isZoomed.value) {
+    resetZoom()
+  } else {
+    isZoomed.value = true
+    panX.value = 0
+    panY.value = 0
+  }
 }
 
 const handleTouchStart = (e: TouchEvent) => {
   touchStartX.value = e.touches[0].clientX
+  touchStartY.value = e.touches[0].clientY
   touchStartTime.value = Date.now()
+  
+  if (isZoomed.value) {
+    isDragging.value = true
+    hasDragged.value = false
+    dragStartX.value = e.touches[0].clientX - panX.value
+    dragStartY.value = e.touches[0].clientY - panY.value
+  }
+}
+
+const handleTouchMove = (e: TouchEvent) => {
+  if (isZoomed.value && isDragging.value) {
+    const clientX = e.touches[0].clientX
+    const clientY = e.touches[0].clientY
+    const newPanX = clientX - dragStartX.value
+    const newPanY = clientY - dragStartY.value
+    
+    if (Math.abs(newPanX - panX.value) > 3 || Math.abs(newPanY - panY.value) > 3) {
+      hasDragged.value = true
+    }
+    
+    panX.value = newPanX
+    panY.value = newPanY
+  }
 }
 
 const handleTouchEnd = (e: TouchEvent) => {
+  if (isZoomed.value && isDragging.value) {
+    isDragging.value = false
+    setTimeout(() => { hasDragged.value = false }, 50)
+    return
+  }
+
   touchEndX.value = e.changedTouches[0].clientX
   const touchEndTime = Date.now()
   const duration = touchEndTime - touchStartTime.value
@@ -61,11 +113,42 @@ const handleTouchEnd = (e: TouchEvent) => {
     } else {
       nextImage()
     }
-    isZoomed.value = false
+  }
+}
+
+const handleMouseDown = (e: MouseEvent) => {
+  if (!isZoomed.value) return
+  isDragging.value = true
+  hasDragged.value = false
+  dragStartX.value = e.clientX - panX.value
+  dragStartY.value = e.clientY - panY.value
+}
+
+const handleMouseMove = (e: MouseEvent) => {
+  if (!isZoomed.value || !isDragging.value) return
+  const newPanX = e.clientX - dragStartX.value
+  const newPanY = e.clientY - dragStartY.value
+  
+  if (Math.abs(newPanX - panX.value) > 3 || Math.abs(newPanY - panY.value) > 3) {
+    hasDragged.value = true
+  }
+  
+  panX.value = newPanX
+  panY.value = newPanY
+}
+
+const handleMouseUp = () => {
+  if (isDragging.value) {
+    isDragging.value = false
+    setTimeout(() => { hasDragged.value = false }, 50)
   }
 }
 
 const handleImageClick = () => {
+  if (hasDragged.value) {
+    hasDragged.value = false
+    return
+  }
   toggleZoom()
 }
 </script>
@@ -141,16 +224,24 @@ const handleImageClick = () => {
 
         <div 
           class="preview-container" 
-          :class="{ 'is-zoomed': isZoomed }"
+          :class="{ 'is-zoomed': isZoomed, 'is-dragging': isDragging }"
           @touchstart="handleTouchStart"
+          @touchmove="handleTouchMove"
           @touchend="handleTouchEnd"
+          @mousedown="handleMouseDown"
+          @mousemove="handleMouseMove"
+          @mouseup="handleMouseUp"
+          @mouseleave="handleMouseUp"
           @click.self="closeImagePreview"
         >
-          <div class="preview-image-wrapper" @click="handleImageClick">
+          <div class="preview-image-wrapper">
             <img
               :src="getFullImageUrl(images[currentImageIndex])"
               :alt="imageAlt"
               :class="`preview-image ${isZoomed ? 'zoomed' : ''}`"
+              :style="isZoomed ? { transform: `translate(${panX}px, ${panY}px) scale(2)` } : {}"
+              @click="handleImageClick"
+              draggable="false"
             />
           </div>
         </div>
@@ -368,8 +459,16 @@ const handleImageClick = () => {
 }
 
 .preview-image.zoomed {
-  transform: scale(2);
-  cursor: zoom-out;
+  cursor: grab;
+}
+
+.preview-container.is-zoomed {
+  touch-action: none;
+}
+
+.preview-container.is-dragging .preview-image.zoomed {
+  cursor: grabbing;
+  transition: none;
 }
 
 .preview-footer {

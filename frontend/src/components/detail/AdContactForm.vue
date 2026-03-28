@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import axios from '../../api/axios'
+import { api } from '../../services/api'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../../services/recaptchaService'
 
 const props = defineProps<{
@@ -56,6 +57,9 @@ const submitContactForm = async () => {
     contactSuccess.value = true
     contactForm.value = { email: '', message: '' }
     emit('success', 'Wiadomość została wysłana pomyślnie!')
+    
+    // Track email click in statistics
+    api.incrementEmailClicks(props.adId).catch(() => {})
     
     setTimeout(() => {
       contactSuccess.value = false

@@ -429,8 +429,18 @@ const updateMarkers = () => {
 
     marker.bindPopup(popupContent, { maxWidth: 220 })
     marker.on('click', () => { selectedAdId.value = ad.id; scrollToAd(ad.id) })
-    marker.on('mouseover', () => { const i = createCustomIcon(ad.type, true, selectedAdId.value === ad.id); if (i) marker.setIcon(i) })
-    marker.on('mouseout', () => { if (hoveredAdId.value !== ad.id) { const i = createCustomIcon(ad.type, false, selectedAdId.value === ad.id); if (i) marker.setIcon(i) } })
+    marker.on('mouseover', () => { 
+      if (!isMobile.value) {
+        const i = createCustomIcon(ad.type, true, selectedAdId.value === ad.id); 
+        if (i) marker.setIcon(i) 
+      }
+    })
+    marker.on('mouseout', () => { 
+      if (!isMobile.value && hoveredAdId.value !== ad.id) { 
+        const i = createCustomIcon(ad.type, false, selectedAdId.value === ad.id); 
+        if (i) marker.setIcon(i) 
+      }
+    })
     
     marker.addTo(map!)
     markers.set(ad.id, marker)

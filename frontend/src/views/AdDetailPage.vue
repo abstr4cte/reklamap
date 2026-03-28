@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getFullImageUrl } from '../services/api'
+import { getFullImageUrl, api } from '../services/api'
 import axios from '../api/axios'
 import type { Advertisement } from '../types'
 import ToastNotification from '../components/ToastNotification.vue'
@@ -65,6 +65,17 @@ const handlePhoneCall = () => {
   } else {
     // First click just shows the number
     showPhone.value = true
+    // Track phone click in statistics
+    api.incrementPhoneClicks(ad.value.id).catch(() => {})
+  }
+}
+
+const handleShowPhone = () => {
+  if (!ad.value?.phone) return
+  if (!showPhone.value) {
+    showPhone.value = true
+    // Track phone click in statistics
+    api.incrementPhoneClicks(ad.value.id).catch(() => {})
   }
 }
 const showActionsMenu = ref(false)
@@ -410,10 +421,12 @@ watch(() => route.params.id, (newId, oldId) => {
 // Lifecycle
 onMounted(() => {
   loadAd()
+  document.body.classList.add('has-sticky-actions')
 })
 
 onUnmounted(() => {
   if (map) map.remove()
+  document.body.classList.remove('has-sticky-actions')
 })
 
 defineExpose({
@@ -567,7 +580,7 @@ defineExpose({
             @toggle-favorite="toggleFavorite"
             @toggle-comparison="toggleComparison"
             @handle-download-pdf="handleDownloadPDF"
-            @handle-show-phone="showPhone = true"
+            @handle-show-phone="handleShowPhone"
             @handle-share="showActionsMenu = true"
             @open-report-modal="showReportModal = true"
           />
@@ -1348,12 +1361,12 @@ defineExpose({
 
 <style>
 @media (max-width: 1024px) {
-  .feedback-container {
+  body.has-sticky-actions .feedback-container {
     bottom: calc(1rem + 85px) !important;
     transition: bottom 0.3s ease;
   }
   
-  .scroll-to-top {
+  body.has-sticky-actions .scroll-to-top {
     bottom: calc(5rem + 85px) !important;
     transition: bottom 0.3s ease;
   }
