@@ -331,13 +331,13 @@ const showReportModal = ref(false)
 watch([showReportModal, showActionsMenu], ([reportVal, actionsVal]) => {
   if (reportVal || actionsVal) {
     document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.touchAction = 'none'
   } else {
     document.body.style.overflow = ''
+    document.documentElement.style.overflow = ''
+    document.body.style.touchAction = ''
   }
-})
-
-onUnmounted(() => {
-  document.body.style.overflow = ''
 })
 const reportForm = ref({ reason: '', details: '' })
 const isSubmittingReport = ref(false)
@@ -463,6 +463,9 @@ onMounted(() => {
 onUnmounted(() => {
   if (map) map.remove()
   document.body.classList.remove('has-sticky-actions')
+  document.body.style.overflow = ''
+  document.documentElement.style.overflow = ''
+  document.body.style.touchAction = ''
 })
 
 defineExpose({

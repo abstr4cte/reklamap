@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import WebPImage from '../WebPImage.vue'
 import { getFullImageUrl } from '../../services/api'
 
@@ -46,15 +46,31 @@ const openImagePreview = () => {
   if (props.images.length > 0) {
     showImagePreview.value = true
     resetZoom()
-    document.body.style.overflow = 'hidden'
   }
 }
 
 const closeImagePreview = () => {
   showImagePreview.value = false
   resetZoom()
-  document.body.style.overflow = 'auto'
 }
+
+watch(showImagePreview, (val) => {
+  if (val) {
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.touchAction = 'none'
+  } else {
+    document.body.style.overflow = ''
+    document.documentElement.style.overflow = ''
+    document.body.style.touchAction = ''
+  }
+})
+
+onUnmounted(() => {
+  document.body.style.overflow = ''
+  document.documentElement.style.overflow = ''
+  document.body.style.touchAction = ''
+})
 
 const toggleZoom = () => {
   if (isZoomed.value) {
@@ -462,6 +478,8 @@ const handleImageClick = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overscroll-behavior: contain;
+  touch-action: none;
 }
 
 .preview-close-btn {
