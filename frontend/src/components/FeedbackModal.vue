@@ -183,7 +183,7 @@ defineExpose({
                   :class="{ active: feedbackType === 'bug' }"
                   class="type-btn"
                 >
-                  <img src="/icons/blad.svg" alt="" class="type-icon" />
+                  <div class="type-icon" style="-webkit-mask-image: url('/icons/blad.svg'); mask-image: url('/icons/blad.svg');"></div>
                   Błąd
                 </button>
                 <button
@@ -192,7 +192,7 @@ defineExpose({
                   :class="{ active: feedbackType === 'suggestion' }"
                   class="type-btn"
                 >
-                  <img src="/icons/sugestia.svg" alt="" class="type-icon" />
+                  <div class="type-icon" style="-webkit-mask-image: url('/icons/sugestia.svg'); mask-image: url('/icons/sugestia.svg');"></div>
                   Sugestia
                 </button>
                 <button
@@ -201,7 +201,7 @@ defineExpose({
                   :class="{ active: feedbackType === 'question' }"
                   class="type-btn"
                 >
-                  <img src="/icons/pytanie.svg" alt="" class="type-icon" />
+                  <div class="type-icon" style="-webkit-mask-image: url('/icons/pytanie.svg'); mask-image: url('/icons/pytanie.svg');"></div>
                   Pytanie
                 </button>
               </div>
@@ -384,13 +384,18 @@ defineExpose({
   height: 24px;
   margin-right: 0.5rem;
   vertical-align: middle;
-  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(224deg) brightness(94%) contrast(91%);
-  -webkit-filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(224deg) brightness(94%) contrast(91%);
+  background-color: #8a6fe6;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  display: inline-block;
 }
 
 .type-btn.active .type-icon {
-  filter: brightness(0) invert(1); /* Białe ikonki dla aktywnego przycisku */
-  -webkit-filter: brightness(0) invert(1);
+  background-color: white; /* Białe ikonki dla aktywnego przycisku */
 }
 
 .input-wrapper {

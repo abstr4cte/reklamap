@@ -382,7 +382,7 @@ const handleSearchAlertSubmit = (email: string) => {
               :class="{ 'mobile-category': isMobile }"
             >
               <div class="category-icon">
-                <img :src="`/icons/${category.icon}`" :alt="category.name" />
+                <div class="icon-mask" :style="{ '-webkit-mask-image': `url(/icons/${category.icon})`, 'mask-image': `url(/icons/${category.icon})` }" :aria-label="category.name"></div>
               </div>
               <h3 class="category-name">{{ category.name }}</h3>
               <p class="category-description">{{ category.description }}</p>
@@ -668,12 +668,16 @@ const handleSearchAlertSubmit = (email: string) => {
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
 }
 
-.category-icon img {
+.category-icon .icon-mask {
   width: 100%;
   height: 100%;
-  /* Apply purple color directly - same on all devices */
-  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(224deg) brightness(94%) contrast(91%);
-  -webkit-filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(224deg) brightness(94%) contrast(91%);
+  background-color: #8a6fe6;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 .category-card:hover .category-icon {
