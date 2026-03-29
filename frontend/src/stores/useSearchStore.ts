@@ -152,6 +152,9 @@ export const useSearchStore = defineStore('search', () => {
   }
 
   const syncFromUrl = (query: Record<string, string>, params: Record<string, string>) => {
+    // Start with a clean slate of filters to avoid stale results
+    filters.value = { ...DEFAULT_FILTERS }
+    
     const urlFilters = queryParamsToFilters(query)
     
     // Merge URL path params
@@ -174,6 +177,7 @@ export const useSearchStore = defineStore('search', () => {
     if (params.city) {
         // City from path has priority
         filters.value.city = deslugify(params.city as string)
+        filters.value.cityStrict = true // If in URL path, it's usually intentional
     }
 
     // Apply other filters from query
@@ -498,54 +502,52 @@ export const useSearchStore = defineStore('search', () => {
     }
 
     // 2. Location Search
-    // Skip location filters if mapBounds is active (user is scrolling/zooming map)
-    if (!f.mapBounds) {
-      if (f.region) filtered = filtered.filter(ad => ad.region === f.region)
-      if (f.city) {
-        const cityQuery = normalizePolishChars(f.city.toLowerCase().trim())
-        if (f.cityStrict) {
-          // Ścisłe dopasowanie miasta (np. po wyborze z sugestii)
-          filtered = filtered.filter(ad => {
-            const cityMatch = normalizePolishChars((ad.city || '').toLowerCase()) === cityQuery
-            
-            // Jeśli mamy współrzędne wybranej lokalizacji, dodatkowo filtruj po odległości
-            // aby wykluczyć inne miasta o tej samej nazwie (np. różne "Warszawy" w Polsce)
-            if (cityMatch && f.selectedLocationCoords) {
-              const distance = getDistanceFromLatLonInKm(
-                f.selectedLocationCoords.lat,
-                f.selectedLocationCoords.lng,
-                ad.latitude,
-                ad.longitude
-              )
-              // Ogłoszenie musi być w promieniu 30km od wybranego miasta
-              return distance <= 30
-            }
-            
-            return cityMatch
-          })
-        } else {
-          // Inteligentne szukanie luźne (obsługuje typowanie ręczne)
-          filtered = filtered.filter(ad => {
-            const adCity = normalizePolishChars((ad.city || '').toLowerCase())
-            const adLocation = normalizePolishChars((ad.location || '').toLowerCase())
-            
-            // 1. Jeśli wpisana fraza jest częścią nazwy miasta obiektu -> OK
-            if (adCity.includes(cityQuery)) return true
-            
-            // 2. Jeśli wpisana fraza jest osobnym słowem w adresie -> OK
-            const locationWords = adLocation.split(/[^a-z0-9]+/)
-            return locationWords.some(word => word === cityQuery)
-          })
-        }
+    // Always apply location text filters if set. Map bounds act as an additional constraint.
+    if (f.region) filtered = filtered.filter(ad => ad.region === f.region)
+    if (f.city) {
+      const cityQuery = normalizePolishChars(f.city.toLowerCase().trim())
+      if (f.cityStrict) {
+        // Ścisłe dopasowanie miasta (np. po wyborze z sugestii)
+        filtered = filtered.filter(ad => {
+          const cityMatch = normalizePolishChars((ad.city || '').toLowerCase()) === cityQuery
+          
+          // Jeśli mamy współrzędne wybranej lokalizacji, dodatkowo filtruj po odległości
+          // aby wykluczyć inne miasta o tej samej nazwie (np. różne "Warszawy" w Polsce)
+          if (cityMatch && f.selectedLocationCoords) {
+            const distance = getDistanceFromLatLonInKm(
+              f.selectedLocationCoords.lat,
+              f.selectedLocationCoords.lng,
+              ad.latitude,
+              ad.longitude
+            )
+            // Ogłoszenie musi być w promieniu 30km od wybranego miasta
+            return distance <= 30
+          }
+          
+          return cityMatch
+        })
+      } else {
+        // Inteligentne szukanie luźne (obsługuje typowanie ręczne)
+        filtered = filtered.filter(ad => {
+          const adCity = normalizePolishChars((ad.city || '').toLowerCase())
+          const adLocation = normalizePolishChars((ad.location || '').toLowerCase())
+          
+          // 1. Jeśli wpisana fraza jest częścią nazwy miasta obiektu -> OK
+          if (adCity.includes(cityQuery)) return true
+          
+          // 2. Jeśli wpisana fraza jest osobnym słowem w adresie -> OK
+          const locationWords = adLocation.split(/[^a-z0-9]+/)
+          return locationWords.some(word => word === cityQuery)
+        })
       }
-      
-      // 3. Street Search (from suggestion selection)
-      if (f.street) {
-        const streetQuery = normalizePolishChars(f.street.toLowerCase().trim())
-        filtered = filtered.filter(ad => 
-          normalizePolishChars((ad.location || '').toLowerCase()).includes(streetQuery)
-        )
-      }
+    }
+    
+    // 3. Street Search (from suggestion selection)
+    if (f.street) {
+      const streetQuery = normalizePolishChars(f.street.toLowerCase().trim())
+      filtered = filtered.filter(ad => 
+        normalizePolishChars((ad.location || '').toLowerCase()).includes(streetQuery)
+      )
     }
 
     // 3. Exact Match Filters

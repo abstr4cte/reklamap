@@ -635,6 +635,20 @@ onMounted(async () => {
   isInitialized.value = true
 })
 
+// Add watch for route changes to handle navigation between categories/locations
+watch(
+  () => [route.params, route.query],
+  () => {
+    searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
+    syncLocationQuery()
+    // Scroll to top of the listings when category/location changes
+    nextTick(() => {
+      scrollListToTop()
+    })
+  },
+  { deep: true }
+)
+
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
   window.removeEventListener('resize', checkIfMobile)
