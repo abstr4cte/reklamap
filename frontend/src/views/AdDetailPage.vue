@@ -1129,6 +1129,8 @@ defineExpose({
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid var(--border-color, #e5e7eb);
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 @media (max-width: 1024px) {
@@ -1366,8 +1368,8 @@ defineExpose({
   .skeleton-gallery { aspect-ratio: 4/3; }
 }
 
-/* Optimization for very narrow screens */
-@media (max-width: 395px) {
+/* Optimization for mobile screens */
+@media (max-width: 575px) {
   .mobile-sticky-actions {
     padding: 1rem 1rem !important;
   }

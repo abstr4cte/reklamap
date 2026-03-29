@@ -50,6 +50,7 @@ const markers: Map<string, LType.Marker> = new Map()
 const showMapOnMobile = ref(false)
 const showSortPanel = ref(false)
 const showSearchAlertModal = ref(false)
+const hasShownAlertModal = ref(localStorage.getItem('search_alert_shown') === 'true')
 const isStatusMenuOpen = ref(false)
 const statusMultiselect = ref<HTMLElement | null>(null)
 const hoveredAdId = ref<string | null>(null)
@@ -491,6 +492,12 @@ const initMap = async () => {
       return
     }
     
+    // Skip updating mapBounds if map is hidden on mobile
+    // This prevents accidental filter updates during scroll when browser UI changes height
+    if (isMobile.value && !showMapOnMobile.value) {
+      return
+    }
+    
     const bounds = map.getBounds()
     
     // Update map bounds to filter results, but keep text filter values intact
@@ -633,6 +640,18 @@ onMounted(async () => {
 
   syncLocationQuery()
   isInitialized.value = true
+  
+  // 4. Proactive search alert modal (consistent with HomePage)
+  if (!hasShownAlertModal.value) {
+    setTimeout(() => {
+      // Show only if user has active filters, is on search results, and hasn't seen it yet
+      if (!hasShownAlertModal.value && activeFiltersCount.value > 0) {
+        showSearchAlertModal.value = true
+        hasShownAlertModal.value = true
+        localStorage.setItem('search_alert_shown', 'true')
+      }
+    }, 20000) // 20 seconds
+  }
 })
 
 // Add watch for route changes to handle navigation between categories/locations
