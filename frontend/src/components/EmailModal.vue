@@ -109,7 +109,6 @@ const handleClose = () => {
                 v-model="email"
                 type="text"
                 placeholder="twoj@email.com"
-                required
                 class="email-input"
                 :class="{ 'error': errorMessage }"
                 @input="errorMessage = ''"
@@ -117,9 +116,9 @@ const handleClose = () => {
 
             </div>
             
-            <div v-if="errorMessage" class="error-message">
+            <span v-if="errorMessage" class="error-text">
               {{ errorMessage }}
-            </div>
+            </span>
 
             <button type="submit" :disabled="isSubmitting" class="submit-btn">
               <span v-if="!isSubmitting">Wyślij link</span>
@@ -340,14 +339,12 @@ const handleClose = () => {
   transform: translateY(-1px);
 }
 
-.error-message {
+.error-text {
   color: #EF4444;
   font-size: 0.875rem;
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  background-color: #FEF2F2;
-  border-radius: 6px;
-  border-left: 3px solid #EF4444;
+  margin-top: 0.25rem;
+  display: block;
+  text-align: left;
 }
 
 .success-body {

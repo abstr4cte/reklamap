@@ -112,6 +112,7 @@ const formatDate = (date: any) => {
 
 const dragOverTarget = ref<{ index: number, type: 'existing' | 'new' } | null>(null)
 const isSaving = ref(false)
+const editErrors = ref<Record<string, string>>({})
 
 const isTokenInvalid = ref(false)
 const activeTab = ref<'listings' | 'statistics'>('listings')
@@ -427,11 +428,62 @@ const toggleActive = async (id: string) => {
 
 const saveChanges = async (id: string) => {
   if (!editingAd.value || isSaving.value) return
+  
+  editErrors.value = {}
+  let hasErrors = false
+
+  if (!editingAd.value.title) {
+    editErrors.value.title = 'Tytuł jest wymagany'
+    hasErrors = true
+  }
+  if (!editingAd.value.description) {
+    editErrors.value.description = 'Opis jest wymagany'
+    hasErrors = true
+  }
+  if (!editingAd.value.price && editingAd.value.price !== 0) {
+    editErrors.value.price = 'Cena jest wymagana'
+    hasErrors = true
+  }
+  if (!editingAd.value.location) {
+    editErrors.value.location = 'Lokalizacja jest wymagana'
+    hasErrors = true
+  }
+
+  if (showDimensionsFields.value) {
+    if (!editingAd.value.width && editingAd.value.width !== 0) {
+      editErrors.value.width = 'Szerokość jest wymagana'
+      hasErrors = true
+    }
+    if (!editingAd.value.height && editingAd.value.height !== 0) {
+      editErrors.value.height = 'Wysokość jest wymagana'
+      hasErrors = true
+    }
+  }
+
+  if (showTrafficIntensity.value && !editingAd.value.traffic_intensity) {
+    editErrors.value.traffic_intensity = 'Natężenie ruchu jest wymagane'
+    hasErrors = true
+  }
+
+  if (!editingAd.value.offer_type) {
+    editErrors.value.offer_type = 'Rodzaj oferty jest wymagany'
+    hasErrors = true
+  }
+
+  if (!(editingAd.value as any).contact_preference) {
+    (editErrors.value as any).contact_preference = 'Forma kontaktu jest wymagana'
+    hasErrors = true
+  }
 
   // Validate variant field for types that require it
   const typesWithVariant = ['billboard', 'citylight', 'led_screen', 'totem', 'transport', 'mobile']
   if (typesWithVariant.includes(editingAd.value.type) && !(editingAd.value as any).variant) {
-    alert('Wariant jest wymagany dla tego typu powierzchni reklamowej')
+    editErrors.value.variant = 'Wariant jest wymagany dla tego typu'
+    hasErrors = true
+  }
+
+  if (hasErrors) {
+    toast.value?.add('Proszę uzupełnić wymagane pola', 'error')
     return
   }
 
@@ -1168,8 +1220,13 @@ const getEnvironmentOptions = (type: string) => {
 }
 
 const handleSubmit = async () => {
-  if (!email.value || !email.value.includes('@')) {
-    errorMessage.value = 'Proszę podać poprawny adres email'
+  if (!email.value) {
+    errorMessage.value = 'Proszę podać adres e-mail'
+    return
+  }
+  
+  if (!email.value.includes('@')) {
+    errorMessage.value = 'Proszę podać poprawny adres e-mail'
     return
   }
 
@@ -1299,10 +1356,11 @@ onBeforeUnmount(() => {
                 </svg>
                 <input
                   v-model="email"
-                  type="email"
+                  type="text"
                   placeholder="twoj@email.com"
-                  required
                   class="email-input"
+                  :class="{ 'error': errorMessage }"
+                  @input="errorMessage = ''"
                 />
               </div>
               
@@ -1560,23 +1618,41 @@ onBeforeUnmount(() => {
                     </div>
 
                     <div class="form-group full-width">
-                      <label>Tytuł</label>
-                      <input v-model="editingAd.title" type="text" required />
+                      <label>Tytuł <span class="required-star">*</span></label>
+                      <input 
+                        v-model="editingAd.title" 
+                        type="text" 
+                        :class="{ 'error': editErrors.title }"
+                        @input="editErrors.title = ''"
+                      />
+                      <span v-if="editErrors.title" class="error-text">{{ editErrors.title }}</span>
                     </div>
 
                     <div class="form-group full-width">
-                      <label>Opis</label>
-                      <textarea v-model="editingAd.description" rows="4" required></textarea>
+                      <label>Opis <span class="required-star">*</span></label>
+                      <textarea 
+                        v-model="editingAd.description" 
+                        rows="4"
+                        :class="{ 'error': editErrors.description }"
+                        @input="editErrors.description = ''"
+                      ></textarea>
+                      <span v-if="editErrors.description" class="error-text">{{ editErrors.description }}</span>
                     </div>
 
                     <div class="form-group">
-                      <label>Cena</label>
-                      <input :value="editingAd.price" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); if(editingAd) editingAd.price = val ? parseFloat(val) : 0 }" type="text" required />
+                      <label>Cena <span class="required-star">*</span></label>
+                      <input 
+                        :value="editingAd.price" 
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); if(editingAd) { editingAd.price = val ? parseFloat(val) : 0; editErrors.price = '' } }" 
+                        type="text" 
+                        :class="{ 'error': editErrors.price }"
+                      />
+                      <span v-if="editErrors.price" class="error-text">{{ editErrors.price }}</span>
                     </div>
 
                     <div class="form-group">
-                      <label>Jednostka cenowa</label>
-                      <select v-model="editingAd.price_unit" required>
+                      <label>Jednostka cenowa <span class="required-star">*</span></label>
+                      <select v-model="editingAd.price_unit">
                         <option v-for="unit in availablePriceUnits" :key="unit.value" :value="unit.value">
                           {{ unit.label }}
                         </option>
@@ -1592,7 +1668,7 @@ onBeforeUnmount(() => {
 
                     <div class="form-group">
                       <label>Typ powierzchni</label>
-                      <select v-model="editingAd.type" required disabled>
+                      <select v-model="editingAd.type" disabled>
                         <option value="billboard">Billboardy</option>
                         <option value="citylight">Citylighty</option>
                         <option value="led_screen">Ekrany LED</option>
@@ -1612,11 +1688,12 @@ onBeforeUnmount(() => {
                           <input 
                             v-model="editingAd.location" 
                             type="text" 
-                            required 
-                            @input="searchAddress(editingAd.location)"
+                            @input="searchAddress(editingAd.location); editErrors.location = ''"
                             @blur="handleBlur"
                             class="location-input"
+                            :class="{ 'error': editErrors.location }"
                           />
+                          <span v-if="editErrors.location" class="error-text">{{ editErrors.location }}</span>
                           <div v-if="isResolvingAddress" class="input-spinner">
                             <svg class="spinner-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -1661,13 +1738,15 @@ onBeforeUnmount(() => {
                     </div>
 
                     <div v-if="showDimensionsFields" class="form-group">
-                      <label>Szerokość (m)</label>
-                      <input :value="editingAd.width" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); if(editingAd) editingAd.width = val ? parseFloat(val) : 0 }" type="text" :required="showDimensionsFields" />
+                      <label>Szerokość (m) <span class="required-star">*</span></label>
+                      <input :value="editingAd.width" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); if(editingAd) { editingAd.width = val ? parseFloat(val) : 0; editErrors.width = '' } }" type="text" :class="{ 'error': editErrors.width }" />
+                      <span v-if="editErrors.width" class="error-text">{{ editErrors.width }}</span>
                     </div>
 
                     <div v-if="showDimensionsFields" class="form-group">
-                      <label>Wysokość (m)</label>
-                      <input :value="editingAd.height" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); if(editingAd) editingAd.height = val ? parseFloat(val) : 0 }" type="text" :required="showDimensionsFields" />
+                      <label>Wysokość (m) <span class="required-star">*</span></label>
+                      <input :value="editingAd.height" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); if(editingAd) { editingAd.height = val ? parseFloat(val) : 0; editErrors.height = '' } }" type="text" :class="{ 'error': editErrors.height }" />
+                      <span v-if="editErrors.height" class="error-text">{{ editErrors.height }}</span>
                     </div>
 
                     <!-- SEKCJA: Opcje specyficzne dla typu -->
@@ -1677,13 +1756,14 @@ onBeforeUnmount(() => {
 
                     <!-- Natężenie ruchu -->
                     <div v-if="showTrafficIntensity" class="form-group">
-                      <label>Natężenie ruchu</label>
-                      <select v-model="editingAd.traffic_intensity" :required="showTrafficIntensity">
+                      <label>Natężenie ruchu <span class="required-star">*</span></label>
+                      <select v-model="editingAd.traffic_intensity" :class="{ 'error': editErrors.traffic_intensity }" @change="editErrors.traffic_intensity = ''">
                         <option value="">Wybierz</option>
                         <option value="low">Niskie</option>
                         <option value="medium">Średnie</option>
                         <option value="high">Wysokie</option>
                       </select>
+                      <span v-if="editErrors.traffic_intensity" class="error-text">{{ editErrors.traffic_intensity }}</span>
                     </div>
                     <!-- OTS / Daily Views -->
                     <div v-if="['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem'].includes(editingAd.type)" class="form-group">
@@ -1694,12 +1774,13 @@ onBeforeUnmount(() => {
                     <!-- Wariant -->
                     <div v-if="showVariantField" class="form-group">
                       <label>Wariant <span style="color: red;">*</span></label>
-                      <select v-model="(editingAd as any).variant">
+                      <select v-model="(editingAd as any).variant" :class="{ 'error': editErrors.variant }" @change="editErrors.variant = ''">
                         <option value="">Wybierz wariant</option>
                         <option v-for="variant in getVariantOptions(editingAd.type)" :key="variant.value" :value="variant.value">
                           {{ variant.label }}
                         </option>
                       </select>
+                      <span v-if="editErrors.variant" class="error-text">{{ editErrors.variant }}</span>
                     </div>
 
                     <!-- Klasa drogi (Billboard) -->
@@ -1839,12 +1920,13 @@ onBeforeUnmount(() => {
                     </div>
 
                     <div class="form-group">
-                      <label>Rodzaj oferty</label>
-                      <select v-model="editingAd.offer_type" required>
+                      <label>Rodzaj oferty <span class="required-star">*</span></label>
+                      <select v-model="editingAd.offer_type" :class="{ 'error': editErrors.offer_type }" @change="editErrors.offer_type = ''">
                         <option value="owner">Właściciel (bezpośrednio)</option>
                         <option value="agency">Agencja reklamowa</option>
                         <option value="sublease">Podnajmujący</option>
                       </select>
+                      <span v-if="editErrors.offer_type" class="error-text">{{ editErrors.offer_type }}</span>
                     </div>
 
                     <!-- SEKCJA: Wyposażenie i dodatki -->
@@ -1880,12 +1962,13 @@ onBeforeUnmount(() => {
                     </div>
 
                     <div class="form-group full-width">
-                      <label>Preferowana forma kontaktu</label>
-                      <select v-model="(editingAd as any).contact_preference" required>
+                      <label>Preferowana forma kontaktu <span class="required-star">*</span></label>
+                      <select v-model="(editingAd as any).contact_preference" :class="{ 'error': editErrors.contact_preference }" @change="editErrors.contact_preference = ''">
                         <option value="email">Tylko formularz kontaktowy</option>
                         <option value="phone">Tylko telefon</option>
                         <option value="both">Formularz i telefon</option>
                       </select>
+                      <span v-if="editErrors.contact_preference" class="error-text">{{ editErrors.contact_preference }}</span>
                     </div>
 
                     <div v-if="(editingAd as any).contact_preference === 'phone' || (editingAd as any).contact_preference === 'both'" class="form-group full-width">
@@ -4378,4 +4461,23 @@ onBeforeUnmount(() => {
   }
 }
 
+.error-text {
+  display: block;
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+.required-star {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+input.error,
+select.error,
+textarea.error {
+  border-color: #ef4444 !important;
+  background-color: #fffafb !important;
+}
 </style>

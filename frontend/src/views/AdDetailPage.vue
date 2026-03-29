@@ -11,6 +11,8 @@ import { useSeo } from '../composables/useSeo'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
 import { useSearchStore } from '../stores/useSearchStore'
 import { useStreetViewStore } from '../stores/useStreetViewStore'
+import { slugify } from '../utils/slugify'
+import { mapTypeToUrlFormat } from '../utils/typeMapping'
 
 // Detailed Components
 import AdGallery from '../components/detail/AdGallery.vue'
@@ -78,9 +80,28 @@ const handleShowPhone = () => {
     api.incrementPhoneClicks(ad.value.id).catch(() => {})
   }
 }
+
+const scrollToContactForm = () => {
+  const formElement = document.getElementById('contact-form-section')
+  if (formElement) {
+    formElement.scrollIntoView({ behavior: 'smooth' })
+  }
+}
 const showActionsMenu = ref(false)
 const dailyStatsViews = ref(0)
 const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
+
+const hasPhone = computed(() => {
+  if (!ad.value) return false
+  return !!(ad.value.phone && ad.value.phone.trim() && ad.value.contact_preference !== 'form')
+})
+
+const hasForm = computed(() => {
+  if (!ad.value) return false
+  return ad.value.contact_preference !== 'phone'
+})
+
+const hasBothContactMethods = computed(() => hasPhone.value && hasForm.value)
 
 // Map Variables
 const mapContainer = ref<HTMLElement | null>(null)
@@ -188,6 +209,21 @@ watch(ad, (newAd) => {
       structuredData
     }
   }
+})
+
+// Breadcrumbs
+const breadcrumbItems = computed(() => {
+  if (!ad.value) return []
+  const citySlug = slugify(ad.value.city)
+  const typeUrlPart = mapTypeToUrlFormat(ad.value.type || 'other')
+  
+  return [
+    { label: 'Strona główna', path: '/' },
+    { label: 'Powierzchnie reklamowe', path: '/powierzchnie-reklamowe' },
+    { label: searchStore.getTypeLabel(ad.value.type), path: `/powierzchnie-reklamowe/${typeUrlPart}` },
+    { label: ad.value.city, path: `/powierzchnie-reklamowe/${typeUrlPart}/${citySlug}` },
+    { label: ad.value.title }
+  ]
 })
 
 // Actions
@@ -468,7 +504,7 @@ defineExpose({
     </div>
 
     <div v-else-if="ad" class="page-container">
-      <Breadcrumbs :items="[{ label: 'Główna', path: '/' }, { label: ad.city, path: '/lista' }, { label: ad.title }]" />
+      <Breadcrumbs :items="breadcrumbItems" />
 
       <div class="content-layout">
         <div class="main-content">
@@ -551,12 +587,14 @@ defineExpose({
           </div>
 
           <!-- Contact Form -->
-          <AdContactForm 
-            v-if="ad.contact_preference !== 'phone'" 
-            :adId="ad.id"
-            @success="toast?.add($event, 'success')"
-            @error="toast?.add($event, 'error')"
-          />
+          <div id="contact-form-section">
+            <AdContactForm 
+              v-if="ad.contact_preference !== 'phone'" 
+              :adId="ad.id"
+              @success="toast?.add($event, 'success')"
+              @error="toast?.add($event, 'error')"
+            />
+          </div>
 
           <!-- Similar Listings -->
           <AdSimilarListings 
@@ -583,6 +621,7 @@ defineExpose({
             @handle-show-phone="handleShowPhone"
             @handle-share="showActionsMenu = true"
             @open-report-modal="showReportModal = true"
+            @scroll-to-form="scrollToContactForm"
           />
         </div>
       </div>
@@ -686,9 +725,9 @@ defineExpose({
       </div>
       <div class="sticky-btns">
         <button 
-          v-if="ad.phone" 
+          v-if="hasPhone" 
           @click="handlePhoneCall" 
-          class="btn btn-primary btn-small btn-phone"
+          :class="['btn btn-primary btn-small btn-phone', { 'btn-icon-only': hasBothContactMethods }]"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l2.18-1.14a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -696,7 +735,19 @@ defineExpose({
           <span class="btn-text">{{ showPhone ? ad.phone : 'Zadzwoń' }}</span>
         </button>
 
-        <button @click="showActionsMenu = true" class="btn btn-secondary btn-small">
+        <button 
+          v-if="hasForm" 
+          @click="scrollToContactForm" 
+          class="btn btn-primary btn-small btn-message-sticky"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <path d="M22 6l-10 7L2 6" />
+          </svg>
+          <span class="btn-text">Napisz</span>
+        </button>
+
+        <button @click="showActionsMenu = true" class="btn btn-secondary btn-small btn-icon-only">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
             <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
           </svg>
@@ -720,6 +771,11 @@ defineExpose({
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 2rem;
+  scroll-behavior: smooth;
+}
+
+#contact-form-section {
+  scroll-margin-top: 100px;
 }
 
 .content-layout {
@@ -1066,7 +1122,7 @@ defineExpose({
   background: var(--card-bg, white);
   padding: 1rem 1.5rem;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-  z-index: 1500;
+  z-index: 1050;
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid var(--border-color, #e5e7eb);
@@ -1138,13 +1194,16 @@ defineExpose({
 }
 
 .btn-phone {
-  background: var(--accent-color, #10B981);
-  color: white;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  background: white !important;
+  color: #667eea !important;
+  border: 1.5px solid rgba(102, 126, 234, 0.4) !important;
+  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.1) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .btn-phone:active {
   transform: scale(0.95);
+  background: rgba(102, 126, 234, 0.05) !important;
 }
 
 .btn-secondary {
@@ -1155,6 +1214,18 @@ defineExpose({
 }
 
 .btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.35);
+}
+
+.btn-message-sticky {
+  background: var(--primary-gradient) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25) !important;
+}
+
+.btn-message-sticky:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(102, 126, 234, 0.35);
 }
@@ -1323,34 +1394,42 @@ defineExpose({
   }
   
   .btn-small {
-    padding: 0.65rem 0.61rem !important;
-    font-size: 0.8rem !important;
-    gap: 0.2rem !important;
-    border-radius: 12px !important;
-    flex: 0 1 auto;
-    white-space: nowrap;
-    min-width: 0;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    white-space: nowrap;
   }
 
-  @media (max-width:355px) {
-    .btn-small .btn-text {
-      display: none !important;
-    }
-    .btn-small {
-      padding: 0.65rem 0.65rem !important;
-      min-width: 42px;
-      max-width: 42px;
-      border-radius: 50% !important;
-    }
+  .btn-phone:not(.btn-icon-only),
+  .btn-message-sticky {
+    flex: 1;
+    min-width: 100px;
   }
 
-  .btn-small svg {
-    width: 16px !important;
-    height: 16px !important;
-    flex-shrink: 0;
+  .btn-icon-only {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    flex: 0 0 auto !important;
+  }
+
+  .btn-icon-only .btn-text {
+    display: none !important;
+  }
+
+  .btn-icon-only svg {
+    margin: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
   }
 
   .mobile-stats-row {

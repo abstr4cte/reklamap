@@ -358,7 +358,7 @@ watch(isMobileMenuOpen, (isOpen) => {
   left: 0;
   right: 0;
   width: 100%;
-  z-index: 1100;
+  z-index: 3000;
 }
 
 .container {
@@ -707,7 +707,7 @@ watch(isMobileMenuOpen, (isOpen) => {
   width: 320px;
   max-width: 85vw;
   background: white;
-  z-index: 1100;
+  z-index: 3000;
   display: flex;
   flex-direction: column;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);

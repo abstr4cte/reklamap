@@ -157,10 +157,18 @@ const handleImageClick = () => {
   <div class="image-gallery">
     <div class="main-image-wrapper">
       <div v-if="images.length > 0" class="image-container" @click="openImagePreview">
-        <WebPImage :src="images[currentImageIndex]" :alt="imageAlt" class="main-image" />
+        <div class="main-image-bg">
+          <WebPImage :src="images[currentImageIndex]" :alt="imageAlt" />
+        </div>
+        <div class="main-image">
+          <WebPImage :src="images[currentImageIndex]" :alt="imageAlt" />
+        </div>
         <div class="zoom-hint">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M15 15l6 6m-6-6a9 9 0 113.5-3.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <line x1="11" y1="8" x2="11" y2="14"></line>
+            <line x1="8" y1="11" x2="14" y2="11"></line>
           </svg>
         </div>
       </div>
@@ -284,28 +292,83 @@ const handleImageClick = () => {
   width: 100%;
   height: 100%;
   cursor: zoom-in;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  position: relative;
 }
 
-.main-image {
+.main-image-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.main-image-bg :deep(img) {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: blur(25px) brightness(0.7);
+  opacity: 0.6;
+  transform: scale(1.1); /* Avoid blur edges */
+}
+
+.main-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-image :deep(img) {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
 }
 
 .zoom-hint {
   position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 0.5rem;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   color: white;
   opacity: 0;
-  transition: opacity 0.3s;
+  transform: scale(0.8) translate(10px, 10px);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 100;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.zoom-hint svg {
+  width: 20px;
+  height: 20px;
+  stroke: white;
+  display: block;
 }
 
 .image-container:hover .zoom-hint {
   opacity: 1;
+  transform: scale(1) translate(0, 0);
 }
 
 .nav-btn {

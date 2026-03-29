@@ -172,9 +172,9 @@ defineExpose({
             </p>
 
             <form @submit.prevent="handleSubmit" class="feedback-form">
-              <div v-if="error" class="error-message">
+              <span v-if="error" class="error-text">
                 {{ error }}
-              </div>
+              </span>
 
               <div class="type-selector">
                 <button
@@ -216,7 +216,7 @@ defineExpose({
                   type="text"
                   placeholder="twoj@email.pl"
                   class="form-input"
-                  required
+                  :class="{ 'error': error && (error.includes('e-mail') || error.includes('@')) }"
                 />
               </div>
 
@@ -224,9 +224,9 @@ defineExpose({
                 v-model="message"
                 placeholder="Opisz swój problem, sugestię lub pytanie..."
                 rows="4"
-                required
                 maxlength="2000"
                 class="form-textarea"
+                :class="{ 'error': error && (error.includes('wiadomość') || error.includes('znaków')) }"
               ></textarea>
               <div class="char-counter" :class="{ 'near-limit': message.length > 1800 }">
                 {{ message.length }}/2000 znaków
@@ -338,14 +338,12 @@ defineExpose({
   gap: 1rem;
 }
 
-.error-message {
-  padding: 0.75rem 1rem;
-  background: #FEE2E2;
-  border: 1px solid #FECACA;
-  border-radius: 8px;
-  color: #DC2626;
+.error-text {
+  color: #EF4444;
   font-size: 0.875rem;
-  font-weight: 500;
+  margin-bottom: 0.75rem;
+  display: block;
+  text-align: left;
 }
 
 .type-selector {
@@ -434,7 +432,12 @@ defineExpose({
   min-height: 100px;
 }
 
-.form-textarea:focus {
+.form-input.error, .form-textarea.error {
+  border-color: #EF4444;
+  background-color: #FEF2F2;
+}
+
+.form-input:focus, .form-textarea:focus {
   outline: none;
   border-color: #4F46E5;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);

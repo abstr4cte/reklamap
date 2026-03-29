@@ -109,7 +109,6 @@ const handleSubmit = async () => {
               v-model="email" 
               type="text" 
               placeholder="Twój adres e-mail" 
-              required
               class="email-input"
               :class="{ 'error': emailError }"
               :disabled="isSubmitting"

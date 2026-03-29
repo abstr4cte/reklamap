@@ -13,46 +13,59 @@ const formData = ref({
 
 const isSubmitting = ref(false)
 const submitSuccess = ref(false)
-const error = ref('')
+const globalError = ref('')
+const errors = ref<Record<string, string>>({})
 
 const handleSubmit = async () => {
-  if (!formData.value.name || !formData.value.email || !formData.value.subject || !formData.value.message) {
-    error.value = 'Proszę wypełnić wszystkie wymagane pola'
-    return
+  errors.value = {}
+  globalError.value = ''
+  
+  let hasErrors = false
+
+  if (!formData.value.name) {
+    errors.value.name = 'Imię i nazwisko jest wymagane'
+    hasErrors = true
+  } else if (!/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s\-]{2,100}$/.test(formData.value.name)) {
+    errors.value.name = 'Imię i nazwisko może zawierać tylko litery, spacje i myślniki (2-100 znaków)'
+    hasErrors = true
   }
 
-  // Walidacja imienia i nazwiska (tylko litery, spacje, myślniki)
-  if (!/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s\-]{2,100}$/.test(formData.value.name)) {
-    error.value = 'Imię i nazwisko może zawierać tylko litery, spacje i myślniki (2-100 znaków)'
-    return
+  if (!formData.value.email) {
+    errors.value.email = 'Adres e-mail jest wymagany'
+    hasErrors = true
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)) {
+    errors.value.email = 'Nieprawidłowy format adresu e-mail'
+    hasErrors = true
   }
 
-  // Walidacja emaila
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)) {
-    error.value = 'Nieprawidłowy format adresu e-mail'
-    return
-  }
-
-  // Walidacja telefonu (jeśli podany)
   if (formData.value.phone && !/^[\d\s\-\+()]{9,20}$/.test(formData.value.phone.replace(/\s/g, ''))) {
-    error.value = 'Nieprawidłowy format numeru telefonu'
-    return
+    errors.value.phone = 'Nieprawidłowy format numeru telefonu'
+    hasErrors = true
   }
 
-  // Walidacja tematu (max 200 znaków)
-  if (formData.value.subject.length > 200) {
-    error.value = 'Temat nie może być dłuższy niż 200 znaków'
-    return
+  if (!formData.value.subject) {
+    errors.value.subject = 'Proszę wybrać temat'
+    hasErrors = true
+  } else if (formData.value.subject.length > 200) {
+    errors.value.subject = 'Temat nie może być dłuższy niż 200 znaków'
+    hasErrors = true
   }
 
-  // Walidacja wiadomości (max 5000 znaków)
-  if (formData.value.message.length > 5000) {
-    error.value = 'Wiadomość nie może być dłuższa niż 5000 znaków'
+  if (!formData.value.message) {
+    errors.value.message = 'Wiadomość jest wymagana'
+    hasErrors = true
+  } else if (formData.value.message.length > 5000) {
+    errors.value.message = 'Wiadomość nie może być dłuższa niż 5000 znaków'
+    hasErrors = true
+  }
+
+  if (hasErrors) {
+    globalError.value = 'Proszę poprawić błędy w formularzu'
     return
   }
 
   isSubmitting.value = true
-  error.value = ''
+  globalError.value = ''
 
   try {
     // Get reCAPTCHA token
@@ -86,7 +99,7 @@ const handleSubmit = async () => {
     }, 5000)
   } catch (err) {
     isSubmitting.value = false
-    error.value = err instanceof Error ? err.message : 'Błąd podczas wysyłania wiadomości'
+    globalError.value = err instanceof Error ? err.message : 'Błąd podczas wysyłania wiadomości'
     console.error('Error submitting contact form:', err)
   }
 }
@@ -137,31 +150,35 @@ const handleSubmit = async () => {
               <h2>Wyślij wiadomość</h2>
               <p class="form-description">Wypełnij formularz, a my skontaktujemy się z Tobą najszybciej jak to możliwe.</p>
 
-              <div v-if="error" class="error-message">
-                {{ error }}
+              <div v-if="globalError" class="error-message">
+                {{ globalError }}
               </div>
 
               <div class="form-group">
-                <label for="name">Imię i nazwisko *</label>
+                <label for="name">Imię i nazwisko <span class="required-star">*</span></label>
                 <input
                   id="name"
                   v-model="formData.name"
                   type="text"
-                  required
+                  :class="{ 'error': errors.name }"
                   placeholder="Jan Kowalski"
+                  @input="errors.name = ''"
                 />
+                <span v-if="errors.name" class="error-text">{{ errors.name }}</span>
               </div>
 
               <div class="form-row">
                 <div class="form-group">
-                  <label for="email">Adres e-mail *</label>
+                  <label for="email">Adres e-mail <span class="required-star">*</span></label>
                   <input
                     id="email"
                     v-model="formData.email"
                     type="text"
-                    required
+                    :class="{ 'error': errors.email }"
                     placeholder="jan@przykład.pl"
+                    @input="errors.email = ''"
                   />
+                  <span v-if="errors.email" class="error-text">{{ errors.email }}</span>
                 </div>
 
                 <div class="form-group">
@@ -170,14 +187,22 @@ const handleSubmit = async () => {
                     id="phone"
                     v-model="formData.phone"
                     type="tel"
+                    :class="{ 'error': errors.phone }"
                     placeholder="+48 123 456 789"
+                    @input="errors.phone = ''"
                   />
+                  <span v-if="errors.phone" class="error-text">{{ errors.phone }}</span>
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="subject">Temat *</label>
-                <select id="subject" v-model="formData.subject" required>
+                <label for="subject">Temat <span class="required-star">*</span></label>
+                <select 
+                  id="subject" 
+                  v-model="formData.subject"
+                  :class="{ 'error': errors.subject }"
+                  @change="errors.subject = ''"
+                >
                   <option value="" disabled>Wybierz temat</option>
                   <option value="pytanie">Pytanie ogólne</option>
                   <option value="ogloszenie">Problem z ogłoszeniem</option>
@@ -185,17 +210,20 @@ const handleSubmit = async () => {
                   <option value="wspolpraca">Współpraca biznesowa</option>
                   <option value="inne">Inne</option>
                 </select>
+                <span v-if="errors.subject" class="error-text">{{ errors.subject }}</span>
               </div>
 
               <div class="form-group">
-                <label for="message">Wiadomość *</label>
+                <label for="message">Wiadomość <span class="required-star">*</span></label>
                 <textarea
                   id="message"
                   v-model="formData.message"
-                  required
                   rows="6"
+                  :class="{ 'error': errors.message }"
                   placeholder="Opisz swoją sprawę..."
+                  @input="errors.message = ''"
                 ></textarea>
+                <span v-if="errors.message" class="error-text">{{ errors.message }}</span>
               </div>
 
               <div v-if="submitSuccess" class="success-message">
@@ -450,6 +478,26 @@ const handleSubmit = async () => {
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input.error,
+.form-group select.error,
+.form-group textarea.error {
+  border-color: #ef4444;
+  background-color: #fffafb;
+}
+
+.error-text {
+  display: block;
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+.required-star {
+  color: #ef4444;
+  margin-left: 2px;
 }
 
 .form-group textarea {

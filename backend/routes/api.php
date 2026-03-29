@@ -15,8 +15,8 @@ Route::get('/user', function (Request $request) {
 Route::get('listings', [AdvertisementController::class, 'index']);
 Route::get('listings/{id}', [AdvertisementController::class, 'show']);
 
-// Dodawanie ogłoszeń - rate limit 20/h (dla agencji), bez reCAPTCHA
-Route::middleware('throttle:20,60')->post('listings', [AdvertisementController::class, 'store']);
+// Dodawanie ogłoszeń - rate limit 100/h (dla agencji), bez reCAPTCHA
+Route::middleware('throttle:100,60')->post('listings', [AdvertisementController::class, 'store']);
 
 Route::get('listings/{id}/similar', [AdvertisementController::class, 'similar']);
 Route::get('listings/{id}/pdf', [AdvertisementController::class, 'generatePdf']);
@@ -47,8 +47,8 @@ Route::middleware(['throttle:10,60', 'verify.recaptcha'])->group(function () {
 Route::get('search-alerts/unsubscribe/{token}', [\App\Http\Controllers\SearchAlertController::class, 'unsubscribe'])->name('search-alerts.unsubscribe');
 Route::get('newsletter/unsubscribe/{token}', [\App\Http\Controllers\NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
 
-// ─── Upload zdjęć (publiczny, tylko X-App-Key, rate limit 30/min) ────────────
-Route::middleware('throttle:30,1')->post('upload', [StorageController::class, 'upload']);
+// ─── Upload zdjęć (publiczny, tylko X-App-Key, rate limit 100/min) ────────────
+Route::middleware('throttle:100,1')->post('upload', [StorageController::class, 'upload']);
 
 // ─── Zarządzanie tokenami ─────────────────────────────────────────────────────
 // Rate limit na wysyłanie linku (max 5 prób na godzinę z jednego IP) + reCAPTCHA

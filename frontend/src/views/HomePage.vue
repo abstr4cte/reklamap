@@ -567,21 +567,21 @@ const handleSearchAlertSubmit = (email: string) => {
 }
 
 .category-card {
-  background: var(--card-bg, rgba(255, 255, 255, 0.9));
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.08) 50%, rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(15px);
   border-radius: 24px;
   padding: 2.5rem;
   text-decoration: none;
   color: var(--text-main, inherit);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: var(--card-shadow, 0 8px 30px rgba(102, 126, 234, 0.15));
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 10px 40px -10px rgba(102, 126, 234, 0.15);
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   animation: fadeInUp 0.6s ease-out backwards;
-  border: 1px solid var(--border-color, rgba(102, 126, 234, 0.15));
+  border: 1px solid rgba(102, 126, 234, 0.2);
 }
 
 .category-card:nth-child(1) { animation-delay: 0.1s; }
@@ -596,30 +596,55 @@ const handleSearchAlertSubmit = (email: string) => {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+  background-size: 200% 100%;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 3;
 }
 
 .category-card::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s ease, height 0.6s ease;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  transition: 0s;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .category-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 30px 60px -15px rgba(102, 126, 234, 0.3);
+  border-color: rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.15) 100%);
+}
+
+.category-card:hover::before {
+  transform: scaleX(1);
+  animation: flowGradient 3s linear infinite;
+}
+
+.category-card:hover::after {
+  left: 150%;
+  transition: left 0.8s ease-in-out;
+}
+
+@keyframes flowGradient {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
 }
 
 .category-card:hover .category-arrow {
@@ -846,21 +871,21 @@ const handleSearchAlertSubmit = (email: string) => {
 }
 
 .city-card {
-  background: var(--card-bg, rgba(255, 255, 255, 0.9));
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(12px);
   border-radius: 20px;
   padding: 2.25rem 2rem;
   text-decoration: none;
-  color: var(--text-main, #1f2937);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: var(--card-shadow, 0 8px 30px rgba(102, 126, 234, 0.15));
+  color: #ffffff;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   position: relative;
   overflow: hidden;
   animation: fadeInUp 0.6s ease-out backwards;
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.4));
+  border: 1px solid rgba(255, 255, 255, 0.2);
   min-height: 120px;
 }
 
@@ -882,33 +907,40 @@ const handleSearchAlertSubmit = (email: string) => {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0.5), #ffffff);
+  background-size: 200% 100%;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  border-radius: 20px 20px 0 0;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 3;
 }
 
 .city-card::after {
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  border-radius: 20px;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  transition: 0s;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .city-card:hover {
-  transform: translateY(-10px) scale(1.03);
-  box-shadow: 0 20px 50px rgba(102, 126, 234, 0.25), 0 10px 25px rgba(118, 75, 162, 0.2);
-  border-color: rgba(255, 255, 255, 0.6);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(252, 253, 255, 0.95) 100%);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
 }
 
 .city-card:hover::before {
@@ -916,13 +948,14 @@ const handleSearchAlertSubmit = (email: string) => {
 }
 
 .city-card:hover::after {
-  opacity: 1;
+  left: 150%;
+  transition: left 0.7s ease-in-out;
 }
 
 .city-name {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1f2937;
+  color: #ffffff;
   position: relative;
   z-index: 1;
   transition: all 0.3s ease;
@@ -931,16 +964,14 @@ const handleSearchAlertSubmit = (email: string) => {
 }
 
 .city-card:hover .city-name {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #ffffff;
   transform: translateX(4px);
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
 }
 
 .city-region {
   font-size: 0.95rem;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.7);
   text-transform: capitalize;
   position: relative;
   z-index: 1;
@@ -953,15 +984,12 @@ const handleSearchAlertSubmit = (email: string) => {
   top: 2rem;
   right: 1.75rem;
   font-size: 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #ffffff;
   opacity: 0;
   transform: translateX(-15px) rotate(-45deg);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 1;
-  filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.4));
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
 }
 
 .city-card:hover .city-arrow {

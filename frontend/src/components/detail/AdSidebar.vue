@@ -22,20 +22,13 @@ const emit = defineEmits<{
   'handle-share': []
   'handle-show-phone': []
   'open-report-modal': []
-  'toggle-actions-menu': []
+  'scroll-to-form': []
 }>()
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('pl-PL')
 }
 
-const getMaskedPhone = (phone: string) => {
-  if (!phone) return '+48 XXX XXX XXX'
-  let cleaned = phone.replace(/\D/g, '')
-  if (cleaned.startsWith('48') && cleaned.length === 11) cleaned = cleaned.slice(2)
-  if (cleaned.length < 9) return phone
-  return `+48 ${cleaned.slice(0, 3)} XXX XXX`
-}
 
 const getFullPhone = (phone: string) => {
   if (!phone) return ''
@@ -69,18 +62,30 @@ const getFullPhone = (phone: string) => {
       </div>
     </div>
 
-    <div v-if="ad.phone && ad.phone.trim()" class="phone-section">
-      <button v-if="!showPhone" @click="$emit('handle-show-phone')" class="btn btn-phone">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/>
-        </svg>
-        {{ getMaskedPhone(ad.phone) }}
-      </button>
-      <div v-else class="phone-display">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/>
-        </svg>
-        <a :href="`tel:${ad.phone}`" class="phone-number">{{ getFullPhone(ad.phone) }}</a>
+    <div class="contact-actions">
+      <div v-if="ad.phone && ad.phone.trim() && ad.contact_preference !== 'form'" class="phone-section">
+        <button v-if="!showPhone" @click="$emit('handle-show-phone')" class="btn btn-phone">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          Pokaż numer
+        </button>
+        <div v-else class="phone-display">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <a :href="`tel:${ad.phone}`" class="phone-number">{{ getFullPhone(ad.phone) }}</a>
+        </div>
+      </div>
+
+      <div v-if="ad.contact_preference !== 'phone'" class="message-section">
+        <button @click="$emit('scroll-to-form')" class="btn btn-message">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 6l-10 7L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Wyślij wiadomość
+        </button>
       </div>
     </div>
 
@@ -187,8 +192,15 @@ const getFullPhone = (phone: string) => {
   font-size: 0.95rem;
 }
 
-.phone-section {
+.contact-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
   margin-bottom: 2rem;
+}
+
+.phone-section {
+  margin-bottom: 0;
 }
 
 .btn-phone {
@@ -197,18 +209,48 @@ const getFullPhone = (phone: string) => {
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  min-height: 54px;
+  background: #ffffff;
+  color: #667eea;
+  border: 1.5px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.05);
+  box-sizing: border-box;
+}
+
+.btn-phone:hover {
+  background: rgba(102, 126, 234, 0.03);
+  border-color: #667eea;
+  color: #5a67d8;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.15);
+}
+
+.btn-message {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
   padding: 1rem;
-  background: #10B981;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 12px;
   font-weight: 700;
   transition: all 0.2s;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
-.btn-phone:hover {
-  background: #059669;
+.btn-message:hover {
   transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
 }
 
 .phone-display {
@@ -217,12 +259,15 @@ const getFullPhone = (phone: string) => {
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  padding: 1rem;
-  background: var(--bg-tertiary, #f3f4f6);
+  padding: 0.875rem 1rem;
+  min-height: 54px;
+  background: #ffffff;
+  border: 1.5px solid #667eea;
   border-radius: 12px;
   font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--text-main, #111827);
+  font-size: 1rem;
+  color: #667eea;
+  box-sizing: border-box;
 }
 
 .phone-number {
