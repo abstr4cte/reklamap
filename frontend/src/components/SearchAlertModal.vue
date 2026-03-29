@@ -152,7 +152,7 @@ const handleSubmit = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 4000;
   padding: 1.5rem;
 }
 

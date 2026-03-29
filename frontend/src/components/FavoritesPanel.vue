@@ -161,7 +161,7 @@ watch(() => prefStore.favorites, () => {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 1999;
+  z-index: 3999;
   animation: fadeIn 0.3s ease;
 }
 
@@ -179,10 +179,11 @@ watch(() => prefStore.favorites, () => {
   top: 0;
   right: 0;
   height: 100vh;
+  height: 100dvh;
   width: 420px;
   background: white;
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
-  z-index: 2000;
+  z-index: 4000;
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
@@ -399,6 +400,7 @@ watch(() => prefStore.favorites, () => {
 
   .panel-footer {
     padding: 1rem 1.5rem;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
   }
 }
 </style>

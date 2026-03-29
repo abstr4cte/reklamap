@@ -730,7 +730,7 @@ onMounted(() => {
   height: 100vh;
   background: white;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-  z-index: 1100;
+  z-index: 4000;
   transition: transform 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
@@ -868,7 +868,7 @@ onMounted(() => {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.3);
-  z-index: 1099;
+  z-index: 3999;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
