@@ -161,10 +161,11 @@ const handleReset = () => {
   
   // Zresetuj sortowanie do domyślnego
   sortBy.value = 'newest'
-  priceDisplay.value = null
+  priceDisplay.value = 'day'
   
-  // Wyczyść parametry URL
-  router.replace({ query: {} })
+  // Wyczyść parametry URL - użyj window.history zamiast router
+  const newUrl = window.location.pathname
+  window.history.replaceState({}, document.title, newUrl)
   
   // Smooth scroll do góry
   window.scrollTo({ top: 0, behavior: 'smooth' })

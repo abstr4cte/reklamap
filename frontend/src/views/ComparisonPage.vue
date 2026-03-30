@@ -272,7 +272,12 @@ const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
       return ad.price_negotiable ? 'Tak' : 'Nie'
     case 'available_from':
       if (!ad.available_from) return 'Od zaraz'
-      return new Date(ad.available_from).toLocaleDateString('pl-PL')
+      const availableDate = new Date(ad.available_from)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      availableDate.setHours(0, 0, 0, 0)
+      if (availableDate <= today) return 'Od zaraz'
+      return availableDate.toLocaleDateString('pl-PL')
     case 'campaign_duration':
       return (ad as any).campaign_duration ? `${(ad as any).campaign_duration} dni` : '—'
     default:

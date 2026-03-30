@@ -36,7 +36,8 @@ const {
   sortedAndFilteredListings: filteredListings,
   totalPages,
   activeFiltersCount,
-  itemsPerPage
+  itemsPerPage,
+  pathParamsFilters
 } = storeToRefs(searchStore)
 
 // UI State
@@ -277,9 +278,24 @@ const applyFilters = () => {
   locationQuery.value = tempLocationQuery.value
   showFiltersModal.value = false
   
-  // Synchronizuj filtry z URL
-  const queryParams = filtersToQueryParams(filtersWithoutMapBounds)
-  queryParams.page = '1'
+  // Synchronizuj filtry z URL, ale wykluczając filtry z path params
+  const filtersForUrl = { ...filtersWithoutMapBounds }
+  
+  // Usuń filtry które pochodzą z path params (kategoria/miasto z menu)
+  if (pathParamsFilters.value.type && filtersForUrl.type === pathParamsFilters.value.type) {
+    filtersForUrl.type = ''
+  }
+  if (pathParamsFilters.value.city && filtersForUrl.city === pathParamsFilters.value.city) {
+    filtersForUrl.city = ''
+    filtersForUrl.cityStrict = false
+  }
+  
+  const queryParams = filtersToQueryParams(filtersForUrl)
+  // Don't add page=1 to URL (it's the default)
+  // Only add page if > 1
+  if (currentPage.value > 1) {
+    queryParams.page = currentPage.value.toString()
+  }
   const queryString = new URLSearchParams(queryParams).toString()
   const newUrl = queryString ? window.location.pathname + '?' + queryString : window.location.pathname
   window.history.replaceState({}, document.title, newUrl)
@@ -631,7 +647,18 @@ onMounted(async () => {
   // 3. Jeśli URL nie ma query params, ale filtry są ustawione (z localStorage), zaktualizuj URL
   const hasQueryParams = Object.keys(route.query).length > 0
   if (!hasQueryParams && filters.value) {
-    const queryParams = filtersToQueryParams(filters.value)
+    // Wykluczaj filtry z path params przy aktualizacji URL
+    const filtersForUrl = { ...filters.value }
+    
+    if (pathParamsFilters.value.type && filtersForUrl.type === pathParamsFilters.value.type) {
+      filtersForUrl.type = ''
+    }
+    if (pathParamsFilters.value.city && filtersForUrl.city === pathParamsFilters.value.city) {
+      filtersForUrl.city = ''
+      filtersForUrl.cityStrict = false
+    }
+    
+    const queryParams = filtersToQueryParams(filtersForUrl)
     if (Object.keys(queryParams).length > 0) {
       const newUrl = window.location.pathname + '?' + new URLSearchParams(queryParams).toString()
       window.history.replaceState({}, document.title, newUrl)

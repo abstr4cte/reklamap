@@ -93,10 +93,12 @@ export const useSearchStore = defineStore('search', () => {
   const isLoading = ref(false)
   const filters = ref<FilterParams>({ ...DEFAULT_FILTERS })
   const sortBy = ref('newest')
-  const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign' | null>(null)
-  const viewMode = ref<'grid' | 'list'>((localStorage.getItem('adsViewMode') as 'grid' | 'list') || 'grid')
+  const priceDisplay = ref<string>('day')
+  const viewMode = ref<'grid' | 'list'>('grid')
   const currentPage = ref(1)
-  const itemsPerPage = ref(18)
+  const itemsPerPage = ref(24)
+  // Track filters from path params (category/city from menu)
+  const pathParamsFilters = ref<{ type?: string; city?: string }>({})
 
   // Actions
   const setListings = (data: Advertisement[]) => {
@@ -120,9 +122,20 @@ export const useSearchStore = defineStore('search', () => {
     filters.value = { ...filters.value, ...newFilters }
     currentPage.value = 1
     
-    // Persist to localStorage
+    // Persist to localStorage, but exclude filters from path params
     try {
-      localStorage.setItem('reklamap_last_search', JSON.stringify(filters.value))
+      const filtersToSave = { ...filters.value }
+      
+      // Don't save filters that come from path params (category/city from menu)
+      if (pathParamsFilters.value.type && filtersToSave.type === pathParamsFilters.value.type) {
+        filtersToSave.type = ''
+      }
+      if (pathParamsFilters.value.city && filtersToSave.city === pathParamsFilters.value.city) {
+        filtersToSave.city = ''
+        filtersToSave.cityStrict = false
+      }
+      
+      localStorage.setItem('reklamap_last_search', JSON.stringify(filtersToSave))
     } catch (e) {
       console.error('Error saving filters to localStorage:', e)
     }
@@ -131,8 +144,9 @@ export const useSearchStore = defineStore('search', () => {
   const resetFilters = () => {
     filters.value = { ...DEFAULT_FILTERS }
     sortBy.value = 'newest'
-    priceDisplay.value = null
+    priceDisplay.value = 'day'
     currentPage.value = 1
+    pathParamsFilters.value = {} // Reset path params tracking
     
     // Clear localStorage
     try {
@@ -155,6 +169,9 @@ export const useSearchStore = defineStore('search', () => {
     // Start with a clean slate of filters to avoid stale results
     filters.value = { ...DEFAULT_FILTERS }
     
+    // Reset path params tracking
+    pathParamsFilters.value = {}
+    
     const urlFilters = queryParamsToFilters(query)
     
     // Merge URL path params
@@ -172,12 +189,14 @@ export const useSearchStore = defineStore('search', () => {
             'inne': 'other'
         }
         filters.value.type = typeMapping[params.type as string] || params.type as string
+        pathParamsFilters.value.type = filters.value.type // Track as path param
     }
     
     if (params.city) {
         // City from path has priority
         filters.value.city = deslugify(params.city as string)
         filters.value.cityStrict = true // If in URL path, it's usually intentional
+        pathParamsFilters.value.city = filters.value.city // Track as path param
     }
 
     // Apply other filters from query
@@ -681,15 +700,18 @@ export const useSearchStore = defineStore('search', () => {
   const activeFiltersCount = computed(() => {
     const f = filters.value
     const d = DEFAULT_FILTERS
+    const pathParams = pathParamsFilters.value
     let count = 0
 
     // Group 1: Search & Location (counts as one filter if any change)
-    if (f.keyword !== d.keyword || f.city !== d.city || f.region !== d.region || f.street !== d.street || f.selectedLocationCoords !== d.selectedLocationCoords) {
+    // Exclude city if it comes from path params
+    const cityChanged = f.city !== d.city && f.city !== pathParams.city
+    if (f.keyword !== d.keyword || cityChanged || f.region !== d.region || f.street !== d.street || f.selectedLocationCoords !== d.selectedLocationCoords) {
       count++
     }
 
     // Group 2: All other filters (dynamic check)
-    const skipKeys = ['keyword', 'city', 'region', 'street', 'selectedLocationCoords', 'priceUnit', 'locationLabel', 'cityStrict', '_priceDisplayUnit', 'mapBounds']
+    const skipKeys = ['keyword', 'city', 'region', 'street', 'selectedLocationCoords', 'priceUnit', 'locationLabel', 'cityStrict', '_priceDisplayUnit', 'mapBounds', 'type']
     Object.keys(f).forEach(key => {
       if (skipKeys.includes(key)) return
       if (!(key in d)) return // Skip properties not in DEFAULT_FILTERS
@@ -705,6 +727,11 @@ export const useSearchStore = defineStore('search', () => {
       }
     })
 
+    // Add type filter only if it's NOT from path params
+    if (f.type !== d.type && f.type !== pathParams.type) {
+      count++
+    }
+
     return count
   })
 
@@ -715,6 +742,6 @@ export const useSearchStore = defineStore('search', () => {
     getTypeLabel, getStatusLabel, getStatusColor, formatLocation, formatTrafficDirection, getPriceUnitLabel, getVariantLabel, getRoadClassLabel,
     formatTrafficType, formatEnvironment, formatTransportScope, formatMobileExposureMode, formatLightingType, formatLightingTypeBanner, formatOperatingZone,
     adTypes, priceUnitOptions, sortOptions, getPriceLabel, getAvailablePriceUnits,
-    processLocationSuggestions, selectLocationSuggestion
+    processLocationSuggestions, selectLocationSuggestion, pathParamsFilters
   }
 })

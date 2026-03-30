@@ -764,7 +764,19 @@
             <tr>
                 <th>Dostępne od</th>
                 @foreach($advertisements as $ad)
-                    <td>{{ $ad->available_from ? date('d.m.Y', strtotime($ad->available_from)) : 'Od zaraz' }}</td>
+                    <td>
+                        @if(!$ad->available_from)
+                            Od zaraz
+                        @else
+                            @php
+                                $availableDate = new DateTime($ad->available_from);
+                                $today = new DateTime();
+                                $today->setTime(0, 0, 0);
+                                $availableDate->setTime(0, 0, 0);
+                            @endphp
+                            {{ $availableDate <= $today ? 'Od zaraz' : date('d.m.Y', strtotime($ad->available_from)) }}
+                        @endif
+                    </td>
                 @endforeach
             </tr>
             @endif

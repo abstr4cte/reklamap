@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { storeToRefs } from 'pinia'
 import AdCard from './AdCard.vue'
 import type { Advertisement } from '../types'
 import { useSearchStore } from '../stores/useSearchStore'
+import { filtersToQueryParams } from '../utils/filterUtils'
 
 const searchStore = useSearchStore()
+const { filters, pathParamsFilters } = storeToRefs(searchStore)
 
 const props = defineProps<{
   listings: Advertisement[]
@@ -103,6 +106,25 @@ const goToPolandMap = () => {
   }
 }
 
+// Computed property for "Zobacz wszystkie" link with query params
+const seeAllLink = computed(() => {
+  // Exclude filters from path params (category/city from menu)
+  const filtersForUrl = { ...filters.value }
+  
+  if (pathParamsFilters.value.type && filtersForUrl.type === pathParamsFilters.value.type) {
+    filtersForUrl.type = ''
+  }
+  if (pathParamsFilters.value.city && filtersForUrl.city === pathParamsFilters.value.city) {
+    filtersForUrl.city = ''
+    filtersForUrl.cityStrict = false
+  }
+  
+  const queryParams = filtersToQueryParams(filtersForUrl)
+  const queryString = new URLSearchParams(queryParams).toString()
+  
+  return queryString ? `/powierzchnie-reklamowe?${queryString}` : '/powierzchnie-reklamowe'
+})
+
 
 const emit = defineEmits<{
   toggleFavorite: [id: string]
@@ -146,7 +168,7 @@ onUnmounted(() => {
     <div class="section-header-wrapper">
       <div class="section-header">
         <div class="header-right">
-          <router-link to="/powierzchnie-reklamowe" class="see-all-btn">
+          <router-link :to="seeAllLink" class="see-all-btn">
             <span class="full-text">Zobacz wszystkie ogłoszenia</span>
             <span class="short-text">Zobacz wszystkie</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
