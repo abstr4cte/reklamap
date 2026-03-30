@@ -1129,7 +1129,7 @@ defineExpose({
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid var(--border-color, #e5e7eb);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.5rem;
 }
 
