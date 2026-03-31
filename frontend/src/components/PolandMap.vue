@@ -323,8 +323,9 @@ const updateMarkers = () => {
 
       marker.bindPopup(popupContent, { 
         maxWidth: 250,
+        maxHeight: 250,
         autoPan: true,    // Automatyczne przesunięcie mapy, aby popup był widoczny
-        autoPanPadding: [50, 50]  // Padding przy autopan
+        autoPanPadding: [10, 10]  // Zmniejszony padding przy autopan, żeby omijać bugi na małych ekranach
       })
       
       // On mobile, activate map interactions if inactive
@@ -844,6 +845,9 @@ onMounted(() => {
   transform: translateY(-8px);
   transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100% - 2rem);
 }
 
 .map-legend.is-visible {
@@ -858,6 +862,10 @@ onMounted(() => {
   grid-template-columns: 1fr 1fr;
   gap: 0.4rem;
   max-width: 320px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  flex: 1;
+  min-height: 0;
 }
 
 .map-legend .legend-item {
@@ -872,6 +880,7 @@ onMounted(() => {
   padding: 0.25rem 1rem 0.5rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   background: transparent;
+  flex-shrink: 0;
 }
 
 /* Overlay when legend is open */

@@ -2118,7 +2118,7 @@ onMounted(() => {
           <!-- Status dostępności -->          
           <div class="form-group">
             <label class="form-label">Status dostępności <span class="required">*</span></label>
-            <select v-model="formData.status" class="form-select" :class="{ 'error': errors.status }">
+            <select v-model="formData.status" class="form-select" :class="{ 'error': errors.status }" size="1">
               <option value="" disabled>Wybierz status</option>
               <option value="available">Wolne</option>
               <option value="reserved">Zarezerwowane</option>

@@ -451,7 +451,12 @@ const updateMarkers = () => {
       </div>
     `
 
-    marker.bindPopup(popupContent, { maxWidth: 220 })
+    marker.bindPopup(popupContent, { 
+      maxWidth: 220,
+      maxHeight: 250,
+      autoPan: true,
+      autoPanPadding: [10, 10]
+    })
     marker.on('click', () => { selectedAdId.value = ad.id; scrollToAd(ad.id) })
     marker.on('mouseover', () => { 
       if (!isMobile.value) {
@@ -519,7 +524,7 @@ const initMap = async () => {
     resizeObserver.observe(mapContainer.value)
   }
 
-  map.on('moveend', () => {
+  const handleUserMapInteraction = () => {
     if (!map) return
     
     // Skip updating mapBounds if this was a programmatic move (e.g., zoom to city)
@@ -529,7 +534,6 @@ const initMap = async () => {
     }
     
     // Skip updating mapBounds if map is hidden on mobile
-    // This prevents accidental filter updates during scroll when browser UI changes height
     if (isMobile.value && !showMapOnMobile.value) {
       return
     }
@@ -548,7 +552,10 @@ const initMap = async () => {
     // The mapBounds will still narrow down results geographically
     
     searchStore.applyFilters(updates)
-  })
+  }
+
+  map.on('dragend', handleUserMapInteraction)
+  map.on('zoomend', handleUserMapInteraction)
 }
 
 const syncMapToFilters = () => {
@@ -619,7 +626,39 @@ watch(filteredListings, () => {
 }, { deep: true })
 
 const checkIfMobile = () => { isMobile.value = window.innerWidth < 768 }
-const handleScroll = () => { /* Logic for scroll-based UI adjustments */ }
+const handleScroll = () => {
+  if (!isMobile.value) {
+    showMapButton.value = true
+    return
+  }
+  
+  const footer = document.querySelector('footer')
+  const descriptionWrapper = document.querySelector('.description-wrapper')
+  const contentWrapper = document.querySelector('.content-wrapper')
+  
+  if (contentWrapper) {
+    let isBottomSectionVisible = false
+    
+    if (descriptionWrapper) {
+      const descRect = descriptionWrapper.getBoundingClientRect()
+      if (descRect.top <= window.innerHeight) {
+        isBottomSectionVisible = true
+      }
+    }
+    
+    if (footer && !isBottomSectionVisible) {
+      const footerRect = footer.getBoundingClientRect()
+      if (footerRect.top <= window.innerHeight) {
+        isBottomSectionVisible = true
+      }
+    }
+    
+    const contentRect = contentWrapper.getBoundingClientRect()
+    const inContentSection = contentRect.bottom > 0
+    
+    showMapButton.value = inContentSection && !isBottomSectionVisible
+  }
+}
 
 const handleClickOutside = (e: MouseEvent) => {
   if (statusMultiselect.value && !statusMultiselect.value.contains(e.target as Node)) {
@@ -643,6 +682,7 @@ onMounted(async () => {
   checkIfMobile()
   window.addEventListener('resize', checkIfMobile)
   window.addEventListener('scroll', handleScroll)
+  handleScroll() // Ustaw stan początkowy
   if (!isMobile.value) { setTimeout(() => initMap(), 100) }
   document.addEventListener('click', handleClickOutside)
   
@@ -2549,6 +2589,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   padding: 1.25rem;
   border-bottom: 1px solid var(--border-color, #E5E7EB);
   background: var(--bg-secondary, #f9fafb);
+  flex-shrink: 0;
 }
 
 .legend-header h3 {
@@ -2632,6 +2673,9 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   transform: translateY(-8px);
   transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100% - 2rem);
 }
 
 .map-legend.is-visible {
@@ -2651,7 +2695,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   }
   
   .map-legend {
-    display: block;
+    display: flex;
   }
 }
 
@@ -2660,9 +2704,10 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.4rem;
-  max-height: 300px;
   overflow-y: auto;
   padding-right: 0.25rem;
+  flex: 1;
+  min-height: 0;
 }
 
 /* Mobile legend items - single row */
@@ -3417,13 +3462,14 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
   .modal-content {
     width: 100%;
-    max-height: 90vh;
+    max-height: calc(100vh - 80px);
     border-radius: 20px 20px 0 0;
     position: fixed;
     bottom: 0;
     top: auto;
     left: 0;
     transform: none;
+    margin-top: 80px;
   }
 
   .modal-header,

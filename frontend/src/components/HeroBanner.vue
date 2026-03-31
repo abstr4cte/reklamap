@@ -20,6 +20,8 @@ const emit = defineEmits<{
 
 const showAdvanced = ref(false)
 const searchStore = useSearchStore()
+const isUserEditing = ref(false)
+let editingTimeout: ReturnType<typeof setTimeout> | null = null
 
 const filters = ref<FilterParams & { _priceDisplayUnit?: string }>({
   ...searchStore.filters,
@@ -181,6 +183,12 @@ const loadLastSearch = () => {
 }
 
 const handleSearch = () => {
+  // Reset editing flag and clear timeout
+  isUserEditing.value = false
+  if (editingTimeout) {
+    clearTimeout(editingTimeout)
+  }
+  
   // Konwertuj wymiary LED z mm na metry przed wysłaniem
   const searchFilters = { ...filters.value }
   
@@ -391,8 +399,25 @@ onMounted(() => {
   }
 })
 
-// Synchronize with searchStore filters
+// Mark user as editing when interacting with inputs
+const markUserEditing = () => {
+  isUserEditing.value = true
+  if (editingTimeout) {
+    clearTimeout(editingTimeout)
+  }
+  // Reset after 2 seconds of inactivity
+  editingTimeout = setTimeout(() => {
+    isUserEditing.value = false
+  }, 2000)
+}
+
+// Synchronize with searchStore filters (only when user is not actively editing)
 watch(() => searchStore.filters, (newStoreFilters) => {
+  // Don't sync if user is actively editing the form
+  if (isUserEditing.value) {
+    return
+  }
+
   // Update local filters
   Object.keys(newStoreFilters).forEach(key => {
     const k = key as keyof FilterParams
@@ -461,6 +486,7 @@ onBeforeUnmount(() => {
                   type="text"
                   placeholder="np. billboard centrum"
                   class="search-input"
+                  @focus="markUserEditing"
                 />
               </div>
 
@@ -472,7 +498,7 @@ onBeforeUnmount(() => {
                   </svg>
                   Typ powierzchni
                 </label>
-                <select id="search-type" v-model="filters.type" class="search-select">
+                <select id="search-type" v-model="filters.type" class="search-select" @focus="markUserEditing">
                   <option v-for="type in adTypes" :key="type.value" :value="type.value">
                     {{ type.label }}
                   </option>
@@ -564,6 +590,7 @@ onBeforeUnmount(() => {
                   <input
                     :value="filters.priceFrom"
                     @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); filters.priceFrom = val ? parseFloat(val) : null }"
+                    @focus="markUserEditing"
                     type="text"
                     placeholder="Od"
                     class="search-input price-input"
@@ -572,11 +599,12 @@ onBeforeUnmount(() => {
                   <input
                     :value="filters.priceTo"
                     @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); filters.priceTo = val ? parseFloat(val) : null }"
+                    @focus="markUserEditing"
                     type="text"
                     placeholder="Do"
                     class="search-input price-input"
                   />
-                  <select v-model="filters.priceUnit" class="search-select price-unit">
+                  <select v-model="filters.priceUnit" class="search-select price-unit" @focus="markUserEditing">
                     <option v-for="unit in availablePriceUnits" :key="unit.value" :value="unit.value">
                       {{ unit.label }}
                     </option>
@@ -649,7 +677,7 @@ onBeforeUnmount(() => {
                 <div class="search-row">
                   <div class="input-group">
                     <label for="orientation" class="input-label">Orientacja</label>
-                    <select id="orientation" v-model="filters.orientation" class="search-select">
+                    <select id="orientation" v-model="filters.orientation" class="search-select" @focus="markUserEditing">
                       <option value="">Wszystkie</option>
                       <option value="vertical">Pion</option>
                       <option value="horizontal">Poziom</option>
@@ -686,7 +714,7 @@ onBeforeUnmount(() => {
                 <div v-if="variantOptions.length > 0" class="search-row">
                   <div class="input-group">
                     <label class="input-label">Wariant</label>
-                    <select v-model="filters.variant" class="search-select">
+                    <select v-model="filters.variant" class="search-select" @focus="markUserEditing">
                       <option value="">Wszystkie</option>
                       <option v-for="variant in variantOptions" :key="variant.value" :value="variant.value">
                         {{ variant.label }}
@@ -699,7 +727,7 @@ onBeforeUnmount(() => {
                 <div v-if="showRoadClassFilter" class="search-row">
                   <div class="input-group">
                     <label class="input-label">Klasa drogi</label>
-                    <select v-model="filters.roadClass" class="search-select">
+                    <select v-model="filters.roadClass" class="search-select" @focus="markUserEditing">
                       <option value="">Wszystkie</option>
                       <option value="highway">Autostrada</option>
                       <option value="expressway">Droga ekspresowa</option>
@@ -715,7 +743,7 @@ onBeforeUnmount(() => {
                 <div v-if="showTrafficIntensityFilter" class="search-row">
                   <div class="input-group">
                     <label class="input-label">Natężenie ruchu</label>
-                    <select v-model="filters.trafficIntensity" class="search-select">
+                    <select v-model="filters.trafficIntensity" class="search-select" @focus="markUserEditing">
                       <option value="">Wszystkie</option>
                       <option value="low">Niskie</option>
                       <option value="medium">Średnie</option>
@@ -728,7 +756,7 @@ onBeforeUnmount(() => {
                 <div v-if="['billboard', 'banner', 'wall', 'totem'].includes(filters.type)" class="search-row">
                   <div class="input-group">
                     <label class="input-label">Kierunek ruchu</label>
-                    <select v-model="filters.trafficDirection" class="search-select">
+                    <select v-model="filters.trafficDirection" class="search-select" @focus="markUserEditing">
                       <option value="">Wszystkie</option>
                       <option value="entry">Wjazd</option>
                       <option value="exit">Wyjazd</option>
@@ -741,7 +769,7 @@ onBeforeUnmount(() => {
                 <div v-if="['billboard', 'banner', 'wall', 'totem'].includes(filters.type)" class="search-row">
                   <div class="input-group">
                     <label class="input-label">Rodzaj ruchu</label>
-                    <select v-model="filters.trafficType" class="search-select">
+                    <select v-model="filters.trafficType" class="search-select" @focus="markUserEditing">
                       <option value="">Wszystkie</option>
                       <option value="pedestrian">Pieszy</option>
                       <option value="vehicular">Samochodowy</option>
@@ -754,7 +782,7 @@ onBeforeUnmount(() => {
                 <div v-if="showEnvironmentFilter" class="search-row">
                   <div class="input-group">
                     <label class="input-label">Środowisko</label>
-                    <select v-model="filters.environment" class="search-select">
+                    <select v-model="filters.environment" class="search-select" @focus="markUserEditing">
                       <option value="">Wszystkie</option>
                       <option v-for="env in environmentOptions" :key="env.value" :value="env.value">
                         {{ env.label }}
@@ -772,6 +800,7 @@ onBeforeUnmount(() => {
                       type="text"
                       placeholder="np. 1920x1080"
                       class="search-input"
+                      @focus="markUserEditing"
                     />
                   </div>
                   <div class="input-group">
@@ -820,7 +849,7 @@ onBeforeUnmount(() => {
                 <div v-if="showTransportFilters" class="search-row">
                   <div class="input-group">
                     <label class="input-label">Zakres reklamy</label>
-                    <select v-model="filters.transportScope" class="search-select">
+                    <select v-model="filters.transportScope" class="search-select" @focus="markUserEditing">
                       <option value="">Wszystkie</option>
                       <option v-for="option in transportScopeOptions" :key="option.value" :value="option.value">
                         {{ option.label }}
@@ -853,7 +882,7 @@ onBeforeUnmount(() => {
                 <div v-if="showMobileFilters" class="search-row">
                   <div class="input-group">
                     <label class="input-label">Tryb ekspozycji</label>
-                    <select v-model="filters.mobileExposureMode" class="search-select">
+                    <select v-model="filters.mobileExposureMode" class="search-select" @focus="markUserEditing">
                       <option value="">Wszystkie</option>
                       <option value="moving">Jeżdżąca</option>
                       <option value="stationary">Stojąca</option>
