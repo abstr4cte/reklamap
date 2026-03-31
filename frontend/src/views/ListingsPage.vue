@@ -11,7 +11,6 @@ import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import { filtersToQueryParams } from '../utils/filterUtils'
 import polishLocations from '../data/polishLocations.json'
 import { categoryDescriptions, cityDescriptions } from '../data/categoryDescriptions'
-import type { Advertisement } from '../types'
 import type * as LType from 'leaflet'
 
 import Pagination from '../components/Pagination.vue'
@@ -108,7 +107,6 @@ const loadLeaflet = async () => {
 // Helpers from store
 const formatLocation = (loc: string, city: string) => searchStore.formatLocation(loc, city)
 const getTypeLabel = (type: string) => searchStore.getTypeLabel(type)
-const getPriceUnitLabel = (ad: Advertisement) => searchStore.getPriceUnitLabel(ad)
 
 
 
@@ -416,6 +414,10 @@ const updateMarkers = () => {
 
     const imageUrl = ad.image_url ? getFullImageUrl(ad.image_url) : ''
     
+    const displayUnit = searchStore.computedPriceDisplayUnit || ad.price_unit || 'month'
+    const displayPrice = searchStore.getPrice(ad, displayUnit as any)
+    const isEstimated = displayUnit !== (ad.price_unit || 'month')
+    
     const popupContent = `
       <div style="width: 220px;">
         <a href="${adUrl}" style="text-decoration: none; color: inherit; display: block; padding: 4px;">
@@ -436,8 +438,12 @@ const updateMarkers = () => {
               <span>${formatLocation(ad.location, ad.city)}</span>
             </div>
             <div style="font-weight: 800; color: #667eea; font-size: 1rem; margin-top: 4px; display: flex; align-items: baseline; gap: 4px;">
-              <span>${Math.round(ad.price).toLocaleString('pl-PL')} PLN</span>
-              <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">/ ${getPriceUnitLabel(ad)}</span>
+              ${isEstimated ? '<span style="color: #F59E0B; font-weight: bold; margin-right: 2px;">~</span>' : ''}
+              <span>${Math.round(displayPrice).toLocaleString('pl-PL')} PLN</span>
+              <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">
+                ${searchStore.getPriceLabel(displayUnit as any, ad)}
+                ${isEstimated ? '<span style="color: #F59E0B; margin-left: 2px;">(szac.)</span>' : ''}
+              </span>
             </div>
           </div>
         </a>
@@ -906,6 +912,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
               :key="ad.id"
               :ad="ad"
               :view-mode="viewMode"
+              :price-display="searchStore.computedPriceDisplayUnit"
               @toggle-favorite="handleToggleFavorite"
               @toggle-comparison="handleToggleComparison"
               @hover-start="handleAdHover"

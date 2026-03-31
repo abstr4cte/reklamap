@@ -603,8 +603,15 @@ export const useSearchStore = defineStore('search', () => {
     Object.values(rangeFilters).forEach(config => {
       const minVal = (f as any)[config.min]
       const maxVal = (f as any)[config.max]
-      if (minVal !== null) filtered = filtered.filter(ad => (ad as any)[config.key] >= minVal)
-      if (maxVal !== null) filtered = filtered.filter(ad => (ad as any)[config.key] <= maxVal)
+      
+      if (config.key === 'price') {
+        const unit = f.priceUnit || 'month'
+        if (minVal !== null) filtered = filtered.filter(ad => getPrice(ad, unit as any) >= minVal)
+        if (maxVal !== null) filtered = filtered.filter(ad => getPrice(ad, unit as any) <= maxVal)
+      } else {
+        if (minVal !== null) filtered = filtered.filter(ad => (ad as any)[config.key] >= minVal)
+        if (maxVal !== null) filtered = filtered.filter(ad => (ad as any)[config.key] <= maxVal)
+      }
     })
 
     // 5. Boolean Flags
@@ -735,10 +742,24 @@ export const useSearchStore = defineStore('search', () => {
     return count
   })
 
+  const computedPriceDisplayUnit = computed(() => {
+    if (sortBy.value && sortBy.value.startsWith('price-')) {
+      const sortUnit = sortBy.value.split('-')[1]
+      if (sortUnit) return sortUnit as 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
+    }
+    
+    if ((filters.value.priceFrom !== null || filters.value.priceTo !== null) && filters.value.priceUnit) {
+      return filters.value.priceUnit as 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'
+    }
+    
+    return null
+  })
+
   return {
     listings, isLoading, filters, sortBy, priceDisplay, viewMode, currentPage, itemsPerPage,
     fetchListings, setListings, applyFilters, resetFilters, setViewMode, setCurrentPage, syncFromUrl,
     sortedAndFilteredListings, paginatedListings, totalPages, activeFiltersCount, getPrice,
+    computedPriceDisplayUnit,
     getTypeLabel, getStatusLabel, getStatusColor, formatLocation, formatTrafficDirection, getPriceUnitLabel, getVariantLabel, getRoadClassLabel,
     formatTrafficType, formatEnvironment, formatTransportScope, formatMobileExposureMode, formatLightingType, formatLightingTypeBanner, formatOperatingZone,
     adTypes, priceUnitOptions, sortOptions, getPriceLabel, getAvailablePriceUnits,
