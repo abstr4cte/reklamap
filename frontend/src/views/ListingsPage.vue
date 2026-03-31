@@ -273,6 +273,28 @@ const closeFiltersModal = () => { showFiltersModal.value = false; tempFilters.va
 const applyFilters = () => { 
   // Wyczyść mapBounds przy aplikowaniu filtrów, aby mapa mogła przybliżyć się do miasta/regionu
   const filtersWithoutMapBounds = { ...tempFilters.value, mapBounds: null }
+  
+  // Konwertuj wymiary LED z mm na metry przed wysłaniem
+  if (filtersWithoutMapBounds.type === 'led_screen') {
+    if (filtersWithoutMapBounds.widthFrom !== null) {
+      filtersWithoutMapBounds.widthFrom = filtersWithoutMapBounds.widthFrom / 1000
+    }
+    if (filtersWithoutMapBounds.widthTo !== null) {
+      filtersWithoutMapBounds.widthTo = filtersWithoutMapBounds.widthTo / 1000
+    }
+    if (filtersWithoutMapBounds.heightFrom !== null) {
+      filtersWithoutMapBounds.heightFrom = filtersWithoutMapBounds.heightFrom / 1000
+    }
+    if (filtersWithoutMapBounds.heightTo !== null) {
+      filtersWithoutMapBounds.heightTo = filtersWithoutMapBounds.heightTo / 1000
+    }
+  }
+  
+  // Jeśli użytkownik wpisał cenę, ustaw priceDisplay na wybraną jednostkę
+  if ((filtersWithoutMapBounds.priceFrom !== null || filtersWithoutMapBounds.priceTo !== null) && filtersWithoutMapBounds.priceUnit) {
+    searchStore.priceDisplay = filtersWithoutMapBounds.priceUnit
+  }
+  
   searchStore.applyFilters(filtersWithoutMapBounds)
   locationQuery.value = tempLocationQuery.value
   showFiltersModal.value = false

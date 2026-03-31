@@ -9,53 +9,14 @@ import ConfirmDialog from '../components/ConfirmDialog.vue'
 import ToastNotification from '../components/ToastNotification.vue'
 import WebPImage from '../components/WebPImage.vue'
 import ManagementStats from '../components/management/ManagementStats.vue'
+import LocationMapModal from '../components/LocationMapModal.vue'
 import { nsfwService } from '../services/nsfwService'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import type * as LType from 'leaflet'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import { useSearchStore } from '../stores/useSearchStore'
 import { filterWaterFeatures } from '../services/locationService'
-
-let L: typeof LType | null = null
-
-const loadLeaflet = async () => {
-  if (L) return L
-  const LModule = await import('leaflet')
-  L = LModule.default || LModule
-  await import('leaflet/dist/leaflet.css')
-  
-  const [icon, iconShadow] = await Promise.all([
-    import('leaflet/dist/images/marker-icon.png'),
-    import('leaflet/dist/images/marker-shadow.png')
-  ])
-  
-  const DefaultIcon = L!.icon({
-    iconUrl: icon.default,
-    shadowUrl: iconShadow.default,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41]
-  })
-  L!.Marker.prototype.options.icon = DefaultIcon
-  return L
-}
-
-let turfPoint: any = null
-let turfBooleanPointInPolygon: any = null
-let polandGeoJsonData: any = null
-
-const loadGeoUtils = async () => {
-  if (turfPoint && turfBooleanPointInPolygon && polandGeoJsonData) return
-  const [pointModule, polygonModule, geojsonData] = await Promise.all([
-    import('@turf/helpers'),
-    import('@turf/boolean-point-in-polygon'),
-    import('../assets/poland_highres.json')
-  ])
-  turfPoint = pointModule.point
-  turfBooleanPointInPolygon = polygonModule.default
-  polandGeoJsonData = geojsonData.default
-}
 
 
 const router = useRouter()
@@ -93,13 +54,6 @@ const showAddressSuggestions = ref(false)
 const isResolvingAddress = ref(false)
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 const showMapModal = ref(false)
-const modalMapContainer = ref<HTMLElement | null>(null)
-let modalMap: LType.Map | null = null
-let modalMarker: LType.Marker | null = null
-const modalSearchQuery = ref('')
-const modalSearchSuggestions = ref<any[]>([])
-const showModalSearchSuggestions = ref(false)
-let modalSearchTimeout: ReturnType<typeof setTimeout> | null = null
 
 const minDate = new Date()
 minDate.setHours(0, 0, 0, 0)
@@ -269,12 +223,6 @@ const clearLocation = () => {
   editingAd.value.region = ''
   editingAd.value.latitude = 52.0
   editingAd.value.longitude = 19.0
-  
-  // Reset map view to show all of Poland if modal is open
-  if (modalMap && modalMarker) {
-    modalMap.setView([52.0, 19.0], 6)
-    modalMarker.setLatLng([52.0, 19.0])
-  }
 }
 
 const loadAdvertisements = async () => {
@@ -820,219 +768,18 @@ const handleDrop = (event: DragEvent) => {
   isDragging.value = false
 }
 
-const isInPoland = async (lat: number, lng: number): Promise<boolean> => {
-  await loadGeoUtils()
-  const pt = turfPoint([lng, lat])
-  // @ts-ignore
-  for (const feature of polandGeoJsonData.features) {
-    if (turfBooleanPointInPolygon(pt, feature.geometry as any)) {
-      return true
-    }
-  }
-  return false
-}
-
 const openMapModal = () => {
   showMapModal.value = true
-  setTimeout(() => initModalMap(), 100)
 }
 
-const closeMapModal = () => {
-  showMapModal.value = false
-  modalSearchQuery.value = ''
-  modalSearchSuggestions.value = []
-  showModalSearchSuggestions.value = false
-  if (modalMap) {
-    modalMap.remove()
-    modalMap = null
-    modalMarker = null
-  }
-}
-
-const initModalMap = async () => {
-  if (!modalMapContainer.value || modalMap || !editingAd.value) return
-
-  await loadLeaflet()
-  if (!L) return
-
-  const polandBounds = L.latLngBounds([48.5, 13.5], [55.5, 24.5])
-
-  // Check if coordinates are default (center of Poland) or actual location
-  const isDefaultLocation = editingAd.value.latitude === 52.0 && editingAd.value.longitude === 19.0
-  const zoomLevel = isDefaultLocation ? 5 : 12
-  
-  modalMap = L.map(modalMapContainer.value, {
-    maxBounds: polandBounds,
-    maxBoundsViscosity: 1.0,
-    minZoom: 4.5,
-    maxZoom: 18,
-    zoomControl: true
-  }).setView([editingAd.value.latitude || 52.0, editingAd.value.longitude || 19.0], zoomLevel)
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(modalMap)
-
-  modalMarker = L.marker([editingAd.value.latitude || 52.0, editingAd.value.longitude || 19.0], {
-    draggable: true
-  }).addTo(modalMap)
-
-  modalMarker.on('dragend', async () => {
-    const position = modalMarker!.getLatLng()
-    const isInside = await isInPoland(position.lat, position.lng)
-    if (!isInside) {
-      toast.value?.add('Lokalizacja musi być w Polsce', 'error')
-      modalMarker!.setLatLng([editingAd.value!.latitude, editingAd.value!.longitude])
-      return
-    }
-  })
-
-  modalMap!.on('click', async (e: LType.LeafletMouseEvent) => {
-    const isInside = await isInPoland(e.latlng.lat, e.latlng.lng)
-    if (!isInside) {
-      toast.value?.add('Lokalizacja musi być w Polsce', 'error')
-      return
-    }
-    modalMarker!.setLatLng(e.latlng)
-  })
-}
-
-const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
-  try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
-    )
-    const data = await response.json()
-
-    if (data.address) {
-      if (data.address.country_code !== 'pl') {
-        return false
-      }
-
-      if (editingAd.value) {
-        const address = data.address
-        let city = address.city || address.town || address.village || address.municipality || address.county || address.administrative || ''
-        // Usuń prefix "gmina" jeśli pochodzi z municipality
-        if (!address.city && !address.town && !address.village && address.municipality) {
-          city = city.replace(/^gmina\s+/i, '')
-        }
-        editingAd.value.city = city
-        editingAd.value.region = address.state || ''
-        editingAd.value.location = data.display_name || ''
-      }
-      return true
-    }
-    return false
-  } catch (error) {
-    console.error('Error reverse geocoding:', error)
-    return false
-  }
-}
-
-const searchModalLocation = () => {
-  if (modalSearchTimeout) {
-    clearTimeout(modalSearchTimeout)
-  }
-
-  if (modalSearchQuery.value.length < 3) {
-    modalSearchSuggestions.value = []
-    showModalSearchSuggestions.value = false
-    return
-  }
-
-  modalSearchTimeout = setTimeout(async () => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(modalSearchQuery.value)}&countrycodes=pl&limit=10&addressdetails=1`
-      )
-      const data = await response.json()
-      
-      // Filter out water features (rivers, lakes, etc.)
-      const filteredData = filterWaterFeatures(data)
-      
-      modalSearchSuggestions.value = filteredData
-      showModalSearchSuggestions.value = filteredData.length > 0
-    } catch (error) {
-      console.error('Error searching location:', error)
-    }
-  }, 500)
-}
-
-const selectModalLocation = async (suggestion: any) => {
-  const lat = suggestion.lat
-  const lng = suggestion.lng
-  
-  // Handle both LocationResult and raw Nominatim response
-  const isLocationResult = suggestion.name !== undefined && suggestion.displayName !== undefined
-
-  const isInside = await isInPoland(lat, lng)
-  if (!isInside) {
-    toast.value?.add('Lokalizacja musi być w Polsce', 'error')
-    return
-  }
-
-  if (modalMap && modalMarker) {
-    modalMap.setView([lat, lng], 16)
-    modalMarker.setLatLng([lat, lng])
-  }
-
-  // Update coordinates in editingAd
+const handleMapConfirm = (data: { latitude: number, longitude: number, location: string, city: string, region: string }) => {
   if (editingAd.value) {
-    editingAd.value.latitude = lat
-    editingAd.value.longitude = lng
-    
-    if (isLocationResult) {
-      // LocationResult from locationService
-      editingAd.value.location = suggestion.displayName
-      editingAd.value.city = suggestion.name
-      editingAd.value.region = suggestion.state || ''
-    } else {
-      // Raw Nominatim response
-      if (suggestion.address) {
-        const address = suggestion.address
-        let city = address.city || address.town || address.village || address.municipality || address.county || address.administrative || ''
-        if (!address.city && !address.town && !address.village && address.municipality) {
-          city = city.replace(/^gmina\s+/i, '')
-        }
-        editingAd.value.city = city
-        editingAd.value.region = address.state || ''
-        editingAd.value.location = suggestion.display_name || ''
-      }
-    }
+    editingAd.value.latitude = data.latitude
+    editingAd.value.longitude = data.longitude
+    editingAd.value.location = data.location
+    editingAd.value.city = data.city
+    editingAd.value.region = data.region
   }
-
-  // Update search query with selected location
-  if (isLocationResult) {
-    modalSearchQuery.value = suggestion.displayName
-  } else {
-    modalSearchQuery.value = suggestion.display_name || ''
-  }
-  
-  modalSearchSuggestions.value = []
-  showModalSearchSuggestions.value = false
-}
-
-const confirmModalLocation = async () => {
-  if (!modalMarker || !editingAd.value) return
-
-  const position = modalMarker.getLatLng()
-  
-  const isInside = await isInPoland(position.lat, position.lng)
-  if (!isInside) {
-    toast.value?.add('Lokalizacja musi być w Polsce', 'error')
-    return
-  }
-
-  const isValid = await reverseGeocode(position.lat, position.lng)
-  if (!isValid) {
-    toast.value?.add('Lokalizacja musi być w Polsce', 'error')
-    return
-  }
-
-  editingAd.value.latitude = position.lat
-  editingAd.value.longitude = position.lng
-  
-  closeMapModal()
 }
 
 // Computed properties for field visibility based on ad type
@@ -2086,62 +1833,13 @@ onBeforeUnmount(() => {
   <ToastNotification ref="toast" />
 
   <!-- Map Modal -->
-  <div v-if="showMapModal" class="modal-overlay" @click="closeMapModal">
-    <div class="modal-content" @click.stop>
-      <div class="modal-header">
-        <h3>Zaznacz lokalizację na mapie</h3>
-        <button type="button" @click="closeMapModal" class="modal-close">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </div>
-      <div class="modal-search">
-        <div class="modal-search-wrapper">
-          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          <input
-            v-model="modalSearchQuery"
-            @input="searchModalLocation"
-            type="text"
-            placeholder="Wyszukaj miasto, ulicę..."
-            class="modal-search-input"
-          />
-          <button
-            v-if="modalSearchQuery"
-            type="button"
-            @click="modalSearchQuery = ''"
-            class="modal-clear-button"
-            title="Wyczyść wyszukiwanie"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <div v-if="showModalSearchSuggestions && modalSearchSuggestions.length > 0" class="modal-suggestions">
-            <div
-              v-for="(suggestion, index) in modalSearchSuggestions"
-              :key="index"
-              @click="selectModalLocation(suggestion)"
-              class="modal-suggestion-item"
-            >
-              {{ suggestion.displayName || suggestion.display_name }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-body">
-        <div ref="modalMapContainer" class="modal-map"></div>
-        <p class="modal-hint">Wyszukaj lokalizację powyżej lub kliknij na mapie / przeciągnij marker</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" @click="closeMapModal" class="btn-cancel-modal">Anuluj</button>
-        <button type="button" @click="confirmModalLocation" class="btn-primary-modal">Potwierdź lokalizację</button>
-      </div>
-    </div>
-  </div>
+  <LocationMapModal
+    v-if="editingAd"
+    v-model="showMapModal"
+    :initial-latitude="editingAd.latitude"
+    :initial-longitude="editingAd.longitude"
+    @confirm="handleMapConfirm"
+  />
   </div>
 </template>
 

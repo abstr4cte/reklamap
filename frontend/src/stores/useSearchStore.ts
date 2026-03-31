@@ -631,8 +631,7 @@ export const useSearchStore = defineStore('search', () => {
     // 6. Special Case: Surface (Calculated)
     if (f.surfaceFrom !== null || f.surfaceTo !== null) {
       filtered = filtered.filter(ad => {
-        let surface = (ad.width || 0) * (ad.height || 0)
-        if (ad.type === 'led_screen') surface = surface / 1000000
+        const surface = (ad.width || 0) * (ad.height || 0)
         const fromOk = f.surfaceFrom === null || surface >= f.surfaceFrom
         const toOk = f.surfaceTo === null || surface <= f.surfaceTo
         return fromOk && toOk

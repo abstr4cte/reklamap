@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 import ToastNotification from '../components/ToastNotification.vue'
+import LocationMapModal from '../components/LocationMapModal.vue'
 import { defineAsyncComponent } from 'vue'
 import type * as LType from 'leaflet'
 import { slugify } from '../utils/slugify'
@@ -147,13 +148,6 @@ const showToast = ref(false)
 const toastMessage = ref('')
 const isResolvingAddress = ref(false)
 const showMapModal = ref(false)
-const modalMapContainer = ref<HTMLElement | null>(null)
-let modalMap: LType.Map | null = null
-let modalMarker: LType.Marker | null = null
-const modalSearchQuery = ref('')
-const modalSearchSuggestions = ref<any[]>([])
-const showModalSearchSuggestions = ref(false)
-let modalSearchTimeout: ReturnType<typeof setTimeout> | null = null
 
 const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 const isDragging = ref(false)
@@ -691,179 +685,14 @@ const selectAddress = async (suggestion: any) => {
 
 const openMapModal = () => {
   showMapModal.value = true
-  setTimeout(() => initModalMap(), 100)
 }
 
-const closeMapModal = () => {
-  showMapModal.value = false
-  modalSearchQuery.value = ''
-  modalSearchSuggestions.value = []
-  showModalSearchSuggestions.value = false
-  if (modalMap) {
-    modalMap.remove()
-    modalMap = null
-    modalMarker = null
-  }
-}
-
-const initModalMap = async () => {
-  if (!modalMapContainer.value || modalMap) return
-
-  await loadLeaflet()
-  if (!L) return
-
-  const polandBounds = L.latLngBounds([48.5, 13.5], [55.5, 24.5])
-
-  const isDefaultLocation = formData.value.latitude === 52.0 && formData.value.longitude === 19.0
-  const isMobile = window.innerWidth <= 768
-  const zoomLevel = isDefaultLocation ? (isMobile ? 4 : 5) : (isMobile ? 11 : 12)
-  
-  modalMap = L.map(modalMapContainer.value, {
-    maxBounds: polandBounds,
-    maxBoundsViscosity: 1.0,
-    minZoom: 4.5,
-    maxZoom: 18,
-    zoomControl: true
-  }).setView([formData.value.latitude || 52.0, formData.value.longitude || 19.0], zoomLevel)
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(modalMap)
-
-  modalMarker = L.marker([formData.value.latitude || 52.0, formData.value.longitude || 19.0], {
-    draggable: true
-  }).addTo(modalMap)
-
-  modalMarker.on('dragend', async () => {
-    const position = modalMarker!.getLatLng()
-    const isInside = await isInPoland(position.lat, position.lng)
-    if (!isInside) {
-      displayToast('Lokalizacja musi być w Polsce')
-      modalMarker!.setLatLng([formData.value.latitude, formData.value.longitude])
-      return
-    }
-    
-    // Reverse geocode to get address and update modal search input
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.lat}&lon=${position.lng}&zoom=18&addressdetails=1`
-      )
-      const data = await response.json()
-      
-      if (data.display_name) {
-        modalSearchQuery.value = data.display_name
-      }
-    } catch (error) {
-      console.error('Error reverse geocoding:', error)
-    }
-  })
-
-  modalMap!.on('click', async (e: LType.LeafletMouseEvent) => {
-    const isInside = await isInPoland(e.latlng.lat, e.latlng.lng)
-    if (!isInside) {
-      displayToast('Lokalizacja musi być w Polsce')
-      return
-    }
-    modalMarker!.setLatLng(e.latlng)
-    
-    // Reverse geocode to get address and update modal search input
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}&zoom=18&addressdetails=1`
-      )
-      const data = await response.json()
-      
-      if (data.display_name) {
-        modalSearchQuery.value = data.display_name
-      }
-    } catch (error) {
-      console.error('Error reverse geocoding:', error)
-    }
-  })
-}
-
-const searchModalLocation = () => {
-  if (modalSearchTimeout) {
-    clearTimeout(modalSearchTimeout)
-  }
-
-  if (modalSearchQuery.value.length < 3) {
-    modalSearchSuggestions.value = []
-    showModalSearchSuggestions.value = false
-    return
-  }
-
-  modalSearchTimeout = setTimeout(async () => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(modalSearchQuery.value)}&countrycodes=pl&limit=10&addressdetails=1`
-      )
-      const data = await response.json()
-      
-      // Filter out water features (rivers, lakes, etc.)
-      const filteredData = filterWaterFeatures(data)
-      
-      modalSearchSuggestions.value = filteredData
-      showModalSearchSuggestions.value = filteredData.length > 0
-    } catch (error) {
-      console.error('Error searching location:', error)
-    }
-  }, 500)
-}
-
-const selectModalLocation = async (suggestion: any) => {
-  const lat = parseFloat(suggestion.lat)
-  const lng = parseFloat(suggestion.lon)
-  
-  const isInside = await isInPoland(lat, lng)
-  if (!isInside) {
-    displayToast('Lokalizacja musi być w Polsce')
-    return
-  }
-
-  if (modalMap && modalMarker) {
-    modalMap.setView([lat, lng], 16)
-    modalMarker.setLatLng([lat, lng])
-  }
-
-  formData.value.latitude = lat
-  formData.value.longitude = lng
-  
-  const address = suggestion.address
-  formData.value.location = suggestion.display_name
-  let city = address.city || address.town || address.village || address.municipality || address.county || address.administrative || ''
-  if (!address.city && !address.town && !address.village && address.municipality) {
-    city = city.replace(/^gmina\s+/i, '')
-  }
-  formData.value.city = city
-  formData.value.region = address.state || ''
-  
-  modalSearchQuery.value = suggestion.display_name || ''
-  modalSearchSuggestions.value = []
-  showModalSearchSuggestions.value = false
-}
-
-const confirmModalLocation = async () => {
-  if (!modalMarker) return
-
-  const position = modalMarker.getLatLng()
-  
-  const isInside = await isInPoland(position.lat, position.lng)
-  if (!isInside) {
-    displayToast('Lokalizacja musi być w Polsce')
-    return
-  }
-
-  const isValid = await reverseGeocode(position.lat, position.lng)
-  if (!isValid) {
-    displayToast('Lokalizacja musi być w Polsce')
-    return
-  }
-
-  formData.value.latitude = position.lat
-  formData.value.longitude = position.lng
-  
-  closeMapModal()
+const handleMapConfirm = (data: { latitude: number, longitude: number, location: string, city: string, region: string }) => {
+  formData.value.latitude = data.latitude
+  formData.value.longitude = data.longitude
+  formData.value.location = data.location
+  formData.value.city = data.city
+  formData.value.region = data.region
 }
 
 const handleImageUpload = (event: Event) => {
@@ -1441,8 +1270,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <div class="add-listing-page">
+  <div class="add-listing-page">
     <!-- Toast Notification -->
     <ToastNotification ref="toast" />
     
@@ -2320,63 +2148,12 @@ onMounted(() => {
   </div>
 
   <!-- Map Modal -->
-  <div v-if="showMapModal" class="modal-overlay" @click="closeMapModal">
-    <div class="modal-content" @click.stop>
-      <div class="modal-header">
-        <h3>Zaznacz lokalizację na mapie</h3>
-        <button type="button" @click="closeMapModal" class="modal-close">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </div>
-      <div class="modal-search">
-        <div class="modal-search-wrapper">
-          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          <input
-            v-model="modalSearchQuery"
-            @input="searchModalLocation"
-            type="text"
-            placeholder="Wyszukaj miasto, ulicę..."
-            class="modal-search-input"
-          />
-          <button
-            v-if="modalSearchQuery"
-            type="button"
-            @click="modalSearchQuery = ''"
-            class="modal-clear-button"
-            title="Wyczyść wyszukiwanie"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <div v-if="showModalSearchSuggestions && modalSearchSuggestions.length > 0" class="modal-suggestions">
-            <div
-              v-for="(suggestion, index) in modalSearchSuggestions"
-              :key="index"
-              @click="selectModalLocation(suggestion)"
-              class="modal-suggestion-item"
-            >
-              {{ suggestion.display_name }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-body">
-        <div ref="modalMapContainer" class="modal-map"></div>
-        <p class="modal-hint">Wyszukaj lokalizację powyżej lub kliknij na mapie / przeciągnij marker</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" @click="closeMapModal" class="btn-cancel-modal">Anuluj</button>
-        <button type="button" @click="confirmModalLocation" class="btn-primary-modal">Potwierdź lokalizację</button>
-      </div>
-      </div>
-    </div>
-  </div>
+  <LocationMapModal
+    v-model="showMapModal"
+    :initial-latitude="formData.latitude"
+    :initial-longitude="formData.longitude"
+    @confirm="handleMapConfirm"
+  />
 </template>
 
 <style scoped>
@@ -3348,229 +3125,6 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-/* Modal styles */
-.modal-overlay {
-  position: fixed;
-  top: 80px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  padding: 1rem;
-  backdrop-filter: blur(8px);
-  animation: fadeIn 0.2s ease-out;
-  overflow-y: auto;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 600px;
-  max-height: calc(100vh - 115px);
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  overflow: hidden;
-  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  margin: auto;
-}
-
-.modal-header {
-  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-  padding: 1rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #e5e7eb;
-  flex-shrink: 0;
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: 1.25rem;
-  color: #111827;
-  font-weight: 700;
-}
-
-.modal-close {
-  background: white;
-  border: 1px solid #e5e7eb;
-  color: #6b7280;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 8px;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-}
-
-.modal-close:hover {
-  background: #EF4444;
-  color: white;
-  border-color: #EF4444;
-}
-
-.modal-search {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
-  flex-shrink: 0;
-}
-
-.modal-search-wrapper {
-  position: relative;
-}
-
-.search-icon {
-  position: absolute;
-  left: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #9ca3af;
-  pointer-events: none;
-}
-
-.modal-search-input {
-  width: 100%;
-  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-
-.modal-search-input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.modal-clear-button {
-  position: absolute;
-  right: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #9ca3af;
-  cursor: pointer;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s;
-}
-
-.modal-clear-button:hover {
-  color: #6b7280;
-}
-
-.modal-suggestions {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-top: none;
-  border-radius: 0 0 8px 8px;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 10;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.modal-suggestion-item {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  border-bottom: 1px solid #f3f4f6;
-  font-size: 0.9rem;
-  color: #374151;
-}
-
-.modal-suggestion-item:last-child {
-  border-bottom: none;
-}
-
-.modal-suggestion-item:hover {
-  background-color: #f9fafb;
-  color: #667eea;
-}
-
-.modal-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.modal-map {
-  flex: 1;
-  width: 100%;
-  min-height: 300px;
-  margin-bottom: 1rem;
-}
-
-.modal-hint {
-  padding: 1rem 1.5rem;
-  text-align: center;
-  color: #6b7280;
-  font-size: 0.85rem;
-  border-top: 1px solid #f3f4f6;
-  margin: 0;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  padding: 1.5rem;
-  border-top: 1px solid #f3f4f6;
-  flex-shrink: 0;
-}
-
-.btn-cancel-modal {
-  background: white;
-  color: #374151;
-  border: 2px solid #e5e7eb;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-cancel-modal:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
-  color: #111827;
-}
-
-.btn-primary-modal {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
-}
-
-.btn-primary-modal:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
-}
-
 @media (min-width: 769px) {
   .map-button-modern {
     display: none;
@@ -3595,31 +3149,6 @@ onMounted(() => {
     justify-content: center;
   }
 
-  .modal-content {
-    max-width: calc(100vw - 1rem);
-    max-height: calc(100vh - 100px);
-  }
-
-  .modal-header {
-    padding: 1rem;
-  }
-
-  .modal-header h3 {
-    font-size: 1.1rem;
-  }
-
-  .modal-search {
-    padding: 1rem;
-  }
-
-  .modal-body {
-    padding: 0;
-  }
-
-  .modal-map {
-    min-height: 250px;
-  }
-
   .leaflet-container :deep(.leaflet-bottom),
   .leaflet-container :deep(.leaflet-right) {
     display: none !important;
@@ -3627,22 +3156,6 @@ onMounted(() => {
 
   :deep(.leaflet-control-attribution) {
     display: none !important;
-  }
-
-  .modal-hint {
-    padding: 0.75rem 1rem;
-    font-size: 0.8rem;
-  }
-
-  .modal-footer {
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 1rem;
-  }
-
-  .btn-cancel-modal,
-  .btn-primary-modal {
-    width: 100%;
   }
 }
 

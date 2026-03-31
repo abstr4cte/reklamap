@@ -752,6 +752,30 @@ onBeforeUnmount(() => {
                   </div>
                 </div>
 
+                <!-- OTS Range (estimatedDailyViews) -->
+                <div v-if="['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem'].includes(filters.type)" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Zasięg dzienny (OTS)</label>
+                    <div class="range-input">
+                      <input
+                        :value="filters.estimatedDailyViewsFrom"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); filters.estimatedDailyViewsFrom = val ? parseInt(val) : null }"
+                        type="text"
+                        placeholder="Od"
+                        class="search-input"
+                      />
+                      <span class="separator">-</span>
+                      <input
+                        :value="filters.estimatedDailyViewsTo"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); filters.estimatedDailyViewsTo = val ? parseInt(val) : null }"
+                        type="text"
+                        placeholder="Do"
+                        class="search-input"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Traffic Direction (all outdoor types) -->
                 <div v-if="['billboard', 'banner', 'wall', 'totem'].includes(filters.type)" class="search-row">
                   <div class="input-group">
