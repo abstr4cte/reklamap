@@ -81,11 +81,6 @@ const regionCoordinates: Record<string, { lat: number; lng: number; zoom: number
   'zachodniopomorskie': { lat: 53.4285, lng: 14.5528, zoom: 8 }
 }
 
-const handleListScroll = () => {
-  if (listContainerRef.value) {
-    showListScrollTop.value = listContainerRef.value.scrollTop > 500
-  }
-}
 
 const scrollListToTop = () => {
   listContainerRef.value?.scrollTo({ top: 0, behavior: 'smooth' })
@@ -253,7 +248,7 @@ const isStatusActive = computed({
     if (!tempFilters.value) return
     if (val) {
       if (!tempFilters.value.status.includes('active')) {
-        tempFilters.value.status.push('active')
+        tempFilters.value.status = [...tempFilters.value.status, 'active']
       }
     } else {
       tempFilters.value.status = tempFilters.value.status.filter((s: string) => s !== 'active')
@@ -267,7 +262,7 @@ const isStatusReserved = computed({
     if (!tempFilters.value) return
     if (val) {
       if (!tempFilters.value.status.includes('reserved')) {
-        tempFilters.value.status.push('reserved')
+        tempFilters.value.status = [...tempFilters.value.status, 'reserved']
       }
     } else {
       tempFilters.value.status = tempFilters.value.status.filter((s: string) => s !== 'reserved')
@@ -281,7 +276,7 @@ const isStatusSoon = computed({
     if (!tempFilters.value) return
     if (val) {
       if (!tempFilters.value.status.includes('soon')) {
-        tempFilters.value.status.push('soon')
+        tempFilters.value.status = [...tempFilters.value.status, 'soon']
       }
     } else {
       tempFilters.value.status = tempFilters.value.status.filter((s: string) => s !== 'soon')
@@ -363,6 +358,19 @@ const applyFilters = () => {
   const queryString = new URLSearchParams(queryParams).toString()
   const newUrl = queryString ? window.location.pathname + '?' + queryString : window.location.pathname
   window.history.replaceState({}, document.title, newUrl)
+  
+  // Zapisz TYLKO query params do localStorage (wykluczając path params)
+  // Aby użytkownik miał je na HomePage, ale bez kontekstu z path params (kategoria/miasto z menu)
+  try {
+    const filtersToSave = { ...filtersForUrl }
+    // Dodaj _priceDisplayUnit jeśli użytkownik wpisał cenę
+    if ((filtersToSave.priceFrom !== null || filtersToSave.priceTo !== null) && filtersToSave.priceUnit) {
+      filtersToSave._priceDisplayUnit = filtersToSave.priceUnit
+    }
+    localStorage.setItem('reklamap_last_search', JSON.stringify(filtersToSave))
+  } catch (error) {
+    console.error('Error saving filters to localStorage:', error)
+  }
 }
 const resetFilters = () => { 
   searchStore.resetFilters()
@@ -372,6 +380,13 @@ const resetFilters = () => {
   // Wyczyść URL
   const newUrl = window.location.pathname
   window.history.replaceState({}, document.title, newUrl)
+  
+  // Wyczyść localStorage
+  try {
+    localStorage.removeItem('reklamap_last_search')
+  } catch (error) {
+    console.error('Error clearing filters from localStorage:', error)
+  }
 }
 const clearFilters = resetFilters
 
@@ -692,36 +707,38 @@ watch(filteredListings, () => {
 
 const checkIfMobile = () => { isMobile.value = window.innerWidth < 768 }
 const handleScroll = () => {
-  if (!isMobile.value) {
-    showMapButton.value = true
-    return
-  }
-  
   const footer = document.querySelector('footer')
   const descriptionWrapper = document.querySelector('.description-wrapper')
   const contentWrapper = document.querySelector('.content-wrapper')
   
-  if (contentWrapper) {
-    let isBottomSectionVisible = false
-    
-    if (descriptionWrapper) {
-      const descRect = descriptionWrapper.getBoundingClientRect()
-      if (descRect.top <= window.innerHeight) {
-        isBottomSectionVisible = true
-      }
+  // Check if bottom sections (description or footer) are visible
+  let isBottomSectionVisible = false
+  
+  if (descriptionWrapper) {
+    const descRect = descriptionWrapper.getBoundingClientRect()
+    if (descRect.top <= window.innerHeight) {
+      isBottomSectionVisible = true
     }
-    
-    if (footer && !isBottomSectionVisible) {
-      const footerRect = footer.getBoundingClientRect()
-      if (footerRect.top <= window.innerHeight) {
-        isBottomSectionVisible = true
-      }
+  }
+  
+  if (footer && !isBottomSectionVisible) {
+    const footerRect = footer.getBoundingClientRect()
+    if (footerRect.top <= window.innerHeight) {
+      isBottomSectionVisible = true
     }
-    
-    const contentRect = contentWrapper.getBoundingClientRect()
-    const inContentSection = contentRect.bottom > 0
-    
-    showMapButton.value = inContentSection && !isBottomSectionVisible
+  }
+  
+  // For mobile: hide map button when bottom sections visible
+  if (isMobile.value) {
+    if (contentWrapper) {
+      const contentRect = contentWrapper.getBoundingClientRect()
+      const inContentSection = contentRect.bottom > 0
+      showMapButton.value = inContentSection && !isBottomSectionVisible
+    }
+  } else {
+    // For desktop: always show map button, but hide list scroll button when bottom sections visible
+    showMapButton.value = true
+    showListScrollTop.value = !isBottomSectionVisible && (listContainerRef.value?.scrollTop || 0) > 500
   }
 }
 
@@ -1004,7 +1021,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
         ref="listContainerRef" 
         class="listings-list-container" 
         :class="{ 'hidden-mobile': showMapOnMobile }"
-        @scroll="handleListScroll"
+        @scroll="handleScroll"
       >
         <div v-if="isLoading" class="listings-list" :class="viewMode">
           <SkeletonCard v-for="i in itemsPerPage" :key="i" />
@@ -2237,9 +2254,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 @media (max-width: 768px) {
   .listings-list-container .list-scroll-top {
-    left: auto;
-    right: 1.5rem;
-    bottom: 5.5rem; /* Avoid overlap with map button if present */
+    display: none; /* Hide on mobile - use global scroll-to-top button instead */
   }
 }
 

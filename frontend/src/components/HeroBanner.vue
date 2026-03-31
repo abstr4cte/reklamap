@@ -423,11 +423,28 @@ watch(() => searchStore.filters, (newStoreFilters) => {
     return
   }
 
-  // Update local filters (excluding 'type' which should only change when user explicitly selects it)
+  // Filtry wspólne dla wszystkich typów - NIE synchronizuj ich (użytkownik je ustawił ręcznie)
+  const commonFilters = [
+    'type',           // Typ - kontrolowany lokalnie
+    'keyword',        // Słowo kluczowe
+    'city',           // Miasto
+    'region',         // Region
+    'street',         // Ulica
+    'locationLabel',  // Etykieta lokalizacji
+    'selectedLocationCoords', // Współrzędne
+    'cityStrict',     // Ścisłe miasto
+    'priceFrom',      // Cena od
+    'priceTo',        // Cena do
+    'priceUnit',      // Jednostka ceny
+    'status',         // Status (wolne/zarezerwowane/wkrótce)
+    'onlyWithImage'   // Tylko ze zdjęciem
+  ]
+
+  // Update local filters (excluding common filters that user may have set)
   Object.keys(newStoreFilters).forEach(key => {
     const k = key as keyof FilterParams
-    // Skip 'type' field - it should only be controlled locally until user clicks "Search"
-    if (k === 'type') {
+    // Skip common filters - they should be preserved when user changes type
+    if (commonFilters.includes(k)) {
       return
     }
     if (filters.value[k] !== newStoreFilters[k]) {
