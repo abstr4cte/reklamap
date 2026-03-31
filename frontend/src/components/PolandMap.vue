@@ -46,6 +46,7 @@ const emit = defineEmits<{
 
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
+let resizeObserver: ResizeObserver | null = null
 // let markerClusterGroup: any = null
 const markers: Map<string, L.Marker> = new Map()
 const isMapActive = ref(false)
@@ -119,6 +120,11 @@ const createCustomIcon = (type: string, isHovered: boolean = false) => {
 
 const initMap = () => {
   if (!mapContainer.value) return
+
+  if (map) {
+    map.invalidateSize()
+    return
+  }
 
   // Granice Polski (bardziej rozszerzone) - aby markery/popupy nie były ucinane
   const polandBounds = L.latLngBounds(
@@ -202,6 +208,13 @@ const initMap = () => {
 
   updateMarkers()
   syncMapToFilters()
+
+  if (window.ResizeObserver && mapContainer.value) {
+    resizeObserver = new ResizeObserver(() => {
+      if (map) map.invalidateSize()
+    })
+    resizeObserver.observe(mapContainer.value)
+  }
 }
 
 const syncMapToFilters = () => {
@@ -471,6 +484,7 @@ onMounted(() => {
   onBeforeUnmount(() => {
     window.removeEventListener('resize', handleResize)
     window.removeEventListener('scroll', handleScroll)
+    if (resizeObserver) resizeObserver.disconnect()
   })
 })
 </script>

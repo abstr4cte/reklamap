@@ -45,6 +45,7 @@ const showFiltersModal = ref(false)
 const tempFilters = ref<any>(null)
 const mapContainer = ref<HTMLElement | null>(null)
 let map: LType.Map | null = null
+let resizeObserver: ResizeObserver | null = null
 const markers: Map<string, LType.Marker> = new Map()
 // let markerClusterGroup: any = null
 const showMapOnMobile = ref(false)
@@ -473,6 +474,12 @@ const updateMarkers = () => {
 const initMap = async () => {
   if (!mapContainer.value) return
   await loadLeaflet(); if (!L) return
+
+  if (map) {
+    map.invalidateSize()
+    return
+  }
+
   const pCenter: [number, number] = [52.0, 19.0]; const pBounds = L.latLngBounds([45.5, 10.0], [58.5, 28.0])
   isProgrammaticMove.value = true
   map = L.map(mapContainer.value, { scrollWheelZoom: false, maxBounds: pBounds, minZoom: 5 }).setView(pCenter, 6)
@@ -504,6 +511,13 @@ const initMap = async () => {
 
   updateMarkers()
   syncMapToFilters()
+
+  if (window.ResizeObserver && mapContainer.value) {
+    resizeObserver = new ResizeObserver(() => {
+      if (map) map.invalidateSize()
+    })
+    resizeObserver.observe(mapContainer.value)
+  }
 
   map.on('moveend', () => {
     if (!map) return
@@ -706,6 +720,9 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', checkIfMobile)
   window.removeEventListener('scroll', handleScroll)
   document.body.style.overflow = ''
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+  }
 })
 
 const handleSearchAlertSubmit = () => { /* Alert logic */ }
