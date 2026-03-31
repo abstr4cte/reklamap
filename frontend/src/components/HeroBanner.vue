@@ -189,6 +189,14 @@ const handleSearch = () => {
     clearTimeout(editingTimeout)
   }
   
+  // Zapisz ORYGINALNE filtry do localStorage (przed konwersją wymiarów LED)
+  // Aby wymiary LED były zachowane w mm
+  const filtersToSave = { ...filters.value }
+  if ((filtersToSave.priceFrom !== null || filtersToSave.priceTo !== null) && filtersToSave.priceUnit) {
+    filtersToSave._priceDisplayUnit = filtersToSave.priceUnit
+  }
+  saveLastSearch(filtersToSave)
+  
   // Konwertuj wymiary LED z mm na metry przed wysłaniem
   const searchFilters = { ...filters.value }
   
@@ -217,9 +225,6 @@ const handleSearch = () => {
     // Jeśli nie ma ceny, wyczyść priceUnit (nie ma sensu go wysyłać w query params)
     searchFilters.priceUnit = ''
   }
-  
-  // Zapisz ostatnie wyszukiwanie do localStorage
-  saveLastSearch(searchFilters)
   
   // Emit the search event with converted filters
   emit('search', searchFilters)
@@ -418,9 +423,13 @@ watch(() => searchStore.filters, (newStoreFilters) => {
     return
   }
 
-  // Update local filters
+  // Update local filters (excluding 'type' which should only change when user explicitly selects it)
   Object.keys(newStoreFilters).forEach(key => {
     const k = key as keyof FilterParams
+    // Skip 'type' field - it should only be controlled locally until user clicks "Search"
+    if (k === 'type') {
+      return
+    }
     if (filters.value[k] !== newStoreFilters[k]) {
       // @ts-ignore
       filters.value[k] = newStoreFilters[k]

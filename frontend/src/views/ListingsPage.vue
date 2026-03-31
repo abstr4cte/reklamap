@@ -246,6 +246,49 @@ const statusLabel = computed(() => {
   return filters.value.status.map(s => map[s] || s).join(', ')
 })
 
+// Computed properties for status checkboxes
+const isStatusActive = computed({
+  get: () => tempFilters.value?.status?.includes('active') || false,
+  set: (val: boolean) => {
+    if (!tempFilters.value) return
+    if (val) {
+      if (!tempFilters.value.status.includes('active')) {
+        tempFilters.value.status.push('active')
+      }
+    } else {
+      tempFilters.value.status = tempFilters.value.status.filter((s: string) => s !== 'active')
+    }
+  }
+})
+
+const isStatusReserved = computed({
+  get: () => tempFilters.value?.status?.includes('reserved') || false,
+  set: (val: boolean) => {
+    if (!tempFilters.value) return
+    if (val) {
+      if (!tempFilters.value.status.includes('reserved')) {
+        tempFilters.value.status.push('reserved')
+      }
+    } else {
+      tempFilters.value.status = tempFilters.value.status.filter((s: string) => s !== 'reserved')
+    }
+  }
+})
+
+const isStatusSoon = computed({
+  get: () => tempFilters.value?.status?.includes('soon') || false,
+  set: (val: boolean) => {
+    if (!tempFilters.value) return
+    if (val) {
+      if (!tempFilters.value.status.includes('soon')) {
+        tempFilters.value.status.push('soon')
+      }
+    } else {
+      tempFilters.value.status = tempFilters.value.status.filter((s: string) => s !== 'soon')
+    }
+  }
+})
+
 const paginatedAds = computed(() => searchStore.paginatedListings)
 const getCurrentPageAds = () => paginatedAds.value
 
@@ -1633,15 +1676,15 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
               </div>
               <div v-if="isStatusMenuOpen" class="multiselect-dropdown">
                 <label class="checkbox-option">
-                  <input type="checkbox" value="active" v-model="tempFilters.status" v-if="tempFilters">
+                  <input type="checkbox" v-model="isStatusActive">
                   <span>Wolne</span>
                 </label>
                 <label class="checkbox-option">
-                  <input type="checkbox" value="reserved" v-model="tempFilters.status" v-if="tempFilters">
+                  <input type="checkbox" v-model="isStatusReserved">
                   <span>Zarezerwowane</span>
                 </label>
                 <label class="checkbox-option">
-                  <input type="checkbox" value="soon" v-model="tempFilters.status" v-if="tempFilters">
+                  <input type="checkbox" v-model="isStatusSoon">
                   <span>Wkrótce dostępne</span>
                 </label>
               </div>
@@ -2819,7 +2862,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   border-radius: 16px;
   width: 90%;
   max-width: 600px;
-  max-height: 90vh;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
@@ -3484,14 +3527,13 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
   .modal-content {
     width: 100%;
-    max-height: calc(100vh - 80px);
+    max-height: 85vh;
     border-radius: 20px 20px 0 0;
     position: fixed;
     bottom: 0;
     top: auto;
     left: 0;
     transform: none;
-    margin-top: 80px;
   }
 
   .modal-header,

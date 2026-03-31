@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch, nextTick, onBeforeUnmount } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, onMounted, computed, watch, nextTick, onBeforeUnmount, onActivated } from 'vue'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import EmailModal from '../components/EmailModal.vue'
 import HeroBanner from '../components/HeroBanner.vue'
 import PolandMap from '../components/PolandMap.vue'
@@ -15,6 +15,11 @@ import { useSearchStore } from '../stores/useSearchStore'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
 import { storeToRefs } from 'pinia'
 import type { FilterParams } from '../types/filters'
+
+// Define component name for keep-alive
+defineOptions({
+  name: 'HomePage'
+})
 
 const searchStore = useSearchStore()
 const prefStore = usePreferencesStore()
@@ -32,6 +37,9 @@ const hoveredAdId = ref<string | null>(null)
 
 const showSearchAlertModal = ref(false)
 const hasShownAlertModal = ref(localStorage.getItem('search_alert_shown') === 'true')
+
+// Scroll position management
+const SCROLL_POSITION_KEY = 'homepage_scroll_position'
 
 // Favorites and Comparison handlers
 const handleToggleFavorite = async (id: string) => {
@@ -144,10 +152,50 @@ const toggleShowAllCategories = () => {
   showAllCategories.value = !showAllCategories.value
 }
 
+// Zapisz pozycję scrolla przed opuszczeniem strony (przejście do ogłoszenia)
+onBeforeRouteLeave((to, _from, next) => {
+  // Zapisz tylko jeśli przechodzimy do szczegółów ogłoszenia
+  if (to.path.includes('/powierzchnia-reklamowa/')) {
+    const scrollY = window.scrollY || window.pageYOffset
+    sessionStorage.setItem(SCROLL_POSITION_KEY, scrollY.toString())
+  }
+  next()
+})
+
+// Przywróć pozycję scrolla po powrocie na stronę
+onActivated(() => {
+  const savedPosition = sessionStorage.getItem(SCROLL_POSITION_KEY)
+  if (savedPosition) {
+    const position = parseInt(savedPosition, 10)
+    // Użyj nextTick aby upewnić się, że DOM jest gotowy
+    nextTick(() => {
+      window.scrollTo({
+        top: position,
+        behavior: 'instant' // instant zamiast smooth dla natychmiastowego przywrócenia
+      })
+      // Wyczyść zapisaną pozycję po przywróceniu
+      sessionStorage.removeItem(SCROLL_POSITION_KEY)
+    })
+  }
+})
+
 // Obsługa zmiany rozmiaru okna
 onMounted(() => {
   checkIfMobile()
   window.addEventListener('resize', checkIfMobile)
+  
+  // Sprawdź czy jest zapisana pozycja scrolla przy pierwszym załadowaniu
+  const savedPosition = sessionStorage.getItem(SCROLL_POSITION_KEY)
+  if (savedPosition) {
+    const position = parseInt(savedPosition, 10)
+    nextTick(() => {
+      window.scrollTo({
+        top: position,
+        behavior: 'instant'
+      })
+      sessionStorage.removeItem(SCROLL_POSITION_KEY)
+    })
+  }
 })
 
 onBeforeUnmount(() => {
