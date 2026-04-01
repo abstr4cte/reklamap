@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
+
+defineOptions({
+  name: 'listings'
+})
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSearchStore, typeColors, typeLabels, type LocationSuggestion, popularLocations } from '../stores/useSearchStore'

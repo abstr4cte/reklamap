@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch, nextTick, onBeforeUnmount, onActivated } from 'vue'
+
+defineOptions({
+  name: 'home'
+})
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import EmailModal from '../components/EmailModal.vue'
 import HeroBanner from '../components/HeroBanner.vue'

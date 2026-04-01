@@ -140,6 +140,26 @@ const formatDate = (date: Date | null): string => {
 }
 
 const errors = ref<Record<string, string>>({})
+
+// Wyczyść błąd po zmianie wartości pola
+watch(() => formData.value, (newVal) => {
+  if (newVal.email) delete errors.value.email
+  if (newVal.title) delete errors.value.title
+  if (newVal.description) delete errors.value.description
+  if (newVal.type) delete errors.value.type
+  if (newVal.price) delete errors.value.price
+  if (newVal.location) delete errors.value.location
+  if (newVal.status) delete errors.value.status
+  if (newVal.offerType) delete errors.value.offerType
+  if (newVal.contactPreference) delete errors.value.contactPreference
+  if (newVal.phone) delete errors.value.phone
+  if (newVal.roadClass) delete errors.value.roadClass
+  if (newVal.trafficIntensity) delete errors.value.trafficIntensity
+  if (newVal.variant) delete errors.value.variant
+  if (newVal.transportScope) delete errors.value.transportScope
+  if (newVal.mobileExposureMode) delete errors.value.mobileExposureMode
+  if (newVal.acceptTerms) delete errors.value.acceptTerms
+}, { deep: true })
 const isSubmitting = ref(false)
 const addressSuggestions = ref<any[]>([])
 const showAddressSuggestions = ref(false)
@@ -1171,7 +1191,12 @@ const handleSubmit = async () => {
         const type = mapTypeToUrlFormat(formData.value.type)
         const city = slugify(formData.value.city)
         const title = slugify(formData.value.title)
-        router.push(`/powierzchnia-reklamowa/${type}/${city}/${title}-${newAd.id}`)
+        
+        // Redirection with a slight delay and ensuring window scroll
+        setTimeout(() => {
+          window.scrollTo(0, 0)
+          router.push(`/powierzchnia-reklamowa/${type || 'inne'}/${city || 'polska'}/${title || 'ogloszenie'}-${newAd.id}`)
+        }, 100)
       }, 1000)
     } else {
       router.push('/')
@@ -1270,7 +1295,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="add-listing-page">
+  <div class="add-listing-page-root">
+    <div class="add-listing-page">
     <!-- Toast Notification -->
     <ToastNotification ref="toast" />
     
@@ -1281,11 +1307,11 @@ onMounted(() => {
 
     <div class="page-container">
       <div class="page-header">
-        <button @click="router.back()" class="back-button">
+        <button @click="currentStep > 1 ? prevStep() : router.back()" class="back-button">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M15 10H5M5 10L10 15M5 10L10 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          Powrót
+          {{ currentStep > 1 ? 'Poprzedni krok' : 'Powrót' }}
         </button>
         <div class="header-content">
           <h1>Dodaj ogłoszenie</h1>
@@ -2145,15 +2171,16 @@ onMounted(() => {
         </div>
       </form>
     </div>
+ 
+    <!-- Map Modal -->
+    <LocationMapModal
+      v-model="showMapModal"
+      :initial-latitude="formData.latitude"
+      :initial-longitude="formData.longitude"
+      @confirm="handleMapConfirm"
+    />
+    </div>
   </div>
-
-  <!-- Map Modal -->
-  <LocationMapModal
-    v-model="showMapModal"
-    :initial-latitude="formData.latitude"
-    :initial-longitude="formData.longitude"
-    @confirm="handleMapConfirm"
-  />
 </template>
 
 <style scoped>

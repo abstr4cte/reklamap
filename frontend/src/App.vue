@@ -114,11 +114,7 @@ onMounted(() => {
       @open-comparison="isComparisonPanelOpen = true"
     />
     <router-view v-slot="{ Component, route }">
-      <transition name="fade" mode="out-in">
-        <keep-alive :include="['HomePage']">
-          <component :is="Component" :key="route.path" @toggle-favorite="handleToggleFavorite" @toggle-comparison="handleToggleComparison" />
-        </keep-alive>
-      </transition>
+      <component :is="Component" :key="route.path" @toggle-favorite="handleToggleFavorite" @toggle-comparison="handleToggleComparison" />
     </router-view>
     <AppFooter />
     <FavoritesPanel
