@@ -601,8 +601,16 @@ export const useSearchStore = defineStore('search', () => {
     }
 
     Object.values(rangeFilters).forEach(config => {
-      const minVal = (f as any)[config.min]
-      const maxVal = (f as any)[config.max]
+      let minVal = (f as any)[config.min]
+      let maxVal = (f as any)[config.max]
+      
+      // Special handling for LED screen dimensions
+      // Filters store dimensions in mm for LED screens, but database has meters
+      // Convert mm to meters for filtering when type is led_screen
+      if ((config.key === 'width' || config.key === 'height') && f.type === 'led_screen') {
+        if (minVal !== null) minVal = minVal / 1000
+        if (maxVal !== null) maxVal = maxVal / 1000
+      }
       
       if (config.key === 'price') {
         const unit = f.priceUnit || 'month'

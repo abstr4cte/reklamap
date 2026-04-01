@@ -316,27 +316,12 @@ const applyFilters = () => {
   // Wyczyść mapBounds przy aplikowaniu filtrów, aby mapa mogła przybliżyć się do miasta/regionu
   const filtersWithoutMapBounds = { ...tempFilters.value, mapBounds: null }
   
-  // Konwertuj wymiary LED z mm na metry przed wysłaniem
-  if (filtersWithoutMapBounds.type === 'led_screen') {
-    if (filtersWithoutMapBounds.widthFrom !== null) {
-      filtersWithoutMapBounds.widthFrom = filtersWithoutMapBounds.widthFrom / 1000
-    }
-    if (filtersWithoutMapBounds.widthTo !== null) {
-      filtersWithoutMapBounds.widthTo = filtersWithoutMapBounds.widthTo / 1000
-    }
-    if (filtersWithoutMapBounds.heightFrom !== null) {
-      filtersWithoutMapBounds.heightFrom = filtersWithoutMapBounds.heightFrom / 1000
-    }
-    if (filtersWithoutMapBounds.heightTo !== null) {
-      filtersWithoutMapBounds.heightTo = filtersWithoutMapBounds.heightTo / 1000
-    }
-  }
-  
   // Jeśli użytkownik wpisał cenę, ustaw priceDisplay na wybraną jednostkę
   if ((filtersWithoutMapBounds.priceFrom !== null || filtersWithoutMapBounds.priceTo !== null) && filtersWithoutMapBounds.priceUnit) {
     searchStore.priceDisplay = filtersWithoutMapBounds.priceUnit
   }
   
+  // Apply filters (dimension conversion for LED screens happens in searchStore)
   searchStore.applyFilters(filtersWithoutMapBounds)
   locationQuery.value = tempLocationQuery.value
   showFiltersModal.value = false
@@ -708,6 +693,73 @@ watch(filteredListings, () => {
     syncMapToFilters()
   }
 }, { deep: true })
+
+// Wyczyść filtry specyficzne dla typu gdy typ się zmieni w modalu
+watch(() => tempFilters.value?.type, (newType, oldType) => {
+  // Nie rób nic jeśli tempFilters nie istnieje lub typ się nie zmienił
+  if (!tempFilters.value || !oldType || newType === oldType) return
+  
+  // Filtry ogólne które zachowujemy
+  const generalFilters = {
+    type: tempFilters.value.type,
+    keyword: tempFilters.value.keyword,
+    city: tempFilters.value.city,
+    region: tempFilters.value.region,
+    street: tempFilters.value.street,
+    locationLabel: tempFilters.value.locationLabel,
+    selectedLocationCoords: tempFilters.value.selectedLocationCoords,
+    cityStrict: tempFilters.value.cityStrict,
+    priceFrom: tempFilters.value.priceFrom,
+    priceTo: tempFilters.value.priceTo,
+    priceUnit: tempFilters.value.priceUnit,
+    status: tempFilters.value.status,
+    onlyWithImage: tempFilters.value.onlyWithImage,
+    mapBounds: tempFilters.value.mapBounds
+  }
+  
+  // Resetuj wszystkie filtry specyficzne dla typu
+  Object.assign(tempFilters.value, {
+    ...generalFilters,
+    widthFrom: null,
+    widthTo: null,
+    heightFrom: null,
+    heightTo: null,
+    surfaceFrom: null,
+    surfaceTo: null,
+    orientation: '',
+    variant: '',
+    trafficIntensity: '',
+    trafficDirection: [],
+    trafficType: [],
+    roadClass: '',
+    environment: '',
+    transportScope: '',
+    vehicleCountFrom: null,
+    vehicleCountTo: null,
+    mobileExposureMode: '',
+    operatingHours: '',
+    routeArea: '',
+    estimatedDailyViewsFrom: null,
+    estimatedDailyViewsTo: null,
+    pixelPitchFrom: null,
+    pixelPitchTo: null,
+    brightnessFrom: null,
+    brightnessTo: null,
+    resolution: '',
+    priceIncludesPrint: false,
+    priceIncludesMounting: false,
+    graphicDesignHelp: false,
+    hasBacklight: false,
+    hasLightingTypeBanner: false,
+    hasLightingTypeBillboard: false,
+    ambientLightControl: false,
+    operatingZone: '',
+    offerType: '',
+    hasVatInvoice: false,
+    campaignDuration: null,
+    rentalPeriod: ''
+  })
+})
 
 const checkIfMobile = () => { isMobile.value = window.innerWidth < 768 }
 const handleScroll = () => {

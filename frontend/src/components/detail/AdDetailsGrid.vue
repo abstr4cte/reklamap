@@ -56,7 +56,8 @@ const getVariantLabel = (variant: string, type: string) => searchStore.getVarian
   <div class="specifications-grid">
     <div v-if="showDimensions" class="spec-item">
       <div class="spec-label">Wymiary</div>
-      <div class="spec-value">{{ ad.width }}m × {{ ad.height }}m</div>
+      <div v-if="ad.type === 'led_screen'" class="spec-value">{{ (ad.width * 1000).toFixed(0) }}mm × {{ (ad.height * 1000).toFixed(0) }}mm</div>
+      <div v-else class="spec-value">{{ ad.width }}m × {{ ad.height }}m</div>
     </div>
 
     <div v-if="showDimensions && showSurfaceArea" class="spec-item">

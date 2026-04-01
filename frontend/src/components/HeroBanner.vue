@@ -189,31 +189,17 @@ const handleSearch = () => {
     clearTimeout(editingTimeout)
   }
   
-  // Zapisz ORYGINALNE filtry do localStorage (przed konwersją wymiarów LED)
-  // Aby wymiary LED były zachowane w mm
-  const filtersToSave = { ...filters.value }
-  if ((filtersToSave.priceFrom !== null || filtersToSave.priceTo !== null) && filtersToSave.priceUnit) {
-    filtersToSave._priceDisplayUnit = filtersToSave.priceUnit
-  }
-  saveLastSearch(filtersToSave)
-  
-  // Konwertuj wymiary LED z mm na metry przed wysłaniem
+  // Przygotuj filtry do wysłania (bez konwersji wymiarów LED - zostaną w mm)
   const searchFilters = { ...filters.value }
   
-  if (filters.value.type === 'led_screen') {
-    // Konwertuj wymiary z mm na metry
-    if (searchFilters.widthFrom !== null) {
-      searchFilters.widthFrom = searchFilters.widthFrom / 1000
-    }
-    if (searchFilters.widthTo !== null) {
-      searchFilters.widthTo = searchFilters.widthTo / 1000
-    }
-    if (searchFilters.heightFrom !== null) {
-      searchFilters.heightFrom = searchFilters.heightFrom / 1000
-    }
-    if (searchFilters.heightTo !== null) {
-      searchFilters.heightTo = searchFilters.heightTo / 1000
-    }
+  // DEBUG: Log dimension values for LED screens
+  if (searchFilters.type === 'led_screen') {
+    console.log('🔍 HeroBanner.handleSearch() - LED wymiary przed wysłaniem:', {
+      widthFrom: searchFilters.widthFrom,
+      widthTo: searchFilters.widthTo,
+      heightFrom: searchFilters.heightFrom,
+      heightTo: searchFilters.heightTo
+    })
   }
   
   // Jeśli użytkownik wpisał cenę, dodaj priceUnit do filtrów
@@ -226,7 +212,10 @@ const handleSearch = () => {
     searchFilters.priceUnit = ''
   }
   
-  // Emit the search event with converted filters
+  // Zapisz filtry do localStorage (z wartościami w mm dla LED)
+  saveLastSearch(searchFilters)
+  
+  // Emit search event with original dimension values (mm for LED screens)
   emit('search', searchFilters)
   
   // Then scroll to map using goToPolandMap function
@@ -386,6 +375,74 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 
+// Wyczyść filtry specyficzne dla typu gdy typ się zmieni
+watch(() => filters.value.type, (newType, oldType) => {
+  // Nie rób nic przy pierwszym załadowaniu lub gdy typ się nie zmienił
+  if (!oldType || newType === oldType) return
+  
+  // Filtry ogólne które zachowujemy (nie są specyficzne dla typu)
+  const generalFilters = {
+    type: filters.value.type,
+    keyword: filters.value.keyword,
+    city: filters.value.city,
+    region: filters.value.region,
+    street: filters.value.street,
+    locationLabel: filters.value.locationLabel,
+    selectedLocationCoords: filters.value.selectedLocationCoords,
+    cityStrict: filters.value.cityStrict,
+    priceFrom: filters.value.priceFrom,
+    priceTo: filters.value.priceTo,
+    priceUnit: filters.value.priceUnit,
+    status: filters.value.status,
+    onlyWithImage: filters.value.onlyWithImage,
+    mapBounds: filters.value.mapBounds
+  }
+  
+  // Resetuj wszystkie filtry do wartości domyślnych
+  Object.assign(filters.value, {
+    ...generalFilters,
+    // Wyczyść wszystkie specyficzne filtry
+    widthFrom: null,
+    widthTo: null,
+    heightFrom: null,
+    heightTo: null,
+    surfaceFrom: null,
+    surfaceTo: null,
+    orientation: '',
+    variant: '',
+    trafficIntensity: '',
+    trafficDirection: [],
+    trafficType: [],
+    roadClass: '',
+    environment: '',
+    transportScope: '',
+    vehicleCountFrom: null,
+    vehicleCountTo: null,
+    mobileExposureMode: '',
+    operatingHours: '',
+    routeArea: '',
+    estimatedDailyViewsFrom: null,
+    estimatedDailyViewsTo: null,
+    pixelPitchFrom: null,
+    pixelPitchTo: null,
+    brightnessFrom: null,
+    brightnessTo: null,
+    resolution: '',
+    priceIncludesPrint: false,
+    priceIncludesMounting: false,
+    graphicDesignHelp: false,
+    hasBacklight: false,
+    hasLightingTypeBanner: false,
+    hasLightingTypeBillboard: false,
+    ambientLightControl: false,
+    operatingZone: '',
+    offerType: '',
+    hasVatInvoice: false,
+    campaignDuration: null,
+    rentalPeriod: ''
+  })
+})
+
 // Resetuj transportScope gdy wariant się zmieni
 watch(() => filters.value.variant, () => {
   if (filters.value.type === 'transport') {
@@ -436,6 +493,12 @@ watch(() => searchStore.filters, (newStoreFilters) => {
     'priceFrom',      // Cena od
     'priceTo',        // Cena do
     'priceUnit',      // Jednostka ceny
+    'widthFrom',      // Szerokość od (mm dla LED screen)
+    'widthTo',        // Szerokość do (mm dla LED screen)
+    'heightFrom',     // Wysokość od (mm dla LED screen)
+    'heightTo',       // Wysokość do (mm dla LED screen)
+    'surfaceFrom',    // Powierzchnia od
+    'surfaceTo',      // Powierzchnia do
     'status',         // Status (wolne/zarezerwowane/wkrótce)
     'onlyWithImage'   // Tylko ze zdjęciem
   ]

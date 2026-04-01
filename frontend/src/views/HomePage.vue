@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch, nextTick, onBeforeUnmount, onActivated } from 'vue'
-
-defineOptions({
-  name: 'home'
-})
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import EmailModal from '../components/EmailModal.vue'
 import HeroBanner from '../components/HeroBanner.vue'
@@ -80,6 +76,16 @@ const handlePageChange = async (page: number) => {
 }
 
 const handleSearch = (searchFilters: FilterParams & { _priceDisplayUnit?: string }) => {
+  // DEBUG: Log dimension values for LED screens
+  if (searchFilters.type === 'led_screen') {
+    console.log('🔍 HomePage.handleSearch() - LED wymiary otrzymane z HeroBanner:', {
+      widthFrom: searchFilters.widthFrom,
+      widthTo: searchFilters.widthTo,
+      heightFrom: searchFilters.heightFrom,
+      heightTo: searchFilters.heightTo
+    })
+  }
+  
   // Wyczyść mapBounds przy nowym wyszukiwaniu, aby mapa mogła przybliżyć się do miasta/regionu
   const filtersWithoutMapBounds = { ...searchFilters, mapBounds: null }
   searchStore.applyFilters(filtersWithoutMapBounds)
@@ -90,6 +96,16 @@ const handleSearch = (searchFilters: FilterParams & { _priceDisplayUnit?: string
   
   // Konwertuj filtry na query params
   const queryParams = filtersToQueryParams(searchFilters)
+  
+  // DEBUG: Log query params for LED screens
+  if (searchFilters.type === 'led_screen') {
+    console.log('🔍 HomePage.handleSearch() - Query params:', {
+      widthFrom: queryParams.widthFrom,
+      widthTo: queryParams.widthTo,
+      heightFrom: queryParams.heightFrom,
+      heightTo: queryParams.heightTo
+    })
+  }
   
   // Use history.replaceState to update URL without triggering navigation
   // Dodaj ? tylko jeśli są jakieś query params
