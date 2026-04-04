@@ -211,24 +211,28 @@ const getFullPhone = (phone: string) => {
   gap: 0.75rem;
   padding: 0.875rem 1rem;
   min-height: 54px;
-  background: #ffffff;
+  background: rgba(102, 126, 234, 0.05);
   color: #667eea;
-  border: 1.5px solid rgba(102, 126, 234, 0.3);
+  border: 1.5px solid rgba(102, 126, 234, 0.1);
   border-radius: 12px;
   font-weight: 700;
   font-size: 1rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.05);
   box-sizing: border-box;
 }
 
 .btn-phone:hover {
-  background: rgba(102, 126, 234, 0.03);
-  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+  border-color: rgba(102, 126, 234, 0.3);
   color: #5a67d8;
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.15);
+  box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-phone:active {
+  transform: translateY(0);
+  background: rgba(102, 126, 234, 0.15);
 }
 
 .btn-message {
@@ -261,13 +265,19 @@ const getFullPhone = (phone: string) => {
   gap: 0.75rem;
   padding: 0.875rem 1rem;
   min-height: 54px;
-  background: #ffffff;
+  background: rgba(102, 126, 234, 0.08);
   border: 1.5px solid #667eea;
   border-radius: 12px;
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 800;
+  font-size: 1.1rem;
   color: #667eea;
   box-sizing: border-box;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .phone-number {

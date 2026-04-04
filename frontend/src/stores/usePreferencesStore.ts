@@ -6,7 +6,7 @@ import { useToast } from '../composables/useToast'
 export const usePreferencesStore = defineStore('preferences', () => {
   const favorites = ref<string[]>(JSON.parse(localStorage.getItem('favorites') || '[]'))
   const comparison = ref<string[]>(JSON.parse(localStorage.getItem('comparison') || '[]'))
-  const isDarkMode = ref<boolean>(localStorage.getItem('darkMode') === 'true')
+  const isDarkMode = ref<boolean>(false)
   
   // Helper to get toast instance (lazy)
   const getToast = () => {
@@ -22,15 +22,14 @@ export const usePreferencesStore = defineStore('preferences', () => {
     localStorage.setItem('comparison', JSON.stringify(val))
   }, { deep: true })
 
-  watch(isDarkMode, (val) => {
-    localStorage.setItem('darkMode', val.toString())
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', val ? 'dark' : 'light')
-    }
-  }, { immediate: true })
+  // Force light theme on mount
+  if (typeof document !== 'undefined') {
+    document.documentElement.setAttribute('data-theme', 'light')
+    localStorage.removeItem('darkMode')
+  }
 
   const toggleDarkMode = () => {
-    isDarkMode.value = !isDarkMode.value
+    // Disabled
   }
 
   const toggleFavorite = async (id: string) => {

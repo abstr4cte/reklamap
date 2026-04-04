@@ -37,32 +37,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-[data-theme='dark'] {
-  --bg-color: #111827;
-  --bg-secondary: #1f2937;
-  --bg-tertiary: #374151;
-  --text-main: #f9fafb;
-  --text-muted: #d1d5db;
-  --text-light: #9ca3af;
-  --border-color: #374151;
-  --card-bg: #1f2937;
-  --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-  --input-bg: #1f2937;
-  --input-border: #374151;
-}
 
-[data-theme='dark'] input:not([type="checkbox"]):not([type="radio"]),
-[data-theme='dark'] select,
-[data-theme='dark'] textarea {
-  background-color: var(--input-bg);
-  color: var(--text-main);
-  border-color: var(--input-border);
-}
-
-[data-theme='dark'] ::placeholder {
-  color: var(--text-light);
-  opacity: 0.6;
-}
 
 /* Global Selection Style */
 ::selection {
@@ -242,42 +217,7 @@ img {
   justify-content: center !important;
 }
 
-/* Leaflet Dark Mode Extensions */
-[data-theme='dark'] .leaflet-popup-content-wrapper,
-[data-theme='dark'] .leaflet-popup-tip {
-  background: var(--card-bg) !important;
-  color: var(--text-main) !important;
-  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4) !important;
-}
 
-[data-theme='dark'] .leaflet-control-zoom-in,
-[data-theme='dark'] .leaflet-control-zoom-out,
-[data-theme='dark'] .leaflet-bar a {
-  background-color: var(--card-bg) !important;
-  color: var(--text-main) !important;
-  border-bottom: 1px solid var(--border-color) !important;
-}
-
-[data-theme='dark'] .leaflet-bar a:hover {
-  background-color: var(--bg-secondary) !important;
-}
-
-[data-theme='dark'] .leaflet-container {
-  background: var(--bg-color) !important;
-}
-
-[data-theme='dark'] .leaflet-container a.leaflet-popup-close-button {
-  color: var(--text-muted) !important;
-}
-
-[data-theme='dark'] .leaflet-control-attribution {
-  background: var(--bg-color) !important;
-  color: var(--text-muted) !important;
-}
-
-[data-theme='dark'] .leaflet-control-attribution a {
-  color: var(--primary-color) !important;
-}
 
 /* Skeleton Loading Animation */
 @keyframes shimmer {
@@ -312,13 +252,7 @@ img {
   animation: shimmer 2s infinite;
 }
 
-[data-theme='dark'] .skeleton::after {
-  background: linear-gradient(90deg,
-      rgba(255, 255, 255, 0) 0,
-      rgba(255, 255, 255, 0.05) 20%,
-      rgba(255, 255, 255, 0.1) 60%,
-      rgba(255, 255, 255, 0));
-}
+
 
 /* Global Micro-interactions */
 .hover-lift {
