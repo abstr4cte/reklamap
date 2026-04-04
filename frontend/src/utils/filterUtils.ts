@@ -29,6 +29,8 @@ export interface FilterParams {
   region?: string
   city?: string
   cityStrict?: boolean
+  street?: string
+  mapBounds?: any
   priceFrom?: number | null
   priceTo?: number | null
   priceUnit?: string
@@ -45,6 +47,7 @@ export interface FilterParams {
   hasBacklight?: boolean
   onlyWithImage?: boolean
   priceIncludesPrint?: boolean
+  priceIncludesMounting?: boolean
   graphicDesignHelp?: boolean
   offerType?: string
   hasVatInvoice?: boolean
@@ -209,6 +212,11 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.hasLightingTypeBanner) params.hasLightingTypeBanner = 'tak'
   if (filters.hasLightingTypeBillboard) params.hasLightingTypeBillboard = 'tak'
   if (filters.ambientLightControl) params.ambientLightControl = 'tak'
+  if (filters.priceIncludesMounting) params.priceIncludesMounting = 'tak'
+  
+  // Lokalizacja szczegółowa
+  if (filters.street) params.street = normalizePolishChars(filters.street)
+  if (filters.locationLabel) params.loc = normalizePolishChars(filters.locationLabel)
 
   // Konwersja współrzędnych lokalizacji - usunięto z URL by nie zaśmiecać linków
 
@@ -326,6 +334,11 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   filters.hasLightingTypeBillboard = query.hasLightingTypeBillboard === 'tak' || query.hasLightingTypeBillboard === 'true'
   filters.ambientLightControl = query.ambientLightControl === 'tak' || query.ambientLightControl === 'true'
   filters.cityStrict = query.cityStrict === 'tak' || query.cityStrict === 'true'
+  filters.priceIncludesMounting = query.priceIncludesMounting === 'tak' || query.priceIncludesMounting === 'true'
+  
+  // Lokalizacja szczegółowa
+  if (query.street) filters.street = query.street
+  if (query.loc) filters.locationLabel = query.loc
 
   // Współrzędne lokalizacji - przestarzałe w query params, upewniamy się że nie wpadną gubiąc domyślnie
   filters.selectedLocationCoords = null

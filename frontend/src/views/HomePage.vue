@@ -85,8 +85,8 @@ const handleSearch = (searchFilters: FilterParams & { _priceDisplayUnit?: string
   }
   
   // Zaktualizuj URL (pozostając na stronie głównej) dodając zdefiniowane filtry do query params
-  const currentFilters = { ...filters.value }
-  const queryParams = filtersToQueryParams(currentFilters)
+  // Użyj przekazanych searchFilters bezpośrednio, aby uniknąć ewentualnych opóźnień reaktywności store
+  const queryParams = filtersToQueryParams(searchFilters)
   
   // Użyj router.replace zamiast natywnego history.replaceState (Vue Router może to nadpisać)
   router.replace({ query: queryParams })
@@ -225,8 +225,14 @@ const loadAdvertisements = async () => {
 
 // Watch for URL query parameter changes
 watch(() => route.query, (newQuery) => {
-  // Skip if we're in the middle of resetting filters
-  if (isResettingFilters.value) {
+  // Jeśli query jest puste, a mamy flagę zapisanego wyszukiwania, przywróć je do URL
+  // (to rozwiązuje problem klikania logo na Home, które czyści URL ale nie powinno czyścić filtrów)
+  const isUserSearch = localStorage.getItem('user_initiated_search') === 'true'
+  if (Object.keys(newQuery).length === 0 && isUserSearch) {
+    const queryParams = filtersToQueryParams(filters.value)
+    if (Object.keys(queryParams).length > 0) {
+      router.replace({ query: queryParams }).catch(() => {})
+    }
     return
   }
   
@@ -250,7 +256,7 @@ watch(() => route.query, (newQuery) => {
       }
     })
   }
-}, { immediate: true, deep: true })
+}, { deep: true })
 
 // SEO Meta Tags
 useSeo({
@@ -386,16 +392,17 @@ onMounted(() => {
           }
           
           // Dodaj filtry do URL jako query params (miasto/lokalizacja jako query params na stronie głównej)
-          const queryParams = filtersToQueryParams(filters.value)
+          // Użyj lastSearch bezpośrednio, aby mieć pewność że booleany (ze zdjęciem, faktura VAT) trafią do URL
+          const queryParams = filtersToQueryParams(lastSearch as any)
           
-          setTimeout(() => {
+          nextTick(() => {
             router.replace({ query: queryParams }).catch(err => {
               // Ignore NavigationDuplicated error
               if (err.name !== 'NavigationDuplicated') {
                   console.error(err)
               }
             })
-          }, 50)
+          })
         }
       }
     } catch (error) {

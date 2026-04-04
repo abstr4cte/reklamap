@@ -419,6 +419,14 @@ watch(() => filters.value.type, (newType, oldType) => {
     priceUnit: filters.value.priceUnit,
     status: filters.value.status,
     onlyWithImage: filters.value.onlyWithImage,
+    hasVatInvoice: filters.value.hasVatInvoice,
+    priceIncludesPrint: filters.value.priceIncludesPrint,
+    priceIncludesMounting: filters.value.priceIncludesMounting,
+    graphicDesignHelp: filters.value.graphicDesignHelp,
+    hasBacklight: filters.value.hasBacklight,
+    hasLightingTypeBanner: filters.value.hasLightingTypeBanner,
+    hasLightingTypeBillboard: filters.value.hasLightingTypeBillboard,
+    ambientLightControl: filters.value.ambientLightControl,
     mapBounds: filters.value.mapBounds
   }
   
@@ -452,16 +460,8 @@ watch(() => filters.value.type, (newType, oldType) => {
     brightnessFrom: null,
     brightnessTo: null,
     resolution: '',
-    priceIncludesPrint: false,
-    priceIncludesMounting: false,
-    graphicDesignHelp: false,
-    hasBacklight: false,
-    hasLightingTypeBanner: false,
-    hasLightingTypeBillboard: false,
-    ambientLightControl: false,
     operatingZone: '',
     offerType: '',
-    hasVatInvoice: false,
     campaignDuration: null,
     rentalPeriod: ''
   })
@@ -513,25 +513,13 @@ watch(() => searchStore.filters, (newStoreFilters) => {
 
   // Filtry wspólne dla wszystkich typów - NIE synchronizuj ich (użytkownik je ustawił ręcznie)
   const commonFilters = [
-    'type',           // Typ - kontrolowany lokalnie
+    'type',           // Typ
     'keyword',        // Słowo kluczowe
     'city',           // Miasto
     'region',         // Region
     'street',         // Ulica
     'locationLabel',  // Etykieta lokalizacji
-    'selectedLocationCoords', // Współrzędne
-    'cityStrict',     // Ścisłe miasto
-    'priceFrom',      // Cena od
-    'priceTo',        // Cena do
-    'priceUnit',      // Jednostka ceny
-    'widthFrom',      // Szerokość od (mm dla LED screen)
-    'widthTo',        // Szerokość do (mm dla LED screen)
-    'heightFrom',     // Wysokość od (mm dla LED screen)
-    'heightTo',       // Wysokość do (mm dla LED screen)
-    'surfaceFrom',    // Powierzchnia od
-    'surfaceTo',      // Powierzchnia do
-    'status',         // Status (wolne/zarezerwowane/wkrótce)
-    'onlyWithImage'   // Tylko ze zdjęciem
+    'selectedLocationCoords' // Współrzędne
   ]
 
   // Update local filters (excluding common filters that user may have set)

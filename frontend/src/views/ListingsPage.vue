@@ -840,6 +840,14 @@ watch(() => tempFilters.value?.type, (newType, oldType) => {
     priceUnit: tempFilters.value.priceUnit,
     status: tempFilters.value.status,
     onlyWithImage: tempFilters.value.onlyWithImage,
+    hasVatInvoice: tempFilters.value.hasVatInvoice,
+    priceIncludesPrint: tempFilters.value.priceIncludesPrint,
+    priceIncludesMounting: tempFilters.value.priceIncludesMounting,
+    graphicDesignHelp: tempFilters.value.graphicDesignHelp,
+    hasBacklight: tempFilters.value.hasBacklight,
+    hasLightingTypeBanner: tempFilters.value.hasLightingTypeBanner,
+    hasLightingTypeBillboard: tempFilters.value.hasLightingTypeBillboard,
+    ambientLightControl: tempFilters.value.ambientLightControl,
     mapBounds: tempFilters.value.mapBounds
   }
   
@@ -872,16 +880,8 @@ watch(() => tempFilters.value?.type, (newType, oldType) => {
     brightnessFrom: null,
     brightnessTo: null,
     resolution: '',
-    priceIncludesPrint: false,
-    priceIncludesMounting: false,
-    graphicDesignHelp: false,
-    hasBacklight: false,
-    hasLightingTypeBanner: false,
-    hasLightingTypeBillboard: false,
-    ambientLightControl: false,
     operatingZone: '',
     offerType: '',
-    hasVatInvoice: false,
     campaignDuration: null,
     rentalPeriod: ''
   })
