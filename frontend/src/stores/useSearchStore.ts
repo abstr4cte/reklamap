@@ -643,11 +643,6 @@ export const useSearchStore = defineStore('search', () => {
       filtered = filtered.filter(ad => f.status.includes(ad.display_status || ad.status))
     }
 
-    // 8. Special Case: Resolution (Partial match)
-    if (f.resolution) {
-      const res = f.resolution.toLowerCase()
-      filtered = filtered.filter(ad => (ad as any).resolution?.toLowerCase().includes(res))
-    }
 
     // 10. Map Bounds Filter
     if (f.mapBounds) {

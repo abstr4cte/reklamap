@@ -39,7 +39,6 @@ export interface FilterParams {
   roadClass: string
   environment: string
   // LED screen filters
-  resolution: string
   pixelPitchFrom: number | null
   pixelPitchTo: number | null
   brightnessFrom: number | null
@@ -100,7 +99,6 @@ export const DEFAULT_FILTERS: FilterParams = {
   variant: '',
   roadClass: '',
   environment: '',
-  resolution: '',
   pixelPitchFrom: null,
   pixelPitchTo: null,
   brightnessFrom: null,

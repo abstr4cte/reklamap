@@ -879,7 +879,6 @@ watch(() => tempFilters.value?.type, (newType, oldType) => {
     pixelPitchTo: null,
     brightnessFrom: null,
     brightnessTo: null,
-    resolution: '',
     operatingZone: '',
     offerType: '',
     campaignDuration: null,
@@ -1673,17 +1672,6 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             </select>
           </div>
 
-          <!-- LED Screen Filters -->
-          <div v-if="tempFilters && tempFilters.type === 'led_screen'" class="filter-group">
-            <label class="filter-label">Rozdzielczość</label>
-            <input 
-              v-model="tempFilters.resolution" 
-              type="text" 
-              placeholder="np. 1920x1080"
-              class="filter-input"
-              v-if="tempFilters"
-            />
-          </div>
 
           <div v-if="tempFilters && tempFilters.type === 'led_screen'" class="filter-group">
             <label class="filter-label">Pixel Pitch (mm)</label>

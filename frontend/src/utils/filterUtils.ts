@@ -68,7 +68,6 @@ export interface FilterParams {
   mobileExposureMode?: string
   campaignDurationFrom?: number | null
   campaignDurationTo?: number | null
-  resolution?: string
   pixelPitchFrom?: number | null
   pixelPitchTo?: number | null
   brightnessFrom?: number | null
@@ -236,7 +235,6 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.mobileExposureMode) params.mobileExposureMode = filters.mobileExposureMode
   if (filters.operatingZone) params.operatingZone = filters.operatingZone
   if (filters.lightingType) params.lightingType = filters.lightingType
-  if (filters.resolution) params.resolution = filters.resolution
   
   // Wartości liczbowe - extended
   if (filters.vehicleCountFrom !== null && filters.vehicleCountFrom !== undefined) {
@@ -359,7 +357,6 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   if (query.mobileExposureMode) filters.mobileExposureMode = query.mobileExposureMode
   if (query.operatingZone) filters.operatingZone = query.operatingZone
   if (query.lightingType) filters.lightingType = query.lightingType
-  if (query.resolution) filters.resolution = query.resolution
   
   // Wartości liczbowe - extended
   if (query.vehicleCountFrom) filters.vehicleCountFrom = parseFloat(query.vehicleCountFrom) || null

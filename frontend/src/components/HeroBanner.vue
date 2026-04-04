@@ -459,7 +459,6 @@ watch(() => filters.value.type, (newType, oldType) => {
     pixelPitchTo: null,
     brightnessFrom: null,
     brightnessTo: null,
-    resolution: '',
     operatingZone: '',
     offerType: '',
     campaignDuration: null,
@@ -926,16 +925,6 @@ onBeforeUnmount(() => {
 
                 <!-- LED Screen Filters -->
                 <div v-if="showLEDFilters" class="search-row">
-                  <div class="input-group">
-                    <label class="input-label">Rozdzielczość</label>
-                    <input
-                      v-model="filters.resolution"
-                      type="text"
-                      placeholder="np. 1920x1080"
-                      class="search-input"
-                      @focus="markUserEditing"
-                    />
-                  </div>
                   <div class="input-group">
                     <label class="input-label">Pixel Pitch (mm)</label>
                     <div class="range-input">
