@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 import axios from '../api/axios'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 
-defineProps<{
+const props = defineProps<{
   isOpen: boolean
 }>()
+
+watch(() => props.isOpen, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
 
 const emit = defineEmits<{
   close: []

@@ -54,6 +54,14 @@ const totalFiltersCount = computed(() => {
 // UI State
 const isInitialized = ref(false)
 const showFiltersModal = ref(false)
+
+watch(showFiltersModal, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
 const tempFilters = ref<any>(null)
 const mapContainer = ref<HTMLElement | null>(null)
 let map: LType.Map | null = null
@@ -2257,7 +2265,8 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 /* Existing styles below */
 .listings-page {
-  height: 100vh;
+  height: calc(100vh - 72px);
+  padding-top: 1.5rem;
   background: var(--bg-secondary, #f9fafb);
   display: flex;
   flex-direction: column;
@@ -3110,6 +3119,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   left: 0;
   right: 0;
   bottom: 0;
+  padding-top: 80px;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
@@ -3129,7 +3139,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   border-radius: 16px;
   width: 90%;
   max-width: 600px;
-  max-height: 85vh;
+  max-height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);

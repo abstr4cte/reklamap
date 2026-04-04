@@ -53,6 +53,9 @@ const getPriceUnitLabel = (ad: Advertisement): string => searchStore.getPriceUni
 watch(() => props.isOpen, (newValue) => {
   if (newValue) {
     loadFavorites()
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
   }
 })
 
