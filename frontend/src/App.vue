@@ -114,7 +114,9 @@ onMounted(() => {
       @open-comparison="isComparisonPanelOpen = true"
     />
     <router-view v-slot="{ Component, route }">
-      <component :is="Component" :key="route.path" @toggle-favorite="handleToggleFavorite" @toggle-comparison="handleToggleComparison" />
+      <keep-alive :include="['HomePage', 'listings']" :max="5">
+        <component :is="Component" :key="route.path" @toggle-favorite="handleToggleFavorite" @toggle-comparison="handleToggleComparison" />
+      </keep-alive>
     </router-view>
     <AppFooter />
     <FavoritesPanel

@@ -113,7 +113,7 @@ const router = createRouter({
       component: () => import('./views/NotFoundPage.vue')
     }
   ],
-  scrollBehavior(to, from, _savedPosition) {
+  scrollBehavior(to, from, savedPosition) {
     // If there's a hash in the URL, scroll to it with offset for the header
     if (to.hash) {
       return new Promise((resolve) => {
@@ -130,7 +130,20 @@ const router = createRouter({
     if (from.path === to.path) {
       return false
     }
-    // Always scroll to top on any navigation (including back/forward)
+    // When navigating back to kept-alive pages (home/listings), let the component
+    // handle scroll restoration via onActivated to avoid race conditions
+    if (savedPosition) {
+      const isKeepAlivePage = to.name === 'home' || 
+        to.name === 'listings' || 
+        to.name === 'listings-by-type' || 
+        to.name === 'listings-by-city' || 
+        to.name === 'listings-by-type-city'
+      if (isKeepAlivePage) {
+        return false
+      }
+      return savedPosition
+    }
+    // Always scroll to top on forward navigation
     return { top: 0, behavior: 'instant' }
   }
 })

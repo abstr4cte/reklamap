@@ -163,15 +163,16 @@ onActivated(() => {
   const savedPosition = sessionStorage.getItem(SCROLL_POSITION_KEY)
   if (savedPosition) {
     const position = parseInt(savedPosition, 10)
-    // Użyj nextTick aby upewnić się, że DOM jest gotowy
-    nextTick(() => {
+    // Użyj setTimeout, aby upewnić się, że DOM jest w pełni gotowy
+    // nextTick jest za wczesny - scrollBehavior routera może jeszcze nie zakończyć pracy
+    setTimeout(() => {
       window.scrollTo({
         top: position,
-        behavior: 'instant' // instant zamiast smooth dla natychmiastowego przywrócenia
+        behavior: 'instant'
       })
       // Wyczyść zapisaną pozycję po przywróceniu
       sessionStorage.removeItem(SCROLL_POSITION_KEY)
-    })
+    }, 50)
   }
 })
 

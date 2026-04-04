@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, onActivated, nextTick, watch } from 'vue'
 
 defineOptions({
   name: 'listings'
 })
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSearchStore, typeColors, typeLabels, type LocationSuggestion, popularLocations } from '../stores/useSearchStore'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
@@ -74,6 +74,66 @@ const showMapButton = ref(true)
 const listContainerRef = ref<HTMLElement | null>(null)
 const showListScrollTop = ref(false)
 const isProgrammaticMove = ref(false)
+
+// Scroll position management
+const LISTINGS_SCROLL_KEY = 'listings_scroll_position'
+const LISTINGS_PAGE_KEY = 'listings_current_page'
+
+// Zapisz pozycję scrolla przed opuszczeniem strony (przejście do ogłoszenia)
+onBeforeRouteLeave((to, _from, next) => {
+  // Zapisz tylko jeśli przechodzimy do szczegółów ogłoszenia
+  if (to.path.includes('/powierzchnia-reklamowa/')) {
+    // Zapisz scroll kontenera listy (nie window, bo listings-list-container ma overflow-y: auto)
+    const scrollTop = listContainerRef.value?.scrollTop || 0
+    const windowScrollY = window.scrollY || window.pageYOffset
+    sessionStorage.setItem(LISTINGS_SCROLL_KEY, JSON.stringify({ container: scrollTop, window: windowScrollY }))
+    sessionStorage.setItem(LISTINGS_PAGE_KEY, currentPage.value.toString())
+  }
+  next()
+})
+
+// Przywróć pozycję scrolla po powrocie na stronę (keep-alive)
+onActivated(() => {
+  const savedScroll = sessionStorage.getItem(LISTINGS_SCROLL_KEY)
+  const savedPage = sessionStorage.getItem(LISTINGS_PAGE_KEY)
+  
+  if (savedPage) {
+    const page = parseInt(savedPage, 10)
+    if (page && page !== currentPage.value) {
+      searchStore.setCurrentPage(page)
+    }
+  }
+  
+  if (savedScroll) {
+    try {
+      const { container, window: windowY } = JSON.parse(savedScroll)
+      // Użyj setTimeout zamiast nextTick, aby uniknąć wyścigu z scrollBehavior routera
+      setTimeout(() => {
+        // Przywróć scroll kontenera listy
+        if (listContainerRef.value && container) {
+          listContainerRef.value.scrollTop = container
+        }
+        // Przywróć scroll okna (na mobile lista jest w normalnym flow)
+        if (windowY) {
+          window.scrollTo({ top: windowY, behavior: 'instant' })
+        }
+        // Wyczyść zapisaną pozycję po przywróceniu
+        sessionStorage.removeItem(LISTINGS_SCROLL_KEY)
+        sessionStorage.removeItem(LISTINGS_PAGE_KEY)
+      }, 50)
+    } catch (e) {
+      sessionStorage.removeItem(LISTINGS_SCROLL_KEY)
+      sessionStorage.removeItem(LISTINGS_PAGE_KEY)
+    }
+  }
+  
+  // Odśwież mapę po powrocie (keep-alive może powodować problemy z rozmiarem)
+  if (map) {
+    setTimeout(() => {
+      map?.invalidateSize()
+    }, 100)
+  }
+})
 const regionCoordinates: Record<string, { lat: number; lng: number; zoom: number }> = {
   'dolnoslaskie': { lat: 51.1079, lng: 17.0385, zoom: 8 },
   'kujawsko-pomorskie': { lat: 53.1235, lng: 18.0084, zoom: 8 },
