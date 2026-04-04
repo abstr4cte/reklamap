@@ -1897,16 +1897,15 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="form-group" style="margin-top: 1rem;">
-              <label class="form-label">
+            <div class="form-group" style="margin-top: 1.5rem;">
+              <label class="checkbox-option">
                 <input
                   v-model="formData.ambientLightControl"
                   type="checkbox"
-                  class="form-checkbox"
                 />
-                Ekran dostosowuje jasność do otoczenia
+                <span>Ekran dostosowuje jasność do otoczenia</span>
               </label>
-              <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Czy ekran posiada czujnik światła otoczenia i automatycznie dostosowuje jasność?</p>
+              <p class="help-text" style="margin-top: 0.5rem; margin-bottom: 0; font-size: 0.85rem; color: #6b7280; text-align: left;">Czy ekran posiada czujnik światła otoczenia i automatycznie dostosowuje jasność?</p>
             </div>
           </div>
 
@@ -2554,8 +2553,7 @@ input.form-input.phone-input-field:focus {
   background: #f0fdf4;
 }
 
-.radio-option input[type="radio"],
-.checkbox-option input[type="checkbox"] {
+.radio-option input[type="radio"] {
   width: 20px;
   height: 20px;
   cursor: pointer;

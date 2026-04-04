@@ -3347,11 +3347,6 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   background: #f0fdf4;
 }
 
-.checkbox-option input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-}
 
 .checkbox-option span {
   color: #374151;

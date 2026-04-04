@@ -277,7 +277,7 @@ const showGraphicDesignFilter = computed(() => {
 })
 
 const showEquipmentSection = computed(() => {
-  return showPrintFilter.value || showMountingFilter.value || showGraphicDesignFilter.value
+  return showPrintFilter.value || showMountingFilter.value || showGraphicDesignFilter.value || filters.value.type === 'led_screen'
 })
 
 const showTrafficIntensityFilter = computed(() => {
@@ -1092,15 +1092,7 @@ onBeforeUnmount(() => {
                   </div>
                 </div>
 
-                <!-- LED Screen - Ambient Light Control -->
-                <div v-if="filters.type === 'led_screen'" class="search-row">
-                  <div class="input-group">
-                    <label class="checkbox-label search-select" style="justify-content: flex-start;">
-                      <input type="checkbox" v-model="(filters as any).ambientLightControl" />
-                      <span>Dostosowanie do otoczenia</span>
-                    </label>
-                  </div>
-                </div>
+                <!-- LED Screen - Ambient Light Control - Moved to Equipment section -->
               </div>
 
               <div v-if="showEquipmentSection" class="filter-section">
@@ -1129,6 +1121,10 @@ onBeforeUnmount(() => {
                   <label v-if="filters.type === 'billboard'" class="checkbox-label search-select" style="justify-content: flex-start;">
                     <input type="checkbox" v-model="(filters as any).hasLightingTypeBillboard" />
                     <span>Podświetlenie</span>
+                  </label>
+                  <label v-if="filters.type === 'led_screen'" class="checkbox-label search-select" style="justify-content: flex-start;">
+                    <input type="checkbox" v-model="(filters as any).ambientLightControl" />
+                    <span>Dostosowanie do otoczenia</span>
                   </label>
                 </div>
               </div>
@@ -1737,12 +1733,6 @@ onBeforeUnmount(() => {
   font-weight: 500;
 }
 
-.checkbox-label input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  accent-color: #4F46E5;
-}
 
 .vat-checkbox {
   padding-top: 1.5rem;

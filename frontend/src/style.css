@@ -362,3 +362,54 @@ img {
   box-shadow: var(--card-shadow);
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
+
+/* Premium Custom Checkbox */
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #D1D5DB;
+  border-radius: 6px;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+input[type="checkbox"]:hover {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  transform: scale(1.05);
+}
+
+input[type="checkbox"]:checked::after {
+  content: "";
+  display: block;
+  width: 11px;
+  height: 6px;
+  border-left: 3px solid white;
+  border-bottom: 3px solid white;
+  transform: rotate(-45deg);
+  margin-top: -3px;
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+input[type="checkbox"]:active {
+  transform: scale(0.95);
+}
