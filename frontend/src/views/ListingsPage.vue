@@ -44,6 +44,13 @@ const {
   pathParamsFilters
 } = storeToRefs(searchStore)
 
+const totalFiltersCount = computed(() => {
+  let count = activeFiltersCount.value
+  if (pathParamsFilters.value.type) count++
+  if (pathParamsFilters.value.city) count++
+  return count
+})
+
 // UI State
 const isInitialized = ref(false)
 const showFiltersModal = ref(false)
@@ -1011,7 +1018,7 @@ onMounted(async () => {
   if (!hasShownAlertModal.value) {
     setTimeout(() => {
       // Show only if user has active filters, is on search results, and hasn't seen it yet
-      if (!hasShownAlertModal.value && activeFiltersCount.value > 0) {
+      if (!hasShownAlertModal.value && totalFiltersCount.value > 0) {
         showSearchAlertModal.value = true
         hasShownAlertModal.value = true
         localStorage.setItem('search_alert_shown', 'true')
@@ -1077,7 +1084,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
           </svg>
           <span>Filtruj</span>
-          <span v-if="activeFiltersCount > 0" class="filter-badge">{{ activeFiltersCount }}</span>
+          <span v-if="totalFiltersCount > 0" class="filter-badge">{{ totalFiltersCount }}</span>
         </button>
 
         <select v-model="sortBy" class="sort-select">
@@ -1173,7 +1180,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
           </svg>
           <span>Filtruj</span>
-          <span v-if="activeFiltersCount > 0" class="mobile-filter-badge">{{ activeFiltersCount }}</span>
+          <span v-if="totalFiltersCount > 0" class="mobile-filter-badge">{{ totalFiltersCount }}</span>
         </button>
       </div>
 
@@ -1234,7 +1241,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           <p>Nie znaleziono ogłoszeń pasujących do wyszukiwania</p>
           
           <SearchAlertBox 
-            v-if="activeFiltersCount > 0"
+            v-if="totalFiltersCount > 0"
             :location-label="filters?.city || (route.params.city ? deslugify(route.params.city as string) : '')"
             :ad-type-label="filters?.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
             @click="showSearchAlertModal = true"
@@ -1266,7 +1273,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           />
           
           <SearchAlertBox 
-            v-if="!isLoading && listings.length > 0 && activeFiltersCount > 0" 
+            v-if="!isLoading && listings.length > 0 && totalFiltersCount > 0" 
             class="listings-alert" 
             :location-label="filters?.city || (route.params.city ? deslugify(route.params.city as string) : '')"
             :ad-type-label="filters?.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
