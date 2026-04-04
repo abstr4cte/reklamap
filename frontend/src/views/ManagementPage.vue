@@ -2497,6 +2497,14 @@ onBeforeUnmount(() => {
   font-size: 0.95rem;
 }
 
+@media (max-width: 480px) {
+  .phone-prefix {
+    padding: 0 0.5rem;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+  }
+}
+
 .flag-icon {
   width: 24px;
   height: 16px;
@@ -2771,6 +2779,15 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 480px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .stats-bar {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
   .listing-row {
     border-radius: 12px;
     margin-bottom: 0.5rem;
@@ -2875,9 +2892,16 @@ onBeforeUnmount(() => {
   }
 
   .listing-details {
-    padding: 1rem;
+    padding: 0.75rem;
     border-radius: 0 0 12px 12px;
   }
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  max-width: 100%;
 }
 
 .images-grid {
@@ -3579,6 +3603,13 @@ onBeforeUnmount(() => {
   text-align: center;
   max-width: 500px;
   margin: 0 auto;
+}
+
+@media (max-width: 480px) {
+  .content-card {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
 }
 
 .card-body {
