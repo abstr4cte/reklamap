@@ -149,7 +149,6 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.region) params.region = normalizePolishChars(filters.region)
   if (filters.city) params.city = normalizePolishChars(filters.city)
   if (filters.cityStrict) params.cityStrict = 'tak'
-  if (filters.locationLabel) params.loc = normalizePolishChars(filters.locationLabel)
 
   // Wartości liczbowe
   if (filters.priceFrom !== null && filters.priceFrom !== undefined) {
@@ -211,11 +210,7 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.hasLightingTypeBillboard) params.hasLightingTypeBillboard = 'tak'
   if (filters.ambientLightControl) params.ambientLightControl = 'tak'
 
-  // Konwersja współrzędnych lokalizacji
-  if (filters.selectedLocationCoords) {
-    params.lat = filters.selectedLocationCoords.lat.toString()
-    params.lng = filters.selectedLocationCoords.lng.toString()
-  }
+  // Konwersja współrzędnych lokalizacji - usunięto z URL by nie zaśmiecać linków
 
   // Dodatkowe filtry
   if (filters.variant) params.variant = filters.variant
@@ -283,7 +278,6 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   if (query.type) filters.type = query.type
   if (query.region) filters.region = query.region
   if (query.city) filters.city = query.city
-  if (query.loc) filters.locationLabel = query.loc
 
   // Wartości liczbowe
   if (query.priceFrom) filters.priceFrom = parseFloat(query.priceFrom) || null
@@ -333,15 +327,8 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   filters.ambientLightControl = query.ambientLightControl === 'tak' || query.ambientLightControl === 'true'
   filters.cityStrict = query.cityStrict === 'tak' || query.cityStrict === 'true'
 
-  // Konwersja współrzędnych lokalizacji
-  if (query.lat && query.lng) {
-    filters.selectedLocationCoords = {
-      lat: parseFloat(query.lat),
-      lng: parseFloat(query.lng)
-    }
-  } else {
-    filters.selectedLocationCoords = null
-  }
+  // Współrzędne lokalizacji - przestarzałe w query params, upewniamy się że nie wpadną gubiąc domyślnie
+  filters.selectedLocationCoords = null
 
   // Dodatkowe filtry
   if (query.variant) filters.variant = query.variant

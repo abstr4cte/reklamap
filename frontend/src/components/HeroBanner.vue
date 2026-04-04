@@ -148,6 +148,11 @@ const LAST_SEARCH_KEY = 'reklamap_last_search'
 
 const saveLastSearch = (searchFilters: FilterParams) => {
   try {
+    console.log('🔍 HeroBanner.saveLastSearch() - NADPISUJE localStorage:', {
+      type: searchFilters.type,
+      city: searchFilters.city,
+      stackTrace: new Error().stack
+    })
     localStorage.setItem(LAST_SEARCH_KEY, JSON.stringify(searchFilters))
   } catch (error) {
     console.error('Error saving search filters:', error)
@@ -159,11 +164,17 @@ const loadLastSearch = () => {
     const saved = localStorage.getItem(LAST_SEARCH_KEY)
     if (saved) {
       const lastSearch = JSON.parse(saved)
+      console.log('🔍 HeroBanner.loadLastSearch() - Wczytano z localStorage (type/city):', {
+        type: lastSearch.type,
+        city: lastSearch.city
+      })
+      console.log('🔍 HeroBanner.loadLastSearch() - PEŁNY obiekt lastSearch:', lastSearch)
       // Scalaj zapisane filtry z domyślnymi (na wypadek dodania nowych pól)
       filters.value = {
         ...filters.value,
         ...lastSearch
       }
+      console.log('🔍 HeroBanner.loadLastSearch() - Po scaleniu filters.value.type:', filters.value.type)
 
       // Ustaw lokalizację do wyświetlenia w polu tekstowym
       if (lastSearch.locationLabel) {
@@ -215,6 +226,13 @@ const handleSearch = () => {
   // Zapisz filtry do localStorage (z wartościami w mm dla LED)
   saveLastSearch(searchFilters)
   
+  // WAŻNE: Ustaw flagę że to był search zainicjowany przez użytkownika (nie link kategorii)
+  try {
+    localStorage.setItem('user_initiated_search', 'true')
+  } catch (error) {
+    console.error('Error setting user_initiated_search flag:', error)
+  }
+  
   // Emit search event with original dimension values (mm for LED screens)
   emit('search', searchFilters)
   
@@ -229,9 +247,10 @@ const resetFilters = () => {
   }
   locationQuery.value = ''
   apiLocationResults.value = []
-  // Usuń zapisane wyszukiwanie
+  // Usuń zapisane wyszukiwanie i flagę user_initiated_search
   try {
     localStorage.removeItem(LAST_SEARCH_KEY || 'reklamap_last_search')
+    localStorage.removeItem('user_initiated_search')
   } catch (error) {
     console.error('Error clearing search filters:', error)
   }
@@ -377,8 +396,13 @@ const handleClickOutside = (event: MouseEvent) => {
 
 // Wyczyść filtry specyficzne dla typu gdy typ się zmieni
 watch(() => filters.value.type, (newType, oldType) => {
+  console.log('🔍 HeroBanner.watch(type) - Zmiana typu:', { oldType, newType })
   // Nie rób nic przy pierwszym załadowaniu lub gdy typ się nie zmienił
-  if (!oldType || newType === oldType) return
+  if (!oldType || newType === oldType) {
+    console.log('🔍 HeroBanner.watch(type) - SKIP (pierwszy load lub ten sam typ)')
+    return
+  }
+  console.log('🔍 HeroBanner.watch(type) - RESETUJE filtry specyficzne dla typu')
   
   // Filtry ogólne które zachowujemy (nie są specyficzne dla typu)
   const generalFilters = {
@@ -441,6 +465,7 @@ watch(() => filters.value.type, (newType, oldType) => {
     campaignDuration: null,
     rentalPeriod: ''
   })
+  console.log('🔍 HeroBanner.watch(type) - Po resecie filters.value.type:', filters.value.type)
 })
 
 // Resetuj transportScope gdy wariant się zmieni
@@ -475,8 +500,14 @@ const markUserEditing = () => {
 
 // Synchronize with searchStore filters (only when user is not actively editing)
 watch(() => searchStore.filters, (newStoreFilters) => {
+  console.log('🔍 HeroBanner.watch(searchStore.filters) - Synchronizacja:', {
+    isUserEditing: isUserEditing.value,
+    newStoreType: newStoreFilters.type,
+    localType: filters.value.type
+  })
   // Don't sync if user is actively editing the form
   if (isUserEditing.value) {
+    console.log('🔍 HeroBanner.watch(searchStore.filters) - SKIP (user editing)')
     return
   }
 
@@ -527,6 +558,7 @@ watch(() => searchStore.filters, (newStoreFilters) => {
   } else {
     locationQuery.value = ''
   }
+  console.log('🔍 HeroBanner.watch(searchStore.filters) - Po synchronizacji filters.value.type:', filters.value.type)
 }, { deep: true })
 
 onBeforeUnmount(() => {

@@ -5,9 +5,11 @@ import AdCard from './AdCard.vue'
 import type { Advertisement } from '../types'
 import { useSearchStore } from '../stores/useSearchStore'
 import { filtersToQueryParams } from '../utils/filterUtils'
+import { slugify } from '../utils/slugify'
+import { mapTypeToUrlFormat } from '../utils/typeMapping'
 
 const searchStore = useSearchStore()
-const { filters, pathParamsFilters } = storeToRefs(searchStore)
+const { filters } = storeToRefs(searchStore)
 
 const props = defineProps<{
   listings: Advertisement[]
@@ -106,24 +108,43 @@ const goToPolandMap = () => {
   }
 }
 
-// Computed property for "Zobacz wszystkie" link with query params
+// Computed property for "Zobacz wszystkie" link - converts city/type to path params
 const seeAllLink = computed(() => {
-  // Exclude filters from path params (category/city from menu)
-  const filtersForUrl = { ...filters.value }
+  let path = '/powierzchnie-reklamowe'
   
-  if (pathParamsFilters.value.type && filtersForUrl.type === pathParamsFilters.value.type) {
-    filtersForUrl.type = ''
-  }
-  if (pathParamsFilters.value.city && filtersForUrl.city === pathParamsFilters.value.city) {
-    filtersForUrl.city = ''
-    filtersForUrl.cityStrict = false
+  // Dodaj type do path (jeśli jest)
+  if (filters.value.type) {
+    const typeSlug = mapTypeToUrlFormat(filters.value.type)
+    path += '/' + typeSlug
   }
   
-  const queryParams = filtersToQueryParams(filtersForUrl)
+  // Dodaj city do path (jeśli jest)
+  if (filters.value.city) {
+    const citySlug = slugify(filters.value.city)
+    path += '/' + citySlug
+  }
+  
+  // Przygotuj pozostałe filtry jako query params (bez type/city)
+  const { type, city, cityStrict, mapBounds, ...otherFilters } = filters.value
+  
+  const queryParams = filtersToQueryParams(otherFilters as any)
+  
   const queryString = new URLSearchParams(queryParams).toString()
   
-  return queryString ? `/powierzchnie-reklamowe?${queryString}` : '/powierzchnie-reklamowe'
+  return queryString ? `${path}?${queryString}` : path
 })
+
+const handleSeeAllClick = () => {
+  try {
+    localStorage.setItem('user_initiated_search', 'true')
+    
+    // Zapisz też aktualne filtry do localStorage, aby po odświeżeniu zachować stan
+    const filtersToSave = { ...filters.value }
+    localStorage.setItem('reklamap_last_search', JSON.stringify(filtersToSave))
+  } catch (error) {
+    console.error('Error saving search state:', error)
+  }
+}
 
 
 const emit = defineEmits<{
@@ -168,7 +189,7 @@ onUnmounted(() => {
     <div class="section-header-wrapper">
       <div class="section-header">
         <div class="header-right">
-          <router-link :to="seeAllLink" class="see-all-btn">
+          <router-link :to="seeAllLink" class="see-all-btn" @click="handleSeeAllClick">
             <span class="full-text">Zobacz wszystkie ogłoszenia</span>
             <span class="short-text">Zobacz wszystkie</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">

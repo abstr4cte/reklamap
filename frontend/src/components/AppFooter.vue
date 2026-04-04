@@ -105,6 +105,14 @@ const popularSearches = [
   { label: 'Reklama mobilna Katowice', type: 'reklama-mobilna', city: 'katowice' }
 ]
 
+// Wyczyść flagę user_initiated_search gdy użytkownik wchodzi z linku kategorii/miasta w stopce
+const clearSearchFlag = () => {
+  try {
+    localStorage.removeItem('user_initiated_search')
+    localStorage.removeItem('reklamap_last_search')
+  } catch (e) { /* ignore */ }
+}
+
 </script>
 
 <template>
@@ -169,15 +177,15 @@ const popularSearches = [
             </svg>
           </h4>
           <ul class="footer-links">
-            <li><router-link to="/powierzchnie-reklamowe/billboardy">Billboardy</router-link></li>
-            <li><router-link to="/powierzchnie-reklamowe/citylighty">Citylighty</router-link></li>
-            <li><router-link to="/powierzchnie-reklamowe/ekrany-led">Ekrany LED</router-link></li>
-            <li><router-link to="/powierzchnie-reklamowe/banery">Banery</router-link></li>
-            <li><router-link to="/powierzchnie-reklamowe/sciany-reklamowe">Ściany reklamowe</router-link></li>
-            <li><router-link to="/powierzchnie-reklamowe/totemy-reklamowe">Totemy reklamowe</router-link></li>
-            <li><router-link to="/powierzchnie-reklamowe/reklama-w-transporcie">Reklama w transporcie</router-link></li>
-            <li><router-link to="/powierzchnie-reklamowe/reklama-mobilna">Reklama mobilna</router-link></li>
-            <li><router-link to="/powierzchnie-reklamowe/inne">Inne</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/billboardy" @click="clearSearchFlag">Billboardy</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/citylighty" @click="clearSearchFlag">Citylighty</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/ekrany-led" @click="clearSearchFlag">Ekrany LED</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/banery" @click="clearSearchFlag">Banery</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/sciany-reklamowe" @click="clearSearchFlag">Ściany reklamowe</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/totemy-reklamowe" @click="clearSearchFlag">Totemy reklamowe</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/reklama-w-transporcie" @click="clearSearchFlag">Reklama w transporcie</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/reklama-mobilna" @click="clearSearchFlag">Reklama mobilna</router-link></li>
+            <li><router-link to="/powierzchnie-reklamowe/inne" @click="clearSearchFlag">Inne</router-link></li>
           </ul>
         </div>
 
@@ -190,7 +198,7 @@ const popularSearches = [
           </h4>
           <ul class="footer-links">
             <li v-for="city in popularCities" :key="city.slug">
-              <router-link :to="`/powierzchnie-reklamowe/${city.slug}`">{{ city.name }}</router-link>
+              <router-link :to="`/powierzchnie-reklamowe/${city.slug}`" @click="clearSearchFlag">{{ city.name }}</router-link>
             </li>
           </ul>
         </div>
@@ -210,6 +218,7 @@ const popularSearches = [
             :key="`${search.type}-${search.city}`"
             :to="`/powierzchnie-reklamowe/${search.type}/${search.city}`"
             class="search-tag"
+            @click="clearSearchFlag"
           >
             {{ search.label }}
           </router-link>

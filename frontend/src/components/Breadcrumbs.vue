@@ -15,6 +15,13 @@ const router = useRouter()
 
 const navigateTo = (path?: string) => {
   if (path) {
+    // Navigate via breadcrumbs means returning to a general category page,
+    // so we should clear the search continuity flags, same as header menu
+    try {
+      localStorage.removeItem('user_initiated_search')
+      localStorage.removeItem('reklamap_last_search')
+    } catch (e) { /* ignore */ }
+    
     // Reset query params when navigating via breadcrumbs
     router.push({ path, query: {} })
   }

@@ -4,7 +4,7 @@ import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 defineOptions({
   name: 'listings'
 })
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSearchStore, typeColors, typeLabels, type LocationSuggestion, popularLocations } from '../stores/useSearchStore'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
@@ -29,6 +29,7 @@ import AdCard from '../components/AdCard.vue'
 const searchStore = useSearchStore()
 const prefStore = usePreferencesStore()
 const route = useRoute()
+const router = useRouter()
 const {
   filters,
   sortBy,
@@ -316,6 +317,67 @@ const applyFilters = () => {
   // Wyczyść mapBounds przy aplikowaniu filtrów, aby mapa mogła przybliżyć się do miasta/regionu
   const filtersWithoutMapBounds = { ...tempFilters.value, mapBounds: null }
   
+  console.log('🔍 ListingsPage.applyFilters() - filtersWithoutMapBounds:', {
+    type: filtersWithoutMapBounds.type,
+    city: filtersWithoutMapBounds.city,
+    pathParamsType: pathParamsFilters.value.type,
+    pathParamsCity: pathParamsFilters.value.city
+  })
+  
+  // WAŻNE: Jeśli type lub city się zmieniły względem path params - przekieruj na nowy path
+  const typeChanged = filtersWithoutMapBounds.type && filtersWithoutMapBounds.type !== pathParamsFilters.value.type
+  const cityChanged = filtersWithoutMapBounds.city && filtersWithoutMapBounds.city !== pathParamsFilters.value.city
+  
+  if (typeChanged || cityChanged) {
+    // Generuj nowy path na podstawie wybranych type/city
+    let newPath = '/powierzchnie-reklamowe'
+    
+    // Dodaj type do path (jeśli jest)
+    if (filtersWithoutMapBounds.type) {
+      const typeSlug = mapTypeToUrlFormat(filtersWithoutMapBounds.type)
+      newPath += '/' + typeSlug
+    }
+    
+    // Dodaj city do path (jeśli jest)
+    if (filtersWithoutMapBounds.city) {
+      const citySlug = slugify(filtersWithoutMapBounds.city)
+      newPath += '/' + citySlug
+    }
+    
+    // Przygotuj pozostałe filtry jako query params (bez type/city)
+    const otherFilters = { ...filtersWithoutMapBounds }
+    delete otherFilters.type
+    delete otherFilters.city
+    delete otherFilters.cityStrict
+    delete otherFilters.mapBounds
+    
+    const queryParams = filtersToQueryParams(otherFilters)
+    const queryString = new URLSearchParams(queryParams).toString()
+    const fullPath = queryString ? newPath + '?' + queryString : newPath
+    
+    console.log('🔍 ListingsPage.applyFilters() - Przekierowuję na:', fullPath)
+    
+    // Zapisz filtry do localStorage PRZED przekierowaniem
+    try {
+      const filtersToSave = { ...filtersWithoutMapBounds }
+      if ((filtersToSave.priceFrom !== null || filtersToSave.priceTo !== null) && filtersToSave.priceUnit) {
+        filtersToSave._priceDisplayUnit = filtersToSave.priceUnit
+      }
+      localStorage.setItem('reklamap_last_search', JSON.stringify(filtersToSave))
+      // Ustaw flagę user_initiated_search
+      localStorage.setItem('user_initiated_search', 'true')
+    } catch (error) {
+      console.error('Error saving filters to localStorage:', error)
+    }
+    
+    // Przekieruj na nowy path
+    router.push(fullPath)
+    showFiltersModal.value = false
+    return // Przerwij dalsze wykonanie
+  }
+  
+  // Jeśli type/city NIE uległy zmianie - kontynuuj normalnie
+  
   // Jeśli użytkownik wpisał cenę, ustaw priceDisplay na wybraną jednostkę
   if ((filtersWithoutMapBounds.priceFrom !== null || filtersWithoutMapBounds.priceTo !== null) && filtersWithoutMapBounds.priceUnit) {
     searchStore.priceDisplay = filtersWithoutMapBounds.priceUnit
@@ -326,10 +388,29 @@ const applyFilters = () => {
   locationQuery.value = tempLocationQuery.value
   showFiltersModal.value = false
   
-  // Synchronizuj filtry z URL, ale wykluczając filtry z path params
-  const filtersForUrl = { ...filtersWithoutMapBounds }
+  // Sprawdź czy użytkownik dodał jakiekolwiek filtry poza path params (type/city)
+  const hasManualFilters = Object.entries(filtersWithoutMapBounds).some(([key, value]) => {
+    // Pomiń path params i pola pomocnicze
+    if (['type', 'city', 'cityStrict', 'mapBounds', '_priceDisplayUnit'].includes(key)) {
+      return false
+    }
+    
+    // Sprawdź czy pole ma wartość
+    if (value === null || value === undefined || value === '' || value === false) {
+      return false
+    }
+    
+    // Dla tablic sprawdź czy nie są puste
+    if (Array.isArray(value) && value.length === 0) {
+      return false
+    }
+    
+    return true
+  })
   
-  // Usuń filtry które pochodzą z path params (kategoria/miasto z menu)
+  // Przygotuj filtry do URL (query params)
+  // ZAWSZE usuń path params z query params (type/city są już w path)
+  const filtersForUrl = { ...filtersWithoutMapBounds }
   if (pathParamsFilters.value.type && filtersForUrl.type === pathParamsFilters.value.type) {
     filtersForUrl.type = ''
   }
@@ -338,7 +419,16 @@ const applyFilters = () => {
     filtersForUrl.cityStrict = false
   }
   
+  // Zaktualizuj URL z query params (bez path params)
   const queryParams = filtersToQueryParams(filtersForUrl)
+  
+  // Zapisz flagę w localStorage jeśli użytkownik dodał ręczne filtry
+  if (hasManualFilters) {
+    try {
+      localStorage.setItem('user_initiated_search', 'true')
+    } catch (e) { /* ignore */ }
+  }
+  
   // Don't add page=1 to URL (it's the default)
   // Only add page if > 1
   if (currentPage.value > 1) {
@@ -348,15 +438,48 @@ const applyFilters = () => {
   const newUrl = queryString ? window.location.pathname + '?' + queryString : window.location.pathname
   window.history.replaceState({}, document.title, newUrl)
   
-  // Zapisz TYLKO query params do localStorage (wykluczając path params)
-  // Aby użytkownik miał je na HomePage, ale bez kontekstu z path params (kategoria/miasto z menu)
+  // Zapisz do localStorage
+  // Jeśli użytkownik DODAŁ ręczne filtry, zapisz WSZYSTKO (type + city + ręczne filtry)
+  // Jeśli NIE dodał ręcznych filtrów, wyczyść localStorage
   try {
-    const filtersToSave = { ...filtersForUrl }
+    let filtersToSave
+    if (hasManualFilters) {
+      // Zapisz wszystko - użytkownik chce te filtry na HomePage
+      filtersToSave = { ...filtersWithoutMapBounds }
+      
+      // WAŻNE: Jeśli type/city są puste stringi ale są w path params, użyj path params
+      if ((!filtersToSave.type || filtersToSave.type === '') && pathParamsFilters.value.type) {
+        filtersToSave.type = pathParamsFilters.value.type
+      }
+      if ((!filtersToSave.city || filtersToSave.city === '') && pathParamsFilters.value.city) {
+        filtersToSave.city = pathParamsFilters.value.city
+        filtersToSave.cityStrict = true
+      }
+    } else {
+      // Nie zapisuj nic - użytkownik tylko przegląda kategorię bez filtrów
+      filtersToSave = {}
+    }
+    
     // Dodaj _priceDisplayUnit jeśli użytkownik wpisał cenę
     if ((filtersToSave.priceFrom !== null || filtersToSave.priceTo !== null) && filtersToSave.priceUnit) {
       filtersToSave._priceDisplayUnit = filtersToSave.priceUnit
     }
-    localStorage.setItem('reklamap_last_search', JSON.stringify(filtersToSave))
+    
+    console.log('🔍 ListingsPage.applyFilters() - Zapisuję do localStorage:', {
+      hasManualFilters,
+      pathParamsType: pathParamsFilters.value.type,
+      filtersToSave
+    })
+    console.log('🔍 ListingsPage.applyFilters() - filtersToSave.type:', filtersToSave.type, typeof filtersToSave.type)
+    
+    if (Object.keys(filtersToSave).length > 0) {
+      console.log('🔍 ListingsPage.applyFilters() - PRZED zapisem - filtersToSave.type:', filtersToSave.type)
+      localStorage.setItem('reklamap_last_search', JSON.stringify(filtersToSave))
+      console.log('🔍 ListingsPage.applyFilters() - PO zapisie - sprawdzam:', JSON.parse(localStorage.getItem('reklamap_last_search')!))
+    } else {
+      // Jeśli nie ma żadnych filtrów, wyczyść localStorage
+      localStorage.removeItem('reklamap_last_search')
+    }
   } catch (error) {
     console.error('Error saving filters to localStorage:', error)
   }
@@ -370,12 +493,7 @@ const resetFilters = () => {
   const newUrl = window.location.pathname
   window.history.replaceState({}, document.title, newUrl)
   
-  // Wyczyść localStorage
-  try {
-    localStorage.removeItem('reklamap_last_search')
-  } catch (error) {
-    console.error('Error clearing filters from localStorage:', error)
-  }
+  // searchStore.resetFilters() automatycznie czyści localStorage i flagę user_initiated_search
 }
 const clearFilters = resetFilters
 
@@ -824,49 +942,71 @@ onMounted(async () => {
   if (!isMobile.value) { setTimeout(() => initMap(), 100) }
   document.addEventListener('click', handleClickOutside)
   
-  // 1. Najpierw spróbuj załadować filtry z localStorage jako bazę
-  try {
-    const saved = localStorage.getItem('reklamap_last_search')
-    if (saved) {
-      const lastSearch = JSON.parse(saved)
-      searchStore.applyFilters(lastSearch)
-      
-      if (lastSearch._priceDisplayUnit) {
-        searchStore.priceDisplay = lastSearch._priceDisplayUnit
+  // 1. Sprawdź czy type/city są w query params - jeśli tak, przekieruj na path params
+  const queryType = route.query.type as string | undefined
+  const queryCity = route.query.city as string | undefined
+  const pathType = route.params.type as string | undefined
+  const pathCity = route.params.city as string | undefined
+  
+  // Jeśli type lub city są w query params ale NIE w path params - przekieruj
+  if ((queryType && !pathType) || (queryCity && !pathCity)) {
+    let newPath = '/powierzchnie-reklamowe'
+    
+    // Użyj type z query params lub path params
+    const finalType = queryType || pathType
+    if (finalType) {
+      const typeSlug = mapTypeToUrlFormat(finalType)
+      newPath += '/' + typeSlug
+    }
+    
+    // Użyj city z query params lub path params
+    const finalCity = queryCity || pathCity
+    if (finalCity) {
+      const citySlug = slugify(finalCity)
+      newPath += '/' + citySlug
+    }
+    
+    // Pozostałe query params (bez type/city)
+    const otherQuery = { ...route.query }
+    delete otherQuery.type
+    delete otherQuery.city
+    
+    const queryString = new URLSearchParams(otherQuery as any).toString()
+    const fullPath = queryString ? newPath + '?' + queryString : newPath
+    
+    console.log('🔍 ListingsPage.onMounted() - Przekierowuję z query params na path params:', fullPath)
+    router.push(fullPath)
+    return // Przerwij dalsze wykonanie - po przekierowaniu onMounted uruchomi się ponownie
+  }
+
+  // 2. Sprawdź czy jest flaga user_initiated_search w localStorage
+  const isUserSearch = localStorage.getItem('user_initiated_search') === 'true'
+  
+  // 3. Jeśli JEST flaga user_initiated_search → załaduj filtry z localStorage jako bazę
+  if (isUserSearch) {
+    try {
+      const saved = localStorage.getItem('reklamap_last_search')
+      if (saved) {
+        const lastSearch = JSON.parse(saved)
+        searchStore.applyFilters(lastSearch)
+        
+        if (lastSearch._priceDisplayUnit) {
+          searchStore.priceDisplay = lastSearch._priceDisplayUnit
+        }
       }
+    } catch (error) {
+      console.error('Error loading search from localStorage:', error)
     }
-  } catch (error) {
-    console.error('Error loading search from localStorage:', error)
   }
+  // Jeśli NIE ma flagi user_initiated_search → user wszedł przez kategorię → NIE ładuj z localStorage
 
-  // 2. Nadpisz filtrami z URL (oś czasu / query params mają priorytet)
+  // 4. Nadpisz filtrami z URL (query params mają priorytet)
   searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
-
-  // 3. Jeśli URL nie ma query params, ale filtry są ustawione (z localStorage), zaktualizuj URL
-  const hasQueryParams = Object.keys(route.query).length > 0
-  if (!hasQueryParams && filters.value) {
-    // Wykluczaj filtry z path params przy aktualizacji URL
-    const filtersForUrl = { ...filters.value }
-    
-    if (pathParamsFilters.value.type && filtersForUrl.type === pathParamsFilters.value.type) {
-      filtersForUrl.type = ''
-    }
-    if (pathParamsFilters.value.city && filtersForUrl.city === pathParamsFilters.value.city) {
-      filtersForUrl.city = ''
-      filtersForUrl.cityStrict = false
-    }
-    
-    const queryParams = filtersToQueryParams(filtersForUrl)
-    if (Object.keys(queryParams).length > 0) {
-      const newUrl = window.location.pathname + '?' + new URLSearchParams(queryParams).toString()
-      window.history.replaceState({}, document.title, newUrl)
-    }
-  }
 
   syncLocationQuery()
   isInitialized.value = true
   
-  // 4. Proactive search alert modal (consistent with HomePage)
+  // 5. Proactive search alert modal (consistent with HomePage)
   if (!hasShownAlertModal.value) {
     setTimeout(() => {
       // Show only if user has active filters, is on search results, and hasn't seen it yet

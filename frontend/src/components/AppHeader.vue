@@ -80,6 +80,14 @@ const closeCategoriesDropdown = () => {
   isCategoriesDropdownOpen.value = false
 }
 
+// Wyczyść flagę user_initiated_search gdy użytkownik wchodzi z linku kategorii/miasta
+const clearSearchFlag = () => {
+  try {
+    localStorage.removeItem('user_initiated_search')
+    localStorage.removeItem('reklamap_last_search')
+  } catch (e) { /* ignore */ }
+}
+
 watch(isMobileMenuOpen, (isOpen) => {
   if (isOpen) {
     document.body.style.overflow = 'hidden'
@@ -126,7 +134,7 @@ watch(isMobileMenuOpen, (isOpen) => {
                     :key="category.slug"
                     :to="category.slug ? `/powierzchnie-reklamowe/${category.slug}` : '/powierzchnie-reklamowe'"
                     class="dropdown-item"
-                    @click="closeCategoriesDropdown"
+                    @click="closeCategoriesDropdown(); clearSearchFlag()"
                   >
                     {{ category.name }}
                   </router-link>
@@ -138,7 +146,7 @@ watch(isMobileMenuOpen, (isOpen) => {
                     :key="city.slug"
                     :to="`/powierzchnie-reklamowe/${city.slug}`"
                     class="dropdown-item"
-                    @click="closeCategoriesDropdown"
+                    @click="closeCategoriesDropdown(); clearSearchFlag()"
                   >
                     {{ city.name }}
                   </router-link>
@@ -267,7 +275,7 @@ watch(isMobileMenuOpen, (isOpen) => {
                 :key="category.slug"
                 :to="category.slug ? `/powierzchnie-reklamowe/${category.slug}` : '/powierzchnie-reklamowe'"
                 class="mobile-nav-link category-link"
-                @click="closeMobileMenu"
+                @click="closeMobileMenu(); clearSearchFlag()"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>

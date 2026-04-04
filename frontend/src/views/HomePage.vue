@@ -76,16 +76,6 @@ const handlePageChange = async (page: number) => {
 }
 
 const handleSearch = (searchFilters: FilterParams & { _priceDisplayUnit?: string }) => {
-  // DEBUG: Log dimension values for LED screens
-  if (searchFilters.type === 'led_screen') {
-    console.log('🔍 HomePage.handleSearch() - LED wymiary otrzymane z HeroBanner:', {
-      widthFrom: searchFilters.widthFrom,
-      widthTo: searchFilters.widthTo,
-      heightFrom: searchFilters.heightFrom,
-      heightTo: searchFilters.heightTo
-    })
-  }
-  
   // Wyczyść mapBounds przy nowym wyszukiwaniu, aby mapa mogła przybliżyć się do miasta/regionu
   const filtersWithoutMapBounds = { ...searchFilters, mapBounds: null }
   searchStore.applyFilters(filtersWithoutMapBounds)
@@ -94,26 +84,12 @@ const handleSearch = (searchFilters: FilterParams & { _priceDisplayUnit?: string
     priceDisplay.value = searchFilters._priceDisplayUnit as any
   }
   
-  // Konwertuj filtry na query params
-  const queryParams = filtersToQueryParams(searchFilters)
+  // Zaktualizuj URL (pozostając na stronie głównej) dodając zdefiniowane filtry do query params
+  const currentFilters = { ...filters.value }
+  const queryParams = filtersToQueryParams(currentFilters)
   
-  // DEBUG: Log query params for LED screens
-  if (searchFilters.type === 'led_screen') {
-    console.log('🔍 HomePage.handleSearch() - Query params:', {
-      widthFrom: queryParams.widthFrom,
-      widthTo: queryParams.widthTo,
-      heightFrom: queryParams.heightFrom,
-      heightTo: queryParams.heightTo
-    })
-  }
-  
-  // Use history.replaceState to update URL without triggering navigation
-  // Dodaj ? tylko jeśli są jakieś query params
-  const queryString = new URLSearchParams(queryParams).toString()
-  const newUrl = queryString ? window.location.pathname + '?' + queryString : window.location.pathname
-  window.history.replaceState({}, document.title, newUrl)
-  
-  // No need to scroll here as HeroBanner component will handle scrolling
+  // Użyj router.replace zamiast natywnego history.replaceState (Vue Router może to nadpisać)
+  router.replace({ query: queryParams })
 }
 
 const isResettingFilters = ref(false)
@@ -224,16 +200,15 @@ onBeforeUnmount(() => {
 })
 
 const handleReset = () => {
-  // Wyczyść filtry w store
+  // Wyczyść filtry w store (to automatycznie czyści localStorage + flagę user_initiated_search)
   searchStore.resetFilters()
   
   // Zresetuj sortowanie do domyślnego
   sortBy.value = 'newest'
   priceDisplay.value = 'day'
   
-  // Wyczyść parametry URL - użyj window.history zamiast router
-  const newUrl = window.location.pathname
-  window.history.replaceState({}, document.title, newUrl)
+  // Wyczyść parametry URL - użyj router.replace, aby zachować zgodność z vue-router
+  router.replace({ query: {} })
   
   // Smooth scroll do góry
   window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -376,34 +351,61 @@ const popularCities = [
 onMounted(() => {
   loadAdvertisements()
   
+  // Sprawdź flagę user_initiated_search - TYLKO jeśli jest, ładuj filtry z localStorage
+  const isUserSearch = localStorage.getItem('user_initiated_search') === 'true'
+  
   // Jeśli są parametry w URL, zastosuj je jako filtry
+  // (Pominięte automatyczne zapisywanie do localStorage dla param. w URL, żeby nie nadpisywać 
+  // globalnych preferencji po kliknięciu udostępnionego linku)
   if (Object.keys(route.query).length > 0) {
     const queryFilters = queryParamsToFilters(route.query as Record<string, string>)
     // Połącz z domyślnymi filtrami
     filters.value = { ...filters.value, ...queryFilters }
-  } else {
-    // Jeśli nie ma parametrów w URL, spróbuj załadować z localStorage
+  } else if (isUserSearch) {
+    // Jeśli NIE ma query params w URL, ale jest flaga user_initiated_search
+    // User wraca na stronę główną (bez kliknięcia Wyczyść i bez linku kategorii)
+    // Załaduj filtry z localStorage i dodaj do URL jako query params
     try {
       const saved = localStorage.getItem('reklamap_last_search')
       if (saved) {
         const lastSearch = JSON.parse(saved)
-        filters.value = { ...filters.value, ...lastSearch }
         
-        if (lastSearch._priceDisplayUnit) {
-          priceDisplay.value = lastSearch._priceDisplayUnit as any
-        }
+        // Sprawdź czy są jakiekolwiek filtry
+        const hasAnyFilters = Object.entries(lastSearch).some(([key, value]) => {
+          if (['mapBounds', '_priceDisplayUnit'].includes(key)) return false
+          if (value === null || value === undefined || value === '' || value === false) return false
+          if (Array.isArray(value) && value.length === 0) return false
+          return true
+        })
         
-        // Zaktualizuj URL filtrami z localStorage
-        const queryParams = filtersToQueryParams(lastSearch)
-        if (Object.keys(queryParams).length > 0) {
-          const newUrl = window.location.pathname + '?' + new URLSearchParams(queryParams).toString()
-          window.history.replaceState({}, document.title, newUrl)
+        if (hasAnyFilters) {
+          filters.value = { ...filters.value, ...lastSearch }
+          
+          if (lastSearch._priceDisplayUnit) {
+            priceDisplay.value = lastSearch._priceDisplayUnit as any
+          }
+          
+          // Dodaj filtry do URL jako query params (miasto/lokalizacja jako query params na stronie głównej)
+          const queryParams = filtersToQueryParams(filters.value)
+          
+          setTimeout(() => {
+            router.replace({ query: queryParams }).catch(err => {
+              // Ignore NavigationDuplicated error
+              if (err.name !== 'NavigationDuplicated') {
+                  console.error(err)
+              }
+            })
+          }, 50)
         }
       }
     } catch (error) {
       console.error('Error loading search from localStorage:', error)
     }
+  } else {
+    // Wejście bez query params i bez flagi wyszukiwania. Oczyść ewentualne resztki w Pinia.
+    searchStore.resetFilters()
   }
+  // Jeśli NIE ma flagi user_initiated_search i NIE ma query params → czyste wejście, nie ładuj nic
 
   // Logic for showing the search alert modal after 20 seconds
   if (!hasShownAlertModal.value) {
@@ -420,6 +422,14 @@ onMounted(() => {
 
 const handleSearchAlertSubmit = (email: string) => {
   console.log('Saving alert on Home for:', email, filters.value)
+}
+
+// Wyczyść flagę user_initiated_search gdy użytkownik wchodzi z linku kategorii/miasta
+const clearSearchFlag = () => {
+  try {
+    localStorage.removeItem('user_initiated_search')
+    localStorage.removeItem('reklamap_last_search')
+  } catch (e) { /* ignore */ }
 }
 
 </script>
@@ -449,6 +459,7 @@ const handleSearchAlertSubmit = (email: string) => {
               :to="`/powierzchnie-reklamowe/${category.slug}`"
               class="category-card"
               :class="{ 'mobile-category': isMobile }"
+              @click="clearSearchFlag"
             >
               <div class="category-icon">
                 <div class="icon-mask" :style="{ '-webkit-mask-image': `url(/icons/${category.icon})`, 'mask-image': `url(/icons/${category.icon})` }" :aria-label="category.name"></div>
@@ -490,6 +501,7 @@ const handleSearchAlertSubmit = (email: string) => {
               :to="`/powierzchnie-reklamowe/${city.slug}`"
               class="city-card"
               :class="{ 'mobile-city': isMobile }"
+              @click="clearSearchFlag"
             >
               <div class="city-name">{{ city.name }}</div>
               <div class="city-region">{{ city.region }}</div>

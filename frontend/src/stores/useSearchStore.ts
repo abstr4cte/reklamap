@@ -122,18 +122,9 @@ export const useSearchStore = defineStore('search', () => {
     filters.value = { ...filters.value, ...newFilters }
     currentPage.value = 1
     
-    // Persist to localStorage, but exclude filters from path params
+    // Persist to localStorage
     try {
       const filtersToSave = { ...filters.value }
-      
-      // Don't save filters that come from path params (category/city from menu)
-      if (pathParamsFilters.value.type && filtersToSave.type === pathParamsFilters.value.type) {
-        filtersToSave.type = ''
-      }
-      if (pathParamsFilters.value.city && filtersToSave.city === pathParamsFilters.value.city) {
-        filtersToSave.city = ''
-        filtersToSave.cityStrict = false
-      }
       
       localStorage.setItem('reklamap_last_search', JSON.stringify(filtersToSave))
     } catch (e) {
@@ -151,6 +142,7 @@ export const useSearchStore = defineStore('search', () => {
     // Clear localStorage
     try {
       localStorage.removeItem('reklamap_last_search')
+      localStorage.removeItem('user_initiated_search')
     } catch (e) {
       console.error('Error clearing filters from localStorage:', e)
     }
