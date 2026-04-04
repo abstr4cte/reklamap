@@ -143,7 +143,7 @@ const cleanDescription = computed(() => {
 const statusLabel = computed(() => {
   if (!ad.value) return ''
   const status = ad.value.display_status || ad.value.status
-  const labels: Record<string, string> = { active: 'Wolne', reserved: 'Zarezerwowane', unavailable: 'Niedostępne', soon_available: 'Wkrótce wolne' }
+  const labels: Record<string, string> = { active: 'Wolne', reserved: 'Zarezerwowane', unavailable: 'Niedostępne', soon_available: 'Wkrótce dostępne' }
   if (status === 'soon_available' && ad.value.available_from && new Date(ad.value.available_from) <= new Date()) return 'Wolne'
   return labels[status] || 'Status nieznany'
 })
@@ -815,7 +815,7 @@ defineExpose({
 .status-active { background: #ecfdf5; color: #059669; }
 .status-reserved { background: #fffbeb; color: #d97706; }
 .status-unavailable { background: #fef2f2; color: #dc2626; }
-.status-soon { background: #eff6ff; color: #2563eb; }
+.status-soon_available { background: #3B82F6; color: white; }
 
 .page-title {
   font-size: 2.5rem;

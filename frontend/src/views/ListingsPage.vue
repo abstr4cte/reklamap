@@ -241,9 +241,10 @@ watch([() => filters.value.city, () => filters.value.region], () => {
 const sortOptions = searchStore.sortOptions
 
 const statusLabel = computed(() => {
-  if (filters.value.status.length === 0) return 'Wszystkie'
+  const currentFilters = tempFilters.value || filters.value
+  if (!currentFilters.status || currentFilters.status.length === 0) return 'Wszystkie'
   const map: Record<string, string> = { active: 'Wolne', reserved: 'Zarezerwowane', soon_available: 'Wkrótce' }
-  return filters.value.status.map(s => map[s] || s).join(', ')
+  return currentFilters.status.map((s: string) => map[s] || s).join(', ')
 })
 
 // Computed properties for status checkboxes
@@ -276,15 +277,15 @@ const isStatusReserved = computed({
 })
 
 const isStatusSoon = computed({
-  get: () => tempFilters.value?.status?.includes('soon') || false,
+  get: () => tempFilters.value?.status?.includes('soon_available') || false,
   set: (val: boolean) => {
     if (!tempFilters.value) return
     if (val) {
-      if (!tempFilters.value.status.includes('soon')) {
-        tempFilters.value.status = [...tempFilters.value.status, 'soon']
+      if (!tempFilters.value.status.includes('soon_available')) {
+        tempFilters.value.status = [...tempFilters.value.status, 'soon_available']
       }
     } else {
-      tempFilters.value.status = tempFilters.value.status.filter((s: string) => s !== 'soon')
+      tempFilters.value.status = tempFilters.value.status.filter((s: string) => s !== 'soon_available')
     }
   }
 })
@@ -1342,8 +1343,8 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
     <!-- Filters Modal -->
     <Teleport to="body">
-      <div v-if="showFiltersModal" class="modal-overlay" @click="closeFiltersModal">
-        <div class="modal-content" @click.stop>
+      <div v-if="showFiltersModal" class="modal-overlay" @click.self="closeFiltersModal">
+        <div class="modal-content">
         <div class="modal-header">
           <h2>Filtry</h2>
           <button @click="closeFiltersModal" class="close-btn">

@@ -2505,17 +2505,23 @@ onBeforeUnmount(() => {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.phone-input-field {
+.form-group input.phone-input-field {
   flex: 1;
+  min-width: 0;
+  width: 100%;
   padding: 0.75rem;
   border: none;
+  border-radius: 0;
   font-size: 0.95rem;
   color: #374151;
   background: white;
+  box-shadow: none;
 }
 
-.phone-input-field:focus {
+.form-group input.phone-input-field:focus {
   outline: none;
+  border: none;
+  box-shadow: none;
 }
 
 .form-group textarea {
