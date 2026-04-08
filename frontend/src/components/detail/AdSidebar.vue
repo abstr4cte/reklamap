@@ -180,7 +180,7 @@ const getFullPhone = (phone: string) => {
 .status-active { background: #ecfdf5; color: #059669; }
 .status-reserved { background: #fffbeb; color: #d97706; }
 .status-unavailable { background: #fef2f2; color: #dc2626; }
-.status-soon { background: #eff6ff; color: #2563eb; }
+.status-soon_available { background: #3B82F6; color: white; }
 
 .sidebar-info {
   display: flex;
