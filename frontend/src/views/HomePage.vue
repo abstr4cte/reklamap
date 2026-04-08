@@ -23,7 +23,7 @@ defineOptions({
 
 const searchStore = useSearchStore()
 const prefStore = usePreferencesStore()
-const { filters, sortBy, priceDisplay, isLoading, currentPage, itemsPerPage } = storeToRefs(searchStore)
+const { filters, sortBy, priceDisplay, isLoading, currentPage, itemsPerPage, viewMode } = storeToRefs(searchStore)
 
 // Helper to map type to Polish label
 const getTypeLabel = (type: string): string => searchStore.getTypeLabel(type)
@@ -32,7 +32,6 @@ const route = useRoute()
 const router = useRouter()
 
 const isModalOpen = ref(false)
-const viewMode = searchStore.viewMode
 const hoveredAdId = ref<string | null>(null)
 
 const showSearchAlertModal = ref(false)
