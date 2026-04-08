@@ -240,10 +240,25 @@
         $details = [];
 
         // 1. Location (always)
+        $parts = array_map('trim', explode(',', $advertisement->location));
+        $streetWithNumber = '';
+        if (count($parts) >= 2) {
+            $firstPart = $parts[0];
+            $secondPart = $parts[1];
+            if (preg_match('/^\d+/', $firstPart)) {
+                $streetWithNumber = $secondPart . ' ' . $firstPart;
+            } else {
+                $streetWithNumber = $firstPart;
+            }
+        } else {
+            $streetWithNumber = $parts[0] ?? $advertisement->location;
+        }
+
+        $regionName = $advertisement->region ? ' (' . ucfirst($advertisement->region) . ')' : '';
+
         $details[] = [
             'label' => 'Lokalizacja',
-            'value' => $advertisement->city . ', ' . $advertisement->region,
-            'subtext' => $advertisement->location
+            'value' => $streetWithNumber . ', ' . $advertisement->city . $regionName
         ];
 
         // 2. Type (always)

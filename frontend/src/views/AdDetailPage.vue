@@ -579,7 +579,8 @@ defineExpose({
                 <path d="M12 21s-8-7.14-8-12.728A8 8 0 1 1 20 8.272C20 13.86 12 21 12 21z" stroke="currentColor" stroke-width="2"/>
                 <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="2"/>
               </svg>
-              {{ ad.location }}, {{ ad.city }}
+              {{ searchStore.formatLocation(ad.location, ad.city) }} 
+              <span v-if="ad.region" class="region-text"> ({{ ad.region.charAt(0).toUpperCase() + ad.region.slice(1) }})</span>
             </p>
             <div class="price-box">
               <span class="price-value">{{ formatPrice(ad.price) }} PLN</span>
@@ -906,6 +907,11 @@ defineExpose({
   gap: 0.5rem;
   color: var(--text-muted, #6b7280);
   margin-bottom: 2rem;
+}
+
+.region-text {
+  opacity: 0.85;
+  font-weight: 400;
 }
 
 .price-box {
