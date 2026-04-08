@@ -139,7 +139,7 @@ const getVariantLabel = (variant: string, type: string) => searchStore.getVarian
 
     <div v-if="ad.type === 'led_screen' && (ad as any).ambient_light_control" class="spec-item">
       <div class="spec-label">Dostosowanie do otoczenia</div>
-      <div class="spec-value">✓ Tak</div>
+      <div class="spec-value spec-yes">Tak</div>
     </div>
 
     <div v-if="ad.price_unit === 'campaign' && ad.campaign_duration" class="spec-item">

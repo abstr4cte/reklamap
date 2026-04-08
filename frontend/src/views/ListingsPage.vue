@@ -83,6 +83,7 @@ const showMapButton = ref(true)
 const listContainerRef = ref<HTMLElement | null>(null)
 const showListScrollTop = ref(false)
 const isProgrammaticMove = ref(false)
+const isMapActive = ref(false)
 
 // Scroll position management
 const LISTINGS_SCROLL_KEY = 'listings_scroll_position'
@@ -772,6 +773,7 @@ const initMap = async () => {
   map.on('click', () => {
     if (map && !map.scrollWheelZoom.enabled()) {
       map.scrollWheelZoom.enable()
+      isMapActive.value = true
     }
   })
 
@@ -780,6 +782,7 @@ const initMap = async () => {
     mapContainer.value.addEventListener('mouseleave', () => {
       if (map && map.scrollWheelZoom.enabled()) {
         map.scrollWheelZoom.disable()
+        isMapActive.value = false
       }
     })
   }
@@ -1386,6 +1389,13 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
       <!-- Map Container -->
       <div class="map-container-wrapper" :class="{ 'mobile-visible': showMapOnMobile, 'mobile-hidden': isMobile && !showMapOnMobile }">
         <div ref="mapContainer" class="map-container">
+          <!-- Map hint overlay -->
+          <div v-if="!isMapActive" class="map-hint-overlay">
+            <div class="map-hint-message">
+              Kliknij, aby móc przybliżyć mapę
+            </div>
+          </div>
+          
           <!-- Legend Toggle Button -->
           <button 
             class="legend-toggle-button"
@@ -2861,6 +2871,38 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   flex: 1;
   min-height: 0; /* Allows the container to shrink below its content size */
   width: 100%;
+  position: relative;
+}
+
+/* Map Hint Overlay */
+.map-hint-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.map-container:hover .map-hint-overlay {
+  opacity: 1;
+}
+
+.map-hint-message {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
 }
 
 /* Legend Toggle Button */

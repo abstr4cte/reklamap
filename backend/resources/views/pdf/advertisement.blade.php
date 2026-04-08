@@ -43,12 +43,29 @@
             font-weight: bold;
         }
 
-        .main-image {
+        .main-image-wrapper {
             width: 100%;
-            max-height: 400px;
-            object-fit: contain;
-            border-radius: 8px;
+            height: 350px;
+            background-color: #f3f4f6;
             margin-bottom: 2rem;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .main-image {
+            max-width: 100%;
+            max-height: 350px;
+            height: auto;
+            width: auto;
+            margin: 0 auto;
+        }
+
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
         }
 
         .grid {
@@ -180,7 +197,13 @@
     @endphp
 
     @if($base64Image)
-        <img src="{{ $base64Image }}" class="main-image">
+        <table style="width: 100%; margin-bottom: 2rem; border-collapse: collapse;">
+            <tr>
+                <td style="width: 100%; height: 350px; background-color: #f3f4f6; text-align: center; vertical-align: middle; border-radius: 8px;">
+                    <img src="{{ $base64Image }}" style="max-width: 100%; max-height: 350px; display: inline-block;">
+                </td>
+            </tr>
+        </table>
     @endif
 
     <div class="section-title">Szczegóły</div>
@@ -459,7 +482,13 @@
     @endphp
 
     @if($mapScreenshotBase64)
-        <img src="{{ $mapScreenshotBase64 }}" style="width: 100%; height: auto; margin-bottom: 1rem; border-radius: 8px;">
+        <table style="width: 100%; margin-bottom: 1rem; border-collapse: collapse;">
+            <tr>
+                <td style="width: 100%; text-align: center; background-color: #f3f4f6; border-radius: 8px;">
+                    <img src="{{ $mapScreenshotBase64 }}" style="max-width: 100%; max-height: 300px; display: inline-block;">
+                </td>
+            </tr>
+        </table>
     @endif
 
     <div style="margin-bottom: 1rem;">

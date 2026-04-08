@@ -326,6 +326,7 @@ const toggleStreetView = async () => {
 
 // Report Modal
 const showReportModal = ref(false)
+const showReportSuccess = ref(false)
 
 // Prevent background scroll when any modal is open
 watch([showReportModal, showActionsMenu], ([reportVal, actionsVal]) => {
@@ -356,18 +357,26 @@ const submitReport = async () => {
       ...reportForm.value,
       advertisement_id: ad.value.id
     })
-    toast.value?.add('Zgłoszenie zostało wysłane', 'success')
-    showReportModal.value = false
-    reportForm.value = { reason: '', details: '' }
-  } catch (e) {
-    toast.value?.add('Błąd przy wysyłaniu zgłoszenia', 'error')
-  } finally {
+    
+    // Show success modal instead of toast
     isSubmittingReport.value = false
+    showReportSuccess.value = true
+    
+    // Reset form and close after delay
+    setTimeout(() => {
+      showReportSuccess.value = false
+      showReportModal.value = false
+      reportForm.value = { reason: '', details: '' }
+    }, 2000)
+  } catch (e) {
+    isSubmittingReport.value = false
+    toast.value?.add('Błąd przy wysyłaniu zgłoszenia', 'error')
   }
 }
 
 // PDF/Print
 const isGeneratingPDF = ref(false)
+const isPrintingPDF = ref(false)
 const handleDownloadPDF = async () => {
   if (!ad.value) return
   isGeneratingPDF.value = true
@@ -384,6 +393,46 @@ const handleDownloadPDF = async () => {
     toast.value?.add('Błąd generowania PDF', 'error')
   } finally {
     isGeneratingPDF.value = false
+  }
+}
+
+const handlePrint = async () => {
+  console.log("handlePrint triggered");
+  if (!ad.value) return
+  isPrintingPDF.value = true
+  try {
+    const response = await axios.get(`/api/listings/${ad.value.id}/pdf`, { responseType: 'blob' })
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const url = window.URL.createObjectURL(blob)
+    console.log("PDF fetched successfully, blob URL: ", url);
+    
+    // Always use iframe approach for printing to avoid popup blockers
+    const iframe = document.createElement('iframe')
+    iframe.style.position = 'fixed'
+    iframe.style.top = '-10000px'
+    iframe.style.left = '-10000px'
+    iframe.style.width = '0'
+    iframe.style.height = '0'
+    iframe.src = url
+    document.body.appendChild(iframe)
+    
+    iframe.addEventListener('load', () => {
+      console.log("Iframe loaded, triggering print");
+      iframe.contentWindow?.focus()
+      iframe.contentWindow?.print()
+      // Cleanup after a delay
+      setTimeout(() => {
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe)
+        }
+        window.URL.revokeObjectURL(url)
+      }, 5000)
+    })
+  } catch (e) {
+    console.error("Error generating PDF to print:", e);
+    toast.value?.add('Błąd generowania PDF do druku', 'error')
+  } finally {
+    isPrintingPDF.value = false
   }
 }
 
@@ -540,6 +589,7 @@ defineExpose({
             <div class="price-box">
               <span class="price-value">{{ formatPrice(ad.price) }} PLN</span>
               <span class="price-unit">/ {{ searchStore.getPriceUnitLabel(ad.price_unit) }}</span>
+              <span v-if="ad.price_negotiable" class="negotiable-badge">do negocjacji</span>
             </div>
 
 
@@ -616,10 +666,12 @@ defineExpose({
             :isFavorite="isFavorite"
             :isInComparison="isInComparison"
             :isGeneratingPDF="isGeneratingPDF"
+            :isPrintingPDF="isPrintingPDF"
             :showPhone="showPhone"
             :showActionsMenu="showActionsMenu"
             @toggle-favorite="toggleFavorite"
             @toggle-comparison="toggleComparison"
+            @handle-print="handlePrint"
             @handle-download-pdf="handleDownloadPDF"
             @handle-show-phone="handleShowPhone"
             @handle-share="showActionsMenu = true"
@@ -683,39 +735,67 @@ defineExpose({
     <transition name="fade">
       <div v-if="showReportModal" class="modal-overlay" @click.self="showReportModal = false">
         <div class="modal-content report-modal">
-          <div class="modal-header">
-            <h3>Zgłoś naruszenie</h3>
-            <button @click="showReportModal = false" class="btn-close">&times;</button>
+          <button @click="showReportModal = false" class="close-btn" aria-label="Zamknij">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+
+          <div v-if="!showReportSuccess" class="modal-body">
+            <div class="icon-wrapper">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <rect width="48" height="48" rx="24" fill="#FEF2F2"/>
+                <path d="M24 14v10m0 4h.01" stroke="#EF4444" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="24" cy="24" r="10" stroke="#EF4444" stroke-width="2"/>
+              </svg>
+            </div>
+
+            <h2 class="modal-title">Zgłoś naruszenie</h2>
+            <p class="modal-description">
+              Jeśli uważasz, że to ogłoszenie narusza nasze zasady, wybierz powód zgłoszenia poniżej.
+            </p>
+
+            <form @submit.prevent="submitReport" class="report-form">
+              <div class="report-reasons-grid">
+                <label v-for="reason in reportReasons" :key="reason.value" class="radio-option">
+                  <input type="radio" v-model="reportForm.reason" :value="reason.value" />
+                  <span class="reason-label text-bold">{{ reason.label }}</span>
+                </label>
+              </div>
+
+              <div class="details-section">
+                <span class="section-label">Dodatkowe szczegóły (opcjonalnie)</span>
+                <textarea 
+                  v-model="reportForm.details" 
+                  placeholder="Podaj więcej informacji, które pomogą nam zweryfikować to zgłoszenie..."
+                  class="form-textarea"
+                  rows="4"
+                  maxlength="2000"
+                ></textarea>
+              </div>
+
+              <div class="modal-actions">
+                <button type="button" @click="showReportModal = false" class="btn btn-secondary-outline">Anuluj</button>
+                <button type="submit" class="btn btn-danger" :disabled="isSubmittingReport || !reportForm.reason">
+                  {{ isSubmittingReport ? 'Wysyłanie...' : 'Zgłoś ogłoszenie' }}
+                </button>
+              </div>
+            </form>
           </div>
-          
-          <div class="report-intro">
-            Jeśli uważasz, że to ogłoszenie narusza nasze zasady, wybierz powód zgłoszenia poniżej.
+
+          <div v-else class="success-body">
+            <div class="success-icon">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="32" fill="#10B981" opacity="0.1"/>
+                <circle cx="32" cy="32" r="24" fill="#10B981"/>
+                <path d="M22 32L28 38L42 24" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h2 class="success-title">Zgłoszenie zostało wysłane</h2>
+            <p class="success-description">
+              Dziękujemy za zgłoszenie. Nasz zespół sprawdzi to ogłoszenie i podejmie odpowiednie działania.
+            </p>
           </div>
-
-          <form @submit.prevent="submitReport" class="report-form">
-            <div class="report-reasons-grid">
-              <label v-for="reason in reportReasons" :key="reason.value" class="radio-option">
-                <input type="radio" v-model="reportForm.reason" :value="reason.value" />
-                <span class="radio-custom"></span>
-                <span class="reason-label text-bold">{{ reason.label }}</span>
-              </label>
-            </div>
-
-            <div class="details-section">
-              <span class="section-label">Dodatkowe szczegóły (opcjonalnie)</span>
-              <textarea 
-                v-model="reportForm.details" 
-                placeholder="Podaj więcej informacji, które pomogą nam zweryfikować to zgłoszenie..."
-              ></textarea>
-            </div>
-
-            <div class="modal-actions">
-              <button type="button" @click="showReportModal = false" class="btn btn-secondary-outline">Anuluj</button>
-              <button type="submit" class="btn btn-danger" :disabled="isSubmittingReport || !reportForm.reason">
-                {{ isSubmittingReport ? 'Wysyłanie...' : 'Zgłoś ogłoszenie' }}
-              </button>
-            </div>
-          </form>
         </div>
       </div>
     </transition>
@@ -725,6 +805,7 @@ defineExpose({
       <div class="sticky-info">
         <div class="sticky-price">{{ formatPrice(ad.price) }} PLN</div>
         <div class="sticky-unit">/ {{ searchStore.getPriceUnitLabel(ad.price_unit) }}</div>
+        <span v-if="ad.price_negotiable" class="negotiable-badge">do negocjacji</span>
       </div>
       <div class="sticky-btns">
         <button 
@@ -837,6 +918,7 @@ defineExpose({
   align-items: baseline;
   gap: 0.5rem;
   margin-bottom: 2.5rem;
+  flex-wrap: wrap;
 }
 
 .price-value {
@@ -848,6 +930,15 @@ defineExpose({
 .price-unit {
   color: var(--text-muted, #6b7280);
   font-weight: 600;
+}
+
+.negotiable-badge {
+  font-size: 0.75rem;
+  color: #10B981;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  display: inline-block;
+  width: 100%;
 }
 
 .description-body h2 {
@@ -945,65 +1036,71 @@ defineExpose({
 }
 
 .modal-content {
-  background: var(--card-bg, white);
-  color: var(--text-main, #111827);
-  padding: 0;
-  border-radius: 24px;
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  max-width: 480px;
   width: 100%;
-  max-width: 550px;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-.modal-header {
-  padding: 1.5rem 2.5rem;
-  border-bottom: 1px solid #f1f5f9;
-  flex-shrink: 0;
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 }
 
-.modal-body, .report-form {
-  padding: 0 2.5rem 2.5rem 2.5rem;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  flex-grow: 1;
+.close-btn:hover {
+  background: #F3F4F6;
+  color: #1F2937;
 }
 
-.report-intro {
-  color: var(--text-muted, #64748b);
-  font-size: 0.95rem;
-  margin-top: 1.5rem;
-  margin-bottom: 2rem;
-  line-height: 1.5;
-  padding-left: 2.5rem;
-  padding-right: 2.5rem;
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
+.icon-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.modal-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1F2937;
+  margin: 0 0 1rem 0;
+}
+
+.modal-description {
+  font-size: 1rem;
+  color: #6B7280;
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
+}
+
+.report-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
 @keyframes modalIn {
   from { opacity: 0; transform: scale(0.95) translateY(10px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.report-modal h3 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin: 0;
-  letter-spacing: -0.025em;
-}
-
-.report-intro {
-  color: var(--text-muted, #64748b);
-  font-size: 0.95rem;
-  margin-top: 0.5rem;
-  margin-bottom: 2rem;
-  line-height: 1.5;
 }
 
 .report-reasons-grid {
@@ -1017,26 +1114,27 @@ defineExpose({
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.25rem;
-  background: #f8fafc;
-  border: 2px solid transparent;
-  border-radius: 12px;
+  background: white;
+  border: 2px solid #E5E7EB;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .radio-option:hover {
-  background: #f1f5f9;
+  border-color: #4F46E5;
+  background: #f5f3ff;
 }
 
 .radio-option input[type="radio"] {
   width: 1.25rem;
   height: 1.25rem;
-  accent-color: #6366f1;
+  accent-color: #4F46E5;
 }
 
 .radio-option:has(input:checked) {
-  background: #eff6ff;
-  border-color: #3b82f6;
+  border-color: #4F46E5;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
 }
 
 .section-label {
@@ -1045,24 +1143,63 @@ defineExpose({
   font-weight: 700;
   color: #475569;
   margin-bottom: 0.75rem;
+  text-align: left;
 }
 
-.report-form textarea {
+.form-textarea {
   width: 100%;
-  padding: 1rem 1.25rem;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  border-radius: 12px;
-  min-height: 120px;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
+  padding: 1rem;
+  border: 2px solid #E5E7EB;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
   resize: vertical;
+  min-height: 100px;
 }
 
-.report-form textarea:focus {
+.form-textarea:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.success-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.success-icon {
+  margin-bottom: 1.5rem;
+  animation: scaleIn 0.5s ease-out;
+}
+
+.success-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1F2937;
+  margin: 0 0 1rem 0;
+}
+
+.success-description {
+  font-size: 1rem;
+  color: #6B7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .modal-actions {
@@ -1439,6 +1576,30 @@ defineExpose({
 
   .mobile-stats-row {
     gap: 0.5rem !important;
+  }
+}
+
+/* Report Modal Mobile Styles */
+@media (max-width: 640px) {
+  .modal-content {
+    padding: 1.5rem 1.25rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-title,
+  .success-title {
+    font-size: 1.35rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-description {
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .icon-wrapper {
+    margin-bottom: 1rem;
   }
 }
 </style>
