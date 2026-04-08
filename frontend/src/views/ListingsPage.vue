@@ -564,7 +564,11 @@ const resetFilters = () => {
 const clearFilters = resetFilters
 
 const handleSortOptionClick = (val: string) => { searchStore.sortBy = val; showSortPanel.value = false; searchStore.applyFilters({}) }
-const toggleMobileMap = () => { showMapOnMobile.value = !showMapOnMobile.value; if (showMapOnMobile.value) nextTick(() => initMap()) }
+const toggleMobileMap = () => { 
+  showMapOnMobile.value = !showMapOnMobile.value
+  if (showMapOnMobile.value) nextTick(() => initMap())
+  handleScroll() // Update scroll button visibility immediately
+}
 
 const scrollToAd = (adId: string) => {
   const element = document.getElementById(`ad-${adId}`)
@@ -953,18 +957,19 @@ const handleScroll = () => {
   const contentWrapper = document.querySelector('.content-wrapper')
   
   // Check if bottom sections (description or footer) are visible
+  // Added a 40px threshold to prevent it being "visible" when perfectly aligned at the bottom (scrollY=0)
   let isBottomSectionVisible = false
   
   if (descriptionWrapper) {
     const descRect = descriptionWrapper.getBoundingClientRect()
-    if (descRect.top <= window.innerHeight) {
+    if (descRect.top <= window.innerHeight - 40) {
       isBottomSectionVisible = true
     }
   }
   
   if (footer && !isBottomSectionVisible) {
     const footerRect = footer.getBoundingClientRect()
-    if (footerRect.top <= window.innerHeight) {
+    if (footerRect.top <= window.innerHeight - 40) {
       isBottomSectionVisible = true
     }
   }
@@ -976,6 +981,8 @@ const handleScroll = () => {
       const inContentSection = contentRect.bottom > 0
       showMapButton.value = inContentSection && !isBottomSectionVisible
     }
+    // Na komórce też chcemy przycisk przewijania listy, ale tylko gdy nie widzimy mapy
+    showListScrollTop.value = !showMapOnMobile.value && !isBottomSectionVisible && (listContainerRef.value?.scrollTop || 0) > 500
   } else {
     // For desktop: always show map button, but hide list scroll button when bottom sections visible
     showMapButton.value = true
@@ -1346,7 +1353,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             @click="scrollListToTop" 
             class="list-scroll-top"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 15l-6-6-6 6"/>
             </svg>
           </button>
@@ -2022,9 +2029,8 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 
     <!-- Category/City Description for SEO - poza listings-page -->
-    <div class="description-wrapper">
+    <div v-if="currentDescription" class="description-wrapper">
       <CategoryDescription 
-        v-if="currentDescription" 
         :description="currentDescription"
       />
     </div>
@@ -2503,18 +2509,37 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
 }
 
-/* Use absolute for the button relative to the container if sticky doesn't work as expected */
+/* Use fixed for the button relative to the viewport on desktop */
 .listings-list-container .list-scroll-top {
   position: fixed;
   bottom: 2rem;
-  left: calc(50vw - 60px); /* Position it near the divider on desktop if needed, or adjust for mobile */
-  transform: none;
+  left: calc(50vw - 60px); /* Position it near the divider on desktop */
+  z-index: 100;
 }
 
 @media (max-width: 768px) {
   .listings-list-container .list-scroll-top {
-    display: none; /* Hide on mobile - use global scroll-to-top button instead */
+    position: fixed;
+    bottom: 5rem; /* Above the mobile map toggle */
+    right: 1.25rem;
+    left: auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    z-index: 1001;
+    display: flex;
   }
+}
+
+/* Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 .loading-state,

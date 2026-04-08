@@ -101,7 +101,7 @@ const goToPage = (page: number) => {
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        Poprzednia
+        <span>Poprzednia</span>
       </button>
       
       <div class="pagination-numbers">
@@ -128,7 +128,7 @@ const goToPage = (page: number) => {
         class="pagination-btn next-btn"
         aria-label="Następna strona"
       >
-        Następna
+        <span>Następna</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
