@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && npm run postbuild",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' vite build && npm run postbuild",
     "postbuild": "cp public/.htaccess dist/.htaccess && cp public/sw.js dist/sw.js",
     "preview": "vite preview"
   },
@@ -33,6 +33,7 @@
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
+    "terser": "^5.46.1",
     "typescript": "^5.5.3",
     "vite": "^5.4.21",
     "vue-tsc": "^2.1.4"

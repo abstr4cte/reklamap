@@ -5,16 +5,53 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   build: {
+    // Disable sourcemaps in production to save memory
+    sourcemap: false,
+    // Use terser for better minification (less memory than esbuild for large projects)
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
+    // Increase chunk size warning limit
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         // Hash to chunk filenames for cache busting
         chunkFileNames: 'js/[name]-[hash].js',
         entryFileNames: 'js/[name]-[hash].js',
-        manualChunks: {
-          'leaflet-vendor': ['leaflet', 'leaflet.markercluster'],
-          'chart-vendor': ['chart.js', 'vue-chartjs'],
-          'tensorflow-vendor': ['@tensorflow/tfjs', 'nsfwjs'],
-          'date-utils': ['@vuepic/vue-datepicker'],
+        manualChunks: (id) => {
+          // Split large vendors into separate chunks to reduce memory pressure
+          if (id.includes('node_modules')) {
+            if (id.includes('tensorflow') || id.includes('tfjs')) {
+              return 'tensorflow-vendor'
+            }
+            if (id.includes('nsfwjs')) {
+              return 'nsfwjs-vendor'
+            }
+            if (id.includes('leaflet')) {
+              return 'leaflet-vendor'
+            }
+            if (id.includes('chart.js') || id.includes('vue-chartjs')) {
+              return 'chart-vendor'
+            }
+            if (id.includes('vue-router')) {
+              return 'vue-router-vendor'
+            }
+            if (id.includes('pinia')) {
+              return 'pinia-vendor'
+            }
+            if (id.includes('axios')) {
+              return 'axios-vendor'
+            }
+            if (id.includes('vue-datepicker')) {
+              return 'datepicker-vendor'
+            }
+            // All other node_modules
+            return 'vendor'
+          }
         },
         assetFileNames: (assetInfo) => {
           const name = assetInfo.name || ''
