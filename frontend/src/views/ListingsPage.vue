@@ -6,7 +6,7 @@ defineOptions({
 })
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { useSearchStore, typeColors, typeLabels, type LocationSuggestion, popularLocations } from '../stores/useSearchStore'
+import { useSearchStore, typeColors, typeLabels, type LocationSuggestion, popularLocations, variantLabels } from '../stores/useSearchStore'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
 import { getFullImageUrl } from '../services/api'
 import { type LocationResult, debouncedSearchLocations } from '../services/locationService'
@@ -383,8 +383,8 @@ const transportScopeOptions = computed(() => {
 })
 
 const getVariantOptions = (type: string) => {
-  if (type === 'transport') return [{ value: 'bus', label: 'Autobus' }, { value: 'tram', label: 'Tramwaj' }, { value: 'metro', label: 'Metro' }, { value: 'stop', label: 'Przystanek' }]
-  return []
+  const labels = variantLabels[type] || {}
+  return Object.entries(labels).map(([value, label]) => ({ value, label: label as string }))
 }
 
 
@@ -1655,18 +1655,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
         <div v-if="tempFilters.type" class="filter-section">
           <h4 class="section-title">Opcje specyficzne dla typu</h4>
           
-          <!-- Variant Filter -->
-          <div v-if="tempFilters && tempFilters.type && ['billboard', 'citylight', 'led_screen', 'totem', 'transport', 'mobile'].includes(tempFilters.type)" class="filter-group">
-            <label class="filter-label">Wariant</label>
-            <select v-model="tempFilters.variant" class="filter-select" v-if="tempFilters">
-              <option value="">Wszystkie</option>
-              <option v-for="variant in getVariantOptions(tempFilters.type)" :key="variant.value" :value="variant.value">
-                {{ variant.label }}
-              </option>
-            </select>
-          </div>
-
-          <!-- Road Class Filter (Billboard only) -->
+          <!-- 1. Road Class Filter (Billboard only) -->
           <div v-if="tempFilters && tempFilters.type === 'billboard'" class="filter-group">
             <label class="filter-label">Klasa drogi</label>
             <select v-model="tempFilters.roadClass" class="filter-select" v-if="tempFilters">
@@ -1680,7 +1669,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             </select>
           </div>
 
-          <!-- Traffic Intensity (all outdoor types) -->
+          <!-- 2. Traffic Intensity (all outdoor types) -->
           <div v-if="tempFilters && ['billboard', 'banner', 'wall', 'totem'].includes(tempFilters.type)" class="filter-group">
             <label class="filter-label">Natężenie ruchu</label>
             <select v-model="tempFilters.trafficIntensity" class="filter-select" v-if="tempFilters">
@@ -1691,9 +1680,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             </select>
           </div>
 
-
-
-          <!-- Kierunek ruchu (all outdoor types) -->
+          <!-- 3. Kierunek ruchu (all outdoor types) -->
           <div v-if="tempFilters && ['billboard', 'banner', 'wall', 'totem'].includes(tempFilters.type)" class="filter-group">
             <label class="filter-label">Kierunek ruchu</label>
             <select v-model="tempFilters.trafficDirection" class="filter-select" v-if="tempFilters">
@@ -1704,7 +1691,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             </select>
           </div>
 
-          <!-- Rodzaj ruchu (all outdoor types) -->
+          <!-- 4. Rodzaj ruchu (all outdoor types) -->
           <div v-if="tempFilters && ['billboard', 'banner', 'wall', 'totem'].includes(tempFilters.type)" class="filter-group">
             <label class="filter-label">Rodzaj ruchu</label>
             <select v-model="tempFilters.trafficType" class="filter-select" v-if="tempFilters">
@@ -1715,7 +1702,18 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             </select>
           </div>
 
-          <!-- Environment Filter -->
+          <!-- 5. Variant Filter -->
+          <div v-if="tempFilters && tempFilters.type && getVariantOptions(tempFilters.type).length > 0" class="filter-group">
+            <label class="filter-label">Wariant</label>
+            <select v-model="tempFilters.variant" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option v-for="variant in getVariantOptions(tempFilters.type)" :key="variant.value" :value="variant.value">
+                {{ variant.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- 6. Environment Filter -->
           <div v-if="tempFilters && ['citylight', 'led_screen', 'totem', 'other'].includes(tempFilters.type)" class="filter-group">
             <label class="filter-label">Środowisko</label>
             <select v-model="tempFilters.environment" class="filter-select" v-if="tempFilters">
@@ -1726,7 +1724,19 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             </select>
           </div>
 
+          <!-- 7. Billboard - Lighting Type -->
+          <div v-if="tempFilters && tempFilters.type === 'billboard'" class="filter-group">
+            <label class="filter-label">Typ oświetlenia</label>
+            <select v-model="(tempFilters as any).lightingType" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option value="led">LED</option>
+              <option value="fluorescent">Fluorescencyjne</option>
+              <option value="natural">Naturalne</option>
+              <option value="none">Brak</option>
+            </select>
+          </div>
 
+          <!-- 8. LED Screen parametry -->
           <div v-if="tempFilters && tempFilters.type === 'led_screen'" class="filter-group">
             <label class="filter-label">Pixel Pitch (mm)</label>
             <div class="range-inputs">
@@ -1747,7 +1757,6 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
               />
             </div>
           </div>
-
           <div v-if="tempFilters && tempFilters.type === 'led_screen'" class="filter-group">
             <label class="filter-label">Jasność (nits)</label>
             <div class="range-inputs">
@@ -1769,7 +1778,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             </div>
           </div>
 
-          <!-- Transport Filters -->
+          <!-- 9. Transport parametry -->
           <div v-if="tempFilters && tempFilters.type === 'transport'" class="filter-group">
             <label class="filter-label">Zakres reklamy</label>
             <select v-model="tempFilters.transportScope" class="filter-select" v-if="tempFilters">
@@ -1779,7 +1788,6 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
               </option>
             </select>
           </div>
-
           <div v-if="tempFilters && tempFilters.type === 'transport' && tempFilters.variant !== 'stop'" class="filter-group">
             <label class="filter-label">Liczba pojazdów</label>
             <div class="range-inputs">
@@ -1800,31 +1808,6 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
               />
             </div>
           </div>
-
-          <!-- Mobile Filters -->
-          <div v-if="tempFilters && tempFilters.type === 'mobile'" class="filter-group">
-            <label class="filter-label">Tryb ekspozycji</label>
-            <select v-model="tempFilters.mobileExposureMode" class="filter-select" v-if="tempFilters">
-              <option value="">Wszystkie</option>
-              <option value="moving">Jeżdżąca</option>
-              <option value="stationary">Stojąca</option>
-              <option value="mixed">Mieszana</option>
-            </select>
-          </div>
-
-          <!-- Billboard - Lighting Type -->
-          <div v-if="tempFilters && tempFilters.type === 'billboard'" class="filter-group">
-            <label class="filter-label">Typ oświetlenia</label>
-            <select v-model="(tempFilters as any).lightingType" class="filter-select" v-if="tempFilters">
-              <option value="">Wszystkie</option>
-              <option value="led">LED</option>
-              <option value="fluorescent">Fluorescencyjne</option>
-              <option value="natural">Naturalne</option>
-              <option value="none">Brak</option>
-            </select>
-          </div>
-
-          <!-- Transport - Daily Passengers -->
           <div v-if="tempFilters && tempFilters.type === 'transport'" class="filter-group">
             <label class="filter-label">Liczba pasażerów dziennie</label>
             <div class="range-inputs">
@@ -1846,7 +1829,16 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             </div>
           </div>
 
-          <!-- Mobile - Operating Zone -->
+          <!-- 10. Mobile Filters -->
+          <div v-if="tempFilters && tempFilters.type === 'mobile'" class="filter-group">
+            <label class="filter-label">Tryb ekspozycji</label>
+            <select v-model="tempFilters.mobileExposureMode" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option value="moving">Jeżdżąca</option>
+              <option value="stationary">Stojąca</option>
+              <option value="mixed">Mieszana</option>
+            </select>
+          </div>
           <div v-if="tempFilters && tempFilters.type === 'mobile'" class="filter-group">
             <label class="filter-label">Strefa operacyjna</label>
             <select v-model="(tempFilters as any).operatingZone" class="filter-select" v-if="tempFilters">

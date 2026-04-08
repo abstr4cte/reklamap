@@ -106,7 +106,7 @@ const valueMapping: Record<string, Record<string, string>> = {
   status: {
     active: 'wolne',
     reserved: 'zarezerwowane',
-    soon: 'wkrotce'
+    soon_available: 'wkrotce'
   },
   sort: {
     newest: 'najnowsze',

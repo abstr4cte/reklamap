@@ -656,9 +656,21 @@ export const useSearchStore = defineStore('search', () => {
     // 7. Special Case: Multi-select status
     if (f.status && f.status.length > 0) {
       filtered = filtered.filter(ad => {
-        const adStatus = ad.status === 'active' ? 'available' : ad.status
-        const filterStatus = f.status.map(s => s === 'active' ? 'available' : s)
-        return filterStatus.includes(ad.display_status || adStatus)
+        // Normalizujmy statusy do wspólnego mianownika ('active')
+        let adStatus = ad.status === 'available' ? 'active' : ad.status
+        let d_status = ad.display_status || adStatus
+        if (d_status === 'available') d_status = 'active'
+        
+        // Oblicz 'effective status' na frontendzie - jeśli status to 'soon_available', ale data minęła, to traktuj jako 'active' (Wolne)
+        let effectiveStatus = d_status
+        if (d_status === 'soon_available' && ad.available_from) {
+          if (new Date(ad.available_from) <= new Date()) {
+            effectiveStatus = 'active'
+          }
+        }
+        
+        const filterStatus = f.status.map(s => s === 'available' ? 'active' : s)
+        return filterStatus.includes(effectiveStatus)
       })
     }
 

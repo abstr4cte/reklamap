@@ -330,17 +330,17 @@ const showLightingTypeBannerField = computed(() => {
 
 const showPrintOption = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall', 'citylight'].includes(type)
+  return ['billboard', 'banner', 'wall'].includes(type)
 })
 
 const showMountingOption = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall', 'citylight', 'totem'].includes(type)
+  return ['billboard', 'banner', 'wall', 'totem'].includes(type)
 })
 
 const showGraphicDesignOption = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall', 'citylight', 'totem'].includes(type)
+  return ['billboard', 'banner', 'wall', 'totem'].includes(type)
 })
 
 const showTrafficIntensity = computed(() => {
@@ -1428,23 +1428,8 @@ onMounted(() => {
             </label>
           </div>
 
-          <!-- Opcje dodatkowe -->
+          <!-- Właściwości faktury i ceny -->
           <div class="checkbox-group">
-            <label v-if="showPrintOption" class="checkbox-option">
-              <input type="checkbox" v-model="formData.priceIncludesPrint" />
-              <span>Cena zawiera druk</span>
-            </label>
-
-            <label v-if="showMountingOption" class="checkbox-option">
-              <input type="checkbox" v-model="formData.priceIncludesMounting" />
-              <span>Cena zawiera montaż</span>
-            </label>
-
-            <label v-if="showGraphicDesignOption" class="checkbox-option">
-              <input type="checkbox" v-model="formData.graphicDesignHelp" />
-              <span>Pomoc przy projekcie graficznym</span>
-            </label>
-
             <label class="checkbox-option">
               <input type="checkbox" v-model="formData.hasVatInvoice" />
               <span>Faktura VAT</span>
@@ -1767,12 +1752,30 @@ onMounted(() => {
             <span v-if="errors.variant" class="error-text">{{ errors.variant }}</span>
           </div>
 
-          <!-- Podświetlenie - dla Citylight, LED, Totem -->
-          <div v-if="showLightingOption" class="form-group">
-            <label class="checkbox-option">
-              <input type="checkbox" v-model="formData.hasBacklight" />
-              <span>Podświetlenie</span>
-            </label>
+          <!-- Wyposażenie i dodatki -->
+          <div v-if="showPrintOption || showMountingOption || showGraphicDesignOption || showLightingOption" class="form-group" style="padding: 1rem; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+            <label class="form-label" style="margin-bottom: 1rem; color: #374151; font-weight: 600;">Wyposażenie i dodatki</label>
+            <div class="checkbox-group" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <label v-if="showPrintOption" class="checkbox-option">
+                <input type="checkbox" v-model="formData.priceIncludesPrint" />
+                <span>Cena zawiera druk</span>
+              </label>
+
+              <label v-if="showMountingOption" class="checkbox-option">
+                <input type="checkbox" v-model="formData.priceIncludesMounting" />
+                <span>Cena zawiera montaż</span>
+              </label>
+
+              <label v-if="showGraphicDesignOption" class="checkbox-option">
+                <input type="checkbox" v-model="formData.graphicDesignHelp" />
+                <span>Pomoc przy projekcie graficznym</span>
+              </label>
+
+              <label v-if="showLightingOption" class="checkbox-option">
+                <input type="checkbox" v-model="formData.hasBacklight" />
+                <span>Podświetlenie</span>
+              </label>
+            </div>
           </div>
 
           <!-- Typ oświetlenia dla Banerów i Ścian -->
@@ -1973,7 +1976,7 @@ onMounted(() => {
               class="w-full"
             >
               <template #month-year="slotProps">
-                {{ polishMonths[slotProps.month] }} {{ slotProps.year }}
+                {{ slotProps && typeof slotProps.month === 'number' ? polishMonths[slotProps.month] : '' }} {{ slotProps?.year }}
               </template>
               <template #trigger>
                 <div class="date-picker-wrapper">

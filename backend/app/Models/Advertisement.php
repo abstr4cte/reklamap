@@ -118,6 +118,11 @@ class Advertisement extends Model
      */
     public function getDisplayStatusAttribute(): string
     {
+        // Jeśli ma w bazie ustawione "wkrótce dostępne", ale data minęła -> jest wolne
+        if ($this->status === 'soon_available' && $this->available_from && $this->available_from->lte(now())) {
+            return 'active';
+        }
+
         // Jeśli status to active i mamy datę available_from w przyszłości
         if ($this->status === 'active' && $this->available_from && $this->available_from->gt(now())) {
             return 'soon_available';
