@@ -72,6 +72,7 @@ const showMapOnMobile = ref(false)
 const showSortPanel = ref(false)
 const showSearchAlertModal = ref(false)
 const hasShownAlertModal = ref(localStorage.getItem('search_alert_shown') === 'true')
+const alertModalTimer = ref<number | null>(null)
 const isStatusMenuOpen = ref(false)
 const statusMultiselect = ref<HTMLElement | null>(null)
 const hoveredAdId = ref<string | null>(null)
@@ -89,6 +90,12 @@ const LISTINGS_PAGE_KEY = 'listings_current_page'
 
 // Zapisz pozycję scrolla przed opuszczeniem strony (przejście do ogłoszenia)
 onBeforeRouteLeave((to, _from, next) => {
+  // Wyczyść timer alertu przed opuszczeniem strony
+  if (alertModalTimer.value) {
+    clearTimeout(alertModalTimer.value)
+    alertModalTimer.value = null
+  }
+  
   // Zapisz tylko jeśli przechodzimy do szczegółów ogłoszenia
   if (to.path.includes('/powierzchnia-reklamowa/')) {
     // Zapisz scroll kontenera listy (nie window, bo listings-list-container ma overflow-y: auto)
@@ -1083,14 +1090,14 @@ onMounted(async () => {
   
   // 5. Proactive search alert modal (consistent with HomePage)
   if (!hasShownAlertModal.value) {
-    setTimeout(() => {
-      // Show only if user has active filters, is on search results, and hasn't seen it yet
-      if (!hasShownAlertModal.value && totalFiltersCount.value > 0) {
+    alertModalTimer.value = setTimeout(() => {
+      // Show only if user has active filters, is on search results, hasn't seen it yet, AND is still on ListingsPage
+      if (!hasShownAlertModal.value && totalFiltersCount.value > 0 && router.currentRoute.value.path.includes('/powierzchnie-reklamowe')) {
         showSearchAlertModal.value = true
         hasShownAlertModal.value = true
         localStorage.setItem('search_alert_shown', 'true')
       }
-    }, 20000) // 20 seconds
+    }, 20000) as unknown as number // 20 seconds
   }
 })
 

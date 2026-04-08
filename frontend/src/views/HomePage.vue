@@ -37,6 +37,7 @@ const hoveredAdId = ref<string | null>(null)
 
 const showSearchAlertModal = ref(false)
 const hasShownAlertModal = ref(localStorage.getItem('search_alert_shown') === 'true')
+const alertModalTimer = ref<number | null>(null)
 
 // Scroll position management
 const SCROLL_POSITION_KEY = 'homepage_scroll_position'
@@ -150,6 +151,12 @@ const toggleShowAllCategories = () => {
 
 // Zapisz pozycję scrolla przed opuszczeniem strony (przejście do ogłoszenia)
 onBeforeRouteLeave((to, _from, next) => {
+  // Wyczyść timer alertu przed opuszczeniem strony
+  if (alertModalTimer.value) {
+    clearTimeout(alertModalTimer.value)
+    alertModalTimer.value = null
+  }
+  
   // Zapisz tylko jeśli przechodzimy do szczegółów ogłoszenia
   if (to.path.includes('/powierzchnia-reklamowa/')) {
     const scrollY = window.scrollY || window.pageYOffset
@@ -417,14 +424,14 @@ onMounted(() => {
 
   // Logic for showing the search alert modal after 20 seconds
   if (!hasShownAlertModal.value) {
-    setTimeout(() => {
-      // Show only if user has active filters and hasn't seen it yet
-      if (!hasShownAlertModal.value && activeFiltersCount.value > 0) {
+    alertModalTimer.value = setTimeout(() => {
+      // Show only if user has active filters, hasn't seen it yet, AND is still on HomePage
+      if (!hasShownAlertModal.value && activeFiltersCount.value > 0 && router.currentRoute.value.path === '/') {
         showSearchAlertModal.value = true
         hasShownAlertModal.value = true
         localStorage.setItem('search_alert_shown', 'true')
       }
-    }, 20000) // 20 seconds
+    }, 20000) as unknown as number // 20 seconds
   }
 })
 
