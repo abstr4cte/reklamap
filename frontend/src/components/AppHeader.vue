@@ -56,6 +56,18 @@ const closeMobileMenu = () => {
   isMobileMenuOpen.value = false
 }
 
+const handleHomeClick = () => {
+  closeMobileMenu()
+  // Przy kliknięciu w logo lub "Strona główna" robimy "świeży start", 
+  // więc czyścimy zapamiętaną pozycję scrolla z sessionStorage.
+  try {
+    sessionStorage.removeItem('homepage_scroll_position')
+    sessionStorage.removeItem('listings_scroll_position')
+  } catch (e) {
+    console.error(e)
+  }
+}
+
 const handleManagementClick = () => {
   closeMobileMenu()
   emit('openManagementModal')
@@ -101,7 +113,7 @@ watch(isMobileMenuOpen, (isOpen) => {
   <header class="app-header">
     <div class="container">
       <div class="header-left">
-        <router-link to="/" class="logo" @click="closeMobileMenu">
+        <router-link to="/" class="logo" @click="handleHomeClick">
           <img :src="logoImage" alt="ReklaMap" class="logo-image" />
           <span class="logo-text">ReklaMap</span>
         </router-link>
@@ -109,7 +121,7 @@ watch(isMobileMenuOpen, (isOpen) => {
 
       <!-- Desktop Navigation -->
       <nav class="header-center desktop-nav">
-        <router-link to="/" class="nav-link">Strona główna</router-link>
+        <router-link to="/" class="nav-link" @click="handleHomeClick">Strona główna</router-link>
         
         <!-- Categories Dropdown -->
         <div 
@@ -221,7 +233,7 @@ watch(isMobileMenuOpen, (isOpen) => {
         </div>
 
         <nav class="mobile-nav">
-          <router-link to="/" class="mobile-nav-link" @click="closeMobileMenu">
+          <router-link to="/" class="mobile-nav-link" @click="handleHomeClick">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2"/>
             </svg>

@@ -7,16 +7,12 @@ export default defineConfig({
   build: {
     // Disable sourcemaps in production to save memory
     sourcemap: false,
-    // Use terser for better minification (less memory than esbuild for large projects)
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    },
+    // Use esbuild (faster and less memory than terser)
+    minify: 'esbuild',
     // Increase chunk size warning limit
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 1500,
+    // Target modern browsers to reduce polyfills
+    target: 'es2020',
     rollupOptions: {
       output: {
         // Hash to chunk filenames for cache busting

@@ -46,14 +46,14 @@ let polandGeoJsonData: any = null
 
 const loadGeoUtils = async () => {
   if (turfPoint && turfBooleanPointInPolygon && polandGeoJsonData) return
-  const [pointModule, polygonModule, geojsonData] = await Promise.all([
+  const [pointModule, polygonModule, geojsonResponse] = await Promise.all([
     import('@turf/helpers'),
     import('@turf/boolean-point-in-polygon'),
-    import('../assets/poland_highres.json')
+    fetch('/data/poland_highres.json').then(res => res.json())
   ])
   turfPoint = pointModule.point
   turfBooleanPointInPolygon = polygonModule.default
-  polandGeoJsonData = geojsonData.default
+  polandGeoJsonData = geojsonResponse
 }
 
 const isInPoland = async (lat: number, lng: number): Promise<boolean> => {

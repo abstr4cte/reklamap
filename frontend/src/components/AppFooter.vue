@@ -113,6 +113,13 @@ const clearSearchFlag = () => {
   } catch (e) { /* ignore */ }
 }
 
+const handleHomeClick = () => {
+  try {
+    sessionStorage.removeItem('homepage_scroll_position')
+    sessionStorage.removeItem('listings_scroll_position')
+  } catch (e) { /* ignore */ }
+}
+
 </script>
 
 <template>
@@ -147,7 +154,7 @@ const clearSearchFlag = () => {
             </svg>
           </h4>
           <ul class="footer-links">
-            <li><router-link to="/">Strona główna</router-link></li>
+            <li><router-link to="/" @click="handleHomeClick">Strona główna</router-link></li>
             <li><router-link to="/powierzchnie-reklamowe">Wszystkie ogłoszenia</router-link></li>
             <li><router-link to="/dodaj-powierzchnie-reklamowa">Dodaj ogłoszenie</router-link></li>
             <li><router-link to="/blog">Blog</router-link></li>
