@@ -899,7 +899,7 @@ defineExpose({
 .status-active { background: #ecfdf5; color: #059669; }
 .status-reserved { background: #fffbeb; color: #d97706; }
 .status-unavailable { background: #fef2f2; color: #dc2626; }
-.status-soon_available { background: #3B82F6; color: white; }
+.status-soon_available { background: #eff6ff; color: #2563eb; }
 
 .page-title {
   font-size: 2.5rem;
