@@ -1,8 +1,8 @@
-
-import * as nsfwjs from 'nsfwjs'
+// NSFWJS is loaded via CDN in index.html to save build memory
+declare const nsfwjs: any
 
 // Singleton instance
-let model: nsfwjs.NSFWJS | null = null
+let model: any = null
 
 export const nsfwService = {
     async loadModel() {

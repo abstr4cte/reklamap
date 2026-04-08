@@ -1,7 +1,8 @@
-import * as tf from '@tensorflow/tfjs'
-import * as nsfwjs from 'nsfwjs'
+// TensorFlow and NSFWJS are loaded via CDN in index.html to save build memory
+declare const tf: any
+declare const nsfwjs: any
 
-let model: nsfwjs.NSFWJS | null = null
+let model: any = null
 
 export const loadModel = async () => {
     if (model) return model
@@ -21,7 +22,7 @@ export const checkImage = async (file: File): Promise<{ isSafe: boolean; probabi
                 URL.revokeObjectURL(objectUrl)
 
                 // Check for Porn or Hentai with high probability
-                const nsfwPrediction = predictions.find(p => p.className === 'Porn' || p.className === 'Hentai')
+                const nsfwPrediction = predictions.find((p: any) => p.className === 'Porn' || p.className === 'Hentai')
 
                 if (nsfwPrediction && nsfwPrediction.probability > 0.6) {
                     resolve({

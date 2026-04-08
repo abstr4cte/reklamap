@@ -14,7 +14,13 @@ export default defineConfig({
     // Target modern browsers to reduce polyfills
     target: 'es2020',
     rollupOptions: {
+      external: ['@tensorflow/tfjs', 'nsfwjs'],
+      maxParallelFileOps: 2,
       output: {
+        globals: {
+          '@tensorflow/tfjs': 'tf',
+          'nsfwjs': 'nsfwjs'
+        },
         // Hash to chunk filenames for cache busting
         chunkFileNames: 'js/[name]-[hash].js',
         entryFileNames: 'js/[name]-[hash].js',
