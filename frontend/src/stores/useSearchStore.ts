@@ -664,7 +664,9 @@ export const useSearchStore = defineStore('search', () => {
 
     // 8. Special Case: Traffic Direction (Array in ad, string/array in filter)
     if (f.trafficDirection) {
-      const dir = f.trafficDirection as unknown as string
+      // trafficDirection can be string[] or string depending on usage
+      const dirValue = f.trafficDirection
+      const dir = Array.isArray(dirValue) ? (dirValue.length > 0 ? dirValue[0] : '') : dirValue
       if (dir && dir !== '') {
         filtered = filtered.filter(ad => {
           if (!ad.traffic_direction) return false
@@ -677,7 +679,9 @@ export const useSearchStore = defineStore('search', () => {
 
     // 9. Special Case: Traffic Type (Array in ad, string/array in filter)
     if (f.trafficType) {
-      const type = f.trafficType as unknown as string
+      // trafficType can be string[] or string depending on usage
+      const typeValue = f.trafficType
+      const type = Array.isArray(typeValue) ? (typeValue.length > 0 ? typeValue[0] : '') : typeValue
       if (type && type !== '') {
         filtered = filtered.filter(ad => {
           if (!ad.traffic_type) return false

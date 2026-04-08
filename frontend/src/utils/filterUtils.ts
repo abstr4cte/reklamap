@@ -41,8 +41,8 @@ export interface FilterParams {
   heightFrom?: number | null
   heightTo?: number | null
   trafficIntensity?: string
-  trafficDirection?: string[]
-  trafficType?: string[]
+  trafficDirection?: string | string[]
+  trafficType?: string | string[]
   status?: string[]
   hasBacklight?: boolean
   onlyWithImage?: boolean
@@ -215,12 +215,12 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.roadClass) params.roadClass = filters.roadClass
   if (filters.environment) params.environment = filters.environment
   
-  // Traffic direction i traffic type (tablice)
-  if (filters.trafficDirection && filters.trafficDirection.length > 0) {
-    params.trafficDirection = filters.trafficDirection.join(',')
+  // Traffic direction i traffic type
+  if (filters.trafficDirection) {
+    params.trafficDirection = Array.isArray(filters.trafficDirection) ? filters.trafficDirection.join(',') : filters.trafficDirection
   }
-  if (filters.trafficType && filters.trafficType.length > 0) {
-    params.trafficType = filters.trafficType.join(',')
+  if (filters.trafficType) {
+    params.trafficType = Array.isArray(filters.trafficType) ? filters.trafficType.join(',') : filters.trafficType
   }
   if (filters.transportScope) params.transportScope = filters.transportScope
   if (filters.mobileExposureMode) params.mobileExposureMode = filters.mobileExposureMode
@@ -335,12 +335,12 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   if (query.roadClass) filters.roadClass = query.roadClass
   if (query.environment) filters.environment = query.environment
   
-  // Traffic direction i traffic type (konwersja string na tablice)
+  // Traffic direction i traffic type
   if (query.trafficDirection) {
-    filters.trafficDirection = query.trafficDirection.split(',')
+    filters.trafficDirection = query.trafficDirection
   }
   if (query.trafficType) {
-    filters.trafficType = query.trafficType.split(',')
+    filters.trafficType = query.trafficType
   }
   if (query.transportScope) filters.transportScope = query.transportScope
   if (query.mobileExposureMode) filters.mobileExposureMode = query.mobileExposureMode

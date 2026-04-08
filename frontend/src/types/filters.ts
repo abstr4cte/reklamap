@@ -22,8 +22,8 @@ export interface FilterParams {
   surfaceFrom: number | null
   surfaceTo: number | null
   trafficIntensity: string
-  trafficDirection: string[]
-  trafficType: string[]
+  trafficDirection: string | string[]
+  trafficType: string | string[]
   status: string[]
   hasBacklight: boolean
   onlyWithImage: boolean
@@ -81,8 +81,8 @@ export const DEFAULT_FILTERS: FilterParams = {
   surfaceFrom: null,
   surfaceTo: null,
   trafficIntensity: '',
-  trafficDirection: [],
-  trafficType: [],
+  trafficDirection: '',
+  trafficType: '',
   status: [],
   hasBacklight: false,
   onlyWithImage: false,
