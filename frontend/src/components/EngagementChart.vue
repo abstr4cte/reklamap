@@ -780,6 +780,15 @@ defineExpose({
           </svg>
           Zamknij
         </button>
+        <div class="orientation-hint">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <path d="M12 18h.01"></path>
+            <path d="M17 12a5 5 0 0 1-5-5"></path>
+            <path d="M12 7l3 3-3 3"></path>
+          </svg>
+          <span>Obróć telefon dla lepszego widoku</span>
+        </div>
         <div class="fullscreen-chart-container">
           <Line :data="chartData" :options="{ ...chartOptions, maintainAspectRatio: false }" />
         </div>
@@ -1748,5 +1757,43 @@ defineExpose({
       padding: 0.5rem 1rem;
       margin-bottom: 0.5rem;
     }
+  }
+
+  /* Orientation Hint */
+  .orientation-hint {
+    display: none;
+  }
+
+  @media (max-width: 900px) and (orientation: portrait) {
+    .orientation-hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 0.875rem;
+      background: #fefce8;
+      border: 1px solid #fef08a;
+      border-radius: 12px;
+      color: #854d0e;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      animation: slideInDown 0.4s cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    .orientation-hint svg {
+      animation: rotate-tip 2s infinite alternate ease-in-out;
+    }
+  }
+
+  @keyframes slideInDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes rotate-tip {
+    0% { transform: rotate(0deg); }
+    30% { transform: rotate(0deg); }
+    100% { transform: rotate(90deg); }
   }
 </style>

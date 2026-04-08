@@ -653,9 +653,95 @@ defineExpose({
   to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1100px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
   .charts-section {
     grid-template-columns: 1fr;
+  }
+
+  .chart-card {
+    padding: 1rem;
+  }
+
+  .chart-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chart-item {
+    flex-wrap: wrap;
+    padding: 0.75rem;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .chart-item-rank {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .chart-item-info {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .chart-item-value {
+    font-size: 0.95rem;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .chart-item-bar {
+    width: 100%;
+    order: 10;
+    margin: 0.25rem 0;
+    height: 4px;
+  }
+
+  .chart-item-btn {
+    flex-shrink: 0;
+  }
+
+  .additional-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .breakdown-item {
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-item-rank {
+    display: none;
+  }
+  
+  .chart-item-info {
+    min-width: 120px;
+  }
+  
+  .chart-item-value {
+    order: 2;
+    margin-left: initial;
+  }
+  
+  .chart-item-btn {
+    order: 3;
+    margin-left: auto;
+  }
+
+  .chart-item-bar {
+    order: 10;
+  }
+
+  .chart-quick-add-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 

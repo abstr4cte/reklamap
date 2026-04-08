@@ -360,8 +360,12 @@ class AdvertisementController extends Controller
         $validated = $request->validate([
             'advertisement_id' => 'required|exists:advertisements,id',
             'reason' => 'required|string',
-            'details' => 'required|string',
+            'details' => 'nullable|string',
         ]);
+
+        if (!isset($validated['details'])) {
+            $validated['details'] = '';
+        }
 
         \App\Models\Report::create($validated);
 

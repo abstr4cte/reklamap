@@ -728,9 +728,9 @@ defineExpose({
     </transition>
 
     <!-- Report Modal -->
-    <transition name="fade">
+    <transition name="modal">
       <div v-if="showReportModal" class="modal-overlay" @click.self="showReportModal = false">
-        <div class="modal-content report-modal">
+        <div class="modal-content report-modal" @click.stop>
           <button @click="showReportModal = false" class="close-btn" aria-label="Zamknij">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -752,11 +752,17 @@ defineExpose({
             </p>
 
             <form @submit.prevent="submitReport" class="report-form">
-              <div class="report-reasons-grid">
-                <label v-for="reason in reportReasons" :key="reason.value" class="radio-option">
-                  <input type="radio" v-model="reportForm.reason" :value="reason.value" />
-                  <span class="reason-label text-bold">{{ reason.label }}</span>
-                </label>
+              <div class="type-selector report-selector">
+                <button
+                  v-for="reason in reportReasons"
+                  :key="reason.value"
+                  type="button"
+                  @click="reportForm.reason = reason.value"
+                  :class="{ active: reportForm.reason === reason.value }"
+                  class="type-btn report-type-btn"
+                >
+                  {{ reason.label }}
+                </button>
               </div>
 
               <div class="details-section">
@@ -770,11 +776,12 @@ defineExpose({
                 ></textarea>
               </div>
 
-              <div class="modal-actions">
-                <button type="button" @click="showReportModal = false" class="btn btn-secondary-outline">Anuluj</button>
-                <button type="submit" class="btn btn-danger" :disabled="isSubmittingReport || !reportForm.reason">
-                  {{ isSubmittingReport ? 'Wysyłanie...' : 'Zgłoś ogłoszenie' }}
+              <div class="modal-actions-full">
+                <button type="submit" :disabled="isSubmittingReport || !reportForm.reason" class="submit-btn danger-gradient">
+                  <span v-if="isSubmittingReport">Wysyłanie...</span>
+                  <span v-else>Zgłoś ogłoszenie</span>
                 </button>
+                <button type="button" @click="showReportModal = false" class="cancel-link">Anuluj</button>
               </div>
             </form>
           </div>
@@ -787,7 +794,7 @@ defineExpose({
                 <path d="M22 32L28 38L42 24" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <h2 class="success-title">Zgłoszenie zostało wysłane</h2>
+            <h2 class="success-title">Zgłoszenie wysłane</h2>
             <p class="success-description">
               Dziękujemy za zgłoszenie. Nasz zespół sprawdzi to ogłoszenie i podejmie odpowiednie działania.
             </p>
@@ -1032,7 +1039,7 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 9999;
   padding: 1.5rem;
 }
 
@@ -1099,43 +1106,61 @@ defineExpose({
   gap: 1rem;
 }
 
-@keyframes modalIn {
-  from { opacity: 0; transform: scale(0.95) translateY(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+/* Transitions matched to FeedbackModal */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
 }
 
-.report-reasons-grid {
+.modal-enter-active .modal-content,
+.modal-leave-active .modal-content {
+  transition: transform 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .modal-content,
+.modal-leave-to .modal-content {
+  transform: scale(0.9);
+}
+
+.type-selector.report-selector {
   display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
-.radio-option {
+.report-type-btn {
+  padding: 0.85rem 0.5rem;
+  border: 2px solid #E5E7EB;
+  background: white;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  color: #64748b;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  background: white;
-  border: 2px solid #E5E7EB;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
 }
 
-.radio-option:hover {
-  border-color: #4F46E5;
-  background: #f5f3ff;
+.report-type-btn:hover {
+  border-color: #EF4444;
+  background: #fef2f2;
 }
 
-.radio-option input[type="radio"] {
-  width: 1.25rem;
-  height: 1.25rem;
-  accent-color: #4F46E5;
-}
-
-.radio-option:has(input:checked) {
-  border-color: #4F46E5;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+.report-type-btn.active {
+  border-color: #EF4444;
+  background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
 .section-label {
@@ -1161,8 +1186,58 @@ defineExpose({
 
 .form-textarea:focus {
   outline: none;
-  border-color: #4F46E5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.modal-actions-full {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  align-items: center;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-btn.danger-gradient {
+  background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.cancel-link {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.cancel-link:hover {
+  color: #1f2937;
+  text-decoration: underline;
 }
 
 .success-body {
@@ -1192,53 +1267,9 @@ defineExpose({
 }
 
 @keyframes scaleIn {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.modal-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 2rem;
-}
-
-.btn-danger {
-  background: #ef4444 !important;
-  color: white !important;
-  padding: 0.75rem 1.75rem !important;
-  border-radius: 12px !important;
-  font-weight: 700 !important;
-  border: none !important;
-  transition: all 0.2s ease !important;
-}
-
-.btn-danger:hover:not(:disabled) {
-  background: #dc2626 !important;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
-}
-
-.btn-secondary-outline {
-  padding: 0.75rem 1.75rem !important;
-  border-radius: 12px !important;
-  font-weight: 700 !important;
-  background: transparent !important;
-  border: 2px solid #e2e8f0 !important;
-  color: #64748b !important;
-  transition: all 0.2s ease !important;
-}
-
-.btn-secondary-outline:hover {
-  background: #f8fafc !important;
-  border-color: #cbd5e1 !important;
+  0% { transform: scale(0); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 @media (max-width: 1024px) {
@@ -1601,6 +1632,16 @@ defineExpose({
 
   .icon-wrapper {
     margin-bottom: 1rem;
+  }
+
+  .type-selector.report-selector {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .report-type-btn {
+    padding: 0.75rem;
+    font-size: 0.8rem;
   }
 }
 </style>
