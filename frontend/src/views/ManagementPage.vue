@@ -330,6 +330,7 @@ const updateStatus = async (id: string, newStatus: string, availableFrom?: Date 
     if (adIndex !== -1) {
       listings.value[adIndex] = { ...listings.value[adIndex], ...updatedAd };
     }
+    searchStore.fetchListings(); // Fetch new stats/data to propagate over SPA
     toast.value?.add('Status został zaktualizowany', 'success');
   } catch (error: any) {
     if (error.response && error.response.data && error.response.data.errors) {
@@ -354,6 +355,7 @@ const updateActiveStatus = async (id: string, isActive: boolean) => {
     await axios.patch(`/api/advertisements/${id}/active`, { is_active: isActive })
 
     ad.is_active = isActive
+    searchStore.fetchListings() // fetch global listing updates
     toast.value?.add(isActive ? 'Ogłoszenie zostało aktywowane' : 'Ogłoszenie zostało dezaktywowane', 'success')
   } catch (error) {
     toast.value?.add('Błąd podczas zmiany stanu aktywności', 'error')
@@ -516,6 +518,7 @@ const saveChanges = async (id: string) => {
     // Scroll to top of page
     document.documentElement.scrollTop = 0
     document.body.scrollTop = 0
+    searchStore.fetchListings() // keep global list in sync
     toast.value?.add('Zmiany zostały zapisane', 'success')
   } catch (error) {
     toast.value?.add('Błąd podczas zapisywania zmian', 'error')
@@ -541,6 +544,7 @@ const handleConfirmDelete = async () => {
     listings.value = listings.value.filter(a => a.id !== adToDelete.value)
     expandedRows.value.delete(adToDelete.value)
     adToDelete.value = ''
+    searchStore.fetchListings() // sync map / home list
     toast.value?.add('Ogłoszenie zostało usunięte', 'success')
   } catch (error) {
     toast.value?.add('Błąd podczas usuwania ogłoszenia', 'error')

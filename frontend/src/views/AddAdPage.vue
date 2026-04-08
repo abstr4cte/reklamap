@@ -1171,6 +1171,9 @@ const handleSubmit = async () => {
       // Track conversion in GA4
       analytics.finishAddAd(formData.value.type, formData.value.city)
       
+      // Update global listings cache so the new ad is visible elsewhere immediately
+      searchStore.fetchListings()
+      
       toast.value?.add('Ogłoszenie zostało dodane pomyślnie!', 'success')
       setTimeout(() => {
         // Generowanie linku w nowym formacie SEO-friendly
