@@ -101,6 +101,7 @@ class AdvertisementController extends Controller
             'ambient_light_control' => 'nullable|boolean',
             // Lighting type dla banerów i ścian
             'lighting_type_banner' => 'nullable|in:none,backlight,frontlight',
+            'estimated_daily_views' => 'nullable|integer',
         ]);
 
 
@@ -218,6 +219,7 @@ class AdvertisementController extends Controller
             'ambient_light_control' => 'nullable|boolean',
             // Lighting type dla banerów i ścian
             'lighting_type_banner' => 'nullable|in:none,backlight,frontlight',
+            'estimated_daily_views' => 'nullable|integer',
         ]);
 
         $ad = Advertisement::findOrFail($id);

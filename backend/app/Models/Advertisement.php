@@ -72,8 +72,9 @@ class Advertisement extends Model
         'daily_passengers',
         'operating_zone',
         'ambient_light_control',
-        // Lighting type dla banerów i ścian
         'lighting_type_banner',
+        // OTS
+        'estimated_daily_views',
     ];
 
     /**
@@ -105,6 +106,7 @@ class Advertisement extends Model
         'brightness' => 'integer',
         'daily_passengers' => 'integer',
         'ambient_light_control' => 'boolean',
+        'estimated_daily_views' => 'integer',
     ];
 
     protected $appends = ['display_status', 'full_url'];
