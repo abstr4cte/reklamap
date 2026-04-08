@@ -592,7 +592,7 @@ const clearSearchFlag = () => {
       <SearchAlertModal 
         v-if="showSearchAlertModal"
         :active-filters="filters"
-        :location-label="filters.city || filters.region || ''"
+        :location-label="getCurrentLocationLabel"
         @close="showSearchAlertModal = false"
         @submit="handleSearchAlertSubmit"
       />

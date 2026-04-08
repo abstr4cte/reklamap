@@ -3,6 +3,9 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { api } from '../services/api'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 import { analytics } from '../utils/analytics'
+import { useSearchStore } from '../stores/useSearchStore'
+
+const searchStore = useSearchStore()
 
 onMounted(() => {
   document.body.style.overflow = 'hidden'
@@ -104,9 +107,10 @@ const handleSubmit = async () => {
         <h2 class="modal-title">Nie przegap okazji!</h2>
         <p class="modal-desc">
           Powiadomimy Cię e-mailem, gdy tylko pojawi się nowa oferta pasująca do Twoich filtrów:
-          <span class="highlight" v-if="locationLabel || activeFilters.type">
-            {{ activeFilters.type ? 'Billboardy' : 'Ogłoszenia' }} 
-            {{ locationLabel ? 'w: ' + locationLabel : 'w całej Polsce' }}
+          <span class="highlight" v-if="locationLabel || activeFilters.type || activeFilters.keyword">
+            {{ activeFilters.type ? searchStore.getTypeLabel(activeFilters.type) : 'Ogłoszenia' }}
+            <template v-if="activeFilters.keyword"> z hasłem: "{{ activeFilters.keyword }}"</template>
+            {{ locationLabel ? (locationLabel.toLowerCase().startsWith('w ') ? '' : ' w: ') + locationLabel : ' w całej Polsce' }}
           </span>
         </p>
 

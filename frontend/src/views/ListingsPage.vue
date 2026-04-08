@@ -1099,6 +1099,13 @@ watch(
   () => {
     searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
     syncLocationQuery()
+    
+    // Clear alert timer when user navigates between categories
+    if (alertModalTimer.value) {
+      clearTimeout(alertModalTimer.value)
+      alertModalTimer.value = null
+    }
+    
     // Scroll to top of the listings when category/location changes
     nextTick(() => {
       scrollListToTop()

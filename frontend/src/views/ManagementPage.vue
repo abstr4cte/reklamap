@@ -1789,7 +1789,7 @@ onBeforeUnmount(() => {
           class="w-full"
         >
           <template #month-year="slotProps">
-            {{ polishMonths[slotProps.month] }} {{ slotProps.year }}
+            {{ polishMonths[slotProps?.month || 0] }} {{ slotProps?.year }}
           </template>
           <template #trigger>
             <div class="date-picker-wrapper">
