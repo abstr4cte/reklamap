@@ -74,7 +74,6 @@ const handleSubmit = async () => {
       emit('close')
     }, 4000)
   } catch (error: any) {
-    console.error('Error saving search alert:', error)
     emailError.value = error.message || 'Wystąpił błąd. Spróbuj ponownie później.'
   } finally {
     isSubmitting.value = false

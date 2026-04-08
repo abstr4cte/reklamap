@@ -32,7 +32,7 @@ const loadFavorites = async () => {
     const data = await api.getAdvertisementsByIds(prefStore.favorites)
     favoriteAds.value = data.filter(ad => ad.is_active)
   } catch (error) {
-    console.error('Error loading favorites:', error)
+    // Silently fail
   } finally {
     isLoading.value = false
   }

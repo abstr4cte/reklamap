@@ -13,7 +13,7 @@ export const useStreetViewStore = defineStore('streetView', () => {
         availabilityCache.value = JSON.parse(cached)
       }
     } catch (e) {
-      console.warn('Failed to load Street View cache from sessionStorage', e)
+      // Silently fail
     }
   }
 
@@ -21,7 +21,7 @@ export const useStreetViewStore = defineStore('streetView', () => {
     try {
       sessionStorage.setItem('street_view_availability', JSON.stringify(availabilityCache.value))
     } catch (e) {
-      console.warn('Failed to save Street View cache to sessionStorage', e)
+      // Silently fail
     }
   }
 

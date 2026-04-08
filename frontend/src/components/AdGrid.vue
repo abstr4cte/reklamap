@@ -142,7 +142,7 @@ const handleSeeAllClick = () => {
     const filtersToSave = { ...filters.value }
     localStorage.setItem('reklamap_last_search', JSON.stringify(filtersToSave))
   } catch (error) {
-    console.error('Error saving search state:', error)
+    // Silently fail
   }
 }
 

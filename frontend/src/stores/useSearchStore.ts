@@ -112,7 +112,7 @@ export const useSearchStore = defineStore('search', () => {
       const data = await api.getAdvertisements()
       listings.value = data || []
     } catch (error) {
-      console.error('Error fetching listings:', error)
+      // Silently fail
     } finally {
       isLoading.value = false
     }
@@ -128,7 +128,7 @@ export const useSearchStore = defineStore('search', () => {
       
       localStorage.setItem('reklamap_last_search', JSON.stringify(filtersToSave))
     } catch (e) {
-      console.error('Error saving filters to localStorage:', e)
+      // Silently fail
     }
   }
 
@@ -144,7 +144,7 @@ export const useSearchStore = defineStore('search', () => {
       localStorage.removeItem('reklamap_last_search')
       localStorage.removeItem('user_initiated_search')
     } catch (e) {
-      console.error('Error clearing filters from localStorage:', e)
+      // Silently fail
     }
   }
 

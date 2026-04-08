@@ -12,8 +12,6 @@ declare global {
 export const trackEvent = (eventName: string, params: Record<string, any> = {}) => {
     if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', eventName, params);
-    } else {
-        console.warn(`GA4: Cannot track event "${eventName}". gtag not found.`);
     }
 };
 

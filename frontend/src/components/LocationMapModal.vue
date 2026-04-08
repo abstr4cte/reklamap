@@ -148,7 +148,7 @@ const initModalMap = async () => {
         modalSearchQuery.value = data.display_name
       }
     } catch (error) {
-      console.error('Error reverse geocoding:', error)
+      // Silently fail
     }
   })
 
@@ -171,7 +171,7 @@ const initModalMap = async () => {
         modalSearchQuery.value = data.display_name
       }
     } catch (error) {
-      console.error('Error reverse geocoding:', error)
+      // Silently fail
     }
   })
 }
@@ -200,7 +200,7 @@ const searchModalLocation = () => {
       modalSearchSuggestions.value = filteredData
       showModalSearchSuggestions.value = filteredData.length > 0
     } catch (error) {
-      console.error('Error searching location:', error)
+      // Silently fail
     }
   }, 500)
 }
@@ -257,7 +257,6 @@ const confirmModalLocation = async () => {
       region: address.state || ''
     })
   } catch (error) {
-    console.error('Error reverse geocoding:', error)
     // Fallback - emit without full address details
     emit('confirm', {
       latitude: position.lat,

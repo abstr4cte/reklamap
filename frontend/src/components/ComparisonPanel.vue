@@ -34,7 +34,7 @@ const loadComparison = async () => {
     const data = await api.getAdvertisementsByIds(prefStore.comparison)
     comparisonAds.value = data.filter(ad => ad.is_active)
   } catch (error) {
-    console.error('Error loading comparison:', error)
+    // Silently fail
   } finally {
     isLoading.value = false
   }

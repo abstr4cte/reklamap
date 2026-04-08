@@ -12,7 +12,6 @@ export const nsfwService = {
             try {
                 model = await nsfwjs.load()
             } catch (error) {
-                console.error('Failed to load NSFW model:', error)
                 throw error
             }
         }
@@ -76,8 +75,7 @@ export const nsfwService = {
                 img.src = objectUrl
             })
         } catch (error) {
-            console.error('NSFW check failed:', error)
-            // Fail open or closed? Let's fail open (allow image) but log error to avoid blocking user if model fails
+            // Fail open or closed? Let's fail open (allow image) to avoid blocking user if model fails
             // Or fail closed (block image)? Safety first -> maybe return true (safe) but warn?
             // Let's return safe=true if model fails to load, to not break the app.
             return { isSafe: true, probability: 0, className: 'Error' }

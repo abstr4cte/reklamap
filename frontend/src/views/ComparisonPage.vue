@@ -80,7 +80,7 @@ const downloadPdf = async () => {
     link.click()
     document.body.removeChild(link)
   } catch (error) {
-    console.error('Error downloading PDF:', error)
+    // Silently fail
   } finally {
     isGeneratingPdf.value = false
   }
@@ -100,7 +100,7 @@ const loadComparison = async () => {
     // Ustaw domyślną jednostkę na 'original'
     priceUnit.value = 'original'
   } catch (error) {
-    console.error('Error loading comparison:', error)
+    // Silently fail
   } finally {
     isLoading.value = false
   }

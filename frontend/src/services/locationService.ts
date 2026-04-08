@@ -143,7 +143,6 @@ export async function searchLocations(query: string): Promise<LocationResult[]> 
             })
             .filter((loc: LocationResult) => loc.name) // Filter out invalid results
     } catch (error) {
-        console.error('Error searching locations:', error)
         return []
     }
 }

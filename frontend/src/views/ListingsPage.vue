@@ -401,13 +401,6 @@ const applyFilters = () => {
   // Wyczyść mapBounds przy aplikowaniu filtrów, aby mapa mogła przybliżyć się do miasta/regionu
   const filtersWithoutMapBounds = { ...tempFilters.value, mapBounds: null }
   
-  console.log('🔍 ListingsPage.applyFilters() - filtersWithoutMapBounds:', {
-    type: filtersWithoutMapBounds.type,
-    city: filtersWithoutMapBounds.city,
-    pathParamsType: pathParamsFilters.value.type,
-    pathParamsCity: pathParamsFilters.value.city
-  })
-  
   // WAŻNE: Jeśli type lub city się zmieniły względem path params - przekieruj na nowy path
   const typeChanged = filtersWithoutMapBounds.type && filtersWithoutMapBounds.type !== pathParamsFilters.value.type
   const cityChanged = filtersWithoutMapBounds.city && filtersWithoutMapBounds.city !== pathParamsFilters.value.city
@@ -439,8 +432,6 @@ const applyFilters = () => {
     const queryString = new URLSearchParams(queryParams).toString()
     const fullPath = queryString ? newPath + '?' + queryString : newPath
     
-    console.log('🔍 ListingsPage.applyFilters() - Przekierowuję na:', fullPath)
-    
     // Zapisz filtry do localStorage PRZED przekierowaniem
     try {
       const filtersToSave = { ...filtersWithoutMapBounds }
@@ -451,7 +442,7 @@ const applyFilters = () => {
       // Ustaw flagę user_initiated_search
       localStorage.setItem('user_initiated_search', 'true')
     } catch (error) {
-      console.error('Error saving filters to localStorage:', error)
+      // Silently fail
     }
     
     // Przekieruj na nowy path
@@ -549,23 +540,14 @@ const applyFilters = () => {
       filtersToSave._priceDisplayUnit = filtersToSave.priceUnit
     }
     
-    console.log('🔍 ListingsPage.applyFilters() - Zapisuję do localStorage:', {
-      hasManualFilters,
-      pathParamsType: pathParamsFilters.value.type,
-      filtersToSave
-    })
-    console.log('🔍 ListingsPage.applyFilters() - filtersToSave.type:', filtersToSave.type, typeof filtersToSave.type)
-    
     if (Object.keys(filtersToSave).length > 0) {
-      console.log('🔍 ListingsPage.applyFilters() - PRZED zapisem - filtersToSave.type:', filtersToSave.type)
       localStorage.setItem('reklamap_last_search', JSON.stringify(filtersToSave))
-      console.log('🔍 ListingsPage.applyFilters() - PO zapisie - sprawdzam:', JSON.parse(localStorage.getItem('reklamap_last_search')!))
     } else {
       // Jeśli nie ma żadnych filtrów, wyczyść localStorage
       localStorage.removeItem('reklamap_last_search')
     }
   } catch (error) {
-    console.error('Error saving filters to localStorage:', error)
+    // Silently fail
   }
 }
 const resetFilters = () => { 
@@ -1059,7 +1041,6 @@ onMounted(async () => {
     const queryString = new URLSearchParams(otherQuery as any).toString()
     const fullPath = queryString ? newPath + '?' + queryString : newPath
     
-    console.log('🔍 ListingsPage.onMounted() - Przekierowuję z query params na path params:', fullPath)
     router.push(fullPath)
     return // Przerwij dalsze wykonanie - po przekierowaniu onMounted uruchomi się ponownie
   }
@@ -1080,7 +1061,7 @@ onMounted(async () => {
         }
       }
     } catch (error) {
-      console.error('Error loading search from localStorage:', error)
+      // Silently fail
     }
   }
   // Jeśli NIE ma flagi user_initiated_search → user wszedł przez kategorię → NIE ładuj z localStorage

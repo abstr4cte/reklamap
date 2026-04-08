@@ -65,7 +65,6 @@ const submitContactForm = async () => {
       contactSuccess.value = false
     }, 5000)
   } catch (error: any) {
-    console.error('Contact form error:', error)
     const message = error.response?.data?.message || 'Nie udało się wysłać wiadomości. Spróbuj ponownie.'
     contactErrors.value.submit = message
     emit('error', message)

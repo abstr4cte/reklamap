@@ -86,20 +86,17 @@ const colors = [
 const fetchDailyStats = async (adIds: string[]) => {
   if (adIds.length === 0) return
   
-  console.log('[EngagementChart] Fetching daily stats for:', adIds)
   isLoading.value = true
   try {
     const stats = await api.getMultipleDailyStats(adIds, 30)
-    console.log('[EngagementChart] Received stats from API:', stats)
     
     const newCache = { ...dailyStatsCache.value }
     stats.forEach((stat: any) => {
       newCache[stat.advertisement_id] = stat
     })
     dailyStatsCache.value = newCache
-    console.log('[EngagementChart] Updated cache:', dailyStatsCache.value)
   } catch (error) {
-    console.error('Failed to fetch daily stats:', error)
+    // Silently fail - stats are optional
   } finally {
     isLoading.value = false
   }
@@ -108,7 +105,6 @@ const fetchDailyStats = async (adIds: string[]) => {
 // Pobierz dane dzienne dla wybranego ogłoszenia
 const getDailyData = (adId: string, metric: 'clicks' | 'views') => {
   const cached = dailyStatsCache.value[adId]
-  // console.log(`[EngagementChart] Getting data for ${adId}, cached:`, cached)
   const start = startDate.value || new Date()
   const end = endDate.value || new Date()
   const today = new Date()

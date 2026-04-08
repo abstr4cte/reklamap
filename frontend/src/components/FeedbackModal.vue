@@ -137,7 +137,6 @@ const handleSubmit = async () => {
   } catch (err) {
     isSubmitting.value = false
     error.value = err instanceof Error ? err.message : 'Błąd podczas wysyłania feedback'
-    console.error('Error submitting feedback:', err)
   }
 }
 

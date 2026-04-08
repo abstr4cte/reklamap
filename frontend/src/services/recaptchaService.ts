@@ -12,7 +12,6 @@ const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
  */
 export async function getRecaptchaToken(action: string): Promise<string> {
   if (!RECAPTCHA_SITE_KEY) {
-    console.warn('reCAPTCHA site key not configured')
     return ''
   }
 
@@ -27,7 +26,6 @@ export async function getRecaptchaToken(action: string): Promise<string> {
     })
     return token
   } catch (error) {
-    console.error('Failed to get reCAPTCHA token:', error)
     return ''
   }
 }

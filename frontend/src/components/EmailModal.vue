@@ -67,7 +67,6 @@ const handleSubmit = async () => {
       handleClose()
     }, 3000)
   } catch (error) {
-    console.error('Error sending management link:', error)
     errorMessage.value = 'Wystąpił błąd podczas wysyłania linku. Spróbuj ponownie.'
   } finally {
     isSubmitting.value = false

@@ -403,17 +403,14 @@ onMounted(() => {
           const queryParams = filtersToQueryParams(lastSearch as any)
           
           nextTick(() => {
-            router.replace({ query: queryParams }).catch(err => {
-              // Ignore NavigationDuplicated error
-              if (err.name !== 'NavigationDuplicated') {
-                  console.error(err)
-              }
+            router.replace({ query: queryParams }).catch(() => {
+              // Ignore NavigationDuplicated error silently
             })
           })
         }
       }
     } catch (error) {
-      console.error('Error loading search from localStorage:', error)
+      // Silently fail
     }
   } else {
     // Wejście bez query params i bez flagi wyszukiwania. Oczyść ewentualne resztki w Pinia.
@@ -434,8 +431,8 @@ onMounted(() => {
   }
 })
 
-const handleSearchAlertSubmit = (email: string) => {
-  console.log('Saving alert on Home for:', email, filters.value)
+const handleSearchAlertSubmit = () => {
+  // Alert saved
 }
 
 // Wyczyść flagę user_initiated_search gdy użytkownik wchodzi z linku kategorii/miasta

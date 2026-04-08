@@ -32,7 +32,6 @@ const loadBlogPost = async () => {
     const response = await api.get(`/blog/${slug}`)
     post.value = response
   } catch (error) {
-    console.error('Error loading blog post:', error)
     notFound.value = true
   } finally {
     isLoading.value = false

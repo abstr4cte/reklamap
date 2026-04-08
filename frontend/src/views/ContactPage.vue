@@ -100,7 +100,6 @@ const handleSubmit = async () => {
   } catch (err) {
     isSubmitting.value = false
     globalError.value = err instanceof Error ? err.message : 'Błąd podczas wysyłania wiadomości'
-    console.error('Error submitting contact form:', err)
   }
 }
 </script>

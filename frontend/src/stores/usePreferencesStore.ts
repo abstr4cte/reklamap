@@ -45,14 +45,12 @@ export const usePreferencesStore = defineStore('preferences', () => {
           getToast()('Dodano do ulubionych', 'success')
         }
       } catch (error) {
-        console.error('Error checking advertisement:', error)
         getToast()('Błąd podczas dodawania do ulubionych', 'error')
       }
     }
   }
 
   const toggleComparison = async (id: string): Promise<{ success: boolean; error?: string }> => {
-    console.log('toggleComparison called, id:', id, 'current comparison:', comparison.value)
     const idx = comparison.value.indexOf(id)
     if (idx > -1) {
       comparison.value.splice(idx, 1)
@@ -60,7 +58,6 @@ export const usePreferencesStore = defineStore('preferences', () => {
       return { success: true }
     } else {
       if (comparison.value.length >= 5) {
-        console.log('MAX 5 ERROR - showing toast')
         const errorMsg = 'Możesz porównać maksymalnie 5 ogłoszeń'
         getToast()(errorMsg, 'error')
         return { success: false, error: errorMsg }
@@ -86,7 +83,6 @@ export const usePreferencesStore = defineStore('preferences', () => {
           return { success: false, error: errorMsg }
         }
       } catch (error) {
-         console.error(error)
          const errorMsg = 'Błąd podczas weryfikacji ogłoszenia'
          getToast()(errorMsg, 'error')
          return { success: false, error: errorMsg }
@@ -120,7 +116,7 @@ export const usePreferencesStore = defineStore('preferences', () => {
         }
       }
     } catch (error) {
-      console.error('Error syncing stores:', error)
+      // Silently fail
     }
   }
 

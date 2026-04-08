@@ -133,8 +133,8 @@ const searchAddress = (query: string) => {
       addressSuggestions.value = filteredData
       showAddressSuggestions.value = filteredData.length > 0
     } catch (error) {
-      console.error('Error searching address:', error)
-    } finally {
+      // Silently fail
+    } finally{
       isResolvingAddress.value = false
     }
   }, 500)
@@ -155,7 +155,7 @@ const resolveAddressFromInput = async (query: string) => {
       selectAddress(suggestion)
     }
   } catch (error) {
-    console.error('Error resolving address:', error)
+    // Silently fail
   } finally {
     isResolvingAddress.value = false
   }
@@ -268,7 +268,6 @@ const loadAdvertisements = async () => {
                 return { ...ad, views_30d: 0, phone_clicks_30d: 0, email_clicks_30d: 0 }
               })
             } catch (error) {
-              console.error('Error loading daily stats:', error)
               // Set default values if stats fail to load
               listings.value = listings.value.map(ad => ({
                 ...ad,
@@ -285,7 +284,6 @@ const loadAdvertisements = async () => {
           setManagementToken(null) // Wyczyść token z sessionStorage
         }
       } catch (error) {
-        console.error('Error validating token:', error)
         // W przypadku błędu walidacji
         hasToken.value = false
         isTokenInvalid.value = true
@@ -300,7 +298,7 @@ const loadAdvertisements = async () => {
       // Nie pobieramy ogłoszeń, gdy nie ma tokena
     }
   } catch (error) {
-    console.error('Error loading listings:', error)
+    // Silently fail
   } finally {
     isLoading.value = false
   }
@@ -312,7 +310,6 @@ const uploadImage = async (file: File): Promise<string> => {
   try {
     return await api.storage.upload(file)
   } catch (error) {
-    console.error('Error uploading image:', error)
     throw error
   }
 }
@@ -331,7 +328,6 @@ const updateStatus = async (id: string, newStatus: string, availableFrom?: Date 
     }
     toast.value?.add('Status został zaktualizowany', 'success');
   } catch (error: any) {
-    console.error('Error updating status:', error);
     if (error.response && error.response.data && error.response.data.errors) {
       const serverErrors = error.response.data.errors;
       let toastMessage = 'Błąd walidacji:';
@@ -356,7 +352,6 @@ const updateActiveStatus = async (id: string, isActive: boolean) => {
     ad.is_active = isActive
     toast.value?.add(isActive ? 'Ogłoszenie zostało aktywowane' : 'Ogłoszenie zostało dezaktywowane', 'success')
   } catch (error) {
-    console.error('Error updating active status:', error)
     toast.value?.add('Błąd podczas zmiany stanu aktywności', 'error')
   }
 }
@@ -369,7 +364,6 @@ const toggleActive = async (id: string) => {
     const newActiveState = !ad.is_active
     await updateActiveStatus(id, newActiveState)
   } catch (error) {
-    console.error('Error toggling active state:', error)
     toast.value?.add('Błąd podczas zmiany stanu aktywności', 'error')
   }
 }
@@ -520,7 +514,6 @@ const saveChanges = async (id: string) => {
     document.body.scrollTop = 0
     toast.value?.add('Zmiany zostały zapisane', 'success')
   } catch (error) {
-    console.error('Error saving changes:', error)
     toast.value?.add('Błąd podczas zapisywania zmian', 'error')
   } finally {
     isSaving.value = false
@@ -546,7 +539,6 @@ const handleConfirmDelete = async () => {
     adToDelete.value = ''
     toast.value?.add('Ogłoszenie zostało usunięte', 'success')
   } catch (error) {
-    console.error('Error deleting advertisement:', error)
     toast.value?.add('Błąd podczas usuwania ogłoszenia', 'error')
   }
 }
@@ -707,7 +699,7 @@ const processFiles = async (files: FileList | null) => {
         continue
       }
     } catch (error) {
-      console.error('NSFW check error:', error)
+      // Silently fail - continue with upload
     }
 
     // Read file
@@ -1000,7 +992,6 @@ const handleSubmit = async () => {
       router.push('/')
     }, 5000)
   } catch (error) {
-    console.error('Error sending management link:', error)
     errorMessage.value = 'Wystąpił błąd podczas wysyłania linku. Spróbuj ponownie.'
   } finally {
     isSubmitting.value = false

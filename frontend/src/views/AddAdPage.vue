@@ -263,7 +263,7 @@ const resolveAddressFromInput = async (query: string) => {
       displayToast('Nie znaleziono adresu. Sprawdź pisownię lub zaznacz na mapie.')
     }
   } catch (error) {
-    console.error('Error resolving address:', error)
+    // Silently fail
   } finally {
     isResolvingAddress.value = false
   }
@@ -632,7 +632,6 @@ const reverseGeocode = async (lat: number, lng: number): Promise<boolean> => {
     }
     return false
   } catch (error) {
-    console.error('Error reverse geocoding:', error)
     return false
   }
 }
@@ -664,7 +663,7 @@ const searchAddress = (query: string) => {
       addressSuggestions.value = filteredData
       showAddressSuggestions.value = filteredData.length > 0
     } catch (error) {
-      console.error('Error searching address:', error)
+      // Silently fail
     } finally {
       isResolvingAddress.value = false
     }
@@ -786,7 +785,7 @@ const processFiles = async (files: FileList | null | undefined) => {
         continue
       }
     } catch (error) {
-      console.error('NSFW check error:', error)
+      // Silently fail - continue with upload
     }
 
     // Wczytaj podgląd zdjęcia
@@ -1014,7 +1013,6 @@ const nextStep = () => {
 }
 
 const validateField = async (field: 'title' | 'description') => {
-  console.log(`Validating field: ${field}`);
   const value = formData.value[field];
   if (!value) return; // Don't validate empty fields on blur
 
@@ -1044,22 +1042,17 @@ const prevStep = () => {
 
 const uploadImages = async (): Promise<string[]> => {
   if (formData.value.imageFiles.length === 0) {
-    console.log('No images to upload')
     return []
   }
 
-  console.log(`Uploading ${formData.value.imageFiles.length} images...`)
   const failedErrors: string[] = []
   
-  const uploadPromises = formData.value.imageFiles.map(async (item, index) => {
+  const uploadPromises = formData.value.imageFiles.map(async (item) => {
     try {
-      console.log(`Uploading image ${index + 1}/${formData.value.imageFiles.length}: ${item.file.name} (type: ${item.file.type}, size: ${item.file.size})`)
       const url = await api.storage.upload(item.file)
-      console.log(`Image ${index + 1} uploaded successfully:`, url)
       return url
     } catch (error: any) {
       const msg = error?.message || 'Nieznany błąd'
-      console.error(`Error uploading image ${index + 1} (${item.file.name}):`, msg)
       failedErrors.push(`"${item.file.name}": ${msg}`)
       return ''
     }
@@ -1067,8 +1060,6 @@ const uploadImages = async (): Promise<string[]> => {
 
   const results = await Promise.all(uploadPromises)
   const validUrls = results.filter(url => url !== '')
-  console.log(`Upload complete. ${validUrls.length}/${results.length} images uploaded successfully`)
-  console.log('Image URLs:', validUrls)
 
   if (failedErrors.length > 0) {
     // Pokaż szczegółowy błąd dla pojedynczego zdjęcia
@@ -1077,8 +1068,6 @@ const uploadImages = async (): Promise<string[]> => {
     } else {
       // Dla wielu zdjęć pokaż ogólny komunikat
       toast.value?.add(`Nie udało się przesłać ${failedErrors.length} zdjęć. Sprawdź format pliku (JPG, PNG, HEIC).`, 'error')
-      // Loguj szczegóły do konsoli
-      console.error('Failed uploads:', failedErrors)
     }
   }
 
@@ -1095,13 +1084,8 @@ const handleSubmit = async () => {
   try {
     isSubmitting.value = true
 
-    console.log('Starting image upload...')
     const imageUrls = await uploadImages()
-    console.log('Image upload completed. URLs:', imageUrls)
     const mainImageUrl = imageUrls.length > 0 ? imageUrls[0] : ''
-    console.log('Main image URL:', mainImageUrl)
-
-    console.log('Creating advertisement with images:', imageUrls)
     
     // Konwertuj wymiary LCD z mm na metry
     let width = formData.value.width || 0
@@ -1203,11 +1187,6 @@ const handleSubmit = async () => {
     }
   } catch (error: any) {
     isSubmitting.value = false;
-    console.error('Error submitting form:', error);
-    console.log('Full error object:', JSON.stringify(error, null, 2));
-    if (error.response) {
-      console.log('Server response data:', JSON.stringify(error.response, null, 2));
-    }
 
     if (error.response && error.response.data && error.response.data.errors) {
       const fieldTranslations: Record<string, string> = {

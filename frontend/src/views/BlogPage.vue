@@ -39,12 +39,9 @@ const categories = [
 const loadBlogPosts = async () => {
   try {
     isLoading.value = true
-    console.log('Loading blog posts from API...')
     const response = await api.get('/blog')
-    console.log('Blog posts response:', response)
     blogPosts.value = response
   } catch (error) {
-    console.error('Error loading blog posts:', error)
     blogPosts.value = []
   } finally {
     isLoading.value = false
@@ -124,7 +121,6 @@ const handleNewsletterSubmit = async () => {
     }, 5000)
   } catch (err) {
     newsletterError.value = err instanceof Error ? err.message : 'Błąd podczas zapisywania do newslettera'
-    console.error('Error subscribing to newsletter:', err)
   } finally {
     isSubmittingNewsletter.value = false
   }

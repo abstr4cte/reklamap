@@ -299,7 +299,6 @@ const checkStreetViewAvailability = (): Promise<boolean> => {
         resolve(available)
       })
     } catch (err) {
-      console.error('Failed to load Google Maps for Street View:', err)
       resolve(false)
     }
   })
@@ -397,14 +396,12 @@ const handleDownloadPDF = async () => {
 }
 
 const handlePrint = async () => {
-  console.log("handlePrint triggered");
   if (!ad.value) return
   isPrintingPDF.value = true
   try {
     const response = await axios.get(`/api/listings/${ad.value.id}/pdf`, { responseType: 'blob' })
     const blob = new Blob([response.data], { type: 'application/pdf' })
     const url = window.URL.createObjectURL(blob)
-    console.log("PDF fetched successfully, blob URL: ", url);
     
     // Always use iframe approach for printing to avoid popup blockers
     const iframe = document.createElement('iframe')
@@ -417,7 +414,6 @@ const handlePrint = async () => {
     document.body.appendChild(iframe)
     
     iframe.addEventListener('load', () => {
-      console.log("Iframe loaded, triggering print");
       iframe.contentWindow?.focus()
       iframe.contentWindow?.print()
       // Cleanup after a delay
@@ -429,7 +425,6 @@ const handlePrint = async () => {
       }, 5000)
     })
   } catch (e) {
-    console.error("Error generating PDF to print:", e);
     toast.value?.add('Błąd generowania PDF do druku', 'error')
   } finally {
     isPrintingPDF.value = false
@@ -464,7 +459,7 @@ const loadAd = async () => {
       const statsResponse = await axios.get(`/api/listings/${adId}/daily-stats`)
       dailyStatsViews.value = statsResponse.data.summary?.total_views || 0
     } catch (err) {
-      console.warn('Failed to fetch daily stats:', err)
+      // Silently fail
     }
 
     // Fetch similar (optional, don't break page if fails)
@@ -472,7 +467,7 @@ const loadAd = async () => {
       const similarResponse = await axios.get(`/api/listings/${adId}/similar`)
       similarAds.value = similarResponse.data
     } catch (err) {
-      console.warn('Failed to fetch similar ads:', err)
+      // Silently fail
     }
 
     isLoading.value = false

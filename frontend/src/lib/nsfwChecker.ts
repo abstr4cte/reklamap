@@ -40,7 +40,6 @@ export const checkImage = async (file: File): Promise<{ isSafe: boolean; probabi
             img.src = objectUrl
         })
     } catch (error) {
-        console.error('Error checking image:', error)
         // Default to safe if check fails to avoid blocking user
         return { isSafe: true, probability: 0, className: 'Error' }
     }
