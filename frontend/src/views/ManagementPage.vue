@@ -13,6 +13,10 @@ import LocationMapModal from '../components/LocationMapModal.vue'
 import { nsfwService } from '../services/nsfwService'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+
+const polishMonths = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień']
+const polishDays = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'N']
+
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import { useSearchStore } from '../stores/useSearchStore'
@@ -1777,8 +1781,12 @@ onBeforeUnmount(() => {
           auto-apply
           :min-date="minDate"
           :clearable="false"
+          :day-names="polishDays"
           class="w-full"
         >
+          <template #month-year="slotProps">
+            {{ polishMonths[slotProps.month] }} {{ slotProps.year }}
+          </template>
           <template #trigger>
             <div class="date-picker-wrapper">
               <input

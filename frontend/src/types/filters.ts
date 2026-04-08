@@ -58,9 +58,6 @@ export interface FilterParams {
   // Beacons/Backlight checkboxes
   hasLightingTypeBanner: boolean
   hasLightingTypeBillboard: boolean
-  // OTS
-  estimatedDailyViewsFrom: number | null
-  estimatedDailyViewsTo: number | null
   locationLabel: string
   street: string
   mapBounds: MapBounds | null
@@ -116,8 +113,6 @@ export const DEFAULT_FILTERS: FilterParams = {
   ambientLightControl: false,
   hasLightingTypeBanner: false,
   hasLightingTypeBillboard: false,
-  estimatedDailyViewsFrom: null,
-  estimatedDailyViewsTo: null,
   locationLabel: '',
   mapBounds: null,
 }

@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 import ToastNotification from '../components/ToastNotification.vue'
 import LocationMapModal from '../components/LocationMapModal.vue'
-import { defineAsyncComponent } from 'vue'
 import type * as LType from 'leaflet'
 import { slugify } from '../utils/slugify'
 import { analytics } from '../utils/analytics'
@@ -12,7 +11,10 @@ import { useSearchStore, defaultPriceUnitsByType, variantLabels } from '../store
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import { filterWaterFeatures } from '../services/locationService'
 
-const VueDatePicker = defineAsyncComponent(() => import('@vuepic/vue-datepicker').then(m => m.VueDatePicker))
+const polishMonths = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień']
+const polishDays = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'N']
+
+import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 let L: typeof LType | null = null
@@ -1967,8 +1969,12 @@ onMounted(() => {
               auto-apply
               :min-date="minDate"
               :clearable="false"
+              :day-names="polishDays"
               class="w-full"
             >
+              <template #month-year="slotProps">
+                {{ polishMonths[slotProps.month] }} {{ slotProps.year }}
+              </template>
               <template #trigger>
                 <div class="date-picker-wrapper">
                   <input

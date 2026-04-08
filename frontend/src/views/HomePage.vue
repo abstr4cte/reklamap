@@ -421,8 +421,8 @@ onMounted(() => {
   // Logic for showing the search alert modal after 20 seconds
   if (!hasShownAlertModal.value) {
     alertModalTimer.value = setTimeout(() => {
-      // Show only if user has active filters, hasn't seen it yet, AND is still on HomePage
-      if (!hasShownAlertModal.value && activeFiltersCount.value > 0 && router.currentRoute.value.path === '/') {
+      // Show only if user has type selected, hasn't seen it yet, AND is still on HomePage
+      if (!hasShownAlertModal.value && filters.value.type && router.currentRoute.value.path === '/') {
         showSearchAlertModal.value = true
         hasShownAlertModal.value = true
         localStorage.setItem('search_alert_shown', 'true')

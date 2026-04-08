@@ -1082,8 +1082,9 @@ onMounted(async () => {
   // 5. Proactive search alert modal (consistent with HomePage)
   if (!hasShownAlertModal.value) {
     alertModalTimer.value = setTimeout(() => {
-      // Show only if user has active filters, is on search results, hasn't seen it yet, AND is still on ListingsPage
-      if (!hasShownAlertModal.value && totalFiltersCount.value > 0 && router.currentRoute.value.path.includes('/powierzchnie-reklamowe')) {
+      // Show only if user has type selected, hasn't seen it yet, AND is still on ListingsPage
+      const hasType = !!(filters.value.type || pathParamsFilters.value.type)
+      if (!hasShownAlertModal.value && hasType && router.currentRoute.value.path.includes('/powierzchnie-reklamowe')) {
         showSearchAlertModal.value = true
         hasShownAlertModal.value = true
         localStorage.setItem('search_alert_shown', 'true')
@@ -1690,27 +1691,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             </select>
           </div>
 
-          <!-- OTS Range (estimatedDailyViews) -->
-          <div v-if="tempFilters && ['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem'].includes(tempFilters.type)" class="filter-group">
-            <label class="filter-label">Zasięg dzienny (OTS)</label>
-            <div class="range-inputs">
-              <input 
-                :value="tempFilters?.estimatedDailyViewsFrom"
-                @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, false); tempFilters.estimatedDailyViewsFrom = val ? parseInt(val) : null } }"
-                type="text" 
-                placeholder="Od"
-                class="filter-input"
-              />
-              <span>-</span>
-              <input 
-                :value="tempFilters?.estimatedDailyViewsTo"
-                @input="(e) => { if (tempFilters) { const val = handleNumberInput((e.target as HTMLInputElement).value, false); tempFilters.estimatedDailyViewsTo = val ? parseInt(val) : null } }"
-                type="text" 
-                placeholder="Do"
-                class="filter-input"
-              />
-            </div>
-          </div>
+
 
           <!-- Kierunek ruchu (all outdoor types) -->
           <div v-if="tempFilters && ['billboard', 'banner', 'wall', 'totem'].includes(tempFilters.type)" class="filter-group">

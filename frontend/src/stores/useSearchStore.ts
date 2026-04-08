@@ -93,7 +93,7 @@ export const useSearchStore = defineStore('search', () => {
   const isLoading = ref(false)
   const filters = ref<FilterParams>({ ...DEFAULT_FILTERS })
   const sortBy = ref('newest')
-  const priceDisplay = ref<string>('day')
+  const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'>('day')
   const viewMode = ref<'grid' | 'list'>('grid')
   const currentPage = ref(1)
   const itemsPerPage = ref(24)
@@ -456,6 +456,11 @@ export const useSearchStore = defineStore('search', () => {
     return labels[roadClass] || roadClass
   }
 
+  const getTrafficIntensityLabel = (intensity: string): string => {
+    const labels: Record<string, string> = { low: 'Niskie', medium: 'Średnie', high: 'Wysokie' }
+    return labels[intensity] || intensity
+  }
+
   const formatTrafficType = (types: string[] | undefined) => {
     if (!types || !Array.isArray(types) || types.length === 0) return '—'
     return types.map(t => t === 'pedestrian' ? 'Pieszy' : 'Samochodowy').join(', ')
@@ -572,7 +577,8 @@ export const useSearchStore = defineStore('search', () => {
       roadClass: 'road_class' as any,
       environment: 'environment' as any,
       transportScope: 'transport_scope' as any,
-      mobileExposureMode: 'mobile_exposure_mode' as any
+      mobileExposureMode: 'mobile_exposure_mode' as any,
+      operatingZone: 'operating_zone' as any
     }
 
     Object.entries(exactFilters).forEach(([filterKey, adKey]) => {
@@ -588,8 +594,7 @@ export const useSearchStore = defineStore('search', () => {
       pixelPitch: { key: 'pixel_pitch' as any, min: 'pixelPitchFrom', max: 'pixelPitchTo' },
       brightness: { key: 'brightness' as any, min: 'brightnessFrom', max: 'brightnessTo' },
       vehicleCount: { key: 'vehicle_count' as any, min: 'vehicleCountFrom', max: 'vehicleCountTo' },
-      campaignDuration: { key: 'campaign_duration' as any, min: 'campaignDurationFrom', max: 'campaignDurationTo' },
-      estimatedDailyViews: { key: 'estimated_daily_views' as any, min: 'estimatedDailyViewsFrom', max: 'estimatedDailyViewsTo' }
+      campaignDuration: { key: 'campaign_duration' as any, min: 'campaignDurationFrom', max: 'campaignDurationTo' }
     }
 
     Object.values(rangeFilters).forEach(config => {
@@ -625,8 +630,18 @@ export const useSearchStore = defineStore('search', () => {
     }
 
     Object.entries(flagFilters).forEach(([filterKey, adKey]) => {
+      // hasBacklight has special handling below
+      if (filterKey === 'hasBacklight') return
       if ((f as any)[filterKey]) filtered = filtered.filter(ad => (ad as any)[adKey] === true)
     })
+
+    if (f.hasBacklight) {
+      filtered = filtered.filter(ad => 
+        ad.has_backlight === true || 
+        (ad.lighting_type && ad.lighting_type !== '' && ad.lighting_type !== 'none') ||
+        (ad.lighting_type_banner && ad.lighting_type_banner !== '' && ad.lighting_type_banner !== 'none')
+      )
+    }
 
     // 6. Special Case: Surface (Calculated)
     if (f.surfaceFrom !== null || f.surfaceTo !== null) {
@@ -640,7 +655,45 @@ export const useSearchStore = defineStore('search', () => {
 
     // 7. Special Case: Multi-select status
     if (f.status && f.status.length > 0) {
-      filtered = filtered.filter(ad => f.status.includes(ad.display_status || ad.status))
+      filtered = filtered.filter(ad => {
+        const adStatus = ad.status === 'active' ? 'available' : ad.status
+        const filterStatus = f.status.map(s => s === 'active' ? 'available' : s)
+        return filterStatus.includes(ad.display_status || adStatus)
+      })
+    }
+
+    // 8. Special Case: Traffic Direction (Array in ad, string/array in filter)
+    if (f.trafficDirection) {
+      const dir = f.trafficDirection as unknown as string
+      if (dir && dir !== '') {
+        filtered = filtered.filter(ad => {
+          if (!ad.traffic_direction) return false
+          const dirs = Array.isArray(ad.traffic_direction) ? ad.traffic_direction : [ad.traffic_direction]
+          if (dir === 'both') return dirs.length >= 2 || dirs.includes('both')
+          return dirs.includes(dir) || dirs.includes('both')
+        })
+      }
+    }
+
+    // 9. Special Case: Traffic Type (Array in ad, string/array in filter)
+    if (f.trafficType) {
+      const type = f.trafficType as unknown as string
+      if (type && type !== '') {
+        filtered = filtered.filter(ad => {
+          if (!ad.traffic_type) return false
+          const types = Array.isArray(ad.traffic_type) ? ad.traffic_type : [ad.traffic_type]
+          if (type === 'both') return types.length >= 2 || types.includes('both')
+          return types.includes(type) || types.includes('both')
+        })
+      }
+    }
+
+    // 10. Special Case: Lighting Type (Multiple fields)
+    if (f.lightingType && f.lightingType !== '') {
+      filtered = filtered.filter(ad => {
+        const lt = ad.lighting_type || ad.lighting_type_banner
+        return lt === f.lightingType
+      })
     }
 
 
@@ -736,6 +789,7 @@ export const useSearchStore = defineStore('search', () => {
     return count
   })
 
+
   const computedPriceDisplayUnit = computed(() => {
     if (sortBy.value && sortBy.value.startsWith('price-')) {
       const sortUnit = sortBy.value.split('-')[1]
@@ -754,7 +808,7 @@ export const useSearchStore = defineStore('search', () => {
     fetchListings, setListings, applyFilters, resetFilters, setViewMode, setCurrentPage, syncFromUrl,
     sortedAndFilteredListings, paginatedListings, totalPages, activeFiltersCount, getPrice,
     computedPriceDisplayUnit,
-    getTypeLabel, getStatusLabel, getStatusColor, formatLocation, formatTrafficDirection, getPriceUnitLabel, getVariantLabel, getRoadClassLabel,
+    getTypeLabel, getStatusLabel, getStatusColor, formatLocation, formatTrafficDirection, getPriceUnitLabel, getVariantLabel, getRoadClassLabel, getTrafficIntensityLabel,
     formatTrafficType, formatEnvironment, formatTransportScope, formatMobileExposureMode, formatLightingType, formatLightingTypeBanner, formatOperatingZone,
     adTypes, priceUnitOptions, sortOptions, getPriceLabel, getAvailablePriceUnits,
     processLocationSuggestions, selectLocationSuggestion, pathParamsFilters

@@ -16,6 +16,10 @@ import type { Advertisement } from '../types'
 import { api } from '../services/api'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import { pl } from 'date-fns/locale'
+
+const polishMonths = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień']
+const polishDays = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'N']
 
 ChartJS.register(
   CategoryScale,
@@ -557,8 +561,12 @@ defineExpose({
               :enable-time-picker="false"
               auto-apply
               :clearable="false"
+              :day-names="polishDays"
               class="w-full"
             >
+              <template #month-year="slotProps">
+                {{ polishMonths[slotProps.month] }} {{ slotProps.year }}
+              </template>
               <template #trigger>
                 <div class="date-picker-wrapper">
                   <input
@@ -587,8 +595,12 @@ defineExpose({
               :enable-time-picker="false"
               auto-apply
               :clearable="false"
+              :day-names="polishDays"
               class="w-full"
             >
+              <template #month-year="slotProps">
+                {{ polishMonths[slotProps.month] }} {{ slotProps.year }}
+              </template>
               <template #trigger>
                 <div class="date-picker-wrapper">
                   <input

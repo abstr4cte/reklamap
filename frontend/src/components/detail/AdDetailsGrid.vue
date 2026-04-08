@@ -14,6 +14,25 @@ const surfaceArea = computed(() => {
   return (props.ad.width * props.ad.height).toFixed(2)
 })
 
+const pricePerSqm = computed(() => {
+  const p = searchStore.getPrice(props.ad, 'sqm')
+  return p !== Number.MAX_SAFE_INTEGER ? p.toFixed(2) : null
+})
+
+const showPricePerSqm = computed(() => {
+  return ['billboard', 'led_screen', 'banner', 'wall'].includes(props.ad.type) && pricePerSqm.value !== null
+})
+
+const formattedAvailableDate = computed(() => {
+  if (!props.ad.available_from) return null
+  const date = new Date(props.ad.available_from)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  date.setHours(0, 0, 0, 0)
+  if (date <= today) return null
+  return date.toLocaleDateString('pl-PL')
+})
+
 const showDimensions = computed(() => {
   // Wymiary są ukryte dla transport, mobile, other
   const hideDimensionsTypes = ['transport', 'mobile', 'other']
@@ -49,6 +68,8 @@ const getMobileExposureModeLabel = (mode: string) => searchStore.formatMobileExp
 const getLightingTypeLabel = (lt: string) => searchStore.formatLightingType(lt)
 const getOperatingZoneLabel = (zone: string) => searchStore.formatOperatingZone(zone)
 const getVariantLabel = (variant: string, type: string) => searchStore.getVariantLabel(variant, type)
+const getTrafficIntensityLabel = (intensity: string) => searchStore.getTrafficIntensityLabel(intensity)
+
 
 </script>
 
@@ -65,12 +86,17 @@ const getVariantLabel = (variant: string, type: string) => searchStore.getVarian
       <div class="spec-value">{{ surfaceArea }} m²</div>
     </div>
 
+    <div v-if="showPricePerSqm" class="spec-item">
+      <div class="spec-label">Cena za m²</div>
+      <div class="spec-value">{{ pricePerSqm }} PLN</div>
+    </div>
+
     <div v-if="ad.variant" class="spec-item">
       <div class="spec-label">Wariant</div>
       <div class="spec-value">{{ getVariantLabel(ad.variant, ad.type) }}</div>
     </div>
 
-    <div v-if="ad.estimated_daily_views" class="spec-item">
+    <div v-if="ad.estimated_daily_views !== null && ad.estimated_daily_views !== undefined" class="spec-item">
       <div class="spec-label">Zasięg dzienny (OTS)</div>
       <div class="spec-value spec-premium">{{ ad.estimated_daily_views.toLocaleString('pl-PL') }} osób</div>
     </div>
@@ -100,6 +126,16 @@ const getVariantLabel = (variant: string, type: string) => searchStore.getVarian
     <div v-if="ad.environment" class="spec-item">
       <div class="spec-label">Środowisko</div>
       <div class="spec-value">{{ getEnvironmentLabel(ad.environment) }}</div>
+    </div>
+
+    <div v-if="ad.traffic_intensity" class="spec-item">
+      <div class="spec-label">Natężenie ruchu</div>
+      <div class="spec-value">{{ getTrafficIntensityLabel(ad.traffic_intensity) }}</div>
+    </div>
+
+    <div v-if="ad.orientation" class="spec-item">
+      <div class="spec-label">Orientacja</div>
+      <div class="spec-value">{{ ad.orientation === 'horizontal' ? 'Poziom (H)' : 'Pion (V)' }}</div>
     </div>
 
     <div v-if="ad.type === 'billboard' && (ad as any).lighting_type" class="spec-item">
@@ -145,6 +181,11 @@ const getVariantLabel = (variant: string, type: string) => searchStore.getVarian
     <div v-if="ad.price_unit === 'campaign' && ad.campaign_duration" class="spec-item">
       <div class="spec-label">Czas trwania kampanii</div>
       <div class="spec-value">{{ ad.campaign_duration }} dni</div>
+    </div>
+
+    <div v-if="formattedAvailableDate" class="spec-item">
+      <div class="spec-label">Dostępne od</div>
+      <div class="spec-value">{{ formattedAvailableDate }}</div>
     </div>
 
     <div v-if="ad.type === 'transport' && ad.transport_scope" class="spec-item">

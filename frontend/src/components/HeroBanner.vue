@@ -828,29 +828,7 @@ onBeforeUnmount(() => {
                   </div>
                 </div>
 
-                <!-- OTS Range (estimatedDailyViews) -->
-                <div v-if="['billboard', 'citylight', 'led_screen', 'banner', 'wall', 'totem'].includes(filters.type)" class="search-row">
-                  <div class="input-group">
-                    <label class="input-label">Zasięg dzienny (OTS)</label>
-                    <div class="range-input">
-                      <input
-                        :value="filters.estimatedDailyViewsFrom"
-                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); filters.estimatedDailyViewsFrom = val ? parseInt(val) : null }"
-                        type="text"
-                        placeholder="Od"
-                        class="search-input"
-                      />
-                      <span class="separator">-</span>
-                      <input
-                        :value="filters.estimatedDailyViewsTo"
-                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); filters.estimatedDailyViewsTo = val ? parseInt(val) : null }"
-                        type="text"
-                        placeholder="Do"
-                        class="search-input"
-                      />
-                    </div>
-                  </div>
-                </div>
+
 
                 <!-- Traffic Direction (all outdoor types) -->
                 <div v-if="['billboard', 'banner', 'wall', 'totem'].includes(filters.type)" class="search-row">
@@ -1078,17 +1056,9 @@ onBeforeUnmount(() => {
                     <input type="checkbox" v-model="filters.graphicDesignHelp" />
                     <span>Pomoc przy projekcie graficznym</span>
                   </label>
-                  <label v-if="['citylight', 'totem'].includes(filters.type)" class="checkbox-label search-select" style="justify-content: flex-start;">
+                  <label v-if="['citylight', 'totem', 'billboard', 'banner', 'wall'].includes(filters.type)" class="checkbox-label search-select" style="justify-content: flex-start;">
                     <input type="checkbox" v-model="filters.hasBacklight" />
-                    <span>Podświetlenie</span>
-                  </label>
-                  <label v-if="['banner', 'wall'].includes(filters.type)" class="checkbox-label search-select" style="justify-content: flex-start;">
-                    <input type="checkbox" v-model="(filters as any).hasLightingTypeBanner" />
-                    <span>Podświetlenie</span>
-                  </label>
-                  <label v-if="filters.type === 'billboard'" class="checkbox-label search-select" style="justify-content: flex-start;">
-                    <input type="checkbox" v-model="(filters as any).hasLightingTypeBillboard" />
-                    <span>Podświetlenie</span>
+                    <span>Podświetlenie / Oświetlenie</span>
                   </label>
                   <label v-if="filters.type === 'led_screen'" class="checkbox-label search-select" style="justify-content: flex-start;">
                     <input type="checkbox" v-model="(filters as any).ambientLightControl" />
@@ -1127,7 +1097,7 @@ onBeforeUnmount(() => {
                           <span>Zarezerwowane</span>
                         </label>
                         <label class="checkbox-option">
-                          <input type="checkbox" value="soon" v-model="filters.status">
+                          <input type="checkbox" value="soon_available" v-model="filters.status">
                           <span>Wkrótce dostępne</span>
                         </label>
                       </div>
@@ -1143,8 +1113,9 @@ onBeforeUnmount(() => {
                     <label for="offer-type" class="input-label">Rodzaj oferty</label>
                     <select id="offer-type" v-model="filters.offerType" class="search-select">
                       <option value="">Wszystkie</option>
-                      <option value="owner">Właściciel</option>
-                      <option value="agency">Agencja</option>
+                      <option value="owner">Właściciel (bezpośrednio)</option>
+                      <option value="agency">Agencja reklamowa</option>
+                      <option value="sublease">Podnajmujący</option>
                     </select>
                   </div>
                   <div class="input-group">

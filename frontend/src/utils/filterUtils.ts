@@ -54,8 +54,6 @@ export interface FilterParams {
   selectedLocationCoords?: LocationCoords | null
   hasLightingTypeBanner?: boolean
   hasLightingTypeBillboard?: boolean
-  estimatedDailyViewsFrom?: number | null
-  estimatedDailyViewsTo?: number | null
   // Extended filters
   lightingType?: string
   dailyPassengersFrom?: number | null
@@ -171,13 +169,6 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.heightTo !== null && filters.heightTo !== undefined) {
     params.heightTo = filters.heightTo.toString()
   }
-  if (filters.estimatedDailyViewsFrom !== null && filters.estimatedDailyViewsFrom !== undefined) {
-    params.otsFrom = filters.estimatedDailyViewsFrom.toString()
-  }
-  if (filters.estimatedDailyViewsTo !== null && filters.estimatedDailyViewsTo !== undefined) {
-    params.otsTo = filters.estimatedDailyViewsTo.toString()
-  }
-
   // Wartości z mapowaniem na polskie odpowiedniki bez polskich znaków
   // Dodaj priceUnit TYLKO gdy użytkownik wpisał cenę
   if (filters.priceUnit && (filters.priceFrom !== null && filters.priceFrom !== undefined || filters.priceTo !== null && filters.priceTo !== undefined)) {
@@ -292,8 +283,6 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   if (query.widthTo) filters.widthTo = parseFloat(query.widthTo) || null
   if (query.heightFrom) filters.heightFrom = parseFloat(query.heightFrom) || null
   if (query.heightTo) filters.heightTo = parseFloat(query.heightTo) || null
-  if (query.otsFrom) filters.estimatedDailyViewsFrom = parseFloat(query.otsFrom) || null
-  if (query.otsTo) filters.estimatedDailyViewsTo = parseFloat(query.otsTo) || null
 
   // Wartości z mapowaniem - konwersja polskich wartości na angielskie klucze
   if (query.priceUnit) {
