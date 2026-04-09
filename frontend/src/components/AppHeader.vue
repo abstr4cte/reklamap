@@ -58,8 +58,8 @@ const closeMobileMenu = () => {
 
 const handleHomeClick = () => {
   closeMobileMenu()
-  // Przy kliknięciu w logo lub "Strona główna" robimy "świeży start", 
-  // więc czyścimy zapamiętaną pozycję scrolla z sessionStorage.
+  // Przy kliknięciu w logo lub "Strona główna" zachowujemy filtry (jeśli są), 
+  // czyścimy tylko zapamiętaną pozycję scrolla.
   try {
     sessionStorage.removeItem('homepage_scroll_position')
     sessionStorage.removeItem('listings_scroll_position')
@@ -280,14 +280,14 @@ watch(isMobileMenuOpen, (isOpen) => {
             </div>
           </Transition>
           
-          <router-link to="/blog" class="mobile-nav-link" @click="closeMobileMenu">
+          <router-link to="/blog" class="mobile-nav-link" @click="closeMobileMenu()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
               <path d="M14 2v6h6" stroke="currentColor" stroke-width="2"/>
             </svg>
             Blog
           </router-link>
-          <router-link to="/faq" class="mobile-nav-link" @click="closeMobileMenu">
+          <router-link to="/faq" class="mobile-nav-link" @click="closeMobileMenu()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
               <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="2"/>
@@ -295,19 +295,19 @@ watch(isMobileMenuOpen, (isOpen) => {
             </svg>
             FAQ
           </router-link>
-          <router-link to="/regulamin" class="mobile-nav-link" @click="closeMobileMenu">
+          <router-link to="/regulamin" class="mobile-nav-link" @click="closeMobileMenu()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
             </svg>
             Regulamin
           </router-link>
-          <router-link to="/polityka-prywatnosci" class="mobile-nav-link" @click="closeMobileMenu">
+          <router-link to="/polityka-prywatnosci" class="mobile-nav-link" @click="closeMobileMenu()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             Polityka prywatności
           </router-link>
-          <router-link to="/kontakt" class="mobile-nav-link" @click="closeMobileMenu">
+          <router-link to="/kontakt" class="mobile-nav-link" @click="closeMobileMenu()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="currentColor" stroke-width="2"/>
             </svg>

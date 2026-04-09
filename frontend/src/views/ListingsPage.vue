@@ -509,9 +509,8 @@ const applyFilters = () => {
   if (currentPage.value > 1) {
     queryParams.page = currentPage.value.toString()
   }
-  const queryString = new URLSearchParams(queryParams).toString()
-  const newUrl = queryString ? window.location.pathname + '?' + queryString : window.location.pathname
-  window.history.replaceState({}, document.title, newUrl)
+  // Zaktualizuj URL z query params (bez path params) za pomocą routera, aby zachować spójność stanu Vue
+  router.replace({ path: window.location.pathname, query: queryParams }).catch(() => {})
   
   // Zapisz do localStorage
   // Jeśli użytkownik DODAŁ ręczne filtry, zapisz WSZYSTKO (type + city + ręczne filtry)
@@ -1066,11 +1065,19 @@ onMounted(async () => {
     if (isUserSearch) {
       const saved = localStorage.getItem('reklamap_last_search')
       if (saved) {
-        const lastSearch = JSON.parse(saved)
-        searchStore.applyFilters(lastSearch)
-        
-        if (lastSearch._priceDisplayUnit) {
-          searchStore.priceDisplay = lastSearch._priceDisplayUnit
+        try {
+          const lastSearch = JSON.parse(saved)
+          
+          // Ustaw filtry w store bezpośrednio, bez wywoływania applyFilters (które robi save do localStorage)
+          // Zapobiegnie to "zostawaniu" starych filtrów w localStorage przy przełączaniu kategorii
+          searchStore.$patch((state) => {
+            state.filters = { ...state.filters, ...lastSearch }
+            if (lastSearch._priceDisplayUnit) {
+              state.priceDisplay = lastSearch._priceDisplayUnit
+            }
+          })
+        } catch (e) {
+          console.error('Błąd parsowania ostatniego wyszukiwania:', e)
         }
       }
     }

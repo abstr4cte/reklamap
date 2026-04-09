@@ -454,6 +454,8 @@ const clearSearchFlag = () => {
   try {
     localStorage.removeItem('user_initiated_search')
     localStorage.removeItem('reklamap_last_search')
+    // Zresetuj też stan w store, aby UI (np. HeroBanner) odświeżyło się natychmiast
+    searchStore.resetFilters()
   } catch (e) { /* ignore */ }
 }
 
