@@ -10,25 +10,57 @@ jobs:
   frontend-tests:
     runs-on: ubuntu-latest
     
+    strategy:
+      matrix:
+        node-version: [20.x]
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
     
-    - name: Setup Node.js
+    - name: Setup Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
-        node-version: '20.x'
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
     
     - name: Install dependencies
       working-directory: ./frontend
-      run: npm install
+      run: npm ci
     
     - name: Run tests
       working-directory: ./frontend
       run: npm run test -- --run
+    
+    - name: Run tests with coverage
+      working-directory: ./frontend
+      run: npm run test:coverage || true
+    
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      if: always()
+      with:
+        files: ./frontend/coverage/coverage-final.json
+        flags: frontend
+        name: frontend-coverage
 
   backend-tests:
     runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: reklamap_test
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
     
     steps:
     - name: Checkout code
@@ -37,8 +69,8 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2'
-        extensions: mbstring, curl, sqlite3
+        php-version: '8.3'
+        extensions: mysql, mbstring, curl
         tools: composer
     
     - name: Install Composer dependencies
@@ -48,3 +80,6 @@ jobs:
     - name: Run backend tests
       working-directory: ./backend
       run: php artisan test --testsuite=Unit
+      env:
+        DB_CONNECTION: sqlite
+        DB_DATABASE: ':memory:'
