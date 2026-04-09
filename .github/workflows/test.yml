@@ -48,9 +48,3 @@ jobs:
     - name: Run backend tests
       working-directory: ./backend
       run: php artisan test --testsuite=Unit
-      env:
-        APP_ENV: testing
-        APP_KEY: base64:XJGQi5zY/ZHF3Kt5ufrb+xJAWICM/hWlKPqmsw2gBfrI=
-        INTERNAL_API_KEY: test-internal-api-key-for-testing
-        DB_CONNECTION: sqlite
-        DB_DATABASE: ':memory:'
