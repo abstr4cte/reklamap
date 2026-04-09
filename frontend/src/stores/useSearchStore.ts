@@ -106,13 +106,12 @@ export const useSearchStore = defineStore('search', () => {
   }
 
   const fetchListings = async () => {
+    if (isLoading.value && listings.value.length > 0) return // Avoid redundant fetches if we already have data
+    
     try {
       isLoading.value = true
-      // Wyczyść poprzednie wyniki, aby wymusić odświeżenie UI i pokazywanie skeletonów
-      listings.value = []
-      
       const data = await api.getAdvertisements()
-      listings.value = data || []
+      listings.value = Array.isArray(data) ? data : []
     } catch (error) {
       console.error('Failed to fetch listings:', error)
     } finally {
