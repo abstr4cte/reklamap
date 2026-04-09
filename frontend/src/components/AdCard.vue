@@ -163,9 +163,6 @@ onMounted(() => {
       <div class="status-badge" :style="{ background: getStatusColor(ad) }">
         {{ getStatusLabel(ad) }}
       </div>
-      <div v-if="locationTier === 'PREMIUM'" class="tier-badge">
-        PREMIUM
-      </div>
       <div v-if="(ad as any).estimated_daily_views" class="ots-badge">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
@@ -201,7 +198,10 @@ onMounted(() => {
     </div>
 
     <div class="card-content">
-      <h3 class="card-title">{{ ad.title }}</h3>
+      <div class="card-title-row">
+        <h3 class="card-title">{{ ad.title }}</h3>
+        <span v-if="locationTier === 'PREMIUM'" class="content-tier-badge">PREMIUM</span>
+      </div>
 
       <div class="card-location">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -334,20 +334,24 @@ onMounted(() => {
   gap: 0.375rem;
 }
 
-.tier-badge {
-  position: absolute;
-  bottom: 3.5rem; /* Above OTS badge if both exist */
-  right: 1rem;
+.card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.content-tier-badge {
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: white;
-  padding: 0.375rem 0.75rem;
-  border-radius: 6px;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
   font-size: 0.7rem;
   font-weight: 800;
-  backdrop-filter: blur(8px);
-  z-index: 5;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 4px rgba(217, 119, 6, 0.2);
+  flex-shrink: 0;
+  margin-top: 0.2rem;
 }
 
 
