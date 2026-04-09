@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { api } from '../services/api'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
@@ -531,9 +531,6 @@ const saveChanges = async (id: string) => {
     }
 
     toggleRow(id)
-    // Scroll to top of page
-    document.documentElement.scrollTop = 0
-    document.body.scrollTop = 0
     searchStore.fetchListings() // keep global list in sync
     toast.value?.add('Zmiany zostały zapisane', 'success')
   } catch (error) {
@@ -598,10 +595,18 @@ const openPreview = (id: string) => {
 }
 
 const toggleRow = (id: string) => {
-  if (expandedRows.value.has(id)) {
-    expandedRows.value.delete(id)
+  const isOpen = expandedRows.value.has(id)
+
+  // Zawsze tworzymy nowy Set — gwarantuje reaktywność w Vue 3
+  const newSet = new Set<string>()
+
+  if (isOpen) {
+    // Zamknięcie — nowy Set jest pusty, czyścimy editingAd
+    editingAd.value = null
+    unifiedImages.value = []
   } else {
-    expandedRows.value.add(id)
+    // Accordion: tylko jeden otwarty wiersz naraz
+    newSet.add(id)
     const ad = listings.value.find(a => a.id === id)
     if (ad) {
       editingAd.value = { ...ad }
@@ -612,12 +617,9 @@ const toggleRow = (id: string) => {
       // Convert traffic_direction from string to array for checkboxes (backward compatibility)
       if ((editingAd.value as any).traffic_direction) {
         const direction = (editingAd.value as any).traffic_direction
-        // If already an array, keep it as is
         if (Array.isArray(direction)) {
           (editingAd.value as any).traffic_direction = direction
-        }
-        // Convert old string format to array
-        else if (direction === 'both') {
+        } else if (direction === 'both') {
           (editingAd.value as any).traffic_direction = ['entry', 'exit']
         } else if (direction === 'entry' || direction === 'exit') {
           (editingAd.value as any).traffic_direction = [direction]
@@ -627,29 +629,33 @@ const toggleRow = (id: string) => {
       } else {
         (editingAd.value as any).traffic_direction = []
       }
-      // Initialize traffic_type for banners
+      // Initialize traffic_type
       if ((editingAd.value as any).traffic_type) {
         const trafficType = (editingAd.value as any).traffic_type
-        if (Array.isArray(trafficType)) {
-          (editingAd.value as any).traffic_type = trafficType
-        } else {
-          (editingAd.value as any).traffic_type = []
-        }
+        ;(editingAd.value as any).traffic_type = Array.isArray(trafficType) ? trafficType : []
       } else {
         (editingAd.value as any).traffic_type = []
       }
-      // Initialize price_includes_mounting if not present
       if ((editingAd.value as any).price_includes_mounting === undefined) {
         (editingAd.value as any).price_includes_mounting = false
       }
-      // Initialize unifiedImages for the edited ad
       unifiedImages.value = (editingAd.value.images || []).map(url => ({
         type: 'existing',
         url,
         id: Math.random().toString(36).substr(2, 9)
       }))
+
+      // Smooth scroll do otwartego wiersza (szczególnie ważne na mobile)
+      nextTick(() => {
+        const el = document.getElementById(`listing-row-${id}`)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      })
     }
   }
+
+  expandedRows.value = newSet
 }
 
 const handleStatusChange = (id: string, newStatus: string) => {
