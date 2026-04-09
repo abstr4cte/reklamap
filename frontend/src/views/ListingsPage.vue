@@ -1078,9 +1078,23 @@ onMounted(async () => {
 
   syncLocationQuery()
   isInitialized.value = true
-  
+
   // 5. Proactive search alert modal (consistent with HomePage)
   startAlertTimer()
+})
+
+// Przy powrocie do cache'owanej strony (keep-alive) wymuś synchronizację filtrów z URL
+// oraz odśwież dane - onMounted nie odpala się ponownie dla cache'owanych instancji
+onActivated(async () => {
+  // Guard: tylko dla tras ogłoszeń (keep-alive aktywuje wszystkie cache'owane instancje)
+  if (!route.path.startsWith('/powierzchnie-reklamowe')) return
+
+  // Odśwież listę ogłoszeń (może być nieaktualna po powrocie)
+  await searchStore.fetchListings()
+
+  // Synchronizuj filtry z aktualnym URL (path params + query params)
+  searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
+  syncLocationQuery()
 })
 
 const startAlertTimer = () => {
