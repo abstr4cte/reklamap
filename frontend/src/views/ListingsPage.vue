@@ -1082,18 +1082,15 @@ onMounted(async () => {
       }
     }
 
-    // 4. Nadpisz filtrami z URL
+    // 4. Jeśli przeszliśmy walidację path params, zsynchronizuj resztę stanu (ale nie pobieraj danych tutaj, zrobi to watcher)
     searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
     syncLocationQuery()
-
-    // 5. Pobierz ogłoszenia (wymuszamy fetch mimo isLoading, żeby mieć pewność świeżych danych)
-    await searchStore.fetchListings()
     
+    isInitialized.value = true
   } catch (error) {
     console.error('Error initializing listings page:', error)
   } finally {
-    searchStore.isLoading = false
-    isInitialized.value = true
+    // isLoading jest zarządzany przez fetchListings w watcherze
   }
 
   // 6. Proactive search alert modal
@@ -1132,7 +1129,6 @@ const startAlertTimer = () => {
   }, 20000) as unknown as number // 20 seconds
 }
 
-// Add watch for route changes to handle navigation between categories/locations
 watch(
   () => [route.params, route.query],
   () => {
@@ -1153,7 +1149,7 @@ watch(
       scrollListToTop()
     })
   },
-  { deep: true }
+  { deep: true, immediate: true }
 )
 
 onBeforeUnmount(() => {

@@ -108,6 +108,9 @@ export const useSearchStore = defineStore('search', () => {
   const fetchListings = async () => {
     try {
       isLoading.value = true
+      // Wyczyść poprzednie wyniki, aby wymusić odświeżenie UI i pokazywanie skeletonów
+      listings.value = []
+      
       const data = await api.getAdvertisements()
       listings.value = data || []
     } catch (error) {
