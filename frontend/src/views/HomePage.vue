@@ -235,6 +235,9 @@ const loadAdvertisements = async () => {
 
 // Watch for URL query parameter changes
 watch(() => route.query, (newQuery) => {
+  // TYLKO jeśli jesteśmy na stronie głównej
+  if (route.path !== '/') return
+
   // Jeśli query jest puste, a mamy flagę zapisanego wyszukiwania, przywróć je do URL
   // (to rozwiązuje problem klikania logo na Home, które czyści URL ale nie powinno czyścić filtrów)
   const isUserSearch = localStorage.getItem('user_initiated_search') === 'true'

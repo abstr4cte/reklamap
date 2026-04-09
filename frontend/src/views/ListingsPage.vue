@@ -1105,6 +1105,10 @@ const startAlertTimer = () => {
 watch(
   () => [route.params, route.query],
   () => {
+    // TYLKO jeśli jesteśmy na liście ogłoszeń
+    const isListingsRoute = route.path.includes('/powierzchnie-reklamowe')
+    if (!isListingsRoute) return
+
     searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
     syncLocationQuery()
     
