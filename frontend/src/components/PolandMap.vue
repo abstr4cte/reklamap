@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
+import { ref, onMounted, watch, onBeforeUnmount, onActivated } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { Advertisement } from '../types'
@@ -119,6 +119,30 @@ const createCustomIcon = (type: string, isHovered: boolean = false) => {
   })
 }
 
+const enableMapInteractions = () => {
+  if (!map) return
+  
+  map.scrollWheelZoom.enable()
+  map.dragging.enable()
+  map.touchZoom.enable()
+  map.doubleClickZoom.enable()
+  
+  isMapActive.value = true
+}
+
+const disableMapInteractions = () => {
+  if (!map) return
+  
+  map.scrollWheelZoom.disable()
+  if (isMobile.value) {
+    map.dragging.disable()
+    map.touchZoom.disable()
+    map.doubleClickZoom.disable()
+  }
+  
+  isMapActive.value = false
+}
+
 const initMap = () => {
   if (!mapContainer.value) return
 
@@ -172,18 +196,6 @@ const initMap = () => {
   // })
   // map.addLayer(markerClusterGroup)
 
-  // Function to enable all interactions
-  const enableMapInteractions = () => {
-    if (!map) return
-    
-    map.scrollWheelZoom.enable()
-    map.dragging.enable()
-    map.touchZoom.enable()
-    map.doubleClickZoom.enable()
-    
-    isMapActive.value = true
-  }
-
   // Enable interactions on click and hide hint
   map.on('click', () => {
     if (map && !isMapActive.value) {
@@ -191,12 +203,11 @@ const initMap = () => {
     }
   })
   
-  // Disable scroll wheel zoom when mouse leaves the map (desktop only)
+  // Disable interactions when mouse leaves the map (desktop only)
   if (mapContainer.value && !isMobile.value) {
     mapContainer.value.addEventListener('mouseleave', () => {
-      if (map && map.scrollWheelZoom.enabled()) {
-        map.scrollWheelZoom.disable()
-        isMapActive.value = false
+      if (isMapActive.value) {
+        disableMapInteractions()
       }
     })
   }
@@ -353,34 +364,32 @@ const updateMarkers = () => {
       </div>
     `
 
-      if (!isMobile.value) {
-        marker.bindPopup(popupContent, { 
-          maxWidth: 250,
-          maxHeight: 400,
-          autoPan: true,
-          autoPanPadding: [50, 50]
-        })
-      }
+      // marker.bindPopup(popupContent, ...) - Disabled in favor of native Vue panels
       
-      // On mobile, activate map interactions if inactive
+      // On all devices, show custom detail panel
       marker.on('click', () => {
+        selectedAd.value = ad
+        
         if (isMobile.value) {
-          selectedAd.value = ad
-          // Scroll map slightly to show the marker above the bottom card
+          // Mobile: Pan map above the bottom card
           if (map) {
             const point = map.latLngToContainerPoint([ad.latitude, ad.longitude])
             const newPoint = L.point(point.x, point.y + 100)
             const newLatLng = map.containerPointToLatLng(newPoint)
             map.panTo(newLatLng, { animate: true })
           }
-          
-          if (!isMapActive.value && map) {
-            map.scrollWheelZoom.enable()
-            map.dragging.enable()
-            map.touchZoom.enable()
-            map.doubleClickZoom.enable()
-            isMapActive.value = true
+        } else {
+          // Desktop: Pan map to the left to avoid being covered by side panel
+          if (map) {
+            const point = map.latLngToContainerPoint([ad.latitude, ad.longitude])
+            const newPoint = L.point(point.x + 150, point.y)
+            const newLatLng = map.containerPointToLatLng(newPoint)
+            map.panTo(newLatLng, { animate: true })
           }
+        }
+        
+        if (isMobile.value && !isMapActive.value && map) {
+          enableMapInteractions()
         }
       })
       
@@ -463,6 +472,7 @@ watch(isLegendVisible, (newVal) => {
 })
 
 onMounted(() => {
+  selectedAd.value = null
   initMap()
   
   // Get map section reference
@@ -480,8 +490,13 @@ onMounted(() => {
     }
   }
   
-  // Handle scroll to show/hide and position toggle button
+  // Handle scroll to show/hide, position toggle button, and lock map on mobile
   const handleScroll = () => {
+    // If user is scrolling the page, deactivate map interactions on mobile
+    if (isMobile.value && isMapActive.value) {
+      disableMapInteractions()
+    }
+
     if (!mapSection.value) return
     
     const mapRect = mapSection.value.getBoundingClientRect()
@@ -524,7 +539,11 @@ onMounted(() => {
   window.addEventListener('scroll', handleScroll)
   
   // Cleanup
-  onBeforeUnmount(() => {
+  onActivated(() => {
+  selectedAd.value = null
+})
+
+onBeforeUnmount(() => {
     window.removeEventListener('resize', handleResize)
     window.removeEventListener('scroll', handleScroll)
     if (resizeObserver) resizeObserver.disconnect()
@@ -644,7 +663,7 @@ onMounted(() => {
           opacity: showMobileToggle ? 0.9 : 0,
           visibility: showMobileToggle ? 'visible' : 'hidden',
           pointerEvents: showMobileToggle ? 'auto' : 'none',
-          bottom: selectedAd ? '240px' : '20px'
+          bottom: selectedAd ? '160px' : '20px'
         }"
       >
         <span>Pokaż listę</span>
@@ -672,22 +691,103 @@ onMounted(() => {
               <img :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title">
             </div>
             <div class="card-info">
-              <div class="card-category" :style="{ background: typeColors[selectedAd.type] }">
-                {{ searchStore.getTypeLabel(selectedAd.type) }}
+              <div class="card-badges">
+                <div class="card-category" :style="{ background: typeColors[selectedAd.type] }">
+                  {{ searchStore.getTypeLabel(selectedAd.type) }}
+                </div>
+                <div class="card-status" :style="{ background: searchStore.getStatusColor(selectedAd) }">
+                  {{ searchStore.getStatusLabel(selectedAd) }}
+                </div>
               </div>
               <h3 class="card-title">{{ selectedAd.title }}</h3>
-              <div class="card-location">
-                <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
-                  <path d="M7 7C7.825 7 8.5 6.325 8.5 5.5C8.5 4.675 7.825 4 7 4C6.175 4 5.5 4.675 5.5 5.5C5.5 6.325 6.175 7 7 7Z" stroke="currentColor" stroke-width="1.2"/>
-                  <path d="M7 12C7 12 10.5 9 10.5 5.5C10.5 3.567 8.933 2 7 2C5.067 2 3.5 3.567 3.5 5.5C3.5 9 7 12 7 12Z" stroke="currentColor" stroke-width="1.2"/>
-                </svg>
-                {{ formatLocation(selectedAd.location, selectedAd.city) }}
+              <div class="card-details-row">
+                <div class="card-location">
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                    <path d="M7 7C7.825 7 8.5 6.325 8.5 5.5C8.5 4.675 7.825 4 7 4C6.175 4 5.5 4.675 5.5 5.5C5.5 6.325 6.175 7 7 7Z" stroke="currentColor" stroke-width="1.2"/>
+                    <path d="M7 12C7 12 10.5 9 10.5 5.5C10.5 3.567 8.933 2 7 2C5.067 2 3.5 3.567 3.5 5.5C3.5 9 7 12 7 12Z" stroke="currentColor" stroke-width="1.2"/>
+                  </svg>
+                  {{ formatLocation(selectedAd.location, selectedAd.city) }}
+                </div>
+                <div v-if="selectedAd.dimensions" class="card-dimensions">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  </svg>
+                  {{ selectedAd.dimensions }}
+                </div>
               </div>
               <div class="card-price">
                 {{ Math.round(selectedAd.price).toLocaleString('pl-PL') }} {{ getPriceUnitLabel(selectedAd) }}
               </div>
             </div>
           </router-link>
+        </div>
+      </transition>
+
+      <!-- Desktop Side Panel -->
+      <transition name="slide-left">
+        <div v-if="!isMobile && selectedAd" class="desktop-side-panel">
+          <div class="panel-header">
+            <h3>Szczegóły ogłoszenia</h3>
+            <button class="close-panel" @click="selectedAd = null">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <div class="panel-content">
+            <div class="panel-image" v-if="selectedAd.image_url">
+              <img :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title">
+            </div>
+            
+            <div class="panel-body">
+              <div class="panel-badges">
+                <div class="panel-type" :style="{ background: typeColors[selectedAd.type] }">
+                  {{ searchStore.getTypeLabel(selectedAd.type) }}
+                </div>
+                <div class="panel-status" :style="{ background: searchStore.getStatusColor(selectedAd) }">
+                  {{ searchStore.getStatusLabel(selectedAd) }}
+                </div>
+              </div>
+              <h2 class="panel-title">{{ selectedAd.title }}</h2>
+              
+              <div class="panel-info-items">
+                <div class="panel-info-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span>{{ formatLocation(selectedAd.location, selectedAd.city) }}</span>
+                </div>
+                
+                <div v-if="selectedAd.dimensions" class="panel-info-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" translateY="2" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                  </svg>
+                  <span>Wymiary: {{ selectedAd.dimensions }}</span>
+                </div>
+              </div>
+
+              <div class="panel-price-box">
+                <div class="price-label">Cena:</div>
+                <div class="price-value">
+                  {{ Math.round(selectedAd.price).toLocaleString('pl-PL') }} zł
+                  <span class="price-unit-large"> / {{ getPriceUnitLabel(selectedAd).replace('za ', '') }}</span>
+                </div>
+              </div>
+
+              <router-link 
+                :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(selectedAd.type)}/${slugify(selectedAd.city)}/${slugify(selectedAd.title)}-${selectedAd.id}`"
+                class="view-details-btn"
+              >
+                Zobacz pełne ogłoszenie
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </router-link>
+            </div>
+          </div>
         </div>
       </transition>
     </div>
@@ -1227,8 +1327,23 @@ onMounted(() => {
   min-width: 0;
 }
 
+.card-badges {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .card-category {
-  align-self: flex-start;
+  color: white;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.card-status {
   color: white;
   padding: 1px 8px;
   border-radius: 4px;
@@ -1247,8 +1362,14 @@ onMounted(() => {
   text-overflow: ellipsis;
 }
 
-.card-location {
-  font-size: 0.8rem;
+.card-details-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-location, .card-dimensions {
+  font-size: 0.75rem;
   color: #6B7280;
   display: flex;
   align-items: center;
@@ -1256,6 +1377,10 @@ onMounted(() => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.card-dimensions svg {
+  color: #9CA3AF;
 }
 
 .card-price {
@@ -1278,5 +1403,192 @@ onMounted(() => {
 
 .mobile-list-toggle {
   transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Desktop Side Panel Styles */
+.desktop-side-panel {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  width: 400px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.panel-header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.close-panel {
+  background: #F3F4F6;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.close-panel:hover {
+  background: #E5E7EB;
+  color: #1F2937;
+}
+
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-image {
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+}
+
+.panel-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.panel-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.panel-badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.panel-type, .panel-status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: white;
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.panel-info-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.panel-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #4B5563;
+  font-size: 1rem;
+}
+
+.panel-info-item svg {
+  color: #9CA3AF;
+  flex-shrink: 0;
+}
+
+.panel-price-box {
+  background: #F9FAFB;
+  padding: 1.25rem;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.price-label {
+  font-size: 0.875rem;
+  color: #6B7280;
+  font-weight: 600;
+}
+
+.price-value {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #4F46E5;
+}
+
+.price-unit-large {
+  font-size: 0.9rem;
+  color: #6B7280;
+  margin-left: 2px;
+}
+
+.view-details-btn {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  padding: 1rem;
+  border-radius: 14px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+}
+
+.view-details-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.view-details-btn:active {
+  transform: translateY(0);
+}
+
+.view-details-btn:active {
+  transform: translateY(0);
+}
+
+/* Animations */
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-left-enter-from,
+.slide-left-leave-to {
+  transform: translateX(110%);
+  opacity: 0;
 }
 </style>

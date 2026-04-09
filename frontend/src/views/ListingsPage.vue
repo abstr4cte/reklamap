@@ -79,7 +79,12 @@ const isStatusMenuOpen = ref(false)
 const statusMultiselect = ref<HTMLElement | null>(null)
 const hoveredAdId = ref<string | null>(null)
 const selectedAdId = ref<string | null>(null)
-const isMobile = ref(false)
+const selectedAd = computed(() => {
+  if (!listings.value || !selectedAdId.value) return null
+  return listings.value.find(ad => ad.id === selectedAdId.value) || null
+})
+const isMobile = ref(window.innerWidth < 768)
+const isMobileClamped = ref(false)
 const isLegendVisible = ref(false)
 const showMapButton = ref(true)
 const listContainerRef = ref<HTMLElement | null>(null)
@@ -112,6 +117,9 @@ onBeforeRouteLeave((to, _from, next) => {
 
 // Przywróć pozycję scrolla po powrocie na stronę (keep-alive)
 onActivated(() => {
+  showMapOnMobile.value = false
+  selectedAdId.value = null
+
   const savedScroll = sessionStorage.getItem(LISTINGS_SCROLL_KEY)
   const savedPage = sessionStorage.getItem(LISTINGS_PAGE_KEY)
   
@@ -565,10 +573,33 @@ const resetFilters = () => {
 const clearFilters = resetFilters
 
 const handleSortOptionClick = (val: string) => { searchStore.sortBy = val; showSortPanel.value = false; searchStore.applyFilters({}) }
-const toggleMobileMap = () => { 
-  showMapOnMobile.value = !showMapOnMobile.value
-  if (showMapOnMobile.value) nextTick(() => initMap())
-  handleScroll() // Update scroll button visibility immediately
+const toggleMobileMap = () => {
+  showMapOnMobile.value = !showMapOnMobile.value;
+  
+  if (showMapOnMobile.value) {
+    nextTick(() => {
+      initMap();
+      const mapWrapper = document.querySelector('.map-container-wrapper');
+      if (mapWrapper) {
+        const header = document.querySelector('header');
+        const headerOffset = header ? header.offsetHeight : 64;
+        document.documentElement.style.setProperty('--header-height', `${headerOffset}px`);
+        const elementPosition = mapWrapper.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    });
+  } else {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+  handleScroll();
 }
 
 const scrollToAd = (adId: string) => {
@@ -666,56 +697,31 @@ const updateMarkers = () => {
     const icon = createCustomIcon(ad.type, hoveredAdId.value === ad.id, selectedAdId.value === ad.id)
     if (!icon) return
     const marker = L!.marker([ad.latitude, ad.longitude], { icon })
-    const citySlug = slugify(ad.city)
-    const titleSlug = slugify(ad.title)
-    const typeSlug = mapTypeToUrlFormat(ad.type)
-    const adUrl = `/powierzchnia-reklamowa/${typeSlug}/${citySlug}/${titleSlug}-${ad.id}`
+    // Update markers with current listings
+    // marker.bindPopup(...) - Disabled in favor of native Vue panels
 
-    const imageUrl = ad.image_url ? getFullImageUrl(ad.image_url) : ''
-    
-    const displayUnit = searchStore.computedPriceDisplayUnit || ad.price_unit || 'month'
-    const displayPrice = searchStore.getPrice(ad, displayUnit as any)
-    const isEstimated = displayUnit !== (ad.price_unit || 'month')
-    
-    const popupContent = `
-      <div style="width: 220px;">
-        <a href="${adUrl}" style="text-decoration: none; color: inherit; display: block; padding: 4px;">
-          ${imageUrl ? `
-            <div style="margin: -10px -10px 10px -10px; overflow: hidden; border-radius: 8px 8px 0 0;">
-              <img src="${imageUrl}" alt="${ad.title}" style="width: 100%; height: 110px; object-fit: cover; display: block;" />
-            </div>
-          ` : ''}
-          <h4 style="margin: 0 0 6px 0; font-size: 1rem; font-weight: 700; color: var(--text-main, #1F2937); line-height: 1.3;">
-            ${ad.title}
-          </h4>
-          <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem;">
-            <div style="color: var(--text-muted, #6B7280); display: flex; align-items: flex-start; gap: 4px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-top: 2px; flex-shrink: 0;">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
-              <span>${formatLocation(ad.location, ad.city)}</span>
-            </div>
-            <div style="font-weight: 800; color: #667eea; font-size: 1rem; margin-top: 4px; display: flex; align-items: baseline; gap: 4px;">
-              ${isEstimated ? '<span style="color: #F59E0B; font-weight: bold; margin-right: 2px;">~</span>' : ''}
-              <span>${Math.round(displayPrice).toLocaleString('pl-PL')} PLN</span>
-              <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">
-                ${searchStore.getPriceLabel(displayUnit as any, ad)}
-                ${isEstimated ? '<span style="color: #F59E0B; margin-left: 2px;">(szac.)</span>' : ''}
-              </span>
-            </div>
-          </div>
-        </a>
-      </div>
-    `
-
-    marker.bindPopup(popupContent, { 
-      maxWidth: 220,
-      maxHeight: 250,
-      autoPan: true,
-      autoPanPadding: [10, 10]
+    marker.on('click', () => { 
+      selectedAdId.value = ad.id
+      
+      if (isMobile.value) {
+        // Mobile: Pan map above the bottom card
+        if (map) {
+          const point = map.latLngToContainerPoint([ad.latitude, ad.longitude])
+          const newPoint = L!.point(point.x, point.y + 100)
+          const newLatLng = map.containerPointToLatLng(newPoint)
+          map.panTo(newLatLng, { animate: true })
+        }
+      } else {
+        // Desktop: Pan map to the left to avoid being covered by side panel
+        if (map) {
+          const point = map.latLngToContainerPoint([ad.latitude, ad.longitude])
+          const newPoint = L!.point(point.x + 150, point.y)
+          const newLatLng = map.containerPointToLatLng(newPoint)
+          map.panTo(newLatLng, { animate: true })
+        }
+        scrollToAd(ad.id) 
+      }
     })
-    marker.on('click', () => { selectedAdId.value = ad.id; scrollToAd(ad.id) })
     marker.on('mouseover', () => { 
       if (!isMobile.value) {
         const i = createCustomIcon(ad.type, true, selectedAdId.value === ad.id); 
@@ -734,6 +740,27 @@ const updateMarkers = () => {
   })
 }
 
+const enableMapInteractions = () => {
+  if (!map) return
+  map.scrollWheelZoom.enable()
+  map.dragging.enable()
+  map.touchZoom.enable()
+  map.doubleClickZoom.enable()
+  isMapActive.value = true
+}
+
+const disableMapInteractions = () => {
+  if (!map) return
+  map.scrollWheelZoom.disable()
+  // Only disable these on mobile to allow easy navigation on desktop
+  if (isMobile.value) {
+    map.dragging.disable()
+    map.touchZoom.disable()
+    map.doubleClickZoom.disable()
+  }
+  isMapActive.value = false
+}
+
 const initMap = async () => {
   if (!mapContainer.value) return
   await loadLeaflet(); if (!L) return
@@ -745,7 +772,14 @@ const initMap = async () => {
 
   const pCenter: [number, number] = [52.0, 19.0]; const pBounds = L.latLngBounds([45.5, 10.0], [58.5, 28.0])
   isProgrammaticMove.value = true
-  map = L.map(mapContainer.value, { scrollWheelZoom: false, maxBounds: pBounds, minZoom: 5 }).setView(pCenter, 6)
+  map = L.map(mapContainer.value, { 
+    scrollWheelZoom: false, 
+    dragging: !isMobile.value,
+    touchZoom: false,
+    doubleClickZoom: false,
+    maxBounds: pBounds, 
+    minZoom: 5 
+  }).setView(pCenter, 6)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
   
   // markerClusterGroup = (L as any).markerClusterGroup({
@@ -756,21 +790,22 @@ const initMap = async () => {
   // })
   // map.addLayer(markerClusterGroup)
 
-  // Enable scroll wheel zoom on click
-  map.on('click', () => {
-    if (map && !map.scrollWheelZoom.enabled()) {
-      map.scrollWheelZoom.enable()
-      isMapActive.value = true
+  // Enable interactions on click
+  map.on('click', (e: any) => {
+    // Check if the click was on the map itself, not a marker
+    if (e.originalEvent.target.classList.contains('leaflet-container')) {
+      selectedAdId.value = null
+    }
+
+    if (map && !isMapActive.value) {
+      enableMapInteractions()
     }
   })
 
   // Disable scroll wheel zoom when mouse leaves (desktop only)
   if (mapContainer.value && !isMobile.value) {
     mapContainer.value.addEventListener('mouseleave', () => {
-      if (map && map.scrollWheelZoom.enabled()) {
-        map.scrollWheelZoom.disable()
-        isMapActive.value = false
-      }
+      disableMapInteractions()
     })
   }
 
@@ -1012,15 +1047,25 @@ const handleScroll = () => {
     }
   }
   
-  // For mobile: hide map button when bottom sections visible
+  // For mobile: hide map button only when scrolled way past footer, 
+  // otherwise just clamp it above the bottom sections
   if (isMobile.value) {
+    isMobileClamped.value = isBottomSectionVisible
+    
     if (contentWrapper) {
       const contentRect = contentWrapper.getBoundingClientRect()
-      const inContentSection = contentRect.bottom > 0
-      showMapButton.value = inContentSection && !isBottomSectionVisible
+      // Button should be visible as long as we are anywhere near the content
+      // and not scrolling deep into SEO text
+      showMapButton.value = contentRect.bottom > 100 && !isBottomSectionVisible
     }
+    
     // Na komórce też chcemy przycisk przewijania listy, ale tylko gdy nie widzimy mapy
     showListScrollTop.value = !showMapOnMobile.value && !isBottomSectionVisible && (listContainerRef.value?.scrollTop || 0) > 500
+
+    // Auto-lock map interactions on scroll (mobile only)
+    if (isMapActive.value) {
+      disableMapInteractions()
+    }
   } else {
     // For desktop: always show map button, but hide list scroll button when bottom sections visible
     showMapButton.value = true
@@ -1045,6 +1090,8 @@ const getAvailablePriceUnits = (type: string) => searchStore.getAvailablePriceUn
 const showEquipmentSectionInModal = computed(() => tempFilters.value && ['billboard', 'citylight', 'banner', 'wall', 'led_screen'].includes(tempFilters.value.type))
 
 onMounted(async () => {
+  showMapOnMobile.value = false
+  selectedAdId.value = null
   checkIfMobile()
   window.addEventListener('resize', checkIfMobile)
   window.addEventListener('scroll', handleScroll)
@@ -1223,137 +1270,139 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 <template>
   <div>
-    <div class="listings-page">
-    <!-- SEO Breadcrumbs -->
-    <Breadcrumbs :items="breadcrumbs" />
+    <div class="listings-page" :class="{ 'map-active': isMobile && showMapOnMobile }">
+    <div class="listings-header-section">
+      <!-- SEO Breadcrumbs -->
+      <Breadcrumbs :items="breadcrumbs" />
 
-    <h1 class="listings-title sr-only">{{ seoInfo.title.split(' | ')[0] }}</h1>
-    
-    <!-- Search and Filters Bar -->
-    <div class="search-bar">
-      <!-- Desktop View -->
-      <div class="desktop-search">
-        <div class="search-container">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          <input 
-            v-model="filters.keyword" 
-            type="text" 
-            placeholder="Szukaj po tytule..."
-            class="search-input"
-          />
-        </div>
-        
-        <button @click="openFiltersModal" class="filters-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
-          </svg>
-          <span>Filtruj</span>
-          <span v-if="totalFiltersCount > 0" class="filter-badge">{{ totalFiltersCount }}</span>
-        </button>
-
-        <select v-model="sortBy" class="sort-select">
-          <option value="newest">Najnowsze</option>
-          <option value="oldest">Najstarsze</option>
-          <option value="name-asc">Nazwa A-Z</option>
-          <option value="name-desc">Nazwa Z-A</option>
-          <optgroup label="Cena za dzień">
-            <option value="price-day-asc">Cena za dzień rosnąco</option>
-            <option value="price-day-desc">Cena za dzień malejąco</option>
-          </optgroup>
-          <optgroup label="Cena za tydzień">
-            <option value="price-week-asc">Cena za tydzień rosnąco</option>
-            <option value="price-week-desc">Cena za tydzień malejąco</option>
-          </optgroup>
-          <optgroup label="Cena za miesiąc">
-            <option value="price-month-asc">Cena za miesiąc rosnąco</option>
-            <option value="price-month-desc">Cena za miesiąc malejąco</option>
-          </optgroup>
-          <optgroup label="Cena za rok">
-            <option value="price-year-asc">Cena za rok rosnąco</option>
-            <option value="price-year-desc">Cena za rok malejąco</option>
-          </optgroup>
-          <optgroup label="Cena za m²">
-            <option value="price-sqm-asc">Cena za m² rosnąco</option>
-            <option value="price-sqm-desc">Cena za m² malejąco</option>
-          </optgroup>
-          <optgroup label="Cena za kampanię">
-            <option value="price-campaign-asc">Cena za kampanię rosnąco</option>
-            <option value="price-campaign-desc">Cena za kampanię malejąco</option>
-          </optgroup>
-        </select>
-
-        <div class="view-toggle">
-          <button 
-            @click="changeViewMode('grid')" 
-            class="view-btn"
-            :class="{ active: viewMode === 'grid' }"
-            title="Widok kafelków"
-          >
+      <h1 class="listings-title sr-only">{{ seoInfo.title.split(' | ')[0] }}</h1>
+      
+      <!-- Search and Filters Bar -->
+      <div class="search-bar">
+        <!-- Desktop View -->
+        <div class="desktop-search" v-if="!isMobile">
+          <div class="search-container">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-              <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-              <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
-              <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+              <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
+            <input 
+              v-model="filters.keyword" 
+              type="text" 
+              placeholder="Szukaj po tytule..."
+              class="search-input"
+            />
+          </div>
+          
+          <button @click="openFiltersModal" class="filters-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+            </svg>
+            <span>Filtruj</span>
+            <span v-if="totalFiltersCount > 0" class="filter-badge">{{ totalFiltersCount }}</span>
           </button>
-          <button 
-            @click="changeViewMode('list')" 
-            class="view-btn"
-            :class="{ active: viewMode === 'list' }"
-            title="Widok listy"
-          >
+
+          <select v-model="sortBy" class="sort-select">
+            <option value="newest">Najnowsze</option>
+            <option value="oldest">Najstarsze</option>
+            <option value="name-asc">Nazwa A-Z</option>
+            <option value="name-desc">Nazwa Z-A</option>
+            <optgroup label="Cena za dzień">
+              <option value="price-day-asc">Cena za dzień rosnąco</option>
+              <option value="price-day-desc">Cena za dzień malejąco</option>
+            </optgroup>
+            <optgroup label="Cena za tydzień">
+              <option value="price-week-asc">Cena za tydzień rosnąco</option>
+              <option value="price-week-desc">Cena za tydzień malejąco</option>
+            </optgroup>
+            <optgroup label="Cena za miesiąc">
+              <option value="price-month-asc">Cena za miesiąc rosnąco</option>
+              <option value="price-month-desc">Cena za miesiąc malejąco</option>
+            </optgroup>
+            <optgroup label="Cena za rok">
+              <option value="price-year-asc">Cena za rok rosnąco</option>
+              <option value="price-year-desc">Cena za rok malejąco</option>
+            </optgroup>
+            <optgroup label="Cena za m²">
+              <option value="price-sqm-asc">Cena za m² rosnąco</option>
+              <option value="price-sqm-desc">Cena za m² malejąco</option>
+            </optgroup>
+            <optgroup label="Cena za kampanię">
+              <option value="price-campaign-asc">Cena za kampanię rosnąco</option>
+              <option value="price-campaign-desc">Cena za kampanię malejąco</option>
+            </optgroup>
+          </select>
+
+          <div class="view-toggle">
+            <button 
+              @click="changeViewMode('grid')" 
+              class="view-btn"
+              :class="{ active: viewMode === 'grid' }"
+              title="Widok kafelków"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </button>
+            <button 
+              @click="changeViewMode('list')" 
+              class="view-btn"
+              :class="{ active: viewMode === 'list' }"
+              title="Widok listy"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="5" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="3" y="11" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+                <rect x="3" y="17" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile View (ONLY if not full map) -->
+        <div class="mobile-search" v-if="isMobile">
+          <div class="search-container">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="5" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-              <rect x="3" y="11" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
-              <rect x="3" y="17" width="18" height="4" rx="1" stroke="currentColor" stroke-width="2"/>
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+              <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
+            <input 
+              v-model="filters.keyword" 
+              type="text" 
+              placeholder="Szukaj..."
+              class="search-input"
+            />
+          </div>
+          
+          <button
+            @click.stop="handleSortButtonClick"
+            class="mobile-action-btn"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"/>
+              <path d="M6 12h12"/>
+              <path d="M10 18h4"/>
+            </svg>
+            <span>Sortuj</span>
+          </button>
+          
+          <button @click.stop="openFiltersModal" class="mobile-action-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+            </svg>
+            <span>Filtruj</span>
+            <span v-if="totalFiltersCount > 0" class="mobile-filter-badge">{{ totalFiltersCount }}</span>
           </button>
         </div>
 
-      </div>
-
-      <!-- Mobile View -->
-      <div class="mobile-search">
-        <div class="search-container">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          <input 
-            v-model="filters.keyword" 
-            type="text" 
-            placeholder="Szukaj..."
-            class="search-input"
-          />
+        <div class="results-count" v-if="isMobile">
+          {{ filteredListings.length }} ogłoszeń
         </div>
-        
-        <button
-          @click.stop="handleSortButtonClick"
-          class="mobile-action-btn"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h18"/>
-            <path d="M6 12h12"/>
-            <path d="M10 18h4"/>
-          </svg>
-          <span>Sortuj</span>
-        </button>
-        
-        <button @click.stop="openFiltersModal" class="mobile-action-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
-          </svg>
-          <span>Filtruj</span>
-          <span v-if="totalFiltersCount > 0" class="mobile-filter-badge">{{ totalFiltersCount }}</span>
-        </button>
       </div>
-
-      <div class="results-count">
-        {{ filteredListings.length }} ogłoszeń
-      </div>
+    </div>
       
       <!-- Sort Panel -->
       <Teleport to="body">
@@ -1383,17 +1432,39 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           </div>
         </div>
       </Teleport>
-    </div>
 
     <!-- Main Content -->
     <div class="content-wrapper">
-      <!-- List Sidebar -->
-      <div 
-        ref="listContainerRef" 
-        class="listings-list-container" 
-        :class="{ 'hidden-mobile': showMapOnMobile }"
-        @scroll="handleScroll"
+      <!-- Mobile toggle button -->
+      <button 
+        v-if="isMobile && showMapButton" 
+        @click="toggleMobileMap" 
+        class="mobile-map-toggle"
+        :style="{ 
+          bottom: selectedAd && showMapOnMobile ? '180px' : '20px',
+          zIndex: 9999
+        }"
       >
+        <span>{{ showMapOnMobile ? 'Pokaż listę' : 'Pokaż mapę' }}</span>
+        <svg v-if="!showMapOnMobile" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
+          <line x1="9" y1="21" x2="9" y2="9"></line>
+        </svg>
+      </button>
+
+      <div class="listings-layout" :class="{ 'map-visible': showMapOnMobile }">
+        <!-- List Sidebar -->
+        <div 
+          ref="listContainerRef" 
+          class="listings-list-container" 
+          :class="{ 'hidden-mobile': showMapOnMobile }"
+          @scroll="handleScroll"
+        >
         <div v-if="isLoading" class="listings-list" :class="viewMode">
           <SkeletonCard v-for="i in itemsPerPage" :key="i" />
         </div>
@@ -1462,20 +1533,6 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
         </Transition>
       </div>
 
-      <!-- Mobile toggle button -->
-      <button v-if="isMobile && showMapButton" @click="toggleMobileMap" class="mobile-map-toggle">
-        <span>{{ showMapOnMobile ? 'Pokaż listę' : 'Pokaż mapę' }}</span>
-        <svg v-if="!showMapOnMobile" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-          <circle cx="12" cy="10" r="3"></circle>
-        </svg>
-        <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="3" y1="9" x2="21" y2="9"></line>
-          <line x1="9" y1="21" x2="9" y2="9"></line>
-        </svg>
-      </button>
-
       <!-- Map Container -->
       <div class="map-container-wrapper" :class="{ 'mobile-visible': showMapOnMobile, 'mobile-hidden': isMobile && !showMapOnMobile }">
         <div ref="mapContainer" class="map-container">
@@ -1518,8 +1575,134 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             </div>
           </div>
         </div>
+        
+        <!-- Mobile Ad Details Card -->
+        <transition name="slide-up">
+          <div 
+            v-if="isMobile && selectedAd && showMapOnMobile" 
+            class="mobile-bottom-card"
+            :style="{
+              position: 'absolute',
+              bottom: '20px',
+              zIndex: 9998
+            }"
+          >
+            <button class="close-card" @click="selectedAdId = null">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <router-link 
+              :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(selectedAd.type)}/${slugify(selectedAd.city)}/${slugify(selectedAd.title)}-${selectedAd.id}`"
+              class="map-card-content"
+            >
+              <div class="map-card-image" v-if="selectedAd.image_url">
+                <img :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title">
+              </div>
+              <div class="map-card-info">
+                <div class="card-badges">
+                  <div class="card-category" :style="{ background: typeColors[selectedAd.type] }">
+                    {{ getTypeLabel(selectedAd.type) }}
+                  </div>
+                  <div class="card-status" :style="{ background: searchStore.getStatusColor(selectedAd) }">
+                    {{ searchStore.getStatusLabel(selectedAd) }}
+                  </div>
+                </div>
+                <h3 class="card-title">{{ selectedAd.title }}</h3>
+                <div class="card-details-row">
+                  <div class="card-location">
+                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                      <path d="M7 7C7.825 7 8.5 6.325 8.5 5.5C8.5 4.675 7.825 4 7 4C6.175 4 5.5 4.675 5.5 5.5C5.5 6.325 6.175 7 7 7Z" stroke="currentColor" stroke-width="1.2"/>
+                      <path d="M7 12C7 12 10.5 9 10.5 5.5C10.5 3.567 8.933 2 7 2C5.067 2 3.5 3.567 3.5 5.5C3.5 9 7 12 7 12Z" stroke="currentColor" stroke-width="1.2"/>
+                    </svg>
+                    {{ formatLocation(selectedAd.location, selectedAd.city) }}
+                  </div>
+                  <div v-if="selectedAd.dimensions" class="card-dimensions">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    </svg>
+                    {{ selectedAd.dimensions }}
+                  </div>
+                </div>
+                <div class="card-price">
+                  {{ Math.round(searchStore.getPrice(selectedAd, searchStore.computedPriceDisplayUnit as any)).toLocaleString('pl-PL') }} PLN
+                  <span class="price-unit">{{ searchStore.getPriceLabel(searchStore.computedPriceDisplayUnit as any, selectedAd) }}</span>
+                </div>
+              </div>
+            </router-link>
+          </div>
+        </transition>
+
+        <!-- Desktop Side Panel -->
+        <transition name="slide-left">
+          <div v-if="!isMobile && selectedAd" class="desktop-side-panel">
+            <div class="panel-header">
+              <h3>Szczegóły ogłoszenia</h3>
+              <button class="close-panel" @click="selectedAdId = null">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div class="panel-content">
+              <div class="panel-image" v-if="selectedAd.image_url">
+                <img :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title">
+              </div>
+              
+              <div class="panel-body">
+                <div class="panel-badges">
+                  <div class="panel-type" :style="{ background: typeColors[selectedAd.type] }">
+                    {{ searchStore.getTypeLabel(selectedAd.type) }}
+                  </div>
+                  <div class="panel-status" :style="{ background: searchStore.getStatusColor(selectedAd) }">
+                    {{ searchStore.getStatusLabel(selectedAd) }}
+                  </div>
+                </div>
+                <h2 class="panel-title">{{ selectedAd.title }}</h2>
+                
+                <div class="panel-info-items">
+                  <div class="panel-info-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    <span>{{ formatLocation(selectedAd.location, selectedAd.city) }}</span>
+                  </div>
+                  
+                  <div v-if="selectedAd.dimensions" class="panel-info-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="3" width="20" height="14" rx="2" translateY="2" />
+                      <line x1="2" y1="12" x2="22" y2="12" />
+                    </svg>
+                    <span>Wymiary: {{ selectedAd.dimensions }}</span>
+                  </div>
+                </div>
+
+                <div class="panel-price-box">
+                  <div class="price-label">Cena:</div>
+                  <div class="price-value">
+                    {{ Math.round(searchStore.getPrice(selectedAd, searchStore.computedPriceDisplayUnit as any)).toLocaleString('pl-PL') }} zł
+                    <span class="price-unit-large"> / {{ searchStore.getPriceLabel(searchStore.computedPriceDisplayUnit as any, selectedAd).replace('/', '') }}</span>
+                  </div>
+                </div>
+
+                <router-link 
+                  :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(selectedAd.type)}/${slugify(selectedAd.city)}/${slugify(selectedAd.title)}-${selectedAd.id}`"
+                  class="view-details-btn"
+                >
+                  Zobacz pełne ogłoszenie
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </router-link>
+              </div>
+            </div>
+          </div>
+        </transition>
       </div>
-    </div>
+     </div>
     </div>
 
     <!-- Filters Modal -->
@@ -2091,17 +2274,16 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             <label style="margin: 0; cursor: pointer; font-size: 0.875rem; color: #4B5563; font-weight: 500;" @click="tempFilters.onlyWithImage = !tempFilters.onlyWithImage">Tylko ze zdjęciem</label>
           </div>
         </div>
-        </div>
+      </div>
 
-        <div class="modal-footer">
-          <button @click="clearFilters" class="btn-secondary">Wyczyść</button>
-          <button @click="applyFilters" class="btn-primary">Zastosuj</button>
-        </div>
+      <div class="modal-footer">
+        <button @click="clearFilters" class="btn-secondary">Wyczyść</button>
+        <button @click="applyFilters" class="btn-primary">Zastosuj</button>
       </div>
     </div>
-    </Teleport>
+  </div>
+</Teleport>
 
-    <!-- Search Alert Global Modal -->
     <Teleport to="body">
       <SearchAlertModal 
         v-if="showSearchAlertModal && filters"
@@ -2110,17 +2292,16 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
         @close="showSearchAlertModal = false"
         @submit="handleSearchAlertSubmit"
       />
-
     </Teleport>
-
-
+  </div> <!-- End of listings-page -->
+    
     <!-- Category/City Description for SEO - poza listings-page -->
     <div v-if="currentDescription" class="description-wrapper">
       <CategoryDescription 
         :description="currentDescription"
       />
     </div>
-  </div>
+  </div> <!-- End of root div -->
 </template>
 
 <style scoped>
@@ -2300,6 +2481,332 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 .sort-option.active .option-desc {
   color: #6366f1;
+}
+
+/* Mobile Bottom Card */
+.mobile-bottom-card {
+  position: absolute;
+  bottom: 20px; 
+  left: 1rem;
+  right: 1rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.close-card {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-content {
+  /* This selector matches elements in the results list, we keep it as is or fix if needed */
+}
+
+/* Map Card Specifics to avoid conflicts with list cards */
+.map-card-content {
+  display: flex;
+  text-decoration: none;
+  color: inherit;
+  min-height: 120px;
+  height: auto;
+}
+
+.map-card-image {
+  width: 120px;
+  min-height: 120px;
+  flex-shrink: 0;
+}
+
+.map-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.map-card-info {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.card-badges {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.card-category {
+  color: white;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.card-status {
+  color: white;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-details-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-location, .card-dimensions {
+  font-size: 0.75rem;
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-dimensions svg {
+  color: #9CA3AF;
+}
+
+.card-price {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #4F46E5;
+}
+
+.price-unit {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #6B7280;
+}
+
+/* Desktop Side Panel Styles */
+.desktop-side-panel {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  width: 350px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.panel-header {
+  padding: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.close-panel {
+  background: #F3F4F6;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.close-panel:hover {
+  background: #E5E7EB;
+  color: #1F2937;
+}
+
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.panel-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.panel-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.panel-badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.panel-type, .panel-status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: white;
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.panel-info-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.panel-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #4B5563;
+  font-size: 0.95rem;
+}
+
+.panel-info-item svg {
+  color: #9CA3AF;
+  flex-shrink: 0;
+}
+
+.panel-price-box {
+  background: #F9FAFB;
+  padding: 1rem;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.price-label {
+  font-size: 0.8rem;
+  color: #6B7280;
+  font-weight: 600;
+}
+
+.price-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #4F46E5;
+}
+
+.price-unit-large {
+  font-size: 0.875rem;
+  color: #6B7280;
+  margin-left: 2px;
+}
+
+.view-details-btn {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  padding: 1rem;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+}
+
+.view-details-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.view-details-btn:active {
+  transform: translateY(0);
+}
+
+/* Animations */
+.slide-up-enter-active,
+.slide-up-leave-active,
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(120%);
+  opacity: 0;
+}
+
+.slide-left-enter-from,
+.slide-left-leave-to {
+  transform: translateX(110%);
+  opacity: 0;
 }
 
 /* Responsive adjustments */
@@ -2548,14 +3055,23 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   background: linear-gradient(135deg, #5568d3 0%, #65408b 100%);
 }
 
-/* Content Wrapper - 50/50 Split */
+/* Content Wrapper */
 .content-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   flex: 1;
   overflow: hidden;
   height: calc(100vh - 70px); /* Odejmujemy wysokość paska wyszukiwania */
   position: relative;
+}
+
+.listings-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 .listings-list-container {
@@ -3806,7 +4322,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000;
+  z-index: 9999;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
@@ -3819,11 +4335,15 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  transition: bottom 0.3s ease, transform 0.2s ease, opacity 0.2s ease;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   opacity: 0.9;
   white-space: nowrap;
+}
+
+.mobile-map-toggle.is-clamped {
+  /* position: absolute; - Removed in favor of fixed + dynamic bottom */
 }
 
 .mobile-map-toggle:hover {
@@ -3839,6 +4359,47 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 }
 
 @media (max-width: 767px) {
+  .listings-page {
+    height: auto;
+    overflow: visible;
+  }
+
+  .listings-layout {
+    display: flex;
+    flex-direction: column;
+    height: calc(100svh - 140px);
+    min-height: 500px;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .listings-layout.map-visible {
+    height: calc(100svh - var(--header-height, 60px)) !important;
+    min-height: auto;
+  }
+  
+  .listings-page.map-active {
+    padding-top: 1.5rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+  }
+
+  .listings-page.map-active .content-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .content-wrapper {
+    display: block;
+    height: auto;
+    overflow: visible;
+    position: relative;
+    padding-bottom: 0;
+  }
+
   .mobile-map-toggle {
     display: flex;
     opacity: 0.9;
@@ -3867,7 +4428,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   
   .map-container-wrapper {
     display: none;
-    height: calc(100vh - 250px); /* Adjust based on your header/footer */
+    height: 100%; 
     transition: opacity 0.3s ease, height 0.3s ease;
     
     &.mobile-visible {
