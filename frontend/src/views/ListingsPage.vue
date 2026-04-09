@@ -38,6 +38,7 @@ const {
   isLoading,
   listings,
   sortedAndFilteredListings: filteredListings,
+  paginatedListings,
   totalPages,
   activeFiltersCount,
   itemsPerPage,
@@ -373,8 +374,7 @@ const isStatusSoon = computed({
   }
 })
 
-const paginatedAds = computed(() => searchStore.paginatedListings)
-const getCurrentPageAds = () => paginatedAds.value
+const getCurrentPageAds = () => paginatedListings.value
 
 const transportScopeOptions = computed(() => {
   const v = tempFilters.value?.variant || filters.value.variant
@@ -788,7 +788,7 @@ const initMap = async () => {
     
     // Skip updating mapBounds if this was a programmatic move (e.g., zoom to city)
     if (isProgrammaticMove.value) {
-      isProgrammaticMove.value = false
+      // Don't reset to false yet - some programmatic moves trigger multiple events
       return
     }
     
@@ -807,14 +807,20 @@ const initMap = async () => {
       }
     }
 
-    // Don't clear text filters - keep user's input visible
-    // The mapBounds will still narrow down results geographically
-    
     searchStore.applyFilters(updates)
   }
 
-  map.on('dragend', handleUserMapInteraction)
-  map.on('zoomend', handleUserMapInteraction)
+  // Use moveend which is safer and fires once after any movement/zoom
+  map.on('moveend', () => {
+    if (isProgrammaticMove.value) {
+      // Small timeout to allow all programmatic events to settle
+      setTimeout(() => {
+        isProgrammaticMove.value = false
+      }, 100)
+    } else {
+      handleUserMapInteraction()
+    }
+  })
 }
 
 const syncMapToFilters = () => {
@@ -1006,8 +1012,10 @@ const getAvailablePriceUnits = (type: string) => searchStore.getAvailablePriceUn
 
 const showEquipmentSectionInModal = computed(() => tempFilters.value && ['billboard', 'citylight', 'banner', 'wall', 'led_screen'].includes(tempFilters.value.type))
 
-// Lifecycle
 onMounted(async () => {
+  // Pokaż skeleton od samego początku (szczególnie ważne przy przejściach SPA)
+  searchStore.isLoading = true
+  
   checkIfMobile()
   window.addEventListener('resize', checkIfMobile)
   window.addEventListener('scroll', handleScroll)
@@ -1015,51 +1023,47 @@ onMounted(async () => {
   if (!isMobile.value) { setTimeout(() => initMap(), 100) }
   document.addEventListener('click', handleClickOutside)
   
-  // 1. Sprawdź czy type/city są w query params - jeśli tak, przekieruj na path params
-  const queryType = route.query.type as string | undefined
-  const queryCity = route.query.city as string | undefined
-  const pathType = route.params.type as string | undefined
-  const pathCity = route.params.city as string | undefined
-  
-  // Jeśli type lub city są w query params ale NIE w path params - przekieruj
-  if ((queryType && !pathType) || (queryCity && !pathCity)) {
-    let newPath = '/powierzchnie-reklamowe'
+  try {
+    // 1. Sprawdź czy type/city są w query params - jeśli tak, przekieruj na path params
+    const queryType = route.query.type as string | undefined
+    const queryCity = route.query.city as string | undefined
+    const pathType = route.params.type as string | undefined
+    const pathCity = route.params.city as string | undefined
     
-    // Użyj type z query params lub path params
-    const finalType = queryType || pathType
-    if (finalType) {
-      const typeSlug = mapTypeToUrlFormat(finalType)
-      newPath += '/' + typeSlug
+    // Jeśli type lub city są w query params ale NIE w path params - przekieruj
+    if ((queryType && !pathType) || (queryCity && !pathCity)) {
+      let newPath = '/powierzchnie-reklamowe'
+      
+      const finalType = queryType || pathType
+      if (finalType) {
+        const typeSlug = mapTypeToUrlFormat(finalType)
+        newPath += '/' + typeSlug
+      }
+      
+      const finalCity = queryCity || pathCity
+      if (finalCity) {
+        const citySlug = slugify(finalCity)
+        newPath += '/' + citySlug
+      }
+      
+      const otherQuery = { ...route.query }
+      delete otherQuery.type
+      delete otherQuery.city
+      
+      const queryString = new URLSearchParams(otherQuery as any).toString()
+      const fullPath = queryString ? newPath + '?' + queryString : newPath
+      
+      searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
+      
+      router.replace(fullPath)
+      return 
     }
-    
-    // Użyj city z query params lub path params
-    const finalCity = queryCity || pathCity
-    if (finalCity) {
-      const citySlug = slugify(finalCity)
-      newPath += '/' + citySlug
-    }
-    
-    // Pozostałe query params (bez type/city)
-    const otherQuery = { ...route.query }
-    delete otherQuery.type
-    delete otherQuery.city
-    
-    const queryString = new URLSearchParams(otherQuery as any).toString()
-    const fullPath = queryString ? newPath + '?' + queryString : newPath
-    
-    // Zanim przekierujemy, zsynchronizujmy sklep (aby uniknąć błysku nieodfiltrowanych danych)
-    searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
-    
-    router.replace(fullPath) // Używamy replace przy przekierowaniu technicznym
-    return 
-  }
 
-  // 2. Sprawdź czy jest flaga user_initiated_search w localStorage
-  const isUserSearch = localStorage.getItem('user_initiated_search') === 'true'
-  
-  // 3. Jeśli JEST flaga user_initiated_search → załaduj filtry z localStorage jako bazę
-  if (isUserSearch) {
-    try {
+    // 2. Sprawdź czy jest flaga user_initiated_search w localStorage
+    const isUserSearch = localStorage.getItem('user_initiated_search') === 'true'
+    
+    // 3. Jeśli JEST flaga user_initiated_search → załaduj filtry z localStorage jako bazę
+    if (isUserSearch) {
       const saved = localStorage.getItem('reklamap_last_search')
       if (saved) {
         const lastSearch = JSON.parse(saved)
@@ -1069,19 +1073,21 @@ onMounted(async () => {
           searchStore.priceDisplay = lastSearch._priceDisplayUnit
         }
       }
-    } catch (error) {
-      // Silently fail
     }
+
+    // 4. Nadpisz filtrami z URL
+    searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
+    syncLocationQuery()
+
+    // 5. Pobierz ogłoszenia (wymuszamy fetch mimo isLoading, żeby mieć pewność świeżych danych)
+    await searchStore.fetchListings()
+    
+  } catch (error) {
+    console.error('Error initializing listings page:', error)
+  } finally {
+    searchStore.isLoading = false
+    isInitialized.value = true
   }
-
-  // 4. Nadpisz filtrami z URL (query params mają priorytet)
-  searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
-  syncLocationQuery()
-
-  // 5. Pobierz ogłoszenia DOPIERO GDY filtry są ustawione
-  await searchStore.fetchListings()
-  
-  isInitialized.value = true
 
   // 6. Proactive search alert modal
   startAlertTimer()
@@ -1093,11 +1099,14 @@ onActivated(() => {
   // Guard: tylko dla tras ogłoszeń (keep-alive aktywuje wszystkie cache'owane instancje)
   if (!route.path.startsWith('/powierzchnie-reklamowe')) return
 
-  // Synchronizuj filtry z aktualnym URL (path params + query params)
-  // Nie wywołujemy fetchListings() - dane są już w storze, a fetch ustawiałby isLoading=true
-  // co chowałoby wyniki podczas skeleton loadera
+  // Synchronizuj filtry z aktualnym URL
   searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
   syncLocationQuery()
+
+  // Upewnij się, że dane są w sklepie (np. po bezpośrednim wejściu na link)
+  if (listings.value.length === 0) {
+    searchStore.fetchListings()
+  }
 })
 
 const startAlertTimer = () => {
@@ -1128,6 +1137,11 @@ watch(
     searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
     syncLocationQuery()
     
+    // Pobierz ogłoszenia jeśli ich nie ma (np. po odświeżeniu specyficznego URL)
+    if (listings.value.length === 0) {
+      searchStore.fetchListings()
+    }
+
     // Clear and restart alert timer when user navigates between categories or changes filters
     startAlertTimer()
     

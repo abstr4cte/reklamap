@@ -106,13 +106,12 @@ export const useSearchStore = defineStore('search', () => {
   }
 
   const fetchListings = async () => {
-    if (isLoading.value) return
     try {
       isLoading.value = true
       const data = await api.getAdvertisements()
       listings.value = data || []
     } catch (error) {
-      // Silently fail
+      console.error('Failed to fetch listings:', error)
     } finally {
       isLoading.value = false
     }
