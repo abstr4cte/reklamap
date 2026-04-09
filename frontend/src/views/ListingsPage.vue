@@ -1082,33 +1082,34 @@ onMounted(async () => {
       }
     }
 
-    // 4. Jeśli przeszliśmy walidację path params, zsynchronizuj resztę stanu (ale nie pobieraj danych tutaj, zrobi to watcher)
-    searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
-    syncLocationQuery()
+    // 4. Jeśli przeszliśmy walidację path params, zsynchronizuj resztę stanu i pobierz dane
+    await loadData()
     
     isInitialized.value = true
   } catch (error) {
     console.error('Error initializing listings page:', error)
   } finally {
-    // isLoading jest zarządzany przez fetchListings w watcherze
+    searchStore.isLoading = false
   }
 
   // 6. Proactive search alert modal
   startAlertTimer()
 })
 
-// Przy powrocie do cache'owanej strony (keep-alive) wymuś synchronizację filtrów z URL
-// onMounted nie odpala się ponownie dla cache'owanych instancji
-onActivated(() => {
-  // Guard: tylko dla tras ogłoszeń (keep-alive aktywuje wszystkie cache'owane instancje)
-  if (!route.path.startsWith('/powierzchnie-reklamowe')) return
-
+const loadData = async () => {
   // Synchronizuj filtry z aktualnym URL
   searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
   syncLocationQuery()
+  
+  // Pobierz świeże ogłoszenia
+  await searchStore.fetchListings()
+}
 
-  // Upewnij się, że dane są świeże i zaktualizowane dla nowej kategorii/lokalizacji
-  searchStore.fetchListings()
+// Przy powrocie do cache'owanej strony (keep-alive) wymuś synchronizację filtrów z URL
+// onMounted nie odpala się ponownie dla cache'owanych instancji
+onActivated(() => {
+  if (!route.path.startsWith('/powierzchnie-reklamowe')) return
+  loadData()
 })
 
 const startAlertTimer = () => {
@@ -1132,14 +1133,9 @@ const startAlertTimer = () => {
 watch(
   () => [route.params, route.query],
   () => {
-    // Guard: watcher jest aktywny przez keep-alive nawet poza stroną ogłoszeń - ignoruj inne strony
     if (!route.path.startsWith('/powierzchnie-reklamowe')) return
-
-    searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
-    syncLocationQuery()
     
-    // Pobierz świeże ogłoszenia przy każdej zmianie parametrów trasy
-    searchStore.fetchListings()
+    loadData()
 
     // Clear and restart alert timer when user navigates between categories or changes filters
     startAlertTimer()
@@ -1149,7 +1145,7 @@ watch(
       scrollListToTop()
     })
   },
-  { deep: true, immediate: true }
+  { deep: true }
 )
 
 onBeforeUnmount(() => {
