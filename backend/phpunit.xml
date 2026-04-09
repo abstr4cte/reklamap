@@ -19,6 +19,8 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="APP_KEY" value="base64:XJGQi5zY/ZHF3Kt5ufrb+xJAWICM/hWlKPqmsw2gBfrI="/>
+        <env name="INTERNAL_API_KEY" value="test-internal-api-key-for-testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
