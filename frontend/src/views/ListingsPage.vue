@@ -779,7 +779,10 @@ const initMap = async () => {
 
   if (window.ResizeObserver && mapContainer.value) {
     resizeObserver = new ResizeObserver(() => {
-      if (map) map.invalidateSize()
+      if (map) {
+        isProgrammaticMove.value = true
+        map.invalidateSize()
+      }
     })
     resizeObserver.observe(mapContainer.value)
   }
