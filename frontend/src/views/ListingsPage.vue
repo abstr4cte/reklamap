@@ -804,6 +804,14 @@ const initMap = async () => {
       return
     }
     
+    // Prevent capturing bounds when the container hasn't physically rendered yet (0x0 dimensions).
+    // This happens during Vue's lifecycle hooks before the DOM paints the Leaflet flexbox layout,
+    // which previously resulted in a tiny single-point mapBound erasing all advertisements.
+    const size = map.getSize()
+    if (size.x <= 0 || size.y <= 0) {
+      return
+    }
+    
     const bounds = map.getBounds()
     
     // Update map bounds to filter results, but keep text filter values intact
