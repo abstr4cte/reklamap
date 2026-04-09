@@ -51,6 +51,7 @@ let resizeObserver: ResizeObserver | null = null
 const markers: Map<string, L.Marker> = new Map()
 const isMapActive = ref(false)
 const isLegendVisible = ref(false)
+const selectedAd = ref<Advertisement | null>(null)
 const isMobile = ref(window.innerWidth < 768)
 const headerHeight = ref(80)
 const mapSection = ref<HTMLElement | null>(null)
@@ -147,8 +148,16 @@ const initMap = () => {
 
   // Dodaj kontrolkę zoomu w odpowiednim miejscu
   L.control.zoom({
-    position: isMobile.value ? 'bottomright' : 'topleft'
+    position: isMobile.value ? 'bottomleft' : 'topleft'
   }).addTo(map)
+
+  // Zamknij wybraną reklamę przy kliknięciu w mapę
+  map.on('click', (e: any) => {
+    // Check if the click was on the map itself, not a marker
+    if (e.originalEvent.target.classList.contains('leaflet-container')) {
+      selectedAd.value = null
+    }
+  })
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -305,7 +314,7 @@ const updateMarkers = () => {
         <a href="${adUrl}" style="text-decoration: none; color: inherit; display: block;">
           ${imageUrl ? `
             <div style="margin: -20px -20px 12px -20px; overflow: hidden; border-radius: 12px 12px 0 0;">
-              <img src="${imageUrl}" alt="${ad.title}" style="width: 100%; height: 140px; object-fit: cover; display: block;" />
+              <img src="${imageUrl}" alt="${ad.title}" style="width: 100%; height: ${isMobile.value ? '100px' : '140px'}; object-fit: cover; display: block;" />
             </div>
           ` : ''}
           <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: #1F2937;">
@@ -344,18 +353,28 @@ const updateMarkers = () => {
       </div>
     `
 
-      marker.bindPopup(popupContent, { 
-        maxWidth: 250,
-        maxHeight: isMobile.value ? 320 : 400,
-        autoPan: true,
-        autoPanPadding: isMobile.value ? [40, 40] : [50, 50]
-      })
+      if (!isMobile.value) {
+        marker.bindPopup(popupContent, { 
+          maxWidth: 250,
+          maxHeight: 400,
+          autoPan: true,
+          autoPanPadding: [50, 50]
+        })
+      }
       
       // On mobile, activate map interactions if inactive
       marker.on('click', () => {
-        if (isMobile.value && !isMapActive.value) {
-          // Activate map interactions on first marker click
+        if (isMobile.value) {
+          selectedAd.value = ad
+          // Scroll map slightly to show the marker above the bottom card
           if (map) {
+            const point = map.latLngToContainerPoint([ad.latitude, ad.longitude])
+            const newPoint = L.point(point.x, point.y + 100)
+            const newLatLng = map.containerPointToLatLng(newPoint)
+            map.panTo(newLatLng, { animate: true })
+          }
+          
+          if (!isMapActive.value && map) {
             map.scrollWheelZoom.enable()
             map.dragging.enable()
             map.touchZoom.enable()
@@ -620,11 +639,12 @@ onMounted(() => {
         v-if="isMobile" 
         @click="scrollToAdGrid" 
         class="mobile-list-toggle"
-        :class="{ 'is-clamped': isMobileClamped }"
+        :class="{ 'is-clamped': isMobileClamped || (selectedAd && isMobile) }"
         :style="{
           opacity: showMobileToggle ? 0.9 : 0,
           visibility: showMobileToggle ? 'visible' : 'hidden',
-          pointerEvents: showMobileToggle ? 'auto' : 'none'
+          pointerEvents: showMobileToggle ? 'auto' : 'none',
+          bottom: selectedAd ? '240px' : '20px'
         }"
       >
         <span>Pokaż listę</span>
@@ -634,6 +654,42 @@ onMounted(() => {
           <rect x="3" y="17" width="18" height="4" rx="1"/>
         </svg>
       </button>
+
+      <!-- Bottom Sheet Card for Mobile -->
+      <transition name="slide-up">
+        <div v-if="isMobile && selectedAd" class="mobile-bottom-card">
+          <button class="close-card" @click="selectedAd = null">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+          
+          <router-link 
+            :to="`/powierzchnia-reklamowa/${mapTypeToUrlFormat(selectedAd.type)}/${slugify(selectedAd.city)}/${slugify(selectedAd.title)}-${selectedAd.id}`"
+            class="card-content"
+          >
+            <div class="card-image" v-if="selectedAd.image_url">
+              <img :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title">
+            </div>
+            <div class="card-info">
+              <div class="card-category" :style="{ background: typeColors[selectedAd.type] }">
+                {{ searchStore.getTypeLabel(selectedAd.type) }}
+              </div>
+              <h3 class="card-title">{{ selectedAd.title }}</h3>
+              <div class="card-location">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 7C7.825 7 8.5 6.325 8.5 5.5C8.5 4.675 7.825 4 7 4C6.175 4 5.5 4.675 5.5 5.5C5.5 6.325 6.175 7 7 7Z" stroke="currentColor" stroke-width="1.2"/>
+                  <path d="M7 12C7 12 10.5 9 10.5 5.5C10.5 3.567 8.933 2 7 2C5.067 2 3.5 3.567 3.5 5.5C3.5 9 7 12 7 12Z" stroke="currentColor" stroke-width="1.2"/>
+                </svg>
+                {{ formatLocation(selectedAd.location, selectedAd.city) }}
+              </div>
+              <div class="card-price">
+                {{ Math.round(selectedAd.price).toLocaleString('pl-PL') }} {{ getPriceUnitLabel(selectedAd) }}
+              </div>
+            </div>
+          </router-link>
+        </div>
+      </transition>
     </div>
   </section>
 </template>
@@ -1108,5 +1164,119 @@ onMounted(() => {
 
 :deep(.leaflet-top), :deep(.leaflet-bottom) {
   z-index: 850;
+}
+
+/* Mobile Bottom Card Styles */
+.mobile-bottom-card {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.close-card {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-content {
+  display: flex;
+  text-decoration: none;
+  color: inherit;
+  height: 120px;
+}
+
+.card-image {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-info {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.card-category {
+  align-self: flex-start;
+  color: white;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-location {
+  font-size: 0.8rem;
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-price {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #4F46E5;
+}
+
+/* Animations */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(120%);
+  opacity: 0;
+}
+
+.mobile-list-toggle {
+  transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 </style>
