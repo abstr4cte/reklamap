@@ -1083,15 +1083,6 @@ onMounted(async () => {
   startAlertTimer()
 })
 
-onActivated(() => {
-  // Wymuś synchronizację przy powrocie (dla keep-alive)
-  const isListingsRoute = router.currentRoute.value.path.includes('/powierzchnie-reklamowe')
-  if (isListingsRoute) {
-    searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
-    syncLocationQuery()
-  }
-})
-
 const startAlertTimer = () => {
   if (hasShownAlertModal.value) return
   
@@ -1114,9 +1105,8 @@ const startAlertTimer = () => {
 watch(
   () => [route.params, route.query],
   () => {
-    // TYLKO jeśli jesteśmy na liście ogłoszeń (używając router.currentRoute dla pewności w keep-alive)
-    const isListingsRoute = router.currentRoute.value.path.includes('/powierzchnie-reklamowe')
-    if (!isListingsRoute) return
+    // Guard: watcher jest aktywny przez keep-alive nawet poza stroną ogłoszeń - ignoruj inne strony
+    if (!route.path.startsWith('/powierzchnie-reklamowe')) return
 
     searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
     syncLocationQuery()

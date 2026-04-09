@@ -235,8 +235,8 @@ const loadAdvertisements = async () => {
 
 // Watch for URL query parameter changes
 watch(() => route.query, (newQuery) => {
-  // TYLKO jeśli jesteśmy na stronie głównej (używając router.currentRoute dla pewności w keep-alive)
-  if (router.currentRoute.value.path !== '/') return
+  // Guard: watcher jest aktywny przez keep-alive nawet poza stroną główną - ignoruj inne strony
+  if (route.name !== 'home') return
 
   // Jeśli query jest puste, a mamy flagę zapisanego wyszukiwania, przywróć je do URL
   // (to rozwiązuje problem klikania logo na Home, które czyści URL ale nie powinno czyścić filtrów)
