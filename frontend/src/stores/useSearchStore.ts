@@ -209,8 +209,11 @@ export const useSearchStore = defineStore('search', () => {
     }
 
     // Apply other filters from query
+    // cityStrict set by path params (params.city) takes priority over query param default (false)
+    const hasCityFromPath = !!params.city
     Object.entries(urlFilters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '' && 
+      if (hasCityFromPath && key === 'cityStrict') return // path param already set cityStrict=true
+      if (value !== undefined && value !== null && value !== '' &&
           (Array.isArray(value) ? value.length > 0 : true)) {
         // @ts-ignore
         filters.value[key] = value

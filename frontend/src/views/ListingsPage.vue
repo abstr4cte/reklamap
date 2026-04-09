@@ -148,6 +148,7 @@ onActivated(() => {
   // Odśwież mapę po powrocie (keep-alive może powodować problemy z rozmiarem)
   if (map) {
     setTimeout(() => {
+      isProgrammaticMove.value = true  // Prevent moveend from updating mapBounds during invalidateSize
       map?.invalidateSize()
     }, 100)
   }
@@ -785,13 +786,16 @@ const initMap = async () => {
 
   const handleUserMapInteraction = () => {
     if (!map) return
-    
+
+    // Skip updating mapBounds if component is not active (keep-alive deactivated)
+    if (!isActive.value) return
+
     // Skip updating mapBounds if this was a programmatic move (e.g., zoom to city)
     if (isProgrammaticMove.value) {
       // Don't reset to false yet - some programmatic moves trigger multiple events
       return
     }
-    
+
     // Skip updating mapBounds if map is hidden on mobile
     if (isMobile.value && !showMapOnMobile.value) {
       return
