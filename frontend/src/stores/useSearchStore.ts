@@ -538,52 +538,55 @@ export const useSearchStore = defineStore('search', () => {
     }
 
     // 2. Location Search
-    // Always apply location text filters if set. Map bounds act as an additional constraint.
-    if (f.region) filtered = filtered.filter(ad => ad.region === f.region)
-    if (f.city) {
-      const cityQuery = normalizePolishChars(f.city.toLowerCase().trim())
-      if (f.cityStrict) {
-        // Ścisłe dopasowanie miasta (np. po wyborze z sugestii)
-        filtered = filtered.filter(ad => {
-          const cityMatch = normalizePolishChars((ad.city || '').toLowerCase()) === cityQuery
-          
-          // Jeśli mamy współrzędne wybranej lokalizacji, dodatkowo filtruj po odległości
-          // aby wykluczyć inne miasta o tej samej nazwie (np. różne "Warszawy" w Polsce)
-          if (cityMatch && f.selectedLocationCoords) {
-            const distance = getDistanceFromLatLonInKm(
-              f.selectedLocationCoords.lat,
-              f.selectedLocationCoords.lng,
-              ad.latitude,
-              ad.longitude
-            )
-            // Ogłoszenie musi być w promieniu 30km od wybranego miasta
-            return distance <= 30
-          }
-          
-          return cityMatch
-        })
-      } else {
-        // Inteligentne szukanie luźne (obsługuje typowanie ręczne)
-        filtered = filtered.filter(ad => {
-          const adCity = normalizePolishChars((ad.city || '').toLowerCase())
-          const adLocation = normalizePolishChars((ad.location || '').toLowerCase())
-          
-          // 1. Jeśli wpisana fraza jest częścią nazwy miasta obiektu -> OK
-          if (adCity.includes(cityQuery)) return true
-          
-          // 2. Jeśli wpisana fraza jest osobnym słowem w adresie -> OK
-          const locationWords = adLocation.split(/[^a-z0-9]+/)
-          return locationWords.some(word => word === cityQuery)
-        })
+    // Skip location text filters if mapBounds is active (user is interactively panning/zooming the map)
+    // This allows users to zoom out of a city and discover ads in neighboring areas
+    if (!f.mapBounds) {
+      if (f.region) filtered = filtered.filter(ad => ad.region === f.region)
+      if (f.city) {
+        const cityQuery = normalizePolishChars(f.city.toLowerCase().trim())
+        if (f.cityStrict) {
+          // Ścisłe dopasowanie miasta (np. po wyborze z sugestii)
+          filtered = filtered.filter(ad => {
+            const cityMatch = normalizePolishChars((ad.city || '').toLowerCase()) === cityQuery
+            
+            // Jeśli mamy współrzędne wybranej lokalizacji, dodatkowo filtruj po odległości
+            // aby wykluczyć inne miasta o tej samej nazwie (np. różne "Warszawy" w Polsce)
+            if (cityMatch && f.selectedLocationCoords) {
+              const distance = getDistanceFromLatLonInKm(
+                f.selectedLocationCoords.lat,
+                f.selectedLocationCoords.lng,
+                ad.latitude,
+                ad.longitude
+              )
+              // Ogłoszenie musi być w promieniu 30km od wybranego miasta
+              return distance <= 30
+            }
+            
+            return cityMatch
+          })
+        } else {
+          // Inteligentne szukanie luźne (obsługuje typowanie ręczne)
+          filtered = filtered.filter(ad => {
+            const adCity = normalizePolishChars((ad.city || '').toLowerCase())
+            const adLocation = normalizePolishChars((ad.location || '').toLowerCase())
+            
+            // 1. Jeśli wpisana fraza jest częścią nazwy miasta obiektu -> OK
+            if (adCity.includes(cityQuery)) return true
+            
+            // 2. Jeśli wpisana fraza jest osobnym słowem w adresie -> OK
+            const locationWords = adLocation.split(/[^a-z0-9]+/)
+            return locationWords.some(word => word === cityQuery)
+          })
+        }
       }
-    }
-    
-    // 3. Street Search (from suggestion selection)
-    if (f.street) {
-      const streetQuery = normalizePolishChars(f.street.toLowerCase().trim())
-      filtered = filtered.filter(ad => 
-        normalizePolishChars((ad.location || '').toLowerCase()).includes(streetQuery)
-      )
+      
+      // 3. Street Search (from suggestion selection)
+      if (f.street) {
+        const streetQuery = normalizePolishChars(f.street.toLowerCase().trim())
+        filtered = filtered.filter(ad => 
+          normalizePolishChars((ad.location || '').toLowerCase()).includes(streetQuery)
+        )
+      }
     }
 
     // 3. Exact Match Filters
