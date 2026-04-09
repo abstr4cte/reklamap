@@ -138,12 +138,17 @@ const initMap = () => {
     dragging: !isMobile.value, // Disable dragging on mobile until activated
     touchZoom: false, // Disable touch zoom until activated
     doubleClickZoom: false, // Disable double click zoom until activated
-    zoomControl: true, // Disable zoom controls until activated
+    zoomControl: false,
     maxBounds: polandBounds,
     maxBoundsViscosity: 1.0,
     minZoom: 3.5,
     maxZoom: 18
   }).setView([52.0, 19.0], isMobile.value ? 5 : 6)
+
+  // Dodaj kontrolkę zoomu w odpowiednim miejscu
+  L.control.zoom({
+    position: isMobile.value ? 'bottomright' : 'topleft'
+  }).addTo(map)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -341,9 +346,9 @@ const updateMarkers = () => {
 
       marker.bindPopup(popupContent, { 
         maxWidth: 250,
-        maxHeight: 250,
-        autoPan: true,    // Automatyczne przesunięcie mapy, aby popup był widoczny
-        autoPanPadding: [10, 10]  // Zmniejszony padding przy autopan, żeby omijać bugi na małych ekranach
+        maxHeight: isMobile.value ? 320 : 400,
+        autoPan: true,
+        autoPanPadding: isMobile.value ? [40, 40] : [50, 50]
       })
       
       // On mobile, activate map interactions if inactive
@@ -1091,5 +1096,17 @@ onMounted(() => {
     transform: translateX(-50%) translateY(0);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
+}
+
+:deep(.leaflet-control-container) {
+  z-index: 800;
+}
+
+:deep(.leaflet-popup-pane) {
+  z-index: 900;
+}
+
+:deep(.leaflet-top), :deep(.leaflet-bottom) {
+  z-index: 850;
 }
 </style>
