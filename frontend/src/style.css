@@ -131,15 +131,98 @@ img {
   border-radius: 12px !important;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
   font-family: 'Inter', system-ui, sans-serif !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.dp__menu_inner {
+  padding: 0.5rem !important;
+}
+
+/* Month-year navigation header */
+.dp__month_year_wrap {
+  width: 100% !important;
+}
+
+.dp-month-year-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 0.5rem 0.25rem;
+  gap: 0.25rem;
+}
+
+.dp-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #667eea;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.dp-nav-btn:hover {
+  background: rgba(102, 126, 234, 0.12);
+  color: #4f46e5;
+}
+
+.dp-nav-btn:active {
+  background: rgba(102, 126, 234, 0.2);
+}
+
+.dp-month-year-selects {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.dp-select {
+  border: none;
+  background: transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f2937;
+  cursor: pointer;
+  padding: 0.25rem 0.3rem;
+  border-radius: 6px;
+  font-family: inherit;
+  appearance: auto;
+  -webkit-appearance: auto;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.dp-select:hover {
+  background: rgba(102, 126, 234, 0.08);
+  color: #667eea;
+}
+
+.dp-select:focus {
+  outline: 2px solid rgba(102, 126, 234, 0.35);
+  outline-offset: 1px;
+  color: #667eea;
 }
 
 .dp__calendar_header_item {
   font-weight: 600 !important;
   color: #667eea !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.dp__calendar_header_separator {
+  display: none !important;
 }
 
 .dp__cell_inner {
   border-radius: 8px !important;
+  font-size: 0.875rem !important;
 }
 
 .dp__cell_inner:hover {
@@ -149,6 +232,7 @@ img {
 
 .dp__today {
   border: 2px solid #667eea !important;
+  font-weight: 600 !important;
 }
 
 .dp__active_date,
@@ -156,11 +240,11 @@ img {
 .dp__range_end {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   color: white !important;
+  border: none !important;
 }
 
-.dp__month_year_select:hover {
-  background: rgba(102, 126, 234, 0.1) !important;
-  color: #667eea !important;
+.dp__cell_disabled {
+  color: #d1d5db !important;
 }
 
 /* Hide Time Picker Forcefully */

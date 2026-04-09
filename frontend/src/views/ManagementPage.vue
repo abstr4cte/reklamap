@@ -16,6 +16,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 
 const polishMonths = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień']
 const polishDays = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'N']
+const dpYears = Array.from({ length: 8 }, (_, i) => new Date().getFullYear() + i)
 
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
@@ -1794,8 +1795,23 @@ onBeforeUnmount(() => {
           :day-names="polishDays"
           class="w-full"
         >
-          <template #month-year="slotProps">
-            {{ polishMonths[slotProps?.month || 0] }} {{ slotProps?.year }}
+          <template #month-year="{ month, year, updateMonthYear, handleMonthYearChange }">
+            <div class="dp-month-year-nav">
+              <button class="dp-nav-btn" @click="handleMonthYearChange(false)" type="button" aria-label="Poprzedni miesiąc">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <div class="dp-month-year-selects">
+                <select class="dp-select" :value="month" @change="(e) => updateMonthYear(parseInt((e.target as HTMLSelectElement).value), year)">
+                  <option v-for="(name, idx) in polishMonths" :key="idx" :value="idx">{{ name }}</option>
+                </select>
+                <select class="dp-select" :value="year" @change="(e) => updateMonthYear(month, parseInt((e.target as HTMLSelectElement).value))">
+                  <option v-for="y in dpYears" :key="y" :value="y">{{ y }}</option>
+                </select>
+              </div>
+              <button class="dp-nav-btn" @click="handleMonthYearChange(true)" type="button" aria-label="Następny miesiąc">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
           </template>
           <template #trigger>
             <div class="date-picker-wrapper">
