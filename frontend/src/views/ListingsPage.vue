@@ -1008,7 +1008,6 @@ const showEquipmentSectionInModal = computed(() => tempFilters.value && ['billbo
 
 // Lifecycle
 onMounted(async () => {
-  await searchStore.fetchListings()
   checkIfMobile()
   window.addEventListener('resize', checkIfMobile)
   window.addEventListener('scroll', handleScroll)
@@ -1048,8 +1047,11 @@ onMounted(async () => {
     const queryString = new URLSearchParams(otherQuery as any).toString()
     const fullPath = queryString ? newPath + '?' + queryString : newPath
     
-    router.push(fullPath)
-    return // Przerwij dalsze wykonanie - po przekierowaniu onMounted uruchomi się ponownie
+    // Zanim przekierujemy, zsynchronizujmy sklep (aby uniknąć błysku nieodfiltrowanych danych)
+    searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
+    
+    router.replace(fullPath) // Używamy replace przy przekierowaniu technicznym
+    return 
   }
 
   // 2. Sprawdź czy jest flaga user_initiated_search w localStorage
@@ -1071,15 +1073,17 @@ onMounted(async () => {
       // Silently fail
     }
   }
-  // Jeśli NIE ma flagi user_initiated_search → user wszedł przez kategorię → NIE ładuj z localStorage
 
   // 4. Nadpisz filtrami z URL (query params mają priorytet)
   searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
-
   syncLocationQuery()
+
+  // 5. Pobierz ogłoszenia DOPIERO GDY filtry są ustawione
+  await searchStore.fetchListings()
+  
   isInitialized.value = true
 
-  // 5. Proactive search alert modal (consistent with HomePage)
+  // 6. Proactive search alert modal
   startAlertTimer()
 })
 

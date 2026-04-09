@@ -161,6 +161,10 @@ export const useSearchStore = defineStore('search', () => {
     // Start with a clean slate of filters to avoid stale results
     filters.value = { ...DEFAULT_FILTERS }
     
+    // Reset other state to avoid stale pagination or sorting
+    currentPage.value = 1
+    sortBy.value = 'newest'
+    
     // Reset path params tracking
     pathParamsFilters.value = {}
     
