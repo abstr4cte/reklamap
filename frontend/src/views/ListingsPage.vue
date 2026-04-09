@@ -1110,10 +1110,8 @@ onActivated(() => {
   searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
   syncLocationQuery()
 
-  // Upewnij się, że dane są w sklepie (np. po bezpośrednim wejściu na link)
-  if (listings.value.length === 0) {
-    searchStore.fetchListings()
-  }
+  // Upewnij się, że dane są świeże i zaktualizowane dla nowej kategorii/lokalizacji
+  searchStore.fetchListings()
 })
 
 const startAlertTimer = () => {
@@ -1144,10 +1142,8 @@ watch(
     searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
     syncLocationQuery()
     
-    // Pobierz ogłoszenia jeśli ich nie ma (np. po odświeżeniu specyficznego URL)
-    if (listings.value.length === 0) {
-      searchStore.fetchListings()
-    }
+    // Pobierz świeże ogłoszenia przy każdej zmianie parametrów trasy
+    searchStore.fetchListings()
 
     // Clear and restart alert timer when user navigates between categories or changes filters
     startAlertTimer()

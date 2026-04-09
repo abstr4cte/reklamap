@@ -172,16 +172,20 @@ onActivated(() => {
   const savedPosition = sessionStorage.getItem(SCROLL_POSITION_KEY)
   if (savedPosition) {
     const position = parseInt(savedPosition, 10)
-    // Użyj setTimeout, aby upewnić się, że DOM jest w pełni gotowy
-    // nextTick jest za wczesny - scrollBehavior routera może jeszcze nie zakończyć pracy
     setTimeout(() => {
       window.scrollTo({
         top: position,
         behavior: 'instant'
       })
-      // Wyczyść zapisaną pozycję po przywróceniu
       sessionStorage.removeItem(SCROLL_POSITION_KEY)
     }, 50)
+  }
+
+  // Synchronizuj filtry przy powrocie (keep-alive)
+  // Jeśli wracamy na stronę główną bez flagi aktywnego wyszukiwania i bez parametrów URL, czyścimy stan
+  const isUserSearch = localStorage.getItem('user_initiated_search') === 'true'
+  if (Object.keys(route.query).length === 0 && !isUserSearch) {
+    searchStore.resetFilters()
   }
 })
 
@@ -241,10 +245,15 @@ watch(() => route.query, (newQuery) => {
   // Jeśli query jest puste, a mamy flagę zapisanego wyszukiwania, przywróć je do URL
   // (to rozwiązuje problem klikania logo na Home, które czyści URL ale nie powinno czyścić filtrów)
   const isUserSearch = localStorage.getItem('user_initiated_search') === 'true'
-  if (Object.keys(newQuery).length === 0 && isUserSearch) {
-    const queryParams = filtersToQueryParams(filters.value)
-    if (Object.keys(queryParams).length > 0) {
-      router.replace({ query: queryParams }).catch(() => {})
+  if (Object.keys(newQuery).length === 0) {
+    if (isUserSearch) {
+      const queryParams = filtersToQueryParams(filters.value)
+      if (Object.keys(queryParams).length > 0) {
+        router.replace({ query: queryParams }).catch(() => {})
+      }
+    } else {
+      // Wejście na czystą stronę główną bez flagi szukania -> upewnij się, że store jest czysty
+      searchStore.resetFilters()
     }
     return
   }
