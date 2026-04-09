@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, onActivated, nextTick, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, onActivated, onDeactivated, nextTick, watch } from 'vue'
 
 defineOptions({
   name: 'listings'
@@ -54,6 +54,7 @@ const totalFiltersCount = computed(() => {
 
 // UI State
 const isInitialized = ref(false)
+const isActive = ref(true) // Track if this specific component instance is active in keep-alive
 const showFiltersModal = ref(false)
 
 watch(showFiltersModal, (isOpen) => {
@@ -1083,6 +1084,7 @@ onMounted(async () => {
     await loadData()
     
     isInitialized.value = true
+    isActive.value = true
   } catch (error) {
     console.error('Error initializing listings page:', error)
   } finally {
@@ -1114,12 +1116,17 @@ const loadData = async () => {
 // Przy powrocie do cache'owanej strony (keep-alive) wymuś synchronizację filtrów z URL
 // onMounted nie odpala się ponownie dla cache'owanych instancji
 onActivated(() => {
+  isActive.value = true
   if (!route.path.startsWith('/powierzchnie-reklamowe')) return
   // Skip loadData on the INITIAL mount - onMounted already handles it.
   // onActivated fires after onMounted for keep-alive components, causing a race condition.
   // Only reload data when RE-ACTIVATING from keep-alive cache.
   if (!isInitialized.value) return
   loadData()
+})
+
+onDeactivated(() => {
+  isActive.value = false
 })
 
 const startAlertTimer = () => {
@@ -1143,6 +1150,9 @@ const startAlertTimer = () => {
 watch(
   () => [route.params, route.query],
   () => {
+    // If component is cached in keep-alive but not active, ignore route changes!
+    if (!isActive.value) return
+    
     if (!route.path.startsWith('/powierzchnie-reklamowe')) return
     // Skip during initial mount - onMounted handles first load.
     // This watcher should only react to SUBSEQUENT route changes (e.g., switching categories).

@@ -169,9 +169,10 @@ export const useSearchStore = defineStore('search', () => {
   }
 
   const syncFromUrl = (query: Record<string, string>, params: Record<string, string>) => {
-    // Start with a clean slate of filters and listings to avoid stale results
+    // We only reset filters, but DO NOT CLEAR listings.value anymore.
+    // Clearing listings causes empty states on every navigation and race conditions.
+    // The existing data will be instantly re-filtered on the frontend by sortedAndFilteredListings.
     filters.value = { ...DEFAULT_FILTERS }
-    listings.value = [] // Clear results to prevent mismatching old data with new filters during fetch
     
     // Reset other state to avoid stale pagination or sorting
     currentPage.value = 1
