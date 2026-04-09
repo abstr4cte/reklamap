@@ -176,20 +176,20 @@ watch(isMobileMenuOpen, (isOpen) => {
       <div class="header-right">
         <!-- Desktop Buttons -->
         <div class="desktop-buttons">
-          <button @click="handleFavoritesClick" class="favorites-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <button @click="handleFavoritesClick" class="favorites-btn" :aria-label="`Ulubione${favoritesCount > 0 ? ` (${favoritesCount})` : ''}`">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="2"/>
             </svg>
-            <span class="badge-count" v-if="favoritesCount > 0">{{ favoritesCount }}</span>
+            <span class="badge-count" v-if="favoritesCount > 0" aria-hidden="true">{{ favoritesCount }}</span>
           </button>
-          <button @click="handleComparisonClick" class="comparison-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <button @click="handleComparisonClick" class="comparison-btn" :aria-label="`Porównaj${comparisonCount > 0 ? ` (${comparisonCount})` : ''}`">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" rx="1"/>
               <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" rx="1"/>
               <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" rx="1"/>
               <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" rx="1"/>
             </svg>
-            <span class="badge-count" v-if="comparisonCount > 0">{{ comparisonCount }}</span>
+            <span class="badge-count" v-if="comparisonCount > 0" aria-hidden="true">{{ comparisonCount }}</span>
           </button>
           <button @click="handleAddAdClick" class="add-listing-btn btn-interactive">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -207,10 +207,10 @@ watch(isMobileMenuOpen, (isOpen) => {
         </div>
 
         <!-- Hamburger Button -->
-        <button @click="toggleMobileMenu" class="hamburger-btn" :class="{ active: isMobileMenuOpen }">
-          <span></span>
-          <span></span>
-          <span></span>
+        <button @click="toggleMobileMenu" class="hamburger-btn" :class="{ active: isMobileMenuOpen }" :aria-label="isMobileMenuOpen ? 'Zamknij menu' : 'Otwórz menu'" :aria-expanded="isMobileMenuOpen">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
         </button>
       </div>
     </div>
@@ -225,8 +225,8 @@ watch(isMobileMenuOpen, (isOpen) => {
       <div v-if="isMobileMenuOpen" class="mobile-menu">
         <div class="mobile-menu-header">
           <span class="mobile-menu-title">Menu</span>
-          <button @click="closeMobileMenu" class="close-menu-btn">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <button @click="closeMobileMenu" class="close-menu-btn" aria-label="Zamknij menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </button>

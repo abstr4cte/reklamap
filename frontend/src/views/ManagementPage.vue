@@ -398,6 +398,9 @@ const saveChanges = async (id: string) => {
   if (!editingAd.value.price && editingAd.value.price !== 0) {
     editErrors.value.price = 'Cena jest wymagana'
     hasErrors = true
+  } else if (editingAd.value.price > 999999) {
+    editErrors.value.price = 'Cena nie może przekraczać 999 999 zł'
+    hasErrors = true
   }
   if (!editingAd.value.location) {
     editErrors.value.location = 'Lokalizacja jest wymagana'
@@ -408,9 +411,15 @@ const saveChanges = async (id: string) => {
     if (!editingAd.value.width && editingAd.value.width !== 0) {
       editErrors.value.width = 'Szerokość jest wymagana'
       hasErrors = true
+    } else if ((editingAd.value.width ?? 0) > 500) {
+      editErrors.value.width = 'Szerokość nie może przekraczać 500 m'
+      hasErrors = true
     }
     if (!editingAd.value.height && editingAd.value.height !== 0) {
       editErrors.value.height = 'Wysokość jest wymagana'
+      hasErrors = true
+    } else if ((editingAd.value.height ?? 0) > 100) {
+      editErrors.value.height = 'Wysokość nie może przekraczać 100 m'
       hasErrors = true
     }
   }

@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
+import { useSeo } from '../composables/useSeo'
 import ToastNotification from '../components/ToastNotification.vue'
 import LocationMapModal from '../components/LocationMapModal.vue'
 import type * as LType from 'leaflet'
@@ -17,6 +18,14 @@ const dpYears = Array.from({ length: 8 }, (_, i) => new Date().getFullYear() + i
 
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+
+useSeo({
+  title: 'Dodaj powierzchnię reklamową | ReklaMap',
+  description: 'Wystaw swoją powierzchnię reklamową na ReklaMap. Dodaj billboard, baner, ekran LED, citylight lub inne miejsce reklamowe i dotrzyj do tysięcy reklamodawców.',
+  ogType: 'website',
+  canonical: `${window.location.origin}/dodaj-powierzchnie-reklamowa`,
+  keywords: 'dodaj ogłoszenie, wystaw powierzchnię reklamową, billboard do wynajęcia, reklama zewnętrzna'
+})
 
 let L: typeof LType | null = null
 
@@ -346,7 +355,7 @@ const showGraphicDesignOption = computed(() => {
 
 const showTrafficIntensity = computed(() => {
   const type = formData.value.type
-  return ['billboard', 'banner', 'wall', 'totem'].includes(type)
+  return ['billboard', 'banner', 'wall', 'totem', 'led_screen'].includes(type)
 })
 
 const showTrafficDirection = computed(() => {
@@ -901,6 +910,8 @@ const validateStep = (step: number): boolean => {
     case 2:
       if (!formData.value.price || formData.value.price <= 0) {
         errors.value.price = 'Cena jest wymagana'
+      } else if (formData.value.price > 999999) {
+        errors.value.price = 'Cena nie może przekraczać 999 999 zł'
       }
       // Walidacja czasu trwania kampanii
       if (formData.value.priceUnit === 'campaign') {
@@ -915,9 +926,13 @@ const validateStep = (step: number): boolean => {
       if (requiresDimensions.value) {
         if (!formData.value.width || formData.value.width <= 0) {
           errors.value.width = 'Szerokość jest wymagana'
+        } else if (formData.value.width > 500) {
+          errors.value.width = 'Szerokość nie może przekraczać 500 m'
         }
         if (!formData.value.height || formData.value.height <= 0) {
           errors.value.height = 'Wysokość jest wymagana'
+        } else if (formData.value.height > 100) {
+          errors.value.height = 'Wysokość nie może przekraczać 100 m'
         }
       }
       if (!formData.value.location) {
@@ -943,7 +958,7 @@ const validateStep = (step: number): boolean => {
         errors.value.roadClass = 'Klasa drogi jest wymagana dla billboardów'
       }
       // Natężenie ruchu wymagane dla wszystkich typów outdoor
-      if (['billboard', 'banner', 'wall', 'totem'].includes(formData.value.type) && !formData.value.trafficIntensity) {
+      if (['billboard', 'banner', 'wall', 'totem', 'led_screen'].includes(formData.value.type) && !formData.value.trafficIntensity) {
         errors.value.trafficIntensity = 'Natężenie ruchu jest wymagane'
       }
       if (!formData.value.status) {

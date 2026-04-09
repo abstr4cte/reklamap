@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 /**
  * Advertisement API Tests
- * 
+ *
  * Tests for the public API endpoints that handle advertisement CRUD operations.
  * These tests ensure data integrity, validation, and proper error handling.
  */
@@ -21,96 +21,55 @@ class AdvertisementApiTest extends TestCase
      */
     public function test_can_create_advertisement_with_valid_data(): void
     {
-        $data = [
-            'title' => 'Test Billboard in Warsaw',
-            'type' => 'billboard',
-            'city' => 'Warszawa',
-            'location' => 'ul. Testowa 1',
-            'price' => 1000,
-            'price_unit' => 'month',
-            'width' => 6,
-            'height' => 3,
-            'traffic_intensity' => 'high',
-            'owner_email' => 'test@example.com',
-            'phone' => '123456789',
-            'contact_preference' => 'email',
-            'offer_type' => 'rent',
-            'status' => 'active',
-        ];
-
-        $response = $this->postJson('/api/listings', $data, [
-            'X-Internal-Key' => config('app.internal_api_key')
-        ]);
+        $response = $this->postJson('/api/listings', $this->validBillboardData(), $this->appKeyHeaders());
 
         $response->assertStatus(201);
-        $response->assertJsonStructure([
-            'id',
-            'title',
-            'type',
-            'city',
-            'price',
-            'created_at'
-        ]);
+        $response->assertJsonStructure(['id', 'title', 'type', 'city', 'price', 'created_at']);
 
         $this->assertDatabaseHas('advertisements', [
             'title' => 'Test Billboard in Warsaw',
-            'type' => 'billboard',
+            'type'  => 'billboard',
             'price' => 1000,
         ]);
     }
 
     /**
-     * Test creating LED screen with dimensions in meters (frontend sends mm, backend stores m)
+     * Test creating LED screen — dimensions are stored in meters
      */
     public function test_led_screen_dimensions_are_stored_in_meters(): void
     {
-        $data = [
-            'title' => 'LED Screen Test',
-            'type' => 'led_screen',
-            'city' => 'Kraków',
-            'location' => 'ul. LED 1',
-            'price' => 5000,
-            'price_unit' => 'month',
-            'width' => 2.5,    // Should be stored as 2.5m
-            'height' => 1.5,   // Should be stored as 1.5m
+        $data = $this->validBillboardData([
+            'title'       => 'LED Screen Test',
+            'type'        => 'led_screen',
+            'variant'     => 'standard',
+            'city'        => 'Kraków',
+            'location'    => 'ul. LED 1',
             'owner_email' => 'led@example.com',
-            'phone' => '987654321',
-            'contact_preference' => 'email',
-            'offer_type' => 'rent',
-            'status' => 'active',
-        ];
-
-        $response = $this->postJson('/api/listings', $data, [
-            'X-Internal-Key' => config('app.internal_api_key')
+            'price'       => 5000,
+            'width'       => 2.5,
+            'height'      => 1.5,
         ]);
+
+        $response = $this->postJson('/api/listings', $data, $this->appKeyHeaders());
 
         $response->assertStatus(201);
 
         $this->assertDatabaseHas('advertisements', [
-            'title' => 'LED Screen Test',
-            'type' => 'led_screen',
-            'width' => 2.5,  // Stored in meters
+            'title'  => 'LED Screen Test',
+            'type'   => 'led_screen',
+            'width'  => 2.5,
             'height' => 1.5,
         ]);
     }
 
     /**
-     * Test validation: price must be positive
+     * Test validation: price must be non-negative
      */
     public function test_cannot_create_advertisement_with_negative_price(): void
     {
-        $data = [
-            'title' => 'Invalid Ad',
-            'type' => 'billboard',
-            'city' => 'Warszawa',
-            'price' => -100,  // Invalid
-            'price_unit' => 'month',
-            'owner_email' => 'test@example.com',
-        ];
+        $data = $this->validBillboardData(['price' => -100]);
 
-        $response = $this->postJson('/api/listings', $data, [
-            'X-Internal-Key' => config('app.internal_api_key')
-        ]);
+        $response = $this->postJson('/api/listings', $data, $this->appKeyHeaders());
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['price']);
@@ -121,14 +80,7 @@ class AdvertisementApiTest extends TestCase
      */
     public function test_cannot_create_advertisement_without_required_fields(): void
     {
-        $data = [
-            'title' => 'Incomplete Ad',
-            // Missing: type, city, price, owner_email
-        ];
-
-        $response = $this->postJson('/api/listings', $data, [
-            'X-Internal-Key' => config('app.internal_api_key')
-        ]);
+        $response = $this->postJson('/api/listings', ['title' => 'Incomplete Ad'], $this->appKeyHeaders());
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['type', 'city', 'price', 'owner_email']);
@@ -139,18 +91,9 @@ class AdvertisementApiTest extends TestCase
      */
     public function test_cannot_create_advertisement_with_invalid_type(): void
     {
-        $data = [
-            'title' => 'Invalid Type Ad',
-            'type' => 'invalid_type',  // Invalid
-            'city' => 'Warszawa',
-            'price' => 1000,
-            'price_unit' => 'month',
-            'owner_email' => 'test@example.com',
-        ];
+        $data = $this->validBillboardData(['type' => 'invalid_type']);
 
-        $response = $this->postJson('/api/listings', $data, [
-            'X-Internal-Key' => config('app.internal_api_key')
-        ]);
+        $response = $this->postJson('/api/listings', $data, $this->appKeyHeaders());
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['type']);
@@ -161,49 +104,12 @@ class AdvertisementApiTest extends TestCase
      */
     public function test_cannot_create_advertisement_with_invalid_price_unit(): void
     {
-        $data = [
-            'title' => 'Invalid Price Unit Ad',
-            'type' => 'billboard',
-            'city' => 'Warszawa',
-            'price' => 1000,
-            'price_unit' => 'invalid_unit',  // Invalid
-            'owner_email' => 'test@example.com',
-        ];
+        $data = $this->validBillboardData(['price_unit' => 'invalid_unit']);
 
-        $response = $this->postJson('/api/listings', $data, [
-            'X-Internal-Key' => config('app.internal_api_key')
-        ]);
+        $response = $this->postJson('/api/listings', $data, $this->appKeyHeaders());
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['price_unit']);
-    }
-
-    /**
-     * Test updating advertisement
-     */
-    public function test_can_update_advertisement(): void
-    {
-        $ad = Advertisement::factory()->create([
-            'title' => 'Original Title',
-            'price' => 1000,
-        ]);
-
-        $updateData = [
-            'title' => 'Updated Title',
-            'price' => 1500,
-        ];
-
-        $response = $this->putJson("/api/listings/{$ad->id}", $updateData, [
-            'X-Internal-Key' => config('app.internal_api_key')
-        ]);
-
-        $response->assertStatus(200);
-
-        $this->assertDatabaseHas('advertisements', [
-            'id' => $ad->id,
-            'title' => 'Updated Title',
-            'price' => 1500,
-        ]);
     }
 
     /**
@@ -212,48 +118,45 @@ class AdvertisementApiTest extends TestCase
     public function test_can_fetch_single_advertisement(): void
     {
         $ad = Advertisement::factory()->create([
-            'title' => 'Test Billboard',
-            'type' => 'billboard',
-            'status' => 'active',
+            'title'     => 'Test Billboard',
+            'type'      => 'billboard',
+            'is_active' => true,
         ]);
 
-        $response = $this->getJson("/api/listings/{$ad->id}");
+        $response = $this->getJson("/api/listings/{$ad->id}", $this->appKeyHeaders());
 
         $response->assertStatus(200);
         $response->assertJson([
-            'id' => $ad->id,
+            'id'    => $ad->id,
             'title' => 'Test Billboard',
-            'type' => 'billboard',
+            'type'  => 'billboard',
         ]);
     }
 
     /**
-     * Test fetching all advertisements with filters
+     * Test fetching all advertisements returns active ads
      */
-    public function test_can_fetch_advertisements_with_type_filter(): void
+    public function test_can_fetch_all_active_advertisements(): void
     {
-        Advertisement::factory()->create(['type' => 'billboard', 'status' => 'active']);
-        Advertisement::factory()->create(['type' => 'led_screen', 'status' => 'active']);
-        Advertisement::factory()->create(['type' => 'billboard', 'status' => 'active']);
+        Advertisement::factory()->count(3)->create(['is_active' => true]);
 
-        $response = $this->getJson('/api/listings?type=billboard');
+        $response = $this->getJson('/api/listings', $this->appKeyHeaders());
 
         $response->assertStatus(200);
-        $response->assertJsonCount(2, 'data');
+        $response->assertJsonCount(3);
     }
 
     /**
-     * Test fetching advertisements with city filter
+     * Test inactive advertisements are not returned
      */
-    public function test_can_fetch_advertisements_with_city_filter(): void
+    public function test_inactive_advertisements_are_excluded(): void
     {
-        Advertisement::factory()->create(['city' => 'Warszawa', 'status' => 'active']);
-        Advertisement::factory()->create(['city' => 'Kraków', 'status' => 'active']);
-        Advertisement::factory()->create(['city' => 'Warszawa', 'status' => 'active']);
+        Advertisement::factory()->count(2)->create(['is_active' => true]);
+        Advertisement::factory()->create(['is_active' => false]);
 
-        $response = $this->getJson('/api/listings?city=Warszawa');
+        $response = $this->getJson('/api/listings', $this->appKeyHeaders());
 
         $response->assertStatus(200);
-        $response->assertJsonCount(2, 'data');
+        $response->assertJsonCount(2);
     }
 }

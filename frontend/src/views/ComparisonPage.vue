@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
+import { useSeo } from '../composables/useSeo'
 import type { Advertisement } from '../types'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import WebPImage from '../components/WebPImage.vue'
@@ -12,6 +13,14 @@ import { getFieldsForType, shouldShowField, type ComparisonField } from '../util
 import axios from '../api/axios'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
 import { useSearchStore } from '../stores/useSearchStore'
+
+useSeo({
+  title: 'Porównanie powierzchni reklamowych | ReklaMap',
+  description: 'Porównaj wybrane powierzchnie reklamowe. Zestawiaj parametry, ceny i lokalizacje billboardów, banerów, ekranów LED i innych nośników reklamowych.',
+  ogType: 'website',
+  canonical: `${window.location.origin}/porownaj`,
+  noindex: true
+})
 
 const searchStore = useSearchStore()
 const router = useRouter()

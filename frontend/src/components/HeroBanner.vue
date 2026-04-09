@@ -242,17 +242,17 @@ const statusMultiselect = ref<HTMLElement | null>(null)
 // Computed properties for filter visibility based on selected ad type
 const showPrintFilter = computed(() => {
   const type = filters.value.type
-  return ['billboard', 'banner'].includes(type)
+  return ['billboard', 'banner', 'wall'].includes(type)
 })
 
 const showMountingFilter = computed(() => {
   const type = filters.value.type
-  return ['billboard', 'banner', 'wall'].includes(type)
+  return ['billboard', 'banner', 'wall', 'totem'].includes(type)
 })
 
 const showGraphicDesignFilter = computed(() => {
   const type = filters.value.type
-  return ['billboard', 'banner', 'wall'].includes(type)
+  return ['billboard', 'banner', 'wall', 'totem'].includes(type)
 })
 
 const showEquipmentSection = computed(() => {
@@ -261,12 +261,12 @@ const showEquipmentSection = computed(() => {
 
 const showTrafficIntensityFilter = computed(() => {
   const type = filters.value.type
-  return ['billboard', 'banner', 'wall', 'totem'].includes(type)
+  return ['billboard', 'banner', 'wall', 'totem', 'led_screen'].includes(type)
 })
 
 const showDimensionsFilter = computed(() => {
   const type = filters.value.type
-  return ['billboard', 'citylight', 'banner', 'wall', 'led_screen'].includes(type)
+  return ['billboard', 'citylight', 'banner', 'wall', 'totem', 'led_screen'].includes(type)
 })
 
 const variantOptions = computed(() => {
@@ -1054,7 +1054,7 @@ onBeforeUnmount(() => {
                     <input type="checkbox" v-model="filters.graphicDesignHelp" />
                     <span>Pomoc przy projekcie graficznym</span>
                   </label>
-                  <label v-if="['citylight', 'totem', 'billboard', 'banner', 'wall'].includes(filters.type)" class="checkbox-label search-select" style="justify-content: flex-start;">
+                  <label v-if="['citylight', 'totem'].includes(filters.type)" class="checkbox-label search-select" style="justify-content: flex-start;">
                     <input type="checkbox" v-model="filters.hasBacklight" />
                     <span>Podświetlenie / Oświetlenie</span>
                   </label>

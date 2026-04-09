@@ -12,6 +12,7 @@ import { getFullImageUrl } from '../services/api'
 import { type LocationResult, debouncedSearchLocations } from '../services/locationService'
 import { slugify, deslugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
+import { useSeo } from '../composables/useSeo'
 import { filtersToQueryParams } from '../utils/filterUtils'
 import polishLocations from '../data/polishLocations.json'
 import { categoryDescriptions, cityDescriptions } from '../data/categoryDescriptions'
@@ -51,6 +52,63 @@ const totalFiltersCount = computed(() => {
   if (pathParamsFilters.value.city) count++
   return count
 })
+
+// SEO — reverse map from URL slug to typeLabels display name
+const urlTypeToLabel: Record<string, string> = {
+  'billboardy': 'Billboardy',
+  'citylighty': 'Citylighty',
+  'ekrany-led': 'Ekrany LED',
+  'banery': 'Banery',
+  'sciany-reklamowe': 'Ściany reklamowe',
+  'totemy-reklamowe': 'Totemy reklamowe',
+  'reklama-w-transporcie': 'Reklama w transporcie',
+  'reklama-mobilna': 'Reklama mobilna',
+  'inne': 'Inne powierzchnie reklamowe'
+}
+
+const seoData = computed(() => {
+  const typeSlug = route.params.type as string | undefined
+  const citySlug = route.params.city as string | undefined
+  const typeLabel = typeSlug ? urlTypeToLabel[typeSlug] || deslugify(typeSlug) : null
+  const cityName = citySlug ? deslugify(citySlug) : null
+
+  let title: string
+  let description: string
+  let canonical: string
+
+  if (typeLabel && cityName) {
+    title = `${typeLabel} – ${cityName} | ReklaMap`
+    description = `Przeglądaj oferty ${typeLabel.toLowerCase()} w ${cityName}. Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.`
+    canonical = `${window.location.origin}/powierzchnie-reklamowe/${typeSlug}/${citySlug}`
+  } else if (typeLabel) {
+    title = `${typeLabel} w Polsce | ReklaMap`
+    description = `Przeglądaj wszystkie oferty ${typeLabel.toLowerCase()} w Polsce. Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.`
+    canonical = `${window.location.origin}/powierzchnie-reklamowe/${typeSlug}`
+  } else if (cityName) {
+    title = `Powierzchnie reklamowe – ${cityName} | ReklaMap`
+    description = `Przeglądaj dostępne powierzchnie reklamowe w ${cityName}. Billboardy, banery, ekrany LED i więcej. Znajdź idealną lokalizację dla swojej reklamy.`
+    canonical = `${window.location.origin}/powierzchnie-reklamowe/${citySlug}`
+  } else {
+    title = 'Powierzchnie reklamowe w Polsce | ReklaMap'
+    description = 'Przeglądaj i porównuj powierzchnie reklamowe w całej Polsce. Billboardy, citylighty, ekrany LED, banery i więcej. Znajdź idealne miejsce dla swojej reklamy.'
+    canonical = `${window.location.origin}/powierzchnie-reklamowe`
+  }
+
+  return {
+    title,
+    description,
+    ogType: 'website',
+    ogImage: `${window.location.origin}/og-image.png`,
+    ogImageWidth: '1200',
+    ogImageHeight: '630',
+    ogImageAlt: 'ReklaMap – powierzchnie reklamowe w Polsce',
+    ogUrl: canonical,
+    canonical,
+    keywords: 'powierzchnie reklamowe, billboardy, reklama zewnętrzna, outdoor, OOH'
+  }
+})
+
+useSeo(seoData)
 
 // UI State
 const isInitialized = ref(false)

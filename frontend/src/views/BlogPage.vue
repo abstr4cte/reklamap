@@ -3,6 +3,19 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
+import { useSeo } from '../composables/useSeo'
+
+useSeo({
+  title: 'Blog o reklamie zewnętrznej | ReklaMap',
+  description: 'Artykuły, poradniki i aktualności ze świata reklamy zewnętrznej OOH. Dowiedz się jak skutecznie reklamować się na billboardach, banerach i ekranach LED.',
+  ogType: 'website',
+  ogImage: `${window.location.origin}/og-image.png`,
+  ogImageWidth: '1200',
+  ogImageHeight: '630',
+  ogImageAlt: 'ReklaMap Blog – reklama zewnętrzna OOH',
+  canonical: `${window.location.origin}/blog`,
+  keywords: 'blog reklama zewnętrzna, OOH, billboardy, poradniki reklamowe'
+})
 
 const router = useRouter()
 

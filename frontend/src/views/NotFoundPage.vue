@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { useSeo } from '../composables/useSeo'
 
 const router = useRouter()
+
+useSeo({
+  title: '404 – Strona nie znaleziona | ReklaMap',
+  description: 'Nie znaleziono strony. Wróć na stronę główną ReklaMap i przeglądaj dostępne powierzchnie reklamowe w Polsce.',
+  noindex: true
+})
 </script>
 
 <template>

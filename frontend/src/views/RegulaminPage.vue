@@ -1,4 +1,13 @@
 <script setup lang="ts">
+import { useSeo } from '../composables/useSeo'
+
+useSeo({
+  title: 'Regulamin | ReklaMap',
+  description: 'Regulamin platformy ReklaMap – zasady korzystania z serwisu ogłoszeń powierzchni reklamowych. Prawa i obowiązki użytkowników.',
+  ogType: 'website',
+  canonical: `${window.location.origin}/regulamin`,
+  keywords: 'regulamin ReklaMap, zasady korzystania, warunki użytkowania'
+})
 </script>
 
 <template>

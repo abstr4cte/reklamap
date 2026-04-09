@@ -3,143 +3,138 @@
 namespace Tests\Feature;
 
 use App\Models\Advertisement;
+use App\Models\ManagementToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
  * Advertisement Authorization Tests
- * 
+ *
  * Critical security tests ensuring:
- * - Internal API key is required for write operations
- * - Users can only manage their own advertisements
- * - Proper access control for sensitive operations
+ * - X-App-Key is required for all API routes
+ * - Update/delete operations also require a valid management token
+ * - GET endpoints are accessible with the app key
  */
 class AdvertisementAuthorizationTest extends TestCase
 {
     use RefreshDatabase;
 
     /**
-     * Test that creating advertisement requires valid internal API key
+     * Test that creating advertisement requires valid X-App-Key
      */
-    public function test_creating_advertisement_requires_internal_api_key(): void
+    public function test_creating_advertisement_requires_app_key(): void
     {
-        $data = [
-            'title' => 'Test Ad',
-            'type' => 'billboard',
-            'city' => 'Warszawa',
-            'price' => 1000,
-            'price_unit' => 'month',
-            'owner_email' => 'test@example.com',
-        ];
+        $data = $this->validBillboardData();
 
-        // Without API key
+        // Without key → blocked by VerifyAppKey
         $response = $this->postJson('/api/listings', $data);
-        $response->assertStatus(401);
+        $response->assertStatus(403);
 
-        // With invalid API key
-        $response = $this->postJson('/api/listings', $data, [
-            'X-Internal-Key' => 'invalid-key'
-        ]);
-        $response->assertStatus(401);
+        // With invalid key → blocked
+        $response = $this->postJson('/api/listings', $data, ['X-App-Key' => 'wrong-key']);
+        $response->assertStatus(403);
 
-        // With valid API key
-        $response = $this->postJson('/api/listings', $data, [
-            'X-Internal-Key' => config('app.internal_api_key')
-        ]);
+        // With valid key → passes authorization, creates ad
+        $response = $this->postJson('/api/listings', $data, $this->appKeyHeaders());
         $response->assertStatus(201);
     }
 
     /**
-     * Test that updating advertisement requires valid internal API key
+     * Test that updating advertisement requires X-App-Key AND a valid management token
      */
-    public function test_updating_advertisement_requires_internal_api_key(): void
+    public function test_updating_advertisement_requires_app_key_and_management_token(): void
     {
-        $ad = Advertisement::factory()->create();
+        $ad = Advertisement::factory()->create(['owner_email' => 'owner@example.com']);
+        $token = ManagementToken::create([
+            'email'      => 'owner@example.com',
+            'expires_at' => now()->addHour(),
+        ]);
 
-        $updateData = ['title' => 'Updated Title'];
+        $updateData = $this->validBillboardData([
+            'title'       => 'Updated Title',
+            'owner_email' => 'owner@example.com',
+        ]);
 
-        // Without API key
+        // Without any key → blocked by VerifyAppKey
         $response = $this->putJson("/api/listings/{$ad->id}", $updateData);
-        $response->assertStatus(401);
+        $response->assertStatus(403);
 
-        // With invalid API key
-        $response = $this->putJson("/api/listings/{$ad->id}", $updateData, [
-            'X-Internal-Key' => 'invalid-key'
-        ]);
-        $response->assertStatus(401);
+        // With invalid app key → blocked
+        $response = $this->putJson("/api/listings/{$ad->id}", $updateData, ['X-App-Key' => 'wrong-key']);
+        $response->assertStatus(403);
 
-        // With valid API key
-        $response = $this->putJson("/api/listings/{$ad->id}", $updateData, [
-            'X-Internal-Key' => config('app.internal_api_key')
-        ]);
+        // With valid app key but no management token → blocked by VerifyManagementToken
+        $response = $this->putJson("/api/listings/{$ad->id}", $updateData, $this->appKeyHeaders());
+        $response->assertStatus(403);
+
+        // With valid app key + valid management token → allowed
+        $response = $this->putJson("/api/listings/{$ad->id}", $updateData, array_merge(
+            $this->appKeyHeaders(),
+            ['X-Management-Token' => $token->id]
+        ));
         $response->assertStatus(200);
     }
 
     /**
-     * Test that deleting advertisement requires valid internal API key
+     * Test that deleting advertisement requires X-App-Key AND a valid management token
      */
-    public function test_deleting_advertisement_requires_internal_api_key(): void
+    public function test_deleting_advertisement_requires_app_key_and_management_token(): void
     {
-        $ad = Advertisement::factory()->create();
+        $ad = Advertisement::factory()->create(['owner_email' => 'owner@example.com']);
+        $token = ManagementToken::create([
+            'email'      => 'owner@example.com',
+            'expires_at' => now()->addHour(),
+        ]);
 
-        // Without API key
+        // Without any key → blocked
         $response = $this->deleteJson("/api/listings/{$ad->id}");
-        $response->assertStatus(401);
+        $response->assertStatus(403);
 
-        // With invalid API key
-        $response = $this->deleteJson("/api/listings/{$ad->id}", [], [
-            'X-Internal-Key' => 'invalid-key'
-        ]);
-        $response->assertStatus(401);
+        // With invalid app key → blocked
+        $response = $this->deleteJson("/api/listings/{$ad->id}", [], ['X-App-Key' => 'wrong-key']);
+        $response->assertStatus(403);
 
-        // With valid API key
-        $response = $this->deleteJson("/api/listings/{$ad->id}", [], [
-            'X-Internal-Key' => config('app.internal_api_key')
-        ]);
-        $response->assertStatus(200);
+        // With valid app key but no management token → blocked
+        $response = $this->deleteJson("/api/listings/{$ad->id}", [], $this->appKeyHeaders());
+        $response->assertStatus(403);
+
+        // With valid app key + valid management token → allowed
+        $response = $this->deleteJson("/api/listings/{$ad->id}", [], array_merge(
+            $this->appKeyHeaders(),
+            ['X-Management-Token' => $token->id]
+        ));
+        $response->assertStatus(204);
     }
 
     /**
-     * Test that public can view advertisements (no auth required)
+     * Test that GET listings endpoints require X-App-Key
      */
-    public function test_public_can_view_advertisements_without_auth(): void
+    public function test_listing_endpoints_require_app_key(): void
     {
-        $ad = Advertisement::factory()->create(['status' => 'active']);
+        $ad = Advertisement::factory()->create(['is_active' => true]);
 
-        // No API key needed for GET
-        $response = $this->getJson("/api/listings/{$ad->id}");
-        $response->assertStatus(200);
+        // GET /api/listings without key → blocked
+        $this->getJson('/api/listings')->assertStatus(403);
 
-        $response = $this->getJson('/api/listings');
-        $response->assertStatus(200);
+        // GET /api/listings/{id} without key → blocked
+        $this->getJson("/api/listings/{$ad->id}")->assertStatus(403);
+
+        // With valid app key → allowed
+        $this->getJson('/api/listings', $this->appKeyHeaders())->assertStatus(200);
+        $this->getJson("/api/listings/{$ad->id}", $this->appKeyHeaders())->assertStatus(200);
     }
 
     /**
-     * Test that incrementing views doesn't require auth (public action)
+     * Test that increment-views requires X-App-Key
      */
-    public function test_public_can_increment_views_without_auth(): void
-    {
-        $ad = Advertisement::factory()->create();
-
-        // No API key needed for incrementing views
-        $response = $this->postJson("/api/listings/{$ad->id}/increment-views");
-        $response->assertStatus(200);
-    }
-
-    /**
-     * Test rate limiting for view increments (prevent abuse)
-     */
-    public function test_view_increments_are_rate_limited(): void
+    public function test_increment_views_requires_app_key(): void
     {
         $ad = Advertisement::factory()->create();
 
-        // First few requests should succeed
-        for ($i = 0; $i < 5; $i++) {
-            $response = $this->postJson("/api/listings/{$ad->id}/increment-views");
-            $response->assertStatus(200);
-        }
+        // Without key → blocked
+        $this->postJson("/api/listings/{$ad->id}/increment-views")->assertStatus(403);
 
-        // Note: Actual rate limiting depends on your implementation
-        // This is a placeholder test - adjust based on your rate limit logic
+        // With valid key → allowed
+        $this->postJson("/api/listings/{$ad->id}/increment-views", [], $this->appKeyHeaders())->assertStatus(200);
     }
 }

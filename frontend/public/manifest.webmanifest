@@ -19,12 +19,12 @@
   "shortcuts": [
     {
       "name": "Moje Ogłoszenia",
-      "url": "/zarzadzanie",
+      "url": "/zarzadzaj",
       "description": "Przejdź do panelu zarządzania swoimi ogłoszeniami"
     },
     {
       "name": "Dodaj Ogłoszenie",
-      "url": "/dodaj-ogloszenie",
+      "url": "/dodaj-powierzchnie-reklamowa",
       "description": "Dodaj nową powierzchnię reklamową"
     }
   ]
