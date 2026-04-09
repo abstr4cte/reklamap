@@ -187,8 +187,40 @@ const initMap = () => {
     })
   }
   
+  if (window.ResizeObserver && mapContainer.value) {
+    resizeObserver = new ResizeObserver(() => {
+      if (map) {
+        isProgrammaticMove.value = true
+        map.invalidateSize()
+      }
+    })
+    resizeObserver.observe(mapContainer.value)
+  }
+
+  // Guard against phantom Leaflet 'moveend' bugs!
+  let mapUserInteractedTime = 0
+  const flagUserInteraction = () => { mapUserInteractedTime = Date.now() }
+  
+  mapContainer.value.addEventListener('mousedown', flagUserInteraction)
+  mapContainer.value.addEventListener('touchstart', flagUserInteraction, { passive: true })
+  mapContainer.value.addEventListener('wheel', flagUserInteraction, { passive: true })
+  mapContainer.value.addEventListener('keydown', flagUserInteraction)
+
   map.on('moveend', () => {
     if (!map) return
+    
+    // Skip if it was a programmatic move (initial zoom, city zoom etc)
+    if (isProgrammaticMove.value) {
+      setTimeout(() => { isProgrammaticMove.value = false }, 200)
+      return
+    }
+
+    // Absolute guard: If the container wasn't physically interacted with in the last 2.5 seconds,
+    // this moveend is heavily delayed from an animation or Leaflet internal bug. Cancel it.
+    if (Date.now() - mapUserInteractedTime > 2500) {
+      return
+    }
+
     const bounds = map.getBounds()
     
     // Update map bounds to filter results, but keep text filter values intact
@@ -198,23 +230,9 @@ const initMap = () => {
         southWest: { lat: bounds.getSouthWest().lat, lng: bounds.getSouthWest().lng }
       }
     }
-
-    // Don't clear text filters - keep user's input visible
-    // The mapBounds will still narrow down results geographically
     
     searchStore.applyFilters(updates)
-    isProgrammaticMove.value = false
   })
-
-  updateMarkers()
-  syncMapToFilters()
-
-  if (window.ResizeObserver && mapContainer.value) {
-    resizeObserver = new ResizeObserver(() => {
-      if (map) map.invalidateSize()
-    })
-    resizeObserver.observe(mapContainer.value)
-  }
 }
 
 const syncMapToFilters = () => {
@@ -486,6 +504,11 @@ onMounted(() => {
     window.removeEventListener('resize', handleResize)
     window.removeEventListener('scroll', handleScroll)
     if (resizeObserver) resizeObserver.disconnect()
+    if (map) {
+      map.off()
+      map.remove()
+      map = null
+    }
   })
 })
 </script>

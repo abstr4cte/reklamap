@@ -787,6 +787,17 @@ const initMap = async () => {
     resizeObserver.observe(mapContainer.value)
   }
 
+  // Uprooted any remaining phantom Leaflet 'moveend' bugs!
+  // True User Interaction Guard: only allow map bounds filtering if the user 
+  // actually physically interacted with the map container.
+  let mapUserInteractedTime = 0
+  const flagUserInteraction = () => { mapUserInteractedTime = Date.now() }
+  
+  mapContainer.value.addEventListener('mousedown', flagUserInteraction)
+  mapContainer.value.addEventListener('touchstart', flagUserInteraction, { passive: true })
+  mapContainer.value.addEventListener('wheel', flagUserInteraction, { passive: true })
+  mapContainer.value.addEventListener('keydown', flagUserInteraction)
+
   const handleUserMapInteraction = () => {
     if (!map) return
 
@@ -796,6 +807,12 @@ const initMap = async () => {
     // Skip updating mapBounds if this was a programmatic move (e.g., zoom to city)
     if (isProgrammaticMove.value) {
       // Don't reset to false yet - some programmatic moves trigger multiple events
+      return
+    }
+
+    // Absolute guard: If the container wasn't physically interacted with in the last 2.5 seconds,
+    // this moveend is heavily delayed from an animation or Leaflet internal bug. Cancel it.
+    if (Date.now() - mapUserInteractedTime > 2500) {
       return
     }
 
@@ -1193,6 +1210,11 @@ onBeforeUnmount(() => {
   document.body.style.overflow = ''
   if (resizeObserver) {
     resizeObserver.disconnect()
+  }
+  if (map) {
+    map.off()
+    map.remove()
+    map = null
   }
 })
 
