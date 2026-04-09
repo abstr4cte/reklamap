@@ -336,8 +336,8 @@ onMounted(() => {
 
 .tier-badge {
   position: absolute;
-  top: 1rem;
-  right: 4rem; /* To not cover actions buttons completely, but actually actions are in that corner too */
+  bottom: 3.5rem; /* Above OTS badge if both exist */
+  right: 1rem;
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: white;
   padding: 0.375rem 0.75rem;
@@ -347,7 +347,10 @@ onMounted(() => {
   backdrop-filter: blur(8px);
   z-index: 5;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
+
+
 
 .ots-badge {
   position: absolute;

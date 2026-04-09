@@ -1667,6 +1667,16 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
         <div v-if="tempFilters.type" class="filter-section">
           <h4 class="section-title">Opcje specyficzne dla typu</h4>
           
+          <!-- L1. Location Tier Filter (Billboard only) -->
+          <div v-if="tempFilters && tempFilters.type === 'billboard'" class="filter-group">
+            <label class="filter-label">Klasa lokalizacji</label>
+            <select v-model="tempFilters.locationTier" class="filter-select" v-if="tempFilters">
+              <option value="">Wszystkie</option>
+              <option value="PREMIUM">Premium</option>
+              <option value="STANDARD">Standard</option>
+            </select>
+          </div>
+          
           <!-- 1. Road Class Filter (Billboard only) -->
           <div v-if="tempFilters && tempFilters.type === 'billboard'" class="filter-group">
             <label class="filter-label">Klasa drogi</label>
@@ -1681,15 +1691,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             </select>
           </div>
 
-          <!-- 1b. Location Tier Filter (Billboard only) -->
-          <div v-if="tempFilters && tempFilters.type === 'billboard'" class="filter-group">
-            <label class="filter-label">Klasa lokalizacji</label>
-            <select v-model="tempFilters.locationTier" class="filter-select" v-if="tempFilters">
-              <option value="">Wszystkie</option>
-              <option value="PREMIUM">Premium</option>
-              <option value="STANDARD">Standard</option>
-            </select>
-          </div>
+
 
           <!-- 2. Traffic Intensity (all outdoor types) -->
           <div v-if="tempFilters && ['billboard', 'banner', 'wall', 'totem'].includes(tempFilters.type)" class="filter-group">

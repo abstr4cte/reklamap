@@ -288,6 +288,10 @@ const showRoadClassFilter = computed(() => {
   return filters.value.type === 'billboard'
 })
 
+const showLocationTierFilter = computed(() => {
+  return filters.value.type === 'billboard'
+})
+
 const showEnvironmentFilter = computed(() => {
   const type = filters.value.type
   return ['citylight', 'led_screen', 'totem', 'mobile', 'other'].includes(type)
@@ -786,6 +790,18 @@ onBeforeUnmount(() => {
               <div v-if="filters.type" class="filter-section">
                 <h4 class="section-title">Opcje specyficzne dla typu</h4>
                 
+                <!-- Location Tier Filter (Billboard only) -->
+                <div v-if="showLocationTierFilter" class="search-row">
+                  <div class="input-group">
+                    <label class="input-label">Klasa lokalizacji</label>
+                    <select v-model="filters.locationTier" class="search-select" @focus="markUserEditing">
+                      <option value="">Wszystkie</option>
+                      <option value="PREMIUM">Premium</option>
+                      <option value="STANDARD">Standard</option>
+                    </select>
+                  </div>
+                </div>
+
                 <!-- Variant Filter -->
                 <div v-if="variantOptions.length > 0" class="search-row">
                   <div class="input-group">

@@ -586,13 +586,14 @@ export const useSearchStore = defineStore('search', () => {
       const val = (f as any)[filterKey]
       if (val) {
         if (filterKey === 'locationTier') {
-          filtered = filtered.filter(ad => {
-            if (ad.type !== 'billboard') return false
-            const ti = ad.traffic_intensity
-            const rc = (ad as any).road_class
-            const tier = (ti === 'high' && ['highway', 'expressway', 'national'].includes(rc || '')) ? 'PREMIUM' : 'STANDARD'
-            return tier === val
-          })
+          if (f.type === 'billboard') {
+            filtered = filtered.filter(ad => {
+              const ti = ad.traffic_intensity
+              const rc = (ad as any).road_class
+              const tier = (ti === 'high' && ['highway', 'expressway', 'national'].includes(rc || '')) ? 'PREMIUM' : 'STANDARD'
+              return tier === val
+            })
+          }
         } else {
           filtered = filtered.filter(ad => (ad as any)[adKey] === val)
         }
