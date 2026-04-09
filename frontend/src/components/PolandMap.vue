@@ -33,6 +33,16 @@ const scrollToAdGrid = () => {
 }
 
 const scrollToMap = () => {
+  // Na webowej wersji (desktop) scrolluj na samą górę
+  if (!isMobile.value) {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+    return
+  }
+  
+  // Na mobile uwzględnij header
   const mapContainer = document.querySelector('.map-container')
   const header = document.querySelector('.app-header')
   

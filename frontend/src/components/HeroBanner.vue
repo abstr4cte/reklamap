@@ -3,7 +3,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 import bannerImage from '../assets/banner.jpg'
-import { useSearchStore, type LocationSuggestion, popularLocations } from '../stores/useSearchStore'
+import { useSearchStore, type LocationSuggestion, popularLocations, variantLabels } from '../stores/useSearchStore'
 import { type FilterParams, DEFAULT_FILTERS } from '../types/filters'
 
 const scrollY = ref(0)
@@ -272,15 +272,7 @@ const showDimensionsFilter = computed(() => {
 const variantOptions = computed(() => {
   const type = filters.value.type
   if (!type) return []
-  const labels: any = {
-    billboard: { standard: 'Jednostronny', two_sided: 'Dwustronny (back-to-back)', three_sided: 'Trójstronny (prismatron)', scrolling: 'Scrolling / Rolowany' },
-    citylight: { single_sided: 'Jednostronny', double_sided: 'Dwustronny', scrolling: 'Scrolling (rotacyjny)', digital: 'Cyfrowy (DOOH)' },
-    led_screen: { standard: 'Standardowy', interactive: 'Interaktywny' },
-    totem: { single_sided: 'Jednostronny', double_sided: 'Dwustronny', multi_sided: 'Wielostronny / Kolumna', pylon: 'Pylon (przy drodze)', digital: 'Cyfrowy (LED)' },
-    transport: { bus: 'Autobus', tram: 'Tramwaj', metro: 'Metro', train: 'Pociąg / SKM / Kolej', stop: 'Przystanek' },
-    mobile: { trailer: 'Przyczepka', car: 'Samochód', other: 'Inna' }
-  }
-  const typeLabels = labels[type] || {}
+  const typeLabels = variantLabels[type] || {}
   return Object.entries(typeLabels).map(([value, label]) => ({ value, label: label as string }))
 })
 
@@ -294,7 +286,7 @@ const showLocationTierFilter = computed(() => {
 
 const showEnvironmentFilter = computed(() => {
   const type = filters.value.type
-  return ['citylight', 'led_screen', 'totem', 'mobile', 'other'].includes(type)
+  return ['citylight', 'led_screen', 'totem', 'banner', 'mobile', 'other'].includes(type)
 })
 
 const environmentOptions = computed(() => {
@@ -317,9 +309,13 @@ const environmentOptions = computed(() => {
         { value: 'outdoor', label: 'Na zewnątrz' },
         { value: 'event', label: 'Event / Wydarzenie' }
       ]
+    case 'banner':
+      return [
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
     case 'mobile':
       return [
-        { value: 'indoor', label: 'Wewnątrz' },
         { value: 'outdoor', label: 'Na zewnątrz' },
         { value: 'event', label: 'Event / Wydarzenie' }
       ]
@@ -442,7 +438,9 @@ watch(() => filters.value.type, (newType, oldType) => {
     operatingZone: '',
     offerType: '',
     campaignDuration: null,
-    rentalPeriod: ''
+    rentalPeriod: '',
+    lightingType: '',
+    lightingTypeBanner: ''
   })
 })
 
@@ -989,30 +987,14 @@ onBeforeUnmount(() => {
                   </div>
                 </div>
 
-                <!-- Banner - Lighting Type -->
-                <div v-if="filters.type === 'banner'" class="search-row">
+                <!-- Banner / Wall - Lighting Type -->
+                <div v-if="filters.type === 'banner' || filters.type === 'wall'" class="search-row">
                   <div class="input-group">
                     <label class="input-label">Typ oświetlenia</label>
-                    <select v-model="(filters as any).lightingType" class="search-select">
+                    <select v-model="filters.lightingTypeBanner" class="search-select">
                       <option value="">Wszystkie</option>
-                      <option value="led">LED</option>
-                      <option value="fluorescent">Fluorescencyjne</option>
-                      <option value="natural">Naturalne</option>
-                      <option value="none">Brak</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Wall - Lighting Type -->
-                <div v-if="filters.type === 'wall'" class="search-row">
-                  <div class="input-group">
-                    <label class="input-label">Typ oświetlenia</label>
-                    <select v-model="(filters as any).lightingType" class="search-select">
-                      <option value="">Wszystkie</option>
-                      <option value="led">LED</option>
-                      <option value="fluorescent">Fluorescencyjne</option>
-                      <option value="natural">Naturalne</option>
-                      <option value="none">Brak</option>
+                      <option value="backlight">Podświetlenie z tyłu (backlight)</option>
+                      <option value="frontlight">Podświetlenie z przodu (frontlight)</option>
                     </select>
                   </div>
                 </div>

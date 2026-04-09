@@ -185,6 +185,35 @@ const scrollListToTop = () => {
   listContainerRef.value?.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+const scrollToMap = () => {
+  // Na webowej wersji (desktop) scrolluj na samą górę
+  if (!isMobile.value) {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+    return
+  }
+  
+  // Na mobile uwzględnij header
+  const mapContainer = document.querySelector('.map-container')
+  const header = document.querySelector('.app-header')
+  
+  if (mapContainer && header) {
+    const headerRect = header.getBoundingClientRect()
+    const headerStyles = window.getComputedStyle(header)
+    const headerHeight = headerRect.height + parseFloat(headerStyles.marginTop) + parseFloat(headerStyles.marginBottom)
+    
+    const elementPosition = mapContainer.getBoundingClientRect().top + window.pageYOffset
+    const offsetPosition = elementPosition - headerHeight
+    
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
+  }
+}
+
 // Leaflet
 let L: typeof LType | null = null
 const loadLeaflet = async () => {
@@ -799,6 +828,7 @@ const initMap = async () => {
 
     if (map && !isMapActive.value) {
       enableMapInteractions()
+      scrollToMap()
     }
   })
 

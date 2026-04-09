@@ -51,6 +51,7 @@ export interface FilterParams {
   campaignDurationTo: number | null
   // Extended options
   lightingType: string
+  lightingTypeBanner: string
   dailyPassengersFrom: number | null
   dailyPassengersTo: number | null
   operatingZone: string
@@ -108,6 +109,7 @@ export const DEFAULT_FILTERS: FilterParams = {
   campaignDurationFrom: null,
   campaignDurationTo: null,
   lightingType: '',
+  lightingTypeBanner: '',
   dailyPassengersFrom: null,
   dailyPassengersTo: null,
   operatingZone: '',

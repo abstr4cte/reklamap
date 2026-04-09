@@ -743,10 +743,11 @@ export const useSearchStore = defineStore('search', () => {
 
     // 10. Special Case: Lighting Type (Multiple fields)
     if (f.lightingType && f.lightingType !== '') {
-      filtered = filtered.filter(ad => {
-        const lt = ad.lighting_type || ad.lighting_type_banner
-        return lt === f.lightingType
-      })
+      filtered = filtered.filter(ad => ad.lighting_type === f.lightingType)
+    }
+
+    if (f.lightingTypeBanner && f.lightingTypeBanner !== '') {
+      filtered = filtered.filter(ad => ad.lighting_type_banner === f.lightingTypeBanner)
     }
 
 
