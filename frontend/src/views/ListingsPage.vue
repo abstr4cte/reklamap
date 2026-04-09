@@ -1107,9 +1107,9 @@ const loadData = async () => {
 
 // Przy powrocie do cache'owanej strony (keep-alive) wymuś synchronizację filtrów z URL
 // onMounted nie odpala się ponownie dla cache'owanych instancji
-onActivated(() => {
+onActivated(async () => {
   if (!route.path.startsWith('/powierzchnie-reklamowe')) return
-  loadData()
+  await loadData()
 })
 
 const startAlertTimer = () => {
@@ -1132,10 +1132,10 @@ const startAlertTimer = () => {
 
 watch(
   () => [route.params, route.query],
-  () => {
+  async () => {
     if (!route.path.startsWith('/powierzchnie-reklamowe')) return
     
-    loadData()
+    await loadData()
 
     // Clear and restart alert timer when user navigates between categories or changes filters
     startAlertTimer()

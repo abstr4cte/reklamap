@@ -166,8 +166,10 @@ export const useSearchStore = defineStore('search', () => {
     currentPage.value = 1
     sortBy.value = 'newest'
     
-    // Reset path params tracking
+    // Reset path params tracking i ukryte filtry (np. mapBounds)
     pathParamsFilters.value = {}
+    filters.value.mapBounds = null
+    filters.value.selectedLocationCoords = null
     
     const urlFilters = queryParamsToFilters(query)
     
