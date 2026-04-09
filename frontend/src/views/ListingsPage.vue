@@ -1093,19 +1093,32 @@ onMounted(async () => {
   startAlertTimer()
 })
 
+let _loadDataVersion = 0
+
 const loadData = async () => {
+  // Increment version to invalidate any concurrent/stale calls
+  const version = ++_loadDataVersion
+  
   // Synchronizuj filtry z aktualnym URL
   searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
   syncLocationQuery()
   
   // Pobierz świeże ogłoszenia
   await searchStore.fetchListings()
+  
+  // If another loadData was called while we were fetching, our results may be stale
+  // The newer call will handle setting the correct data
+  if (version !== _loadDataVersion) return
 }
 
 // Przy powrocie do cache'owanej strony (keep-alive) wymuś synchronizację filtrów z URL
 // onMounted nie odpala się ponownie dla cache'owanych instancji
 onActivated(() => {
   if (!route.path.startsWith('/powierzchnie-reklamowe')) return
+  // Skip loadData on the INITIAL mount - onMounted already handles it.
+  // onActivated fires after onMounted for keep-alive components, causing a race condition.
+  // Only reload data when RE-ACTIVATING from keep-alive cache.
+  if (!isInitialized.value) return
   loadData()
 })
 
@@ -1131,6 +1144,9 @@ watch(
   () => [route.params, route.query],
   () => {
     if (!route.path.startsWith('/powierzchnie-reklamowe')) return
+    // Skip during initial mount - onMounted handles first load.
+    // This watcher should only react to SUBSEQUENT route changes (e.g., switching categories).
+    if (!isInitialized.value) return
     
     loadData()
 

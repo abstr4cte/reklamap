@@ -105,19 +105,28 @@ export const useSearchStore = defineStore('search', () => {
     listings.value = data
   }
 
+  // Track the in-flight fetch promise so concurrent callers can await it
+  let _fetchPromise: Promise<void> | null = null
+
   const fetchListings = async () => {
-    // Avoid redundant parallel fetches
-    if (isLoading.value) return 
+    // If a fetch is already in flight, return the existing promise
+    // so the caller can properly await the same result
+    if (_fetchPromise) return _fetchPromise
     
-    try {
-      isLoading.value = true
-      const data = await api.getAdvertisements()
-      listings.value = Array.isArray(data) ? data : []
-    } catch (error) {
-      console.error('Failed to fetch listings:', error)
-    } finally {
-      isLoading.value = false
-    }
+    _fetchPromise = (async () => {
+      try {
+        isLoading.value = true
+        const data = await api.getAdvertisements()
+        listings.value = Array.isArray(data) ? data : []
+      } catch (error) {
+        console.error('Failed to fetch listings:', error)
+      } finally {
+        isLoading.value = false
+        _fetchPromise = null
+      }
+    })()
+    
+    return _fetchPromise
   }
 
   const applyFilters = (newFilters: Partial<FilterParams>) => {
