@@ -99,6 +99,13 @@ const priceLabel = computed(() => {
   return searchStore.getPriceLabel(displayUnit as any, props.ad)
 })
 
+const locationTier = computed(() => {
+  if (props.ad.type !== 'billboard') return null
+  const ti = props.ad.traffic_intensity
+  const rc = (props.ad as any).road_class
+  return ti === 'high' && ['highway', 'expressway', 'national'].includes(rc || '') ? 'PREMIUM' : null
+})
+
 
 // Entrance animation via IntersectionObserver
 const cardRef = ref<any>(null)
@@ -155,6 +162,9 @@ onMounted(() => {
       </div>
       <div class="status-badge" :style="{ background: getStatusColor(ad) }">
         {{ getStatusLabel(ad) }}
+      </div>
+      <div v-if="locationTier === 'PREMIUM'" class="tier-badge">
+        PREMIUM
       </div>
       <div v-if="(ad as any).estimated_daily_views" class="ots-badge">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -322,6 +332,21 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 0.375rem;
+}
+
+.tier-badge {
+  position: absolute;
+  top: 1rem;
+  right: 4rem; /* To not cover actions buttons completely, but actually actions are in that corner too */
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
+  z-index: 5;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .ots-badge {

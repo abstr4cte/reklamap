@@ -23,15 +23,7 @@ const showPricePerSqm = computed(() => {
   return ['billboard', 'led_screen', 'banner', 'wall'].includes(props.ad.type) && pricePerSqm.value !== null
 })
 
-const formattedAvailableDate = computed(() => {
-  if (!props.ad.available_from) return null
-  const date = new Date(props.ad.available_from)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  date.setHours(0, 0, 0, 0)
-  if (date <= today) return null
-  return date.toLocaleDateString('pl-PL')
-})
+
 
 const showDimensions = computed(() => {
   // Wymiary są ukryte dla transport, mobile, other
@@ -183,10 +175,7 @@ const getTrafficIntensityLabel = (intensity: string) => searchStore.getTrafficIn
       <div class="spec-value">{{ ad.campaign_duration }} dni</div>
     </div>
 
-    <div v-if="formattedAvailableDate" class="spec-item">
-      <div class="spec-label">Dostępne od</div>
-      <div class="spec-value">{{ formattedAvailableDate }}</div>
-    </div>
+
 
     <div v-if="ad.type === 'transport' && ad.transport_scope" class="spec-item">
       <div class="spec-label">Zakres</div>

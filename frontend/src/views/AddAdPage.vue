@@ -1124,9 +1124,11 @@ const handleSubmit = async () => {
         status: formData.value.status === 'available' ? 'active' : formData.value.status,
         available_from: formData.value.availableFrom 
           ? (() => {
-              const date = new Date(formData.value.availableFrom)
-              date.setHours(0, 0, 0, 0)
-              return date.toISOString().split('T')[0]
+              const d = new Date(formData.value.availableFrom)
+              const year = d.getFullYear()
+              const month = String(d.getMonth() + 1).padStart(2, '0')
+              const day = String(d.getDate()).padStart(2, '0')
+              return `${year}-${month}-${day}`
             })()
           : new Date().toISOString().split('T')[0],
         traffic_intensity: formData.value.trafficIntensity,

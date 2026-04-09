@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { } from 'vue'
+import { computed } from 'vue'
 import type { Advertisement } from '../../types'
 
 const props = defineProps<{
@@ -26,10 +26,10 @@ const emit = defineEmits<{
   'scroll-to-form': []
 }>()
 
-const formatDate = (date: string) => {
+const formatDate = (date: string | null | undefined) => {
+  if (!date) return ''
   return new Date(date).toLocaleDateString('pl-PL')
 }
-
 
 const getFullPhone = (phone: string) => {
   if (!phone) return ''
@@ -38,12 +38,18 @@ const getFullPhone = (phone: string) => {
   return `+48 ${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6)}`
 }
 
+const showAvailableDate = computed(() => {
+  return props.ad.status === 'soon_available' && !!props.ad.available_from
+})
 </script>
 
 <template>
   <div class="sidebar-card">
     <div class="status-badge" :class="statusClass">
       {{ statusLabel }}
+      <div v-if="showAvailableDate" class="available-date">
+        od {{ formatDate(ad.available_from) }}
+      </div>
     </div>
 
     <div class="sidebar-info">
@@ -181,6 +187,13 @@ const getFullPhone = (phone: string) => {
 .status-reserved { background: #fffbeb; color: #d97706; }
 .status-unavailable { background: #fef2f2; color: #dc2626; }
 .status-soon_available { background: #eff6ff; color: #2563eb; }
+
+.available-date {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  opacity: 0.85;
+}
 
 .sidebar-info {
   display: flex;

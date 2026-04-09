@@ -322,7 +322,13 @@ const uploadImage = async (file: File): Promise<string> => {
 
 const updateStatus = async (id: string, newStatus: string, availableFrom?: Date | null) => {
   try {
-    const availableFromISO = availableFrom ? new Date(availableFrom).toISOString().split('T')[0] : null;
+    const availableFromISO = availableFrom ? (() => {
+      const d = new Date(availableFrom)
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    })() : null;
     
     const updatedAd = await api.updateAdvertisementStatus(id, newStatus, availableFromISO);
 

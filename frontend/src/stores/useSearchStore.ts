@@ -578,12 +578,25 @@ export const useSearchStore = defineStore('search', () => {
       environment: 'environment' as any,
       transportScope: 'transport_scope' as any,
       mobileExposureMode: 'mobile_exposure_mode' as any,
-      operatingZone: 'operating_zone' as any
+      operatingZone: 'operating_zone' as any,
+      locationTier: 'location_tier' as any // Virtual field check below
     }
 
     Object.entries(exactFilters).forEach(([filterKey, adKey]) => {
       const val = (f as any)[filterKey]
-      if (val) filtered = filtered.filter(ad => (ad as any)[adKey] === val)
+      if (val) {
+        if (filterKey === 'locationTier') {
+          filtered = filtered.filter(ad => {
+            if (ad.type !== 'billboard') return false
+            const ti = ad.traffic_intensity
+            const rc = (ad as any).road_class
+            const tier = (ti === 'high' && ['highway', 'expressway', 'national'].includes(rc || '')) ? 'PREMIUM' : 'STANDARD'
+            return tier === val
+          })
+        } else {
+          filtered = filtered.filter(ad => (ad as any)[adKey] === val)
+        }
+      }
     })
 
     // 4. Range Filters (Min/Max)

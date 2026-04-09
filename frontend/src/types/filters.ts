@@ -61,6 +61,7 @@ export interface FilterParams {
   locationLabel: string
   street: string
   mapBounds: MapBounds | null
+  locationTier: string
 }
 
 export const DEFAULT_FILTERS: FilterParams = {
@@ -115,4 +116,5 @@ export const DEFAULT_FILTERS: FilterParams = {
   hasLightingTypeBillboard: false,
   locationLabel: '',
   mapBounds: null,
+  locationTier: '',
 }
