@@ -6,8 +6,8 @@ Testy uruchamiają się **automatycznie** w dwóch momentach:
 
 ### 1. 🎣 Pre-commit Hook (lokalnie)
 **Kiedy:** Przy każdym `git commit`  
-**Co robi:** Uruchamia wszystkie 65 testów przed commitem  
-**Czas:** ~1-2 sekundy
+**Co robi:** Uruchamia wszystkie 83 testy (frontend + backend) przed commitem  
+**Czas:** ~1.5 sekundy
 
 ```bash
 # Próbujesz zcommitować:
@@ -15,20 +15,33 @@ git commit -m "some changes"
 
 # Automatycznie uruchamia się:
 🧪 Uruchamiam testy przed commitem...
+
+📦 Frontend tests...
 ✓ tests/unit/dimensionConversion.test.ts (12)
 ✓ tests/unit/priceConversion.test.ts (16)
 ✓ tests/unit/stores/searchStore.filtering.test.ts (21)
 ✓ tests/unit/stores/searchStore.sorting.test.ts (16)
-
 Test Files  4 passed (4)
 Tests       65 passed (65)
+✅ Frontend testy OK
 
-✅ Wszystkie testy przeszły! Kontynuuję commit...
+🔧 Backend tests...
+✓ Tests\Unit\AdvertisementTest (9)
+✓ Tests\Unit\AdvertisementDailyStatTest (8)
+Tests    18 passed (48 assertions)
+✅ Backend testy OK
+
+✅ ✅ ✅ WSZYSTKIE TESTY PRZESZŁY! ✅ ✅ ✅
+Frontend: 65 testów ✓
+Backend:  18 testów ✓
+Total:    83 testy ✓
 ```
 
 **Jeśli test failuje:**
 ```bash
-❌ TESTY NIE PRZESZŁY!
+❌ FRONTEND TESTY NIE PRZESZŁY!
+# lub
+❌ BACKEND TESTY NIE PRZESZŁY!
 
 Nie mogę zcommitować kodu z failującymi testami.
 Napraw błędy i spróbuj ponownie.
