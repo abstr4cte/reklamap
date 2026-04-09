@@ -1080,18 +1080,26 @@ onMounted(async () => {
   isInitialized.value = true
   
   // 5. Proactive search alert modal (consistent with HomePage)
-  if (!hasShownAlertModal.value) {
-    alertModalTimer.value = setTimeout(() => {
-      // Show only if user has type selected, hasn't seen it yet, AND is still on ListingsPage
-      const hasType = !!(filters.value.type || pathParamsFilters.value.type)
-      if (!hasShownAlertModal.value && hasType && router.currentRoute.value.path.includes('/powierzchnie-reklamowe')) {
-        showSearchAlertModal.value = true
-        hasShownAlertModal.value = true
-        localStorage.setItem('search_alert_shown', 'true')
-      }
-    }, 20000) as unknown as number // 20 seconds
-  }
+  startAlertTimer()
 })
+
+const startAlertTimer = () => {
+  if (hasShownAlertModal.value) return
+  
+  if (alertModalTimer.value) {
+    clearTimeout(alertModalTimer.value)
+  }
+
+  alertModalTimer.value = setTimeout(() => {
+    // Show only if user has type selected, hasn't seen it yet, AND is still on ListingsPage
+    const hasType = !!(filters.value.type || pathParamsFilters.value.type)
+    if (!hasShownAlertModal.value && hasType && router.currentRoute.value.path.includes('/powierzchnie-reklamowe')) {
+      showSearchAlertModal.value = true
+      hasShownAlertModal.value = true
+      localStorage.setItem('search_alert_shown', 'true')
+    }
+  }, 20000) as unknown as number // 20 seconds
+}
 
 // Add watch for route changes to handle navigation between categories/locations
 watch(
@@ -1100,11 +1108,8 @@ watch(
     searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
     syncLocationQuery()
     
-    // Clear alert timer when user navigates between categories
-    if (alertModalTimer.value) {
-      clearTimeout(alertModalTimer.value)
-      alertModalTimer.value = null
-    }
+    // Clear and restart alert timer when user navigates between categories or changes filters
+    startAlertTimer()
     
     // Scroll to top of the listings when category/location changes
     nextTick(() => {

@@ -90,6 +90,9 @@ const handleSearch = (searchFilters: FilterParams & { _priceDisplayUnit?: string
   
   // Użyj router.replace zamiast natywnego history.replaceState (Vue Router może to nadpisać)
   router.replace({ query: queryParams })
+
+  // Restart alert timer from the moment of selection/search
+  startAlertTimer()
 }
 
 const isResettingFilters = ref(false)
@@ -419,17 +422,25 @@ onMounted(() => {
   // Jeśli NIE ma flagi user_initiated_search i NIE ma query params → czyste wejście, nie ładuj nic
 
   // Logic for showing the search alert modal after 20 seconds
-  if (!hasShownAlertModal.value) {
-    alertModalTimer.value = setTimeout(() => {
-      // Show only if user has type selected, hasn't seen it yet, AND is still on HomePage
-      if (!hasShownAlertModal.value && filters.value.type && router.currentRoute.value.path === '/') {
-        showSearchAlertModal.value = true
-        hasShownAlertModal.value = true
-        localStorage.setItem('search_alert_shown', 'true')
-      }
-    }, 20000) as unknown as number // 20 seconds
-  }
+  startAlertTimer()
 })
+
+const startAlertTimer = () => {
+  if (hasShownAlertModal.value) return
+  
+  if (alertModalTimer.value) {
+    clearTimeout(alertModalTimer.value)
+  }
+
+  alertModalTimer.value = setTimeout(() => {
+    // Show only if user has type selected, hasn't seen it yet, AND is still on HomePage
+    if (!hasShownAlertModal.value && filters.value.type && router.currentRoute.value.path === '/') {
+      showSearchAlertModal.value = true
+      hasShownAlertModal.value = true
+      localStorage.setItem('search_alert_shown', 'true')
+    }
+  }, 20000) as unknown as number // 20 seconds
+}
 
 const handleSearchAlertSubmit = () => {
   // Alert saved
