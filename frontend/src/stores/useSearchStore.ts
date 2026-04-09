@@ -106,7 +106,8 @@ export const useSearchStore = defineStore('search', () => {
   }
 
   const fetchListings = async () => {
-    if (isLoading.value && listings.value.length > 0) return // Avoid redundant fetches if we already have data
+    // Avoid redundant parallel fetches
+    if (isLoading.value) return 
     
     try {
       isLoading.value = true
@@ -159,17 +160,16 @@ export const useSearchStore = defineStore('search', () => {
   }
 
   const syncFromUrl = (query: Record<string, string>, params: Record<string, string>) => {
-    // Start with a clean slate of filters to avoid stale results
+    // Start with a clean slate of filters and listings to avoid stale results
     filters.value = { ...DEFAULT_FILTERS }
+    listings.value = [] // Clear results to prevent mismatching old data with new filters during fetch
     
     // Reset other state to avoid stale pagination or sorting
     currentPage.value = 1
     sortBy.value = 'newest'
     
-    // Reset path params tracking i ukryte filtry (np. mapBounds)
+    // Reset path params tracking
     pathParamsFilters.value = {}
-    filters.value.mapBounds = null
-    filters.value.selectedLocationCoords = null
     
     const urlFilters = queryParamsToFilters(query)
     

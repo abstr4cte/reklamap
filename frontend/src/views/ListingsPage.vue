@@ -1012,9 +1012,6 @@ const getAvailablePriceUnits = (type: string) => searchStore.getAvailablePriceUn
 const showEquipmentSectionInModal = computed(() => tempFilters.value && ['billboard', 'citylight', 'banner', 'wall', 'led_screen'].includes(tempFilters.value.type))
 
 onMounted(async () => {
-  // Pokaż skeleton od samego początku (szczególnie ważne przy przejściach SPA)
-  searchStore.isLoading = true
-  
   checkIfMobile()
   window.addEventListener('resize', checkIfMobile)
   window.addEventListener('scroll', handleScroll)
@@ -1107,9 +1104,9 @@ const loadData = async () => {
 
 // Przy powrocie do cache'owanej strony (keep-alive) wymuś synchronizację filtrów z URL
 // onMounted nie odpala się ponownie dla cache'owanych instancji
-onActivated(async () => {
+onActivated(() => {
   if (!route.path.startsWith('/powierzchnie-reklamowe')) return
-  await loadData()
+  loadData()
 })
 
 const startAlertTimer = () => {
@@ -1132,10 +1129,10 @@ const startAlertTimer = () => {
 
 watch(
   () => [route.params, route.query],
-  async () => {
+  () => {
     if (!route.path.startsWith('/powierzchnie-reklamowe')) return
     
-    await loadData()
+    loadData()
 
     // Clear and restart alert timer when user navigates between categories or changes filters
     startAlertTimer()
