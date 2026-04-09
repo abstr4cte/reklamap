@@ -74,6 +74,7 @@ export interface FilterParams {
   roadClass?: string
   environment?: string
   locationLabel?: string
+  locationTier?: string
 }
 
 // Mapowanie wartości na polskie odpowiedniki dla URL (bez polskich znaków)
@@ -123,6 +124,10 @@ const valueMapping: Record<string, Record<string, string>> = {
     'price-year-desc': 'cena-rok-malejaco',
     'price-sqm-asc': 'cena-m2-rosnaco',
     'price-sqm-desc': 'cena-m2-malejaco'
+  },
+  locationTier: {
+    'PREMIUM': 'premium',
+    'STANDARD': 'standard'
   }
 }
 
@@ -258,6 +263,9 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.campaignDurationTo !== null && filters.campaignDurationTo !== undefined) {
     params.campaignDurationTo = filters.campaignDurationTo.toString()
   }
+  if (filters.locationTier) {
+    params.locationTier = valueMapping.locationTier[filters.locationTier] || filters.locationTier
+  }
 
   return params
 }
@@ -358,6 +366,10 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   if (query.brightnessTo) filters.brightnessTo = parseFloat(query.brightnessTo) || null
   if (query.campaignDurationFrom) filters.campaignDurationFrom = parseFloat(query.campaignDurationFrom) || null
   if (query.campaignDurationTo) filters.campaignDurationTo = parseFloat(query.campaignDurationTo) || null
+
+  if (query.locationTier) {
+    filters.locationTier = reverseValueMapping.locationTier[query.locationTier] || query.locationTier
+  }
 
   return filters
 }

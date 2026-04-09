@@ -141,9 +141,9 @@ const initMap = () => {
     zoomControl: true, // Disable zoom controls until activated
     maxBounds: polandBounds,
     maxBoundsViscosity: 1.0,
-    minZoom: 4.5,
+    minZoom: 3.5,
     maxZoom: 18
-  }).setView([52.0, 19.0], 6)
+  }).setView([52.0, 19.0], isMobile.value ? 5 : 6)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -240,24 +240,24 @@ const syncMapToFilters = () => {
   
   if (props.selectedLocationCoords) {
     // Priority 1: If exact coordinates are provided, zoom to them
-    const zoomLevel = isMobile.value ? 12 : 13
+    const zoomLevel = isMobile.value ? 11 : 13
     isProgrammaticMove.value = true
     map.setView([props.selectedLocationCoords.lat, props.selectedLocationCoords.lng], zoomLevel)
   } else if (props.selectedCity && markers.size > 0) {
     // Priority 2: If city is selected, fit bounds to markers (likely clustered in that city)
     const group = new L.FeatureGroup(Array.from(markers.values()))
-    const maxZoom = isMobile.value ? 11 : 12
+    const maxZoom = isMobile.value ? 10 : 12
     isProgrammaticMove.value = true
     map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom })
   } else if (props.selectedRegion && regionCoordinates[props.selectedRegion]) {
     // Priority 3: If region is selected (and no city), zoom to region center
     const region = regionCoordinates[props.selectedRegion]
-    const zoomLevel = isMobile.value ? region.zoom - 1 : region.zoom
+    const zoomLevel = isMobile.value ? region.zoom - 2 : region.zoom
     isProgrammaticMove.value = true
     map.setView([region.lat, region.lng], zoomLevel)
   } else if (!searchStore.filters.mapBounds) {
     // Default: Always show full Poland ONLY when no mapBounds are set yet
-    const defaultZoom = isMobile.value ? 5 : 6
+    const defaultZoom = isMobile.value ? 4 : 6
     isProgrammaticMove.value = true
     map.setView([52.0, 19.0], defaultZoom)
   }
