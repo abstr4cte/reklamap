@@ -11,6 +11,7 @@ import WebPImage from '../components/WebPImage.vue'
 import ManagementStats from '../components/management/ManagementStats.vue'
 import LocationMapModal from '../components/LocationMapModal.vue'
 import { nsfwService } from '../services/nsfwService'
+import { formatDim } from '../utils/formatPrice'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
@@ -1251,7 +1252,7 @@ onBeforeUnmount(() => {
                   <p class="listing-meta">
                     {{ ad.city }} • {{ getTypeLabel(ad.type) }}
                     <template v-if="ad.width && ad.height && ad.width > 0 && ad.height > 0">
-                      • {{ ad.width }}m × {{ ad.height }}m
+                      • {{ formatDim(ad.width) }}m × {{ formatDim(ad.height) }}m
                     </template>
                   </p>
                 </div>

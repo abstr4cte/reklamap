@@ -495,8 +495,43 @@ const getVariantOptions = (type: string) => {
 
 
 const getEnvironmentOptions = (type: string): { value: string, label: string }[] => {
-  if (type === 'citylight') return [{ value: 'street', label: 'Ulica' }, { value: 'mall', label: 'Galeria' }, { value: 'station', label: 'Dworzec' }]
-  return []
+  switch (type) {
+    case 'citylight':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' }
+      ]
+    case 'led_screen':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'totem':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'banner':
+      return [
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'mobile':
+      return [
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    case 'other':
+      return [
+        { value: 'indoor', label: 'Wewnątrz' },
+        { value: 'outdoor', label: 'Na zewnątrz' },
+        { value: 'event', label: 'Event / Wydarzenie' }
+      ]
+    default:
+      return []
+  }
 }
 
 // Actions
@@ -2080,8 +2115,8 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             <label class="filter-label">Kierunek ruchu</label>
             <select v-model="tempFilters.trafficDirection" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>
-              <option value="entry">Wjazd</option>
-              <option value="exit">Wyjazd</option>
+              <option value="entry">Wjazd do miasta</option>
+              <option value="exit">Wyjazd z miasta</option>
               <option value="both">Oba kierunki</option>
             </select>
           </div>
@@ -2109,7 +2144,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           </div>
 
           <!-- 6. Environment Filter -->
-          <div v-if="tempFilters && ['citylight', 'led_screen', 'totem', 'other'].includes(tempFilters.type)" class="filter-group">
+          <div v-if="tempFilters && ['citylight', 'led_screen', 'totem', 'banner', 'mobile', 'other'].includes(tempFilters.type)" class="filter-group">
             <label class="filter-label">Środowisko</label>
             <select v-model="tempFilters.environment" class="filter-select" v-if="tempFilters">
               <option value="">Wszystkie</option>

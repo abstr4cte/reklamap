@@ -256,7 +256,8 @@ const showGraphicDesignFilter = computed(() => {
 })
 
 const showEquipmentSection = computed(() => {
-  return showPrintFilter.value || showMountingFilter.value || showGraphicDesignFilter.value || filters.value.type === 'led_screen'
+  return showPrintFilter.value || showMountingFilter.value || showGraphicDesignFilter.value ||
+         filters.value.type === 'led_screen' || filters.value.type === 'citylight'
 })
 
 const showTrafficIntensityFilter = computed(() => {
@@ -850,8 +851,8 @@ onBeforeUnmount(() => {
                     <label class="input-label">Kierunek ruchu</label>
                     <select v-model="filters.trafficDirection" class="search-select" @focus="markUserEditing">
                       <option value="">Wszystkie</option>
-                      <option value="entry">Wjazd</option>
-                      <option value="exit">Wyjazd</option>
+                      <option value="entry">Wjazd do miasta</option>
+                      <option value="exit">Wyjazd z miasta</option>
                       <option value="both">Oba kierunki</option>
                     </select>
                   </div>

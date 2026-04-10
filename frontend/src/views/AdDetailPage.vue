@@ -13,6 +13,7 @@ import { useSearchStore } from '../stores/useSearchStore'
 import { useStreetViewStore } from '../stores/useStreetViewStore'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
+import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 
 // Detailed Components
 import AdGallery from '../components/detail/AdGallery.vue'
@@ -364,9 +365,14 @@ const submitReport = async () => {
   if (!ad.value || !reportForm.value.reason) return
   isSubmittingReport.value = true
   try {
+    let recaptchaToken = ''
+    if (isRecaptchaAvailable()) {
+      recaptchaToken = await getRecaptchaToken('report')
+    }
     await axios.post('/api/reports', {
       ...reportForm.value,
-      advertisement_id: ad.value.id
+      advertisement_id: ad.value.id,
+      recaptcha_token: recaptchaToken
     })
     
     // Show success modal instead of toast

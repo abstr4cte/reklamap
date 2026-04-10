@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { Advertisement } from '../../types'
 import { useSearchStore } from '../../stores/useSearchStore'
+import { formatDim } from '../../utils/formatPrice'
 
 const props = defineProps<{
   ad: Advertisement
@@ -11,7 +12,7 @@ const searchStore = useSearchStore()
 
 const surfaceArea = computed(() => {
   if (!props.ad.width || !props.ad.height) return '0'
-  return (props.ad.width * props.ad.height).toFixed(2)
+  return formatDim(props.ad.width * props.ad.height)
 })
 
 const pricePerSqm = computed(() => {
@@ -58,9 +59,12 @@ const getEnvironmentLabel = (env: string) => searchStore.formatEnvironment(env)
 const getTransportScopeLabel = (scope: string) => searchStore.formatTransportScope(scope)
 const getMobileExposureModeLabel = (mode: string) => searchStore.formatMobileExposureMode(mode)
 const getLightingTypeLabel = (lt: string) => searchStore.formatLightingType(lt)
+const getLightingTypeBannerLabel = (lt: string) => searchStore.formatLightingTypeBanner(lt)
 const getOperatingZoneLabel = (zone: string) => searchStore.formatOperatingZone(zone)
 const getVariantLabel = (variant: string, type: string) => searchStore.getVariantLabel(variant, type)
 const getTrafficIntensityLabel = (intensity: string) => searchStore.getTrafficIntensityLabel(intensity)
+
+const isPricePerSqmExact = computed(() => props.ad.price_unit === 'sqm')
 
 
 </script>
@@ -69,8 +73,8 @@ const getTrafficIntensityLabel = (intensity: string) => searchStore.getTrafficIn
   <div class="specifications-grid">
     <div v-if="showDimensions" class="spec-item">
       <div class="spec-label">Wymiary</div>
-      <div v-if="ad.type === 'led_screen'" class="spec-value">{{ (ad.width * 1000).toFixed(0) }}mm × {{ (ad.height * 1000).toFixed(0) }}mm</div>
-      <div v-else class="spec-value">{{ ad.width }}m × {{ ad.height }}m</div>
+      <div v-if="ad.type === 'led_screen'" class="spec-value">{{ Math.round(ad.width * 1000) }}mm × {{ Math.round(ad.height * 1000) }}mm</div>
+      <div v-else class="spec-value">{{ formatDim(ad.width) }}m × {{ formatDim(ad.height) }}m</div>
     </div>
 
     <div v-if="showDimensions && showSurfaceArea" class="spec-item">
@@ -80,7 +84,10 @@ const getTrafficIntensityLabel = (intensity: string) => searchStore.getTrafficIn
 
     <div v-if="showPricePerSqm" class="spec-item">
       <div class="spec-label">Cena za m²</div>
-      <div class="spec-value">{{ pricePerSqm }} PLN</div>
+      <div class="spec-value">
+        <span v-if="!isPricePerSqmExact" class="spec-approx">~</span>{{ pricePerSqm }} PLN/m²
+        <span v-if="!isPricePerSqmExact" class="spec-note">szacunkowo</span>
+      </div>
     </div>
 
     <div v-if="ad.variant" class="spec-item">
@@ -125,47 +132,47 @@ const getTrafficIntensityLabel = (intensity: string) => searchStore.getTrafficIn
       <div class="spec-value">{{ getTrafficIntensityLabel(ad.traffic_intensity) }}</div>
     </div>
 
-    <div v-if="ad.orientation" class="spec-item">
+    <div v-if="ad.orientation && showDimensions" class="spec-item">
       <div class="spec-label">Orientacja</div>
       <div class="spec-value">{{ ad.orientation === 'horizontal' ? 'Poziom (H)' : 'Pion (V)' }}</div>
     </div>
 
-    <div v-if="ad.type === 'billboard' && (ad as any).lighting_type" class="spec-item">
+    <div v-if="ad.type === 'billboard' && ad.lighting_type" class="spec-item">
       <div class="spec-label">Typ oświetlenia</div>
-      <div class="spec-value">{{ getLightingTypeLabel((ad as any).lighting_type) }}</div>
+      <div class="spec-value">{{ getLightingTypeLabel(ad.lighting_type) }}</div>
     </div>
 
-    <div v-if="['banner', 'wall'].includes(ad.type) && (ad as any).lighting_type_banner" class="spec-item">
+    <div v-if="['banner', 'wall'].includes(ad.type) && ad.lighting_type_banner" class="spec-item">
       <div class="spec-label">Typ oświetlenia</div>
-      <div class="spec-value">{{ getLightingTypeLabel((ad as any).lighting_type_banner) }}</div>
+      <div class="spec-value">{{ getLightingTypeBannerLabel(ad.lighting_type_banner) }}</div>
     </div>
 
-    <div v-if="ad.type === 'transport' && (ad as any).daily_passengers" class="spec-item">
+    <div v-if="ad.type === 'transport' && ad.daily_passengers" class="spec-item">
       <div class="spec-label">Liczba pasażerów dziennie</div>
-      <div class="spec-value">{{ (ad as any).daily_passengers }}</div>
+      <div class="spec-value">{{ ad.daily_passengers.toLocaleString('pl-PL') }}</div>
     </div>
 
-    <div v-if="ad.type === 'mobile' && (ad as any).operating_zone" class="spec-item">
+    <div v-if="ad.type === 'mobile' && ad.operating_zone" class="spec-item">
       <div class="spec-label">Strefa operacyjna</div>
-      <div class="spec-value">{{ getOperatingZoneLabel((ad as any).operating_zone) }}</div>
+      <div class="spec-value">{{ getOperatingZoneLabel(ad.operating_zone) }}</div>
     </div>
 
-    <div v-if="ad.type === 'led_screen' && (ad as any).resolution" class="spec-item">
+    <div v-if="ad.type === 'led_screen' && ad.resolution" class="spec-item">
       <div class="spec-label">Rozdzielczość</div>
-      <div class="spec-value">{{ (ad as any).resolution }}</div>
+      <div class="spec-value">{{ ad.resolution }}</div>
     </div>
 
-    <div v-if="ad.type === 'led_screen' && (ad as any).pixel_pitch" class="spec-item">
+    <div v-if="ad.type === 'led_screen' && ad.pixel_pitch" class="spec-item">
       <div class="spec-label">Pixel Pitch</div>
-      <div class="spec-value">{{ (ad as any).pixel_pitch }} mm</div>
+      <div class="spec-value">{{ ad.pixel_pitch }} mm</div>
     </div>
 
-    <div v-if="ad.type === 'led_screen' && (ad as any).brightness" class="spec-item">
+    <div v-if="ad.type === 'led_screen' && ad.brightness" class="spec-item">
       <div class="spec-label">Jasność</div>
-      <div class="spec-value">{{ (ad as any).brightness }} nits</div>
+      <div class="spec-value">{{ ad.brightness }} nits</div>
     </div>
 
-    <div v-if="ad.type === 'led_screen' && (ad as any).ambient_light_control" class="spec-item">
+    <div v-if="ad.type === 'led_screen' && ad.ambient_light_control" class="spec-item">
       <div class="spec-label">Dostosowanie do otoczenia</div>
       <div class="spec-value spec-yes">Tak</div>
     </div>
@@ -299,6 +306,19 @@ const getTrafficIntensityLabel = (intensity: string) => searchStore.getTrafficIn
 
 .spec-standard {
   color: #3b82f6;
+}
+
+.spec-approx {
+  color: #9ca3af;
+  margin-right: 1px;
+}
+
+.spec-note {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #9ca3af;
+  margin-top: 2px;
 }
 
 @media (max-width: 768px) {

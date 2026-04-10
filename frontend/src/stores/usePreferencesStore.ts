@@ -4,8 +4,11 @@ import { api } from '../services/api'
 import { useToast } from '../composables/useToast'
 
 export const usePreferencesStore = defineStore('preferences', () => {
-  const favorites = ref<number[]>(JSON.parse(localStorage.getItem('favorites') || '[]'))
-  const comparison = ref<number[]>(JSON.parse(localStorage.getItem('comparison') || '[]'))
+  const parseSafe = (key: string): number[] => {
+    try { return JSON.parse(localStorage.getItem(key) || '[]') } catch { return [] }
+  }
+  const favorites = ref<number[]>(parseSafe('favorites'))
+  const comparison = ref<number[]>(parseSafe('comparison'))
   const isDarkMode = ref<boolean>(false)
   
   // Helper to get toast instance (lazy)

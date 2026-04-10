@@ -33,16 +33,14 @@ Route::post('listings/daily-stats/multiple', [AdvertisementController::class, 'g
 Route::get('blog', [BlogController::class, 'index']);
 Route::get('blog/{slug}', [BlogController::class, 'show']);
 
-// Zgłoszenia i feedback - rate limit 10/h, bez reCAPTCHA (wystarczy email verification)
-Route::middleware('throttle:10,60')->post('reports', [AdvertisementController::class, 'report']);
-Route::middleware('throttle:10,60')->post('feedback', [AdvertisementController::class, 'submitFeedback']);
-
-// Rate limit na endpointy wysyłające maile (max 10 na 60 minut z jednego IP) + reCAPTCHA
+// Wszystkie formularze publiczne - rate limit 10/h + reCAPTCHA
 Route::middleware(['throttle:10,60', 'verify.recaptcha'])->group(function () {
     Route::post('listings/{id}/contact', [AdvertisementController::class, 'contactOwner']);
     Route::post('contact', [AdvertisementController::class, 'submitContact']);
     Route::post('newsletter/subscribe', [AdvertisementController::class, 'subscribeNewsletter']);
     Route::post('search-alerts', [\App\Http\Controllers\SearchAlertController::class, 'store']);
+    Route::post('reports', [AdvertisementController::class, 'report']);
+    Route::post('feedback', [AdvertisementController::class, 'submitFeedback']);
 });
 
 Route::get('search-alerts/unsubscribe/{token}', [\App\Http\Controllers\SearchAlertController::class, 'unsubscribe'])->name('search-alerts.unsubscribe');

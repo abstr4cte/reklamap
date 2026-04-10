@@ -9,6 +9,7 @@ import WebPImage from '../components/WebPImage.vue'
 import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import { getFieldsForType, shouldShowField, type ComparisonField } from '../utils/comparisonFields'
+import { formatDim } from '../utils/formatPrice'
 
 import axios from '../api/axios'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
@@ -131,8 +132,7 @@ const handleConfirmClear = () => {
 
 const getSurfaceArea = (ad: Advertisement) => {
   if (ad.width && ad.height) {
-    // Wymiary są zawsze przechowywane w metrach w bazie
-    return (ad.width * ad.height).toFixed(2)
+    return formatDim(ad.width * ad.height)
   }
   return '0'
 }
@@ -210,9 +210,9 @@ const getFieldValue = (field: ComparisonField, ad: Advertisement): any => {
       if (!ad.width || !ad.height) return '—'
       // Dla LED screens konwertuj z metrów na mm
       if (ad.type === 'led_screen') {
-        return `${(ad.width * 1000).toFixed(0)}mm × ${(ad.height * 1000).toFixed(0)}mm`
+        return `${Math.round(ad.width * 1000)}mm × ${Math.round(ad.height * 1000)}mm`
       }
-      return `${ad.width}m × ${ad.height}m`
+      return `${formatDim(ad.width)}m × ${formatDim(ad.height)}m`
     case 'surface_area':
       return `${getSurfaceArea(ad)} m²`
     case 'orientation':

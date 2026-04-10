@@ -10,7 +10,7 @@ export const nsfwService = {
             // Load the model from a public CDN to avoid needing to bundle it locally if not present
             // or just let nsfwjs load its default model from unpkg/jsdelivr
             try {
-                model = await nsfwjs.load()
+                model = await nsfwjs.load('https://unpkg.com/nsfwjs/quant_nsfw_mobilenet/')
             } catch (error) {
                 throw error
             }

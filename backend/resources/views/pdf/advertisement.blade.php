@@ -282,7 +282,7 @@
         if ($showDimensions) {
             $dimValue = ($advertisement->type === 'led_screen')
                 ? number_format($advertisement->width * 1000, 0) . 'mm × ' . number_format($advertisement->height * 1000, 0) . 'mm'
-                : $advertisement->width . 'm × ' . $advertisement->height . 'm';
+                : (float)$advertisement->width . 'm × ' . (float)$advertisement->height . 'm';
             $details[] = ['label' => 'Wymiary', 'value' => $dimValue];
             $details[] = ['label' => 'Orientacja', 'value' => $advertisement->orientation === 'horizontal' ? 'Poziom' : 'Pion'];
         }

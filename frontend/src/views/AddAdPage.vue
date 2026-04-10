@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { useSeo } from '../composables/useSeo'
@@ -1028,21 +1028,21 @@ const validateStep = (step: number): boolean => {
   return Object.keys(errors.value).length === 0
 }
 
-const nextStep = () => {
-  // Zawsze przewijaj do góry przy próbie przejścia dalej
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-  
+const nextStep = async () => {
   if (validateStep(currentStep.value)) {
     if (currentStep.value < totalSteps) {
       currentStep.value++
-
       if (currentStep.value === 3) {
         setTimeout(() => initMap(), 100)
       }
+      // Czekaj na aktualizację DOM zanim przewiniesz — zmiana v-show może skrócić
+      // stronę w trakcie smooth scroll, co powoduje lądowanie na footerze
+      await nextTick()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   } else {
-    // Jeśli walidacja się nie powiodła, pokaż toast (scroll do góry już wykonany)
     toast.value?.add('Proszę uzupełnić wymagane pola', 'error')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 }
 

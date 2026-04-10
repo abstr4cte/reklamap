@@ -155,19 +155,13 @@ export const api = {
         if (!response.ok) throw new Error('Failed to delete advertisement')
     },
 
-    async incrementViews(id: string): Promise<void> {
-        await fetch(`${API_URL}/listings/${id}/increment-views`, {
-            method: 'POST',
-            headers: withKey(),
-        })
-    },
-    async incrementPhoneClicks(id: string): Promise<void> {
+    async incrementPhoneClicks(id: number): Promise<void> {
         await fetch(`${API_URL}/listings/${id}/increment-phone-clicks`, {
             method: 'POST',
             headers: withKey(),
         })
     },
-    async incrementEmailClicks(id: string): Promise<void> {
+    async incrementEmailClicks(id: number): Promise<void> {
         await fetch(`${API_URL}/listings/${id}/increment-email-clicks`, {
             method: 'POST',
             headers: withKey(),

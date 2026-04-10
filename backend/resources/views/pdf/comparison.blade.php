@@ -60,20 +60,55 @@
             width: 120px;
         }
 
-        .ad-image {
+        .img-container {
+            position: relative;
             width: 100%;
-            height: 250px;
-            object-fit: cover;
-            object-position: center;
-            margin-bottom: 5px;
-            border-radius: 8px;
-            background-color: #f3f4f6;
+            height: 160px;
+            overflow: hidden;
+            background-color: #111827;
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+
+        .img-bg {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: 110%;
+            height: 110%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+        }
+
+        .img-front-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 160px;
+            text-align: center;
+            line-height: 160px;
+        }
+
+        .img-front {
+            vertical-align: middle;
+            max-width: 100%;
+            max-height: 150px;
+            line-height: normal;
+        }
+
+        .img-placeholder {
+            text-align: center;
+            color: #6b7280;
+            line-height: 160px;
+            font-size: 9px;
         }
 
         .ad-title {
             font-weight: bold;
             font-size: 11px;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             display: block;
         }
 
@@ -81,6 +116,15 @@
             color: #4f46e5;
             font-weight: bold;
             font-size: 12px;
+        }
+
+        .col-header {
+            background-color: #e5e7eb;
+            font-weight: bold;
+            font-size: 9px;
+            text-align: center;
+            color: #374151;
+            padding: 5px 4px;
         }
 
         .footer {
@@ -113,47 +157,59 @@
         <h1>Porównanie ogłoszeń</h1>
     </div>
 
+    {{-- Sekcja ze zdjęciami — poza tabelą, nie powtarza się przy łamaniu stron --}}
+    @php
+        $adImages = [];
+        foreach ($advertisements as $ad) {
+            $base64Image = null;
+            $imgSrc = $ad->image_url;
+            if (!$imgSrc && !empty($ad->images) && count($ad->images) > 0) {
+                $imgSrc = $ad->images[0];
+            }
+            if ($imgSrc) {
+                $filename = basename(parse_url($imgSrc, PHP_URL_PATH));
+                $path = storage_path('app/public/advertisements/' . $filename);
+                if (file_exists($path)) {
+                    $imageData = file_get_contents($path);
+                    $type = pathinfo($path, PATHINFO_EXTENSION);
+                    if ($imageData && $type) {
+                        $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($imageData);
+                    }
+                }
+            }
+            $adImages[$ad->id] = $base64Image;
+        }
+    @endphp
+
+    <table style="margin-bottom: 12px;">
+        <tbody>
+            <tr>
+                <td style="width: 120px; border: none; padding: 0;"></td>
+                @foreach($advertisements as $ad)
+                    <td style="border: none; padding: 0 4px 0 0; vertical-align: top;">
+                        <div class="img-container">
+                            @if($adImages[$ad->id])
+                                <div class="img-bg" style="background-image: url('{{ $adImages[$ad->id] }}');"></div>
+                                <div class="img-front-wrapper">
+                                    <img src="{{ $adImages[$ad->id] }}" class="img-front">
+                                </div>
+                            @else
+                                <div class="img-placeholder">Brak zdjęcia</div>
+                            @endif
+                        </div>
+                        <span class="ad-title">{{ $ad->title }}</span>
+                    </td>
+                @endforeach
+            </tr>
+        </tbody>
+    </table>
+
     <table>
         <thead>
             <tr>
                 <th></th>
                 @foreach($advertisements as $ad)
-                    <td>
-                        @php
-                            $base64Image = null;
-                            $imgSrc = $ad->image_url;
-                            if (!$imgSrc && !empty($ad->images) && count($ad->images) > 0) {
-                                $imgSrc = $ad->images[0];
-                            }
-
-                            if ($imgSrc) {
-                                $imageData = null;
-                                $type = null;
-
-                                // Extract filename from URL (works for both full URLs and relative paths)
-                                $filename = basename(parse_url($imgSrc, PHP_URL_PATH));
-                                
-                                // Images are always stored in storage/app/public/advertisements/
-                                $path = storage_path('app/public/advertisements/' . $filename);
-
-                                // Try to load the image
-                                if (file_exists($path)) {
-                                    $imageData = file_get_contents($path);
-                                    $type = pathinfo($path, PATHINFO_EXTENSION);
-                                }
-
-                                // Convert to base64 if we have image data
-                                if ($imageData && $type) {
-                                    $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($imageData);
-                                }
-                            }
-                        @endphp
-
-                        @if($base64Image)
-                            <img src="{{ $base64Image }}" class="ad-image">
-                        @endif
-                        <span class="ad-title">{{ $ad->title }}</span>
-                    </td>
+                    <td class="col-header">{{ Str::limit($ad->title, 35) }}</td>
                 @endforeach
             </tr>
         </thead>
@@ -340,7 +396,7 @@
                         @if($ad->type === 'led_screen')
                             {{ number_format($ad->width * 1000, 0) }}mm x {{ number_format($ad->height * 1000, 0) }}mm
                         @else
-                            {{ $ad->width }}m x {{ $ad->height }}m
+                            {{ (float)$ad->width }}m x {{ (float)$ad->height }}m
                         @endif
                     </td>
                 @endforeach
@@ -354,7 +410,7 @@
             <tr>
                 <th>Powierzchnia</th>
                 @foreach($advertisements as $ad)
-                    <td class="highlight">{{ number_format($ad->width * $ad->height, 2) }} m²</td>
+                    <td class="highlight">{{ rtrim(rtrim(number_format($ad->width * $ad->height, 2), '0'), '.') }} m²</td>
                 @endforeach
             </tr>
             @endif
