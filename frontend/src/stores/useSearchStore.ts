@@ -259,10 +259,16 @@ export const useSearchStore = defineStore('search', () => {
   }
 
   const applyFilters = (newFilters: Partial<FilterParams>) => {
+    const hadMapBounds = !!filters.value.mapBounds
     filters.value = { ...filters.value, ...newFilters }
 
     const isMapBoundsOnly = Object.keys(newFilters).length === 1 && 'mapBounds' in newFilters
     if (isMapBoundsOnly) {
+      // When user first starts panning/zooming (mapBounds just activated), re-fetch pins
+      // without city/region so the whole map shows all matching pins, not just the searched city.
+      if (!hadMapBounds) {
+        fetchMapPins()
+      }
       // Debounce grid re-fetch on map pan/zoom — 600ms after user stops moving
       if (_mapBoundsTimer) clearTimeout(_mapBoundsTimer)
       _mapBoundsTimer = setTimeout(() => {
