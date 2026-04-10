@@ -128,7 +128,7 @@ class Advertisement extends Model
             return 'soon_available';
         }
 
-        return $this->status;
+        return $this->status ?? 'active';
     }
 
     public function getFullUrlAttribute(): string
