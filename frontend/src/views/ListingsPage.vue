@@ -4452,6 +4452,10 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
     overflow: visible;
   }
 
+  .listings-header-section :deep(.breadcrumbs) {
+    padding-left: 1rem;
+  }
+
   .listings-layout {
     display: flex;
     flex-direction: column;

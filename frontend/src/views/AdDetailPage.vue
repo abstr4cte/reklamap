@@ -155,6 +155,16 @@ const statusClass = computed(() => {
   return `status-${status}`
 })
 
+const showAvailableDate = computed(() => {
+  const status = ad.value?.display_status || ad.value?.status
+  return status === 'soon_available' && !!ad.value?.available_from && new Date(ad.value.available_from) > new Date()
+})
+
+const formatAvailableDate = (date: string | null | undefined) => {
+  if (!date) return ''
+  return new Date(date).toLocaleDateString('pl-PL')
+}
+
 // SEO Logic
 const seoOptions = ref<any>({ title: 'ReklaMap', description: 'Trwa ładowanie...' })
 const { updateMetaTags: _updateMetaTags } = useSeo(seoOptions)
@@ -570,6 +580,9 @@ defineExpose({
           <div class="mobile-status-badge mobile-only">
             <div class="status-badge" :class="statusClass">
               {{ statusLabel }}
+              <div v-if="showAvailableDate" class="available-date">
+                od {{ formatAvailableDate(ad.available_from) }}
+              </div>
             </div>
           </div>
 
@@ -900,6 +913,12 @@ defineExpose({
 .status-reserved { background: #fffbeb; color: #d97706; }
 .status-unavailable { background: #fef2f2; color: #dc2626; }
 .status-soon_available { background: #eff6ff; color: #2563eb; }
+
+.available-date {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
 
 .page-title {
   font-size: 2.5rem;

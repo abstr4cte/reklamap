@@ -632,11 +632,10 @@ const clearSearchFlag = () => {
 
 <style scoped>
 .categories-section {
-  background: var(--bg-secondary, linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%));
+  background: linear-gradient(to bottom, #ffffff 0%, #f5f7fa 50%, #e8ecf1 100%);
   padding: 5rem 0;
   margin: 0;
   position: relative;
-  overflow: hidden;
   transition: background 0.3s ease;
 }
 

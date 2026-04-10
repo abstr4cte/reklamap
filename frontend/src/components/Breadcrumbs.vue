@@ -184,21 +184,68 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .breadcrumbs {
-    margin-bottom: 1rem;
+    margin-bottom: 0.875rem;
   }
-  
+
+  /* Na mobile: usuń kartę, zostaw tylko back link */
   .breadcrumb-list {
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    gap: 0;
   }
-  
+
+  /* Ukryj wszystkie elementy... */
   .breadcrumb-item {
-    font-size: 0.8125rem;
+    display: none;
   }
-  
-  .breadcrumb-separator {
-    width: 14px;
-    height: 14px;
+
+  /* ...pokaż tylko bezpośredniego rodzica (drugi od końca) */
+  .breadcrumb-item:nth-last-child(2) {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Ukryj separator za back linkiem */
+  .breadcrumb-item:nth-last-child(2) .breadcrumb-separator {
+    display: none;
+  }
+
+  /* Styl back linka — mniejszy, subtelny */
+  .breadcrumb-item:nth-last-child(2) .breadcrumb-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8125rem;
+    color: var(--text-muted, #6b7280);
+    font-weight: 500;
+    padding: 0.25rem 0;
+  }
+
+  .breadcrumb-item:nth-last-child(2) .breadcrumb-link::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(135deg);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .breadcrumb-item:nth-last-child(2) .breadcrumb-link::after {
+    display: none;
+  }
+
+  .breadcrumb-item:nth-last-child(2) .breadcrumb-link:hover {
+    color: var(--primary-color, #667eea);
+  }
+
+  /* Gdy lista ma tylko 1 element (np. strona bez rodzica), pokaż go */
+  .breadcrumb-item:only-child {
+    display: flex;
   }
 }
 </style>
