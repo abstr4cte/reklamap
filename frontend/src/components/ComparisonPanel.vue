@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: []
-  removeComparison: [id: string]
+  removeComparison: [id: number]
 }>()
 
 const router = useRouter()
@@ -40,7 +40,7 @@ const loadComparison = async () => {
   }
 }
 
-const removeComparison = async (id: string) => {
+const removeComparison = async (id: number) => {
   emit('removeComparison', id)
   comparisonAds.value = comparisonAds.value.filter(ad => ad.id !== id)
 }

@@ -32,7 +32,7 @@ const route = useRoute()
 const router = useRouter()
 
 const isModalOpen = ref(false)
-const hoveredAdId = ref<string | null>(null)
+const hoveredAdId = ref<number | null>(null)
 
 const showSearchAlertModal = ref(false)
 const hasShownAlertModal = ref(localStorage.getItem('search_alert_shown') === 'true')
@@ -599,7 +599,7 @@ const clearSearchFlag = () => {
       v-if="!isLoading && paginatedListings.length > 0"
       :current-page="currentPage"
       :total-pages="totalPages"
-      :total-items="sortedAndFilteredListings.length"
+      :total-items="searchStore.serverTotal > 0 ? searchStore.serverTotal : sortedAndFilteredListings.length"
       :items-per-page="itemsPerPage"
       :show-info="true"
       :scroll-to-top="false"

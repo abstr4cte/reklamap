@@ -4,7 +4,7 @@ export interface LocationCoords {
 }
 
 export interface Advertisement {
-    id: string
+    id: number
     title: string
     type: string
     location: string

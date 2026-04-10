@@ -33,32 +33,18 @@ const scrollToAdGrid = () => {
 }
 
 const scrollToMap = () => {
-  // Na webowej wersji (desktop) scrolluj na samą górę
-  if (!isMobile.value) {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
-    return
-  }
-  
-  // Na mobile uwzględnij header
-  const mapContainer = document.querySelector('.map-container')
+  const mapEl = document.querySelector('.map-container')
   const header = document.querySelector('.app-header')
-  
-  if (mapContainer && header) {
-    const headerRect = header.getBoundingClientRect()
-    const headerStyles = window.getComputedStyle(header)
-    const headerHeight = headerRect.height + parseFloat(headerStyles.marginTop) + parseFloat(headerStyles.marginBottom)
-    
-    const elementPosition = mapContainer.getBoundingClientRect().top + window.pageYOffset
-    const offsetPosition = elementPosition - headerHeight
-    
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: 'smooth'
-    })
-  }
+  if (!mapEl) return
+
+  const headerHeight = header
+    ? header.getBoundingClientRect().height
+    : 0
+
+  const elementPosition = mapEl.getBoundingClientRect().top + window.pageYOffset
+  const offsetPosition = elementPosition - headerHeight
+
+  window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
 }
 
 const props = defineProps<{
@@ -66,18 +52,18 @@ const props = defineProps<{
   selectedRegion?: string
   selectedCity?: string
   selectedLocationCoords?: { lat: number; lng: number } | null
-  hoveredAdId?: string | null
+  hoveredAdId?: number | null
 }>()
 
 const emit = defineEmits<{
-  'update:hoveredAdId': [id: string | null]
+  'update:hoveredAdId': [id: number | null]
 }>()
 
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 let resizeObserver: ResizeObserver | null = null
 // let markerClusterGroup: any = null
-const markers: Map<string, L.Marker> = new Map()
+const markers: Map<number, L.Marker> = new Map()
 const isMapActive = ref(false)
 const isLegendVisible = ref(false)
 const selectedAd = ref<Advertisement | null>(null)

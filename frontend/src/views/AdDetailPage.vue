@@ -210,11 +210,13 @@ watch(ad, (newAd) => {
       }
     ]
     
-    seoOptions.value = { 
-      title, 
-      description, 
+    seoOptions.value = {
+      title,
+      description,
       keywords,
-      ogImage: imageUrl, 
+      canonical: typeof window !== 'undefined' ? window.location.href : '',
+      ogUrl: typeof window !== 'undefined' ? window.location.href : '',
+      ogImage: imageUrl,
       ogType: 'product',
       structuredData
     }

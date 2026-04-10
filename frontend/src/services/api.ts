@@ -37,13 +37,24 @@ export const api = {
         return response.json()
     },
 
-    async getAdvertisements(): Promise<Advertisement[]> {
-        const response = await fetch(`${API_URL}/listings`, { headers: withKey() })
+    async getAdvertisements(params?: Record<string, any>): Promise<any> {
+        let url = `${API_URL}/listings`
+        if (params && Object.keys(params).length > 0) {
+            const searchParams = new URLSearchParams()
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== null && value !== undefined && value !== '') {
+                    searchParams.set(key, String(value))
+                }
+            })
+            const qs = searchParams.toString()
+            if (qs) url += '?' + qs
+        }
+        const response = await fetch(url, { headers: withKey() })
         if (!response.ok) throw new Error('Failed to fetch listings')
         return response.json()
     },
 
-    async getAdvertisement(id: string): Promise<Advertisement | null> {
+    async getAdvertisement(id: number): Promise<Advertisement | null> {
         const response = await fetch(`${API_URL}/listings/${id}`, { headers: withKey() })
         if (!response.ok) {
             if (response.status === 404) return null
@@ -52,7 +63,7 @@ export const api = {
         return response.json()
     },
 
-    async getAdvertisementsByIds(ids: string[]): Promise<Advertisement[]> {
+    async getAdvertisementsByIds(ids: number[]): Promise<Advertisement[]> {
         if (ids.length === 0) return []
         const response = await fetch(`${API_URL}/listings?ids=${ids.join(',')}`, { headers: withKey() })
         if (!response.ok) throw new Error('Failed to fetch listings by ids')
@@ -119,7 +130,7 @@ export const api = {
         if (!response.ok) throw new Error('Failed to update advertisement')
     },
 
-    async deleteAdvertisement(id: string): Promise<void> {
+    async deleteAdvertisement(id: number): Promise<void> {
         const response = await fetch(`${API_URL}/listings/${id}`, {
             method: 'DELETE',
             headers: withManagementToken(withKey()),
@@ -158,7 +169,7 @@ export const api = {
         return response.json()
     },
 
-    async getMultipleDailyStats(ids: string[], days: number = 30): Promise<any[]> {
+    async getMultipleDailyStats(ids: number[], days: number = 30): Promise<any[]> {
         const response = await fetch(`${API_URL}/listings/daily-stats/multiple`, {
             method: 'POST',
             headers: {

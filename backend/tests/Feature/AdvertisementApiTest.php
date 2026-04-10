@@ -134,7 +134,7 @@ class AdvertisementApiTest extends TestCase
     }
 
     /**
-     * Test fetching all advertisements returns active ads
+     * Test fetching all advertisements returns active ads (paginated response)
      */
     public function test_can_fetch_all_active_advertisements(): void
     {
@@ -143,11 +143,13 @@ class AdvertisementApiTest extends TestCase
         $response = $this->getJson('/api/listings', $this->appKeyHeaders());
 
         $response->assertStatus(200);
-        $response->assertJsonCount(3);
+        // Response is now paginated: { data: [...], total: N, ... }
+        $response->assertJsonStructure(['data', 'total', 'current_page', 'last_page']);
+        $response->assertJsonCount(3, 'data');
     }
 
     /**
-     * Test inactive advertisements are not returned
+     * Test inactive advertisements are not returned (paginated response)
      */
     public function test_inactive_advertisements_are_excluded(): void
     {
@@ -157,6 +159,6 @@ class AdvertisementApiTest extends TestCase
         $response = $this->getJson('/api/listings', $this->appKeyHeaders());
 
         $response->assertStatus(200);
-        $response->assertJsonCount(2);
+        $response->assertJsonCount(2, 'data');
     }
 }

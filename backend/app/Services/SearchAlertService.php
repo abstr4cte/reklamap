@@ -50,36 +50,10 @@ class SearchAlertService
     }
 
     /**
-     * Check if ad matches additional criteria like price range or dimensions.
+     * Alerts match only on type/city/region — no advanced filter checks.
      */
-    protected function matchesAdvancedFilters(Advertisement $ad, $filters)
+    protected function matchesAdvancedFilters(Advertisement $ad, $filters): bool
     {
-        if (empty($filters)) {
-            return true;
-        }
-
-        // Price check
-        if (isset($filters['priceFrom']) && $ad->price < (float) $filters['priceFrom'])
-            return false;
-        if (isset($filters['priceTo']) && $ad->price > (float) $filters['priceTo'])
-            return false;
-
-        // Rental period check
-        if (isset($filters['rentalPeriod']) && !empty($filters['rentalPeriod'])) {
-            if ($ad->rental_period !== $filters['rentalPeriod'])
-                return false;
-        }
-
-        // Width/Height check
-        if (isset($filters['widthFrom']) && $ad->width < (float) $filters['widthFrom'])
-            return false;
-        if (isset($filters['widthTo']) && $ad->width > (float) $filters['widthTo'])
-            return false;
-        if (isset($filters['heightFrom']) && $ad->height < (float) $filters['heightFrom'])
-            return false;
-        if (isset($filters['heightTo']) && $ad->height > (float) $filters['heightTo'])
-            return false;
-
         return true;
     }
 }

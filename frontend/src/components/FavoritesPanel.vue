@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: []
-  removeFavorite: [id: string]
+  removeFavorite: [id: number]
 }>()
 
 const favoriteAds = ref<Advertisement[]>([])
@@ -38,7 +38,7 @@ const loadFavorites = async () => {
   }
 }
 
-const removeFavorite = async (id: string) => {
+const removeFavorite = async (id: number) => {
   emit('removeFavorite', id)
   favoriteAds.value = favoriteAds.value.filter(ad => ad.id !== id)
 }

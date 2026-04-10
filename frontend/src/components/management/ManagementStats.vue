@@ -12,7 +12,7 @@ const chartRef = ref<InstanceType<typeof EngagementChart> | null>(null)
 
 const emit = defineEmits<{
   'show-toast': [message: string, type: 'success' | 'error']
-  'open-confirm-dialog': [title: string, message: string, type: 'info' | 'warning' | 'danger', adIds: string[], metric?: 'views' | 'clicks']
+  'open-confirm-dialog': [title: string, message: string, type: 'info' | 'warning' | 'danger', adIds: number[], metric?: 'views' | 'clicks']
 }>()
 
 const searchStore = useSearchStore()
@@ -54,7 +54,7 @@ const mostEngagingAds = computed(() => {
     .slice(0, 5)
 })
 
-const isAdOnChart = (adId: string): boolean => {
+const isAdOnChart = (adId: number): boolean => {
   if (chartRef.value) {
     const chartComponent = chartRef.value as any
     if (chartComponent.selectedAds?.value) {
@@ -66,10 +66,10 @@ const isAdOnChart = (adId: string): boolean => {
   return false
 }
 
-const addAdToChart = (adId: string) => {
+const addAdToChart = (adId: number) => {
   if (chartRef.value) {
     const chartComponent = chartRef.value as any
-    let selectedAds: string[] = []
+    let selectedAds: number[] = []
     
     if (chartComponent.selectedAds?.value) {
       selectedAds = chartComponent.selectedAds.value
@@ -98,10 +98,10 @@ const addAdToChart = (adId: string) => {
   }
 }
 
-const addTopAdsToChart = (adIds: string[], metric?: 'views' | 'clicks') => {
+const addTopAdsToChart = (adIds: number[], metric?: 'views' | 'clicks') => {
   if (chartRef.value) {
     const chartComponent = chartRef.value as any
-    let selectedAds: string[] = []
+    let selectedAds: number[] = []
     
     if (chartComponent.selectedAds?.value) {
       selectedAds = chartComponent.selectedAds.value
@@ -118,13 +118,13 @@ const addTopAdsToChart = (adIds: string[], metric?: 'views' | 'clicks') => {
   }
 }
 
-const executeAddTopAdsToChart = (adIds: string[], metric?: 'views' | 'clicks') => {
+const executeAddTopAdsToChart = (adIds: number[], metric?: 'views' | 'clicks') => {
   if (chartRef.value) {
     const chartComponent = chartRef.value as any
-    
+
     if (chartComponent.selectedAds) {
       chartComponent.selectedAds.length = 0
-      adIds.forEach((id: string) => {
+      adIds.forEach((id: number) => {
         chartComponent.selectedAds.push(id)
       })
     }

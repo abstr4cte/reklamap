@@ -97,6 +97,9 @@ export const useSearchStore = defineStore('search', () => {
   const viewMode = ref<'grid' | 'list'>('grid')
   const currentPage = ref(1)
   const itemsPerPage = ref(24)
+  // Server-side pagination state
+  const serverTotal = ref(0)
+  const serverLastPage = ref(1)
   // Track filters from path params (category/city from menu)
   const pathParamsFilters = ref<{ type?: string; city?: string }>({})
 
@@ -105,38 +108,150 @@ export const useSearchStore = defineStore('search', () => {
     listings.value = data
   }
 
-  // Track the in-flight fetch promise so concurrent callers can await it
-  let _fetchPromise: Promise<void> | null = null
+  // Build query params from current filters + page for the backend API
+  const buildApiParams = (): Record<string, any> => {
+    const f = filters.value
+    const params: Record<string, any> = {
+      page: currentPage.value,
+      per_page: itemsPerPage.value,
+      sort: sortBy.value,
+    }
+
+    if (f.type) params.type = f.type
+    if (f.city && !f.mapBounds) {
+      params.city = f.city
+      if (f.cityStrict) params.city_strict = 1
+    }
+    if (f.region && !f.mapBounds) params.region = f.region
+    if (f.keyword) params.search = f.keyword
+    if (f.status.length > 0) params.status = f.status.join(',')
+
+    // Distance coords (when city is strictly matched with known coords)
+    if (f.selectedLocationCoords && f.cityStrict && !f.mapBounds) {
+      params.lat = f.selectedLocationCoords.lat
+      params.lng = f.selectedLocationCoords.lng
+      params.radius = 30
+    }
+
+    // Map bounds (overrides city/region when user pans the map)
+    if (f.mapBounds) {
+      params.map_north = f.mapBounds.northEast.lat
+      params.map_south = f.mapBounds.southWest.lat
+      params.map_east  = f.mapBounds.northEast.lng
+      params.map_west  = f.mapBounds.southWest.lng
+    }
+
+    // Price range
+    if (f.priceFrom !== null) { params.price_from = f.priceFrom; params.price_unit = f.priceUnit }
+    if (f.priceTo !== null)   { params.price_to   = f.priceTo;   params.price_unit = f.priceUnit }
+
+    // Dimension ranges (LED dimensions in DB are meters, but user inputs mm for LED)
+    const ledFactor = f.type === 'led_screen' ? 1000 : 1
+    if (f.widthFrom  !== null) params.width_from  = f.widthFrom  / ledFactor
+    if (f.widthTo    !== null) params.width_to    = f.widthTo    / ledFactor
+    if (f.heightFrom !== null) params.height_from = f.heightFrom / ledFactor
+    if (f.heightTo   !== null) params.height_to   = f.heightTo   / ledFactor
+
+    // Surface
+    if (f.surfaceFrom !== null) params.surface_from = f.surfaceFrom
+    if (f.surfaceTo   !== null) params.surface_to   = f.surfaceTo
+
+    // Exact match filters
+    if (f.orientation)       params.orientation        = f.orientation
+    if (f.variant)           params.variant            = f.variant
+    if (f.roadClass)         params.road_class         = f.roadClass
+    if (f.offerType)         params.offer_type         = f.offerType
+    if (f.trafficIntensity)  params.traffic_intensity  = f.trafficIntensity
+    if (f.environment)       params.environment        = f.environment
+    if (f.transportScope)    params.transport_scope    = f.transportScope
+    if (f.mobileExposureMode)params.mobile_exposure_mode = f.mobileExposureMode
+    if (f.operatingZone)     params.operating_zone     = f.operatingZone
+    if (f.rentalPeriod)      params.rental_period      = f.rentalPeriod
+    if (f.lightingType)      params.lighting_type      = f.lightingType
+    if (f.lightingTypeBanner)params.lighting_type_banner = f.lightingTypeBanner
+    if (f.locationTier)      params.location_tier      = f.locationTier
+
+    // Traffic direction / type
+    const trafficDir = Array.isArray(f.trafficDirection) ? f.trafficDirection[0] : f.trafficDirection
+    if (trafficDir) params.traffic_direction = trafficDir
+
+    const trafficType = Array.isArray(f.trafficType) ? f.trafficType[0] : f.trafficType
+    if (trafficType) params.traffic_type = trafficType
+
+    // Boolean filters
+    if (f.hasBacklight)          params.has_backlight          = 1
+    if (f.onlyWithImage)         params.has_image              = 1
+    if (f.priceIncludesPrint)    params.price_includes_print   = 1
+    if (f.priceIncludesMounting) params.price_includes_mounting = 1
+    if (f.graphicDesignHelp)     params.graphic_design_help    = 1
+    if (f.hasVatInvoice)         params.has_vat_invoice        = 1
+    if (f.ambientLightControl)   params.ambient_light_control  = 1
+
+    // LED-specific ranges
+    if (f.pixelPitchFrom      !== null) params.pixel_pitch_from       = f.pixelPitchFrom
+    if (f.pixelPitchTo        !== null) params.pixel_pitch_to         = f.pixelPitchTo
+    if (f.brightnessFrom      !== null) params.brightness_from        = f.brightnessFrom
+    if (f.brightnessTo        !== null) params.brightness_to          = f.brightnessTo
+    if (f.vehicleCountFrom    !== null) params.vehicle_count_from     = f.vehicleCountFrom
+    if (f.vehicleCountTo      !== null) params.vehicle_count_to       = f.vehicleCountTo
+    if (f.campaignDurationFrom !== null) params.campaign_duration_from = f.campaignDurationFrom
+    if (f.campaignDurationTo  !== null) params.campaign_duration_to   = f.campaignDurationTo
+    if (f.dailyPassengersFrom !== null) params.daily_passengers_from  = f.dailyPassengersFrom
+    if (f.dailyPassengersTo   !== null) params.daily_passengers_to    = f.dailyPassengersTo
+
+    return params
+  }
+
+  // Generation counter to discard stale responses when fetches overlap
+  let _fetchGeneration = 0
 
   const fetchListings = async () => {
-    // If a fetch is already in flight, return the existing promise
-    // so the caller can properly await the same result
-    if (_fetchPromise) return _fetchPromise
-    
-    _fetchPromise = (async () => {
-      try {
-        isLoading.value = true
-        const data = await api.getAdvertisements()
-        listings.value = Array.isArray(data) ? data : []
-      } catch (error) {
-        console.error('Failed to fetch listings:', error)
-      } finally {
-        isLoading.value = false
-        _fetchPromise = null
+    const generation = ++_fetchGeneration
+
+    try {
+      isLoading.value = true
+      const params = buildApiParams()
+      const response = await api.getAdvertisements(params)
+
+      // Discard if a newer fetch was started while this was in flight
+      if (generation !== _fetchGeneration) return
+
+      if (response && 'data' in response && 'current_page' in response) {
+        // Paginated response from Laravel paginate()
+        listings.value = Array.isArray(response.data) ? response.data : []
+        serverTotal.value = response.total ?? listings.value.length
+        serverLastPage.value = response.last_page ?? 1
+      } else if (Array.isArray(response)) {
+        // Plain array (e.g. ids= query, legacy)
+        listings.value = response
+        serverTotal.value = response.length
+        serverLastPage.value = 1
       }
-    })()
-    
-    return _fetchPromise
+    } catch (error) {
+      if (generation !== _fetchGeneration) return
+      console.error('Failed to fetch listings:', error)
+    } finally {
+      if (generation === _fetchGeneration) {
+        isLoading.value = false
+      }
+    }
   }
 
   const applyFilters = (newFilters: Partial<FilterParams>) => {
     filters.value = { ...filters.value, ...newFilters }
+
+    // mapBounds changes come from map panning — don't reset page or re-fetch,
+    // as the backend handles them and we'd hammer the API on every pan.
+    // The updated mapBounds params are included automatically on the NEXT fetch.
+    const isMapBoundsOnly = Object.keys(newFilters).length === 1 && 'mapBounds' in newFilters
+    if (isMapBoundsOnly) return
+
     currentPage.value = 1
-    
+    fetchListings()
+
     // Persist to localStorage
     try {
       const filtersToSave = { ...filters.value }
-      
       localStorage.setItem('reklamap_last_search', JSON.stringify(filtersToSave))
     } catch (e) {
       // Silently fail
@@ -148,8 +263,10 @@ export const useSearchStore = defineStore('search', () => {
     sortBy.value = 'newest'
     priceDisplay.value = 'day'
     currentPage.value = 1
-    pathParamsFilters.value = {} // Reset path params tracking
-    
+    pathParamsFilters.value = {}
+
+    fetchListings()
+
     // Clear localStorage
     try {
       localStorage.removeItem('reklamap_last_search')
@@ -166,6 +283,7 @@ export const useSearchStore = defineStore('search', () => {
 
   const setCurrentPage = (page: number) => {
     currentPage.value = page
+    fetchListings()
   }
 
   const syncFromUrl = (query: Record<string, string>, params: Record<string, string>) => {
@@ -795,14 +913,15 @@ export const useSearchStore = defineStore('search', () => {
     return sorted
   })
 
-  const paginatedListings = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage.value
-    const end = start + itemsPerPage.value
-    return sortedAndFilteredListings.value.slice(start, end)
-  })
+  // Server already returns paginated data — no client-side slicing needed.
+  // sortedAndFilteredListings may still apply client-side refinements (e.g. mapBounds).
+  const paginatedListings = computed(() => sortedAndFilteredListings.value)
 
+  // Use server-provided page count; fall back to client-side calculation when store
+  // is pre-populated via setListings() (e.g. in tests or SSR scenarios).
   const totalPages = computed(() => {
-    return Math.ceil(sortedAndFilteredListings.value.length / itemsPerPage.value)
+    if (serverLastPage.value > 1) return serverLastPage.value
+    return Math.ceil(sortedAndFilteredListings.value.length / itemsPerPage.value) || 1
   })
 
   const activeFiltersCount = computed(() => {
@@ -859,6 +978,7 @@ export const useSearchStore = defineStore('search', () => {
 
   return {
     listings, isLoading, filters, sortBy, priceDisplay, viewMode, currentPage, itemsPerPage,
+    serverTotal, serverLastPage,
     fetchListings, setListings, applyFilters, resetFilters, setViewMode, setCurrentPage, syncFromUrl,
     sortedAndFilteredListings, paginatedListings, totalPages, activeFiltersCount, getPrice,
     computedPriceDisplayUnit,

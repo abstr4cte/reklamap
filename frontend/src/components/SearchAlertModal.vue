@@ -62,7 +62,6 @@ const handleSubmit = async () => {
       type: props.activeFilters.type,
       city: props.activeFilters.city,
       region: props.activeFilters.region,
-      filters: props.activeFilters,
       recaptcha_token: recaptchaToken
     })
 

@@ -152,7 +152,7 @@ const emit = defineEmits<{
   toggleComparison: [id: string]
   'update:viewMode': [mode: 'grid' | 'list']
   'update:sortBy': [sort: string]
-  'update:hoveredAdId': [id: string | null]
+  'update:hoveredAdId': [id: number | null]
 }>()
 
 const sortBy = ref(props.sortBy || 'newest')

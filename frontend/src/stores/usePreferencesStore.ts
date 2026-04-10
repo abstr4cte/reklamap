@@ -4,8 +4,8 @@ import { api } from '../services/api'
 import { useToast } from '../composables/useToast'
 
 export const usePreferencesStore = defineStore('preferences', () => {
-  const favorites = ref<string[]>(JSON.parse(localStorage.getItem('favorites') || '[]'))
-  const comparison = ref<string[]>(JSON.parse(localStorage.getItem('comparison') || '[]'))
+  const favorites = ref<number[]>(JSON.parse(localStorage.getItem('favorites') || '[]'))
+  const comparison = ref<number[]>(JSON.parse(localStorage.getItem('comparison') || '[]'))
   const isDarkMode = ref<boolean>(false)
   
   // Helper to get toast instance (lazy)
@@ -32,7 +32,7 @@ export const usePreferencesStore = defineStore('preferences', () => {
     // Disabled
   }
 
-  const toggleFavorite = async (id: string) => {
+  const toggleFavorite = async (id: number) => {
     const idx = favorites.value.indexOf(id)
     if (idx > -1) {
       favorites.value.splice(idx, 1)
@@ -50,7 +50,7 @@ export const usePreferencesStore = defineStore('preferences', () => {
     }
   }
 
-  const toggleComparison = async (id: string): Promise<{ success: boolean; error?: string }> => {
+  const toggleComparison = async (id: number): Promise<{ success: boolean; error?: string }> => {
     const idx = comparison.value.indexOf(id)
     if (idx > -1) {
       comparison.value.splice(idx, 1)
@@ -90,8 +90,8 @@ export const usePreferencesStore = defineStore('preferences', () => {
     }
   }
 
-  const isFavorite = (id: string) => favorites.value.includes(id)
-  const isCompared = (id: string) => comparison.value.includes(id)
+  const isFavorite = (id: number) => favorites.value.includes(id)
+  const isCompared = (id: number) => comparison.value.includes(id)
 
   const clearComparison = () => {
     comparison.value = []

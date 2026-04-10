@@ -38,12 +38,12 @@ const email = ref('')
 const isSubmitting = ref(false)
 const isSuccess = ref(false)
 const errorMessage = ref('')
-const expandedRows = ref<Set<string>>(new Set())
+const expandedRows = ref<Set<number>>(new Set())
 const editingAd = ref<Advertisement | null>(null)
 const confirmDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null)
 const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
-const adToDelete = ref<string>('')
-const pendingTopAdsToAdd = ref<string[]>([])
+const adToDelete = ref<number | null>(null)
+const pendingTopAdsToAdd = ref<number[]>([])
 const confirmDialogTitle = ref('Potwierdzenie')
 const confirmDialogMessage = ref('')
 const confirmDialogType = ref<'info' | 'warning' | 'danger'>('info')
@@ -78,7 +78,7 @@ const activeTab = ref<'listings' | 'statistics'>('listings')
 const managementStatsRef = ref<any>(null)
 const pendingTopAdsMetric = ref<'views' | 'clicks' | undefined>(undefined)
 
-const handleStatsConfirmRequest = (title: string, message: string, type: 'info' | 'warning' | 'danger', adIds: string[], metric?: 'views' | 'clicks') => {
+const handleStatsConfirmRequest = (title: string, message: string, type: 'info' | 'warning' | 'danger', adIds: number[], metric?: 'views' | 'clicks') => {
   pendingTopAdsToAdd.value = adIds
   pendingTopAdsMetric.value = metric
   confirmDialogTitle.value = title
@@ -540,7 +540,7 @@ const saveChanges = async (id: string) => {
   }
 }
 
-const deleteAd = (id: string) => {
+const deleteAd = (id: number) => {
   adToDelete.value = id
   confirmDialogTitle.value = 'Usuń ogłoszenie'
   confirmDialogMessage.value = 'Czy na pewno chcesz usunąć to ogłoszenie? Tej operacji nie można cofnąć.'
@@ -594,11 +594,11 @@ const openPreview = (id: string) => {
   window.open(href, '_blank')
 }
 
-const toggleRow = (id: string) => {
+const toggleRow = (id: number) => {
   const isOpen = expandedRows.value.has(id)
 
   // Zawsze tworzymy nowy Set — gwarantuje reaktywność w Vue 3
-  const newSet = new Set<string>()
+  const newSet = new Set<number>()
 
   if (isOpen) {
     // Zamknięcie — nowy Set jest pusty, czyścimy editingAd

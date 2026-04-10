@@ -41,6 +41,7 @@ const {
   sortedAndFilteredListings: filteredListings,
   paginatedListings,
   totalPages,
+  serverTotal,
   activeFiltersCount,
   itemsPerPage,
   pathParamsFilters
@@ -126,7 +127,7 @@ const tempFilters = ref<any>(null)
 const mapContainer = ref<HTMLElement | null>(null)
 let map: LType.Map | null = null
 let resizeObserver: ResizeObserver | null = null
-const markers: Map<string, LType.Marker> = new Map()
+const markers: Map<number, LType.Marker> = new Map()
 // let markerClusterGroup: any = null
 const showMapOnMobile = ref(false)
 const showSortPanel = ref(false)
@@ -135,8 +136,8 @@ const hasShownAlertModal = ref(localStorage.getItem('search_alert_shown') === 't
 const alertModalTimer = ref<number | null>(null)
 const isStatusMenuOpen = ref(false)
 const statusMultiselect = ref<HTMLElement | null>(null)
-const hoveredAdId = ref<string | null>(null)
-const selectedAdId = ref<string | null>(null)
+const hoveredAdId = ref<number | null>(null)
+const selectedAdId = ref<number | null>(null)
 const selectedAd = computed(() => {
   if (!listings.value || !selectedAdId.value) return null
   return listings.value.find(ad => ad.id === selectedAdId.value) || null
@@ -699,7 +700,7 @@ const scrollToAd = (adId: string) => {
   }
 }
 
-const handleAdHover = (adId: string | null) => {
+const handleAdHover = (adId: number | null) => {
   hoveredAdId.value = adId
   if (adId && markers.has(adId)) {
     const ad = listings.value.find(a => a.id === adId)
@@ -1589,11 +1590,11 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             />
           </div>
           
-          <Pagination 
-            v-if="!isLoading && filteredListings.length > 0"
+          <Pagination
+            v-if="!isLoading && (filteredListings.length > 0 || serverTotal > 0)"
             :current-page="currentPage"
             :total-pages="totalPages"
-            :total-items="filteredListings.length"
+            :total-items="serverTotal > 0 ? serverTotal : filteredListings.length"
             :items-per-page="itemsPerPage"
             @update:current-page="searchStore.setCurrentPage($event); scrollListToTop()"
           />

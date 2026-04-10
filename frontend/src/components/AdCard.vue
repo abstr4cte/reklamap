@@ -23,9 +23,9 @@ const localIsFavorite = computed(() => prefStore.isFavorite(props.ad.id))
 const localIsInComparison = computed(() => prefStore.isCompared(props.ad.id))
 
 const emit = defineEmits<{
-  toggleFavorite: [id: string]
-  toggleComparison: [id: string]
-  hoverStart: [id: string]
+  toggleFavorite: [id: number]
+  toggleComparison: [id: number]
+  hoverStart: [id: number]
   hoverEnd: [id: null]
 }>()
 

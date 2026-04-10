@@ -20,25 +20,278 @@ class AdvertisementController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Advertisement::where('is_active', 1);
-
-        // If ids parameter is provided, filter by those IDs and preserve order
+        // Special case: return specific ads by IDs (used by comparison page)
         if ($request->has('ids')) {
             $ids = explode(',', $request->input('ids'));
-            $ads = $query->whereIn('id', $ids)->get();
-
-            // Preserve the order from the ids parameter
+            $ads = Advertisement::where('is_active', 1)->whereIn('id', $ids)->get();
             $adsOrdered = collect();
             foreach ($ids as $id) {
                 $ad = $ads->firstWhere('id', $id);
-                if ($ad) {
-                    $adsOrdered->push($ad);
-                }
+                if ($ad) $adsOrdered->push($ad);
             }
             return $adsOrdered;
         }
 
-        return $query->orderBy('created_at', 'desc')->get();
+        $query = Advertisement::where('is_active', 1);
+
+        // --- Type filter ---
+        if ($request->filled('type')) {
+            $query->where('type', $request->input('type'));
+        }
+
+        // --- City filter ---
+        if ($request->filled('city')) {
+            $city = $request->input('city');
+            if ($request->boolean('city_strict')) {
+                $query->whereRaw('LOWER(city) = ?', [mb_strtolower($city)]);
+            } else {
+                $query->whereRaw('LOWER(city) LIKE ?', ['%' . mb_strtolower($city) . '%']);
+            }
+        }
+
+        // --- Distance filter (requires lat/lng when city_strict is set with coords) ---
+        if ($request->filled('lat') && $request->filled('lng') && $request->filled('radius')) {
+            $lat = (float) $request->input('lat');
+            $lng = (float) $request->input('lng');
+            $radius = (float) $request->input('radius', 30);
+            $query->whereRaw("
+                (6371 * 2 * ASIN(SQRT(
+                    POWER(SIN((RADIANS(?) - RADIANS(latitude)) / 2), 2) +
+                    COS(RADIANS(?)) * COS(RADIANS(latitude)) *
+                    POWER(SIN((RADIANS(?) - RADIANS(longitude)) / 2), 2)
+                ))) <= ?
+            ", [$lat, $lat, $lng, $radius]);
+        }
+
+        // --- Region filter ---
+        if ($request->filled('region')) {
+            $query->where('region', $request->input('region'));
+        }
+
+        // --- Status filter ---
+        if ($request->filled('status')) {
+            $statuses = array_map(
+                fn($s) => trim($s) === 'available' ? 'active' : trim($s),
+                explode(',', $request->input('status'))
+            );
+            $query->where(function ($q) use ($statuses) {
+                foreach ($statuses as $status) {
+                    if ($status === 'active') {
+                        $q->orWhere('status', 'active')
+                          ->orWhere(function ($inner) {
+                              $inner->where('status', 'soon_available')
+                                    ->where(function ($d) {
+                                        $d->whereNull('available_from')
+                                          ->orWhere('available_from', '<=', now());
+                                    });
+                          });
+                    } else {
+                        $q->orWhere('status', $status);
+                    }
+                }
+            });
+        }
+        // Default: no status restriction — show all is_active=1 ads regardless of status
+
+        // --- Keyword search ---
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%$search%")
+                  ->orWhere('description', 'LIKE', "%$search%")
+                  ->orWhere('location', 'LIKE', "%$search%");
+            });
+        }
+
+        // --- Map bounds filter ---
+        if ($request->filled('map_north') && $request->filled('map_south') &&
+            $request->filled('map_east') && $request->filled('map_west')) {
+            $query->whereBetween('latitude', [(float) $request->input('map_south'), (float) $request->input('map_north')])
+                  ->whereBetween('longitude', [(float) $request->input('map_west'), (float) $request->input('map_east')]);
+        }
+
+        // --- Exact match filters ---
+        $exactFilters = [
+            'orientation', 'variant', 'road_class', 'offer_type',
+            'traffic_intensity', 'environment', 'transport_scope',
+            'mobile_exposure_mode', 'operating_zone', 'rental_period',
+            'lighting_type', 'lighting_type_banner',
+        ];
+        foreach ($exactFilters as $param) {
+            if ($request->filled($param)) {
+                $query->where($param, $request->input($param));
+            }
+        }
+
+        // --- Location tier (virtual: PREMIUM = high traffic + major road) ---
+        if ($request->filled('location_tier')) {
+            if ($request->input('location_tier') === 'PREMIUM') {
+                $query->where('traffic_intensity', 'high')
+                      ->whereIn('road_class', ['highway', 'expressway', 'national']);
+            } else {
+                $query->where(function ($q) {
+                    $q->where('traffic_intensity', '!=', 'high')
+                      ->orWhereNotIn('road_class', ['highway', 'expressway', 'national'])
+                      ->orWhereNull('road_class');
+                });
+            }
+        }
+
+        // --- Boolean filters ---
+        $booleanFilters = [
+            'has_image', 'price_includes_print', 'price_includes_mounting',
+            'graphic_design_help', 'has_vat_invoice', 'ambient_light_control',
+        ];
+        foreach ($booleanFilters as $param) {
+            if ($request->has($param) && $request->input($param) !== null && $request->input($param) !== '') {
+                $query->where($param, (bool) $request->input($param));
+            }
+        }
+
+        // --- Has backlight (OR across 3 lighting fields) ---
+        if ($request->boolean('has_backlight')) {
+            $query->where(function ($q) {
+                $q->where('has_backlight', true)
+                  ->orWhere(function ($i) {
+                      $i->whereNotNull('lighting_type')
+                        ->where('lighting_type', '!=', '')
+                        ->where('lighting_type', '!=', 'none');
+                  })
+                  ->orWhere(function ($i) {
+                      $i->whereNotNull('lighting_type_banner')
+                        ->where('lighting_type_banner', '!=', '')
+                        ->where('lighting_type_banner', '!=', 'none');
+                  });
+            });
+        }
+
+        // --- Price range (with unit conversion to per-day base) ---
+        if ($request->filled('price_from') || $request->filled('price_to')) {
+            $priceUnit = $request->input('price_unit', 'month');
+            $factors = ['day' => 1, 'week' => 7, 'month' => 30, 'year' => 365, 'campaign' => 30, 'sqm' => 30];
+            $factor = $factors[$priceUnit] ?? 30;
+
+            // SQL to normalize any ad's stored price to "per day"
+            $pricePerDaySql = "
+                CASE
+                    WHEN price_unit = 'day'      THEN price
+                    WHEN price_unit = 'week'     THEN price / 7.0
+                    WHEN price_unit = 'month'    THEN price / 30.0
+                    WHEN price_unit = 'year'     THEN price / 365.0
+                    WHEN price_unit = 'campaign' THEN price / COALESCE(NULLIF(campaign_duration, 0), 30.0)
+                    ELSE price / 30.0
+                END
+            ";
+
+            if ($request->filled('price_from')) {
+                $query->whereRaw("($pricePerDaySql) >= ?", [(float) $request->input('price_from') / $factor]);
+            }
+            if ($request->filled('price_to')) {
+                $query->whereRaw("($pricePerDaySql) <= ?", [(float) $request->input('price_to') / $factor]);
+            }
+        }
+
+        // --- Numeric range filters ---
+        $rangeFilters = [
+            'width_from'            => ['col' => 'width',            'op' => '>='],
+            'width_to'              => ['col' => 'width',            'op' => '<='],
+            'height_from'           => ['col' => 'height',           'op' => '>='],
+            'height_to'             => ['col' => 'height',           'op' => '<='],
+            'pixel_pitch_from'      => ['col' => 'pixel_pitch',      'op' => '>='],
+            'pixel_pitch_to'        => ['col' => 'pixel_pitch',      'op' => '<='],
+            'brightness_from'       => ['col' => 'brightness',       'op' => '>='],
+            'brightness_to'         => ['col' => 'brightness',       'op' => '<='],
+            'vehicle_count_from'    => ['col' => 'vehicle_count',    'op' => '>='],
+            'vehicle_count_to'      => ['col' => 'vehicle_count',    'op' => '<='],
+            'campaign_duration_from'=> ['col' => 'campaign_duration','op' => '>='],
+            'campaign_duration_to'  => ['col' => 'campaign_duration','op' => '<='],
+            'daily_passengers_from' => ['col' => 'daily_passengers', 'op' => '>='],
+            'daily_passengers_to'   => ['col' => 'daily_passengers', 'op' => '<='],
+        ];
+        foreach ($rangeFilters as $param => $cfg) {
+            if ($request->filled($param)) {
+                $query->where($cfg['col'], $cfg['op'], (float) $request->input($param));
+            }
+        }
+
+        // --- Surface area (calculated from width × height) ---
+        if ($request->filled('surface_from')) {
+            $query->whereRaw('(width * height) >= ?', [(float) $request->input('surface_from')]);
+        }
+        if ($request->filled('surface_to')) {
+            $query->whereRaw('(width * height) <= ?', [(float) $request->input('surface_to')]);
+        }
+
+        // --- Traffic direction (JSON array field) ---
+        if ($request->filled('traffic_direction')) {
+            $dir = $request->input('traffic_direction');
+            if ($dir === 'both') {
+                $query->whereJsonContains('traffic_direction', 'entry')
+                      ->whereJsonContains('traffic_direction', 'exit');
+            } else {
+                $query->where(function ($q) use ($dir) {
+                    $q->whereJsonContains('traffic_direction', $dir)
+                      ->orWhereJsonContains('traffic_direction', 'both');
+                });
+            }
+        }
+
+        // --- Traffic type (JSON array field) ---
+        if ($request->filled('traffic_type')) {
+            $ttype = $request->input('traffic_type');
+            if ($ttype === 'both') {
+                $query->whereJsonContains('traffic_type', 'pedestrian')
+                      ->whereJsonContains('traffic_type', 'vehicular');
+            } else {
+                $query->where(function ($q) use ($ttype) {
+                    $q->whereJsonContains('traffic_type', $ttype)
+                      ->orWhereJsonContains('traffic_type', 'both');
+                });
+            }
+        }
+
+        // --- Sorting ---
+        $sort = $request->input('sort', 'newest');
+        $pricePerDaySql = "
+            CASE
+                WHEN price_unit = 'day'      THEN price
+                WHEN price_unit = 'week'     THEN price / 7.0
+                WHEN price_unit = 'month'    THEN price / 30.0
+                WHEN price_unit = 'year'     THEN price / 365.0
+                WHEN price_unit = 'campaign' THEN price / COALESCE(NULLIF(campaign_duration, 0), 30.0)
+                ELSE price / 30.0
+            END
+        ";
+
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc'); break;
+            case 'name-asc':
+                $query->orderBy('title', 'asc'); break;
+            case 'name-desc':
+                $query->orderBy('title', 'desc'); break;
+            case 'price-day-asc':
+            case 'price-week-asc':
+            case 'price-month-asc':
+            case 'price-year-asc':
+            case 'price-campaign-asc':
+                $query->orderByRaw("($pricePerDaySql) ASC"); break;
+            case 'price-day-desc':
+            case 'price-week-desc':
+            case 'price-month-desc':
+            case 'price-year-desc':
+            case 'price-campaign-desc':
+                $query->orderByRaw("($pricePerDaySql) DESC"); break;
+            case 'price-sqm-asc':
+                $query->orderByRaw("CASE WHEN width > 0 AND height > 0 THEN ($pricePerDaySql) / (width * height) ELSE 99999999 END ASC"); break;
+            case 'price-sqm-desc':
+                $query->orderByRaw("CASE WHEN width > 0 AND height > 0 THEN ($pricePerDaySql) / (width * height) ELSE 0 END DESC"); break;
+            default: // newest
+                $query->orderBy('created_at', 'desc');
+        }
+
+        $perPage = min(max((int) $request->input('per_page', 24), 1), 200);
+        return $query->paginate($perPage);
     }
 
     public function store(Request $request)

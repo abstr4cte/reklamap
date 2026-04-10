@@ -64,13 +64,13 @@ const downloadPdf = async () => {
     const ids = comparisonAds.value.map(ad => ad.id).join(',')
     // Filtruj pola - wyślij tylko te, które są obsługiwane w PDF
     const supportedPdfFields = [
-      'price', 'price_negotiable', 'price_per_sqm', 'type', 'variant', 'dimensions', 'surface_area', 
-      'orientation', 'location', 'traffic_intensity', 'estimated_daily_views', 
-      'traffic_direction', 'traffic_type', 'road_class', 'has_backlight', 
-      'lighting_type', 'lighting_type_banner', 'environment', 'daily_passengers', 
-      'transport_scope', 'vehicle_count', 'mobile_exposure_mode', 'operating_hours', 
-      'route_area', 'operating_zone', 'resolution', 'pixel_pitch', 'brightness', 
-      'ambient_light_control', 'campaign_duration', 'price_includes_print', 'price_includes_mounting', 
+      'price', 'price_negotiable', 'price_per_sqm', 'type', 'variant', 'dimensions', 'surface_area',
+      'orientation', 'location', 'location_tier', 'traffic_intensity', 'estimated_daily_views',
+      'traffic_direction', 'traffic_type', 'road_class', 'has_backlight',
+      'lighting_type', 'lighting_type_banner', 'environment', 'daily_passengers',
+      'transport_scope', 'vehicle_count', 'mobile_exposure_mode', 'operating_hours',
+      'route_area', 'operating_zone', 'resolution', 'pixel_pitch', 'brightness',
+      'ambient_light_control', 'campaign_duration', 'price_includes_print', 'price_includes_mounting',
       'graphic_design_help', 'status', 'available_from', 'offer_type', 'has_vat_invoice'
     ]
     const fields = comparisonFields.value
@@ -115,7 +115,7 @@ const loadComparison = async () => {
   }
 }
 
-const removeFromComparison = async (id: string) => {
+const removeFromComparison = async (id: number) => {
   await prefStore.toggleComparison(id)
   comparisonAds.value = comparisonAds.value.filter(ad => ad.id !== id)
 }

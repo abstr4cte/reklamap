@@ -218,29 +218,23 @@ export function shouldShowField(field: ComparisonField, ads: any[]): boolean {
 // Funkcja pomocnicza do pobierania wartości pola
 function getFieldValue(key: string, ad: any): any {
   switch (key) {
-    case 'price_per_sqm':
+    case 'price_per_sqm': {
       let area = 0
       if (ad.width && ad.height) {
-        // Dla LED screens wymiary są w mm, konwertuj na m²
-        if (ad.type === 'led_screen') {
-          area = (ad.width * ad.height) / 1000000
-        } else {
-          area = ad.width * ad.height
-        }
+        // Wymiary wszystkich typów (w tym LED) są przechowywane w metrach w DB
+        area = ad.width * ad.height
       }
       return area > 0 ? ad.price / area : null
+    }
     case 'surface_area':
       if (!ad.width || !ad.height) return null
-      // Dla LED screens wymiary są w mm, konwertuj na m²
-      if (ad.type === 'led_screen') {
-        return (ad.width * ad.height) / 1000000
-      }
+      // Wymiary wszystkich typów (w tym LED) są przechowywane w metrach w DB
       return ad.width * ad.height
     case 'dimensions':
       if (!ad.width || !ad.height) return null
-      // Dla LED screens wymiary są w mm
+      // Dla LED screens wymiary w DB są w metrach, ale wyświetlamy w mm
       if (ad.type === 'led_screen') {
-        return `${ad.width}mm × ${ad.height}mm`
+        return `${Math.round(ad.width * 1000)}mm × ${Math.round(ad.height * 1000)}mm`
       }
       return `${ad.width}m × ${ad.height}m`
     case 'location_tier':

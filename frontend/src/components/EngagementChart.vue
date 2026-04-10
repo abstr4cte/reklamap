@@ -38,7 +38,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const selectedAds = ref<string[]>([])
+const selectedAds = ref<number[]>([])
 const chartMetric = ref<'clicks' | 'views'>('views')
 const clicksType = ref<'all' | 'phone' | 'email'>('all')
 const dailyStatsCache = ref<Record<string, any>>({})
@@ -87,7 +87,7 @@ const colors = [
 ]
 
 // Pobierz rzeczywiste dane dzienne z backendu
-const fetchDailyStats = async (adIds: string[]) => {
+const fetchDailyStats = async (adIds: number[]) => {
   if (adIds.length === 0) return
   
   isLoading.value = true
@@ -107,7 +107,7 @@ const fetchDailyStats = async (adIds: string[]) => {
 }
 
 // Pobierz dane dzienne dla wybranego ogłoszenia
-const getDailyData = (adId: string, metric: 'clicks' | 'views') => {
+const getDailyData = (adId: number, metric: 'clicks' | 'views') => {
   const cached = dailyStatsCache.value[adId]
   const start = startDate.value || new Date()
   const end = endDate.value || new Date()
@@ -405,7 +405,7 @@ const filteredAds = computed(() => {
   return sorted
 })
 
-const toggleAdSelection = (adId: string) => {
+const toggleAdSelection = (adId: number) => {
   const index = selectedAds.value.indexOf(adId)
   if (index > -1) {
     selectedAds.value.splice(index, 1)
@@ -420,7 +420,7 @@ const clearSelection = () => {
 }
 
 // Expose metody dla rodzica
-const addAdsToChart = (adIds: string[]) => {
+const addAdsToChart = (adIds: number[]) => {
   adIds.forEach(id => {
     if (!selectedAds.value.includes(id) && selectedAds.value.length < 5) {
       selectedAds.value.push(id)
