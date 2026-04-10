@@ -13,6 +13,7 @@ Route::get('/user', function (Request $request) {
 
 // ─── Publiczne endpointy (tylko X-App-Key) ────────────────────────────────────
 Route::get('listings', [AdvertisementController::class, 'index']);
+Route::get('listings/map-pins', [AdvertisementController::class, 'mapPins']);
 Route::get('listings/{id}', [AdvertisementController::class, 'show']);
 
 // Dodawanie ogłoszeń - rate limit 100/h (dla agencji), bez reCAPTCHA

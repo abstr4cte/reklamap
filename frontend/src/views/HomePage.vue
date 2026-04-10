@@ -51,6 +51,7 @@ const handleToggleComparison = async (id: string) => {
 }
 
 const sortedAndFilteredListings = computed(() => searchStore.sortedAndFilteredListings)
+const mapPins = computed(() => searchStore.mapPins)
 
 const activeFiltersCount = computed(() => searchStore.activeFiltersCount)
 const totalPages = computed(() => searchStore.totalPages)
@@ -234,7 +235,7 @@ const handleReset = () => {
 }
 
 const loadAdvertisements = async () => {
-  await searchStore.fetchListings()
+  await Promise.all([searchStore.fetchListings(), searchStore.fetchMapPins()])
 }
 
 // Watch for URL query parameter changes
@@ -567,7 +568,7 @@ const clearSearchFlag = () => {
     
     <PolandMap 
       data-poland-map
-      :listings="sortedAndFilteredListings" 
+      :listings="mapPins"
       :selected-region="filters.region"
       :selected-city="filters.city"
       :selected-location-coords="filters.selectedLocationCoords"

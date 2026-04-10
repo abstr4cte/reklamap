@@ -1,4 +1,4 @@
-import type { Advertisement } from '../types'
+import type { Advertisement, MapPin } from '../types'
 import { API_URL, STORAGE_URL } from '../config'
 
 // Funkcja pomocnicza do konwersji względnych ścieżek na pełne URL-e
@@ -51,6 +51,23 @@ export const api = {
         }
         const response = await fetch(url, { headers: withKey() })
         if (!response.ok) throw new Error('Failed to fetch listings')
+        return response.json()
+    },
+
+    async getMapPins(params?: Record<string, any>): Promise<MapPin[]> {
+        let url = `${API_URL}/listings/map-pins`
+        if (params && Object.keys(params).length > 0) {
+            const searchParams = new URLSearchParams()
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== null && value !== undefined && value !== '') {
+                    searchParams.set(key, String(value))
+                }
+            })
+            const qs = searchParams.toString()
+            if (qs) url += '?' + qs
+        }
+        const response = await fetch(url, { headers: withKey() })
+        if (!response.ok) throw new Error('Failed to fetch map pins')
         return response.json()
     },
 

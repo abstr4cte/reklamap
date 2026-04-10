@@ -2,7 +2,7 @@
 import { ref, onMounted, watch, onBeforeUnmount, onActivated } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import type { Advertisement } from '../types'
+import type { MapPin } from '../types'
 import { slugify } from '../utils/slugify'
 import { getFullImageUrl } from '../services/api'
 import { useSearchStore, typeColors } from '../stores/useSearchStore'
@@ -17,7 +17,7 @@ const searchStore = useSearchStore()
 const formatLocation = (location: string, city: string) => searchStore.formatLocation(location, city)
 
 // Funkcja zwracająca etykietę jednostki ceny
-const getPriceUnitLabel = (ad: Advertisement): string => searchStore.getPriceUnitLabel(ad)
+const getPriceUnitLabel = (ad: MapPin): string => searchStore.getPriceUnitLabel(ad)
 
 const scrollToAdGrid = () => {
   const adGrid = document.querySelector('.listings-section')
@@ -48,7 +48,7 @@ const scrollToMap = () => {
 }
 
 const props = defineProps<{
-  listings: Advertisement[]
+  listings: MapPin[]
   selectedRegion?: string
   selectedCity?: string
   selectedLocationCoords?: { lat: number; lng: number } | null
@@ -66,7 +66,7 @@ let resizeObserver: ResizeObserver | null = null
 const markers: Map<number, L.Marker> = new Map()
 const isMapActive = ref(false)
 const isLegendVisible = ref(false)
-const selectedAd = ref<Advertisement | null>(null)
+const selectedAd = ref<MapPin | null>(null)
 const isMobile = ref(window.innerWidth < 768)
 const headerHeight = ref(80)
 const mapSection = ref<HTMLElement | null>(null)

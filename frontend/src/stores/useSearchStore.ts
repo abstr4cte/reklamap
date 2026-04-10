@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { api } from '../services/api'
-import type { Advertisement } from '../types'
+import type { Advertisement, MapPin } from '../types'
 import { FilterParams, DEFAULT_FILTERS } from '../types/filters'
 import { normalizePolishChars, queryParamsToFilters } from '../utils/filterUtils'
 import { deslugify } from '../utils/slugify'
@@ -90,6 +90,7 @@ export const popularLocations: LocationSuggestion[] = [
 export const useSearchStore = defineStore('search', () => {
   // State
   const listings = ref<Advertisement[]>([])
+  const mapPins = ref<MapPin[]>([])
   const isLoading = ref(false)
   const filters = ref<FilterParams>({ ...DEFAULT_FILTERS })
   const sortBy = ref('newest')
@@ -204,6 +205,26 @@ export const useSearchStore = defineStore('search', () => {
 
   // Generation counter to discard stale responses when fetches overlap
   let _fetchGeneration = 0
+  let _mapPinsGeneration = 0
+  let _mapBoundsTimer: ReturnType<typeof setTimeout> | null = null
+
+  const fetchMapPins = async () => {
+    const generation = ++_mapPinsGeneration
+    try {
+      // Build params without mapBounds — pins always show all results for current filters
+      const params = buildApiParams()
+      delete params.map_north
+      delete params.map_south
+      delete params.map_east
+      delete params.map_west
+
+      const pins = await api.getMapPins(params)
+      if (generation !== _mapPinsGeneration) return
+      mapPins.value = pins
+    } catch {
+      if (generation !== _mapPinsGeneration) return
+    }
+  }
 
   const fetchListings = async () => {
     const generation = ++_fetchGeneration
@@ -240,14 +261,20 @@ export const useSearchStore = defineStore('search', () => {
   const applyFilters = (newFilters: Partial<FilterParams>) => {
     filters.value = { ...filters.value, ...newFilters }
 
-    // mapBounds changes come from map panning — don't reset page or re-fetch,
-    // as the backend handles them and we'd hammer the API on every pan.
-    // The updated mapBounds params are included automatically on the NEXT fetch.
     const isMapBoundsOnly = Object.keys(newFilters).length === 1 && 'mapBounds' in newFilters
-    if (isMapBoundsOnly) return
+    if (isMapBoundsOnly) {
+      // Debounce grid re-fetch on map pan/zoom — 600ms after user stops moving
+      if (_mapBoundsTimer) clearTimeout(_mapBoundsTimer)
+      _mapBoundsTimer = setTimeout(() => {
+        currentPage.value = 1
+        fetchListings()
+      }, 600)
+      return
+    }
 
     currentPage.value = 1
     fetchListings()
+    fetchMapPins()
 
     // Persist to localStorage
     try {
@@ -266,6 +293,7 @@ export const useSearchStore = defineStore('search', () => {
     pathParamsFilters.value = {}
 
     fetchListings()
+    fetchMapPins()
 
     // Clear localStorage
     try {
@@ -977,9 +1005,9 @@ export const useSearchStore = defineStore('search', () => {
   })
 
   return {
-    listings, isLoading, filters, sortBy, priceDisplay, viewMode, currentPage, itemsPerPage,
+    listings, mapPins, isLoading, filters, sortBy, priceDisplay, viewMode, currentPage, itemsPerPage,
     serverTotal, serverLastPage,
-    fetchListings, setListings, applyFilters, resetFilters, setViewMode, setCurrentPage, syncFromUrl,
+    fetchListings, fetchMapPins, setListings, applyFilters, resetFilters, setViewMode, setCurrentPage, syncFromUrl,
     sortedAndFilteredListings, paginatedListings, totalPages, activeFiltersCount, getPrice,
     computedPriceDisplayUnit,
     getTypeLabel, getStatusLabel, getStatusColor, formatLocation, formatTrafficDirection, getPriceUnitLabel, getVariantLabel, getRoadClassLabel, getTrafficIntensityLabel,

@@ -8,7 +8,7 @@ import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSearchStore, typeColors, typeLabels, type LocationSuggestion, popularLocations, variantLabels } from '../stores/useSearchStore'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
-import { getFullImageUrl } from '../services/api'
+import { api, getFullImageUrl } from '../services/api'
 import { type LocationResult, debouncedSearchLocations } from '../services/locationService'
 import { slugify, deslugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
@@ -17,6 +17,7 @@ import { filtersToQueryParams } from '../utils/filterUtils'
 import polishLocations from '../data/polishLocations.json'
 import { categoryDescriptions, cityDescriptions } from '../data/categoryDescriptions'
 import type * as LType from 'leaflet'
+import type { Advertisement } from '../types'
 
 import Pagination from '../components/Pagination.vue'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
@@ -38,6 +39,7 @@ const {
   currentPage,
   isLoading,
   listings,
+  mapPins,
   sortedAndFilteredListings: filteredListings,
   paginatedListings,
   totalPages,
@@ -138,9 +140,15 @@ const isStatusMenuOpen = ref(false)
 const statusMultiselect = ref<HTMLElement | null>(null)
 const hoveredAdId = ref<number | null>(null)
 const selectedAdId = ref<number | null>(null)
-const selectedAd = computed(() => {
-  if (!listings.value || !selectedAdId.value) return null
-  return listings.value.find(ad => ad.id === selectedAdId.value) || null
+const selectedAd = ref<Advertisement | null>(null)
+
+watch(selectedAdId, async (id) => {
+  if (!id) { selectedAd.value = null; return }
+  // First try current page for instant display, then fetch full data if needed
+  const fromPage = listings.value.find(ad => ad.id === id)
+  if (fromPage) { selectedAd.value = fromPage; return }
+  const full = await api.getAdvertisement(id)
+  if (selectedAdId.value === id) selectedAd.value = full
 })
 const isMobile = ref(window.innerWidth < 768)
 const isMobileClamped = ref(false)
@@ -690,7 +698,7 @@ const toggleMobileMap = () => {
   handleScroll();
 }
 
-const scrollToAd = (adId: string) => {
+const scrollToAd = (adId: number) => {
   const element = document.getElementById(`ad-${adId}`)
   const container = document.querySelector('.listings-list-container')
   if (element && container) {
@@ -703,7 +711,7 @@ const scrollToAd = (adId: string) => {
 const handleAdHover = (adId: number | null) => {
   hoveredAdId.value = adId
   if (adId && markers.has(adId)) {
-    const ad = listings.value.find(a => a.id === adId)
+    const ad = mapPins.value.find(a => a.id === adId)
     if (ad) {
       const marker = markers.get(adId)!
       const icon = createCustomIcon(ad.type, true, selectedAdId.value === adId)
@@ -712,7 +720,7 @@ const handleAdHover = (adId: number | null) => {
   }
   markers.forEach((marker, id) => {
     if (id !== adId) {
-      const ad = listings.value.find(a => a.id === id)
+      const ad = mapPins.value.find(a => a.id === id)
       if (ad) {
         const icon = createCustomIcon(ad.type, false, selectedAdId.value === id)
         if (icon) marker.setIcon(icon)
@@ -781,7 +789,7 @@ const updateMarkers = () => {
   markers.forEach(marker => map?.removeLayer(marker))
   markers.clear()
 
-  filteredListings.value.forEach(ad => {
+  mapPins.value.forEach(ad => {
     const icon = createCustomIcon(ad.type, hoveredAdId.value === ad.id, selectedAdId.value === ad.id)
     if (!icon) return
     const marker = L!.marker([ad.latitude, ad.longitude], { icon })
@@ -1038,7 +1046,7 @@ watch(() => searchStore.filters.mapBounds, (newBounds, oldBounds) => {
   }
 })
 
-watch(filteredListings, () => {
+watch(mapPins, () => {
   updateMarkers()
   // If we have a location filter but haven't zoomed/panned manually, ensure map view matches
   if ((filters.value.city || filters.value.region || filters.value.selectedLocationCoords) && !searchStore.filters.mapBounds) {
@@ -1273,8 +1281,8 @@ const loadData = async () => {
   searchStore.syncFromUrl(route.query as Record<string, string>, route.params as Record<string, string>)
   syncLocationQuery()
   
-  // Pobierz świeże ogłoszenia
-  await searchStore.fetchListings()
+  // Pobierz świeże ogłoszenia i pinezki mapy równolegle
+  await Promise.all([searchStore.fetchListings(), searchStore.fetchMapPins()])
   
   // If another loadData was called while we were fetching, our results may be stale
   // The newer call will handle setting the correct data

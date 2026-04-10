@@ -3,6 +3,19 @@ export interface LocationCoords {
     lng: number
 }
 
+export interface MapPin {
+    id: number
+    latitude: number
+    longitude: number
+    type: string
+    title: string
+    city: string
+    location: string
+    price: number
+    price_unit: string
+    image_url: string | null
+}
+
 export interface Advertisement {
     id: number
     title: string

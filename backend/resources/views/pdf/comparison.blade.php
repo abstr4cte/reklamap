@@ -62,12 +62,12 @@
 
         .ad-image {
             width: 100%;
-            height: 100px;
-            object-fit: contain;
+            height: 250px;
+            object-fit: cover;
             object-position: center;
             margin-bottom: 5px;
-            border-radius: 4px;
-            background-color: #f9fafb;
+            border-radius: 8px;
+            background-color: #f3f4f6;
         }
 
         .ad-title {

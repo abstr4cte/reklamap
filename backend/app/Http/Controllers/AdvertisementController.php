@@ -32,6 +32,76 @@ class AdvertisementController extends Controller
             return $adsOrdered;
         }
 
+        $query = $this->buildFilteredQuery($request);
+
+        // --- Sorting ---
+        $sort = $request->input('sort', 'newest');
+        $pricePerDaySql = "
+            CASE
+                WHEN price_unit = 'day'      THEN price
+                WHEN price_unit = 'week'     THEN price / 7.0
+                WHEN price_unit = 'month'    THEN price / 30.0
+                WHEN price_unit = 'year'     THEN price / 365.0
+                WHEN price_unit = 'campaign' THEN price / COALESCE(NULLIF(campaign_duration, 0), 30.0)
+                ELSE price / 30.0
+            END
+        ";
+
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc'); break;
+            case 'name-asc':
+                $query->orderBy('title', 'asc'); break;
+            case 'name-desc':
+                $query->orderBy('title', 'desc'); break;
+            case 'price-day-asc':
+            case 'price-week-asc':
+            case 'price-month-asc':
+            case 'price-year-asc':
+            case 'price-campaign-asc':
+                $query->orderByRaw("($pricePerDaySql) ASC"); break;
+            case 'price-day-desc':
+            case 'price-week-desc':
+            case 'price-month-desc':
+            case 'price-year-desc':
+            case 'price-campaign-desc':
+                $query->orderByRaw("($pricePerDaySql) DESC"); break;
+            case 'price-sqm-asc':
+                $query->orderByRaw("CASE WHEN width > 0 AND height > 0 THEN ($pricePerDaySql) / (width * height) ELSE 99999999 END ASC"); break;
+            case 'price-sqm-desc':
+                $query->orderByRaw("CASE WHEN width > 0 AND height > 0 THEN ($pricePerDaySql) / (width * height) ELSE 0 END DESC"); break;
+            default: // newest
+                $query->orderBy('created_at', 'desc');
+        }
+
+        $perPage = min(max((int) $request->input('per_page', 24), 1), 200);
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * Lightweight map pins endpoint — returns only fields needed for map markers/popups.
+     * Same filters as index(), no pagination, max 2000 results, only ads with coordinates.
+     */
+    public function mapPins(Request $request)
+    {
+        $query = $this->buildFilteredQuery($request);
+
+        $query->whereNotNull('latitude')
+              ->whereNotNull('longitude')
+              ->where('latitude', '!=', 0)
+              ->where('longitude', '!=', 0);
+
+        return $query
+            ->orderBy('created_at', 'desc')
+            ->limit(2000)
+            ->get(['id', 'latitude', 'longitude', 'type', 'title', 'city', 'location', 'price', 'price_unit', 'image_url']);
+    }
+
+    /**
+     * Build a filtered query from request parameters (shared by index and mapPins).
+     */
+    private function buildFilteredQuery(Request $request)
+    {
         $query = Advertisement::where('is_active', 1);
 
         // --- Type filter ---
@@ -49,7 +119,7 @@ class AdvertisementController extends Controller
             }
         }
 
-        // --- Distance filter (requires lat/lng when city_strict is set with coords) ---
+        // --- Distance filter ---
         if ($request->filled('lat') && $request->filled('lng') && $request->filled('radius')) {
             $lat = (float) $request->input('lat');
             $lng = (float) $request->input('lng');
@@ -91,7 +161,6 @@ class AdvertisementController extends Controller
                 }
             });
         }
-        // Default: no status restriction — show all is_active=1 ads regardless of status
 
         // --- Keyword search ---
         if ($request->filled('search')) {
@@ -148,7 +217,7 @@ class AdvertisementController extends Controller
             }
         }
 
-        // --- Has backlight (OR across 3 lighting fields) ---
+        // --- Has backlight ---
         if ($request->boolean('has_backlight')) {
             $query->where(function ($q) {
                 $q->where('has_backlight', true)
@@ -170,8 +239,6 @@ class AdvertisementController extends Controller
             $priceUnit = $request->input('price_unit', 'month');
             $factors = ['day' => 1, 'week' => 7, 'month' => 30, 'year' => 365, 'campaign' => 30, 'sqm' => 30];
             $factor = $factors[$priceUnit] ?? 30;
-
-            // SQL to normalize any ad's stored price to "per day"
             $pricePerDaySql = "
                 CASE
                     WHEN price_unit = 'day'      THEN price
@@ -182,7 +249,6 @@ class AdvertisementController extends Controller
                     ELSE price / 30.0
                 END
             ";
-
             if ($request->filled('price_from')) {
                 $query->whereRaw("($pricePerDaySql) >= ?", [(float) $request->input('price_from') / $factor]);
             }
@@ -214,7 +280,7 @@ class AdvertisementController extends Controller
             }
         }
 
-        // --- Surface area (calculated from width × height) ---
+        // --- Surface area ---
         if ($request->filled('surface_from')) {
             $query->whereRaw('(width * height) >= ?', [(float) $request->input('surface_from')]);
         }
@@ -250,48 +316,7 @@ class AdvertisementController extends Controller
             }
         }
 
-        // --- Sorting ---
-        $sort = $request->input('sort', 'newest');
-        $pricePerDaySql = "
-            CASE
-                WHEN price_unit = 'day'      THEN price
-                WHEN price_unit = 'week'     THEN price / 7.0
-                WHEN price_unit = 'month'    THEN price / 30.0
-                WHEN price_unit = 'year'     THEN price / 365.0
-                WHEN price_unit = 'campaign' THEN price / COALESCE(NULLIF(campaign_duration, 0), 30.0)
-                ELSE price / 30.0
-            END
-        ";
-
-        switch ($sort) {
-            case 'oldest':
-                $query->orderBy('created_at', 'asc'); break;
-            case 'name-asc':
-                $query->orderBy('title', 'asc'); break;
-            case 'name-desc':
-                $query->orderBy('title', 'desc'); break;
-            case 'price-day-asc':
-            case 'price-week-asc':
-            case 'price-month-asc':
-            case 'price-year-asc':
-            case 'price-campaign-asc':
-                $query->orderByRaw("($pricePerDaySql) ASC"); break;
-            case 'price-day-desc':
-            case 'price-week-desc':
-            case 'price-month-desc':
-            case 'price-year-desc':
-            case 'price-campaign-desc':
-                $query->orderByRaw("($pricePerDaySql) DESC"); break;
-            case 'price-sqm-asc':
-                $query->orderByRaw("CASE WHEN width > 0 AND height > 0 THEN ($pricePerDaySql) / (width * height) ELSE 99999999 END ASC"); break;
-            case 'price-sqm-desc':
-                $query->orderByRaw("CASE WHEN width > 0 AND height > 0 THEN ($pricePerDaySql) / (width * height) ELSE 0 END DESC"); break;
-            default: // newest
-                $query->orderBy('created_at', 'desc');
-        }
-
-        $perPage = min(max((int) $request->input('per_page', 24), 1), 200);
-        return $query->paginate($perPage);
+        return $query;
     }
 
     public function store(Request $request)
