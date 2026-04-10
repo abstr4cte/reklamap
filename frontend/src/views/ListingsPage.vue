@@ -1058,65 +1058,67 @@ watch(mapPins, () => {
 watch(() => tempFilters.value?.type, (newType, oldType) => {
   // Nie rób nic jeśli tempFilters nie istnieje lub typ się nie zmienił
   if (!tempFilters.value || !oldType || newType === oldType) return
-  
-  // Filtry ogólne które zachowujemy
-  const generalFilters = {
-    type: tempFilters.value.type,
-    keyword: tempFilters.value.keyword,
-    city: tempFilters.value.city,
-    region: tempFilters.value.region,
-    street: tempFilters.value.street,
-    locationLabel: tempFilters.value.locationLabel,
+
+  // Zachowaj tylko filtry universalne (niezależne od typu)
+  const keep = {
+    type:                   tempFilters.value.type,
+    keyword:                tempFilters.value.keyword,
+    city:                   tempFilters.value.city,
+    region:                 tempFilters.value.region,
+    street:                 tempFilters.value.street,
+    locationLabel:          tempFilters.value.locationLabel,
     selectedLocationCoords: tempFilters.value.selectedLocationCoords,
-    cityStrict: tempFilters.value.cityStrict,
-    priceFrom: tempFilters.value.priceFrom,
-    priceTo: tempFilters.value.priceTo,
-    priceUnit: tempFilters.value.priceUnit,
-    status: tempFilters.value.status,
-    onlyWithImage: tempFilters.value.onlyWithImage,
-    hasVatInvoice: tempFilters.value.hasVatInvoice,
-    priceIncludesPrint: tempFilters.value.priceIncludesPrint,
-    priceIncludesMounting: tempFilters.value.priceIncludesMounting,
-    graphicDesignHelp: tempFilters.value.graphicDesignHelp,
-    hasBacklight: tempFilters.value.hasBacklight,
-    hasLightingTypeBanner: tempFilters.value.hasLightingTypeBanner,
-    hasLightingTypeBillboard: tempFilters.value.hasLightingTypeBillboard,
-    ambientLightControl: tempFilters.value.ambientLightControl,
-    mapBounds: tempFilters.value.mapBounds
+    cityStrict:             tempFilters.value.cityStrict,
+    priceFrom:              tempFilters.value.priceFrom,
+    priceTo:                tempFilters.value.priceTo,
+    priceUnit:              tempFilters.value.priceUnit,
+    status:                 tempFilters.value.status,
+    onlyWithImage:          tempFilters.value.onlyWithImage,
+    hasVatInvoice:          tempFilters.value.hasVatInvoice,
+    locationTier:           tempFilters.value.locationTier,
+    mapBounds:              tempFilters.value.mapBounds,
   }
-  
+
   // Resetuj wszystkie filtry specyficzne dla typu
   Object.assign(tempFilters.value, {
-    ...generalFilters,
-    widthFrom: null,
-    widthTo: null,
-    heightFrom: null,
-    heightTo: null,
-    surfaceFrom: null,
-    surfaceTo: null,
+    ...keep,
+    // wymiary
+    widthFrom: null, widthTo: null,
+    heightFrom: null, heightTo: null,
+    surfaceFrom: null, surfaceTo: null,
     orientation: '',
+    // typ-specyficzne
     variant: '',
+    roadClass: '',
+    environment: '',
     trafficIntensity: '',
     trafficDirection: '',
     trafficType: '',
-    roadClass: '',
-    environment: '',
+    // transport
     transportScope: '',
-    vehicleCountFrom: null,
-    vehicleCountTo: null,
+    vehicleCountFrom: null, vehicleCountTo: null,
+    dailyPassengersFrom: null, dailyPassengersTo: null,
+    // mobile
     mobileExposureMode: '',
-    operatingHours: '',
-    routeArea: '',
-    estimatedDailyViewsFrom: null,
-    estimatedDailyViewsTo: null,
-    pixelPitchFrom: null,
-    pixelPitchTo: null,
-    brightnessFrom: null,
-    brightnessTo: null,
     operatingZone: '',
+    campaignDurationFrom: null, campaignDurationTo: null,
+    // LED
+    pixelPitchFrom: null, pixelPitchTo: null,
+    brightnessFrom: null, brightnessTo: null,
+    ambientLightControl: false,
+    // oświetlenie
+    lightingType: '',
+    lightingTypeBanner: '',
+    hasBacklight: false,
+    hasLightingTypeBanner: false,
+    hasLightingTypeBillboard: false,
+    // usługi dodatkowe
+    priceIncludesPrint: false,
+    priceIncludesMounting: false,
+    graphicDesignHelp: false,
+    // inne
     offerType: '',
-    campaignDuration: null,
-    rentalPeriod: ''
+    rentalPeriod: '',
   })
 })
 

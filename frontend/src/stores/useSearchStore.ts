@@ -260,10 +260,11 @@ export const useSearchStore = defineStore('search', () => {
 
   const applyFilters = (newFilters: Partial<FilterParams>) => {
     const hadMapBounds = !!filters.value.mapBounds
-    filters.value = { ...filters.value, ...newFilters }
 
     const isMapBoundsOnly = Object.keys(newFilters).length === 1 && 'mapBounds' in newFilters
+
     if (isMapBoundsOnly) {
+      filters.value = { ...filters.value, ...newFilters }
       // When user first starts panning/zooming (mapBounds just activated), re-fetch pins
       // without city/region so the whole map shows all matching pins, not just the searched city.
       if (!hadMapBounds) {
@@ -277,6 +278,9 @@ export const useSearchStore = defineStore('search', () => {
       }, 600)
       return
     }
+
+    // Non-mapBounds filter change: clear mapBounds so map resets to selected location / full Poland
+    filters.value = { ...filters.value, ...newFilters, mapBounds: null }
 
     currentPage.value = 1
     fetchListings()

@@ -924,15 +924,19 @@ const validateStep = (step: number): boolean => {
     case 3:
       // Wymiary wymagane dla billboard, banner, wall, citylight
       if (requiresDimensions.value) {
+        const isLed = formData.value.type === 'led_screen'
+        const maxW = isLed ? 500000 : 500   // LED: mm (500000mm = 500m), inne: m
+        const maxH = isLed ? 100000 : 100
+        const unit = isLed ? 'mm' : 'm'
         if (!formData.value.width || formData.value.width <= 0) {
           errors.value.width = 'Szerokość jest wymagana'
-        } else if (formData.value.width > 500) {
-          errors.value.width = 'Szerokość nie może przekraczać 500 m'
+        } else if (formData.value.width > maxW) {
+          errors.value.width = `Szerokość nie może przekraczać ${maxW} ${unit}`
         }
         if (!formData.value.height || formData.value.height <= 0) {
           errors.value.height = 'Wysokość jest wymagana'
-        } else if (formData.value.height > 100) {
-          errors.value.height = 'Wysokość nie może przekraczać 100 m'
+        } else if (formData.value.height > maxH) {
+          errors.value.height = `Wysokość nie może przekraczać ${maxH} ${unit}`
         }
       }
       if (!formData.value.location) {
@@ -993,6 +997,18 @@ const validateStep = (step: number): boolean => {
       if (formData.value.type === 'led_screen' && formData.value.resolution) {
         if (!/^\d+x\d+$/i.test(formData.value.resolution)) {
           errors.value.resolution = 'Rozdzielczość musi być w formacie WxH (np. 1920x1080)'
+        }
+      }
+      // Walidacja pixel pitch
+      if (formData.value.type === 'led_screen' && formData.value.pixelPitch !== null) {
+        if (formData.value.pixelPitch < 0.1 || formData.value.pixelPitch > 100) {
+          errors.value.pixelPitch = 'Pixel Pitch musi być między 0.1 a 100 mm'
+        }
+      }
+      // Walidacja jasności
+      if (formData.value.type === 'led_screen' && formData.value.brightness !== null) {
+        if (formData.value.brightness < 1000 || formData.value.brightness > 15000) {
+          errors.value.brightness = 'Jasność musi być między 1000 a 15000 nits'
         }
       }
       break
@@ -1233,6 +1249,14 @@ const handleSubmit = async () => {
         width: 'Szerokość',
         height: 'Wysokość',
         campaign_duration: 'Czas trwania kampanii',
+        pixel_pitch: 'Pixel Pitch',
+        brightness: 'Jasność',
+        resolution: 'Rozdzielczość',
+      };
+
+      const fieldRanges: Record<string, string> = {
+        pixel_pitch: '0.1–100 mm',
+        brightness: '1000–15000 nits',
       };
 
       const serverErrors = error.response.data.errors;
@@ -1242,7 +1266,7 @@ const handleSubmit = async () => {
       for (const key in serverErrors) {
         const translatedField = fieldTranslations[key] || key;
         let message = serverErrors[key][0];
-        
+
         // Tłumaczenie kluczy walidacji Laravel
         if (message === 'validation.required') {
           message = `Pole ${translatedField} jest wymagane`;
@@ -1250,17 +1274,22 @@ const handleSubmit = async () => {
           message = `Pole ${translatedField} musi być prawidłowym adresem e-mail`;
         } else if (message === 'validation.numeric') {
           message = `Pole ${translatedField} musi być liczbą`;
+        } else if (message === 'validation.integer') {
+          message = `Pole ${translatedField} musi być liczbą całkowitą`;
         } else if (message === 'validation.string') {
           message = `Pole ${translatedField} musi być tekstem`;
         } else if (message.startsWith('validation.min.')) {
-          message = `Pole ${translatedField} jest za krótkie`;
+          message = `Pole ${translatedField} jest za małe`;
         } else if (message.startsWith('validation.max.')) {
-          message = `Pole ${translatedField} jest za długie`;
+          message = `Pole ${translatedField} przekracza dozwoloną wartość`;
+        } else if (message.startsWith('validation.between.')) {
+          const range = fieldRanges[key];
+          message = range
+            ? `${translatedField}: dozwolony zakres to ${range}`
+            : `Pole ${translatedField} ma niedozwoloną wartość`;
         } else if (message.includes('validation.')) {
-          // Inne klucze walidacji - zamień nazwę pola
-          message = message.replace(key, translatedField);
+          message = `Pole ${translatedField} ma nieprawidłową wartość`;
         } else {
-          // Jeśli backend zwrócił pełny komunikat, zamień nazwę pola
           message = message.replace(key, translatedField);
         }
         
@@ -1872,33 +1901,40 @@ onMounted(() => {
                   v-model="formData.resolution"
                   type="text"
                   class="form-input"
+                  :class="{ 'error': errors.resolution }"
                   placeholder="np. 1920x1080"
+                  @input="errors.resolution = ''"
                 />
-                <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Przykład: 1920x1080, 3840x2160, 1280x720</p>
+                <span v-if="errors.resolution" class="error-text">{{ errors.resolution }}</span>
+                <p v-else class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Przykład: 1920x1080, 3840x2160, 1280x720</p>
               </div>
 
               <div class="form-group">
                 <label class="form-label">Pixel Pitch (mm)</label>
                 <input
                   :value="formData.pixelPitch"
-                  @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); formData.pixelPitch = val ? parseFloat(val) : null }"
+                  @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); formData.pixelPitch = val ? parseFloat(val) : null; errors.pixelPitch = '' }"
                   type="text"
                   class="form-input"
+                  :class="{ 'error': errors.pixelPitch }"
                   placeholder="np. 3.9"
                 />
-                <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Przykład: 3.9, 6.67, 10</p>
+                <span v-if="errors.pixelPitch" class="error-text">{{ errors.pixelPitch }}</span>
+                <p v-else class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Zakres: 0.1–100 mm (np. 3.9, 6.67, 10)</p>
               </div>
 
               <div class="form-group">
                 <label class="form-label">Jasność (nits)</label>
                 <input
                   :value="formData.brightness"
-                  @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); formData.brightness = val ? parseInt(val) : null }"
+                  @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); formData.brightness = val ? parseInt(val) : null; errors.brightness = '' }"
                   type="text"
                   class="form-input"
+                  :class="{ 'error': errors.brightness }"
                   placeholder="np. 5000"
                 />
-                <p class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Przykład: 5000, 6500, 8000</p>
+                <span v-if="errors.brightness" class="error-text">{{ errors.brightness }}</span>
+                <p v-else class="help-text" style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.8rem; color: #9ca3af;">Zakres: 1000–15000 nits (np. 5000, 6500, 8000)</p>
               </div>
             </div>
 

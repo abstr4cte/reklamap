@@ -468,10 +468,9 @@ watch(() => props.hoveredAdId, (newId) => {
   })
 })
 
-// Watch for mapBounds being cleared (e.g., when user clicks "Search" again)
+// Watch for mapBounds being cleared (e.g., when user clicks "Search" again) — reset map view
 watch(() => searchStore.filters.mapBounds, (newBounds, oldBounds) => {
-  // If mapBounds was cleared (null) and we have location filters, zoom to them
-  if (!newBounds && oldBounds && (props.selectedCity || props.selectedRegion || props.selectedLocationCoords)) {
+  if (!newBounds && oldBounds) {
     syncMapToFilters()
   }
 })
