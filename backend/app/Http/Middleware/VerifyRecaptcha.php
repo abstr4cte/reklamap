@@ -21,9 +21,8 @@ class VerifyRecaptcha
             return $next($request);
         }
 
-        // Skip verification in local development environment
-        if (app()->environment('local')) {
-            \Log::info('reCAPTCHA verification skipped (local environment)');
+        // Skip verification in local and testing environments
+        if (app()->environment('local', 'testing')) {
             return $next($request);
         }
 
