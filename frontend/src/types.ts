@@ -47,7 +47,6 @@ export interface Advertisement {
     graphic_design_help: boolean
     offer_type: string
     has_vat_invoice: boolean
-    views: number
     is_active: boolean
     phone?: string
     contact_preference?: string

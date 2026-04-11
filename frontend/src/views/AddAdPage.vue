@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { useSeo } from '../composables/useSeo'
+import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 import ToastNotification from '../components/ToastNotification.vue'
 import LocationMapModal from '../components/LocationMapModal.vue'
 import type * as LType from 'leaflet'
@@ -1118,6 +1119,11 @@ const handleSubmit = async () => {
   try {
     isSubmitting.value = true
 
+    let recaptchaToken = ''
+    if (isRecaptchaAvailable()) {
+      recaptchaToken = await getRecaptchaToken('add_listing')
+    }
+
     const imageUrls = await uploadImages()
     const mainImageUrl = imageUrls.length > 0 ? imageUrls[0] : ''
     
@@ -1197,7 +1203,8 @@ const handleSubmit = async () => {
         ambient_light_control: formData.value.ambientLightControl,
         lighting_type_banner: formData.value.lightingTypeBanner || null,
         estimated_daily_views: formData.value.estimatedDailyViews || null,
-        subscribe_newsletter: formData.value.subscribeNewsletter
+        subscribe_newsletter: formData.value.subscribeNewsletter,
+        recaptcha_token: recaptchaToken
 
     } as any) // Casting to any to avoid strict type checks for now if interface mismatches
 

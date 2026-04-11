@@ -91,7 +91,7 @@ export const api = {
         return ids.map(id => adsMap.get(id)).filter(Boolean) as Advertisement[]
     },
 
-    async createAdvertisement(ad: Omit<Advertisement, 'id' | 'created_at' | 'updated_at'>): Promise<Advertisement> {
+    async createAdvertisement(ad: Omit<Advertisement, 'id' | 'created_at' | 'updated_at'> & { recaptcha_token?: string }): Promise<Advertisement> {
         const response = await fetch(`${API_URL}/listings`, {
             method: 'POST',
             headers: {

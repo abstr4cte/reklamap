@@ -101,6 +101,10 @@ export default defineConfig({
       '/storage': {
         target: 'http://localhost:8000',
         changeOrigin: true,
+      },
+      '/sitemap.xml': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
       }
     }
   }

@@ -322,8 +322,10 @@ class AdvertisementController extends Controller
     public function store(Request $request)
     {
         // Types that require variant field
+        $type = $request->input('type');
         $typesWithVariant = ['billboard', 'citylight', 'led_screen', 'totem', 'transport', 'mobile'];
-        $requiresVariant = in_array($request->input('type'), $typesWithVariant);
+        $requiresVariant = in_array($type, $typesWithVariant);
+        $requiresRoadClass = $type === 'billboard';
 
         $validated = $request->validate([
             'title' => ['required', 'string', new ProfanityRule],
@@ -340,7 +342,7 @@ class AdvertisementController extends Controller
             'price_unit' => 'required|in:day,week,month,year,sqm,campaign',
             'region' => 'nullable|string',
             'orientation' => 'required|string',
-            'traffic_intensity' => 'nullable|string',
+            'traffic_intensity' => 'nullable|in:low,medium,high',
             'offer_type' => 'required|string',
             'phone' => 'nullable|string',
             'contact_preference' => 'nullable|string',
@@ -357,7 +359,7 @@ class AdvertisementController extends Controller
             'image_url' => 'nullable|string',
             // Type-specific fields
             'variant' => $requiresVariant ? 'required|string' : 'nullable|string',
-            'road_class' => 'nullable|string',
+            'road_class' => $requiresRoadClass ? 'required|in:highway,expressway,national,regional,local,urban' : 'nullable|in:highway,expressway,national,regional,local,urban',
             'traffic_direction' => 'nullable|array',
             'traffic_type' => 'nullable|array',
             'environment' => 'nullable|string',
@@ -444,8 +446,10 @@ class AdvertisementController extends Controller
     public function update(Request $request, string $id)
     {
         // Types that require variant field
+        $type = $request->input('type');
         $typesWithVariant = ['billboard', 'citylight', 'led_screen', 'totem', 'transport', 'mobile'];
-        $requiresVariant = in_array($request->input('type'), $typesWithVariant);
+        $requiresVariant = in_array($type, $typesWithVariant);
+        $requiresRoadClass = $type === 'billboard';
 
         $validated = $request->validate([
             'title' => ['required', 'string', new ProfanityRule],
@@ -462,7 +466,7 @@ class AdvertisementController extends Controller
             'price_unit' => 'required|in:day,week,month,year,sqm,campaign',
             'region' => 'nullable|string',
             'orientation' => 'required|string',
-            'traffic_intensity' => 'nullable|string',
+            'traffic_intensity' => 'nullable|in:low,medium,high',
             'offer_type' => 'required|string',
             'phone' => 'nullable|string',
             'contact_preference' => 'nullable|string',
@@ -479,7 +483,7 @@ class AdvertisementController extends Controller
             'image_url' => 'nullable|string',
             // Type-specific fields
             'variant' => $requiresVariant ? 'required|string' : 'nullable|string',
-            'road_class' => 'nullable|string',
+            'road_class' => $requiresRoadClass ? 'required|in:highway,expressway,national,regional,local,urban' : 'nullable|in:highway,expressway,national,regional,local,urban',
             'traffic_direction' => 'nullable|array',
             'traffic_type' => 'nullable|array',
             'environment' => 'nullable|string',

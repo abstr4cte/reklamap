@@ -38,6 +38,7 @@ abstract class TestCase extends BaseTestCase
             'contact_preference' => 'email',
             'offer_type'         => 'rent',
             'orientation'        => 'horizontal',
+            'road_class'         => 'national',
         ], $overrides);
     }
 }
