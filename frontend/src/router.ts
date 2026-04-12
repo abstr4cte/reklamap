@@ -148,6 +148,15 @@ const router = createRouter({
   }
 })
 
+// Handle chunk load errors after deployment (old JS files no longer exist)
+router.onError((error, to) => {
+  if (error.message?.includes('Failed to fetch dynamically imported module') ||
+      error.message?.includes('Importing a module script failed') ||
+      error.name === 'ChunkLoadError') {
+    window.location.href = to.fullPath
+  }
+})
+
 // Google Analytics Page Tracking
 router.afterEach((to) => {
   if ((window as any).gtag) {
