@@ -27,8 +27,8 @@
         }
 
         .header-logo {
-            width: 50px;
-            height: 50px;
+            height: 52px;
+            width: auto;
             flex-shrink: 0;
         }
 
@@ -153,7 +153,7 @@
 
 <body>
     <div class="header">
-        <img src="{{ public_path('logo.png') }}" alt="ReklaMap" class="header-logo" />
+        <img src="{{ public_path('logo-text.png') }}" alt="ReklaMap" class="header-logo" />
         <h1>Porównanie ogłoszeń</h1>
     </div>
 

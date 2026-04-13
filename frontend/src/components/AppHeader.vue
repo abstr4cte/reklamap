@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import logoImage from '../assets/logo.png'
+import logoTextImage from '../assets/logo-text.png'
 
 
 const props = defineProps<{
@@ -114,8 +115,8 @@ watch(isMobileMenuOpen, (isOpen) => {
     <div class="container">
       <div class="header-left">
         <router-link to="/" class="logo" @click="handleHomeClick">
-          <img :src="logoImage" alt="ReklaMap" class="logo-image" />
-          <span class="logo-text">ReklaMap</span>
+          <img :src="logoTextImage" alt="ReklaMap" class="logo-image logo-image--full" />
+          <img :src="logoImage" alt="ReklaMap" class="logo-image logo-image--icon" />
         </router-link>
       </div>
 
@@ -392,9 +393,18 @@ watch(isMobileMenuOpen, (isOpen) => {
 }
 
 .logo-image {
-  width: 50px;
-  height: 50px;
+  height: 56px;
   object-fit: contain;
+}
+
+.logo-image--full {
+  width: auto;
+  display: block;
+}
+
+.logo-image--icon {
+  width: 56px;
+  display: none;
 }
 
 .logo-text {
@@ -979,9 +989,13 @@ watch(isMobileMenuOpen, (isOpen) => {
   }
 }
 
-@media (max-width: 380px) {
-  .logo-text {
+@media (max-width: 480px) {
+  .logo-image--full {
     display: none;
+  }
+
+  .logo-image--icon {
+    display: block;
   }
 }
 </style>

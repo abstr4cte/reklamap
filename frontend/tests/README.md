@@ -24,9 +24,11 @@ frontend/tests/
 ├── unit/                                       # Testy jednostkowe
 │   ├── dimensionConversion.test.ts            # Konwersje wymiarów LED (mm ↔️ m)
 │   ├── priceConversion.test.ts                # Konwersje jednostek ceny
+│   ├── formValidation.test.ts                 # Walidacja formularza dodawania ogłoszenia
 │   └── stores/                                 # Testy logiki store
 │       ├── searchStore.filtering.test.ts      # Filtrowanie ogłoszeń
-│       └── searchStore.sorting.test.ts        # Sortowanie ogłoszeń
+│       ├── searchStore.sorting.test.ts        # Sortowanie ogłoszeń
+│       └── preferencesStore.test.ts           # Ulubione i porównanie
 └── README.md                                   # Ten plik
 ```
 
@@ -89,6 +91,31 @@ frontend/tests/
 
 **Przykład:** 100 PLN/dzień = 3000 PLN/miesiąc > 2000 PLN/miesiąc
 
+### ✅ Ulubione i porównanie (preferencesStore)
+
+**Dlaczego?** Użytkownicy muszą móc zapisywać i porównywać ogłoszenia bez błędów.
+
+**Testy sprawdzają:**
+- Dodawanie/usuwanie z ulubionych
+- Dodawanie/usuwanie z porównania
+- **Limit 5 ogłoszeń** w porównaniu
+- **Walidacja tego samego typu** w porównaniu (nie można porównać billboardu z LED)
+- Weryfikacja aktywności ogłoszenia (nie można dodać nieaktywnego)
+- Czyszczenie porównania
+- Synchronizacja z localStorage
+- Obsługa błędów API
+
+### ✅ Walidacja formularza dodawania ogłoszenia
+
+**Dlaczego?** Walidacja musi być spójna i zapobiegać błędnym danym.
+
+**Testy sprawdzają:**
+- **Step 1:** Email (wymagany, format), tytuł (wymagany, max 200 znaków), opis (wymagany, max 5000 znaków), rodzaj powierzchni
+- **Step 2:** Cena (wymagana, max 999,999 zł), czas trwania kampanii (dla `priceUnit === 'campaign'`)
+- **Step 3:** Wymiary (wymagane dla outdoor, max wartości różne dla LED/billboard), lokalizacja, telefon (dokładnie 9 cyfr)
+- **Step 4:** Klasa drogi (billboard), natężenie ruchu (outdoor), wariant (dla typów które go wymagają), status dostępności
+- **Step 5:** Akceptacja regulaminu
+
 ## Pokrycie kodu
 
 Obecne pokrycie skupia się na **krytycznej logice biznesowej**:
@@ -96,10 +123,12 @@ Obecne pokrycie skupia się na **krytycznej logice biznesowej**:
 - ✅ Konwersje cen (16 testów)
 - ✅ Logika filtrowania (21 testów)
 - ✅ Logika sortowania (16 testów)
+- ✅ Ulubione i porównanie (14 testów)
+- ✅ Walidacja formularza (48 testów)
 - ⏳ Komponenty (TODO)
 - ⏳ E2E flows (TODO)
 
-**Total: 65 testów jednostkowych (100% passing)**
+**Total: 127 testów jednostkowych (100% passing)**
 
 ## Dodawanie nowych testów
 
@@ -178,14 +207,18 @@ Te testy zapobiegają powrotowi następujących bugów:
 ### Faza 2: ✅ Store Logic (DONE)
 - [x] searchStore filtering logic (21 testów)
 - [x] searchStore sorting logic (16 testów)
-- [ ] preferencesStore (favorites, comparison) - opcjonalne
+- [x] preferencesStore - favorites, comparison (14 testów)
 
-### Faza 3: ⏳ Components (IN PROGRESS)
+### Faza 3: ✅ Form Validation (DONE)
+- [x] Add advertisement form validation (48 testów)
+- [x] All 5 steps validated (email, price, dimensions, features, terms)
+
+### Faza 4: ⏳ Components (TODO)
 - [ ] HeroBanner filters
 - [ ] AdCard price display
 - [ ] ListingsPage modal
 
-### Faza 4: ⏳ E2E (TODO)
+### Faza 5: ⏳ E2E (TODO)
 - [ ] Search flow (select type, filter, view results)
 - [ ] Add listing flow
 - [ ] Comparison flow

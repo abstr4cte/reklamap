@@ -29,10 +29,9 @@
             gap: 0;
         }
         .logo-image {
-            width: 50px;
             height: 50px;
+            width: auto;
             object-fit: contain;
-            margin-right: 15px;
         }
         .logo {
             font-size: 28px;
@@ -171,8 +170,8 @@
         <!-- Header -->
         <div class="header">
             <div class="header-content">
-                <img src="{{ asset('logo.png') }}" alt="ReklaMap" class="logo-image" />
-                <h1 class="logo">ReklaMap</h1>
+                <img src="{{ asset('logo-text.png') }}" alt="ReklaMap" class="logo-image" />
+                
             </div>
             <p class="tagline">Portal powierzchni reklamowych</p>
         </div>

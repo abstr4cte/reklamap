@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import logoImage from '../assets/logo.png'
+import logoTextImage from '../assets/logo-text.png'
 
 const currentYear = new Date().getFullYear()
 
@@ -128,8 +128,7 @@ const handleHomeClick = () => {
       <div class="footer-content">
         <div class="footer-section brand-section">
           <div class="brand-header">
-            <img :src="logoImage" alt="ReklaMap" class="brand-logo" />
-            <h3>ReklaMap</h3>
+            <img :src="logoTextImage" alt="ReklaMap" class="brand-logo" />
           </div>
           <p class="footer-description">
             Platforma do wynajmu powierzchni reklamowych w całej Polsce.
@@ -279,8 +278,8 @@ const handleHomeClick = () => {
 }
 
 .brand-logo {
-  width: 60px;
-  height: 60px;
+  height: 64px;
+  width: auto;
   object-fit: contain;
 }
 

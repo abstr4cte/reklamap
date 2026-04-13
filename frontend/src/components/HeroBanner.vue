@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
-import bannerImage from '../assets/banner.jpg'
+import bannerImage from '../assets/banner.png'
 import { useSearchStore, type LocationSuggestion, popularLocations, variantLabels } from '../stores/useSearchStore'
 import { type FilterParams, DEFAULT_FILTERS } from '../types/filters'
 

@@ -20,8 +20,8 @@
         }
 
         .header-logo {
-            width: 60px;
-            height: 60px;
+            height: 52px;
+            width: auto;
             flex-shrink: 0;
         }
 
@@ -138,7 +138,7 @@
 
 <body>
     <div class="header">
-        <img src="{{ public_path('logo.png') }}" alt="ReklaMap" class="header-logo" />
+        <img src="{{ public_path('logo-text.png') }}" alt="ReklaMap" class="header-logo" />
         <div class="header-content">
             <div class="title">{{ $advertisement->title }}</div>
             <div class="price">
