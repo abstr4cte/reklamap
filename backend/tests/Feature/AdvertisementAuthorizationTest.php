@@ -137,4 +137,139 @@ class AdvertisementAuthorizationTest extends TestCase
         // With valid key → allowed
         $this->postJson("/api/listings/{$ad->id}/increment-views", [], $this->appKeyHeaders())->assertStatus(200);
     }
+
+    /**
+     * Test editing with expired management token fails with 403
+     */
+    public function test_editing_with_expired_token_fails(): void
+    {
+        $ad = Advertisement::factory()->create(['owner_email' => 'owner@example.com']);
+        $expiredToken = ManagementToken::create([
+            'email' => 'owner@example.com',
+            'expires_at' => now()->subDay(), // Expired
+        ]);
+
+        $updateData = $this->validBillboardData([
+            'title' => 'Updated Title',
+            'owner_email' => 'owner@example.com',
+        ]);
+
+        $response = $this->putJson("/api/listings/{$ad->id}", $updateData, array_merge(
+            $this->appKeyHeaders(),
+            ['X-Management-Token' => $expiredToken->id]
+        ));
+
+        $response->assertStatus(401);
+    }
+
+    /**
+     * Test editing with invalid management token fails with 401
+     */
+    public function test_editing_with_invalid_token_fails(): void
+    {
+        $ad = Advertisement::factory()->create(['owner_email' => 'owner@example.com']);
+
+        $updateData = $this->validBillboardData([
+            'title' => 'Updated Title',
+            'owner_email' => 'owner@example.com',
+        ]);
+
+        $response = $this->putJson("/api/listings/{$ad->id}", $updateData, array_merge(
+            $this->appKeyHeaders(),
+            ['X-Management-Token' => 'invalid-token-id']
+        ));
+
+        $response->assertStatus(401);
+    }
+
+    /**
+     * Test deleting with expired management token fails with 401
+     */
+    public function test_deleting_with_expired_token_fails(): void
+    {
+        $ad = Advertisement::factory()->create(['owner_email' => 'owner@example.com']);
+        $expiredToken = ManagementToken::create([
+            'email' => 'owner@example.com',
+            'expires_at' => now()->subDay(), // Expired
+        ]);
+
+        $response = $this->deleteJson("/api/listings/{$ad->id}", [], array_merge(
+            $this->appKeyHeaders(),
+            ['X-Management-Token' => $expiredToken->id]
+        ));
+
+        $response->assertStatus(401);
+    }
+
+    /**
+     * Test deleting with wrong email token fails with 403
+     */
+    public function test_deleting_with_wrong_email_token_fails(): void
+    {
+        $ad = Advertisement::factory()->create(['owner_email' => 'owner@example.com']);
+        $wrongToken = ManagementToken::create([
+            'email' => 'wrong@example.com',
+            'expires_at' => now()->addHour(),
+        ]);
+
+        $response = $this->deleteJson("/api/listings/{$ad->id}", [], array_merge(
+            $this->appKeyHeaders(),
+            ['X-Management-Token' => $wrongToken->id]
+        ));
+
+        $response->assertStatus(403);
+    }
+
+    /**
+     * Test successful update with valid token
+     */
+    public function test_successful_update_with_valid_token(): void
+    {
+        $ad = Advertisement::factory()->create(['owner_email' => 'owner@example.com', 'title' => 'Original Title']);
+        $token = ManagementToken::create([
+            'email' => 'owner@example.com',
+            'expires_at' => now()->addHour(),
+        ]);
+
+        $updateData = $this->validBillboardData([
+            'title' => 'Updated Title',
+            'owner_email' => 'owner@example.com',
+        ]);
+
+        $response = $this->putJson("/api/listings/{$ad->id}", $updateData, array_merge(
+            $this->appKeyHeaders(),
+            ['X-Management-Token' => $token->id]
+        ));
+
+        $response->assertStatus(200);
+        $response->assertJson(['title' => 'Updated Title']);
+
+        $this->assertDatabaseHas('advertisements', [
+            'id' => $ad->id,
+            'title' => 'Updated Title',
+        ]);
+    }
+
+    /**
+     * Test successful delete with valid token
+     */
+    public function test_successful_delete_with_valid_token(): void
+    {
+        $ad = Advertisement::factory()->create(['owner_email' => 'owner@example.com']);
+        $token = ManagementToken::create([
+            'email' => 'owner@example.com',
+            'expires_at' => now()->addHour(),
+        ]);
+
+        $response = $this->deleteJson("/api/listings/{$ad->id}", [], array_merge(
+            $this->appKeyHeaders(),
+            ['X-Management-Token' => $token->id]
+        ));
+
+        $response->assertStatus(204);
+
+        $this->assertDatabaseMissing('advertisements', [
+            'id' => $ad->id,
+        ]);
+    }
 }

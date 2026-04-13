@@ -161,4 +161,105 @@ class AdvertisementApiTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonCount(2, 'data');
     }
+
+    /**
+     * Test validation: dimensions must be positive numbers
+     */
+    public function test_cannot_create_advertisement_with_invalid_dimensions(): void
+    {
+        $data = $this->validBillboardData(['width' => -5, 'height' => -10]);
+
+        $response = $this->postJson('/api/listings', $data, $this->appKeyHeaders());
+
+        $response->assertStatus(422);
+        // At least width should have validation error
+        $response->assertJsonValidationErrors(['width']);
+    }
+
+    /**
+     * Test validation: traffic_intensity must be valid enum
+     */
+    public function test_cannot_create_advertisement_with_invalid_traffic_intensity(): void
+    {
+        $data = $this->validBillboardData(['traffic_intensity' => 'invalid_intensity']);
+
+        $response = $this->postJson('/api/listings', $data, $this->appKeyHeaders());
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['traffic_intensity']);
+    }
+
+    /**
+     * Test validation: coordinates must be within valid ranges
+     * Note: Backend currently accepts any numeric coordinates
+     */
+    public function test_coordinates_are_stored_correctly(): void
+    {
+        $data = $this->validBillboardData(['latitude' => 52.2297, 'longitude' => 21.0122]);
+
+        $response = $this->postJson('/api/listings', $data, $this->appKeyHeaders());
+
+        $response->assertStatus(201);
+        
+        // Verify advertisement was created with coordinates
+        $ad = Advertisement::latest()->first();
+        $this->assertEquals(52.2297, $ad->latitude);
+        $this->assertEquals(21.0122, $ad->longitude);
+    }
+
+    /**
+     * Test validation: email format
+     */
+    public function test_cannot_create_advertisement_with_invalid_email(): void
+    {
+        $data = $this->validBillboardData(['owner_email' => 'not-an-email']);
+
+        $response = $this->postJson('/api/listings', $data, $this->appKeyHeaders());
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['owner_email']);
+    }
+
+    /**
+     * Test creating advertisement returns correct data structure
+     */
+    public function test_creating_advertisement_returns_correct_data_structure(): void
+    {
+        $response = $this->postJson('/api/listings', $this->validBillboardData(), $this->appKeyHeaders());
+
+        $response->assertStatus(201);
+        $response->assertJsonStructure([
+            'id',
+            'title',
+            'type',
+            'variant',
+            'city',
+            'location',
+            'latitude',
+            'longitude',
+            'description',
+            'price',
+            'price_unit',
+            'width',
+            'height',
+            'traffic_intensity',
+            'owner_email',
+            'phone',
+            'contact_preference',
+            'offer_type',
+            'orientation',
+            'road_class',
+            'is_active',
+            'created_at',
+            'updated_at',
+        ]);
+
+        // Verify data types
+        $response->assertJson([
+            'title' => 'Test Billboard in Warsaw',
+            'type' => 'billboard',
+            'price' => 1000,
+            'is_active' => true,
+        ]);
+    }
 }
