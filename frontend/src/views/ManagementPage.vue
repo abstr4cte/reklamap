@@ -23,7 +23,13 @@ import { slugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import { useSearchStore } from '../stores/useSearchStore'
 import { filterWaterFeatures } from '../services/locationService'
+import { useSeo } from '../composables/useSeo'
 
+useSeo({
+  title: 'Panel zarządzania ogłoszeniami - ReklaMap',
+  description: 'Zarządzaj swoimi ogłoszeniami powierzchni reklamowych na platformie ReklaMap.',
+  noindex: true,
+})
 
 const router = useRouter()
 const route = useRoute()
