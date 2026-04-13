@@ -1,177 +1,154 @@
 # Backend Tests - ReklaMap
 
-## ✅ Status: 19 testów passing (Unit tests complete)
+## Status: 96 testów passing
 
 ```bash
 php artisan test
 ```
 
 ```
-Tests:    19 passed (Unit)
-Duration: ~1s
+Tests:    96 passed (401 assertions)
+Duration: ~93s
 ```
 
 ---
 
-## 🎯 Co jest testowane?
+## Struktura testów
 
-### ✅ Unit Tests (18 testów) - 100% passing
-
-#### **1. Advertisement Model Tests** (9 testów)
-- Daily stats calculation (total views, clicks)
-- Surface area calculation (LED screens, billboards)
-- Price per m² calculation
-- Filtering by status
-- Required fields validation
-- LED dimensions (stored in meters, not mm)
-- Optional fields (can be null)
-- Price validation (numeric, positive)
-
-#### **2. AdvertisementDailyStat Model Tests** (8 testów)
-- Creating daily stats for today
-- Incrementing views
-- Incrementing phone clicks
-- Incrementing email clicks
-- Getting stats for last 30 days
-- Calculating total stats across days
-- Separate stats per advertisement
-- Stats cannot be negative
-
-### ⏳ Feature Tests (16 testów) - Needs API authentication setup
-
-API endpoint tests require proper authentication middleware configuration.  
-Current status: **Needs backend route/middleware adjustments**
+```
+backend/tests/
+├── Feature/
+│   ├── AdvertisementApiTest.php           # CRUD endpoints (14 testów)
+│   ├── AdvertisementAuthorizationTest.php # Bezpieczeństwo / tokeny (11 testów)
+│   ├── AdvertisementStatsTest.php         # Statystyki views/clicks (9 testów)
+│   ├── BlogTest.php                       # Blog API (10 testów)
+│   ├── ManagementTest.php                 # Tokeny zarządzania (13 testów)
+│   ├── PdfGenerationTest.php              # Generowanie PDF (10 testów)
+│   ├── SearchAlertTest.php                # Alerty wyszukiwania (10 testów)
+│   └── ExampleTest.php
+├── Unit/
+│   ├── AdvertisementTest.php              # Logika modelu (9 testów)
+│   ├── AdvertisementDailyStatTest.php     # Logika statystyk (8 testów)
+│   └── ExampleTest.php
+├── TestCase.php
+└── README.md
+```
 
 ---
 
-## 🚀 Jak uruchomić testy?
+## Co jest testowane?
+
+### Unit Tests (18 testów)
+
+**AdvertisementTest.php**
+- Obliczanie sum statystyk dziennych
+- Obliczanie powierzchni (LED, billboard)
+- Obliczanie ceny za m²
+- Filtrowanie po statusie
+- Wymagane pola modelu
+- Wymiary LED w metrach (nie mm)
+- Opcjonalne pola mogą być null
+- Cena numeryczna i dodatnia
+
+**AdvertisementDailyStatTest.php**
+- Tworzenie rekordu dla dzisiejszego dnia
+- Inkrementacja views, phone_clicks, email_clicks
+- Statystyki ostatnich 30 dni
+- Agregacja sum z wielu dni
+- Oddzielne statystyki per ogłoszenie
+- Statystyki nie mogą być ujemne
+
+### Feature Tests (78 testów)
+
+**AdvertisementApiTest.php** — tworzenie, pobieranie, walidacja ogłoszeń
+- Tworzenie z poprawnymi danymi
+- Wymiary LED zapisywane w metrach
+- Walidacja pól (cena, wymiary, typ, email)
+- Pobieranie ogłoszenia po ID
+- Lista tylko aktywnych ogłoszeń
+- Poprawna struktura odpowiedzi
+
+**AdvertisementAuthorizationTest.php** — middleware X-App-Key i management token
+- Wymagany nagłówek X-App-Key
+- Edycja/usuwanie wymaga tokenu zarządzania
+- Wygaśnięty token zwraca 401
+- Nieprawidłowy / nieswój token zwraca 401
+- Udana edycja i usunięcie z poprawnym tokenem
+
+**AdvertisementStatsTest.php** — stats endpoints
+- Inkrementacja views tworzy rekord dzienny
+- Rate limiting inkrementacji
+- Inkrementacja phone_clicks i email_clicks
+- GET stats zwraca podsumowanie
+- Agregacja przez wiele dni
+- 404 dla nieistniejącego ogłoszenia
+
+**BlogTest.php** — API blogów
+- Lista opublikowanych postów
+- Posty draft nie są zwracane
+- Pobieranie po slug
+- 404 dla nieistniejącego / draft posta
+- Filtrowanie po kategorii
+- Kolejność po published_at
+- Szacowanie czasu czytania
+- Wymagany X-App-Key
+
+**ManagementTest.php** — tokeny zarządzania (bezhasłowy auth)
+- Wysłanie linku zarządzania na email
+- Wysłanie usuwa stare tokeny
+- Rate limiting wysyłania linku
+- Walidacja poprawnego tokenu
+- Token wygasły / nieistniejący zwraca 401
+- Token zwraca statystyki 30 dni
+- Token zwraca tylko własne ogłoszenia
+- Token wygasa po 30 dniach
+
+**PdfGenerationTest.php** — generowanie PDF przez DomPDF
+- PDF jednego ogłoszenia
+- PDF porównania wielu ogłoszeń
+- 404 dla nieistniejącego ogłoszenia
+- Poprawność danych w PDF
+- Różne typy ogłoszeń
+- Wymagany X-App-Key
+
+**SearchAlertTest.php** — alerty email
+- Tworzenie alertu z filtrami
+- Tworzenie z minimalnymi danymi
+- Duplikat alertu — informacja zamiast błędu
+- Wiele alertów z różnymi filtrami
+- Walidacja email (wymagany, format)
+- Wypisanie przez token
+- Rate limiting
+- Filtry zapisywane jako JSON
+
+---
+
+## Uruchomienie testów
 
 ```bash
-cd /var/www/html/reklamap/backend
+cd backend
 
 # Wszystkie testy
 php artisan test
 
-# Tylko Unit tests (100% passing)
+# Tylko Unit
 php artisan test --testsuite=Unit
 
-# Z pokryciem kodu
-php artisan test --coverage
+# Tylko Feature
+php artisan test --testsuite=Feature
 
-# Z szczegółami
+# Jeden plik
+php artisan test tests/Feature/AdvertisementApiTest.php
+
+# Z detalami
 php artisan test --testdox
 ```
 
 ---
 
-## 📁 Struktura testów
+## Konfiguracja
 
-```
-backend/tests/
-├── Feature/                                    # API endpoint tests
-│   ├── AdvertisementApiTest.php               # CRUD operations (10 testów)
-│   ├── AdvertisementAuthorizationTest.php     # Security tests (6 testów)
-│   └── ExampleTest.php
-├── Unit/                                       # Business logic tests
-│   ├── AdvertisementTest.php                  # Model logic (9 testów)
-│   ├── AdvertisementDailyStatTest.php         # Stats logic (8 testów)
-│   └── ExampleTest.php
-├── TestCase.php                                # Base test class
-└── README.md                                   # Ten plik
-```
-
----
-
-## 🔬 Co testują Unit tests?
-
-### AdvertisementTest.php
-
-**1. Daily Stats Calculation**
-```php
-// Test: daily_stats_calculates_total_views_correctly
-// Sprawdza czy suma views z daily_stats jest poprawna
-$stats->sum('views') === 300 // ✅
-```
-
-**2. Surface Area Calculation**
-```php
-// Test: surface_area_calculation_for_led_screen
-// LED: 2.5m × 1.5m = 3.75m²
-$surfaceArea === 3.75 // ✅
-```
-
-**3. Price per m² Calculation**
-```php
-// Test: price_per_square_meter_calculation
-// 3000 PLN / 18m² = 166.67 PLN/m²
-round($pricePerSqm, 2) === 166.67 // ✅
-```
-
-**4. LED Dimensions Validation**
-```php
-// Test: led_screen_dimensions_are_in_meters
-// Wymiary powinny być w metrach (nie mm)
-$ad->width < 100 // ✅ (nie 2500mm)
-```
-
-### AdvertisementDailyStatTest.php
-
-**1. Creating Daily Stats**
-```php
-// Test: creates_daily_stat_for_today_if_not_exists
-// Tworzy rekord dla dzisiejszego dnia jeśli nie istnieje
-$stat->views === 0 // ✅ (initial)
-```
-
-**2. Incrementing Stats**
-```php
-// Test: can_increment_views
-$stat->increment('views', 3)
-$stat->views === 3 // ✅
-```
-
-**3. Stats Aggregation**
-```php
-// Test: calculates_total_stats_correctly
-// Suma z wielu dni
-$totalViews = $stats->sum('views') // 300 ✅
-$totalClicks = $stats->sum('phone_clicks') + $stats->sum('email_clicks') // 25 ✅
-```
-
----
-
-## 🐛 Bugi które testy wyłapują
-
-### Bug #1: Daily Stats Calculation Error
-**Problem:** Suma views była źle liczona  
-**Test:** `test_daily_stats_calculates_total_views_correctly`  
-**Status:** ✅ Chroniony
-
-### Bug #2: Surface Area dla LED (mm vs m)
-**Problem:** Obliczanie powierzchni używało mm zamiast m  
-**Test:** `test_surface_area_calculation_for_led_screen`  
-**Status:** ✅ Chroniony
-
-### Bug #3: Price per m² Division by Zero
-**Problem:** Dzielenie przez 0 gdy brak wymiarów  
-**Test:** `test_price_per_square_meter_calculation`  
-**Status:** ✅ Chroniony
-
-### Bug #4: Negative Stats Values
-**Problem:** Stats mogły być ujemne  
-**Test:** `test_stats_cannot_be_negative`  
-**Status:** ✅ Chroniony
-
-### Bug #5: Stats Mixed Between Ads
-**Problem:** Statystyki z różnych ogłoszeń się mieszały  
-**Test:** `test_stats_are_separate_per_advertisement`  
-**Status:** ✅ Chroniony
-
----
-
-## 🔧 Konfiguracja
-
-### Test Database (SQLite in-memory)
+Testy używają SQLite in-memory (szybkie, izolowane):
 
 ```xml
 <!-- phpunit.xml -->
@@ -179,64 +156,11 @@ $totalClicks = $stats->sum('phone_clicks') + $stats->sum('email_clicks') // 25 �
 <env name="DB_DATABASE" value=":memory:"/>
 ```
 
-**Korzyści:**
-- ✅ Szybkie (wszystko w pamięci)
-- ✅ Izolowane (każdy test ma czystą bazę)
-- ✅ Nie trzeba setupować test database
-
-### Factories
-
-```php
-// database/factories/AdvertisementFactory.php
-Advertisement::factory()->create();
-Advertisement::factory()->ledScreen()->create();
-Advertisement::factory()->billboardHighTraffic()->create();
-```
+Każdy test z `RefreshDatabase` zaczyna z czystą bazą.
 
 ---
 
-## 📊 Pokrycie kodu
-
-| Model | Metody | Coverage |
-|-------|--------|----------|
-| Advertisement | Core logic | ✅ 80% |
-| AdvertisementDailyStat | All methods | ✅ 100% |
-| Total | | ✅ 85% |
-
----
-
-## 🎓 Jak dodać nowy test?
-
-### Unit Test (Model Logic)
-
-```php
-// tests/Unit/MyModelTest.php
-<?php
-
-namespace Tests\Unit;
-
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-class MyModelTest extends TestCase
-{
-    use RefreshDatabase;
-
-    public function test_my_feature(): void
-    {
-        // Arrange
-        $model = MyModel::factory()->create();
-        
-        // Act
-        $result = $model->myMethod();
-        
-        // Assert
-        $this->assertEquals('expected', $result);
-    }
-}
-```
-
-### Feature Test (API Endpoint)
+## Dodawanie nowych testów
 
 ```php
 // tests/Feature/MyApiTest.php
@@ -245,83 +169,9 @@ public function test_api_endpoint(): void
     $response = $this->postJson('/api/endpoint', [
         'data' => 'value'
     ], [
-        'X-Internal-Key' => config('app.internal_api_key')
+        'X-App-Key' => config('app.internal_app_key')
     ]);
-    
+
     $response->assertStatus(201);
-    $response->assertJson(['success' => true]);
 }
 ```
-
----
-
-## 🆘 Troubleshooting
-
-### Problem: "Column not found"
-**Rozwiązanie:** Sprawdź czy Factory używa prawidłowych kolumn
-
-### Problem: "Tests use MySQL instead of SQLite"
-**Rozwiązanie:** 
-```bash
-php artisan config:clear
-php artisan test --env=testing
-```
-
-### Problem: "CSRF token mismatch"
-**Rozwiązanie:** Testy automatycznie wyłączają CSRF (`TestCase.php`)
-
----
-
-## 🎯 Roadmap
-
-### ✅ Faza 1: Unit Tests (DONE)
-- [x] Advertisement model tests (9 testów)
-- [x] AdvertisementDailyStat tests (8 testów)
-- [x] Factory setup
-
-### ⏳ Faza 2: Feature Tests (In Progress)
-- [x] Test structure created (16 testów)
-- [ ] Fix authentication middleware for tests
-- [ ] Implement proper API key validation in tests
-
-### 🔜 Faza 3: Integration Tests
-- [ ] Full CRUD flow tests
-- [ ] Daily stats integration with views/clicks
-- [ ] Email notifications
-
----
-
-## 💡 Best Practices
-
-### ✅ DO:
-- Use factories for test data
-- Use `RefreshDatabase` trait
-- Test business logic, not framework
-- Write descriptive test names
-- Test edge cases (null, 0, negative)
-
-### ❌ DON'T:
-- Don't test Laravel framework itself
-- Don't use real database for tests
-- Don't hardcode test data
-- Don't test implementation details
-- Don't skip edge cases
-
----
-
-## 📈 Metryki
-
-```
-Unit Tests:     18 passed ✅
-Feature Tests:  Needs setup ⏳
-Total Coverage: 85% (models)
-Execution Time: ~1s
-```
-
----
-
-## 🔗 Related Documentation
-
-- Frontend Tests: `/frontend/tests/README.md`
-- Test Coverage: `/TEST_COVERAGE.md`
-- Testing Summary: `/TESTING_SUMMARY.md`
