@@ -107,7 +107,7 @@ class StorageController extends Controller
                     ]);
                 } catch (\Exception $e2) {
                     Log::error('Fallback storage also failed: ' . $e2->getMessage());
-                    return response()->json(['error' => 'Nie można przetworzyć zdjęcia: ' . $e->getMessage()], 500);
+                    return response()->json(['error' => 'Nie można przetworzyć zdjęcia. Spróbuj ponownie lub użyj innego pliku.'], 500);
                 }
             }
         }

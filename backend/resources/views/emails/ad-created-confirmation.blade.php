@@ -1,106 +1,171 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="pl">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dziękujemy za dodanie ogłoszenia!</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twoje ogłoszenie zostało opublikowane — ReklaMap</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .email-container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            background-color: #ffffff;
         }
-
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
+            padding: 40px 30px;
             text-align: center;
-            border-radius: 8px 8px 0 0;
         }
-
         .header-content {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0;
         }
-
-        .header img {
+        .logo-image {
             width: 50px;
             height: 50px;
             object-fit: contain;
             margin-right: 15px;
         }
-
-        .header h1 {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            color: #111827 !important;
+        .logo {
             font-size: 28px;
+            font-weight: 800;
+            color: #111827;
+            margin: 0;
+            letter-spacing: -0.5px;
         }
-
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            margin: 8px 0 0 0;
+        }
         .content {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px 30px;
         }
-
+        .success-badge {
+            display: inline-block;
+            background-color: #d1fae5;
+            color: #065f46;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .greeting {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 20px 0;
+        }
         .button {
             display: inline-block;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white !important;
+            color: #ffffff !important;
             text-decoration: none !important;
-            padding: 12px 25px;
+            padding: 14px 32px;
             border-radius: 8px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-
-        .footer {
+            font-weight: 600;
+            font-size: 16px;
+            margin: 10px 0;
             text-align: center;
-            margin-top: 30px;
-            font-size: 12px;
-            color: #666;
+        }
+        .button-secondary {
+            display: inline-block;
+            background: #ffffff;
+            color: #667eea !important;
+            text-decoration: none !important;
+            padding: 13px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 10px 0;
+            text-align: center;
+            border: 2px solid #667eea;
+        }
+        .divider {
+            height: 1px;
+            background-color: #e5e7eb;
+            margin: 30px 0;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer-text {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0 0 15px 0;
+        }
+        .footer-link {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 14px;
+        }
+        @media only screen and (max-width: 600px) {
+            .content { padding: 30px 20px; }
+            .header { padding: 30px 20px; }
+            .greeting { font-size: 20px; }
         }
     </style>
 </head>
-
 <body>
-    <div class="header">
-        <div class="header-content">
-            <img src="{{ asset('logo.png') }}" alt="ReklaMap" />
-            <h1 style="color: white; margin: 0;">ReklaMap</h1>
-        </div>
-    </div>
-
-    <div class="content">
-        <h2>Twoje ogłoszenie zostało opublikowane!</h2>
-
-        <p>Witaj!</p>
-
-        <p>Dziękujemy za dodanie ogłoszenia w serwisie ReklaMap. Cieszymy się, że jesteś z nami!</p>
-
-        <p>Możesz zobaczyć swoje ogłoszenie, klikając w poniższy przycisk:</p>
-
-        <div style="text-align: center;">
-            <a href="{{ env('FRONTEND_URL', 'https://reklamap.pl') }}{{ $ad->full_url }}" class="button">Zobacz swoje ogłoszenie</a>
+    <div class="email-container">
+        <div class="header">
+            <div class="header-content">
+                <img src="{{ asset('logo.png') }}" alt="ReklaMap" class="logo-image" />
+                <h1 class="logo">ReklaMap</h1>
+            </div>
+            <p class="tagline">Portal powierzchni reklamowych</p>
         </div>
 
-        <p>Chcesz zarządzać swoimi ogłoszeniami? Przejdź do panelu zarządzania, gdzie możesz je edytować lub usunąć.</p>
+        <div class="content">
+            <div class="success-badge">✓ Ogłoszenie opublikowane</div>
+            <h2 class="greeting">Twoje ogłoszenie jest już online!</h2>
 
-        <div style="text-align: center;">
-            <a href="{{ env('FRONTEND_URL', 'https://reklamap.pl') }}/zarzadzaj" class="button">Zarządzaj ogłoszeniami</a>
+            <p style="color: #4b5563; line-height: 1.6; margin: 0 0 20px 0;">
+                Dziękujemy za dodanie ogłoszenia w serwisie ReklaMap. Cieszymy się, że jesteś z nami!
+            </p>
+
+            <div style="text-align: center;">
+                <a href="{{ env('FRONTEND_URL', 'https://reklamap.pl') }}{{ $ad->full_url }}" class="button">Zobacz swoje ogłoszenie</a>
+            </div>
+
+            <div class="divider"></div>
+
+            <p style="color: #4b5563; line-height: 1.6; margin: 0 0 16px 0;">
+                Chcesz zarządzać swoimi ogłoszeniami? W panelu zarządzania możesz je edytować, dezaktywować lub usunąć.
+            </p>
+
+            <div style="text-align: center;">
+                <a href="{{ env('FRONTEND_URL', 'https://reklamap.pl') }}/zarzadzaj" class="button-secondary">Zarządzaj ogłoszeniami</a>
+            </div>
         </div>
-    </div>
 
-    <div class="footer">
-        <p>&copy; {{ date('Y') }} ReklaMap. Wszelkie prawa zastrzeżone.</p>
-        <p>To jest wiadomość automatyczna, prosimy na nią nie odpowiadać.</p>
+        <div class="footer">
+            <p class="footer-text">
+                Ta wiadomość została wysłana automatycznie przez platformę ReklaMap.<br>
+                Nie odpowiadaj na tego maila — to adres noreply.
+            </p>
+            <div>
+                <a href="{{ config('app.url') }}" class="footer-link">Strona główna</a>
+                <a href="{{ config('app.url') }}/kontakt" class="footer-link">Kontakt</a>
+                <a href="{{ config('app.url') }}/regulamin" class="footer-link">Regulamin</a>
+            </div>
+            <p style="color: #9ca3af; font-size: 12px; margin: 20px 0 0 0;">
+                © {{ date('Y') }} ReklaMap. Wszelkie prawa zastrzeżone.
+            </p>
+        </div>
     </div>
 </body>
-
 </html>

@@ -349,7 +349,7 @@ const updateStatus = async (id: string, newStatus: string, availableFrom?: Date 
       }
       toast.value?.add(toastMessage, 'error', 6000);
     } else {
-      toast.value?.add(`Błąd podczas aktualizacji statusu: ${error.message || 'Nieznany błąd'}`, 'error');
+      toast.value?.add('Błąd podczas aktualizacji statusu. Spróbuj ponownie.', 'error');
     }
   }
 }

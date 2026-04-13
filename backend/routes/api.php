@@ -16,8 +16,8 @@ Route::get('listings', [AdvertisementController::class, 'index']);
 Route::get('listings/map-pins', [AdvertisementController::class, 'mapPins']);
 Route::get('listings/{id}', [AdvertisementController::class, 'show']);
 
-// Dodawanie ogłoszeń - rate limit 20/h + reCAPTCHA
-Route::middleware(['throttle:20,60', 'verify.recaptcha'])->post('listings', [AdvertisementController::class, 'store']);
+// Dodawanie ogłoszeń - reCAPTCHA
+Route::middleware('verify.recaptcha')->post('listings', [AdvertisementController::class, 'store']);
 
 Route::get('listings/{id}/similar', [AdvertisementController::class, 'similar']);
 Route::get('listings/{id}/pdf', [AdvertisementController::class, 'generatePdf']);

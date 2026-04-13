@@ -1,147 +1,190 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="pl">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Nowy artykuł na blogu Reklamap</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nowy artykuł na blogu ReklaMap</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .email-container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            background-color: #ffffff;
         }
-
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
+            padding: 40px 30px;
             text-align: center;
-            border-radius: 8px 8px 0 0;
         }
-
         .header-content {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0;
         }
-
-        .header img {
+        .logo-image {
             width: 50px;
             height: 50px;
             object-fit: contain;
             margin-right: 15px;
         }
-
-        .header h1 {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
             color: #111827;
             margin: 0;
-            font-size: 28px;
+            letter-spacing: -0.5px;
         }
-
-        .content {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .blog-preview {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #667eea;
-        }
-
-        .blog-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin: 0 0 10px 0;
-        }
-
-        .blog-excerpt {
-            color: #666;
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
             font-size: 14px;
-            margin: 10px 0;
+            margin: 8px 0 0 0;
         }
-
+        .content {
+            padding: 40px 30px;
+        }
+        .greeting {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 20px 0;
+        }
+        .blog-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 24px 0;
+            background-color: #f8faff;
+        }
+        .blog-info {
+            padding: 24px;
+        }
+        .blog-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .blog-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0 0 12px 0;
+            line-height: 1.4;
+        }
+        .blog-excerpt {
+            color: #4b5563;
+            font-size: 15px;
+            line-height: 1.6;
+            margin: 0;
+        }
         .button {
             display: inline-block;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white !important;
+            color: #ffffff !important;
             text-decoration: none !important;
-            padding: 12px 25px;
+            padding: 14px 32px;
             border-radius: 8px;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 16px;
             margin: 20px 0;
+            text-align: center;
         }
-
+        .divider {
+            height: 1px;
+            background-color: #e5e7eb;
+            margin: 30px 0;
+        }
         .footer {
+            background-color: #f9fafb;
+            padding: 30px;
             text-align: center;
-            margin-top: 30px;
-            font-size: 12px;
-            color: #666;
+            border-top: 1px solid #e5e7eb;
         }
-
-        .unsubscribe {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 11px;
+        .footer-text {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0 0 15px 0;
         }
-
-        .unsubscribe a {
+        .footer-link {
             color: #667eea;
             text-decoration: none;
+            margin: 0 10px;
+            font-size: 14px;
+        }
+        @media only screen and (max-width: 600px) {
+            .content { padding: 30px 20px; }
+            .header { padding: 30px 20px; }
+            .greeting { font-size: 20px; }
         }
     </style>
 </head>
-
 <body>
-    <div class="header">
-        <div class="header-content">
-            <img src="{{ asset('logo.png') }}" alt="ReklaMap" />
-            <h1>ReklaMap</h1>
-        </div>
-    </div>
-
-    <div class="content">
-        <h2>Nowy artykuł na naszym blogu!</h2>
-
-        <p>Witaj!</p>
-
-        <p>Mamy dla Ciebie nowy artykuł na blogu Reklamap, który może Cię zainteresować.</p>
-
-        <div class="blog-preview">
-            <div class="blog-title">{{ $blogPost->title }}</div>
-            <div class="blog-excerpt">
-                {{ $blogPost->content ? substr(strip_tags($blogPost->content), 0, 150) . '...' : 'Przeczytaj artykuł aby dowiedzieć się więcej.' }}
+    <div class="email-container">
+        <div class="header">
+            <div class="header-content">
+                <img src="{{ asset('logo.png') }}" alt="ReklaMap" class="logo-image" />
+                <h1 class="logo">ReklaMap</h1>
             </div>
+            <p class="tagline">Portal powierzchni reklamowych</p>
         </div>
 
-        <p>Kliknij poniżej, aby przeczytać pełny artykuł:</p>
+        <div class="content">
+            <h2 class="greeting">Nowy artykuł na blogu!</h2>
 
-        <div style="text-align: center;">
-            <a href="{{ $blogUrl }}" class="button">Czytaj artykuł</a>
+            <p style="color: #4b5563; line-height: 1.6; margin: 0 0 20px 0;">
+                Mamy dla Ciebie nowy artykuł, który może Cię zainteresować.
+            </p>
+
+            <div class="blog-card">
+                <div class="blog-info">
+                    <div class="blog-label">Nowy artykuł</div>
+                    <h3 class="blog-title">{{ $blogPost->title }}</h3>
+                    <p class="blog-excerpt">
+                        {{ $blogPost->content ? substr(strip_tags($blogPost->content), 0, 180) . '...' : 'Przeczytaj artykuł, aby dowiedzieć się więcej.' }}
+                    </p>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="{{ $blogUrl }}" class="button">Czytaj artykuł</a>
+            </div>
+
+            <div class="divider"></div>
+
+            <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 0;">
+                Masz pytania lub sugestie dotyczące naszych treści? <a href="{{ config('app.url') }}/kontakt" style="color: #667eea; text-decoration: none;">Napisz do nas.</a>
+            </p>
         </div>
 
-        <p>Jeśli masz pytania lub sugestie dotyczące naszych artykułów, daj nam znać!</p>
-    </div>
-
-    <div class="footer">
-        <p>&copy; {{ date('Y') }} ReklaMap. Wszelkie prawa zastrzeżone.</p>
-        <p>To jest wiadomość automatyczna, prosimy na nią nie odpowiadać.</p>
-        @if(isset($unsubscribeToken))
-            <p class="unsubscribe">Nie chcesz otrzymywać tych wiadomości? <a
-                    href="{{ route('newsletter.unsubscribe', ['token' => $unsubscribeToken]) }}">Wypisz się tutaj</a></p>
-        @endif
+        <div class="footer">
+            <p class="footer-text">
+                Ta wiadomość została wysłana automatycznie przez platformę ReklaMap.<br>
+                Nie odpowiadaj na tego maila — to adres noreply.
+            </p>
+            <div>
+                <a href="{{ config('app.url') }}" class="footer-link">Strona główna</a>
+                <a href="{{ config('app.url') }}/blog" class="footer-link">Blog</a>
+                <a href="{{ config('app.url') }}/regulamin" class="footer-link">Regulamin</a>
+            </div>
+            @if(isset($unsubscribeToken))
+            <p style="color: #9ca3af; font-size: 12px; margin: 15px 0 0 0;">
+                Nie chcesz otrzymywać powiadomień o nowych artykułach?
+                <a href="{{ route('newsletter.unsubscribe', ['token' => $unsubscribeToken]) }}" style="color: #9ca3af;">Wypisz się tutaj</a>.
+            </p>
+            @endif
+            <p style="color: #9ca3af; font-size: 12px; margin: 10px 0 0 0;">
+                © {{ date('Y') }} ReklaMap. Wszelkie prawa zastrzeżone.
+            </p>
+        </div>
     </div>
 </body>
-
-
 </html>

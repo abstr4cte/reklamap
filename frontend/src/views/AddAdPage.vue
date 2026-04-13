@@ -1307,7 +1307,7 @@ const handleSubmit = async () => {
       errors.value = newErrors;
       toast.value?.add(toastMessage, 'error', 8000);
     } else {
-      toast.value?.add(error.message || 'Wystąpił nieoczekiwany błąd. Spróbuj ponownie.', 'error');
+      toast.value?.add('Wystąpił nieoczekiwany błąd. Spróbuj ponownie.', 'error');
     }
   }
 }

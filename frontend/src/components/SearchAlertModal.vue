@@ -76,7 +76,7 @@ const handleSubmit = async () => {
       emit('close')
     }, 4000)
   } catch (error: any) {
-    emailError.value = error.message || 'Wystąpił błąd. Spróbuj ponownie później.'
+    emailError.value = 'Wystąpił błąd. Spróbuj ponownie później.'
   } finally {
     isSubmitting.value = false
   }
