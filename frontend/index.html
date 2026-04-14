@@ -32,7 +32,10 @@
         // Maksymalnie jeden reload co 10 sekund, żeby nie zapętlić przy trwałych błędach
         if (last && now - parseInt(last, 10) < 10000) return;
         sessionStorage.setItem(RELOAD_KEY, String(now));
-        window.location.reload(true);
+        // reload(true) jest deprecated i ignorowany w nowoczesnych przeglądarkach —
+        // zamiast tego nawiguj na ten sam URL z timestamp, co wymusza pobranie z serwera
+        var sep = location.search ? '&' : '?';
+        location.replace(location.pathname + location.search + sep + '_v=' + now + (location.hash || ''));
       }, true);
     })();
   </script>
