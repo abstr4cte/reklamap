@@ -1,7 +1,7 @@
 # Instrukcja tworzenia postów blogowych — ReklaMap
 
 Każdy post tworzony na polecenie użytkownika musi spełniać poniższe wymagania.
-Po wygenerowaniu: dodaj slug do `index.md`, zapisz post w `posts/` i dorzuć wpis do seedera.
+Po wygenerowaniu: dodaj slug do `INDEX.md`, zapisz post w `posts/` i dorzuć wpis do seedera.
 
 ---
 
