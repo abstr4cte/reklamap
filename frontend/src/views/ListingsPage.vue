@@ -1335,6 +1335,9 @@ onActivated(() => {
   // onActivated fires after onMounted for keep-alive components, causing a race condition.
   // Only reload data when RE-ACTIVATING from keep-alive cache.
   if (!isInitialized.value) return
+  // Jeśli wracamy z ogłoszenia (jest zapisana pozycja scrolla), dane są w pamięci keep-alive —
+  // nie resetuj strony ani nie pobieraj ponownie, bo skróciłoby to listę i zepsuło scroll.
+  if (sessionStorage.getItem(LISTINGS_SCROLL_KEY)) return
   loadData()
 })
 

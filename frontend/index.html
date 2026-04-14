@@ -17,7 +17,26 @@
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.webmanifest" />
-  
+
+  <!-- Stale deploy guard: jeśli przeglądarka ma stary index.html po deployu,
+       skrypt/CSS z nieistniejącym hashem zwróci 404 (ResourceError).
+       Wykrywamy to i wymuszamy twarde przeładowanie — raz, żeby nie zapętlić. -->
+  <script>
+    (function () {
+      var RELOAD_KEY = '__rm_reload_ts';
+      window.addEventListener('error', function (e) {
+        var tag = e.target && e.target.tagName;
+        if (tag !== 'SCRIPT' && tag !== 'LINK') return;
+        var last = sessionStorage.getItem(RELOAD_KEY);
+        var now = Date.now();
+        // Maksymalnie jeden reload co 10 sekund, żeby nie zapętlić przy trwałych błędach
+        if (last && now - parseInt(last, 10) < 10000) return;
+        sessionStorage.setItem(RELOAD_KEY, String(now));
+        window.location.reload(true);
+      }, true);
+    })();
+  </script>
+
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

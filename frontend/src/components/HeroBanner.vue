@@ -483,6 +483,8 @@ watch(() => searchStore.filters, (newStoreFilters) => {
   }
 
   // Filtry wspólne dla wszystkich typów - NIE synchronizuj ich (użytkownik je ustawił ręcznie)
+  // WYJĄTEK: jeśli wartość w sklepie to wartość domyślna (pusty string/null) — to znaczy że
+  // był reset (np. powrót do strony głównej przez logo), więc synchronizujemy żeby wyczyścić formularz
   const commonFilters = [
     'type',           // Typ
     'keyword',        // Słowo kluczowe
@@ -493,16 +495,20 @@ watch(() => searchStore.filters, (newStoreFilters) => {
     'selectedLocationCoords' // Współrzędne
   ]
 
-  // Update local filters (excluding common filters that user may have set)
+  // Update local filters (excluding common filters that user may have set,
+  // unless the store value is the default — which signals a reset)
   Object.keys(newStoreFilters).forEach(key => {
     const k = key as keyof FilterParams
-    // Skip common filters - they should be preserved when user changes type
-    if (commonFilters.includes(k)) {
+    const storeVal = newStoreFilters[k]
+    const defaultVal = DEFAULT_FILTERS[k as keyof typeof DEFAULT_FILTERS]
+    const isDefault = storeVal === defaultVal || storeVal === null || storeVal === ''
+    // Skip common filters only when they have a non-default value (user set them intentionally)
+    if (commonFilters.includes(k) && !isDefault) {
       return
     }
-    if (filters.value[k] !== newStoreFilters[k]) {
+    if (filters.value[k] !== storeVal) {
       // @ts-ignore
-      filters.value[k] = newStoreFilters[k]
+      filters.value[k] = storeVal
     }
   })
 
