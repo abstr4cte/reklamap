@@ -1,18 +1,16 @@
-const CACHE_VERSION = 'v2'; // Zwiększ przy każdym deploy
+const CACHE_VERSION = '__BUILD_TIMESTAMP__'; // automatycznie zastępowane przez Vite
 const CACHE_NAME = `reklamap-${CACHE_VERSION}`;
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
   '/manifest.webmanifest',
   '/pwa-icon-512.png'
 ];
 
-// Install - cache podstawowe zasoby
+// Install - cache podstawowe zasoby (bez index.html - zawsze serwujemy z sieci)
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(ASSETS_TO_CACHE))
-      .then(() => self.skipWaiting()) // Aktywuj nowy SW natychmiast
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -25,59 +23,59 @@ self.addEventListener('activate', (event) => {
           .filter((name) => name.startsWith('reklamap-') && name !== CACHE_NAME)
           .map((name) => caches.delete(name))
       );
-    }).then(() => self.clients.claim()) // Przejmij kontrolę natychmiast
+    }).then(() => self.clients.claim())
   );
 });
 
-// Fetch - strategia Network First dla JS/CSS, Cache First dla reszty
+// Fetch
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
-  
-  // Omijaj Service Worker dla zewnętrznych zasobów
-  if (url.origin !== self.location.origin) {
-    return;
-  }
 
-  // Omijaj Service Worker dla API
-  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/storage/')) {
-    return;
-  }
+  // Omijaj SW dla zewnętrznych zasobów i API
+  if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/storage/')) return;
 
-  // Network First dla JS/CSS (zawsze pobieraj najnowsze)
-  if (url.pathname.match(/\.(js|css)$/)) {
+  // Network First dla nawigacji (HTML) - zawsze świeży index.html po deployu
+  if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          // Cache nową wersję
           if (response && response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone);
-            });
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
           }
           return response;
         })
-        .catch(() => {
-          // Fallback do cache tylko jeśli network fail
-          return caches.match(event.request);
-        })
+        .catch(() => caches.match('/index.html'))
     );
     return;
   }
 
-  // Cache First dla pozostałych zasobów (obrazy, fonty, itp.)
+  // Network First dla JS/CSS (hashed filenames - zawsze świeże)
+  if (url.pathname.match(/\.(js|css)$/)) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Cache First dla pozostałych zasobów (obrazy, fonty, ikony)
   event.respondWith(
     caches.match(event.request)
-      .then((response) => {
-        if (response) {
-          return response;
-        }
+      .then((cached) => {
+        if (cached) return cached;
         return fetch(event.request).then((response) => {
           if (response && response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone);
-            });
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
           }
           return response;
         });

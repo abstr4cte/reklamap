@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "NODE_OPTIONS='--max-old-space-size=2048' vite build",
-    "postbuild": "cp public/.htaccess dist/.htaccess && cp public/sw.js dist/sw.js",
+    "postbuild": "cp public/.htaccess dist/.htaccess",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",

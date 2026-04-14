@@ -1,10 +1,23 @@
 import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
+import fs from 'fs'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    {
+      name: 'sw-build-timestamp',
+      closeBundle() {
+        const swPath = path.resolve(__dirname, 'dist/sw.js')
+        if (!fs.existsSync(swPath)) return
+        const buildTs = `v${Date.now()}`
+        const content = fs.readFileSync(swPath, 'utf-8')
+        fs.writeFileSync(swPath, content.replace('__BUILD_TIMESTAMP__', buildTs))
+      }
+    }
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
