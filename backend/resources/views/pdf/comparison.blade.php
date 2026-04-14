@@ -16,26 +16,33 @@
         }
 
         .header {
-            text-align: center;
+            width: 100%;
             margin-bottom: 20px;
             border-bottom: 2px solid #e5e7eb;
             padding-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .header-table td {
+            border: none;
+            padding: 0;
+            vertical-align: middle;
         }
 
         .header-logo {
             height: 52px;
             width: auto;
-            flex-shrink: 0;
         }
 
         .header h1 {
             font-size: 24px;
             margin: 0;
             color: #111827;
+            text-align: center;
         }
 
         table {
@@ -87,15 +94,20 @@
             left: 0;
             width: 100%;
             height: 160px;
+            display: table;
+        }
+
+        .img-front-cell {
+            display: table-cell;
             text-align: center;
-            line-height: 160px;
+            vertical-align: middle;
+            width: 100%;
+            height: 160px;
         }
 
         .img-front {
-            vertical-align: middle;
             max-width: 100%;
             max-height: 150px;
-            line-height: normal;
         }
 
         .img-placeholder {
@@ -153,8 +165,17 @@
 
 <body>
     <div class="header">
-        <img src="{{ public_path('logo-text.png') }}" alt="ReklaMap" class="header-logo" />
-        <h1>Porównanie ogłoszeń</h1>
+        <table class="header-table">
+            <tr>
+                <td style="width: 140px;">
+                    <img src="{{ public_path('logo-text.png') }}" alt="ReklaMap" class="header-logo" />
+                </td>
+                <td>
+                    <h1>Porównanie ogłoszeń</h1>
+                </td>
+                <td style="width: 140px;"></td>
+            </tr>
+        </table>
     </div>
 
     {{-- Sekcja ze zdjęciami — poza tabelą, nie powtarza się przy łamaniu stron --}}
@@ -191,7 +212,9 @@
                             @if($adImages[$ad->id])
                                 <div class="img-bg" style="background-image: url('{{ $adImages[$ad->id] }}');"></div>
                                 <div class="img-front-wrapper">
-                                    <img src="{{ $adImages[$ad->id] }}" class="img-front">
+                                    <div class="img-front-cell">
+                                        <img src="{{ $adImages[$ad->id] }}" class="img-front">
+                                    </div>
                                 </div>
                             @else
                                 <div class="img-placeholder">Brak zdjęcia</div>

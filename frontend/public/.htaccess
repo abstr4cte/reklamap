@@ -25,7 +25,16 @@ Require valid-user
   AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
 </IfModule>
 
-# Cache control for static assets
+# index.html must never be cached - it references hashed chunks that change on every deploy
+<Files "index.html">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </IfModule>
+</Files>
+
+# Cache control for static assets (safe because filenames include content hash)
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType text/css "access plus 1 year"

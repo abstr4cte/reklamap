@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, watch, ref, unref, type Ref } from 'vue'
+import { onMounted, onUnmounted, onActivated, watch, ref, unref, type Ref } from 'vue'
 
 interface SeoOptions {
   title?: string
@@ -250,6 +250,10 @@ export function useSeo(options: SeoOptions | Ref<SeoOptions>) {
   updateMetaTags()
 
   onMounted(() => {
+    updateMetaTags()
+  })
+
+  onActivated(() => {
     updateMetaTags()
   })
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, onDeactivated } from 'vue'
 import { storeToRefs } from 'pinia'
 import AdCard from './AdCard.vue'
 import type { Advertisement } from '../types'
@@ -167,6 +167,11 @@ onUnmounted(() => {
     window.removeEventListener('resize', checkIfMobile)
     window.removeEventListener('scroll', handleScroll)
   }
+})
+
+onDeactivated(() => {
+  showMapButton.value = false
+  showMapButtonDesktop.value = false
 })
 </script>
 

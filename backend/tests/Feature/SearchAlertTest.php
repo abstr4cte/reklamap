@@ -162,7 +162,8 @@ class SearchAlertTest extends TestCase
 
         $response = $this->get('/api/search-alerts/unsubscribe/test-token-123456789', $this->appKeyHeaders());
 
-        $response->assertStatus(200);
+        $response->assertStatus(302);
+        $response->assertRedirect();
 
         $this->assertDatabaseMissing('search_alerts', [
             'id' => $alert->id,
