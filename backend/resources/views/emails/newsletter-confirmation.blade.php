@@ -23,7 +23,7 @@
             text-align: center;
         }
         .logo-image {
-            height: 50px;
+            height: 75px;
             width: auto;
             object-fit: contain;
         }
@@ -95,8 +95,8 @@
             margin: 0 0 15px 0;
         }
         .footer-link {
-            color: #667eea;
-            text-decoration: none;
+            color: #1a0dab;
+            text-decoration: underline;
             margin: 0 10px;
             font-size: 14px;
         }

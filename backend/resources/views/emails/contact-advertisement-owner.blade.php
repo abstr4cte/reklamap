@@ -22,14 +22,8 @@
             padding: 40px 30px;
             text-align: center;
         }
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
-        }
         .logo-image {
-            height: 50px;
+            height: 75px;
             width: auto;
             object-fit: contain;
         }
@@ -142,8 +136,8 @@
             margin: 15px 0;
         }
         .footer-link {
-            color: #667eea;
-            text-decoration: none;
+            color: #1a0dab;
+            text-decoration: underline;
             margin: 0 10px;
             font-size: 14px;
         }
@@ -169,10 +163,9 @@
     <div class="email-container">
         <!-- Header -->
         <div class="header">
-            <div class="header-content">
-                <img src="{{ asset('logo-text.png') }}" alt="ReklaMap" class="logo-image" />
+            <img src="{{ asset('logo-text.png') }}" alt="ReklaMap" class="logo-image" />
                 
-            </div>
+            
             <p class="tagline">Portal powierzchni reklamowych</p>
         </div>
 
