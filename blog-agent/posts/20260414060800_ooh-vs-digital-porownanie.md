@@ -4,7 +4,7 @@ slug: "ooh-vs-digital-porownanie"
 category: rynek-ooh
 meta_description: "OOH vs digital — porównanie skuteczności, kosztów i zasięgu. Kiedy wybrać reklamę zewnętrzną, a kiedy digital? Praktyczny przewodnik dla reklamodawców."
 image_alt: "Porównanie reklamy outdoor OOH z reklamą digital — billboard obok tabletu z reklamą internetową"
-image_prompt: "Split image comparing traditional billboard advertising with digital advertising on screens, clean comparison concept, professional illustration, no text on image"
+image_prompt: "A large billboard on a city street next to a person holding a smartphone with an ad on the screen, urban environment, natural daylight, realistic photography, no text on image"
 keywords:
   - OOH vs digital
   - reklama zewnętrzna vs internet

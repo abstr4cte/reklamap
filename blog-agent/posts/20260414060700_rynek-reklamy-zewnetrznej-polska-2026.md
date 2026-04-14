@@ -4,7 +4,7 @@ slug: "rynek-reklamy-zewnetrznej-polska-2026"
 category: rynek-ooh
 meta_description: "Rynek reklamy zewnętrznej w Polsce 2026 — aktualne dane, trendy i prognozy. Sprawdź jak rozwija się OOH, DOOH i jakie zmiany czekają branżę reklamową."
 image_alt: "Wykres wzrostu rynku reklamy zewnętrznej OOH w Polsce w 2026 roku"
-image_prompt: "Abstract data visualization showing advertising market growth, clean infographic style, professional business illustration, no text on image"
+image_prompt: "Aerial view of a modern city center with multiple outdoor advertising billboards and LED screens visible on buildings and streets, daytime, realistic photography, no text on image"
 keywords:
   - rynek reklamy OOH Polska
   - reklama zewnętrzna statystyki 2026

@@ -19,6 +19,7 @@ class BlogPost extends Model
         'user_id',
         'published_at',
         'category',
+        'status',
     ];
 
     protected $attributes = [

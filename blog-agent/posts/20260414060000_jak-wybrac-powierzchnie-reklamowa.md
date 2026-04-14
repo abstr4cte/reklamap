@@ -4,7 +4,7 @@ slug: "jak-wybrac-powierzchnie-reklamowa"
 category: poradniki
 meta_description: "Jak wybrać idealną powierzchnię reklamową? Poznaj kluczowe czynniki — lokalizację, format, natężenie ruchu i budżet. Przewodnik dla reklamodawców."
 image_alt: "Reklamodawca analizujący mapę z lokalizacjami nośników reklamowych"
-image_prompt: "A business person studying a city map with advertising locations marked, professional office setting, flat design illustration, no text on image"
+image_prompt: "A business professional studying a large city map with advertising locations pinned, modern office desk, natural window light, realistic photography, sharp focus, no text on image"
 keywords:
   - powierzchnia reklamowa
   - jak wybrać billboard

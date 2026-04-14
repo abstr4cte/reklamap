@@ -4,7 +4,7 @@ slug: "ile-kosztuje-reklama-outdoor"
 category: poradniki
 meta_description: "Ile kosztuje reklama outdoor w 2026? Sprawdź ceny billboardów, citylightów, ekranów LED i banerów. Cennik i czynniki wpływające na koszt kampanii."
 image_alt: "Tabela z cennikiem różnych typów reklamy outdoor — billboardy, citylighty, ekrany LED"
-image_prompt: "Clean infographic showing advertising costs comparison between billboard, citylight, LED screen and banner, flat design, professional, no text on image"
+image_prompt: "A row of different outdoor advertising formats — billboard, citylight, LED screen and banner — on a busy city street, golden hour light, realistic photography, wide angle, no text on image"
 keywords:
   - ile kosztuje reklama outdoor
   - cena billboardu

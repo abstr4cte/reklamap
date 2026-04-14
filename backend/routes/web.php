@@ -6,7 +6,7 @@ use App\Models\Advertisement;
 use Illuminate\Support\Str;
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json(['status' => 'ok'], 200);
 });
 
 // Sitemap.xml generator with cache

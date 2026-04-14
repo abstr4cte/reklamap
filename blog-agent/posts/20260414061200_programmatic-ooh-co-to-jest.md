@@ -4,7 +4,7 @@ slug: "programmatic-ooh-co-to-jest"
 category: trendy
 meta_description: "Programmatic OOH — co to jest, jak działa i czy warto? Poznaj automatyczny zakup reklamy zewnętrznej, targetowanie i możliwości dla reklamodawców w 2026 roku."
 image_alt: "Dashboard systemu programmatic OOH z mapą nośników reklamowych i danymi kampanii"
-image_prompt: "Computer dashboard showing programmatic advertising interface with data visualizations and city map, modern tech office, clean professional illustration, no text on image"
+image_prompt: "Marketing professional working on a laptop in a modern office with multiple monitors showing campaign analytics, city view through large windows, realistic photography, natural light, no text on image"
 keywords:
   - programmatic OOH
   - automatyzacja reklamy outdoor

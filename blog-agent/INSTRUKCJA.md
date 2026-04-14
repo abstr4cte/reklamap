@@ -58,7 +58,7 @@ Po wygenerowaniu: dodaj slug do `INDEX.md`, zapisz post w `posts/` i dorzuć wpi
 - `meta_description` — max **155 znaków**, zawiera CTA lub wartość dla czytelnika, zawiera słowo kluczowe
 - `slug` — tylko małe litery, myślniki zamiast spacji, bez polskich znaków, max 60 znaków
 - `image_alt` — max **125 znaków**, opisowy tekst obrazka zawierający główne słowo kluczowe, np. *"Billboard przy autostradzie A1 w Łodzi — reklama zewnętrzna"*. Fallback to tytuł posta, ale zawsze podawaj dedykowany alt.
-- `image_prompt` — szczegółowy prompt do wygenerowania grafiki głównej (po angielsku, styl: professional photography or flat design illustration, no text on image)
+- `image_prompt` — szczegółowy prompt do wygenerowania grafiki głównej (po angielsku, zawsze styl: **realistic professional photography**, natural lighting, sharp details, no text on image, no watermarks)
 
 ### Linki wewnętrzne
 - Minimum **2 linki wewnętrzne** — mogą prowadzić do podstron platformy lub innych postów blogowych
