@@ -12,11 +12,18 @@ class EditBlogPost extends EditRecord
 {
     protected static string $resource = BlogPostResource::class;
 
+    private string $statusBeforeSave = '';
+
     protected function getHeaderActions(): array
     {
         return [
             DeleteAction::make(),
         ];
+    }
+
+    protected function beforeSave(): void
+    {
+        $this->statusBeforeSave = $this->record->status ?? '';
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
@@ -29,9 +36,8 @@ class EditBlogPost extends EditRecord
     {
         // Send newsletter email if status changed to published
         $blogPost = $this->record;
-        $originalStatus = $blogPost->getOriginal('status');
 
-        if ($originalStatus !== 'published' && $blogPost->status === 'published') {
+        if ($this->statusBeforeSave !== 'published' && $blogPost->status === 'published') {
             $subscribers = Newsletter::all();
 
             if ($subscribers->isNotEmpty()) {
