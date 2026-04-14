@@ -11,7 +11,7 @@ class AdvertisementsSeeder extends Seeder
 {
     /**
      * Startowe ogłoszenia platformy.
-     * Email zarządzania: ogloszenia@reklamap.pl
+     * Email zarządzania: test@test.pl
      * Zdjęcia dodaj ręcznie przez panel /zarzadzaj
      */
     public function run(): void
@@ -779,7 +779,7 @@ class AdvertisementsSeeder extends Seeder
         ];
 
         $defaults = [
-            'owner_email'             => 'ogloszenia@reklamap.pl',
+            'owner_email'             => 'test@test.pl',
             'phone'                   => '',
             'contact_preference'      => 'email',
             'is_active'               => true,
@@ -862,6 +862,6 @@ class AdvertisementsSeeder extends Seeder
             $ad->timestamps = true;
         }
 
-        $this->command->info('Dodano ' . count($ads) . ' ogłoszeń. Email zarządzania: ogloszenia@reklamap.pl');
+        $this->command->info('Dodano ' . count($ads) . ' ogłoszeń. Email zarządzania: test@test.pl');
     }
 }

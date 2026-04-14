@@ -33,6 +33,7 @@ interface BlogPost {
   content: string
   category: string
   image: string
+  imageAlt: string | null
   date: string
   readTime: string
   author: string
@@ -181,7 +182,7 @@ const handleNewsletterSubmit = async () => {
             style="cursor: pointer"
           >
             <div class="card-image">
-              <img :src="post.image" :alt="post.title" />
+              <img :src="post.image" :alt="post.imageAlt ?? post.title" />
               <div class="card-category">{{ categories.find(c => c.id === post.category)?.name }}</div>
             </div>
             <div class="card-content">

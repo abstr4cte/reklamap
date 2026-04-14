@@ -16,6 +16,7 @@ interface BlogPost {
   content: string
   category: string
   image: string | null
+  imageAlt: string | null
   date: string
   readTime: string
   author: string
@@ -61,7 +62,11 @@ watch(post, (newPost) => {
         '@type': 'BlogPosting',
         'headline': newPost.title,
         'description': newPost.excerpt,
-        'image': newPost.image,
+        'image': newPost.image ? {
+          '@type': 'ImageObject',
+          'url': newPost.image,
+          'description': newPost.imageAlt ?? newPost.title
+        } : undefined,
         'author': {
           '@type': 'Person',
           'name': newPost.author

@@ -57,11 +57,28 @@ Po wygenerowaniu: dodaj slug do `index.md`, zapisz post w `posts/` i dorzuć wpi
 - `title` — max **60 znaków**, zawiera główne słowo kluczowe blisko początku
 - `meta_description` — max **155 znaków**, zawiera CTA lub wartość dla czytelnika, zawiera słowo kluczowe
 - `slug` — tylko małe litery, myślniki zamiast spacji, bez polskich znaków, max 60 znaków
+- `image_alt` — max **125 znaków**, opisowy tekst obrazka zawierający główne słowo kluczowe, np. *"Billboard przy autostradzie A1 w Łodzi — reklama zewnętrzna"*. Fallback to tytuł posta, ale zawsze podawaj dedykowany alt.
 - `image_prompt` — szczegółowy prompt do wygenerowania grafiki głównej (po angielsku, styl: professional photography or flat design illustration, no text on image)
 
 ### Linki wewnętrzne
-- Minimum **2 linki wewnętrzne** do innych podstron platformy (np. `/powierzchnie-reklamowe/billboardy`, `/faq`, inny post blogowy)
+- Minimum **2 linki wewnętrzne** — mogą prowadzić do podstron platformy lub innych postów blogowych
+- Listę podstron platformy znajdziesz w `blog-agent/SITEMAP.md`
+- Listę opublikowanych i roboczych postów blogowych znajdziesz w `blog-agent/INDEX.md` — linkuj do tematycznie powiązanych postów gdy tylko to możliwe
 - Anchor text opisowy, nie "kliknij tutaj"
+
+### Akapit wprowadzający (snippet zone)
+- Pierwsze **100 słów** to strefa, z której Google pobiera featured snippet — musi zawierać główne słowo kluczowe i bezpośrednio odpowiadać na intencję zapytania
+- Nie zaczynaj od wstępu ogólnego — od razu daj wartość
+
+### Sekcja FAQ
+- Na końcu każdego artykułu dodaj sekcję `## Najczęściej zadawane pytania` z minimum **3 parami pytanie/odpowiedź**
+- Pytania formułuj tak jak użytkownicy wpisują je w Google (np. *"Ile kosztuje wynajem billboardu?"*)
+- Odpowiedzi zwięzłe — 2–4 zdania
+- To generuje **rich snippets** ("People also ask") w wynikach wyszukiwania
+
+### Freshness signals
+- Zawsze wypełnij `published_at` w metadanych posta (format: `YYYY-MM-DD HH:MM:SS`)
+- Dla kategorii `rynek-ooh` i `prawo-i-regulacje` dodaj w treści wzmiankę o aktualnym roku — Google premiuje świeże treści w tych tematach
 
 ### Treść
 - Pisz po **polsku**, profesjonalnie ale przystępnie — odbiorca to przedsiębiorca lub marketer
@@ -82,26 +99,46 @@ title: "Tytuł posta (max 60 znaków)"
 slug: "slug-posta"
 category: poradniki | trendy | case-study | rynek-ooh | prawo-i-regulacje | lokalizacje
 meta_description: "Opis do 155 znaków z głównym słowem kluczowym i CTA."
+image_alt: "Opisowy alt obrazka z głównym słowem kluczowym, max 125 znaków."
 image_prompt: "Detailed English prompt for AI image generation. Professional, no text."
 keywords:
   - główne słowo kluczowe
   - słowo poboczne 1
   - słowo poboczne 2
 word_count: ~1500
-created_at: "YYYY-MM-DD HH:MM:SS"
+published_at: "YYYY-MM-DD HH:MM:SS"
 status: draft
 ---
 
 # Tytuł posta
 
-[Treść posta w Markdown...]
+[Pierwsze 100 słów — snippet zone: główne słowo kluczowe + bezpośrednia odpowiedź na intencję zapytania]
+
+## Nagłówek H2 z słowem kluczowym
+
+[Treść...]
+
+## Najczęściej zadawane pytania
+
+**Pytanie 1?**
+Odpowiedź w 2–4 zdaniach.
+
+**Pytanie 2?**
+Odpowiedź w 2–4 zdaniach.
+
+**Pytanie 3?**
+Odpowiedź w 2–4 zdaniach.
+
+---
+
+[CTA]
 ```
 
 ---
 
 ## Workflow po wygenerowaniu posta
 
-1. Dodaj wpis do `blog-agent/index.md`
+1. Dodaj wpis do `blog-agent/INDEX.md`
 2. Zapisz plik w `blog-agent/posts/{timestamp}_{slug}.md`
 3. Dorzuć post do tablicy w `backend/database/seeders/BlogPostsSeeder.php`
 4. Poinformuj użytkownika — niech uruchomi `php artisan db:seed --class=BlogPostsSeeder` i opublikuje post w panelu Filament

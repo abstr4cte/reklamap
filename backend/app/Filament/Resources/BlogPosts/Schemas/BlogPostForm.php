@@ -94,6 +94,11 @@ class BlogPostForm
                     ->directory('blog')
                     ->previewable(false)
                     ->nullable(),
+                TextInput::make('image_alt')
+                    ->label('Alt obrazka (SEO)')
+                    ->placeholder('Krótki opis obrazka dla wyszukiwarek, np. "Billboard przy autostradzie A1 w Łodzi"')
+                    ->maxLength(125)
+                    ->nullable(),
                 Textarea::make('image_prompt')
                     ->label('Prompt do generowania grafiki')
                     ->placeholder('Opisz grafikę do wygenerowania dla tego artykułu...')
