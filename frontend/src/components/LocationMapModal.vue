@@ -394,7 +394,7 @@ onBeforeUnmount(() => {
 /* Modal styles */
 .modal-overlay {
   position: fixed;
-  top: 80px;
+  top: var(--header-height, 100px);
   left: 0;
   right: 0;
   bottom: 0;

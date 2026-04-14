@@ -278,7 +278,7 @@ const handleHomeClick = () => {
 }
 
 .brand-logo {
-  height: 64px;
+  height: 84px;
   width: auto;
   object-fit: contain;
 }

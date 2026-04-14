@@ -36,16 +36,12 @@ const handleSortOptionClick = (value: string) => {
 }
 
 const handleFilterButtonClick = () => {
-  // Scroll to hero banner
+  const headerHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 100
   const heroBanner = document.querySelector('[data-hero-banner]')
   if (heroBanner) {
     const elementPosition = heroBanner.getBoundingClientRect().top + window.pageYOffset
-    const offsetPosition = elementPosition - 32 // 2rem = 32px offset
-    
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: 'smooth'
-    })
+    const offsetPosition = elementPosition - headerHeight
+    window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
   }
 }
 
@@ -381,7 +377,7 @@ onUnmounted(() => {
 
 .section-header-wrapper {
   position: sticky;
-  top: 80px;
+  top: var(--header-height, 100px);
   background: white;
   z-index: 50;
   box-shadow: 0 8px 12px -6px rgba(0, 0, 0, 0.15);
@@ -389,7 +385,7 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .section-header-wrapper {
-    top: 80px;
+    top: var(--header-height, 100px);
   }
 }
 

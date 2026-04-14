@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
@@ -47,8 +47,18 @@ const handleRemoveComparison = (id: string) => {
   handleToggleComparison(id)
 }
 
+const updateHeaderHeight = () => {
+  const header = document.querySelector('.app-header') as HTMLElement | null
+  if (header) {
+    const height = header.offsetHeight
+    document.documentElement.style.setProperty('--header-height', `${height}px`)
+  }
+}
+
 onMounted(() => {
   if (typeof window !== 'undefined') {
+    updateHeaderHeight()
+    window.addEventListener('resize', updateHeaderHeight)
     // Add Organization and WebSite structured data for SEO
     const organizationSchema = {
       '@context': 'https://schema.org',
@@ -92,12 +102,14 @@ onMounted(() => {
     websiteScript.textContent = JSON.stringify(websiteSchema)
     document.head.appendChild(websiteScript)
   }
-  // Sync favorites and comparison on mount
   prefStore.syncStores()
-  // Set global toast instance after DOM is ready
   nextTick(() => {
     setToastInstance(toast.value)
   })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateHeaderHeight)
 })
 
 
@@ -147,7 +159,7 @@ onMounted(() => {
 
 .app {
   min-height: 100vh;
-  padding-top: 72px;
+  padding-top: var(--header-height, 100px);
   overflow-x: clip;
   width: 100%;
 }

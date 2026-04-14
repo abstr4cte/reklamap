@@ -393,7 +393,7 @@ watch(isMobileMenuOpen, (isOpen) => {
 }
 
 .logo-image {
-  height: 56px;
+  height: 68px;
   object-fit: contain;
 }
 

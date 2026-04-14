@@ -1571,7 +1571,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
     <div class="content-wrapper">
       <!-- Mobile toggle button -->
       <button 
-        v-if="isMobile && showMapButton" 
+        v-if="isMobile && showMapButton && !showFiltersModal"
         @click="toggleMobileMap" 
         class="mobile-map-toggle"
         :style="{ 
@@ -2996,8 +2996,8 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 /* Existing styles below */
 .listings-page {
-  height: calc(100vh - 72px);
-  padding-top: 1.5rem;
+  height: calc(100vh - var(--header-height, 100px));
+  padding-top: 1rem;
   background: var(--bg-secondary, #f9fafb);
   display: flex;
   flex-direction: column;
@@ -3195,7 +3195,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   flex-direction: column;
   flex: 1;
   overflow: hidden;
-  height: calc(100vh - 70px); /* Odejmujemy wysokość paska wyszukiwania */
+  height: calc(100vh - var(--header-height, 100px)); /* Odejmujemy wysokość paska wyszukiwania */
   position: relative;
 }
 
@@ -3910,7 +3910,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   left: 0;
   right: 0;
   bottom: 0;
-  padding-top: 80px;
+  padding-top: var(--header-height, 100px);
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
@@ -4434,14 +4434,14 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   .content-wrapper {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 400px;
-    height: calc(100vh - 70px);
+    height: calc(100vh - var(--header-height, 100px));
   }
 
   .ads-list-container {
     border-right: none;
     border-bottom: 2px solid #e5e7eb;
     height: auto;
-    max-height: calc(100vh - 470px); /* 70px nagłówek + 400px mapa */
+    max-height: calc(100vh - var(--header-height, 100px) - 400px); /* nagłówek + mapa */
   }
   
   .map-container-wrapper {
@@ -4505,7 +4505,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   .listings-layout {
     display: flex;
     flex-direction: column;
-    height: calc(100svh - 140px);
+    height: calc(100svh - var(--header-height, 100px) - 68px);
     min-height: 500px;
     overflow: hidden;
     position: relative;

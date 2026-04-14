@@ -121,7 +121,7 @@ const router = createRouter({
           resolve({
             el: to.hash,
             behavior: 'smooth',
-            top: 80
+            top: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 100
           })
         }, 100)
       })
