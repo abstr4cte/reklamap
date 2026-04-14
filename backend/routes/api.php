@@ -43,8 +43,8 @@ Route::middleware(['throttle:10,60', 'verify.recaptcha'])->group(function () {
     Route::post('feedback', [AdvertisementController::class, 'submitFeedback']);
 });
 
-Route::get('search-alerts/unsubscribe/{token}', [\App\Http\Controllers\SearchAlertController::class, 'unsubscribe'])->name('search-alerts.unsubscribe');
-Route::get('newsletter/unsubscribe/{token}', [\App\Http\Controllers\NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
+Route::get('search-alerts/unsubscribe/{token}', [\App\Http\Controllers\SearchAlertController::class, 'unsubscribe'])->name('search-alerts.unsubscribe')->withoutMiddleware(\App\Http\Middleware\VerifyAppKey::class);
+Route::get('newsletter/unsubscribe/{token}', [\App\Http\Controllers\NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe')->withoutMiddleware(\App\Http\Middleware\VerifyAppKey::class);
 
 // ─── Upload zdjęć (publiczny, tylko X-App-Key, rate limit 100/min) ────────────
 Route::middleware('throttle:100,1')->post('upload', [StorageController::class, 'upload']);

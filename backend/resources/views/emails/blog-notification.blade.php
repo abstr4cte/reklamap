@@ -138,6 +138,9 @@
             </p>
 
             <div class="blog-card">
+                @if($blogPost->image)
+                    <img src="{{ $blogPost->image }}" alt="{{ $blogPost->title }}" style="width:100%;height:200px;object-fit:cover;display:block;" />
+                @endif
                 <div class="blog-info">
                     <div class="blog-label">Nowy artykuł</div>
                     <h3 class="blog-title">{{ $blogPost->title }}</h3>
@@ -154,7 +157,7 @@
             <div class="divider"></div>
 
             <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 0;">
-                Masz pytania lub sugestie dotyczące naszych treści? <a href="{{ config('app.url') }}/kontakt" style="color: #667eea; text-decoration: none;">Napisz do nas.</a>
+                Masz pytania lub sugestie dotyczące naszych treści? <a href="{{ config('app.frontend_url') }}/kontakt" style="color: #667eea; text-decoration: none;">Napisz do nas.</a>
             </p>
         </div>
 

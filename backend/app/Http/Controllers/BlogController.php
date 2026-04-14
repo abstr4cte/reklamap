@@ -43,7 +43,7 @@ class BlogController extends Controller
                 'content' => $post->content,
                 'category' => $post->category,
                 'image' => $imageUrl,
-                'date' => $post->published_at ? $post->published_at->format('d F Y') : $post->created_at->format('d F Y'),
+                'date' => $post->published_at ? $post->published_at->locale('pl')->translatedFormat('d F Y') : $post->created_at->locale('pl')->translatedFormat('d F Y'),
                 'readTime' => $this->estimateReadTime($post->content),
                 'author' => $post->user->name ?? 'Anonimowy',
             ];
@@ -83,7 +83,7 @@ class BlogController extends Controller
             'content' => $post->content,
             'category' => $post->category,
             'image' => $imageUrl,
-            'date' => $post->published_at ? $post->published_at->format('d F Y') : $post->created_at->format('d F Y'),
+            'date' => $post->published_at ? $post->published_at->locale('pl')->translatedFormat('d F Y') : $post->created_at->locale('pl')->translatedFormat('d F Y'),
             'readTime' => $this->estimateReadTime($post->content),
             'author' => $post->user->name ?? 'Anonimowy',
         ]);

@@ -717,6 +717,10 @@ class AdvertisementController extends Controller
     {
         $validated = $request->validate([
             'email' => 'required|email|unique:newsletter_subscribers,email',
+        ], [
+            'email.unique' => 'Ten adres e-mail jest już zapisany w naszym newsletterze.',
+            'email.required' => 'Adres e-mail jest wymagany.',
+            'email.email' => 'Podaj prawidłowy adres e-mail.',
         ]);
 
         try {
