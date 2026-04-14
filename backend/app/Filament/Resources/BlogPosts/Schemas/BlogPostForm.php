@@ -4,6 +4,7 @@ namespace App\Filament\Resources\BlogPosts\Schemas;
 
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -73,9 +74,11 @@ class BlogPostForm
                         'poradniki' => 'Poradniki',
                         'trendy' => 'Trendy',
                         'case-study' => 'Case Study',
-                        'nowosci' => 'Nowości',
+                        'rynek-ooh' => 'Rynek OOH',
+                        'prawo-i-regulacje' => 'Prawo i regulacje',
+                        'lokalizacje' => 'Lokalizacje',
                     ])
-                    ->default('nowosci')
+                    ->default('rynek-ooh')
                     ->required(),
                 Toggle::make('status')
                     ->label('Opublikowany')
@@ -90,6 +93,11 @@ class BlogPostForm
                     ->disk('public')
                     ->directory('blog')
                     ->previewable(false)
+                    ->nullable(),
+                Textarea::make('image_prompt')
+                    ->label('Prompt do generowania grafiki')
+                    ->placeholder('Opisz grafikę do wygenerowania dla tego artykułu...')
+                    ->rows(3)
                     ->nullable(),
                 RichEditor::make('content')
                     ->label('Treść')

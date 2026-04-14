@@ -93,6 +93,11 @@ const router = createRouter({
       component: () => import('./views/BlogPage.vue')
     },
     {
+      path: '/blog/:category(poradniki|trendy|case-study|rynek-ooh|prawo-i-regulacje|lokalizacje)',
+      name: 'blog-category',
+      component: () => import('./views/BlogPage.vue')
+    },
+    {
       path: '/blog/:slug',
       name: 'blog-post',
       component: () => import('./views/BlogPostPage.vue')

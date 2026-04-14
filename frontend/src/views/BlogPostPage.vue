@@ -177,7 +177,7 @@ const blogPosts: BlogPost[] = [
     slug: 'nowa-funkcja-porownywanie-powierzchni-reklamowych',
     excerpt: 'Wprowadziliśmy nowe narzędzie umożliwiające zestawienie do 5 ogłoszeń obok siebie. Zobacz, jak z niego korzystać.',
     content: '',
-    category: 'nowosci',
+    category: 'rynek-ooh',
     image: 'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=800',
     date: '25 października 2025',
     readTime: '3 min',
@@ -225,7 +225,9 @@ const categories = [
   { id: 'poradniki', name: 'Poradniki' },
   { id: 'trendy', name: 'Trendy' },
   { id: 'case-study', name: 'Case Study' },
-  { id: 'nowosci', name: 'Nowości' }
+  { id: 'rynek-ooh', name: 'Rynek OOH' },
+  { id: 'prawo-i-regulacje', name: 'Prawo i regulacje' },
+  { id: 'lokalizacje', name: 'Lokalizacje' }
 ]
 
 const getCategoryName = (id: string) => {

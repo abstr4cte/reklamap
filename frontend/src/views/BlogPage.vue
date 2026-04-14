@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { api } from '../services/api'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 import { useSeo } from '../composables/useSeo'
@@ -18,6 +18,7 @@ useSeo({
 })
 
 const router = useRouter()
+const route = useRoute()
 
 const newsletterEmail = ref('')
 const isSubmittingNewsletter = ref(false)
@@ -37,17 +38,25 @@ interface BlogPost {
   author: string
 }
 
-const selectedCategory = ref('wszystkie')
 const blogPosts = ref<BlogPost[]>([])
 const isLoading = ref(true)
 
 const categories = [
-  { id: 'wszystkie', name: 'Wszystkie' },
-  { id: 'poradniki', name: 'Poradniki' },
-  { id: 'trendy', name: 'Trendy' },
-  { id: 'case-study', name: 'Case Study' },
-  { id: 'nowosci', name: 'Nowości' }
+  { id: 'wszystkie', name: 'Wszystkie', path: '/blog' },
+  { id: 'poradniki', name: 'Poradniki', path: '/blog/poradniki' },
+  { id: 'trendy', name: 'Trendy', path: '/blog/trendy' },
+  { id: 'case-study', name: 'Case Study', path: '/blog/case-study' },
+  { id: 'rynek-ooh', name: 'Rynek OOH', path: '/blog/rynek-ooh' },
+  { id: 'prawo-i-regulacje', name: 'Prawo i regulacje', path: '/blog/prawo-i-regulacje' },
+  { id: 'lokalizacje', name: 'Lokalizacje', path: '/blog/lokalizacje' }
 ]
+
+const selectedCategory = computed(() => (route.params.category as string) || 'wszystkie')
+
+watch(
+  () => route.params.category,
+  () => { loadBlogPosts() }
+)
 
 const loadBlogPosts = async () => {
   try {
@@ -152,15 +161,15 @@ const handleNewsletterSubmit = async () => {
     <div class="content-section">
       <div class="container">
         <div class="categories">
-          <button
+          <router-link
             v-for="category in categories"
             :key="category.id"
-            @click="selectedCategory = category.id"
+            :to="category.path"
             class="category-btn"
             :class="{ active: selectedCategory === category.id }"
           >
             {{ category.name }}
-          </button>
+          </router-link>
         </div>
 
         <div class="blog-grid">
@@ -306,6 +315,8 @@ const handleNewsletterSubmit = async () => {
   color: #6b7280;
   cursor: pointer;
   transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .category-btn:hover {

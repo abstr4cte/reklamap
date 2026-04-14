@@ -14,6 +14,7 @@ class BlogPost extends Model
         'slug',
         'content',
         'image',
+        'image_prompt',
         'user_id',
         'published_at',
         'category',

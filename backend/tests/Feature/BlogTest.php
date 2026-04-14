@@ -140,7 +140,7 @@ class BlogTest extends TestCase
 
         BlogPost::factory()->count(3)->create([
             'status' => 'published',
-            'category' => 'nowosci',
+            'category' => 'rynek-ooh',
             'user_id' => $user->id,
         ]);
 

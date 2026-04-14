@@ -27,7 +27,7 @@ class BlogPostFactory extends Factory
             'title' => $title,
             'slug' => Str::slug($title),
             'content' => fake()->paragraphs(5, true),
-            'category' => fake()->randomElement(['poradniki', 'nowosci', 'case-study', 'trendy']),
+            'category' => fake()->randomElement(['poradniki', 'rynek-ooh', 'case-study', 'trendy']),
             'image' => null,
             'status' => 'published',
             'published_at' => now(),

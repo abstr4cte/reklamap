@@ -48,13 +48,17 @@ class BlogPostsTable
                         'info' => 'poradniki',
                         'warning' => 'trendy',
                         'success' => 'case-study',
-                        'primary' => 'nowosci',
+                        'primary' => 'rynek-ooh',
+                        'danger' => 'prawo-i-regulacje',
+                        'gray' => 'lokalizacje',
                     ])
                     ->formatStateUsing(fn (string $state): string => match($state) {
                         'poradniki' => 'Poradniki',
                         'trendy' => 'Trendy',
                         'case-study' => 'Case Study',
-                        'nowosci' => 'Nowości',
+                        'rynek-ooh' => 'Rynek OOH',
+                        'prawo-i-regulacje' => 'Prawo i regulacje',
+                        'lokalizacje' => 'Lokalizacje',
                         default => $state,
                     }),
                 TextColumn::make('excerpt')
@@ -75,7 +79,9 @@ class BlogPostsTable
                         'poradniki' => 'Poradniki',
                         'trendy' => 'Trendy',
                         'case-study' => 'Case Study',
-                        'nowosci' => 'Nowości',
+                        'rynek-ooh' => 'Rynek OOH',
+                        'prawo-i-regulacje' => 'Prawo i regulacje',
+                        'lokalizacje' => 'Lokalizacje',
                     ]),
             ])
             ->recordActions([

@@ -96,6 +96,21 @@ Only types with meaningful physical configurations have variants. `banner` and `
 
 ---
 
+## Blog Agent
+
+Gdy użytkownik powie **"napisz bloga o X"** (lub podobnie), wykonaj następujące kroki:
+
+1. Przeczytaj `blog-agent/INSTRUKCJA.md` — zawiera wytyczne SEO, opis platformy, format pliku i workflow
+2. Wygeneruj post zgodnie z instrukcją
+3. Zapisz plik w `blog-agent/posts/{YYYYMMDDHHMMSS}_{slug}.md`
+4. Dodaj wiersz do tabeli w `blog-agent/index.md`
+5. Dorzuć wpis do tablicy `$posts` w `backend/database/seeders/BlogPostsSeeder.php` ze statusem `draft`
+6. Poinformuj użytkownika żeby uruchomił: `php artisan db:seed --class=BlogPostsSeeder`
+
+Seeder jest idempotentny — można go uruchamiać wielokrotnie, duplikatów nie będzie (sprawdza slug).
+
+---
+
 ## Conventions
 
 - **Component naming**: PascalCase; views have `Page` suffix (`ListingsPage.vue`)
