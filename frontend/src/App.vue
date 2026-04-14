@@ -105,6 +105,21 @@ onMounted(() => {
   prefStore.syncStores()
   nextTick(() => {
     setToastInstance(toast.value)
+
+    const params = new URLSearchParams(window.location.search)
+    const wypisano = params.get('wypisano')
+    if (wypisano === 'alerty') {
+      const miasto = params.get('miasto')
+      const region = params.get('region')
+      const typ    = params.get('typ')
+      const czesci = [typ, miasto || region].filter(Boolean)
+      const szczegoly = czesci.length ? ` (${czesci.join(', ')})` : ''
+      toast.value?.add(`Wypisano z powiadomień${szczegoly}. Nie będziesz już otrzymywać alertów dla tych kryteriów.`, 'success')
+      window.history.replaceState({}, '', window.location.pathname)
+    } else if (wypisano === 'newsletter') {
+      toast.value?.add('Wypisano z newslettera ReklaMap. Twój adres e-mail został usunięty z listy.', 'success')
+      window.history.replaceState({}, '', window.location.pathname)
+    }
   })
 })
 

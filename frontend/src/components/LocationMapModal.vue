@@ -130,20 +130,21 @@ const initModalMap = async () => {
 
   modalMarker.on('dragend', async () => {
     const position = modalMarker!.getLatLng()
+    const prevLat = props.initialLatitude
+    const prevLng = props.initialLongitude
+
     const isInside = await isInPoland(position.lat, position.lng)
     if (!isInside) {
       displayToast('Lokalizacja musi być w Polsce')
-      modalMarker!.setLatLng([props.initialLatitude, props.initialLongitude])
+      modalMarker!.setLatLng([prevLat, prevLng])
       return
     }
-    
-    // Reverse geocode to get address and update modal search input
+
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.lat}&lon=${position.lng}&zoom=18&addressdetails=1`
       )
       const data = await response.json()
-      
       if (data.display_name) {
         modalSearchQuery.value = data.display_name
       }
@@ -153,20 +154,21 @@ const initModalMap = async () => {
   })
 
   modalMap!.on('click', async (e: LType.LeafletMouseEvent) => {
+    // Przesuń marker natychmiast
+    modalMarker!.setLatLng(e.latlng)
+
     const isInside = await isInPoland(e.latlng.lat, e.latlng.lng)
     if (!isInside) {
       displayToast('Lokalizacja musi być w Polsce')
+      modalMarker!.setLatLng([props.initialLatitude, props.initialLongitude])
       return
     }
-    modalMarker!.setLatLng(e.latlng)
-    
-    // Reverse geocode to get address and update modal search input
+
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}&zoom=18&addressdetails=1`
       )
       const data = await response.json()
-      
       if (data.display_name) {
         modalSearchQuery.value = data.display_name
       }

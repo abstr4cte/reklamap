@@ -646,7 +646,7 @@ defineExpose({
             <h2>Lokalizacja na mapie</h2>
             <div ref="mapContainer" class="map-container"></div>
             
-            <StreetViewSection 
+            <StreetViewSection
               :showStreetView="showStreetView"
               :streetViewUrl="streetViewUrl"
               :streetViewLoading="streetViewLoading"

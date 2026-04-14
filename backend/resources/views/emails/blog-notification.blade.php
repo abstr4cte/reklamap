@@ -170,14 +170,14 @@
                 Nie odpowiadaj na tego maila — to adres noreply.
             </p>
             <div>
-                <a href="{{ config('app.url') }}" class="footer-link">Strona główna</a>
-                <a href="{{ config('app.url') }}/blog" class="footer-link">Blog</a>
-                <a href="{{ config('app.url') }}/regulamin" class="footer-link">Regulamin</a>
+                <a href="{{ config('app.frontend_url') }}" class="footer-link">Strona główna</a>
+                <a href="{{ config('app.frontend_url') }}/blog" class="footer-link">Blog</a>
+                <a href="{{ config('app.frontend_url') }}/regulamin" class="footer-link">Regulamin</a>
             </div>
             @if(isset($unsubscribeToken))
             <p style="color: #9ca3af; font-size: 12px; margin: 15px 0 0 0;">
                 Nie chcesz otrzymywać powiadomień o nowych artykułach?
-                <a href="{{ route('newsletter.unsubscribe', ['token' => $unsubscribeToken]) }}" style="color: #9ca3af;">Wypisz się tutaj</a>.
+                <a href="{{ config('app.url') }}/api/newsletter/unsubscribe/{{ $unsubscribeToken }}" style="color: #9ca3af;">Wypisz się tutaj</a>.
             </p>
             @endif
             <p style="color: #9ca3af; font-size: 12px; margin: 10px 0 0 0;">

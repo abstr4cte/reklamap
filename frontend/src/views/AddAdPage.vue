@@ -578,44 +578,59 @@ const initMap = async () => {
 
   marker.on('dragend', async () => {
     const position = marker!.getLatLng()
-    // First check client-side GeoJSON
+    const prevLat = formData.value.latitude
+    const prevLng = formData.value.longitude
+
+    // Zatwierdź pozycję od razu
+    formData.value.latitude = position.lat
+    formData.value.longitude = position.lng
+
     const isInside = await isInPoland(position.lat, position.lng)
     if (!isInside) {
       displayToast('Lokalizacja musi być w Polsce')
-      marker!.setLatLng([formData.value.latitude, formData.value.longitude])
+      marker!.setLatLng([prevLat, prevLng])
+      formData.value.latitude = prevLat
+      formData.value.longitude = prevLng
       return
     }
-    
-    // Then verify with Nominatim
+
     const isValid = await reverseGeocode(position.lat, position.lng)
     if (!isValid) {
       displayToast('Lokalizacja musi być w Polsce')
-      marker!.setLatLng([formData.value.latitude, formData.value.longitude])
+      marker!.setLatLng([prevLat, prevLng])
+      formData.value.latitude = prevLat
+      formData.value.longitude = prevLng
       return
     }
-
-    formData.value.latitude = position.lat
-    formData.value.longitude = position.lng
   })
 
   map!.on('click', async (e: LType.LeafletMouseEvent) => {
-    // First check client-side GeoJSON
+    const prevLat = formData.value.latitude
+    const prevLng = formData.value.longitude
+
+    // Przesuń marker natychmiast — feedback dla użytkownika
+    marker!.setLatLng(e.latlng)
+    formData.value.latitude = e.latlng.lat
+    formData.value.longitude = e.latlng.lng
+
+    // Waliduj w tle, cofnij jeśli poza Polską
     const isInside = await isInPoland(e.latlng.lat, e.latlng.lng)
     if (!isInside) {
       displayToast('Lokalizacja musi być w Polsce')
+      marker!.setLatLng([prevLat, prevLng])
+      formData.value.latitude = prevLat
+      formData.value.longitude = prevLng
       return
     }
 
-    // Then verify with Nominatim
     const isValid = await reverseGeocode(e.latlng.lat, e.latlng.lng)
     if (!isValid) {
       displayToast('Lokalizacja musi być w Polsce')
+      marker!.setLatLng([prevLat, prevLng])
+      formData.value.latitude = prevLat
+      formData.value.longitude = prevLng
       return
     }
-
-    formData.value.latitude = e.latlng.lat
-    formData.value.longitude = e.latlng.lng
-    marker!.setLatLng(e.latlng)
   })
 }
 

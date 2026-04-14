@@ -720,11 +720,15 @@ class AdvertisementController extends Controller
         ]);
 
         try {
+            $token = \Illuminate\Support\Str::random(40);
+
             \App\Models\Newsletter::create([
                 'email' => $validated['email'],
-                'unsubscribe_token' => \Illuminate\Support\Str::random(40),
+                'unsubscribe_token' => $token,
             ]);
 
+            \Illuminate\Support\Facades\Mail::to($validated['email'])
+                ->send(new \App\Mail\NewsletterConfirmationMail($token));
 
             return response()->json(['message' => 'Dziękujemy za zapisanie się do newslettera!']);
         } catch (\Illuminate\Database\QueryException $e) {

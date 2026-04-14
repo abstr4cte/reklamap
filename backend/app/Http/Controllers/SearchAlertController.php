@@ -61,9 +61,19 @@ class SearchAlertController extends Controller
             return response()->json(['message' => 'Nieprawidłowy lub wygasły token subskrypcji.'], 404);
         }
 
+        $city   = $alert->city   ?? '';
+        $region = $alert->region ?? '';
+        $type   = $alert->type   ?? '';
+
         $alert->delete();
 
-        // Można zwrócić widok Blade z potwierdzeniem
-        return "Subskrypcja została pomyślnie usunięta. Nie będziesz już otrzymywać powiadomień dla tych kryteriów.";
+        $params = http_build_query(array_filter([
+            'wypisano' => 'alerty',
+            'miasto'   => $city,
+            'region'   => $region,
+            'typ'      => $type,
+        ]));
+
+        return redirect(config('app.frontend_url') . '/?' . $params);
     }
 }

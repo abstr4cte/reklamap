@@ -164,7 +164,17 @@
                         <strong>Typ:</strong> {{ $typeLabel }}
                     </div>
                     <div class="ad-price">
-                        {{ number_format($ad->price, 0, ',', ' ') }} zł / {{ $ad->price_unit }}
+                        @php
+                            $priceUnits = [
+                                'day'      => 'dzień',
+                                'week'     => 'tydzień',
+                                'month'    => 'miesiąc',
+                                'year'     => 'rok',
+                                'sqm'      => 'm²',
+                                'campaign' => 'kampanię',
+                            ];
+                        @endphp
+                        {{ number_format($ad->price, 0, ',', ' ') }} zł / {{ $priceUnits[$ad->price_unit] ?? $ad->price_unit }}
                     </div>
                     <div style="text-align: center;">
                         <a href="{{ $adUrl }}" class="button">Zobacz ofertę</a>
@@ -185,13 +195,13 @@
                 Nie odpowiadaj na tego maila — to adres noreply.
             </p>
             <div>
-                <a href="{{ config('app.url') }}" class="footer-link">Strona główna</a>
-                <a href="{{ config('app.url') }}/kontakt" class="footer-link">Kontakt</a>
-                <a href="{{ config('app.url') }}/regulamin" class="footer-link">Regulamin</a>
+                <a href="{{ config('app.frontend_url') }}" class="footer-link">Strona główna</a>
+                <a href="{{ config('app.frontend_url') }}/kontakt" class="footer-link">Kontakt</a>
+                <a href="{{ config('app.frontend_url') }}/regulamin" class="footer-link">Regulamin</a>
             </div>
             <p style="color: #9ca3af; font-size: 12px; margin: 15px 0 0 0;">
                 Nie chcesz już otrzymywać tych powiadomień?
-                <a href="{{ route('search-alerts.unsubscribe', ['token' => $unsubscribeToken]) }}" style="color: #9ca3af;">Wypisz się tutaj</a>.
+                <a href="{{ config('app.url') }}/api/search-alerts/unsubscribe/{{ $unsubscribeToken }}" style="color: #9ca3af;">Wypisz się tutaj</a>.
             </p>
             <p style="color: #9ca3af; font-size: 12px; margin: 10px 0 0 0;">
                 © {{ date('Y') }} ReklaMap. Wszelkie prawa zastrzeżone.

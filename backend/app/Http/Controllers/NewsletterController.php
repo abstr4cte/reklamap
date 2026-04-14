@@ -20,6 +20,6 @@ class NewsletterController extends Controller
 
         $subscriber->delete();
 
-        return "Twój adres e-mail został pomyślnie usunięty z listy subskrybentów newslettera ReklaMap.";
+        return redirect(config('app.frontend_url') . '/?wypisano=newsletter');
     }
 }
