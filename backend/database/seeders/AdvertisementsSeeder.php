@@ -21,7 +21,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ WARSZAWA ══════════════════
 
             [
-                'title' => 'Billboard jednostronny - ul. Modlińska, Białołęka',
+                'title' => 'Billboard przy Modlińskiej — Białołęka, wyjazd z Warszawy',
                 'type' => 'billboard',
                 'location' => 'ul. Modlińska 223',
                 'city' => 'Warszawa',
@@ -42,7 +42,7 @@ class AdvertisementsSeeder extends Seeder
                 'price_negotiable' => true,
             ],
             [
-                'title' => 'Ekran LED - ul. Głębocka / Targówek',
+                'title' => 'Ekran LED Targówek - skrzyżowanie ze świetlną',
                 'type' => 'led_screen',
                 'location' => 'ul. Głębocka 13',
                 'city' => 'Warszawa',
@@ -65,7 +65,7 @@ class AdvertisementsSeeder extends Seeder
                 'variant' => 'standard',
             ],
             [
-                'title' => 'Citylight - przystanek Kondratowicza / Bródno',
+                'title' => 'Citylight Bródno - ruchliwy przystanek kilku linii',
                 'type' => 'citylight',
                 'location' => 'ul. Kondratowicza 37',
                 'city' => 'Warszawa',
@@ -84,7 +84,7 @@ class AdvertisementsSeeder extends Seeder
                 'offer_type' => 'owner',
             ],
             [
-                'title' => 'Billboard - ul. Płochocińska / wyjazd z Warszawy',
+                'title' => 'Billboard wylot z Warszawy na Marki i Legionowo',
                 'type' => 'billboard',
                 'location' => 'ul. Płochocińska 85',
                 'city' => 'Warszawa',
@@ -108,7 +108,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ KRAKÓW ══════════════════
 
             [
-                'title' => 'Billboard - ul. Półkole / Nowa Huta',
+                'title' => 'Wolny billboard Nowa Huta Kraków',
                 'type' => 'billboard',
                 'location' => 'ul. Półkole 18',
                 'city' => 'Kraków',
@@ -129,7 +129,7 @@ class AdvertisementsSeeder extends Seeder
                 'price_negotiable' => true,
             ],
             [
-                'title' => 'Citylight - przystanek os. Piastów, Kraków',
+                'title' => 'Citylight na przystanku os. Piastów Kraków',
                 'type' => 'citylight',
                 'location' => 'os. Piastów 52',
                 'city' => 'Kraków',
@@ -149,7 +149,7 @@ class AdvertisementsSeeder extends Seeder
                 'price_negotiable' => true,
             ],
             [
-                'title' => 'Ekran LED - ul. Kamieńskiego / Podgórze',
+                'title' => 'Wynajem czasu emisji ekran LED - Podgórze Kraków',
                 'type' => 'led_screen',
                 'location' => 'ul. Kamieńskiego 11',
                 'city' => 'Kraków',
@@ -174,7 +174,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ WROCŁAW ══════════════════
 
             [
-                'title' => 'Billboard - ul. Kosmonautów / Fabryczna',
+                'title' => 'Billboard dwustronny przy obwodnicy - Wrocław Fabryczna',
                 'type' => 'billboard',
                 'location' => 'ul. Kosmonautów 51',
                 'city' => 'Wrocław',
@@ -195,7 +195,7 @@ class AdvertisementsSeeder extends Seeder
                 'price_negotiable' => true,
             ],
             [
-                'title' => 'Citylight - ul. Grabiszyńska / Grabiszyn',
+                'title' => 'Panel citylight Grabiszyńska Wrocław',
                 'type' => 'citylight',
                 'location' => 'ul. Grabiszyńska 195',
                 'city' => 'Wrocław',
@@ -214,7 +214,7 @@ class AdvertisementsSeeder extends Seeder
                 'offer_type' => 'owner',
             ],
             [
-                'title' => 'Siatka na ścianie - ul. Świdnicka / centrum',
+                'title' => 'Ściana pod siatę wielkoformatową - centrum Wrocławia',
                 'type' => 'wall',
                 'location' => 'ul. Świdnicka 12',
                 'city' => 'Wrocław',
@@ -236,7 +236,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ POZNAŃ ══════════════════
 
             [
-                'title' => 'Billboard - ul. Dąbrowskiego / Łazarz',
+                'title' => 'Billboard Łazarz Poznań blisko UCK',
                 'type' => 'billboard',
                 'location' => 'ul. Dąbrowskiego 87',
                 'city' => 'Poznań',
@@ -256,7 +256,7 @@ class AdvertisementsSeeder extends Seeder
                 'offer_type' => 'owner',
             ],
             [
-                'title' => 'Totem reklamowy - ul. Bukowska / Jeżyce',
+                'title' => 'Pylon przy wjeździe do centrum — ul. Bukowska, Jeżyce Poznań',
                 'type' => 'totem',
                 'location' => 'ul. Bukowska 27',
                 'city' => 'Poznań',
@@ -279,7 +279,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ GDAŃSK ══════════════════
 
             [
-                'title' => 'Billboard - ul. Kartuska / Chełm',
+                'title' => 'Billboard DK7 Gdańsk - obok stacji paliw',
                 'type' => 'billboard',
                 'location' => 'ul. Kartuska 245',
                 'city' => 'Gdańsk',
@@ -299,7 +299,7 @@ class AdvertisementsSeeder extends Seeder
                 'offer_type' => 'owner',
             ],
             [
-                'title' => 'Citylight - przystanek Łostowice Świętokrzyska',
+                'title' => 'Citylight Łostowice Gdańsk - duże osiedle',
                 'type' => 'citylight',
                 'location' => 'ul. Łostowicka 93',
                 'city' => 'Gdańsk',
@@ -318,7 +318,7 @@ class AdvertisementsSeeder extends Seeder
                 'offer_type' => 'owner',
             ],
             [
-                'title' => 'Baner na ogrodzeniu - Port Gdański / Nowy Port',
+                'title' => 'Ogrodzenie pod baner - strefa portowa Nowy Port',
                 'type' => 'banner',
                 'location' => 'ul. Majowa 2',
                 'city' => 'Gdańsk',
@@ -341,7 +341,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ ŁÓDŹ ══════════════════
 
             [
-                'title' => 'Billboard - ul. Brzezińska / Widzew',
+                'title' => 'Billboard Widzew Łódź dostępny od zaraz',
                 'type' => 'billboard',
                 'location' => 'ul. Brzezińska 37',
                 'city' => 'Łódź',
@@ -365,7 +365,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ KATOWICE ══════════════════
 
             [
-                'title' => 'Billboard - ul. Murckowska / Muchowiec',
+                'title' => 'Billboard południe Katowic - wyjazd na S86',
                 'type' => 'billboard',
                 'location' => 'ul. Murckowska 14',
                 'city' => 'Katowice',
@@ -385,7 +385,7 @@ class AdvertisementsSeeder extends Seeder
                 'offer_type' => 'owner',
             ],
             [
-                'title' => 'Citylight - przystanek Rolna / Koszutka',
+                'title' => 'Panel na przystanku tramwajowym Koszutka Katowice',
                 'type' => 'citylight',
                 'location' => 'ul. Rolna 43',
                 'city' => 'Katowice',
@@ -407,7 +407,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ SZCZECIN ══════════════════
 
             [
-                'title' => 'Billboard - ul. Struga / Niebuszewo',
+                'title' => 'Billboard Niebuszewo Szczecin - dostępny od zaraz',
                 'type' => 'billboard',
                 'location' => 'ul. Andrzeja Struga 15',
                 'city' => 'Szczecin',
@@ -431,7 +431,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ LUBLIN ══════════════════
 
             [
-                'title' => 'Billboard - ul. Kraśnicka / Czuby',
+                'title' => 'Billboard wylot z Lublina - droga krajowa na Kraśnik',
                 'type' => 'billboard',
                 'location' => 'ul. Kraśnicka 178',
                 'city' => 'Lublin',
@@ -452,7 +452,7 @@ class AdvertisementsSeeder extends Seeder
                 'price_negotiable' => true,
             ],
             [
-                'title' => 'Totem reklamowy - ul. Zana / Czuby Północne',
+                'title' => 'Dwustronny pylon przy galerii Atrium - Lublin Czuby',
                 'type' => 'totem',
                 'location' => 'ul. Tomasza Zana 38',
                 'city' => 'Lublin',
@@ -474,7 +474,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ BYDGOSZCZ ══════════════════
 
             [
-                'title' => 'Reklama w transporcie - autobusy MZK Bydgoszcz',
+                'title' => 'Reklama na autobusach MZK Bydgoszcz — 80 pojazdów, cała sieć',
                 'type' => 'transport',
                 'location' => 'ul. Inowrocławska 11',
                 'city' => 'Bydgoszcz',
@@ -498,7 +498,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ RZESZÓW ══════════════════
 
             [
-                'title' => 'Billboard - al. Rejtana / centrum Rzeszowa',
+                'title' => 'Billboard dwustronny centrum Rzeszowa - przy dworcu',
                 'type' => 'billboard',
                 'location' => 'al. Leopolda Lisa-Kuli 19',
                 'city' => 'Rzeszów',
@@ -522,7 +522,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ OKOLICE WARSZAWY ══════════════════
 
             [
-                'title' => 'Billboard - ul. Puławska / Piaseczno',
+                'title' => 'Billboard przy Puławskiej — Piaseczno, korki i długa ekspozycja',
                 'type' => 'billboard',
                 'location' => 'ul. Puławska 34',
                 'city' => 'Piaseczno',
@@ -543,7 +543,7 @@ class AdvertisementsSeeder extends Seeder
                 'price_negotiable' => true,
             ],
             [
-                'title' => 'Citylight - przystanek PKP Pruszków',
+                'title' => 'Citylight PKP Pruszków - tysiące pasażerów dziennie',
                 'type' => 'citylight',
                 'location' => 'ul. Bohaterów Warszawy 2',
                 'city' => 'Pruszków',
@@ -566,7 +566,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ DROGI KRAJOWE / EKSPRESOWE ══════════════════
 
             [
-                'title' => 'Billboard - DK7 / Białobrzegi (wjazd od Radomia)',
+                'title' => 'Billboard DK7 Białobrzegi kierunek Warszawa',
                 'type' => 'billboard',
                 'location' => 'ul. Warszawska 112',
                 'city' => 'Białobrzegi',
@@ -587,7 +587,7 @@ class AdvertisementsSeeder extends Seeder
                 'price_negotiable' => true,
             ],
             [
-                'title' => 'Billboard - S8 okolice Mszczonowa (kierunek Warszawa)',
+                'title' => 'Billboard przy MOP Adamowice — S8, 45 km od Warszawy',
                 'type' => 'billboard',
                 'location' => 'Mszczonów, MOP Adamowice',
                 'city' => 'Mszczonów',
@@ -608,7 +608,7 @@ class AdvertisementsSeeder extends Seeder
                 'estimated_daily_views' => 20000,
             ],
             [
-                'title' => 'Billboard - DK1 / Piotrków Trybunalski Południe',
+                'title' => 'Billboard przy DK1 za Piotrkowem — trasa na Śląsk, wolny po 8 latach',
                 'type' => 'billboard',
                 'location' => 'ul. Sulejowska 201',
                 'city' => 'Piotrków Trybunalski',
@@ -632,7 +632,7 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ MNIEJSZE MIASTA ══════════════════
 
             [
-                'title' => 'Ekran LED - ul. Kościuszki / Kielce centrum',
+                'title' => 'Ekran LED centrum Kielc - przy przejściu dla pieszych',
                 'type' => 'led_screen',
                 'location' => 'ul. Tadeusza Kościuszki 8',
                 'city' => 'Kielce',
@@ -656,7 +656,7 @@ class AdvertisementsSeeder extends Seeder
                 'environment' => 'outdoor',
             ],
             [
-                'title' => 'Baner na ogrodzeniu - Tarnów, ul. Krakowska',
+                'title' => 'Ogrodzenie pod baner - wjazd do Tarnowa od strony Krakowa',
                 'type' => 'banner',
                 'location' => 'ul. Krakowska 153',
                 'city' => 'Tarnów',
@@ -677,7 +677,7 @@ class AdvertisementsSeeder extends Seeder
                 'environment' => 'outdoor',
             ],
             [
-                'title' => 'Citylight - przystanek Olsztyn / Centrum',
+                'title' => 'Citylight centrum Olsztyna - ruchliwy przystanek tramwajowy',
                 'type' => 'citylight',
                 'location' => 'al. Piłsudskiego 38',
                 'city' => 'Olsztyn',
@@ -696,7 +696,7 @@ class AdvertisementsSeeder extends Seeder
                 'offer_type' => 'owner',
             ],
             [
-                'title' => 'Reklama na taksówce - Warszawa, własny samochód',
+                'title' => 'Naklejka reklamowa na taksówce — Warszawa, centrum i Mokotów codziennie',
                 'type' => 'mobile',
                 'location' => 'Warszawa',
                 'city' => 'Warszawa',
@@ -720,7 +720,7 @@ class AdvertisementsSeeder extends Seeder
                 'price_negotiable' => true,
             ],
             [
-                'title' => 'Billboard - ul. Legnicka / Lubin (wjazd od autostrady)',
+                'title' => 'Billboard Lubin wjazd od A4 - miasto KGHM',
                 'type' => 'billboard',
                 'location' => 'ul. Legnicka 84',
                 'city' => 'Lubin',
@@ -741,7 +741,7 @@ class AdvertisementsSeeder extends Seeder
                 'has_vat_invoice' => true,
             ],
             [
-                'title' => 'Siatka wielkoformatowa - kamienica Wieliczka Rynek',
+                'title' => 'Ściana na kamienicy przy Rynku — Wieliczka, blisko Kopalni Soli',
                 'type' => 'wall',
                 'location' => 'Rynek 15',
                 'city' => 'Wieliczka',
