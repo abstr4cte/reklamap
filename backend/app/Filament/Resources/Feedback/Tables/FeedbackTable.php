@@ -6,7 +6,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -19,20 +18,20 @@ class FeedbackTable
                 TextColumn::make('id')
                     ->label('ID')
                     ->sortable(),
-                BadgeColumn::make('type')
+                TextColumn::make('type')
                     ->label('Typ')
-                    ->colors([
-                        'danger' => 'bug',
-                        'success' => 'feature',
-                        'warning' => 'improvement',
-                        'gray' => 'other',
-                    ])
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->badge()
+                    ->state(fn ($record) => match ($record->type) {
                         'bug' => 'Błąd',
-                        'feature' => 'Nowa funkcja',
-                        'improvement' => 'Ulepszenie',
-                        'other' => 'Inne',
-                        default => $state,
+                        'suggestion' => 'Sugestia',
+                        'question' => 'Pytanie',
+                        default => $record->type,
+                    })
+                    ->color(fn ($record) => match ($record->type) {
+                        'bug' => 'danger',
+                        'suggestion' => 'success',
+                        'question' => 'info',
+                        default => 'gray',
                     }),
                 TextColumn::make('email')
                     ->label('Email')
@@ -53,9 +52,8 @@ class FeedbackTable
                     ->label('Typ')
                     ->options([
                         'bug' => 'Błąd',
-                        'feature' => 'Nowa funkcja',
-                        'improvement' => 'Ulepszenie',
-                        'other' => 'Inne',
+                        'suggestion' => 'Sugestia',
+                        'question' => 'Pytanie',
                     ]),
             ])
             ->recordActions([

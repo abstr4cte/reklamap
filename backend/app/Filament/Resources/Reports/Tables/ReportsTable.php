@@ -6,7 +6,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -24,22 +23,38 @@ class ReportsTable
                     ->sortable(),
                 TextColumn::make('reason')
                     ->label('Powód')
+                    ->badge()
+                    ->state(fn ($record) => match ($record->reason) {
+                        'incorrect_info' => 'Niepoprawne informacje',
+                        'unavailable' => 'Już niedostępna',
+                        'spam' => 'Spam / Oszustwo',
+                        'other' => 'Inne',
+                        default => $record->reason,
+                    })
+                    ->color(fn ($record) => match ($record->reason) {
+                        'incorrect_info' => 'warning',
+                        'unavailable' => 'gray',
+                        'spam' => 'danger',
+                        default => 'info',
+                    })
                     ->sortable(),
                 TextColumn::make('details')
                     ->label('Szczegóły')
                     ->limit(50),
-                BadgeColumn::make('status')
+                TextColumn::make('status')
                     ->label('Status')
-                    ->colors([
-                        'danger' => 'pending',
-                        'warning' => 'reviewed',
-                        'success' => 'resolved',
-                    ])
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->badge()
+                    ->state(fn ($record) => match ($record->status) {
                         'pending' => 'Oczekujące',
                         'reviewed' => 'Przejrzane',
                         'resolved' => 'Rozwiązane',
-                        default => $state,
+                        default => $record->status,
+                    })
+                    ->color(fn ($record) => match ($record->status) {
+                        'pending' => 'danger',
+                        'reviewed' => 'warning',
+                        'resolved' => 'success',
+                        default => 'gray',
                     }),
                 TextColumn::make('created_at')
                     ->label('Data')

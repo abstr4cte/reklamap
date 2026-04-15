@@ -15,7 +15,7 @@ class NewsletterController extends Controller
         $subscriber = Newsletter::where('unsubscribe_token', $token)->first();
 
         if (!$subscriber) {
-            return "Nieprawidłowy lub wygasły token subskrypcji.";
+            return redirect(config('app.frontend_url') . '/?blad=newsletter-token');
         }
 
         $subscriber->delete();

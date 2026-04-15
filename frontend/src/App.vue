@@ -108,6 +108,7 @@ onMounted(() => {
 
     const params = new URLSearchParams(window.location.search)
     const wypisano = params.get('wypisano')
+    const blad = params.get('blad')
     if (wypisano === 'alerty') {
       const miasto = params.get('miasto')
       const region = params.get('region')
@@ -118,6 +119,12 @@ onMounted(() => {
       window.history.replaceState({}, '', window.location.pathname)
     } else if (wypisano === 'newsletter') {
       toast.value?.add('Wypisano z newslettera ReklaMap. Twój adres e-mail został usunięty z listy.', 'success')
+      window.history.replaceState({}, '', window.location.pathname)
+    } else if (blad === 'newsletter-token') {
+      toast.value?.add('Link do wypisania jest nieprawidłowy lub już wygasł.', 'error')
+      window.history.replaceState({}, '', window.location.pathname)
+    } else if (blad === 'alert-token') {
+      toast.value?.add('Link do wypisania z alertów jest nieprawidłowy lub już wygasł.', 'error')
       window.history.replaceState({}, '', window.location.pathname)
     }
   })

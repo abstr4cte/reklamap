@@ -17,8 +17,15 @@ class ReportForm
                     ->label('ID Ogłoszenia')
                     ->disabled()
                     ->dehydrated(),
-                TextInput::make('reason')
+                Select::make('reason')
                     ->label('Powód')
+                    ->options([
+                        'incorrect_info' => 'Niepoprawne informacje',
+                        'unavailable' => 'Już niedostępna',
+                        'spam' => 'Spam / Oszustwo',
+                        'other' => 'Inne',
+                    ])
+                    ->native(false)
                     ->required(),
                 Textarea::make('details')
                     ->label('Szczegóły')

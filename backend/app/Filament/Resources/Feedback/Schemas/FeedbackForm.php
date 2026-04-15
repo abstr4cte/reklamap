@@ -17,10 +17,10 @@ class FeedbackForm
                     ->label('Typ')
                     ->options([
                         'bug' => 'Błąd',
-                        'feature' => 'Nowa funkcja',
-                        'improvement' => 'Ulepszenie',
-                        'other' => 'Inne',
+                        'suggestion' => 'Sugestia',
+                        'question' => 'Pytanie',
                     ])
+                    ->native(false)
                     ->required(),
                 TextInput::make('email')
                     ->label('Email')

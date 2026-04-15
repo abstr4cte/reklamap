@@ -58,7 +58,7 @@ class SearchAlertController extends Controller
         $alert = SearchAlert::where('unsubscribe_token', $token)->first();
 
         if (!$alert) {
-            return response()->json(['message' => 'Nieprawidłowy lub wygasły token subskrypcji.'], 404);
+            return redirect(config('app.frontend_url') . '/?blad=alert-token');
         }
 
         $city   = $alert->city   ?? '';
