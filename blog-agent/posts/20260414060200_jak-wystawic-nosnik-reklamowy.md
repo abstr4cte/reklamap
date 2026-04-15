@@ -53,7 +53,7 @@ Najprościej: sprawdź, ile kosztują podobne nośniki w Twojej okolicy. Na [Rek
 
 Profesjonalne podejście: oblicz wartość swojego nośnika na podstawie liczby kontaktów. Policz natężenie ruchu (liczba samochodów/pieszych dziennie) i zastosuj wzór:
 
-**Cena miesięczna = (Dzienny ruch × 30 dni × CPM rynkowy) / 1000**
+`Cena miesięczna = (Dzienny ruch × 30 dni × CPM rynkowy) / 1000`
 
 Dla billboardu przy drodze z ruchem 20 000 aut/dobę i CPM = 2 zł: **20 000 × 30 × 2 / 1000 = 1 200 zł/miesiąc**
 

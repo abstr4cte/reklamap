@@ -98,7 +98,7 @@ Sama lokalizacja to nie jedyny czynnik. Oto co jeszcze kształtuje cenę:
 
 Żeby uczciwie porównać oferty różnych nośników, używaj wskaźnika CPM (Cost Per Mille) — cena za tysiąc kontaktów z reklamą.
 
-**CPM = (Cena nośnika / Liczba kontaktów w okresie) × 1000**
+`CPM = (Cena nośnika / Liczba kontaktów w okresie) × 1000`
 
 Przykład: billboard za 3 000 zł/miesiąc, przy którym przejeżdża 50 000 samochodów dziennie (1,5 mln/miesiąc), daje CPM = 2 zł. To bardzo dobry wynik — dla porównania reklama w mediach społecznościowych osiąga CPM na poziomie 5–30 zł.
 

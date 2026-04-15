@@ -84,8 +84,9 @@ class BlogPostForm
                     ->label('Opublikowany')
                     ->onIcon('heroicon-m-check-badge')
                     ->offIcon('heroicon-m-x-mark')
-                    ->default(true)
-                    ->formatStateUsing(fn ($state) => $state === 'published' || $state === true || $state === 1)
+                    ->afterStateHydrated(fn ($component, $state) => $component->state(
+                        $state === null ? true : $state === 'published'
+                    ))
                     ->dehydrateStateUsing(fn ($state) => $state ? 'published' : 'draft'),
                 FileUpload::make('image')
                     ->label('Obrazek')

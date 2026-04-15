@@ -18,6 +18,7 @@ interface BlogPost {
   image: string | null
   imageAlt: string | null
   date: string
+  dateIso: string | null
   readTime: string
   author: string
 }
@@ -56,7 +57,7 @@ watch(post, (newPost) => {
       ogImage: newPost.image || undefined,
       ogUrl: url,
       canonical: url,
-      publishedTime: newPost.date ? new Date(newPost.date).toISOString() : undefined,
+      publishedTime: newPost.dateIso ?? undefined,
       structuredData: {
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
@@ -71,7 +72,7 @@ watch(post, (newPost) => {
           '@type': 'Person',
           'name': newPost.author
         },
-        'datePublished': newPost.date ? new Date(newPost.date).toISOString() : undefined,
+        'datePublished': newPost.dateIso ?? undefined,
         'publisher': {
           '@type': 'Organization',
           'name': 'ReklaMap',
@@ -272,17 +273,36 @@ const shareToSocial = (platform: 'facebook' | 'twitter' | 'whatsapp' | 'linkedin
 
 <template>
   <div class="blog-post-page">
-    <div v-if="isLoading" class="loading">
-      <p>Ładowanie artykułu...</p>
+    <div v-if="isLoading" class="skeleton-page">
+      <div class="skeleton-hero skeleton"></div>
+      <div class="container skeleton-body">
+        <div class="skeleton-line skeleton" style="width: 120px; height: 16px; margin-bottom: 2rem;"></div>
+        <div class="skeleton-line skeleton" style="width: 100%; height: 24px; margin-bottom: 1rem;"></div>
+        <div class="skeleton-line skeleton" style="width: 80%; height: 24px; margin-bottom: 2rem;"></div>
+        <div class="skeleton-line skeleton" style="width: 100%; height: 16px; margin-bottom: 0.75rem;"></div>
+        <div class="skeleton-line skeleton" style="width: 100%; height: 16px; margin-bottom: 0.75rem;"></div>
+        <div class="skeleton-line skeleton" style="width: 90%; height: 16px; margin-bottom: 0.75rem;"></div>
+        <div class="skeleton-line skeleton" style="width: 100%; height: 16px; margin-bottom: 0.75rem;"></div>
+        <div class="skeleton-line skeleton" style="width: 70%; height: 16px;"></div>
+      </div>
     </div>
-    
-    <div v-else-if="notFound" class="not-found">
-      <h2>Artykuł nie znaleziony</h2>
-      <button @click="router.push('/blog')" class="back-btn">
-        Wróć do bloga
-      </button>
+
+    <div v-else-if="notFound" class="not-found-page">
+      <div class="not-found-content">
+          <div class="error-code">404</div>
+          <h1>Artykuł nie został znaleziony</h1>
+          <p>Wygląda na to, że artykuł, którego szukasz, nie istnieje lub został przeniesiony.</p>
+          <div class="not-found-actions">
+            <button @click="router.push('/blog')" class="btn btn-primary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Wróć do bloga
+            </button>
+          </div>
+      </div>
     </div>
-    
+
     <div v-else-if="post" class="blog-post-page">
       <div class="hero-section" :style="{ backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${post.image})` }">
         <div class="container">
@@ -469,6 +489,103 @@ h1 {
 
 .post-content :deep(p) {
   margin-bottom: 1.5rem;
+}
+
+.post-content :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  font-size: 0.95rem;
+  overflow-x: auto;
+  display: block;
+}
+
+.post-content :deep(thead) {
+  background: #f3f4f6;
+}
+
+.post-content :deep(th) {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #111827;
+  border-bottom: 2px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.post-content :deep(td) {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.post-content :deep(tr:last-child td) {
+  border-bottom: none;
+}
+
+.post-content :deep(tr:hover td) {
+  background: #f9fafb;
+}
+
+.post-content :deep(ul), .post-content :deep(ol) {
+  margin: 0 0 1.5rem 1.5rem;
+  line-height: 1.8;
+}
+
+.post-content :deep(li) {
+  margin-bottom: 0.4rem;
+}
+
+.post-content :deep(strong) {
+  color: #111827;
+  font-weight: 600;
+}
+
+.post-content :deep(a) {
+  color: #667eea;
+  text-decoration: underline;
+}
+
+.post-content :deep(a:hover) {
+  color: #4f46e5;
+}
+
+.post-content :deep(code) {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.2em 0.5em;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
+  color: #4f46e5;
+  white-space: nowrap;
+}
+
+.post-content :deep(pre) {
+  background: #1f2937;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  overflow-x: auto;
+}
+
+.post-content :deep(pre code) {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  white-space: pre;
+}
+
+.post-content :deep(blockquote) {
+  border-left: 4px solid #667eea;
+  background: #f5f3ff;
+  margin: 2rem 0;
+  padding: 1rem 1.5rem;
+  border-radius: 0 8px 8px 0;
+  color: #374151;
+  font-style: italic;
 }
 
 .share-section {
@@ -694,15 +811,125 @@ h1 {
   box-shadow: 0 4px 12px rgba(10, 102, 194, 0.3);
 }
 
+/* Skeleton loading */
+.skeleton-page {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.skeleton-hero {
+  height: 60vh;
+  min-height: 400px;
+  border-radius: 0;
+}
+
+.skeleton-body {
+  max-width: 780px;
+  padding-top: 3rem;
+}
+
+.skeleton-line {
+  border-radius: 6px;
+  display: block;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 404 not found */
+.not-found-page {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+  padding: 2rem;
+}
+
+.not-found-content {
+  background: white;
+  padding: 4rem 2rem;
+  border-radius: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+  text-align: center;
+  max-width: 560px;
+  width: 100%;
+}
+
+.error-code {
+  font-size: 8rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1.5rem;
+}
+
+.not-found-content h1 {
+  font-size: 2rem;
+  color: #1f2937;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.not-found-content p {
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.not-found-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.5);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
 @media (max-width: 768px) {
   .hero-section {
     height: 50vh;
   }
-  
+
   h1 {
     font-size: 2rem;
   }
-  
+
   .container {
     padding: 0 1.5rem;
   }

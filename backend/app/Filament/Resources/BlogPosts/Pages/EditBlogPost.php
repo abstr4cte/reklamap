@@ -44,7 +44,7 @@ class EditBlogPost extends EditRecord
                 foreach ($subscribers as $subscriber) {
                     Mail::send('emails.blog-notification', [
                         'blogPost' => $blogPost,
-                        'blogUrl' => config('app.frontend_url') . '/blog/' . $blogPost->slug,
+                        'blogUrl' => config('app.frontend_url') . '/blog/' . $blogPost->category . '/' . $blogPost->slug,
                         'unsubscribeToken' => $subscriber->unsubscribe_token,
                     ], function ($message) use ($subscriber) {
 

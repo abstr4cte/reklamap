@@ -116,7 +116,7 @@
 <body>
     <div class="email-container">
         <div class="header">
-            <img src="{{ asset('logo-text.png') }}" alt="ReklaMap" class="logo-image" />
+            <img src="{{ url('logo-text.png') }}" alt="ReklaMap" class="logo-image" />
                 
             
             <p class="tagline">Portal powierzchni reklamowych</p>

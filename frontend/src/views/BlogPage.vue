@@ -178,7 +178,7 @@ const handleNewsletterSubmit = async () => {
             v-for="post in filteredPosts"
             :key="post.id"
             class="blog-card"
-            @click="router.push(`/blog/${post.slug}`)"
+            @click="router.push(`/blog/${post.category}/${post.slug}`)"
             style="cursor: pointer"
           >
             <div class="card-image">

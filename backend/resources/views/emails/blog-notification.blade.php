@@ -124,7 +124,7 @@
 <body>
     <div class="email-container">
         <div class="header">
-            <img src="{{ asset('logo-text.png') }}" alt="ReklaMap" class="logo-image" />
+            <img src="{{ url('logo-text.png') }}" alt="ReklaMap" class="logo-image" />
                 
             
             <p class="tagline">Portal powierzchni reklamowych</p>
@@ -139,7 +139,12 @@
 
             <div class="blog-card">
                 @if($blogPost->image)
-                    <img src="{{ $blogPost->image }}" alt="{{ $blogPost->title }}" style="width:100%;height:200px;object-fit:cover;display:block;" />
+                    @php
+                        $imageUrl = filter_var($blogPost->image, FILTER_VALIDATE_URL)
+                            ? $blogPost->image
+                            : url('storage/' . $blogPost->image);
+                    @endphp
+                    <img src="{{ $imageUrl }}" alt="{{ $blogPost->title }}" style="width:100%;height:200px;object-fit:cover;display:block;" />
                 @endif
                 <div class="blog-info">
                     <div class="blog-label">Nowy artykuł</div>

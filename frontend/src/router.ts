@@ -98,7 +98,7 @@ const router = createRouter({
       component: () => import('./views/BlogPage.vue')
     },
     {
-      path: '/blog/:slug',
+      path: '/blog/:category(poradniki|trendy|case-study|rynek-ooh|prawo-i-regulacje|lokalizacje)/:slug',
       name: 'blog-post',
       component: () => import('./views/BlogPostPage.vue')
     },
