@@ -2,6 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from './views/HomePage.vue'
 // Some components are lazy-loaded within the router definition
 
+// Wyłącz natywne przywracanie scrolla przez przeglądarkę — obsługujemy to sami w onActivated
+if (typeof window !== 'undefined') {
+  history.scrollRestoration = 'manual'
+}
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [

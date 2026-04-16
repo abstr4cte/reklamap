@@ -200,20 +200,23 @@ onActivated(() => {
   if (savedScroll) {
     try {
       const { container, window: windowY } = JSON.parse(savedScroll)
-      // Użyj setTimeout zamiast nextTick, aby uniknąć wyścigu z scrollBehavior routera
-      setTimeout(() => {
-        // Przywróć scroll kontenera listy
-        if (listContainerRef.value && container) {
-          listContainerRef.value.scrollTop = container
-        }
-        // Przywróć scroll okna (na mobile lista jest w normalnym flow)
-        if (windowY) {
-          window.scrollTo({ top: windowY, behavior: 'instant' })
-        }
-        // Wyczyść zapisaną pozycję po przywróceniu
-        sessionStorage.removeItem(LISTINGS_SCROLL_KEY)
-        sessionStorage.removeItem(LISTINGS_PAGE_KEY)
-      }, 50)
+      // nextTick czeka aż Vue zakończy aktualizację DOM po aktywacji keep-alive,
+      // requestAnimationFrame czeka na następną klatkę — wtedy kontener jest gotowy do scrolla
+      nextTick(() => {
+        requestAnimationFrame(() => {
+          // Przywróć scroll kontenera listy
+          if (listContainerRef.value && container) {
+            listContainerRef.value.scrollTop = container
+          }
+          // Przywróć scroll okna (na mobile lista jest w normalnym flow)
+          if (windowY) {
+            window.scrollTo({ top: windowY, behavior: 'instant' })
+          }
+          // Wyczyść zapisaną pozycję po przywróceniu
+          sessionStorage.removeItem(LISTINGS_SCROLL_KEY)
+          sessionStorage.removeItem(LISTINGS_PAGE_KEY)
+        })
+      })
     } catch (e) {
       sessionStorage.removeItem(LISTINGS_SCROLL_KEY)
       sessionStorage.removeItem(LISTINGS_PAGE_KEY)
