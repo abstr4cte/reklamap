@@ -76,7 +76,7 @@ Billboard widzi każdy — to zaleta przy masowych produktach, wada przy niszowy
 
 ## Optymalny mix: OOH + digital
 
-Najlepsze kampanie łączą oba kanały w przemyślany sposób. Badania Nielsenа pokazują, że OOH wzmacnia skuteczność kampanii digital o 40–50% — użytkownicy, którzy zobaczyli markę na billboardzie, chętniej klikają jej reklamy online.
+Najlepsze kampanie łączą oba kanały w przemyślany sposób. Badania Nielsena pokazują, że OOH wzmacnia skuteczność kampanii digital o 40–50% — użytkownicy, którzy zobaczyli markę na billboardzie, chętniej klikają jej reklamy online.
 
 **Schemat działający w praktyce:**
 1. OOH buduje świadomość i rozpoznawalność marki w wybranej lokalizacji

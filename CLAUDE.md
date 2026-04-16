@@ -10,6 +10,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
+### Statystyki produkcji
+```bash
+php scripts/stats.php            # ostatnie 7 dni
+php scripts/stats.php --days=30  # ostatnie 30 dni
+php scripts/stats.php --url=http://localhost:8000  # lokalnie (dev)
+```
+Wynik ląduje w `reklamap-os/stats/stats-YYYY-MM-DD.md` — wklej zawartość do rozmowy.
+Wymaga `INTERNAL_APP_KEY` w `backend/.env` zgodnego z produkcją.
+
 ### Frontend (`/frontend`)
 ```bash
 npm run dev           # Dev server at localhost:5173 (proxies /api to localhost:8000)

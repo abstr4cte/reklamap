@@ -37,7 +37,7 @@ export const categoryDescriptions: Record<string, CategoryDescription> = {
     description: 'Citylighty to elegancka forma reklamy zewnętrznej, idealnie wkomponowana w tkankę miejską. Najczęściej spotykane na przystankach komunikacji miejskiej, deptakach oraz w okolicach galerii handlowych. Standardowy wymiar 120x180 cm pozwala na przedstawienie szczegółowych informacji, które odbiorca (pieszy lub pasażer) może dokładnie przestudiować. Dzięki wewnętrznemu podświetleniu, reklama na citylightach prezentuje się niezwykle atrakcyjnie po zmroku. Jest to niezastąpione narzędzie dla branży fashion, beauty, retail oraz dla instytucji kultury i miast promujących wydarzenia.',
     benefits: [
       'Bliskość odbiorcy – reklama na wysokości wzroku pieszego',
-      'Preстиżowy wygląd dzięki przeszklonym obudowom i podświetleniu',
+      'Prestiżowy wygląd dzięki przeszklonym obudowom i podświetleniu',
       'Dotarcie do osób oczekujących na transport publiczny (długi czas kontaktu)',
       'Idealne do działań prosprzedażowych i informacyjnych w centrach miast',
       'Możliwość zastosowania kreatywnych rozwiązań (np. zapachowych lub interaktywnych)'
