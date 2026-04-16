@@ -22,74 +22,78 @@ class AdvertisementStatsSeeder extends Seeder
         // Bazowa liczba odsłon dziennie per ogłoszenie.
         // Klucz = slug, wartość = mediana dzienna.
         // Ogłoszenia dodane później zaczynają zbierać statystyki od daty dodania.
+        // Bazowa liczba odsłon dziennie per ogłoszenie.
+        // Ogłoszenia z całego okresu (1–15 IV): wartości 3–9/dzień → łącznie ~45–135 odsłon.
+        // Ogłoszenia dodane 15 IV (1 dzień): wartości 15–22 → odzwierciedlają "świeży" ruch
+        // z pierwszego dnia widoczności na nowej, nieopatrzonej platformie.
         $baseViews = [
             // Warszawa
-            'billboard-przy-modlinskiej-bialoleka-wyjazd-z-warszawy'        => 44,
-            'ekran-led-targowek-skrzyzowanie-ze-swietlna'                    => 62,
-            'citylight-brodno-ruchliwy-przystanek-kilku-linii'               => 28,
-            'billboard-wylot-z-warszawy-na-marki-i-legionowo'               => 34,
-            'billboard-premium-srodmiescie-warszawa-marszalkowska-swietokrzyska' => 78,
+            'billboard-przy-modlinskiej-bialoleka-wyjazd-z-warszawy'        => 6,
+            'ekran-led-targowek-skrzyzowanie-ze-swietlna'                    => 9,
+            'citylight-brodno-ruchliwy-przystanek-kilku-linii'               => 4,
+            'billboard-wylot-z-warszawy-na-marki-i-legionowo'               => 5,
+            'billboard-premium-srodmiescie-warszawa-marszalkowska-swietokrzyska' => 22, // start 15 IV
 
             // Kraków
-            'wolny-billboard-nowa-huta-krakow'                              => 30,
-            'citylight-na-przystanku-os-piastow-krakow'                     => 21,
-            'wynajem-czasu-emisji-ekran-led-podgorze-krakow'                => 52,
+            'wolny-billboard-nowa-huta-krakow'                              => 4,
+            'citylight-na-przystanku-os-piastow-krakow'                     => 3,
+            'wynajem-czasu-emisji-ekran-led-podgorze-krakow'                => 7,
 
             // Wrocław
-            'billboard-dwustronny-przy-obwodnicy-wroclaw-fabryczna'         => 40,
-            'panel-citylight-grabiszynska-wroclaw'                          => 18,
-            'sciana-pod-siate-wielkoformatowa-centrum-wroclawia'            => 36,
-            'citylight-przystanek-pilsudskiego-wroclaw-wysoki-ruch-uczciwa-cena' => 24,
+            'billboard-dwustronny-przy-obwodnicy-wroclaw-fabryczna'         => 6,
+            'panel-citylight-grabiszynska-wroclaw'                          => 3,
+            'sciana-pod-siate-wielkoformatowa-centrum-wroclawia'            => 5,
+            'citylight-przystanek-pilsudskiego-wroclaw-wysoki-ruch-uczciwa-cena' => 18, // start 15 IV
 
             // Poznań
-            'billboard-lazarz-poznan-blisko-uck'                            => 33,
-            'pylon-przy-wjezdzie-do-centrum-ul-bukowska-jezyce-poznan'      => 25,
+            'billboard-lazarz-poznan-blisko-uck'                            => 5,
+            'pylon-przy-wjezdzie-do-centrum-ul-bukowska-jezyce-poznan'      => 4,
 
             // Gdańsk
-            'billboard-dk7-gdansk-obok-stacji-paliw'                        => 37,
-            'citylight-lostowice-gdansk-duze-osiedle'                       => 17,
-            'ogrodzenie-pod-baner-strefa-portowa-nowy-port'                 => 13,
+            'billboard-dk7-gdansk-obok-stacji-paliw'                        => 5,
+            'citylight-lostowice-gdansk-duze-osiedle'                       => 3,
+            'ogrodzenie-pod-baner-strefa-portowa-nowy-port'                 => 2,
 
             // Łódź
-            'billboard-widzew-lodz-dostepny-od-zaraz'                       => 26,
+            'billboard-widzew-lodz-dostepny-od-zaraz'                       => 4,
 
             // Katowice
-            'billboard-poludnie-katowic-wyjazd-na-s86'                      => 30,
-            'panel-na-przystanku-tramwajowym-koszutka-katowice'             => 18,
+            'billboard-poludnie-katowic-wyjazd-na-s86'                      => 4,
+            'panel-na-przystanku-tramwajowym-koszutka-katowice'             => 3,
 
             // Szczecin
-            'billboard-niebuszewo-szczecin-dostepny-od-zaraz'               => 20,
+            'billboard-niebuszewo-szczecin-dostepny-od-zaraz'               => 3,
 
             // Lublin
-            'billboard-wylot-z-lublina-droga-krajowa-na-krasnik'            => 24,
-            'dwustronny-pylon-przy-galerii-atrium-lublin-czuby'             => 19,
+            'billboard-wylot-z-lublina-droga-krajowa-na-krasnik'            => 3,
+            'dwustronny-pylon-przy-galerii-atrium-lublin-czuby'             => 3,
 
             // Bydgoszcz
-            'reklama-na-autobusach-mzk-bydgoszcz-80-pojazdow-cala-siec'    => 46,
+            'reklama-na-autobusach-mzk-bydgoszcz-80-pojazdow-cala-siec'    => 6,
 
             // Rzeszów
-            'billboard-dwustronny-centrum-rzeszowa-przy-dworcu'             => 38,
+            'billboard-dwustronny-centrum-rzeszowa-przy-dworcu'             => 5,
 
             // Okolice Warszawy
-            'billboard-przy-pulawskiej-piaseczno-korki-i-dluga-ekspozycja'  => 41,
-            'citylight-pkp-pruszkow-tysiace-pasazerow-dziennie'             => 31,
+            'billboard-przy-pulawskiej-piaseczno-korki-i-dluga-ekspozycja'  => 6,
+            'citylight-pkp-pruszkow-tysiace-pasazerow-dziennie'             => 4,
 
             // Drogi krajowe
-            'billboard-dk7-bialobrzegi-kierunek-warszawa'                   => 28,
-            'billboard-przy-mop-adamowice-s8-45-km-od-warszawy'            => 48,
-            'billboard-przy-dk1-za-piotrkowem-trasa-na-slask-wolny-po-8-latach' => 22,
+            'billboard-dk7-bialobrzegi-kierunek-warszawa'                   => 4,
+            'billboard-przy-mop-adamowice-s8-45-km-od-warszawy'            => 7,
+            'billboard-przy-dk1-za-piotrkowem-trasa-na-slask-wolny-po-8-latach' => 3,
 
             // Mniejsze miasta
-            'ekran-led-centrum-kielc-przy-przejsciu-dla-pieszych'           => 33,
-            'ogrodzenie-pod-baner-wjazd-do-tarnowa-od-strony-krakowa'      => 12,
-            'citylight-centrum-olsztyna-ruchliwy-przystanek-tramwajowy'     => 17,
-            'naklejka-reklamowa-na-taksowce-warszawa-centrum-i-mokotow-codziennie' => 38,
-            'billboard-lubin-wjazd-od-a4-miasto-kghm'                      => 21,
-            'sciana-na-kamienicy-przy-rynku-wieliczka-blisko-kopalni-soli'  => 43,
+            'ekran-led-centrum-kielc-przy-przejsciu-dla-pieszych'           => 5,
+            'ogrodzenie-pod-baner-wjazd-do-tarnowa-od-strony-krakowa'      => 2,
+            'citylight-centrum-olsztyna-ruchliwy-przystanek-tramwajowy'     => 3,
+            'naklejka-reklamowa-na-taksowce-warszawa-centrum-i-mokotow-codziennie' => 5,
+            'billboard-lubin-wjazd-od-a4-miasto-kghm'                      => 3,
+            'sciana-na-kamienicy-przy-rynku-wieliczka-blisko-kopalni-soli'  => 6,
 
             // Budget / z charakterem
-            'billboard-wjazd-do-nowego-sacza-od-strony-krakowa-tani'       => 10,
-            'billboard-przy-dk8-pultusk-dobry-na-lato-tani-bo-zasloniety'  => 13,
+            'billboard-wjazd-do-nowego-sacza-od-strony-krakowa-tani'       => 15, // start 15 IV
+            'billboard-przy-dk8-pultusk-dobry-na-lato-tani-bo-zasloniety'  => 16, // start 15 IV
         ];
 
         // Ogłoszenia dodane w połowie kwietnia — nie mają statystyk sprzed swojego dodania
@@ -125,14 +129,14 @@ class AdvertisementStatsSeeder extends Seeder
             while ($current->lte($end)) {
                 $multiplier = $dayMultiplier[$current->dayOfWeek] ?? 1.0;
 
-                // Losowość ±30%, wynik clamped do przedziału 10-120
+                // Losowość ±30%, wynik clamped do przedziału 1-25
                 $views = (int) round($base * $multiplier * (0.7 + lcg_value() * 0.6));
-                $views = max(10, min(120, $views));
+                $views = max(1, min(25, $views));
 
-                // Kliknięcia formularza: ~1-3% odsłon, głównie w dni robocze
+                // Kliknięcia formularza: świeża platforma, bardzo rzadkie
                 $emailClicks = 0;
-                if ($current->isWeekday() && $views > 20) {
-                    $emailClicks = (lcg_value() < 0.25) ? rand(1, 2) : 0;
+                if ($current->isWeekday() && $views > 5) {
+                    $emailClicks = (lcg_value() < 0.12) ? 1 : 0;
                 }
 
                 // Kliknięcia telefonu: bardzo rzadkie (contact_preference = form)
