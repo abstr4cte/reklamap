@@ -21,14 +21,14 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ WARSZAWA ══════════════════
 
             [
-                'title' => 'Billboard przy Modlińskiej — Białołęka, wyjazd z Warszawy',
+                'title' => 'Billboard przy Modlińskiej - \1iałołęka, wyjazd z Warszawy',
                 'type' => 'billboard',
                 'location' => 'ul. Modlińska 223',
                 'city' => 'Warszawa',
                 'region' => 'mazowieckie',
                 'latitude' => 52.3156,
                 'longitude' => 20.9887,
-                'description' => "Mam wolny billboard przy Modlińskiej na Białołęce, wyjazd w stronę Nieporętu. Dużo aut rano i po południu, bo ludzie dojeżdżają z tamtych okolic do pracy. Sam mieszkam niedaleko i powiem szczerze — każdy kto jedzie tą drogą mija ten baner. Minimalny wynajem miesiąc, cena do ustalenia przy dłuższej umowie. Kontakt przez formularz.",
+                'description' => "Mam wolny billboard przy Modlińskiej na Białołęce, wyjazd w stronę Nieporętu. Dużo aut rano i po południu, bo ludzie dojeżdżają z tamtych okolic do pracy. Sam mieszkam niedaleko i powiem szczerze - \1ażdy kto jedzie tą drogą mija ten baner. Minimalny wynajem miesiąc, cena do ustalenia przy dłuższej umowie. Kontakt przez formularz.",
                 'price' => 1400,
                 'price_unit' => 'month',
                 'width' => 5.04,
@@ -72,7 +72,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'mazowieckie',
                 'latitude' => 52.2803,
                 'longitude' => 21.0612,
-                'description' => "Panel na przystanku Kondratowicza na Bródnie — staje tu 11 i 25 tramwaj plus kilka autobusów, między innymi 156 i 203. Rano jest tu kolejka bo tramwaje jeżdżą co kilkanaście minut i ludzie czekają. Podświetlany, format 120x180. Jedna uwaga: grafika trochę pogięta na lewym rogu po poprzednim najemcy, ale można wymienić — cena z wymianą do dogadania.",
+                'description' => "Panel na przystanku Kondratowicza na Bródnie - \1taje tu 11 i 25 tramwaj plus kilka autobusów, między innymi 156 i 203. Rano jest tu kolejka bo tramwaje jeżdżą co kilkanaście minut i ludzie czekają. Podświetlany, format 120x180. Jedna uwaga: grafika trochę pogięta na lewym rogu po poprzednim najemcy, ale można wymienić - \1ena z wymianą do dogadania.",
                 'price' => 850,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -91,7 +91,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'mazowieckie',
                 'latitude' => 52.3089,
                 'longitude' => 21.0534,
-                'description' => "Billboard przy wyjeździe z Warszawy w stronę Marek i Legionowa — ulica Płochocińska. Sporo aut wcześnie rano i późnym popołudniem. Jednostronny, format 504x238 cm, oświetlony. Dobry na lokalną firmę albo dewelopera z tamtych okolic. Piszcie na formularz.",
+                'description' => "Billboard przy wyjeździe z Warszawy w stronę Marek i Legionowa - \1lica Płochocińska. Sporo aut wcześnie rano i późnym popołudniem. Jednostronny, format 504x238 cm, oświetlony. Dobry na lokalną firmę albo dewelopera z tamtych okolic. Piszcie na formularz.",
                 'price' => 1100,
                 'price_unit' => 'month',
                 'width' => 5.04,
@@ -136,7 +136,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'malopolskie',
                 'latitude' => 50.0812,
                 'longitude' => 20.0253,
-                'description' => "Piastów, Nowa Huta — przystanek obsługiwany przez 22 tramwaj w kierunku centrum i kilka autobusów osiedlowych. Rankiem wsiada tu dużo robotników z kombinatu i pobliskich zakładów. Jeden minus, który powiem wprost: zimą wiata bywa zasypana i panel trochę mniej widoczny od ulicy. Latem jest bez zarzutu. Cena za miesiąc z wliczonym utrzymaniem, przy dłuższej umowie gadamy.",
+                'description' => "Piastów, Nowa Huta - \1rzystanek obsługiwany przez 22 tramwaj w kierunku centrum i kilka autobusów osiedlowych. Rankiem wsiada tu dużo robotników z kombinatu i pobliskich zakładów. Jeden minus, który powiem wprost: zimą wiata bywa zasypana i panel trochę mniej widoczny od ulicy. Latem jest bez zarzutu. Cena za miesiąc z wliczonym utrzymaniem, przy dłuższej umowie gadamy.",
                 'price' => 750,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -181,7 +181,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'dolnoslaskie',
                 'latitude' => 51.0989,
                 'longitude' => 16.9823,
-                'description' => "Powierzchnia reklamowa przy ul. Kosmonautów we Wrocławiu, w bezpośrednim sąsiedztwie wjazdu na obwodnicę i trasę do autostrady A4. Nośnik dwustronny 6x3m skierowany na ruch w obu kierunkach — centrum oraz węzeł autostradowy. Profil ruchu: mieszany (osobowy, dostawczy, ciężarowy). Oświetlenie LED, ekspozycja całodobowa. Nośnik zarządzany przez Grupę Reklam Zewnętrznych Południe Sp. z o.o. Minimalna umowa: 1 miesiąc. Faktura VAT.",
+                'description' => "Powierzchnia reklamowa przy ul. Kosmonautów we Wrocławiu, w bezpośrednim sąsiedztwie wjazdu na obwodnicę i trasę do autostrady A4. Nośnik dwustronny 6x3m skierowany na ruch w obu kierunkach - \1entrum oraz węzeł autostradowy. Profil ruchu: mieszany (osobowy, dostawczy, ciężarowy). Oświetlenie LED, ekspozycja całodobowa. Nośnik zarządzany przez Grupę Reklam Zewnętrznych Południe Sp. z o.o. Minimalna umowa: 1 miesiąc. Faktura VAT.",
                 'price' => 2600,
                 'price_unit' => 'month',
                 'width' => 6.00,
@@ -202,7 +202,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'dolnoslaskie',
                 'latitude' => 51.0894,
                 'longitude' => 17.0021,
-                'description' => "Panel na przystanku przy Grabiszyńskiej niedaleko cmentarza. Brzmi niepoważnie, ale tam naprawdę jest duży ruch — blisko centrum, dużo linii tramwajowych. Citylight jednostronny, podświetlany. Dobra lokalizacja dla usług lokalnych.",
+                'description' => "Panel na przystanku przy Grabiszyńskiej niedaleko cmentarza. Brzmi niepoważnie, ale tam naprawdę jest duży ruch - \1lisko centrum, dużo linii tramwajowych. Citylight jednostronny, podświetlany. Dobra lokalizacja dla usług lokalnych.",
                 'price' => 700,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -221,7 +221,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'dolnoslaskie',
                 'latitude' => 51.1064,
                 'longitude' => 17.0278,
-                'description' => "Oferujemy wynajem powierzchni ściennej (siatka wielkoformatowa) na kamienicy przy ul. Świdnickiej we Wrocławiu. Ekspozycja 8x6m skierowana na ruch pieszy i samochodowy. Lokalizacja w obrębie centrum, wysoka intensywność ruchu pieszego. Właściciel nieruchomości prowadzi obsługę prawno-administracyjną. Cena netto, faktura VAT 23%. Preferowany wynajem kwartalny lub roczny — przy umowie rocznej rabat 15%. Kontakt w sprawie szczegółów technicznych i wizualizacji przez formularz.",
+                'description' => "Oferujemy wynajem powierzchni ściennej (siatka wielkoformatowa) na kamienicy przy ul. Świdnickiej we Wrocławiu. Ekspozycja 8x6m skierowana na ruch pieszy i samochodowy. Lokalizacja w obrębie centrum, wysoka intensywność ruchu pieszego. Właściciel nieruchomości prowadzi obsługę prawno-administracyjną. Cena netto, faktura VAT 23%. Preferowany wynajem kwartalny lub roczny - \1rzy umowie rocznej rabat 15%. Kontakt w sprawie szczegółów technicznych i wizualizacji przez formularz.",
                 'price' => 3200,
                 'price_unit' => 'month',
                 'width' => 8.00,
@@ -256,14 +256,14 @@ class AdvertisementsSeeder extends Seeder
                 'offer_type' => 'owner',
             ],
             [
-                'title' => 'Pylon przy wjeździe do centrum — ul. Bukowska, Jeżyce Poznań',
+                'title' => 'Pylon przy wjeździe do centrum - \1l. Bukowska, Jeżyce Poznań',
                 'type' => 'totem',
                 'location' => 'ul. Bukowska 27',
                 'city' => 'Poznań',
                 'region' => 'wielkopolskie',
                 'latitude' => 52.4098,
                 'longitude' => 16.8912,
-                'description' => "Pylon 1x3,5m przy Bukowskiej na Jeżycach, tuż przy wjeździe do centrum. Bardzo modna dzielnica, kawiarnie, sklepy — dobrze tu się pokazać jeśli kierujesz markę do aktywnych trzydziestolatków. Podświetlany, stan bdb. Dostępny od początku przyszłego miesiąca.",
+                'description' => "Pylon 1x3,5m przy Bukowskiej na Jeżycach, tuż przy wjeździe do centrum. Bardzo modna dzielnica, kawiarnie, sklepy - \1obrze tu się pokazać jeśli kierujesz markę do aktywnych trzydziestolatków. Podświetlany, stan bdb. Dostępny od początku przyszłego miesiąca.",
                 'price' => 1500,
                 'price_unit' => 'month',
                 'width' => 1.00,
@@ -286,7 +286,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'pomorskie',
                 'latitude' => 54.3421,
                 'longitude' => 18.5932,
-                'description' => "Nośnik przy ul. Kartuskiej — drodze krajowej nr 7 w kierunku Kartuz. Lokalizacja przy stacji paliw i serwisie, co dodatkowo wydłuża ekspozycję dla zatrzymujących się kierowców. Szacowany DEC (Daily Effective Circulation): 14 000 pojazdów. Billboard jednostronny 6x3m z oświetleniem LED. Dedykowany branżom: motoryzacja, serwis, budownictwo, usługi lokalne. Zarządca nośnika: OutMedia Gdańsk. Umowa od 1 miesiąca, możliwa płatność kwartalna z rabatem.",
+                'description' => "Nośnik przy ul. Kartuskiej - \1rodze krajowej nr 7 w kierunku Kartuz. Lokalizacja przy stacji paliw i serwisie, co dodatkowo wydłuża ekspozycję dla zatrzymujących się kierowców. Szacowany DEC (Daily Effective Circulation): 14 000 pojazdów. Billboard jednostronny 6x3m z oświetleniem LED. Dedykowany branżom: motoryzacja, serwis, budownictwo, usługi lokalne. Zarządca nośnika: OutMedia Gdańsk. Umowa od 1 miesiąca, możliwa płatność kwartalna z rabatem.",
                 'price' => 1900,
                 'price_unit' => 'month',
                 'width' => 6.00,
@@ -306,7 +306,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'pomorskie',
                 'latitude' => 54.3312,
                 'longitude' => 18.5821,
-                'description' => "Łostowice to blokowisko z lat 80. — kilkanaście tysięcy mieszkańców i prawie wszyscy jeżdżą autobusem bo tramwaj tu nie dociera. Przystanek przy Łostowickiej jest głównym węzłem — staje tu linia 110, 122 i 158. Podświetlany, 120x180 cm. Ramka ma drobne zarysowania po kilku latach użytkowania, ale sam panel świeci równo i grafikę widać dobrze.",
+                'description' => "Łostowice to blokowisko z lat 80. - \1ilkanaście tysięcy mieszkańców i prawie wszyscy jeżdżą autobusem bo tramwaj tu nie dociera. Przystanek przy Łostowickiej jest głównym węzłem - \1taje tu linia 110, 122 i 158. Podświetlany, 120x180 cm. Ramka ma drobne zarysowania po kilku latach użytkowania, ale sam panel świeci równo i grafikę widać dobrze.",
                 'price' => 650,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -325,7 +325,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'pomorskie',
                 'latitude' => 54.3891,
                 'longitude' => 18.6612,
-                'description' => "Przestrzeń banerowa na ogrodzeniu przy ul. Majowej w Nowym Porcie — strefa przemysłowo-portowa Gdańska. Format do 12x2m, mocowanie do istniejącej konstrukcji. Ruch docelowy: pojazdy ciężarowe, pracownicy portu, transport lokalny. Ekspozycja dzienna. Idealne zastosowanie: branża logistyczna, spedycja, wynajem maszyn, usługi B2B. Warunki: wynajem miesięczny lub kwartalny, montaż i demontaż grafiki we własnym zakresie lub na zlecenie (wycena na zapytanie).",
+                'description' => "Przestrzeń banerowa na ogrodzeniu przy ul. Majowej w Nowym Porcie - \1trefa przemysłowo-portowa Gdańska. Format do 12x2m, mocowanie do istniejącej konstrukcji. Ruch docelowy: pojazdy ciężarowe, pracownicy portu, transport lokalny. Ekspozycja dzienna. Idealne zastosowanie: branża logistyczna, spedycja, wynajem maszyn, usługi B2B. Warunki: wynajem miesięczny lub kwartalny, montaż i demontaż grafiki we własnym zakresie lub na zlecenie (wycena na zapytanie).",
                 'price' => 900,
                 'price_unit' => 'month',
                 'width' => 12.00,
@@ -348,7 +348,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'lodzkie',
                 'latitude' => 51.7712,
                 'longitude' => 19.5034,
-                'description' => "Billboard przy Brzezińskiej na Widzewie — ulica jest mocno zakorkowana wieczorami bo to główny dojazd ze wschodnich części Łodzi. Jednostronny, oświetlony, standard 504x238. Mam możliwość wymiany grafiki co miesiąc, sam organizuję druk za dodatkową opłatą jeśli potrzeba.",
+                'description' => "Billboard przy Brzezińskiej na Widzewie - \1lica jest mocno zakorkowana wieczorami bo to główny dojazd ze wschodnich części Łodzi. Jednostronny, oświetlony, standard 504x238. Mam możliwość wymiany grafiki co miesiąc, sam organizuję druk za dodatkową opłatą jeśli potrzeba.",
                 'price' => 1100,
                 'price_unit' => 'month',
                 'width' => 5.04,
@@ -392,7 +392,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'slaskie',
                 'latitude' => 50.2589,
                 'longitude' => 19.0078,
-                'description' => "Koszutka to stara robotnicza dzielnica — przystanek przy Rolnej obsługuje głównie ludzi jadących na pierwszą zmianę i wracających po pracy. Tramwaje 6 i 15, rano w obie strony tłoczno. Powiem szczerze: tutaj reklama działa lepiej dla usług lokalnych niż dla marek premium — publika jest pragmatyczna. Apteka, sklep, serwis — strzał w dziesiątkę. Podświetlany, dostępny od zaraz.",
+                'description' => "Koszutka to stara robotnicza dzielnica - \1rzystanek przy Rolnej obsługuje głównie ludzi jadących na pierwszą zmianę i wracających po pracy. Tramwaje 6 i 15, rano w obie strony tłoczno. Powiem szczerze: tutaj reklama działa lepiej dla usług lokalnych niż dla marek premium - \1ublika jest pragmatyczna. Apteka, sklep, serwis - \1trzał w dziesiątkę. Podświetlany, dostępny od zaraz.",
                 'price' => 680,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -438,7 +438,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'lubelskie',
                 'latitude' => 51.2165,
                 'longitude' => 22.5012,
-                'description' => "Mam billboard przy Kraśnickiej na wylocie z Lublina w stronę Kraśnika. Droga bardzo ruchliwa — dużo busów i tirów, bo to ważny tranzyt na południe. Nośnik jednostronny, skierowany na wyjazd z miasta. Oświetlony, cena za miesiąc, przy dłuższej umowie jest pole do rozmowy.",
+                'description' => "Mam billboard przy Kraśnickiej na wylocie z Lublina w stronę Kraśnika. Droga bardzo ruchliwa - \1użo busów i tirów, bo to ważny tranzyt na południe. Nośnik jednostronny, skierowany na wyjazd z miasta. Oświetlony, cena za miesiąc, przy dłuższej umowie jest pole do rozmowy.",
                 'price' => 1350,
                 'price_unit' => 'month',
                 'width' => 5.04,
@@ -459,7 +459,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'lubelskie',
                 'latitude' => 51.2298,
                 'longitude' => 22.5234,
-                'description' => "Pylon dwustronny przy ul. Zana, między galerią Atrium a osiedlem Czuby Północne. Duże osiedle, mnóstwo mieszkańców, blisko galeria i kilka sklepów. Dobra ekspozycja dla usług lokalnych — przychodnia, restauracja, sklep. Podświetlany LED, format 1,2x3m. Dostępny od zaraz.",
+                'description' => "Pylon dwustronny przy ul. Zana, między galerią Atrium a osiedlem Czuby Północne. Duże osiedle, mnóstwo mieszkańców, blisko galeria i kilka sklepów. Dobra ekspozycja dla usług lokalnych - \1rzychodnia, restauracja, sklep. Podświetlany LED, format 1,2x3m. Dostępny od zaraz.",
                 'price' => 1100,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -474,14 +474,14 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ BYDGOSZCZ ══════════════════
 
             [
-                'title' => 'Reklama na autobusach MZK Bydgoszcz — 80 pojazdów, cała sieć',
+                'title' => 'Reklama na autobusach MZK Bydgoszcz - 80 pojazdów, cała sieć',
                 'type' => 'transport',
                 'location' => 'ul. Inowrocławska 11',
                 'city' => 'Bydgoszcz',
                 'region' => 'kujawsko-pomorskie',
                 'latitude' => 53.1235,
                 'longitude' => 18.0234,
-                'description' => "Agencja MediaBus oferuje powierzchnię reklamową na taborze komunikacji miejskiej w Bydgoszczy. Dostępne formaty: tylna szyba (100x70cm), boki nadwozia (700x100cm), naklejki wewnętrzne. Flota obejmuje 80 autobusów obsługujących wszystkie dzielnice miasta. Minimalny czas kampanii: 4 tygodnie. Możliwość targetowania wybranych linii lub całej floty. Wycena indywidualna — proszę o kontakt z podaniem pożądanego formatu i okresu kampanii.",
+                'description' => "Agencja MediaBus oferuje powierzchnię reklamową na taborze komunikacji miejskiej w Bydgoszczy. Dostępne formaty: tylna szyba (100x70cm), boki nadwozia (700x100cm), naklejki wewnętrzne. Flota obejmuje 80 autobusów obsługujących wszystkie dzielnice miasta. Minimalny czas kampanii: 4 tygodnie. Możliwość targetowania wybranych linii lub całej floty. Wycena indywidualna - \1roszę o kontakt z podaniem pożądanego formatu i okresu kampanii.",
                 'price' => 2400,
                 'price_unit' => 'month',
                 'width' => 7.00,
@@ -505,7 +505,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'podkarpackie',
                 'latitude' => 50.0412,
                 'longitude' => 22.0023,
-                'description' => "Billboard przy głównej alei w centrum Rzeszowa, niedaleko dworca. Rzeszów szybko rośnie i ruch w centrum jest coraz większy. Nośnik dwustronny, widoczny zarówno od strony ronda jak i w kierunku galerii. Sam mam kilka nośników w mieście — ten jest najlepiej zlokalizowany z całej mojej oferty. Cena miesięczna, możliwa faktura.",
+                'description' => "Billboard przy głównej alei w centrum Rzeszowa, niedaleko dworca. Rzeszów szybko rośnie i ruch w centrum jest coraz większy. Nośnik dwustronny, widoczny zarówno od strony ronda jak i w kierunku galerii. Sam mam kilka nośników w mieście - \1en jest najlepiej zlokalizowany z całej mojej oferty. Cena miesięczna, możliwa faktura.",
                 'price' => 2100,
                 'price_unit' => 'month',
                 'width' => 6.00,
@@ -522,14 +522,14 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ OKOLICE WARSZAWY ══════════════════
 
             [
-                'title' => 'Billboard przy Puławskiej — Piaseczno, korki i długa ekspozycja',
+                'title' => 'Billboard przy Puławskiej - \1iaseczno, korki i długa ekspozycja',
                 'type' => 'billboard',
                 'location' => 'ul. Puławska 34',
                 'city' => 'Piaseczno',
                 'region' => 'mazowieckie',
                 'latitude' => 52.0823,
                 'longitude' => 21.0167,
-                'description' => "Nośnik przy Puławskiej w Piasecznie, kilkaset metrów za granicą Warszawy. Jeden z głównych wyjazdów z południa aglomeracji — korki tu stoją codziennie rano i wieczorem, więc czas ekspozycji jest naprawdę długi. Jednostronny 6x3m, oświetlony. Poprzedni najemca miał salon samochodowy — polecam ten typ branży.",
+                'description' => "Nośnik przy Puławskiej w Piasecznie, kilkaset metrów za granicą Warszawy. Jeden z głównych wyjazdów z południa aglomeracji - \1orki tu stoją codziennie rano i wieczorem, więc czas ekspozycji jest naprawdę długi. Jednostronny 6x3m, oświetlony. Poprzedni najemca miał salon samochodowy - \1olecam ten typ branży.",
                 'price' => 1800,
                 'price_unit' => 'month',
                 'width' => 6.00,
@@ -550,7 +550,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'mazowieckie',
                 'latitude' => 52.1689,
                 'longitude' => 20.8012,
-                'description' => "Panel reklamowy przy wejściu na stację PKP Pruszków. Codziennie kilka tysięcy dojeżdżających do Warszawy — większość to osoby w wieku 25–50 lat, pracujące. Ekspozycja bardzo dobra bo ludzie stoją i czekają na peron. Format 120x180cm, podświetlany, stan bdb. Dostępny od następnego miesiąca.",
+                'description' => "Panel reklamowy przy wejściu na stację PKP Pruszków. Codziennie kilka tysięcy dojeżdżających do Warszawy - \1iększość to osoby w wieku 25–50 lat, pracujące. Ekspozycja bardzo dobra bo ludzie stoją i czekają na peron. Format 120x180cm, podświetlany, stan bdb. Dostępny od następnego miesiąca.",
                 'price' => 780,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -573,7 +573,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'mazowieckie',
                 'latitude' => 51.6589,
                 'longitude' => 20.9456,
-                'description' => "Billboard przy drodze krajowej nr 7 między Radomiem a Warszawą, miejscowość Białobrzegi. Trasa bardzo uczęszczana — jedyna prosta droga z południa Mazowsza do stolicy. Nośnik jednostronny skierowany na Warszawę, widoczny z daleka bo teren otwarty. Idealne dla firm z branży transportowej, budowlanej albo deweloperów z okolic Radomia. Cena negocjowalna przy umowie minimum 3 miesiące.",
+                'description' => "Billboard przy drodze krajowej nr 7 między Radomiem a Warszawą, miejscowość Białobrzegi. Trasa bardzo uczęszczana - \1edyna prosta droga z południa Mazowsza do stolicy. Nośnik jednostronny skierowany na Warszawę, widoczny z daleka bo teren otwarty. Idealne dla firm z branży transportowej, budowlanej albo deweloperów z okolic Radomia. Cena negocjowalna przy umowie minimum 3 miesiące.",
                 'price' => 1450,
                 'price_unit' => 'month',
                 'width' => 6.00,
@@ -587,7 +587,7 @@ class AdvertisementsSeeder extends Seeder
                 'price_negotiable' => true,
             ],
             [
-                'title' => 'Billboard przy MOP Adamowice — S8, 45 km od Warszawy',
+                'title' => 'Billboard przy MOP Adamowice - \18, 45 km od Warszawy',
                 'type' => 'billboard',
                 'location' => 'Mszczonów, MOP Adamowice',
                 'city' => 'Mszczonów',
@@ -608,14 +608,14 @@ class AdvertisementsSeeder extends Seeder
                 'estimated_daily_views' => 20000,
             ],
             [
-                'title' => 'Billboard przy DK1 za Piotrkowem — trasa na Śląsk, wolny po 8 latach',
+                'title' => 'Billboard przy DK1 za Piotrkowem - \1rasa na Śląsk, wolny po 8 latach',
                 'type' => 'billboard',
                 'location' => 'ul. Sulejowska 201',
                 'city' => 'Piotrków Trybunalski',
                 'region' => 'lodzkie',
                 'latitude' => 51.3789,
                 'longitude' => 19.7023,
-                'description' => "Stary, sprawdzony nośnik przy DK1 za Piotrkowem jadąc na południe. Trasa na Częstochowę i Śląsk, zawsze spory ruch — szczególnie TIRy i busy. Billboard jednostronny, skierowany na kierowców jadących na południe. Oświetlony. Mam go już od 8 lat i zawsze był wynajęty — dopiero teraz jest wolny po poprzednim kliencie.",
+                'description' => "Stary, sprawdzony nośnik przy DK1 za Piotrkowem jadąc na południe. Trasa na Częstochowę i Śląsk, zawsze spory ruch - \1zczególnie TIRy i busy. Billboard jednostronny, skierowany na kierowców jadących na południe. Oświetlony. Mam go już od 8 lat i zawsze był wynajęty - \1opiero teraz jest wolny po poprzednim kliencie.",
                 'price' => 1250,
                 'price_unit' => 'month',
                 'width' => 5.04,
@@ -639,7 +639,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'swietokrzyskie',
                 'latitude' => 50.8661,
                 'longitude' => 20.6331,
-                'description' => "Ekran LED w ścisłym centrum Kielc, przy głównej ulicy handlowej. Lokalizacja przy przejściu dla pieszych z długim cyklem świetlnym — idealna ekspozycja dla pieszych i zatrzymanych kierowców. Rozdzielczość Full HD, jasność 6000 nitów, praca 24/7. Sprzedajemy czas emisji w blokach tygodniowych (min. 2 tygodnie) lub miesięcznych. Cena za emisję w rotacji — wyłączność do uzgodnienia.",
+                'description' => "Ekran LED w ścisłym centrum Kielc, przy głównej ulicy handlowej. Lokalizacja przy przejściu dla pieszych z długim cyklem świetlnym - \1dealna ekspozycja dla pieszych i zatrzymanych kierowców. Rozdzielczość Full HD, jasność 6000 nitów, praca 24/7. Sprzedajemy czas emisji w blokach tygodniowych (min. 2 tygodnie) lub miesięcznych. Cena za emisję w rotacji - \1yłączność do uzgodnienia.",
                 'price' => 2200,
                 'price_unit' => 'month',
                 'width' => 3.00,
@@ -663,7 +663,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'malopolskie',
                 'latitude' => 50.0134,
                 'longitude' => 20.9723,
-                'description' => "Mam ogrodzenie przy swojej działce przy Krakowskiej w Tarnowie i mogę je udostępnić pod baner. Działka stoi przy wjeździe do miasta od strony Krakowa — sporo aut tamtędy jedzie zwłaszcza przez wakacje i weekendy. Miejsce na baner mniej więcej 8x2m, mogę przygotować punkty montażowe. Cena do negocjacji, wolę dłuższy wynajem.",
+                'description' => "Mam ogrodzenie przy swojej działce przy Krakowskiej w Tarnowie i mogę je udostępnić pod baner. Działka stoi przy wjeździe do miasta od strony Krakowa - \1poro aut tamtędy jedzie zwłaszcza przez wakacje i weekendy. Miejsce na baner mniej więcej 8x2m, mogę przygotować punkty montażowe. Cena do negocjacji, wolę dłuższy wynajem.",
                 'price' => 600,
                 'price_unit' => 'month',
                 'width' => 8.00,
@@ -684,7 +684,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'warminsko-mazurskie',
                 'latitude' => 53.7784,
                 'longitude' => 20.4801,
-                'description' => "Al. Piłsudskiego to główna ulica Olsztyna — przystanek blisko galerii i kilku biur. Staje tu 1 i 3 tramwaj plus autobusy podmiejskie z okolicznych gmin. W piątki po południu naprawdę spory tłum dojeżdżających. Format 120x180, podświetlany. Mogę wymieniać grafikę samodzielnie co miesiąc jeśli potrzebujesz — usługa za dodatkową opłatą, cena do dogadania.",
+                'description' => "Al. Piłsudskiego to główna ulica Olsztyna - \1rzystanek blisko galerii i kilku biur. Staje tu 1 i 3 tramwaj plus autobusy podmiejskie z okolicznych gmin. W piątki po południu naprawdę spory tłum dojeżdżających. Format 120x180, podświetlany. Mogę wymieniać grafikę samodzielnie co miesiąc jeśli potrzebujesz - \1sługa za dodatkową opłatą, cena do dogadania.",
                 'price' => 620,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -696,14 +696,14 @@ class AdvertisementsSeeder extends Seeder
                 'offer_type' => 'owner',
             ],
             [
-                'title' => 'Naklejka reklamowa na taksówce — Warszawa, centrum i Mokotów codziennie',
+                'title' => 'Naklejka reklamowa na taksówce - \1arszawa, centrum i Mokotów codziennie',
                 'type' => 'mobile',
                 'location' => 'Warszawa',
                 'city' => 'Warszawa',
                 'region' => 'mazowieckie',
                 'latitude' => 52.2297,
                 'longitude' => 21.0122,
-                'description' => "Jeżdżę taksówką po Warszawie od 6 lat, głównie Śródmieście, Mokotów, Wola, czasem Ursynów i Wilanów. Pracuję codziennie ok. 10-12 godzin. Mam miejsce na naklejkę z tyłu auta i mogę wozić ulotki w środku dla pasażerów. Tanio, ale skutecznie — każdy pasażer siedzi i patrzy. Kontakt przez wiadomość.",
+                'description' => "Jeżdżę taksówką po Warszawie od 6 lat, głównie Śródmieście, Mokotów, Wola, czasem Ursynów i Wilanów. Pracuję codziennie ok. 10-12 godzin. Mam miejsce na naklejkę z tyłu auta i mogę wozić ulotki w środku dla pasażerów. Tanio, ale skutecznie - \1ażdy pasażer siedzi i patrzy. Kontakt przez wiadomość.",
                 'price' => 200,
                 'price_unit' => 'month',
                 'width' => 0.60,
@@ -714,7 +714,7 @@ class AdvertisementsSeeder extends Seeder
                 'has_backlight' => false,
                 'offer_type' => 'owner',
                 'mobile_exposure_mode' => 'moving',
-                'route_area' => 'Warszawa — Śródmieście, Mokotów, Wola',
+                'route_area' => 'Warszawa - \1ródmieście, Mokotów, Wola',
                 'vehicle_count' => 1,
                 'operating_hours' => '07:00-19:00',
                 'price_negotiable' => true,
@@ -727,7 +727,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'dolnoslaskie',
                 'latitude' => 51.4023,
                 'longitude' => 16.2134,
-                'description' => "Billboard przy drodze z autostrady A4 do Lubina. Lubin to miasto KGHM — dużo firm dostawczych, pracowników i kontrahentów tamtędy jeździ. Nośnik jednostronny skierowany na wjazd do miasta. Stan dobry, oświetlony. Cena miesięczna, wystawiam fakturę.",
+                'description' => "Billboard przy drodze z autostrady A4 do Lubina. Lubin to miasto KGHM - \1użo firm dostawczych, pracowników i kontrahentów tamtędy jeździ. Nośnik jednostronny skierowany na wjazd do miasta. Stan dobry, oświetlony. Cena miesięczna, wystawiam fakturę.",
                 'price' => 1050,
                 'price_unit' => 'month',
                 'width' => 5.04,
@@ -741,14 +741,14 @@ class AdvertisementsSeeder extends Seeder
                 'has_vat_invoice' => true,
             ],
             [
-                'title' => 'Ściana na kamienicy przy Rynku — Wieliczka, blisko Kopalni Soli',
+                'title' => 'Ściana na kamienicy przy Rynku - \1ieliczka, blisko Kopalni Soli',
                 'type' => 'wall',
                 'location' => 'Rynek 15',
                 'city' => 'Wieliczka',
                 'region' => 'malopolskie',
                 'latitude' => 49.9878,
                 'longitude' => 20.0645,
-                'description' => "Ściana reklamowa na kamienicy przy Rynku w Wieliczce — kilkaset metrów od wejścia do Kopalni Soli. Przez Wieliczkę przejeżdżają setki tysięcy turystów rocznie. Powierzchnia 6x4m, boczna elewacja widoczna z Rynku. Polecam firmom turystycznym, restauracjom, hotelom z okolic Krakowa. Minimum 3 miesiące, możliwa umowa sezonowa.",
+                'description' => "Ściana reklamowa na kamienicy przy Rynku w Wieliczce - \1ilkaset metrów od wejścia do Kopalni Soli. Przez Wieliczkę przejeżdżają setki tysięcy turystów rocznie. Powierzchnia 6x4m, boczna elewacja widoczna z Rynku. Polecam firmom turystycznym, restauracjom, hotelom z okolic Krakowa. Minimum 3 miesiące, możliwa umowa sezonowa.",
                 'price' => 2800,
                 'price_unit' => 'month',
                 'width' => 6.00,
@@ -765,14 +765,14 @@ class AdvertisementsSeeder extends Seeder
             // ══════════════════ PREMIUM / BUDŻET / Z CHARAKTEREM ══════════════════
 
             [
-                'title' => 'Billboard premium Śródmieście Warszawa — Marszałkowska/Świętokrzyska',
+                'title' => 'Billboard premium Śródmieście Warszawa - \1arszałkowska/Świętokrzyska',
                 'type' => 'billboard',
                 'location' => 'ul. Marszałkowska 68',
                 'city' => 'Warszawa',
                 'region' => 'mazowieckie',
                 'latitude' => 52.2312,
                 'longitude' => 21.0089,
-                'description' => "Nośnik w sercu Warszawy, skrzyżowanie Marszałkowskiej i Świętokrzyskiej — zaraz przy wejściu do metra. Dobowy ruch pieszy przekracza 25 000 osób, plus kierowcy. Dwustronny 6x3m, oświetlenie LED, stan b.d.b. Zarządzamy kilkoma nośnikami w centrum — ten jest naszym flagowym. Możliwość emisji w wyłączności lub rotacji max 3 klientów. Cena netto, faktura VAT 23%, minimalna umowa 1 miesiąc.",
+                'description' => "Nośnik w sercu Warszawy, skrzyżowanie Marszałkowskiej i Świętokrzyskiej - \1araz przy wejściu do metra. Dobowy ruch pieszy przekracza 25 000 osób, plus kierowcy. Dwustronny 6x3m, oświetlenie LED, stan b.d.b. Zarządzamy kilkoma nośnikami w centrum - \1en jest naszym flagowym. Możliwość emisji w wyłączności lub rotacji max 3 klientów. Cena netto, faktura VAT 23%, minimalna umowa 1 miesiąc.",
                 'price' => 4200,
                 'price_unit' => 'month',
                 'width' => 6.00,
@@ -786,14 +786,14 @@ class AdvertisementsSeeder extends Seeder
                 'has_vat_invoice' => true,
             ],
             [
-                'title' => 'Billboard wjazd do Nowego Sącza od strony Krakowa — tani',
+                'title' => 'Billboard wjazd do Nowego Sącza od strony Krakowa - \1ani',
                 'type' => 'billboard',
                 'location' => 'ul. Krakowska 178',
                 'city' => 'Nowy Sącz',
                 'region' => 'malopolskie',
                 'latitude' => 49.6234,
                 'longitude' => 20.6887,
-                'description' => "Mam billboard przy Krakowskiej w Nowym Sączu — droga wjazdowa od strony Krakowa. Każdy kto jedzie do Sącza z zachodu go mija. Powiem szczerze: cena jest niska bo to obrzeża i Nowy Sącz to nie Kraków — ale dla lokalnej firmy z okolicy w zupełności wystarczy. Do odnowienia malowanie słupa, ale konstrukcja i panel są w dobrym stanie. Jednostronny, oświetlony. Minimalna umowa 2 miesiące.",
+                'description' => "Mam billboard przy Krakowskiej w Nowym Sączu - \1roga wjazdowa od strony Krakowa. Każdy kto jedzie do Sącza z zachodu go mija. Powiem szczerze: cena jest niska bo to obrzeża i Nowy Sącz to nie Kraków - \1le dla lokalnej firmy z okolicy w zupełności wystarczy. Do odnowienia malowanie słupa, ale konstrukcja i panel są w dobrym stanie. Jednostronny, oświetlony. Minimalna umowa 2 miesiące.",
                 'price' => 550,
                 'price_unit' => 'month',
                 'width' => 5.04,
@@ -807,14 +807,14 @@ class AdvertisementsSeeder extends Seeder
                 'price_negotiable' => true,
             ],
             [
-                'title' => 'Billboard przy DK8 Pułtusk — dobry na lato, tani bo zasłonięty',
+                'title' => 'Billboard przy DK8 Pułtusk - \1obry na lato, tani bo zasłonięty',
                 'type' => 'billboard',
                 'location' => 'ul. Białowiejska 11',
                 'city' => 'Pułtusk',
                 'region' => 'mazowieckie',
                 'latitude' => 52.7123,
                 'longitude' => 21.0845,
-                'description' => "Billboard przy drodze krajowej nr 8 za Pułtuskiem jadąc z Warszawy na Białystok. Powiem o problemie wprost, żebyś wiedział na co się piszesz: po lewej stronie rośnie dąb i od maja do października trochę zasłania panel od zachodu, szczególnie po południu. Zimą i wczesną wiosną widoczność jest pełna. Właśnie dlatego daję to tanio. Ruch na DK8 jest spory — ciągłe tiry i osobówki. Jednostronny, oświetlony.",
+                'description' => "Billboard przy drodze krajowej nr 8 za Pułtuskiem jadąc z Warszawy na Białystok. Powiem o problemie wprost, żebyś wiedział na co się piszesz: po lewej stronie rośnie dąb i od maja do października trochę zasłania panel od zachodu, szczególnie po południu. Zimą i wczesną wiosną widoczność jest pełna. Właśnie dlatego daję to tanio. Ruch na DK8 jest spory - \1iągłe tiry i osobówki. Jednostronny, oświetlony.",
                 'price' => 680,
                 'price_unit' => 'month',
                 'width' => 5.04,
@@ -828,14 +828,14 @@ class AdvertisementsSeeder extends Seeder
                 'price_negotiable' => true,
             ],
             [
-                'title' => 'Citylight przystanek Piłsudskiego Wrocław — wysoki ruch, uczciwa cena',
+                'title' => 'Citylight przystanek Piłsudskiego Wrocław - \1ysoki ruch, uczciwa cena',
                 'type' => 'citylight',
                 'location' => 'ul. Piłsudskiego 105',
                 'city' => 'Wrocław',
                 'region' => 'dolnoslaskie',
                 'latitude' => 51.0982,
                 'longitude' => 17.0378,
-                'description' => "Przystanek przy Piłsudskiego niedaleko dworca — staje tu z 8 linii i ruch jest naprawdę duży przez całą dobę. Jedna rzecz do powiedzenia: wieczorami kręci się przy tym przystanku sporo bezdomnych. Sam panel jest w dobrej formie, ale to nie jest środowisko premium — mówię to uczciwie. Dla fast-foodów, sklepów dyskontowych, usług lokalnych — działa doskonale. Dla marki luksusowej pewnie nie ta lokalizacja. Podświetlany, format standardowy.",
+                'description' => "Przystanek przy Piłsudskiego niedaleko dworca - \1taje tu z 8 linii i ruch jest naprawdę duży przez całą dobę. Jedna rzecz do powiedzenia: wieczorami kręci się przy tym przystanku sporo bezdomnych. Sam panel jest w dobrej formie, ale to nie jest środowisko premium - \1ówię to uczciwie. Dla fast-foodów, sklepów dyskontowych, usług lokalnych - \1ziała doskonale. Dla marki luksusowej pewnie nie ta lokalizacja. Podświetlany, format standardowy.",
                 'price' => 720,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -865,7 +865,7 @@ class AdvertisementsSeeder extends Seeder
             'status'                  => 'active',
         ];
 
-        // Daty dodania — wszystkie w kwietniu 2026
+        // Daty dodania - \1szystkie w kwietniu 2026
         $createdDates = [
             Carbon::create(2026, 4, 1, 9, 12),
             Carbon::create(2026, 4, 1, 14, 33),
@@ -922,17 +922,17 @@ class AdvertisementsSeeder extends Seeder
 
             // Ogłoszenia dostępne od konkretnej daty (nie od zaraz)
             $availableFrom = [
-                2  => Carbon::create(2026, 4, 25), // Bródno — "najem miesięczny lub dłużej"
-                4  => Carbon::create(2026, 4, 22), // Kraków Półkole — dopiero udostępnia
-                6  => Carbon::create(2026, 5, 1),  // Kraków LED Podgórze — agencja, cykl miesięczny
-                7  => Carbon::create(2026, 5, 1),  // Wrocław Kosmonautów — wolny od maja
-                11 => Carbon::create(2026, 5, 1),  // Poznań pylon — opis: "od początku przyszłego miesiąca"
-                12 => Carbon::create(2026, 4, 28), // Gdańsk DK7 — zarządca OutMedia
-                24 => Carbon::create(2026, 5, 1),  // Pruszków PKP — opis: "od następnego miesiąca"
-                27 => Carbon::create(2026, 4, 20), // Piotrków DK1 — "wolny po poprzednim kliencie"
-                29 => Carbon::create(2026, 5, 10), // Tarnów — "wolę dłuższy wynajem"
-                33 => Carbon::create(2026, 4, 18), // Wieliczka wall — min. 3 miesiące
-                36 => Carbon::create(2026, 5, 1),  // Pułtusk DK8 — problem z dębem, nie pilno
+                2  => Carbon::create(2026, 4, 25), // Bródno -"najem miesięczny lub dłużej"
+                4  => Carbon::create(2026, 4, 22), // Kraków Półkole - \1opiero udostępnia
+                6  => Carbon::create(2026, 5, 1),  // Kraków LED Podgórze - \1gencja, cykl miesięczny
+                7  => Carbon::create(2026, 5, 1),  // Wrocław Kosmonautów - \1olny od maja
+                11 => Carbon::create(2026, 5, 1),  // Poznań pylon - \1pis: "od początku przyszłego miesiąca"
+                12 => Carbon::create(2026, 4, 28), // Gdańsk DK7 - \1arządca OutMedia
+                24 => Carbon::create(2026, 5, 1),  // Pruszków PKP - \1pis: "od następnego miesiąca"
+                27 => Carbon::create(2026, 4, 20), // Piotrków DK1 -"wolny po poprzednim kliencie"
+                29 => Carbon::create(2026, 5, 10), // Tarnów -"wolę dłuższy wynajem"
+                33 => Carbon::create(2026, 4, 18), // Wieliczka wall - \1in. 3 miesiące
+                36 => Carbon::create(2026, 5, 1),  // Pułtusk DK8 - \1roblem z dębem, nie pilno
             ];
             if (isset($availableFrom[$index])) {
                 $data['available_from'] = $availableFrom[$index];
