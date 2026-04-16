@@ -96,28 +96,37 @@ Only types with meaningful physical configurations have variants. `banner` and `
 
 ---
 
-## Blog Agent (SEO Strategy & Writing)
+## System Agentów AI (reklamap-os/)
 
-Projekt posiada moduł SEO w `reklamap-os/`. Proces jest dwuetapowy i opiera się na dwóch instrukcjach systemowych:
+Projekt posiada zespół wyspecjalizowanych agentów AI w `reklamap-os/agents/`. Punktem wejścia jest **Router** (`reklamap-os/ROUTING.md`) — wczytaj go, aby zarządzać całym zespołem.
 
 ### Agenci i ich role
-- **Strateg:** `reklamap-os/agents/AGENT_STRATEG_SEO.md` — Analizuje luki, planuje frazy i prowadzi użytkownika przez research (AnswerThePublic, Ahrefs, Perplexity). NIE pisze artykułów.
-- **Pisarz:** `reklamap-os/agents/AGENT_PISARZ.md` — Tworzy posty SEO na podstawie danych z brudnopisu. NIE prowadzi samodzielnego researchu.
 
-### Procedura pracy (Workflow)
+| Plik | Rola |
+|---|---|
+| `AGENT_STRATEG_SEO.md` | Research słów kluczowych, planowanie tematów bloga |
+| `AGENT_PISARZ.md` | Pisanie artykułów SEO na podstawie brudnopisu |
+| `AGENT_KOREKTOR.md` | Audyt tekstu, usuwanie AI-izmów, weryfikacja faktów |
+| `AGENT_ARCHITEKT_SEO.md` | Audyt techniczny SEO kodu (Laravel + Vue) |
+| `AGENT_BIZNESOWY.md` | Strategia produktu, monetyzacja, backlog RICE |
+| `AGENT_MARKETER.md` | Cold calling, skrypty sprzedażowe, pozyskiwanie nośników |
 
-1. **Inicjacja — tryb ze Strategiem:** Gdy użytkownik chce znaleźć najlepszy temat lub nie podaje gotowej frazy — wczytaj `AGENT_STRATEG_SEO.md`, `INDEX.md` oraz `STRATEGY_LOG.md` i przeprowadź użytkownika przez Etapy 0–4.
-2. **Inicjacja — tryb szybki:** Gdy użytkownik podaje gotowy temat/frazę z danymi — pomiń Stratega i przejdź bezpośrednio do pisania z `AGENT_PISARZ.md`.
-3. **Research krok po kroku:** Postępuj ściśle według etapów ze instrukcji Stratega. **Zadawaj użytkownikowi jedno zadanie naraz** i czekaj na dane z zewnętrznych narzędzi.
-4. **Archiwizacja:** Wszystkie sprawdzone frazy dopisuj do tabeli w `reklamap-os/status/STRATEGY_LOG.md` (status: Odrzucone / Do napisania). Fakty z Perplexity lądują w `reklamap-os/status/BRUDNOPIS_SEO.md`.
-5. **Pisanie:** Po zebraniu danych przełącz się na `AGENT_PISARZ.md` i wygeneruj artykuł — **wyłącznie** na podstawie danych z `BRUDNOPIS_SEO.md`.
-6. **Finalizacja:**
-   - Zapisz post w `reklamap-os/blog/posts/{YYYYMMDDHHMMSS}_{slug}.md`
-   - Zaktualizuj tabelę w `reklamap-os/blog/INDEX.md`
-   - Dodaj wpis do `$posts` w `backend/database/seeders/BlogPostsSeeder.php` (status: `draft`)
-   - Poinformuj użytkownika: `php artisan db:seed --class=BlogPostsSeeder`
+### Workflow bloga (Content Pipeline)
 
-Seeder używa `updateOrCreate` — można go uruchamiać wielokrotnie.
+1. **Wywołaj Agenta Stratega** — research (AnswerThePublic → Ahrefs → Perplexity), zapisuje dane do `reklamap-os/status/BRUDNOPIS_SEO.md`
+2. **Wywołaj Agenta Pisarza** — pisze artykuł z brudnopisu, zapisuje w `reklamap-os/blog/posts/`, aktualizuje `reklamap-os/blog/INDEX.md` i `backend/database/seeders/BlogPostsSeeder.php`
+3. **Wywołaj Agenta Korektora** — audyt i korekta, oznacza artykuł jako `✅ ZRECENZOWANY` w INDEX.md
+4. Uruchom `php artisan db:seed --class=BlogPostsSeeder` — synchronizuje z bazą danych (status: `draft`)
+5. Publikuj ręcznie przez panel admina
+
+### Pliki stanu systemu
+
+- `reklamap-os/status/BRUDNOPIS_SEO.md` — dane z researchu dla bieżącego artykułu
+- `reklamap-os/status/STRATEGY_LOG.md` — historia researchu SEO
+- `reklamap-os/status/SALES_LOG.md` — wyniki rozmów sprzedażowych
+- `reklamap-os/docs/PRODUCT_BACKLOG.md` — backlog produktowy z RICE
+- `reklamap-os/docs/MARKETING_ASSETS.md` — skrypty i szablony sprzedażowe
+- `reklamap-os/blog/INDEX.md` — indeks wszystkich postów blogowych
 
 ---
 
