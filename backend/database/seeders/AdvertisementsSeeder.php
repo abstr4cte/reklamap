@@ -72,7 +72,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'mazowieckie',
                 'latitude' => 52.2803,
                 'longitude' => 21.0612,
-                'description' => "Wiata autobusowa przy ul. Kondratowicza, przystanek jest tu bardzo ruchliwy bo obsługuje kilka linii z Bródna. Citylight podświetlany, format 120x180. Dużo ludzi czeka tu na autobus zwłaszcza rano. Interesuje mnie najem miesięczny lub dłużej.",
+                'description' => "Panel na przystanku Kondratowicza na Bródnie — staje tu 11 i 25 tramwaj plus kilka autobusów, między innymi 156 i 203. Rano jest tu kolejka bo tramwaje jeżdżą co kilkanaście minut i ludzie czekają. Podświetlany, format 120x180. Jedna uwaga: grafika trochę pogięta na lewym rogu po poprzednim najemcy, ale można wymienić — cena z wymianą do dogadania.",
                 'price' => 850,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -136,7 +136,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'malopolskie',
                 'latitude' => 50.0812,
                 'longitude' => 20.0253,
-                'description' => "Mam citylight na przystanku przy os. Piastów w Nowej Hucie. Dużo starszych mieszkańców i dojeżdżających do pracy — przystanek obsługuje linie tramwajowe i autobusowe. Cena za miesiąc z wliczonym utrzymaniem. Jak chcesz dłużej to negocjujemy.",
+                'description' => "Piastów, Nowa Huta — przystanek obsługiwany przez 22 tramwaj w kierunku centrum i kilka autobusów osiedlowych. Rankiem wsiada tu dużo robotników z kombinatu i pobliskich zakładów. Jeden minus, który powiem wprost: zimą wiata bywa zasypana i panel trochę mniej widoczny od ulicy. Latem jest bez zarzutu. Cena za miesiąc z wliczonym utrzymaniem, przy dłuższej umowie gadamy.",
                 'price' => 750,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -306,7 +306,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'pomorskie',
                 'latitude' => 54.3312,
                 'longitude' => 18.5821,
-                'description' => "Panel na przystanku na Łostowicach — duże osiedle, mnóstwo rodzin i pracujących. Autobusy kursują często, więc przy przystanku zawsze ktoś stoi. Podświetlany, format standardowy. Fajne miejsce pod sklepy spożywcze, siłownie, usługi dla mieszkańców.",
+                'description' => "Łostowice to blokowisko z lat 80. — kilkanaście tysięcy mieszkańców i prawie wszyscy jeżdżą autobusem bo tramwaj tu nie dociera. Przystanek przy Łostowickiej jest głównym węzłem — staje tu linia 110, 122 i 158. Podświetlany, 120x180 cm. Ramka ma drobne zarysowania po kilku latach użytkowania, ale sam panel świeci równo i grafikę widać dobrze.",
                 'price' => 650,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -392,7 +392,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'slaskie',
                 'latitude' => 50.2589,
                 'longitude' => 19.0078,
-                'description' => "Panel citylight przy przystanku tramwajowym na Rolnej, dzielnica Koszutka. Sporo pracujących ludzi wsiada tam rano, blisko kilku osiedli. Podświetlany, dostępny od zaraz. Dobra lokalizacja dla aptek, sklepów spożywczych, usług zdrowotnych.",
+                'description' => "Koszutka to stara robotnicza dzielnica — przystanek przy Rolnej obsługuje głównie ludzi jadących na pierwszą zmianę i wracających po pracy. Tramwaje 6 i 15, rano w obie strony tłoczno. Powiem szczerze: tutaj reklama działa lepiej dla usług lokalnych niż dla marek premium — publika jest pragmatyczna. Apteka, sklep, serwis — strzał w dziesiątkę. Podświetlany, dostępny od zaraz.",
                 'price' => 680,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -684,7 +684,7 @@ class AdvertisementsSeeder extends Seeder
                 'region' => 'warminsko-mazurskie',
                 'latitude' => 53.7784,
                 'longitude' => 20.4801,
-                'description' => "Panel reklamowy na przystanku tramwajowym przy alei Piłsudskiego — główna arteria Olsztyna. Przystanek obsługuje kilka linii, duży ruch pasażerski cały dzień. Podświetlany, format 120x180, stan bardzo dobry. Dobra lokalizacja dla firm chcących zaistnieć w Olsztynie — miasto dynamicznie się rozwija, sporo nowych mieszkańców.",
+                'description' => "Al. Piłsudskiego to główna ulica Olsztyna — przystanek blisko galerii i kilku biur. Staje tu 1 i 3 tramwaj plus autobusy podmiejskie z okolicznych gmin. W piątki po południu naprawdę spory tłum dojeżdżających. Format 120x180, podświetlany. Mogę wymieniać grafikę samodzielnie co miesiąc jeśli potrzebujesz — usługa za dodatkową opłatą, cena do dogadania.",
                 'price' => 620,
                 'price_unit' => 'month',
                 'width' => 1.20,
@@ -761,12 +761,99 @@ class AdvertisementsSeeder extends Seeder
                 'price_negotiable' => true,
             ],
 
+
+            // ══════════════════ PREMIUM / BUDŻET / Z CHARAKTEREM ══════════════════
+
+            [
+                'title' => 'Billboard premium Śródmieście Warszawa — Marszałkowska/Świętokrzyska',
+                'type' => 'billboard',
+                'location' => 'ul. Marszałkowska 68',
+                'city' => 'Warszawa',
+                'region' => 'mazowieckie',
+                'latitude' => 52.2312,
+                'longitude' => 21.0089,
+                'description' => "Nośnik w sercu Warszawy, skrzyżowanie Marszałkowskiej i Świętokrzyskiej — zaraz przy wejściu do metra. Dobowy ruch pieszy przekracza 25 000 osób, plus kierowcy. Dwustronny 6x3m, oświetlenie LED, stan b.d.b. Zarządzamy kilkoma nośnikami w centrum — ten jest naszym flagowym. Możliwość emisji w wyłączności lub rotacji max 3 klientów. Cena netto, faktura VAT 23%, minimalna umowa 1 miesiąc.",
+                'price' => 4200,
+                'price_unit' => 'month',
+                'width' => 6.00,
+                'height' => 3.00,
+                'variant' => 'two_sided',
+                'road_class' => 'urban',
+                'traffic_intensity' => 'high',
+                'traffic_type' => ['vehicular', 'pedestrian'],
+                'has_backlight' => true,
+                'offer_type' => 'agency',
+                'has_vat_invoice' => true,
+            ],
+            [
+                'title' => 'Billboard wjazd do Nowego Sącza od strony Krakowa — tani',
+                'type' => 'billboard',
+                'location' => 'ul. Krakowska 178',
+                'city' => 'Nowy Sącz',
+                'region' => 'malopolskie',
+                'latitude' => 49.6234,
+                'longitude' => 20.6887,
+                'description' => "Mam billboard przy Krakowskiej w Nowym Sączu — droga wjazdowa od strony Krakowa. Każdy kto jedzie do Sącza z zachodu go mija. Powiem szczerze: cena jest niska bo to obrzeża i Nowy Sącz to nie Kraków — ale dla lokalnej firmy z okolicy w zupełności wystarczy. Do odnowienia malowanie słupa, ale konstrukcja i panel są w dobrym stanie. Jednostronny, oświetlony. Minimalna umowa 2 miesiące.",
+                'price' => 550,
+                'price_unit' => 'month',
+                'width' => 5.04,
+                'height' => 2.38,
+                'variant' => 'standard',
+                'road_class' => 'national',
+                'traffic_intensity' => 'medium',
+                'traffic_type' => ['vehicular'],
+                'has_backlight' => true,
+                'offer_type' => 'owner',
+                'price_negotiable' => true,
+            ],
+            [
+                'title' => 'Billboard przy DK8 Pułtusk — dobry na lato, tani bo zasłonięty',
+                'type' => 'billboard',
+                'location' => 'ul. Białowiejska 11',
+                'city' => 'Pułtusk',
+                'region' => 'mazowieckie',
+                'latitude' => 52.7123,
+                'longitude' => 21.0845,
+                'description' => "Billboard przy drodze krajowej nr 8 za Pułtuskiem jadąc z Warszawy na Białystok. Powiem o problemie wprost, żebyś wiedział na co się piszesz: po lewej stronie rośnie dąb i od maja do października trochę zasłania panel od zachodu, szczególnie po południu. Zimą i wczesną wiosną widoczność jest pełna. Właśnie dlatego daję to tanio. Ruch na DK8 jest spory — ciągłe tiry i osobówki. Jednostronny, oświetlony.",
+                'price' => 680,
+                'price_unit' => 'month',
+                'width' => 5.04,
+                'height' => 2.38,
+                'variant' => 'standard',
+                'road_class' => 'national',
+                'traffic_intensity' => 'medium',
+                'traffic_type' => ['vehicular'],
+                'has_backlight' => true,
+                'offer_type' => 'owner',
+                'price_negotiable' => true,
+            ],
+            [
+                'title' => 'Citylight przystanek Piłsudskiego Wrocław — wysoki ruch, uczciwa cena',
+                'type' => 'citylight',
+                'location' => 'ul. Piłsudskiego 105',
+                'city' => 'Wrocław',
+                'region' => 'dolnoslaskie',
+                'latitude' => 51.0982,
+                'longitude' => 17.0378,
+                'description' => "Przystanek przy Piłsudskiego niedaleko dworca — staje tu z 8 linii i ruch jest naprawdę duży przez całą dobę. Jedna rzecz do powiedzenia: wieczorami kręci się przy tym przystanku sporo bezdomnych. Sam panel jest w dobrej formie, ale to nie jest środowisko premium — mówię to uczciwie. Dla fast-foodów, sklepów dyskontowych, usług lokalnych — działa doskonale. Dla marki luksusowej pewnie nie ta lokalizacja. Podświetlany, format standardowy.",
+                'price' => 720,
+                'price_unit' => 'month',
+                'width' => 1.20,
+                'height' => 1.80,
+                'variant' => 'single_sided',
+                'traffic_intensity' => 'high',
+                'traffic_type' => ['pedestrian'],
+                'has_backlight' => true,
+                'offer_type' => 'owner',
+                'price_negotiable' => true,
+            ],
+
         ];
 
         $defaults = [
             'owner_email'             => 'test@test.pl',
             'phone'                   => '',
-            'contact_preference'      => 'email',
+            'contact_preference'      => 'form',
             'is_active'               => true,
             'is_verified'             => true,
             'has_image'               => false,
@@ -815,6 +902,10 @@ class AdvertisementsSeeder extends Seeder
             Carbon::create(2026, 4, 14, 15, 17),
             Carbon::create(2026, 4, 14, 16, 03),
             Carbon::create(2026, 4, 14, 17, 22),
+            Carbon::create(2026, 4, 15, 9, 15),
+            Carbon::create(2026, 4, 15, 11, 43),
+            Carbon::create(2026, 4, 15, 14, 28),
+            Carbon::create(2026, 4, 15, 16, 55),
         ];
 
         foreach ($ads as $index => $ad) {
@@ -829,9 +920,22 @@ class AdvertisementsSeeder extends Seeder
             // Przypisz datę dodania
             $createdAt = $createdDates[$index] ?? now()->subDays(rand(1, 30));
 
-            // Kilka ogłoszeń jako dostępne od przyszłej daty
-            if (in_array($index, [2, 7, 12, 17])) {
-                $data['available_from'] = now()->addDays(rand(10, 25));
+            // Ogłoszenia dostępne od konkretnej daty (nie od zaraz)
+            $availableFrom = [
+                2  => Carbon::create(2026, 4, 25), // Bródno — "najem miesięczny lub dłużej"
+                4  => Carbon::create(2026, 4, 22), // Kraków Półkole — dopiero udostępnia
+                6  => Carbon::create(2026, 5, 1),  // Kraków LED Podgórze — agencja, cykl miesięczny
+                7  => Carbon::create(2026, 5, 1),  // Wrocław Kosmonautów — wolny od maja
+                11 => Carbon::create(2026, 5, 1),  // Poznań pylon — opis: "od początku przyszłego miesiąca"
+                12 => Carbon::create(2026, 4, 28), // Gdańsk DK7 — zarządca OutMedia
+                24 => Carbon::create(2026, 5, 1),  // Pruszków PKP — opis: "od następnego miesiąca"
+                27 => Carbon::create(2026, 4, 20), // Piotrków DK1 — "wolny po poprzednim kliencie"
+                29 => Carbon::create(2026, 5, 10), // Tarnów — "wolę dłuższy wynajem"
+                33 => Carbon::create(2026, 4, 18), // Wieliczka wall — min. 3 miesiące
+                36 => Carbon::create(2026, 5, 1),  // Pułtusk DK8 — problem z dębem, nie pilno
+            ];
+            if (isset($availableFrom[$index])) {
+                $data['available_from'] = $availableFrom[$index];
             }
 
             $ad = Advertisement::updateOrCreate(

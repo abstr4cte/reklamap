@@ -96,6 +96,29 @@ Only types with meaningful physical configurations have variants. `banner` and `
 
 ---
 
+## System Agentów AI — Zasada Priorytetu
+
+### 🚨 KLUCZOWA ZASADA
+Dla każdego zadania **wykraczającego poza czystą edycję kodu** — zacznij od odczytania `reklamap-os/ROUTING.md`, który zawiera pełną mapę agentów i procedury. Nie używaj trybu ogólnego (Explore) do spraw produktowych, SEO ani treści.
+
+**Skrócona mapa kompetencji:**
+
+| Temat zadania | Agent |
+|---|---|
+| Strategia, monetyzacja, backlog, sensowność biznesowa | `AGENT_BIZNESOWY` |
+| Audyt techniczny SEO kodu (Laravel/Vue), URL, Schema.org | `AGENT_ARCHITEKT_SEO` |
+| Research słów kluczowych, planowanie bloga | `AGENT_STRATEG_SEO` |
+| Pisanie artykułu SEO | `AGENT_PISARZ` |
+| Korekta tekstu, usuwanie AI-izmów, ocena naturalności | `AGENT_KOREKTOR` |
+| Cold calling, skrypty sprzedażowe, pozyskiwanie nośników | `AGENT_MARKETER` |
+
+**Procedury specjalne** (szczegóły w ROUTING.md):
+- "Narada" → Biznesowy + Architekt jednocześnie
+- Nowy artykuł → Strateg → Pisarz → Korektor
+- Brak pasującego agenta → działam sam, rozważam czy zasugerować nowego agenta
+
+---
+
 ## System Agentów AI (reklamap-os/)
 
 Projekt posiada zespół wyspecjalizowanych agentów AI w `reklamap-os/agents/`. Punktem wejścia jest **Router** (`reklamap-os/ROUTING.md`) — wczytaj go, aby zarządzać całym zespołem.
@@ -137,3 +160,30 @@ Projekt posiada zespół wyspecjalizowanych agentów AI w `reklamap-os/agents/`.
 - **Vue SFC order**: `<script setup lang="ts">` → `<template>` → `<style scoped>`
 - **Toast notifications**: Use the global `useToast` composable (set in `App.vue`), never create local instances
 - **Mobile breakpoint**: 768px
+
+---
+
+## Senior Dev Standards
+
+### Laravel / PHP
+
+- **Typed everything**: zawsze deklaruj typy parametrów i zwracane wartości. Żadnych `mixed` bez uzasadnienia.
+- **Validation w Form Request**: logika walidacji idzie do dedykowanej klasy `app/Http/Requests/`, nigdy inline w kontrolerze (`$request->validate([...])`).
+- **Kontroler = ruch drogowy**: kontroler tylko przyjmuje request, deleguje i zwraca response. Logika biznesowa (np. kalkulacje, transformacje) ląduje w serwisie lub modelu.
+- **HTTP status codes**: `201` przy tworzeniu zasobu, `204` przy usunięciu, `422` przy błędach walidacji, `404` gdy zasób nie istnieje — nigdy wszystko jako `200`.
+- **`env()` tylko w `config/`**: nigdy nie wywołuj `env('COKOLWIEK')` bezpośrednio w kodzie poza plikami konfiguracyjnymi. Używaj `config('app.cokolwiek')`.
+- **Transakcje przy multi-write**: jeśli jedna operacja pisze do kilku tabel, opakuj w `DB::transaction()`.
+- **Brak `dd()` / `var_dump()`** w kodzie — debug tylko przez logi (`Log::debug()`).
+- **Indeksy na foreign keys**: każda migracja dodająca `foreignId` musi mieć `->index()` lub `->constrained()`.
+- **`$fillable` zamiast `$guarded = []`**: zawsze jawna lista pól do masowego przypisania.
+
+### Vue 3 / TypeScript
+
+- **Żadnego `any`**: wszystkie typy z `frontend/src/types.ts`. Jeśli brakuje interfejsu — dopisz go.
+- **`defineProps` i `defineEmits` zawsze typowane**: `defineProps<{ title: string }>()`, nie obiektowa składnia bez typów.
+- **`computed` zamiast metod** dla wartości pochodnych — metoda przelicza się przy każdym renderze, computed jest memoizowany.
+- **Nie mutuj propsów**: jeśli komponent potrzebuje modyfikować wartość z props, skopiuj do lokalnego `ref`.
+- **Logika async = loading + error state**: każde wywołanie API musi obsługiwać stan ładowania i błędu — nigdy nie zakładaj że się uda.
+- **Komponenty do 300 linii**: jeśli SFC rośnie powyżej, wydziel logikę do composable lub podziel komponent.
+- **Brak logiki w szablonie**: `v-if="user.role === 'admin' && !loading && items.length > 0"` → wyrzuć to do `computed`.
+- **Composables dla współdzielonej logiki**: jeśli ten sam pattern pojawia się w 2+ komponentach, ląduje w `composables/use*.ts`.
