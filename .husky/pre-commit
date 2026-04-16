@@ -1,0 +1,14 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🧪 Running frontend tests before commit..."
+
+cd frontend && npm run test -- --run
+
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed! Commit aborted."
+  echo "Fix the failing tests before committing."
+  exit 1
+fi
+
+echo "✅ All tests passed! Proceeding with commit..."
