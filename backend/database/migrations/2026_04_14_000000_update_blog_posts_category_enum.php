@@ -28,8 +28,10 @@ return new class extends Migration
             DB::statement("ALTER TABLE blog_posts MODIFY COLUMN category ENUM('poradniki', 'trendy', 'case-study', 'nowosci', 'rynek-ooh', 'prawo-i-regulacje', 'lokalizacje') NOT NULL DEFAULT 'nowosci'");
         }
 
-        // Krok 2: zaktualizuj dane
-        DB::table('blog_posts')->where('category', 'rynek-ooh')->update(['category' => 'nowosci']);
+        // Krok 2: zaktualizuj dane — sprowadź wszystkie wartości spoza docelowego ENUM do 'nowosci'
+        DB::table('blog_posts')
+            ->whereNotIn('category', ['poradniki', 'trendy', 'case-study', 'nowosci'])
+            ->update(['category' => 'nowosci']);
 
         if (DB::getDriverName() === 'mysql') {
             // Krok 3: usuń nową wartość z ENUM
