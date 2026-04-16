@@ -69,7 +69,8 @@ class AdvertisementStatsSeeder extends Seeder
             'dwustronny-pylon-przy-galerii-atrium-lublin-czuby'             => 3,
 
             // Bydgoszcz
-            'reklama-na-autobusach-mzk-bydgoszcz-80-pojazdow-cala-siec'    => 6,
+            'naklejka-reklamowa-na-taksowce-bydgoszcz-glownie-srodmiescie' => 3,
+            'przyczepka-reklamowa-do-wynajecia-bydgoszcz-i-okolice'        => 4,
 
             // Rzeszów
             'billboard-dwustronny-centrum-rzeszowa-przy-dworcu'             => 5,
