@@ -44,11 +44,92 @@ onMounted(() => {
   loadBlogPost()
 })
 
+// Parsuje sekcję FAQ z HTML contentu i zwraca schema FAQPage lub null
+function extractFaqSchema(html: string): object | null {
+  if (typeof window === 'undefined') return null
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+
+  let faqHeading: Element | null = null
+  doc.querySelectorAll('h2').forEach(h => {
+    if (h.textContent?.includes('Najczęściej zadawane pytania')) {
+      faqHeading = h
+    }
+  })
+  if (!faqHeading) return null
+
+  const entities: object[] = []
+  let sibling = (faqHeading as Element).nextElementSibling
+
+  while (sibling && sibling.tagName !== 'H2') {
+    if (sibling.tagName === 'P') {
+      const strong = sibling.querySelector('strong')
+      if (strong) {
+        const questionText = strong.textContent?.trim() ?? ''
+        const clone = sibling.cloneNode(true) as Element
+        clone.querySelector('strong')?.remove()
+        clone.querySelectorAll('br').forEach(br => br.replaceWith(' '))
+        const answerText = clone.textContent?.trim() ?? ''
+        if (questionText && answerText) {
+          entities.push({
+            '@type': 'Question',
+            'name': questionText,
+            'acceptedAnswer': { '@type': 'Answer', 'text': answerText }
+          })
+        }
+      }
+    }
+    sibling = sibling.nextElementSibling
+  }
+
+  if (entities.length === 0) return null
+  return { '@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': entities }
+}
+
+// Buduje schema BreadcrumbList dla posta
+function buildBreadcrumbSchema(p: BlogPost): object {
+  const base = typeof window !== 'undefined' ? window.location.origin : ''
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    'itemListElement': [
+      { '@type': 'ListItem', 'position': 1, 'name': 'Strona główna', 'item': base },
+      { '@type': 'ListItem', 'position': 2, 'name': 'Blog', 'item': `${base}/blog` },
+      { '@type': 'ListItem', 'position': 3, 'name': p.title, 'item': `${base}/blog/${p.category}/${p.slug}` }
+    ]
+  }
+}
+
 // SEO Meta Tags
 watch(post, (newPost) => {
   if (newPost) {
     const url = typeof window !== 'undefined' ? window.location.href : ''
-    
+
+    const blogPostingSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      'headline': newPost.title,
+      'description': newPost.excerpt,
+      'image': newPost.image ? {
+        '@type': 'ImageObject',
+        'url': newPost.image,
+        'description': newPost.imageAlt ?? newPost.title
+      } : undefined,
+      'author': {
+        '@type': 'Person',
+        'name': newPost.author
+      },
+      'datePublished': newPost.dateIso ?? undefined,
+      'publisher': {
+        '@type': 'Organization',
+        'name': 'ReklaMap',
+        'logo': { '@type': 'ImageObject', 'url': logoImage }
+      }
+    }
+
+    const schemas: object[] = [blogPostingSchema, buildBreadcrumbSchema(newPost)]
+    const faqSchema = extractFaqSchema(newPost.content ?? '')
+    if (faqSchema) schemas.push(faqSchema)
+
     useSeo({
       title: `${newPost.title} | Blog ReklaMap`,
       description: newPost.excerpt,
@@ -58,30 +139,7 @@ watch(post, (newPost) => {
       ogUrl: url,
       canonical: url,
       publishedTime: newPost.dateIso ?? undefined,
-      structuredData: {
-        '@context': 'https://schema.org',
-        '@type': 'BlogPosting',
-        'headline': newPost.title,
-        'description': newPost.excerpt,
-        'image': newPost.image ? {
-          '@type': 'ImageObject',
-          'url': newPost.image,
-          'description': newPost.imageAlt ?? newPost.title
-        } : undefined,
-        'author': {
-          '@type': 'Person',
-          'name': newPost.author
-        },
-        'datePublished': newPost.dateIso ?? undefined,
-        'publisher': {
-          '@type': 'Organization',
-          'name': 'ReklaMap',
-          'logo': {
-            '@type': 'ImageObject',
-            'url': logoImage
-          }
-        }
-      }
+      structuredData: schemas
     })
   }
 }, { immediate: true })

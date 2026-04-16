@@ -96,18 +96,28 @@ Only types with meaningful physical configurations have variants. `banner` and `
 
 ---
 
-## Blog Agent
+## Blog Agent (SEO Strategy & Writing)
 
-Gdy użytkownik powie **"napisz bloga o X"** (lub podobnie), wykonaj następujące kroki:
+Projekt posiada moduł SEO w `reklamap-os/`. Proces jest dwuetapowy i opiera się na dwóch instrukcjach systemowych:
 
-1. Przeczytaj `blog-agent/INSTRUKCJA.md` — zawiera wytyczne SEO, opis platformy, format pliku i workflow
-2. Wygeneruj post zgodnie z instrukcją
-3. Zapisz plik w `blog-agent/posts/{YYYYMMDDHHMMSS}_{slug}.md`
-4. Dodaj wiersz do tabeli w `blog-agent/INDEX.md`
-5. Dorzuć wpis do tablicy `$posts` w `backend/database/seeders/BlogPostsSeeder.php` ze statusem `draft`
-6. Poinformuj użytkownika żeby uruchomił: `php artisan db:seed --class=BlogPostsSeeder`
+### Agenci i ich role
+- **Strateg:** `reklamap-os/agents/AGENT_STRATEG_SEO.md` — Analizuje luki, planuje frazy i prowadzi użytkownika przez research (AnswerThePublic, Ahrefs, Perplexity). NIE pisze artykułów.
+- **Pisarz:** `reklamap-os/agents/AGENT_PISARZ.md` — Tworzy posty SEO na podstawie danych z brudnopisu. NIE prowadzi samodzielnego researchu.
 
-Seeder jest idempotentny — można go uruchamiać wielokrotnie, duplikatów nie będzie (sprawdza slug).
+### Procedura pracy (Workflow)
+
+1. **Inicjacja — tryb ze Strategiem:** Gdy użytkownik chce znaleźć najlepszy temat lub nie podaje gotowej frazy — wczytaj `AGENT_STRATEG_SEO.md`, `INDEX.md` oraz `STRATEGY_LOG.md` i przeprowadź użytkownika przez Etapy 0–4.
+2. **Inicjacja — tryb szybki:** Gdy użytkownik podaje gotowy temat/frazę z danymi — pomiń Stratega i przejdź bezpośrednio do pisania z `AGENT_PISARZ.md`.
+3. **Research krok po kroku:** Postępuj ściśle według etapów ze instrukcji Stratega. **Zadawaj użytkownikowi jedno zadanie naraz** i czekaj na dane z zewnętrznych narzędzi.
+4. **Archiwizacja:** Wszystkie sprawdzone frazy dopisuj do tabeli w `reklamap-os/status/STRATEGY_LOG.md` (status: Odrzucone / Do napisania). Fakty z Perplexity lądują w `reklamap-os/status/BRUDNOPIS_SEO.md`.
+5. **Pisanie:** Po zebraniu danych przełącz się na `AGENT_PISARZ.md` i wygeneruj artykuł — **wyłącznie** na podstawie danych z `BRUDNOPIS_SEO.md`.
+6. **Finalizacja:**
+   - Zapisz post w `reklamap-os/blog/posts/{YYYYMMDDHHMMSS}_{slug}.md`
+   - Zaktualizuj tabelę w `reklamap-os/blog/INDEX.md`
+   - Dodaj wpis do `$posts` w `backend/database/seeders/BlogPostsSeeder.php` (status: `draft`)
+   - Poinformuj użytkownika: `php artisan db:seed --class=BlogPostsSeeder`
+
+Seeder używa `updateOrCreate` — można go uruchamiać wielokrotnie.
 
 ---
 
