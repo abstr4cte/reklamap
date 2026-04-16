@@ -1172,28 +1172,34 @@ const handleScroll = () => {
   
   if (descriptionWrapper) {
     const descRect = descriptionWrapper.getBoundingClientRect()
-    if (descRect.top <= window.innerHeight - 40) {
+    // Kiedy opis pokrywa się ze spodem okna co do piksela, włączamy rygiel. Da to 0px przeskoku mapy.
+    if (descRect.top <= window.innerHeight) {
       isBottomSectionVisible = true
     }
   }
   
   if (footer && !isBottomSectionVisible) {
     const footerRect = footer.getBoundingClientRect()
-    if (footerRect.top <= window.innerHeight - 40) {
+    if (footerRect.top <= window.innerHeight) {
       isBottomSectionVisible = true
     }
   }
   
-  // For mobile: hide map button only when scrolled way past footer, 
-  // otherwise just clamp it above the bottom sections
+  // For mobile: sprawdzamy prostą kotwicę przed przyciskiem, żeby uniknąć nieskończonej pętli skakania opartej na paginacji
   if (isMobile.value) {
-    isMobileClamped.value = isBottomSectionVisible
+    const anchor = document.getElementById('map-toggle-anchor')
+    const anchorRect = anchor?.getBoundingClientRect()
+    // 80: Rezerwujemy 80px kontener, a przycisk zawiśnie dokładnie pośrodku (top: 50%).
+    // Gdy góra kontenera zrówna się z innerHeight - 80, środek kontenera idealnie pokrywa się z dotychczasowym punktem!
+    const shouldClamp = !!(anchorRect && anchorRect.top <= window.innerHeight - 80)
+
+    isMobileClamped.value = shouldClamp || isBottomSectionVisible
     
     if (contentWrapper) {
       const contentRect = contentWrapper.getBoundingClientRect()
-      // Button should be visible as long as we are anywhere near the content
-      // and not scrolling deep into SEO text
-      showMapButton.value = contentRect.bottom > 100 && !isBottomSectionVisible
+      // Usuwamy `!isBottomSectionVisible` — dzięki dodanej klasie `absolute` (clamped) przycisk teraz
+      // naturalnie zotaje na dole listy i scrolluje się do góry razem z resztą strony (nie nachodzi na stopkę).
+      showMapButton.value = contentRect.bottom > 100
     }
     
     // Na komórce też chcemy przycisk przewijania listy, ale tylko gdy nie widzimy mapy
@@ -1575,28 +1581,6 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
     <!-- Main Content -->
     <div class="content-wrapper">
-      <!-- Mobile toggle button -->
-      <button 
-        v-if="isMobile && showMapButton && !showFiltersModal"
-        @click="toggleMobileMap" 
-        class="mobile-map-toggle"
-        :style="{ 
-          bottom: selectedAd && showMapOnMobile ? '180px' : '20px',
-          zIndex: 9999
-        }"
-      >
-        <span>{{ showMapOnMobile ? 'Pokaż listę' : 'Pokaż mapę' }}</span>
-        <svg v-if="!showMapOnMobile" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-          <circle cx="12" cy="10" r="3"></circle>
-        </svg>
-        <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="3" y1="9" x2="21" y2="9"></line>
-          <line x1="9" y1="21" x2="9" y2="9"></line>
-        </svg>
-      </button>
-
       <div class="listings-layout" :class="{ 'map-visible': showMapOnMobile }">
         <!-- List Sidebar -->
         <div 
@@ -1640,7 +1624,28 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
               @hover-end="handleAdLeave"
             />
           </div>
-          
+          <!-- Niewidzialna kotwica w DOM, stale rezerwująca wysokość na przycisk. 
+               Zwiększona do 80px, co idealnie amortyzuje odległość by przycisk usiadł "między, między". -->
+          <div id="map-toggle-anchor" style="position: relative; width: 100%; height: 80px; margin: 1rem 0;">
+            <!-- Przycisk POKAŻ MAPĘ (widoczny tylko na liście) -->
+            <button 
+              v-if="isMobile && showMapButton && !showFiltersModal && !showMapOnMobile"
+              @click="toggleMobileMap" 
+              class="mobile-map-toggle"
+              :class="{ 'is-clamped': isMobileClamped }"
+              :style="{ 
+                bottom: '20px',
+                zIndex: 40
+              }"
+            >
+              <span>Pokaż mapę</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+
           <Pagination
             v-if="!isLoading && (filteredListings.length > 0 || serverTotal > 0)"
             :current-page="currentPage"
@@ -1682,6 +1687,22 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
               Kliknij, aby móc przybliżyć mapę
             </div>
           </div>
+
+          <!-- Przycisk POKAŻ LISTĘ (widoczny tylko na mapie) -->
+          <button 
+            v-if="isMobile && showMapOnMobile && !showFiltersModal"
+            @click="toggleMobileMap" 
+            class="mobile-map-toggle mobile-map-toggle--map-mode"
+            :class="{ 'is-clamped': isMobileClamped }"
+            :style="{ zIndex: 1000 }"
+          >
+             <span>Pokaż listę</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+          </button>
           
           <!-- Legend Toggle Button -->
           <button 
@@ -4483,7 +4504,26 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 }
 
 .mobile-map-toggle.is-clamped {
-  /* position: absolute; - Removed in favor of fixed + dynamic bottom */
+  /* Bez animacji, natychmiastowe zablokowanie */
+  transition: none !important;
+  /* Kiedy zaparkuje, przycisk staje się idealnie scentrykowany W POŚRODKU wewnętrznej 80-pikselowej kotwicy */
+  position: absolute !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  bottom: auto !important;
+}
+
+.mobile-map-toggle--map-mode {
+  /* Domyślnie floatuje z oknem przeglądarki na mapie (bottom kontrolowany przez inline style) */
+  position: fixed !important;
+}
+
+.mobile-map-toggle--map-mode.is-clamped {
+  /* Zatrzymuje się na spądziku mapy gdy zjeżdżasz do footera sekcji SEO (nie leci dalej) */
+  position: absolute !important;
+  /* Kiedy jest clamped ignorujemy inline style, bo na poziomie footera/SEO nie ma otwartej karty (zamyka się przy odkliknięciu w tło) */
+  bottom: 20px !important;
+  top: auto !important;
 }
 
 .mobile-map-toggle:hover {
@@ -4562,8 +4602,17 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   .listings-list-container {
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
-    min-height: calc(100vh - 250px); /* Adjust based on your header/footer */
+    /* dvh = dynamic viewport height — uwzględnia pasek URL przeglądarki na mobilce */
+    min-height: calc(100vh - 250px); /* fallback dla starszych przeglądarek */
+    min-height: calc(100dvh - 250px);
     transition: opacity 0.3s ease, height 0.3s ease;
+    /*
+      Padding-bottom musi uwzględniać:
+      - przycisk mobile-map-toggle: ~44px wysokość + 20px od dołu = ~64px
+      - gesture bar / safe-area na iPhone
+      64 + 16px zapasu = 80px minimum
+    */
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
     
     &.mobile-hidden {
       display: none;
@@ -4609,7 +4658,8 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   .content-wrapper {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 70px); /* fallback */
+    height: calc(100dvh - 70px);
   }
   
   .ads-list-container {

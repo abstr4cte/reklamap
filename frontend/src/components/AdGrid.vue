@@ -22,6 +22,8 @@ const props = defineProps<{
 
 const showSortPanel = ref(false)
 const localSortBy = ref(props.sortBy || 'newest')
+const isDesktopClamped = ref(false)
+const isMobileClamped = ref(false)
 
 const sortOptions = searchStore.sortOptions
 
@@ -64,7 +66,9 @@ const handleScroll = () => {
     const listingsRect = listingsSection.getBoundingClientRect()
     const footerRect = footer?.getBoundingClientRect()
     const mapRect = polandMap?.getBoundingClientRect()
-    
+    const pagination = document.querySelector('.pagination-container')
+    const paginationRect = pagination?.getBoundingClientRect()
+
     // Show button when:
     // 1. Header is sticky (at top)
     // 2. We're in listings section (not at footer)
@@ -74,13 +78,19 @@ const handleScroll = () => {
     const inListingsSection = listingsRect.top < window.innerHeight && listingsRect.bottom > 0
     const footerIsVisible = footerRect && footerRect.top < window.innerHeight
     const mapIsBelowUs = !mapRect || mapRect.bottom < 0 // Map is above viewport (we've passed it) or doesn't exist
-    
-    const shouldShowButton = isHeaderSticky && inListingsSection && !footerIsVisible && mapIsBelowUs
-    
+    const paginationIsVisible = paginationRect && paginationRect.top < window.innerHeight
+
+    // Tryb floating (fixed): chowaj gdy footer wchodzi do viewportu
+    const shouldShowFloating = isHeaderSticky && inListingsSection && !footerIsVisible && mapIsBelowUs && !paginationIsVisible
+    // Tryb clamped (absolute): zostaje widoczny aż sekcja całkowicie zniknie
+    const shouldShowClamped = isHeaderSticky && inListingsSection && mapIsBelowUs && !!paginationIsVisible
+
     if (isMobile.value) {
-      showMapButton.value = shouldShowButton
+      isMobileClamped.value = shouldShowClamped
+      showMapButton.value = shouldShowFloating || shouldShowClamped
     } else {
-      showMapButtonDesktop.value = shouldShowButton
+      isDesktopClamped.value = shouldShowClamped
+      showMapButtonDesktop.value = shouldShowFloating || shouldShowClamped
     }
   }
 }
@@ -172,6 +182,8 @@ onUnmounted(() => {
 onDeactivated(() => {
   showMapButton.value = false
   showMapButtonDesktop.value = false
+  isMobileClamped.value = false
+  isDesktopClamped.value = false
 })
 </script>
 
@@ -348,7 +360,7 @@ onDeactivated(() => {
     </Teleport>
 
     <!-- Desktop toggle button (shows map) -->
-    <button v-if="showMapButtonDesktop" @click="goToPolandMap" class="desktop-map-toggle">
+    <button v-if="showMapButtonDesktop" @click="goToPolandMap" class="desktop-map-toggle" :class="{ 'is-clamped': isDesktopClamped }">
       <span>Pokaż mapę</span>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -357,7 +369,7 @@ onDeactivated(() => {
     </button>
 
     <!-- Mobile toggle button (shows map) -->
-    <button v-if="showMapButton" @click="goToPolandMap" class="mobile-map-toggle">
+    <button v-if="showMapButton" @click="goToPolandMap" class="mobile-map-toggle" :class="{ 'is-clamped': isMobileClamped }">
       <span>Pokaż mapę</span>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -369,6 +381,7 @@ onDeactivated(() => {
 
 <style scoped>
 .listings-section {
+  position: relative;
   padding: 4rem 0;
   background: white;
 }
@@ -974,6 +987,11 @@ onDeactivated(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
+.desktop-map-toggle.is-clamped {
+  position: absolute;
+  bottom: -10px;
+}
+
 /* Mobile Map Toggle Button */
 .mobile-map-toggle {
   position: fixed;
@@ -1010,5 +1028,10 @@ onDeactivated(() => {
 .mobile-map-toggle:active {
   transform: translateX(-50%) translateY(0);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.mobile-map-toggle.is-clamped {
+  position: absolute;
+  bottom: -10px;
 }
 </style>
