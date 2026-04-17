@@ -208,6 +208,13 @@ export const useSearchStore = defineStore('search', () => {
   let _mapPinsGeneration = 0
   let _mapBoundsTimer: ReturnType<typeof setTimeout> | null = null
 
+  const cancelMapBoundsTimer = () => {
+    if (_mapBoundsTimer) {
+      clearTimeout(_mapBoundsTimer)
+      _mapBoundsTimer = null
+    }
+  }
+
   const fetchMapPins = async () => {
     const generation = ++_mapPinsGeneration
     try {
@@ -1017,7 +1024,7 @@ export const useSearchStore = defineStore('search', () => {
   return {
     listings, mapPins, isLoading, filters, sortBy, priceDisplay, viewMode, currentPage, itemsPerPage,
     serverTotal, serverLastPage,
-    fetchListings, fetchMapPins, setListings, applyFilters, resetFilters, setViewMode, setCurrentPage, syncFromUrl,
+    fetchListings, fetchMapPins, setListings, applyFilters, resetFilters, setViewMode, setCurrentPage, syncFromUrl, cancelMapBoundsTimer,
     sortedAndFilteredListings, paginatedListings, totalPages, activeFiltersCount, getPrice,
     computedPriceDisplayUnit,
     getTypeLabel, getStatusLabel, getStatusColor, formatLocation, formatTrafficDirection, getPriceUnitLabel, getVariantLabel, getRoadClassLabel, getTrafficIntensityLabel,

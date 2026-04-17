@@ -396,25 +396,6 @@ const updateMarkers = () => {
           scrollToMap()
         }
 
-        if (isMobile.value) {
-          // Mobile: Pan map above the bottom card
-          if (map) {
-            const point = map.latLngToContainerPoint([ad.latitude, ad.longitude])
-            const newPoint = L.point(point.x, point.y + 100)
-            const newLatLng = map.containerPointToLatLng(newPoint)
-            isProgrammaticMove.value = true
-            map.panTo(newLatLng, { animate: true })
-          }
-        } else {
-          // Desktop: Pan map to the left to avoid being covered by side panel
-          if (map) {
-            const point = map.latLngToContainerPoint([ad.latitude, ad.longitude])
-            const newPoint = L.point(point.x + 150, point.y)
-            const newLatLng = map.containerPointToLatLng(newPoint)
-            isProgrammaticMove.value = true
-            map.panTo(newLatLng, { animate: true })
-          }
-        }
         
       })
       

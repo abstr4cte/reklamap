@@ -738,11 +738,11 @@ const handleSortButtonClick = () => { showSortPanel.value = true }
 const changeViewMode = (mode: 'grid' | 'list') => { searchStore.setViewMode(mode) }
 
 // Favorites and Comparison handlers
-const handleToggleFavorite = async (id: string) => {
+const handleToggleFavorite = async (id: number) => {
   await prefStore.toggleFavorite(id)
 }
 
-const handleToggleComparison = async (id: string) => {
+const handleToggleComparison = async (id: number) => {
   await prefStore.toggleComparison(id)
 }
 
@@ -808,23 +808,8 @@ const updateMarkers = () => {
         scrollToMap()
       }
 
-      if (isMobile.value) {
-        // Mobile: Pan map above the bottom card
-        if (map) {
-          const point = map.latLngToContainerPoint([ad.latitude, ad.longitude])
-          const newPoint = L!.point(point.x, point.y + 100)
-          const newLatLng = map.containerPointToLatLng(newPoint)
-          map.panTo(newLatLng, { animate: true })
-        }
-      } else {
-        // Desktop: Pan map to the left to avoid being covered by side panel
-        if (map) {
-          const point = map.latLngToContainerPoint([ad.latitude, ad.longitude])
-          const newPoint = L!.point(point.x + 150, point.y)
-          const newLatLng = map.containerPointToLatLng(newPoint)
-          map.panTo(newLatLng, { animate: true })
-        }
-        scrollToAd(ad.id) 
+      if (!isMobile.value) {
+        scrollToAd(ad.id)
       }
     })
     marker.on('mouseover', () => { 
@@ -1322,6 +1307,11 @@ onActivated(() => {
   // onActivated fires after onMounted for keep-alive components, causing a race condition.
   // Only reload data when RE-ACTIVATING from keep-alive cache.
   if (!isInitialized.value) return
+  // Zawsze czyść mapBounds — mógł zostać ustawiony przez PolandMap na HomePage
+  // gdy user tam przeglądał pinezki przed przejściem tutaj. Bez tego timer debounce
+  // (600ms) odpali fetchListings() z wąskim bbox → 0 wyników.
+  searchStore.cancelMapBoundsTimer()
+  searchStore.filters.mapBounds = null
   // Jeśli wracamy z ogłoszenia (jest zapisana pozycja scrolla), dane są w pamięci keep-alive —
   // nie resetuj strony ani nie pobieraj ponownie, bo skróciłoby to listę i zepsuło scroll.
   if (sessionStorage.getItem(LISTINGS_SCROLL_KEY)) return
