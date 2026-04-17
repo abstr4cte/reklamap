@@ -159,6 +159,7 @@ const listContainerRef = ref<HTMLElement | null>(null)
 const showListScrollTop = ref(false)
 const isProgrammaticMove = ref(false)
 const isMapActive = ref(false)
+const isScrollingToMap = ref(false)
 
 // Scroll position management
 const LISTINGS_SCROLL_KEY = 'listings_scroll_position'
@@ -269,19 +270,21 @@ const scrollToMap = () => {
   // Na mobile uwzględnij header
   const mapContainer = document.querySelector('.map-container')
   const header = document.querySelector('.app-header')
-  
+
   if (mapContainer && header) {
     const headerRect = header.getBoundingClientRect()
     const headerStyles = window.getComputedStyle(header)
     const headerHeight = headerRect.height + parseFloat(headerStyles.marginTop) + parseFloat(headerStyles.marginBottom)
-    
+
     const elementPosition = mapContainer.getBoundingClientRect().top + window.pageYOffset
     const offsetPosition = elementPosition - headerHeight
-    
+
+    isScrollingToMap.value = true
     window.scrollTo({
       top: offsetPosition,
       behavior: 'smooth'
     })
+    setTimeout(() => { isScrollingToMap.value = false }, 700)
   }
 }
 
@@ -1207,13 +1210,18 @@ const handleScroll = () => {
     showListScrollTop.value = !showMapOnMobile.value && !isBottomSectionVisible && (listContainerRef.value?.scrollTop || 0) > 500
 
     // Auto-lock map interactions on scroll (mobile only)
-    if (isMapActive.value) {
+    // (pomijamy podczas programatycznego scrolla do mapy — scrollToMap ustawia flagę)
+    if (isMapActive.value && !isScrollingToMap.value) {
       disableMapInteractions()
     }
   } else {
-    // For desktop: always show map button, but hide list scroll button when bottom sections visible
+    // For desktop: lista scrolluje się wewnątrz kontenera — sprawdzamy jej własny scroll, nie window
     showMapButton.value = true
-    showListScrollTop.value = !isBottomSectionVisible && (listContainerRef.value?.scrollTop || 0) > 500
+    const container = listContainerRef.value
+    const nearContainerBottom = container
+      ? container.scrollTop + container.clientHeight >= container.scrollHeight - 100
+      : false
+    showListScrollTop.value = !nearContainerBottom && (container?.scrollTop || 0) > 500
   }
 }
 
@@ -3290,7 +3298,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    z-index: 1001;
+    z-index: 999;
     display: flex;
   }
 }

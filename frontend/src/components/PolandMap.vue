@@ -45,7 +45,9 @@ const scrollToMap = () => {
   const elementPosition = mapEl.getBoundingClientRect().top + window.pageYOffset
   const offsetPosition = elementPosition - headerHeight
 
+  isScrollingToMap.value = true
   window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
+  setTimeout(() => { isScrollingToMap.value = false }, 700)
 }
 
 const props = defineProps<{
@@ -66,6 +68,7 @@ let resizeObserver: ResizeObserver | null = null
 // let markerClusterGroup: any = null
 const markers: Map<number, L.Marker> = new Map()
 const isMapActive = ref(false)
+const isScrollingToMap = ref(false)
 const isLegendVisible = ref(false)
 const selectedAd = ref<MapPin | null>(null)
 const isMobile = ref(window.innerWidth < 768)
@@ -510,7 +513,8 @@ onMounted(() => {
   // Handle scroll to show/hide, position toggle button, and lock map on mobile
   const handleScroll = () => {
     // If user is scrolling the page, deactivate map interactions on mobile
-    if (isMobile.value && isMapActive.value) {
+    // (ale nie podczas programatycznego scrolla do mapy — scrollToMap ustawia flagę)
+    if (isMobile.value && isMapActive.value && !isScrollingToMap.value) {
       disableMapInteractions()
     }
 
