@@ -402,6 +402,7 @@ const updateMarkers = () => {
             const point = map.latLngToContainerPoint([ad.latitude, ad.longitude])
             const newPoint = L.point(point.x, point.y + 100)
             const newLatLng = map.containerPointToLatLng(newPoint)
+            isProgrammaticMove.value = true
             map.panTo(newLatLng, { animate: true })
           }
         } else {
@@ -410,6 +411,7 @@ const updateMarkers = () => {
             const point = map.latLngToContainerPoint([ad.latitude, ad.longitude])
             const newPoint = L.point(point.x + 150, point.y)
             const newLatLng = map.containerPointToLatLng(newPoint)
+            isProgrammaticMove.value = true
             map.panTo(newLatLng, { animate: true })
           }
         }

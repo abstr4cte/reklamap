@@ -382,13 +382,11 @@ const popularCities = [
 ]
 
 onMounted(() => {
-  loadAdvertisements()
-  
   // Sprawdź flagę user_initiated_search - TYLKO jeśli jest, ładuj filtry z localStorage
   const isUserSearch = localStorage.getItem('user_initiated_search') === 'true'
-  
+
   // Jeśli są parametry w URL, zastosuj je jako filtry
-  // (Pominięte automatyczne zapisywanie do localStorage dla param. w URL, żeby nie nadpisywać 
+  // (Pominięte automatyczne zapisywanie do localStorage dla param. w URL, żeby nie nadpisywać
   // globalnych preferencji po kliknięciu udostępnionego linku)
   if (Object.keys(route.query).length > 0) {
     const queryFilters = queryParamsToFilters(route.query as Record<string, string>)
@@ -402,7 +400,7 @@ onMounted(() => {
       const saved = localStorage.getItem('reklamap_last_search')
       if (saved) {
         const lastSearch = JSON.parse(saved)
-        
+
         // Sprawdź czy są jakiekolwiek filtry
         const hasAnyFilters = Object.entries(lastSearch).some(([key, value]) => {
           if (['mapBounds', '_priceDisplayUnit'].includes(key)) return false
@@ -410,18 +408,18 @@ onMounted(() => {
           if (Array.isArray(value) && value.length === 0) return false
           return true
         })
-        
+
         if (hasAnyFilters) {
           filters.value = { ...filters.value, ...lastSearch }
-          
+
           if (lastSearch._priceDisplayUnit) {
             priceDisplay.value = lastSearch._priceDisplayUnit as any
           }
-          
+
           // Dodaj filtry do URL jako query params (miasto/lokalizacja jako query params na stronie głównej)
           // Użyj lastSearch bezpośrednio, aby mieć pewność że booleany (ze zdjęciem, faktura VAT) trafią do URL
           const queryParams = filtersToQueryParams(lastSearch as any)
-          
+
           nextTick(() => {
             router.replace({ query: queryParams }).catch(() => {
               // Ignore NavigationDuplicated error silently
@@ -434,9 +432,14 @@ onMounted(() => {
     }
   } else {
     // Wejście bez query params i bez flagi wyszukiwania. Oczyść ewentualne resztki w Pinia.
+    // resetFilters() wywołuje fetchListings() + fetchMapPins() wewnętrznie — nie wywołuj loadAdvertisements().
     searchStore.resetFilters()
+    startAlertTimer()
+    return
   }
-  // Jeśli NIE ma flagi user_initiated_search i NIE ma query params → czyste wejście, nie ładuj nic
+
+  // Filtry zostały już ustawione powyżej — fetchMapPins() odbierze prawidłowe parametry.
+  loadAdvertisements()
 
   // Logic for showing the search alert modal after 20 seconds
   startAlertTimer()
