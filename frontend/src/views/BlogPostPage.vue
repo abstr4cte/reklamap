@@ -3,7 +3,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { useSeo } from '../composables/useSeo'
-import logoImage from '../assets/logo.png'
+import logoImage from '../assets/logo.webp'
 
 const route = useRoute()
 const router = useRouter()

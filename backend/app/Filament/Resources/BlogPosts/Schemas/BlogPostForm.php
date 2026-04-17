@@ -11,6 +11,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image;
 
 class BlogPostForm
 {
@@ -94,7 +95,25 @@ class BlogPostForm
                     ->disk('public')
                     ->directory('blog')
                     ->previewable(false)
-                    ->nullable(),
+                    ->nullable()
+                    ->saveUploadedFileUsing(function ($file): string {
+                        $filename = Str::random(40) . '.webp';
+                        $storagePath = storage_path('app/public/blog/');
+
+                        if (!file_exists($storagePath)) {
+                            mkdir($storagePath, 0755, true);
+                        }
+
+                        $img = Image::read($file->getRealPath());
+
+                        if ($img->width() > 1920) {
+                            $img->scale(width: 1920);
+                        }
+
+                        $img->toWebp(85)->save($storagePath . $filename);
+
+                        return 'blog/' . $filename;
+                    }),
                 TextInput::make('image_alt')
                     ->label('Alt obrazka (SEO)')
                     ->placeholder('Krótki opis obrazka dla wyszukiwarek, np. "Billboard przy autostradzie A1 w Łodzi"')

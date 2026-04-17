@@ -17,6 +17,7 @@ import { filtersToQueryParams } from '../utils/filterUtils'
 import polishLocations from '../data/polishLocations.json'
 import { categoryDescriptions, cityDescriptions } from '../data/categoryDescriptions'
 import type * as LType from 'leaflet'
+import WebPImage from '../components/WebPImage.vue'
 import type { Advertisement } from '../types'
 
 import Pagination from '../components/Pagination.vue'
@@ -1759,7 +1760,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
               class="map-card-content"
             >
               <div class="map-card-image" v-if="selectedAd.image_url">
-                <img :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title">
+                <WebPImage :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title" />
               </div>
               <div class="map-card-info">
                 <div class="card-badges">
@@ -1809,7 +1810,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             
             <div class="panel-content">
               <div class="panel-image" v-if="selectedAd.image_url">
-                <img :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title">
+                <WebPImage :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title" />
               </div>
               
               <div class="panel-body">

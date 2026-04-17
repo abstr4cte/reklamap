@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import type { MapPin } from '../types'
 import { slugify } from '../utils/slugify'
 import { getFullImageUrl } from '../services/api'
+import WebPImage from './WebPImage.vue'
 import { useSearchStore, typeColors } from '../stores/useSearchStore'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
 // import 'leaflet.markercluster'
@@ -336,12 +337,13 @@ const updateMarkers = () => {
 
     const imageUrl = ad.image_url ? getFullImageUrl(ad.image_url) : ''
     
+    const webpImageUrl = imageUrl ? imageUrl.replace(/\.(jpg|jpeg)$/i, '.webp') : null
     const popupContent = `
       <div style="width: 250px;">
         <a href="${adUrl}" style="text-decoration: none; color: inherit; display: block;">
-          ${imageUrl ? `
+          ${webpImageUrl ? `
             <div style="margin: -20px -20px 12px -20px; overflow: hidden; border-radius: 12px 12px 0 0;">
-              <img src="${imageUrl}" alt="${ad.title}" style="width: 100%; height: ${isMobile.value ? '100px' : '140px'}; object-fit: cover; display: block;" />
+              <img src="${webpImageUrl}" alt="${ad.title}" style="width: 100%; height: ${isMobile.value ? '100px' : '140px'}; object-fit: cover; display: block;" />
             </div>
           ` : ''}
           <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: #1F2937;">
@@ -703,7 +705,7 @@ onBeforeUnmount(() => {
             class="card-content"
           >
             <div class="card-image" v-if="selectedAd.image_url">
-              <img :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title">
+              <WebPImage :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title" />
             </div>
             <div class="card-info">
               <div class="card-badges">
@@ -752,7 +754,7 @@ onBeforeUnmount(() => {
           
           <div class="panel-content">
             <div class="panel-image" v-if="selectedAd.image_url">
-              <img :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title">
+              <WebPImage :src="getFullImageUrl(selectedAd.image_url)" :alt="selectedAd.title" />
             </div>
             
             <div class="panel-body">

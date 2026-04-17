@@ -4,6 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { api } from '../services/api'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 import { useSeo } from '../composables/useSeo'
+import WebPImage from '../components/WebPImage.vue'
 
 useSeo({
   title: 'Blog o reklamie zewnętrznej | ReklaMap',
@@ -182,7 +183,7 @@ const handleNewsletterSubmit = async () => {
             style="cursor: pointer"
           >
             <div class="card-image">
-              <img :src="post.image" :alt="post.imageAlt ?? post.title" />
+              <WebPImage :src="post.image" :alt="post.imageAlt ?? post.title" />
               <div class="card-category">{{ categories.find(c => c.id === post.category)?.name }}</div>
             </div>
             <div class="card-content">
@@ -268,7 +269,7 @@ const handleNewsletterSubmit = async () => {
 }
 
 .hero-section {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%), url('../assets/banner-section.png');
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%), url('../assets/banner-section.webp');
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;

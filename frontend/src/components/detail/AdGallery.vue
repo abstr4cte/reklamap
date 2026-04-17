@@ -259,14 +259,17 @@ const handleImageClick = () => {
           @click.self="closeImagePreview"
         >
           <div class="preview-image-wrapper">
-            <img
-              :src="getFullImageUrl(images[currentImageIndex])"
-              :alt="imageAlt"
-              :class="`preview-image ${isZoomed ? 'zoomed' : ''}`"
-              :style="isZoomed ? { transform: `translate(${panX}px, ${panY}px) scale(2)` } : {}"
-              @click="handleImageClick"
-              draggable="false"
-            />
+            <picture>
+              <source :srcset="getFullImageUrl(images[currentImageIndex]).replace(/\.(jpg|jpeg)$/i, '.webp')" type="image/webp">
+              <img
+                :src="getFullImageUrl(images[currentImageIndex])"
+                :alt="imageAlt"
+                :class="`preview-image ${isZoomed ? 'zoomed' : ''}`"
+                :style="isZoomed ? { transform: `translate(${panX}px, ${panY}px) scale(2)` } : {}"
+                @click="handleImageClick"
+                draggable="false"
+              />
+            </picture>
           </div>
         </div>
 

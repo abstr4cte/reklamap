@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import logoTextImage from '../assets/logo-text.png'
+import logoTextImage from '../assets/logo-text.webp'
 
 const currentYear = new Date().getFullYear()
 

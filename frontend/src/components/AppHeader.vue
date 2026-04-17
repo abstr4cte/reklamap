@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import logoImage from '../assets/logo.png'
-import logoTextImage from '../assets/logo-text.png'
+import logoImage from '../assets/logo.webp'
+import logoTextImage from '../assets/logo-text.webp'
 
 
 const props = defineProps<{
