@@ -67,7 +67,7 @@ const handlePageChange = async (page: number) => {
   const adsSection = document.querySelector('.listings-section')
   if (adsSection) {
     const elementPosition = adsSection.getBoundingClientRect().top + window.pageYOffset
-    const offsetPosition = elementPosition - 32 // 2rem = 32px offset
+    const offsetPosition = elementPosition - 80
     
     window.scrollTo({
       top: offsetPosition,

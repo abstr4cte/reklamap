@@ -24,8 +24,8 @@ const scrollToAdGrid = () => {
   const adGrid = document.querySelector('.listings-section')
   if (adGrid) {
     const elementPosition = adGrid.getBoundingClientRect().top + window.pageYOffset
-    const offsetPosition = elementPosition - 32
-    
+    const offsetPosition = elementPosition - 80
+
     window.scrollTo({
       top: offsetPosition,
       behavior: 'smooth'
@@ -188,7 +188,7 @@ const initMap = () => {
 
   // Dodaj kontrolkę zoomu w odpowiednim miejscu
   L.control.zoom({
-    position: isMobile.value ? 'bottomleft' : 'topleft'
+    position: isMobile.value ? 'topright' : 'topleft'
   }).addTo(map)
 
   // Zamknij wybraną reklamę przy kliknięciu w mapę
@@ -557,8 +557,14 @@ onMounted(() => {
   
   // Cleanup
   onActivated(() => {
-  selectedAd.value = null
-})
+    selectedAd.value = null
+    // mapBounds to efemeryczny stan viewport — czyścimy przy powrocie na stronę,
+    // żeby bbox ustawiony np. na ListingsPage nie filtrował ogłoszeń do 0.
+    if (searchStore.filters.mapBounds) {
+      searchStore.filters.mapBounds = null  // watcher (~linia 474) wywoła syncMapToFilters()
+      searchStore.fetchListings()
+    }
+  })
 
 onBeforeUnmount(() => {
     window.removeEventListener('resize', handleResize)
