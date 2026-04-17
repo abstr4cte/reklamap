@@ -390,7 +390,12 @@ const updateMarkers = () => {
       // On all devices, show custom detail panel
       marker.on('click', () => {
         selectedAd.value = ad
-        
+
+        if (!isMapActive.value) {
+          enableMapInteractions()
+          scrollToMap()
+        }
+
         if (isMobile.value) {
           // Mobile: Pan map above the bottom card
           if (map) {
@@ -409,9 +414,6 @@ const updateMarkers = () => {
           }
         }
         
-        if (isMobile.value && !isMapActive.value && map) {
-          enableMapInteractions()
-        }
       })
       
       marker.on('mouseover', () => {
@@ -690,7 +692,7 @@ onBeforeUnmount(() => {
           opacity: showMobileToggle ? 0.9 : 0,
           visibility: showMobileToggle ? 'visible' : 'hidden',
           pointerEvents: showMobileToggle ? 'auto' : 'none',
-          bottom: selectedAd ? '160px' : '20px'
+          bottom: '20px'
         }"
       >
         <span>Pokaż listę</span>

@@ -258,34 +258,9 @@ const scrollListToTop = () => {
 }
 
 const scrollToMap = () => {
-  // Na webowej wersji (desktop) scrolluj na samą górę
-  if (!isMobile.value) {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
-    return
-  }
-  
-  // Na mobile uwzględnij header
-  const mapContainer = document.querySelector('.map-container')
-  const header = document.querySelector('.app-header')
-
-  if (mapContainer && header) {
-    const headerRect = header.getBoundingClientRect()
-    const headerStyles = window.getComputedStyle(header)
-    const headerHeight = headerRect.height + parseFloat(headerStyles.marginTop) + parseFloat(headerStyles.marginBottom)
-
-    const elementPosition = mapContainer.getBoundingClientRect().top + window.pageYOffset
-    const offsetPosition = elementPosition - headerHeight
-
-    isScrollingToMap.value = true
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: 'smooth'
-    })
-    setTimeout(() => { isScrollingToMap.value = false }, 700)
-  }
+  isScrollingToMap.value = true
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+  setTimeout(() => { isScrollingToMap.value = false }, 700)
 }
 
 // Leaflet
@@ -714,27 +689,14 @@ const handleSortOptionClick = (val: string) => { searchStore.sortBy = val; showS
 const toggleMobileMap = () => {
   showMapOnMobile.value = !showMapOnMobile.value;
   
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
   if (showMapOnMobile.value) {
     nextTick(() => {
       initMap();
-      const mapWrapper = document.querySelector('.map-container-wrapper');
-      if (mapWrapper) {
-        const header = document.querySelector('header');
-        const headerOffset = header ? header.offsetHeight : 64;
-        document.documentElement.style.setProperty('--header-height', `${headerOffset}px`);
-        const elementPosition = mapWrapper.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      }
-    });
-  } else {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
+      const header = document.querySelector('header');
+      const headerOffset = header ? header.offsetHeight : 64;
+      document.documentElement.style.setProperty('--header-height', `${headerOffset}px`);
     });
   }
   handleScroll();
@@ -838,9 +800,14 @@ const updateMarkers = () => {
     // Update markers with current listings
     // marker.bindPopup(...) - Disabled in favor of native Vue panels
 
-    marker.on('click', () => { 
+    marker.on('click', () => {
       selectedAdId.value = ad.id
-      
+
+      if (!isMapActive.value) {
+        enableMapInteractions()
+        scrollToMap()
+      }
+
       if (isMobile.value) {
         // Mobile: Pan map above the bottom card
         if (map) {
@@ -1189,15 +1156,17 @@ const handleScroll = () => {
     }
   }
   
-  // For mobile: sprawdzamy prostą kotwicę przed przyciskiem, żeby uniknąć nieskończonej pętli skakania opartej na paginacji
   if (isMobile.value) {
-    const anchor = document.getElementById('map-toggle-anchor')
-    const anchorRect = anchor?.getBoundingClientRect()
-    // 80: Rezerwujemy 80px kontener, a przycisk zawiśnie dokładnie pośrodku (top: 50%).
-    // Gdy góra kontenera zrówna się z innerHeight - 80, środek kontenera idealnie pokrywa się z dotychczasowym punktem!
-    const shouldClamp = !!(anchorRect && anchorRect.top <= window.innerHeight - 80)
-
-    isMobileClamped.value = shouldClamp || isBottomSectionVisible
+    if (showMapOnMobile.value) {
+      // Tryb mapy: clampuj "Pokaż listę" gdy description-wrapper lub footer wjeżdża w viewport
+      isMobileClamped.value = isBottomSectionVisible
+    } else {
+      // Tryb listy: clampuj "Pokaż mapę" gdy paginacja lub description-wrapper jest widoczna
+      const pagination = document.querySelector('.pagination-container')
+      const paginationRect = pagination?.getBoundingClientRect()
+      const paginationIsVisible = !!(paginationRect && paginationRect.top < window.innerHeight)
+      isMobileClamped.value = paginationIsVisible || isBottomSectionVisible
+    }
     
     if (contentWrapper) {
       const contentRect = contentWrapper.getBoundingClientRect()
@@ -1595,7 +1564,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
         <div 
           ref="listContainerRef" 
           class="listings-list-container" 
-          :class="{ 'hidden-mobile': showMapOnMobile }"
+          :class="{ 'mobile-hidden': showMapOnMobile }"
           @scroll="handleScroll"
         >
         <div v-if="isLoading" class="listings-list" :class="viewMode">
@@ -4513,13 +4482,8 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 }
 
 .mobile-map-toggle.is-clamped {
-  /* Bez animacji, natychmiastowe zablokowanie */
-  transition: none !important;
-  /* Kiedy zaparkuje, przycisk staje się idealnie scentrykowany W POŚRODKU wewnętrznej 80-pikselowej kotwicy */
-  position: absolute !important;
-  top: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  bottom: auto !important;
+  position: absolute;
+  bottom: -10px;
 }
 
 .mobile-map-toggle--map-mode {
@@ -4549,46 +4513,58 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 @media (max-width: 767px) {
   .listings-page {
-    height: auto;
+    height: calc(100svh - var(--header-height, 100px));
     overflow: visible;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .listings-header-section {
+    flex-shrink: 0;
   }
 
   .listings-header-section :deep(.breadcrumbs) {
     padding-left: 1rem;
   }
 
+  .listings-page.map-active .listings-header-section :deep(.breadcrumbs) {
+    display: none !important;
+  }
+
   .listings-layout {
     display: flex;
     flex-direction: column;
-    height: calc(100svh - var(--header-height, 100px) - 68px);
-    min-height: 500px;
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
     position: relative;
     transition: all 0.3s ease;
   }
 
-  .listings-layout.map-visible {
-    height: calc(100svh - var(--header-height, 60px)) !important;
-    min-height: auto;
-  }
-  
-  .listings-page.map-active {
-    padding-top: 1.5rem !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    padding-bottom: 0 !important;
-    margin: 0 !important;
+  .listings-page.map-active .content-wrapper {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
   }
 
-  .listings-page.map-active .content-wrapper {
+  .listings-page.map-active .map-container-wrapper.mobile-visible {
+    flex: 1 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    position: relative !important;
+  }
+
+  .listings-page.map-active {
+    height: calc(100svh - var(--header-height, 100px)) !important;
+    overflow: hidden !important;
     padding: 0 !important;
     margin: 0 !important;
   }
-  
+
   .content-wrapper {
-    display: block;
-    height: auto;
-    overflow: visible;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
     position: relative;
     padding-bottom: 0;
   }
@@ -4597,47 +4573,33 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
     display: flex;
     opacity: 0.9;
   }
-  
+
   .mobile-map-toggle span {
     display: inline-block;
   }
-  
-  .content-wrapper {
-    flex-direction: column;
-    height: auto;
-    min-height: calc(100vh - 200px);
-  }
-  
+
   .listings-list-container {
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
-    /* dvh = dynamic viewport height — uwzględnia pasek URL przeglądarki na mobilce */
-    min-height: calc(100vh - 250px); /* fallback dla starszych przeglądarek */
-    min-height: calc(100dvh - 250px);
     transition: opacity 0.3s ease, height 0.3s ease;
-    /*
-      Padding-bottom musi uwzględniać:
-      - przycisk mobile-map-toggle: ~44px wysokość + 20px od dołu = ~64px
-      - gesture bar / safe-area na iPhone
-      64 + 16px zapasu = 80px minimum
-    */
     padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
-    
+
     &.mobile-hidden {
       display: none;
     }
   }
-  
+
   .map-container-wrapper {
     display: none;
-    height: 100%; 
+    height: 100%;
     transition: opacity 0.3s ease, height 0.3s ease;
-    
+
     &.mobile-visible {
-      display: block;
+      display: flex;
+      flex-direction: column;
       opacity: 1;
     }
-    
+
     &.mobile-hidden {
       display: none;
     }

@@ -537,9 +537,13 @@ const saveChanges = async (id: string) => {
       ad.contact_preference = (editingAd.value as any).contact_preference || 'email'
     }
 
+    const rowEl = document.getElementById(`listing-row-${id}`)
     toggleRow(id)
     searchStore.fetchListings() // keep global list in sync
     toast.value?.add('Zmiany zostały zapisane', 'success')
+    nextTick(() => {
+      rowEl?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
   } catch (error) {
     toast.value?.add('Błąd podczas zapisywania zmian', 'error')
   } finally {
