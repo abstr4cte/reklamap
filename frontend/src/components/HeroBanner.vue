@@ -194,16 +194,12 @@ const handleSearch = () => {
   
   // Jeśli użytkownik wpisał cenę, dodaj priceUnit do filtrów
   // Aby wyniki były przełączone na tę jednostkę (jak przy sortowaniu)
-  if ((searchFilters.priceFrom !== null || searchFilters.priceTo !== null) && searchFilters.priceUnit) {
-    // Dodaj specjalny parametr do emitowanego eventu
-    searchFilters._priceDisplayUnit = searchFilters.priceUnit
-  } else {
-    // Jeśli nie ma ceny, wyczyść priceUnit (nie ma sensu go wysyłać w query params)
-    searchFilters.priceUnit = ''
-  }
-  
-  // Zapisz filtry do localStorage (z wartościami w mm dla LED)
+  // Zapisz filtry do localStorage
   saveLastSearch(searchFilters)
+
+  if ((searchFilters.priceFrom !== null || searchFilters.priceTo !== null) && searchFilters.priceUnit) {
+    searchFilters._priceDisplayUnit = searchFilters.priceUnit
+  }
   
   // WAŻNE: Ustaw flagę że to był search zainicjowany przez użytkownika (nie link kategorii)
   try {
@@ -393,7 +389,11 @@ watch(() => filters.value.type, (newType, oldType) => {
     cityStrict: filters.value.cityStrict,
     priceFrom: filters.value.priceFrom,
     priceTo: filters.value.priceTo,
-    priceUnit: filters.value.priceUnit,
+    priceUnit: (() => {
+      const available = searchStore.getAvailablePriceUnits(newType ?? '')
+      const current = filters.value.priceUnit
+      return available.some(u => u.value === current) ? current : (available[0]?.value ?? 'month')
+    })(),
     status: filters.value.status,
     onlyWithImage: filters.value.onlyWithImage,
     hasVatInvoice: filters.value.hasVatInvoice,

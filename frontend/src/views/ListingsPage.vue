@@ -1067,7 +1067,11 @@ watch(() => tempFilters.value?.type, (newType, oldType) => {
     cityStrict:             tempFilters.value.cityStrict,
     priceFrom:              tempFilters.value.priceFrom,
     priceTo:                tempFilters.value.priceTo,
-    priceUnit:              tempFilters.value.priceUnit,
+    priceUnit:              (() => {
+      const available = getAvailablePriceUnits(newType ?? '')
+      const current = tempFilters.value!.priceUnit
+      return available.some(u => u.value === current) ? current : (available[0]?.value ?? 'month')
+    })(),
     status:                 tempFilters.value.status,
     onlyWithImage:          tempFilters.value.onlyWithImage,
     hasVatInvoice:          tempFilters.value.hasVatInvoice,

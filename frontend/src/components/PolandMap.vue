@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, onBeforeUnmount, onActivated } from 'vue'
+import { ref, onMounted, watch, onBeforeUnmount, onActivated, onDeactivated } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { MapPin } from '../types'
@@ -13,6 +13,7 @@ import { mapTypeToUrlFormat } from '../utils/typeMapping'
 // import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 const searchStore = useSearchStore()
+const isActive = ref(true)
 
 // Funkcja formatująca adres i miasto, taka sama jak w AdCard
 const formatLocation = (location: string, city: string) => searchStore.formatLocation(location, city)
@@ -253,7 +254,11 @@ const initMap = () => {
 
   map.on('moveend', () => {
     if (!map) return
-    
+
+    // Skip if component is deactivated (keep-alive) — delayed Leaflet events can still fire
+    // after navigation and would overwrite mapBounds already cleared by the new page.
+    if (!isActive.value) return
+
     // Skip if it was a programmatic move (initial zoom, city zoom etc)
     if (isProgrammaticMove.value) {
       setTimeout(() => { isProgrammaticMove.value = false }, 200)
@@ -546,6 +551,7 @@ onMounted(() => {
   
   // Cleanup
   onActivated(() => {
+    isActive.value = true
     selectedAd.value = null
     // mapBounds to efemeryczny stan viewport — czyścimy przy powrocie na stronę,
     // żeby bbox ustawiony np. na ListingsPage nie filtrował ogłoszeń do 0.
@@ -553,6 +559,13 @@ onMounted(() => {
       searchStore.filters.mapBounds = null  // watcher (~linia 474) wywoła syncMapToFilters()
       searchStore.fetchListings()
     }
+  })
+
+  onDeactivated(() => {
+    isActive.value = false
+    // Anuluj timer debounce mapBounds — opóźnione moveend events mogą odpalić fetchListings
+    // ze starym bbox po przejściu na inną stronę, co skutkuje 0 wyników na ListingsPage.
+    searchStore.cancelMapBoundsTimer()
   })
 
 onBeforeUnmount(() => {
