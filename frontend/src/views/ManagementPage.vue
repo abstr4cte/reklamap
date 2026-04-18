@@ -1123,8 +1123,12 @@ const handleSubmit = async () => {
     setTimeout(() => {
       router.push('/')
     }, 5000)
-  } catch (error) {
-    errorMessage.value = 'Wystąpił błąd podczas wysyłania linku. Spróbuj ponownie.'
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response?.data?.message) {
+      errorMessage.value = error.response.data.message
+    } else {
+      errorMessage.value = 'Wystąpił błąd podczas wysyłania linku. Spróbuj ponownie.'
+    }
   } finally {
     isSubmitting.value = false
   }

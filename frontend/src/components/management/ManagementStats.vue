@@ -17,16 +17,28 @@ const emit = defineEmits<{
 
 const searchStore = useSearchStore()
 
+const filterType = ref<string>('')
+
+const availableTypes = computed(() =>
+  [...new Set(props.listings.map(ad => ad.type))].sort()
+)
+
+const filteredListings = computed(() =>
+  filterType.value
+    ? props.listings.filter(ad => ad.type === filterType.value)
+    : props.listings
+)
+
 const totalViews = computed(() => {
-  return props.listings.reduce((sum, ad) => sum + (ad.views_30d || 0), 0)
+  return filteredListings.value.reduce((sum, ad) => sum + (ad.views_30d || 0), 0)
 })
 
 const totalPhoneClicks = computed(() => {
-  return props.listings.reduce((sum, ad) => sum + (ad.phone_clicks_30d || 0), 0)
+  return filteredListings.value.reduce((sum, ad) => sum + (ad.phone_clicks_30d || 0), 0)
 })
 
 const totalEmailClicks = computed(() => {
-  return props.listings.reduce((sum, ad) => sum + (ad.email_clicks_30d || 0), 0)
+  return filteredListings.value.reduce((sum, ad) => sum + (ad.email_clicks_30d || 0), 0)
 })
 
 const totalEngagement = computed(() => {
@@ -39,13 +51,13 @@ const engagementRate = computed(() => {
 })
 
 const topPerformingAds = computed(() => {
-  return [...props.listings]
+  return [...filteredListings.value]
     .sort((a, b) => ((b.views_30d || 0) - (a.views_30d || 0)))
     .slice(0, 5)
 })
 
 const mostEngagingAds = computed(() => {
-  return [...props.listings]
+  return [...filteredListings.value]
     .sort((a, b) => {
       const aEngagement = (a.phone_clicks_30d || 0) + (a.email_clicks_30d || 0)
       const bEngagement = (b.phone_clicks_30d || 0) + (b.email_clicks_30d || 0)
@@ -149,7 +161,7 @@ const executeAddTopAdsToChart = (adIds: number[], metric?: 'views' | 'clicks') =
 
 const adsByType = computed(() => {
   const types: Record<string, number> = {}
-  props.listings.forEach(ad => {
+  filteredListings.value.forEach(ad => {
     types[ad.type] = (types[ad.type] || 0) + 1
   })
   return Object.entries(types).map(([type, count]) => ({
@@ -161,9 +173,9 @@ const adsByType = computed(() => {
 
 const adsByStatus = computed(() => {
   const statuses = {
-    active: props.listings.filter(ad => ad.status === 'active').length,
-    reserved: props.listings.filter(ad => ad.status === 'reserved').length,
-    soon_available: props.listings.filter(ad => ad.status === 'soon_available').length
+    active: filteredListings.value.filter(ad => ad.status === 'active').length,
+    reserved: filteredListings.value.filter(ad => ad.status === 'reserved').length,
+    soon_available: filteredListings.value.filter(ad => ad.status === 'soon_available').length
   }
   return statuses
 })
@@ -177,6 +189,23 @@ defineExpose({
 
 <template>
   <div class="statistics-dashboard">
+    <!-- Filter bar -->
+    <div class="stats-filter-bar">
+      <div class="stats-filter-left">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" class="stats-filter-icon">
+          <path d="M3 6h18M7 12h10M11 18h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="stats-filter-label">Filtruj według typu:</span>
+        <select v-model="filterType" class="stats-filter-select">
+          <option value="">Wszystkie typy</option>
+          <option v-for="type in availableTypes" :key="type" :value="type">{{ getTypeLabel(type) }}</option>
+        </select>
+      </div>
+      <span v-if="filterType" class="stats-filter-count">
+        {{ filteredListings.length }} z {{ props.listings.length }} ogłoszeń
+      </span>
+    </div>
+
     <!-- Summary Cards -->
     <div class="stats-grid">
       <div class="stat-card">
@@ -349,17 +378,17 @@ defineExpose({
 
     <!-- Additional Stats -->
     <div class="additional-stats">
-      <!-- Ads by Type -->
-      <div class="stat-breakdown-card">
+      <!-- Ads by Type (hidden when type filter is active — redundant) -->
+      <div v-if="!filterType" class="stat-breakdown-card">
         <h3>Ogłoszenia według typu</h3>
         <div class="breakdown-list">
           <div v-for="item in adsByType" :key="item.type" class="breakdown-item">
             <div class="breakdown-label">{{ item.label }}</div>
             <div class="breakdown-value">{{ item.count }}</div>
             <div class="breakdown-bar">
-              <div 
-                class="breakdown-bar-fill" 
-                :style="{ width: `${(item.count / props.listings.length) * 100}%` }"
+              <div
+                class="breakdown-bar-fill"
+                :style="{ width: `${(item.count / filteredListings.length) * 100}%` }"
               ></div>
             </div>
           </div>
@@ -820,4 +849,61 @@ defineExpose({
 .status-dot.active { background-color: #10b981; }
 .status-dot.reserved { background-color: #f59e0b; }
 .status-dot.soon { background-color: #3b82f6; }
+
+.stats-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stats-filter-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.stats-filter-icon {
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.stats-filter-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.stats-filter-select {
+  padding: 0.4rem 0.75rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #374151;
+  background: #f9fafb;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.stats-filter-select:focus {
+  border-color: #667eea;
+  background: white;
+}
+
+.stats-filter-count {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  background: #f3f4f6;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
 </style>

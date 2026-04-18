@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ManagementToken;
 use App\Models\Advertisement;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -17,11 +18,17 @@ class ManagementController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function sendManagementLink(Request $request)
+    public function sendManagementLink(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'email' => 'required|email',
         ]);
+
+        if (!Advertisement::where('owner_email', $validated['email'])->exists()) {
+            return response()->json([
+                'message' => 'Nie znaleziono ogłoszeń przypisanych do tego adresu e-mail.',
+            ], 422);
+        }
 
         // Delete any existing tokens for this email
         ManagementToken::where('email', $validated['email'])->delete();
@@ -46,7 +53,7 @@ class ManagementController extends Controller
      * @param  string  $token
      * @return \Illuminate\Http\Response
      */
-    public function validateToken($token)
+    public function validateToken(string $token): JsonResponse
     {
         $managementToken = ManagementToken::find($token);
 
