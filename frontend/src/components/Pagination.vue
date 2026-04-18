@@ -71,7 +71,9 @@ const goToPage = (page: number) => {
         // Scrolluj do określonego elementu
         const element = document.querySelector(props.scrollTarget)
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          const headerHeight = (document.querySelector('.app-header') as HTMLElement)?.offsetHeight ?? 0
+          const top = element.getBoundingClientRect().top + window.scrollY - headerHeight - 16
+          window.scrollTo({ top, behavior: 'smooth' })
         }
       } else {
         // Scrolluj do góry strony

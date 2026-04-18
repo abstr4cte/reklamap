@@ -881,6 +881,7 @@ class AdvertisementsSeeder extends Seeder
             'has_vat_invoice'         => true,
             'price_includes_print'    => false,
             'price_includes_mounting' => false,
+            'graphic_design_help'     => false,
             'price_negotiable'        => false,
             'status'                  => 'active',
         ];
@@ -934,6 +935,8 @@ class AdvertisementsSeeder extends Seeder
             if (isset($data['width'], $data['height'])) {
                 $data['orientation'] = $data['width'] >= $data['height'] ? 'horizontal' : 'vertical';
             }
+
+            $data['rental_period'] = in_array($data['price_unit'] ?? '', ['day', 'week']) ? 'short_term' : 'long_term';
 
             $data['slug'] = Str::slug($data['title']);
 

@@ -85,7 +85,9 @@ const handleShowPhone = () => {
 const scrollToContactForm = () => {
   const formElement = document.getElementById('contact-form-section')
   if (formElement) {
-    formElement.scrollIntoView({ behavior: 'smooth' })
+    const headerHeight = (document.querySelector('.app-header') as HTMLElement)?.offsetHeight ?? 0
+    const top = formElement.getBoundingClientRect().top + window.scrollY - headerHeight - 16
+    window.scrollTo({ top, behavior: 'smooth' })
   }
 }
 const showActionsMenu = ref(false)

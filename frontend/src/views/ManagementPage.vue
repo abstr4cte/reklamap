@@ -409,6 +409,13 @@ const saveChanges = async (id: string) => {
     editErrors.value.price = 'Cena nie może przekraczać 999 999 zł'
     hasErrors = true
   }
+  if (editingAd.value.price_unit === 'campaign') {
+    const cd = (editingAd.value as any).campaign_duration
+    if (!cd || cd <= 0) {
+      editErrors.value.campaign_duration = 'Czas trwania kampanii jest wymagany'
+      hasErrors = true
+    }
+  }
   if (!editingAd.value.location) {
     editErrors.value.location = 'Lokalizacja jest wymagana'
     hasErrors = true
@@ -427,6 +434,24 @@ const saveChanges = async (id: string) => {
       hasErrors = true
     } else if ((editingAd.value.height ?? 0) > 100) {
       editErrors.value.height = 'Wysokość nie może przekraczać 100 m'
+      hasErrors = true
+    }
+  }
+
+  if (editingAd.value.type === 'led_screen') {
+    const resolution = (editingAd.value as any).resolution
+    if (resolution && !/^\d+x\d+$/i.test(resolution)) {
+      editErrors.value.resolution = 'Rozdzielczość musi być w formacie WxH (np. 1920x1080)'
+      hasErrors = true
+    }
+    const pixelPitch = (editingAd.value as any).pixel_pitch
+    if (pixelPitch !== null && pixelPitch !== undefined && (pixelPitch < 0.1 || pixelPitch > 100)) {
+      editErrors.value.pixel_pitch = 'Pixel Pitch musi być między 0.1 a 100 mm'
+      hasErrors = true
+    }
+    const brightness = (editingAd.value as any).brightness
+    if (brightness !== null && brightness !== undefined && (brightness < 1000 || brightness > 15000)) {
+      editErrors.value.brightness = 'Jasność musi być między 1000 a 15000 nits'
       hasErrors = true
     }
   }
@@ -525,6 +550,11 @@ const saveChanges = async (id: string) => {
         operating_zone: (editingAd.value as any).operating_zone || null,
         ambient_light_control: (editingAd.value as any).ambient_light_control || false,
         lighting_type_banner: (editingAd.value as any).lighting_type_banner || null,
+        campaign_duration: editingAd.value.price_unit === 'campaign' ? ((editingAd.value as any).campaign_duration || null) : null,
+        estimated_daily_views: (editingAd.value as any).estimated_daily_views || null,
+        resolution: editingAd.value.type === 'led_screen' ? ((editingAd.value as any).resolution || null) : null,
+        pixel_pitch: editingAd.value.type === 'led_screen' ? ((editingAd.value as any).pixel_pitch || null) : null,
+        brightness: editingAd.value.type === 'led_screen' ? ((editingAd.value as any).brightness || null) : null,
     })
 
     const ad = listings.value.find(a => a.id === id)
@@ -542,7 +572,11 @@ const saveChanges = async (id: string) => {
     searchStore.fetchListings() // keep global list in sync
     toast.value?.add('Zmiany zostały zapisane', 'success')
     nextTick(() => {
-      rowEl?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      if (rowEl) {
+        const headerHeight = (document.querySelector('.app-header') as HTMLElement)?.offsetHeight ?? 0
+        const top = rowEl.getBoundingClientRect().top + window.scrollY - headerHeight - 16
+        window.scrollTo({ top, behavior: 'smooth' })
+      }
     })
   } catch (error) {
     toast.value?.add('Błąd podczas zapisywania zmian', 'error')
@@ -660,7 +694,9 @@ const toggleRow = (id: number) => {
       nextTick(() => {
         const el = document.getElementById(`listing-row-${id}`)
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          const headerHeight = (document.querySelector('.app-header') as HTMLElement)?.offsetHeight ?? 0
+          const top = el.getBoundingClientRect().top + window.scrollY - headerHeight - 16
+          window.scrollTo({ top, behavior: 'smooth' })
         }
       })
     }
@@ -1438,6 +1474,18 @@ onBeforeUnmount(() => {
                       </select>
                     </div>
 
+                    <div v-if="editingAd.price_unit === 'campaign'" class="form-group">
+                      <label>Czas trwania kampanii (dni) <span class="required-star">*</span></label>
+                      <input
+                        :value="(editingAd as any).campaign_duration"
+                        @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); if(editingAd) { (editingAd as any).campaign_duration = val ? parseInt(val) : null; editErrors.campaign_duration = '' } }"
+                        type="text"
+                        :class="{ 'error': editErrors.campaign_duration }"
+                        placeholder="30"
+                      />
+                      <span v-if="editErrors.campaign_duration" class="error-text">{{ editErrors.campaign_duration }}</span>
+                    </div>
+
                     <div class="form-group checkbox-group full-width">
                       <label>
                         <input v-model="editingAd.price_negotiable" type="checkbox" />
@@ -1549,6 +1597,43 @@ onBeforeUnmount(() => {
                       <label>Dzienny zasięg (OTS)</label>
                       <input :value="(editingAd as any).estimated_daily_views" @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); (editingAd as any).estimated_daily_views = val ? parseInt(val) : null }" type="text" placeholder="np. 25000" />
                     </div>
+
+                    <!-- Parametry techniczne LED screen -->
+                    <template v-if="editingAd.type === 'led_screen'">
+                      <div class="form-group">
+                        <label>Rozdzielczość (piksele)</label>
+                        <input
+                          :value="(editingAd as any).resolution"
+                          @input="(e) => { if(editingAd) { (editingAd as any).resolution = (e.target as HTMLInputElement).value; editErrors.resolution = '' } }"
+                          type="text"
+                          :class="{ 'error': editErrors.resolution }"
+                          placeholder="np. 1920x1080"
+                        />
+                        <span v-if="editErrors.resolution" class="error-text">{{ editErrors.resolution }}</span>
+                      </div>
+                      <div class="form-group">
+                        <label>Pixel Pitch (mm)</label>
+                        <input
+                          :value="(editingAd as any).pixel_pitch"
+                          @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); if(editingAd) { (editingAd as any).pixel_pitch = val ? parseFloat(val) : null; editErrors.pixel_pitch = '' } }"
+                          type="text"
+                          :class="{ 'error': editErrors.pixel_pitch }"
+                          placeholder="np. 3.9"
+                        />
+                        <span v-if="editErrors.pixel_pitch" class="error-text">{{ editErrors.pixel_pitch }}</span>
+                      </div>
+                      <div class="form-group">
+                        <label>Jasność (nits)</label>
+                        <input
+                          :value="(editingAd as any).brightness"
+                          @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, false); if(editingAd) { (editingAd as any).brightness = val ? parseInt(val) : null; editErrors.brightness = '' } }"
+                          type="text"
+                          :class="{ 'error': editErrors.brightness }"
+                          placeholder="np. 5000"
+                        />
+                        <span v-if="editErrors.brightness" class="error-text">{{ editErrors.brightness }}</span>
+                      </div>
+                    </template>
 
                     <!-- Wariant -->
                     <div v-if="showVariantField" class="form-group">
