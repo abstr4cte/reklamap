@@ -177,7 +177,8 @@ const { updateMetaTags: _updateMetaTags } = useSeo(seoOptions)
 watch(ad, (newAd) => {
   if (newAd) {
     const imageUrl = newAd.image_url ? getFullImageUrl(newAd.image_url) : undefined
-    const title = `${newAd.title} – ${searchStore.getTypeLabel(newAd.type)}, ${newAd.city} | ReklaMap`
+    const dims = (newAd.width && newAd.height) ? ` ${newAd.width}×${newAd.height}m,` : ''
+    const title = `${newAd.title} –${dims} ${searchStore.getTypeLabel(newAd.type)}, ${newAd.city} | ReklaMap`
     const description = `${newAd.title} – ${searchStore.getTypeLabel(newAd.type)} w ${newAd.city}. Wymiary: ${newAd.width}×${newAd.height}m. Cena: ${formatPrice(newAd.price)} PLN. ${(newAd.description || '').substring(0, 100)}...`
     const keywords = `${newAd.title}, ${searchStore.getTypeLabel(newAd.type)} ${newAd.city}, reklama zewnętrzna ${newAd.city}`
     

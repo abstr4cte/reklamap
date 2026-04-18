@@ -14,6 +14,7 @@ const openItems = ref<number[]>([])
 
 const categories = [
   { id: 'wszystkie', name: 'Wszystkie' },
+  { id: 'rynek', name: 'Rynek reklamy' },
   { id: 'podstawy', name: 'Podstawy' },
   { id: 'ogloszenia', name: 'Ogłoszenia' },
   { id: 'platnosci', name: 'Płatności' },
@@ -21,6 +22,48 @@ const categories = [
 ]
 
 const faqItems: FaqItem[] = [
+  {
+    id: 24,
+    category: 'rynek',
+    question: 'Ile kosztuje wynajem billboardu?',
+    answer: 'Koszt wynajmu billboardu w Polsce zależy od lokalizacji, formatu i czasu trwania kampanii. W małych miastach ceny zaczynają się od około 500–1000 zł miesięcznie, w średnich miastach wynoszą 1500–4000 zł, a w Warszawie i innych dużych aglomeracjach ceny premium osiągają 5000–15 000 zł miesięcznie za nośnik przy głównych arteriach. Standardowy format 12m² przy drodze krajowej kosztuje przeciętnie 2000–5000 zł netto za miesiąc. Na ReklaMap możesz bezpośrednio porównywać ceny bez prowizji pośredników.'
+  },
+  {
+    id: 25,
+    category: 'rynek',
+    question: 'Ile kosztuje reklama na citylighcie?',
+    answer: 'Wynajem citylightu (format 120×180 cm) kosztuje w Polsce zazwyczaj od 400 do 2500 zł miesięcznie netto. W małych miastach i przy mało uczęszczanych przystankach ceny startują od 400 zł. W centrach dużych miast (Warszawa, Kraków, Wrocław) przy węzłach przesiadkowych metro/tramwaj stawki wynoszą 1200–2500 zł miesięcznie. Przy zakupie pakietu kilku nośników właściciele często oferują rabat 10–20%.'
+  },
+  {
+    id: 26,
+    category: 'rynek',
+    question: 'Ile kosztuje reklama na ekranie LED?',
+    answer: 'Ceny ekranów LED (DOOH) są zwykle podawane za slot emisyjny lub za dobę. Najem ekranu LED w małym mieście to koszt od 50–200 zł dziennie, w średnich miastach 200–800 zł, a w Warszawie przy kluczowych skrzyżowaniach — od 1000 do kilku tysięcy złotych dziennie. Czas emisji jednej kreacji to zazwyczaj 10–15 sekund w cyklu rotacyjnym. Ekrany LED są dostępne zarówno na wynajem krótkoterminowy (kilka dni), jak i na pełne kampanie miesięczne.'
+  },
+  {
+    id: 27,
+    category: 'rynek',
+    question: 'Co to jest reklama OOH i czym różni się od DOOH?',
+    answer: 'OOH (Out-of-Home) to ogólna nazwa reklamy zewnętrznej — wszystkich nośników reklamowych znajdujących się poza domem odbiorcy. Obejmuje billboardy, banery, citylighty, totemy i inne formy reklamy w przestrzeni publicznej. DOOH (Digital Out-of-Home) to cyfrowa odmiana OOH — ekrany LED, elektroniczne tablice reklamowe i inne nośniki wyświetlające dynamiczne treści. Główna różnica: OOH to nośniki statyczne (drukowane), DOOH to nośniki cyfrowe z możliwością zmiany treści w czasie rzeczywistym i emisją materiałów wideo.'
+  },
+  {
+    id: 28,
+    category: 'rynek',
+    question: 'Jak wybrać odpowiedni format reklamy zewnętrznej dla małej firmy?',
+    answer: 'Dla małej firmy z ograniczonym budżetem najlepiej sprawdzają się banery (najtańsze w produkcji i wynajmie), citylighty przy lokalnych przystankach lub totemy przy wejściu do centrum handlowego. Kluczowe pytania przed wyborem: Kim jest Twój klient i gdzie się porusza? Jaki jest Twój budżet miesięczny? Czy zależy Ci na zasięgu (billboard przy trasie) czy na częstotliwości kontaktu (citylight przy przystanku)? Przy budżecie do 2000 zł miesięcznie rekomendujemy 2–3 citylighty w konkretnej dzielnicy lub jeden baner w strategicznym miejscu.'
+  },
+  {
+    id: 29,
+    category: 'rynek',
+    question: 'Jak wynająć powierzchnię reklamową przez ReklaMap?',
+    answer: 'Proces wynajmu przez ReklaMap składa się z 4 kroków: 1) Znajdź interesujące ogłoszenie używając filtrów (miasto, typ, wymiary, cena) lub mapy interaktywnej. 2) Sprawdź szczegóły nośnika — zdjęcia, lokalizację na mapie, widok Street View i parametry techniczne. 3) Skontaktuj się bezpośrednio z właścicielem przez formularz lub podany numer telefonu. 4) Ustal warunki współpracy bezpośrednio z właścicielem — termin, cenę, materiały reklamowe. ReklaMap nie pobiera żadnej prowizji ani opłat za skojarzenie stron.'
+  },
+  {
+    id: 30,
+    category: 'rynek',
+    question: 'Czym różni się billboard od citylightu i baneru?',
+    answer: 'Billboard to wielkoformatowy nośnik (najczęściej 12m² lub 18m²) montowany przy drogach i autostradach, projektowany pod kątem szybkiego odczytu przez kierowców. Citylight to mniejszy, podświetlany nośnik (120×180 cm) ustawiany przy chodnikach, przystankach i w galeriach — adresowany do pieszych i pasażerów z dłuższym czasem kontaktu. Baner to elastyczna tkanina reklamowa montowana na budynkach, płotach i rusztowaniach — dostępna w dowolnych wymiarach, najtańsza w produkcji. Wybór zależy od grupy docelowej: kierowcy → billboard, piesi/pasażerowie → citylight, lokalna ekspozycja → baner.'
+  },
   {
     id: 1,
     category: 'podstawy',
@@ -201,9 +244,9 @@ const faqSchema = computed(() => ({
 
 // SEO Meta Tags
 useSeo({
-  title: 'FAQ - Często zadawane pytania | ReklaMap',
-  description: 'Odpowiedzi na najczęstsze pytania dotyczące korzystania z platformy ReklaMap. Dowiedz się jak dodawać ogłoszenia, zarządzać powierzchniami reklamowymi i więcej.',
-  keywords: 'faq, pytania, pomoc, instrukcje, jak dodać ogłoszenie, powierzchnie reklamowe',
+  title: 'FAQ – Ile kosztuje billboard? Jak wynająć powierzchnię reklamową? | ReklaMap',
+  description: 'Ile kosztuje billboard, citylight i ekran LED? Jak wynająć powierzchnię reklamową? Odpowiedzi na najczęstsze pytania o rynek OOH i korzystanie z platformy ReklaMap.',
+  keywords: 'ile kosztuje billboard, wynajem billboard cena, reklama OOH, citylight cena, jak wynająć powierzchnię reklamową',
   ogType: 'website',
   canonical: 'https://reklamap.pl/faq',
   structuredData: faqSchema.value

@@ -15,7 +15,7 @@ import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import { useSeo } from '../composables/useSeo'
 import { filtersToQueryParams } from '../utils/filterUtils'
 import polishLocations from '../data/polishLocations.json'
-import { categoryDescriptions, cityDescriptions } from '../data/categoryDescriptions'
+import { categoryDescriptions, cityDescriptions, typeCityDescriptions } from '../data/categoryDescriptions'
 import type * as LType from 'leaflet'
 import WebPImage from '../components/WebPImage.vue'
 import type { Advertisement } from '../types'
@@ -101,18 +101,32 @@ const seoData = computed(() => {
   const allowedQueryKeys = ['sort', 'page']
   const hasExtraFilters = Object.keys(route.query).some(k => !allowedQueryKeys.includes(k))
 
+  const origin = window.location.origin
+  const itemListSchema = paginatedListings.value.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    'name': title,
+    'numberOfItems': paginatedListings.value.length,
+    'itemListElement': paginatedListings.value.map((ad, index) => ({
+      '@type': 'ListItem',
+      'position': index + 1,
+      'url': `${origin}/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`
+    }))
+  } : undefined
+
   return {
     title,
     description,
     ogType: 'website',
-    ogImage: `${window.location.origin}/og-image.png`,
+    ogImage: `${origin}/og-image.png`,
     ogImageWidth: '1200',
     ogImageHeight: '630',
     ogImageAlt: 'ReklaMap – powierzchnie reklamowe w Polsce',
     ogUrl: canonical,
     canonical,
     keywords: 'powierzchnie reklamowe, billboardy, reklama zewnętrzna, outdoor, OOH',
-    noindex: hasExtraFilters
+    noindex: hasExtraFilters,
+    ...(itemListSchema ? { structuredData: itemListSchema } : {})
   }
 })
 
@@ -305,7 +319,11 @@ const breadcrumbs = computed(() => {
 const currentDescription = computed(() => {
   const city = route.params.city as string
   const type = route.params.type as string
-  return (city && cityDescriptions[city]) || (type && categoryDescriptions[type]) || categoryDescriptions['']
+  const combinedKey = type && city ? `${type}-${city}` : null
+  return (combinedKey && typeCityDescriptions[combinedKey])
+    || (city && cityDescriptions[city])
+    || (type && categoryDescriptions[type])
+    || categoryDescriptions['']
 })
 
 const seoInfo = computed(() => {

@@ -457,8 +457,7 @@ const showOperatingZoneField = computed(() => {
 const lightingTypeOptions = [
   { value: 'led', label: 'LED' },
   { value: 'fluorescent', label: 'Fluorescencyjne' },
-  { value: 'natural', label: 'Naturalne' },
-  { value: 'none', label: 'Brak' }
+  { value: 'natural', label: 'Naturalne' }
 ]
 
 const operatingZoneOptions = [

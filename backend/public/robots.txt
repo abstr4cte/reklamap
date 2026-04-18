@@ -6,8 +6,10 @@ Allow: /
 Disallow: /api/
 Disallow: /storage/temp/
 
-# Blokuj panele administracyjne
+# Blokuj panele administracyjne i strony bez wartości SEO
 Disallow: /zarzadzaj
+Disallow: /zarzadzaj/
+Disallow: /porownaj
 
 # Sitemap
 Sitemap: https://reklamap.pl/sitemap.xml

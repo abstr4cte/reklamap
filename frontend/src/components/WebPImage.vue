@@ -6,6 +6,7 @@ interface Props {
   src: string
   alt: string
   class?: string
+  eager?: boolean
 }
 
 const props = defineProps<Props>()
@@ -27,11 +28,12 @@ const jpgSrc = computed(() => {
     <!-- WebP format dla nowoczesnych przeglądarek -->
     <source :srcset="webpSrc" type="image/webp">
     <!-- Fallback JPG dla starszych przeglądarek -->
-    <img 
-      :src="jpgSrc" 
-      :alt="alt" 
+    <img
+      :src="jpgSrc"
+      :alt="alt"
       :class="props.class"
-      loading="lazy"
+      :loading="props.eager ? 'eager' : 'lazy'"
+      :fetchpriority="props.eager ? 'high' : 'auto'"
       decoding="async"
     >
   </picture>

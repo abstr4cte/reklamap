@@ -6,17 +6,79 @@ import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaSe
 import { useSeo } from '../composables/useSeo'
 import WebPImage from '../components/WebPImage.vue'
 
-useSeo({
-  title: 'Blog o reklamie zewnętrznej | ReklaMap',
-  description: 'Artykuły, poradniki i aktualności ze świata reklamy zewnętrznej OOH. Dowiedz się jak skutecznie reklamować się na billboardach, banerach i ekranach LED.',
-  ogType: 'website',
-  ogImage: `${window.location.origin}/og-image.png`,
-  ogImageWidth: '1200',
-  ogImageHeight: '630',
-  ogImageAlt: 'ReklaMap Blog – reklama zewnętrzna OOH',
-  canonical: `${window.location.origin}/blog`,
-  keywords: 'blog reklama zewnętrzna, OOH, billboardy, poradniki reklamowe'
+const categoryMeta: Record<string, { title: string; description: string; keywords: string; heading: string; intro: string }> = {
+  'wszystkie': {
+    title: 'Blog o reklamie zewnętrznej | ReklaMap',
+    description: 'Artykuły, poradniki i aktualności ze świata reklamy zewnętrznej OOH. Dowiedz się jak skutecznie reklamować się na billboardach, banerach i ekranach LED.',
+    keywords: 'blog reklama zewnętrzna, OOH, billboardy, poradniki reklamowe',
+    heading: 'Blog ReklaMap',
+    intro: 'Porady, trendy i inspiracje ze świata reklamy outdoor'
+  },
+  'poradniki': {
+    title: 'Poradniki – Jak skutecznie reklamować się outdoorowowo | ReklaMap Blog',
+    description: 'Praktyczne poradniki dla reklamodawców i właścicieli nośników. Jak wybrać billboard, ustalić cenę, napisać brief i mierzyć efektywność kampanii OOH.',
+    keywords: 'poradniki reklama zewnętrzna, jak wybrać billboard, kampania OOH, reklama outdoor jak zacząć',
+    heading: 'Poradniki reklamowe',
+    intro: 'Praktyczne wskazówki dla reklamodawców i właścicieli nośników — od wyboru lokalizacji po mierzenie efektywności kampanii OOH.'
+  },
+  'trendy': {
+    title: 'Trendy w reklamie zewnętrznej – OOH i DOOH | ReklaMap Blog',
+    description: 'Najnowsze trendy w reklamie zewnętrznej: DOOH, programmatic OOH, AI w reklamie outdoorowej. Śledź zmiany na rynku reklamy OOH w Polsce i na świecie.',
+    keywords: 'trendy reklama zewnętrzna, DOOH, programmatic OOH, cyfrowe billboardy, reklama przyszłości',
+    heading: 'Trendy w reklamie OOH',
+    intro: 'Śledzmy razem przyszłość reklamy zewnętrznej — od cyfrowych ekranów LED po programmatic buying i AI w planowaniu kampanii outdoorowych.'
+  },
+  'case-study': {
+    title: 'Case Study – Skuteczne kampanie reklamowe OOH | ReklaMap Blog',
+    description: 'Analizy i case study skutecznych kampanii reklamowych outdoor. Dowiedz się co działało, jakie wyniki osiągnęły marki i jakie wnioski wyciągnąć dla własnej kampanii.',
+    keywords: 'case study reklama OOH, kampania billboardowa wyniki, przykłady reklamy zewnętrznej',
+    heading: 'Case study kampanii OOH',
+    intro: 'Konkretne przykłady i analizy kampanii outdoorowych — co zadziałało, jakie wyniki osiągnięto i co możesz zastosować we własnej reklamie.'
+  },
+  'rynek-ooh': {
+    title: 'Rynek reklamy OOH w Polsce – Dane i Analizy | ReklaMap Blog',
+    description: 'Analizy rynku reklamy zewnętrznej OOH w Polsce. Dane o wydatkach, wzrostach, udziałach formatów i prognozy dla branży outdoor na kolejne lata.',
+    keywords: 'rynek OOH Polska, reklama zewnętrzna dane, wydatki na billboardy, branża outdoor statystyki',
+    heading: 'Rynek reklamy OOH',
+    intro: 'Dane, statystyki i analizy polskiego rynku reklamy zewnętrznej — wydatki, udziały formatów, wzrosty i prognozy dla branży OOH.'
+  },
+  'prawo-i-regulacje': {
+    title: 'Prawo i regulacje w reklamie zewnętrznej | ReklaMap Blog',
+    description: 'Przepisy dotyczące reklamy outdoor w Polsce. Ustawa krajobrazowa, pozwolenia na billboard, strefy ochrony krajobrazu i zmiany prawne w reklamie zewnętrznej.',
+    keywords: 'ustawa krajobrazowa billboard, pozwolenie na reklamę zewnętrzną, przepisy reklama outdoor, regulacje OOH',
+    heading: 'Prawo i regulacje OOH',
+    intro: 'Przepisy, pozwolenia i zmiany prawne dotyczące reklamy zewnętrznej w Polsce — wszystko co musisz wiedzieć zanim postawisz nośnik.'
+  },
+  'lokalizacje': {
+    title: 'Najlepsze lokalizacje pod reklamę zewnętrzną w Polsce | ReklaMap Blog',
+    description: 'Przewodniki po lokalizacjach reklamowych w polskich miastach. Gdzie warto postawić billboard, citylight lub ekran LED w Warszawie, Krakowie, Wrocławiu i innych miastach.',
+    keywords: 'najlepsze lokalizacje billboard, gdzie postawić reklamę, lokalizacje OOH Warszawa Kraków',
+    heading: 'Lokalizacje reklamowe w Polsce',
+    intro: 'Przewodniki po rynkach reklamowych polskich miast — gdzie warto zainwestować w billboard, citylight lub ekran LED, żeby maksymalizować zasięg kampanii.'
+  }
+}
+
+const seoData = computed(() => {
+  const cat = selectedCategory.value
+  const meta = categoryMeta[cat] || categoryMeta['wszystkie']
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'
+  const canonical = cat === 'wszystkie' ? `${origin}/blog` : `${origin}/blog/${cat}`
+  return {
+    title: meta.title,
+    description: meta.description,
+    keywords: meta.keywords,
+    ogType: 'website' as const,
+    ogImage: `${origin}/og-image.png`,
+    ogImageWidth: '1200',
+    ogImageHeight: '630',
+    ogImageAlt: 'ReklaMap Blog – reklama zewnętrzna OOH',
+    canonical
+  }
 })
+
+useSeo(seoData)
+
+const currentCategoryMeta = computed(() => categoryMeta[selectedCategory.value] || categoryMeta['wszystkie'])
 
 const router = useRouter()
 const route = useRoute()
@@ -155,8 +217,8 @@ const handleNewsletterSubmit = async () => {
   <div class="blog-page">
     <div class="hero-section">
       <div class="container">
-        <h1>Blog ReklaMap</h1>
-        <p class="hero-subtitle">Porady, trendy i inspiracje ze świata reklamy outdoor</p>
+        <h1>{{ currentCategoryMeta.heading }}</h1>
+        <p class="hero-subtitle">{{ currentCategoryMeta.intro }}</p>
       </div>
     </div>
 
