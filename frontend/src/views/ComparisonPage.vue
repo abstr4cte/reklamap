@@ -85,7 +85,9 @@ const downloadPdf = async () => {
     const url = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement('a')
     link.href = url
-    link.setAttribute('download', 'porownanie-ogloszen.pdf')
+    const types = [...new Set(comparisonAds.value.map(a => a.type))].join('-')
+    const date = new Date().toISOString().slice(0, 10)
+    link.setAttribute('download', `porownanie-${types}-reklamap-${date}.pdf`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)

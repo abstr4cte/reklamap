@@ -91,6 +91,8 @@ const scrollToContactForm = () => {
   }
 }
 const showActionsMenu = ref(false)
+const showShareModal = ref(false)
+const shareLinkCopied = ref(false)
 const dailyStatsViews = ref(0)
 const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 
@@ -342,9 +344,29 @@ const toggleStreetView = async () => {
 const showReportModal = ref(false)
 const showReportSuccess = ref(false)
 
+const shareUrl = computed(() => window.location.href)
+
+const shareOnPlatform = (platform: string) => {
+  const url = encodeURIComponent(shareUrl.value)
+  const text = encodeURIComponent(ad.value?.title ?? 'Powierzchnia reklamowa')
+  const links: Record<string, string> = {
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+    twitter: `https://twitter.com/intent/tweet?url=${url}&text=${text}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+    whatsapp: `https://wa.me/?text=${text}%20${url}`,
+  }
+  window.open(links[platform], '_blank', 'noopener,noreferrer')
+}
+
+const copyShareLink = async () => {
+  await navigator.clipboard.writeText(shareUrl.value)
+  shareLinkCopied.value = true
+  setTimeout(() => { shareLinkCopied.value = false }, 2000)
+}
+
 // Prevent background scroll when any modal is open
-watch([showReportModal, showActionsMenu], ([reportVal, actionsVal]) => {
-  if (reportVal || actionsVal) {
+watch([showReportModal, showActionsMenu, showShareModal], ([reportVal, actionsVal, shareVal]) => {
+  if (reportVal || actionsVal || shareVal) {
     document.body.style.overflow = 'hidden'
     document.documentElement.style.overflow = 'hidden'
     document.body.style.touchAction = 'none'
@@ -404,7 +426,9 @@ const handleDownloadPDF = async () => {
     const url = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement('a')
     link.href = url
-    link.setAttribute('download', `ogloszenie-${ad.value.id}.pdf`)
+    const slug = ad.value.title.toLowerCase().replace(/[^a-z0-9ąćęłńóśźż]+/gi, '-').replace(/^-|-$/g, '').substring(0, 60)
+    const date = new Date().toISOString().slice(0, 10)
+    link.setAttribute('download', `${slug}-reklamap-${date}.pdf`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -693,7 +717,7 @@ defineExpose({
             @handle-print="handlePrint"
             @handle-download-pdf="handleDownloadPDF"
             @handle-show-phone="handleShowPhone"
-            @handle-share="showActionsMenu = true"
+            @handle-share="showShareModal = true"
             @open-report-modal="showReportModal = true"
             @scroll-to-form="scrollToContactForm"
           />
@@ -743,6 +767,53 @@ defineExpose({
                   <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 <span>Zgłoś</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Share Modal -->
+    <transition name="modal">
+      <div v-if="showShareModal" class="modal-overlay" @click.self="showShareModal = false">
+        <div class="modal-content share-modal-content" @click.stop>
+          <div class="modal-header">
+            <h3>Udostępnij ogłoszenie</h3>
+            <button @click="showShareModal = false" class="btn-close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="share-platforms">
+              <button @click="shareOnPlatform('facebook')" class="share-platform-btn facebook">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+                </svg>
+                Facebook
+              </button>
+              <button @click="shareOnPlatform('twitter')" class="share-platform-btn twitter">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                X (Twitter)
+              </button>
+              <button @click="shareOnPlatform('linkedin')" class="share-platform-btn linkedin">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+                  <circle cx="4" cy="4" r="2"/>
+                </svg>
+                LinkedIn
+              </button>
+              <button @click="shareOnPlatform('whatsapp')" class="share-platform-btn whatsapp">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                WhatsApp
+              </button>
+            </div>
+            <div class="share-copy-link">
+              <input type="text" :value="shareUrl" readonly class="share-link-input" />
+              <button @click="copyShareLink" class="share-copy-btn" :class="{ copied: shareLinkCopied }">
+                {{ shareLinkCopied ? 'Skopiowano!' : 'Kopiuj link' }}
               </button>
             </div>
           </div>
@@ -1439,6 +1510,85 @@ defineExpose({
 
 .actions-modal-content {
   max-width: 400px;
+}
+
+.share-modal-content {
+  max-width: 440px;
+}
+
+.share-modal-content .modal-header {
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: none;
+}
+
+.share-modal-content .modal-body {
+  padding: 0 1.5rem 1.5rem;
+}
+
+.share-platforms {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.share-platform-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.share-platform-btn:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
+.share-platform-btn.facebook { background: #1877f2; }
+.share-platform-btn.twitter  { background: #000; }
+.share-platform-btn.linkedin { background: #0a66c2; }
+.share-platform-btn.whatsapp { background: #25d366; }
+
+.share-copy-link {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.share-link-input {
+  flex: 1;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted, #6b7280);
+  background: var(--bg-secondary, #f9fafb);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.share-copy-btn {
+  padding: 0.625rem 1rem;
+  background: var(--primary-color, #667eea);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.share-copy-btn.copied {
+  background: #22c55e;
 }
 
 .actions-modal-content .modal-header {

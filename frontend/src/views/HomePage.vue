@@ -591,10 +591,10 @@ const clearSearchFlag = () => {
       @update:hovered-ad-id="hoveredAdId = $event"
     >
       <template #empty-content>
-        <SearchAlertBox 
-          v-if="activeFiltersCount > 0"
+        <SearchAlertBox
+          v-if="!!filters.type"
           :location-label="getCurrentLocationLabel"
-          :ad-type-label="filters.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
+          :ad-type-label="getTypeLabel(filters.type!)"
           @click="showSearchAlertModal = true"
         />
       </template>
@@ -612,10 +612,10 @@ const clearSearchFlag = () => {
 
     <!-- End of List Search Alert CTA -->
     <div class="home-alert-container">
-      <SearchAlertBox 
-        v-if="activeFiltersCount > 0 && paginatedListings.length > 0"
+      <SearchAlertBox
+        v-if="!!filters.type && paginatedListings.length > 0"
         :location-label="getCurrentLocationLabel"
-        :ad-type-label="filters.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
+        :ad-type-label="getTypeLabel(filters.type!)"
         @click="showSearchAlertModal = true"
       />
     </div>

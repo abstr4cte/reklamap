@@ -172,6 +172,8 @@ onBeforeRouteLeave((to, _from, next) => {
     clearTimeout(alertModalTimer.value)
     alertModalTimer.value = null
   }
+
+  closeFiltersModal()
   
   // Zapisz tylko jeśli przechodzimy do szczegółów ogłoszenia
   if (to.path.includes('/powierzchnia-reklamowa/')) {
