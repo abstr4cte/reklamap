@@ -292,21 +292,35 @@ useSeo({
   ogImageHeight: '630',
   ogImageAlt: 'ReklaMap – platforma powierzchni reklamowych w Polsce',
   canonical: typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl',
-  structuredData: {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    'name': 'ReklaMap',
-    'url': typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl',
-    'description': 'Platforma do wynajmu powierzchni reklamowych w całej Polsce',
-    'potentialAction': {
-      '@type': 'SearchAction',
-      'target': {
-        '@type': 'EntryPoint',
-        'urlTemplate': `${typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'}/powierzchnie-reklamowe?keyword={search_term_string}`
-      },
-      'query-input': 'required name=search_term_string'
+  structuredData: [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      'name': 'ReklaMap',
+      'url': typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl',
+      'description': 'Platforma do wynajmu powierzchni reklamowych w całej Polsce',
+      'potentialAction': {
+        '@type': 'SearchAction',
+        'target': {
+          '@type': 'EntryPoint',
+          'urlTemplate': `${typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'}/powierzchnie-reklamowe?keyword={search_term_string}`
+        },
+        'query-input': 'required name=search_term_string'
+      }
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      'name': 'ReklaMap',
+      'url': typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl',
+      'logo': `${typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'}/logo.png`,
+      'contactPoint': {
+        '@type': 'ContactPoint',
+        'contactType': 'customer service',
+        'availableLanguage': 'Polish'
+      }
     }
-  }
+  ]
 })
 
 const categories = [

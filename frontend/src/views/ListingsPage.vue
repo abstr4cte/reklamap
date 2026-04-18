@@ -98,6 +98,9 @@ const seoData = computed(() => {
     canonical = `${window.location.origin}/powierzchnie-reklamowe`
   }
 
+  const allowedQueryKeys = ['sort', 'page']
+  const hasExtraFilters = Object.keys(route.query).some(k => !allowedQueryKeys.includes(k))
+
   return {
     title,
     description,
@@ -108,7 +111,8 @@ const seoData = computed(() => {
     ogImageAlt: 'ReklaMap – powierzchnie reklamowe w Polsce',
     ogUrl: canonical,
     canonical,
-    keywords: 'powierzchnie reklamowe, billboardy, reklama zewnętrzna, outdoor, OOH'
+    keywords: 'powierzchnie reklamowe, billboardy, reklama zewnętrzna, outdoor, OOH',
+    noindex: hasExtraFilters
   }
 })
 
@@ -1134,15 +1138,14 @@ const handleScroll = () => {
   
   if (descriptionWrapper) {
     const descRect = descriptionWrapper.getBoundingClientRect()
-    // Kiedy opis pokrywa się ze spodem okna co do piksela, włączamy rygiel. Da to 0px przeskoku mapy.
-    if (descRect.top <= window.innerHeight) {
+    if (descRect.top < window.innerHeight - 40) {
       isBottomSectionVisible = true
     }
   }
-  
+
   if (footer && !isBottomSectionVisible) {
     const footerRect = footer.getBoundingClientRect()
-    if (footerRect.top <= window.innerHeight) {
+    if (footerRect.top < window.innerHeight - 40) {
       isBottomSectionVisible = true
     }
   }
@@ -1454,8 +1457,8 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           </select>
 
           <div class="view-toggle">
-            <button 
-              @click="changeViewMode('grid')" 
+            <button
+              @click="changeViewMode('grid')"
               class="view-btn"
               :class="{ active: viewMode === 'grid' }"
               title="Widok kafelków"
@@ -1467,8 +1470,8 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
                 <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
               </svg>
             </button>
-            <button 
-              @click="changeViewMode('list')" 
+            <button
+              @click="changeViewMode('list')"
               class="view-btn"
               :class="{ active: viewMode === 'list' }"
               title="Widok listy"
@@ -1480,6 +1483,10 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
               </svg>
             </button>
           </div>
+
+          <span v-if="!isLoading" class="results-count" style="margin-left: auto;">
+            Znaleziono {{ serverTotal > 0 ? serverTotal : filteredListings.length }} ogłoszeń
+          </span>
         </div>
 
         <!-- Mobile View (ONLY if not full map) -->
@@ -1518,8 +1525,8 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           </button>
         </div>
 
-        <div class="results-count" v-if="isMobile">
-          {{ filteredListings.length }} ogłoszeń
+        <div v-if="!isLoading" class="results-count results-count-mobile">
+          Znaleziono {{ serverTotal > 0 ? serverTotal : filteredListings.length }} ogłoszeń
         </div>
       </div>
     </div>
@@ -1598,17 +1605,13 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
               @hover-end="handleAdLeave"
             />
           </div>
-          <!-- Niewidzialna kotwica w DOM, stale rezerwująca wysokość na przycisk. 
-               Zwiększona do 80px, co idealnie amortyzuje odległość by przycisk usiadł "między, między". -->
           <div id="map-toggle-anchor" style="position: relative; width: 100%; height: 80px; margin: 1rem 0;">
-            <!-- Przycisk POKAŻ MAPĘ (widoczny tylko na liście) -->
-            <button 
+            <button
               v-if="isMobile && showMapButton && !showFiltersModal && !showMapOnMobile"
-              @click="toggleMobileMap" 
+              @click="toggleMobileMap"
               class="mobile-map-toggle"
               :class="{ 'is-clamped': isMobileClamped }"
-              :style="{ 
-                bottom: '20px',
+              :style="{
                 zIndex: 40
               }"
             >
@@ -1618,6 +1621,13 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
                 <circle cx="12" cy="10" r="3"></circle>
               </svg>
             </button>
+          </div>
+
+          <div
+            v-if="!isLoading && (filteredListings.length > 0 || serverTotal > 0)"
+            class="pagination-info"
+          >
+            Wyświetlanie {{ (currentPage - 1) * itemsPerPage + 1 }}–{{ Math.min(currentPage * itemsPerPage, serverTotal > 0 ? serverTotal : filteredListings.length) }} z {{ serverTotal > 0 ? serverTotal : filteredListings.length }} ogłoszeń
           </div>
 
           <Pagination
@@ -2949,13 +2959,9 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   .desktop-search {
     display: none;
   }
-  
+
   .mobile-search {
     display: flex;
-  }
-  
-  .results-count {
-    display: none;
   }
 }
 
@@ -2963,13 +2969,9 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   .desktop-search {
     display: none;
   }
-  
+
   .mobile-search {
     display: flex;
-  }
-  
-  .results-count {
-    display: none;
   }
 }
 
@@ -2978,6 +2980,10 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
     display: none;
   }
   
+  .results-count-mobile {
+    display: none;
+  }
+
   .desktop-search {
     display: flex;
     align-items: center;
@@ -3150,8 +3156,17 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 .results-count {
   color: var(--text-muted, #6b7280);
+  font-size: 0.875rem;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.pagination-info {
+  text-align: center;
+  color: var(--text-muted, #6b7280);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
 }
 
 .view-toggle {
@@ -4452,7 +4467,6 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 /* Mobile Map Toggle Button */
 .mobile-map-toggle {
-  display: none; /* Hidden by default, shown only on mobile */
   position: fixed;
   bottom: 20px;
   left: 50%;

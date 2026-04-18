@@ -182,6 +182,10 @@ watch(ad, (newAd) => {
     const keywords = `${newAd.title}, ${searchStore.getTypeLabel(newAd.type)} ${newAd.city}, reklama zewnętrzna ${newAd.city}`
     
     // Structured Data
+    const typeUrlPart = mapTypeToUrlFormat(newAd.type || 'other')
+    const citySlug = slugify(newAd.city)
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'
+
     const structuredData = [
       {
         '@context': 'https://schema.org',
@@ -212,6 +216,17 @@ watch(ad, (newAd) => {
           'addressLocality': newAd.city,
           'addressCountry': 'PL'
         }
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+          { '@type': 'ListItem', 'position': 1, 'name': 'Strona główna', 'item': origin },
+          { '@type': 'ListItem', 'position': 2, 'name': 'Powierzchnie reklamowe', 'item': `${origin}/powierzchnie-reklamowe` },
+          { '@type': 'ListItem', 'position': 3, 'name': searchStore.getTypeLabel(newAd.type), 'item': `${origin}/powierzchnie-reklamowe/${typeUrlPart}` },
+          { '@type': 'ListItem', 'position': 4, 'name': newAd.city, 'item': `${origin}/powierzchnie-reklamowe/${typeUrlPart}/${citySlug}` },
+          { '@type': 'ListItem', 'position': 5, 'name': newAd.title }
+        ]
       }
     ]
     
