@@ -85,6 +85,61 @@ const activeTab = ref<'listings' | 'statistics'>('listings')
 const managementStatsRef = ref<any>(null)
 const pendingTopAdsMetric = ref<'views' | 'clicks' | undefined>(undefined)
 
+const filterActive = ref<'all' | 'active' | 'inactive'>('all')
+const filterType = ref<string>('')
+const filterStatus = ref<string>('')
+const filterSearch = ref<string>('')
+const sortBy = ref<'date_desc' | 'date_asc' | 'name_asc' | 'views' | 'phone_clicks'>('date_desc')
+
+let searchDebounce: ReturnType<typeof setTimeout> | null = null
+const filterSearchInput = ref<string>('')
+const onSearchInput = (value: string) => {
+  if (searchDebounce) clearTimeout(searchDebounce)
+  searchDebounce = setTimeout(() => { filterSearch.value = value }, 250)
+}
+
+const isEffectivelyFree = (ad: Advertisement): boolean => {
+  if (ad.status === 'active') return true
+  if (ad.status === 'soon_available' && ad.available_from) {
+    return new Date(ad.available_from) <= new Date()
+  }
+  return false
+}
+
+const filteredListings = computed(() => {
+  const result = listings.value.filter(ad => {
+    if (filterActive.value === 'active' && !ad.is_active) return false
+    if (filterActive.value === 'inactive' && ad.is_active) return false
+    if (filterType.value && ad.type !== filterType.value) return false
+    if (filterStatus.value === 'active') {
+      if (!isEffectivelyFree(ad)) return false
+    } else if (filterStatus.value === 'soon_available') {
+      if (ad.status !== 'soon_available') return false
+      if (ad.available_from && new Date(ad.available_from) <= new Date()) return false
+    } else if (filterStatus.value) {
+      if (ad.status !== filterStatus.value) return false
+    }
+    if (filterSearch.value) {
+      const q = filterSearch.value.toLowerCase()
+      if (!ad.title.toLowerCase().includes(q) && !ad.city?.toLowerCase().includes(q)) return false
+    }
+    return true
+  })
+
+  return result.slice().sort((a, b) => {
+    if (sortBy.value === 'date_asc') return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    if (sortBy.value === 'name_asc') return a.title.localeCompare(b.title, 'pl')
+    if (sortBy.value === 'views') return (b.views_30d ?? 0) - (a.views_30d ?? 0)
+    if (sortBy.value === 'phone_clicks') return (b.phone_clicks_30d ?? 0) - (a.phone_clicks_30d ?? 0)
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  })
+})
+
+const availableTypes = computed(() => {
+  const types = [...new Set(listings.value.map(ad => ad.type))]
+  return types.sort()
+})
+
 const handleStatsConfirmRequest = (title: string, message: string, type: 'info' | 'warning' | 'danger', adIds: number[], metric?: 'views' | 'clicks') => {
   pendingTopAdsToAdd.value = adIds
   pendingTopAdsMetric.value = metric
@@ -1280,7 +1335,78 @@ onBeforeUnmount(() => {
               </div>
             </div>
 
-            <div v-for="ad in listings" :key="ad.id" :id="'listing-row-' + ad.id" class="listing-row" :class="{ expanded: expandedRows.has(ad.id) }">
+            <div class="listings-filters">
+              <div class="filters-row">
+                <div class="filter-search-wrapper">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" class="filter-search-icon">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                    <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  <input
+                    type="text"
+                    class="filter-search"
+                    placeholder="Szukaj po tytule lub mieście…"
+                    :value="filterSearchInput"
+                    @input="e => { filterSearchInput = (e.target as HTMLInputElement).value; onSearchInput(filterSearchInput) }"
+                  />
+                  <button v-if="filterSearchInput" class="filter-search-clear" @click="filterSearchInput = ''; filterSearch = ''" title="Wyczyść">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="filter-group">
+                  <span class="filter-group-label">Widoczność</span>
+                  <div class="filter-pills">
+                    <button :class="['filter-pill', { active: filterActive === 'all' }]" @click="filterActive = 'all'">Wszystkie</button>
+                    <button :class="['filter-pill', { active: filterActive === 'active' }]" @click="filterActive = 'active'">Aktywne</button>
+                    <button :class="['filter-pill', { active: filterActive === 'inactive' }]" @click="filterActive = 'inactive'">Nieaktywne</button>
+                  </div>
+                </div>
+
+                <div class="filter-group">
+                  <span class="filter-group-label">Typ</span>
+                  <select class="filter-select" v-model="filterType">
+                    <option value="">Wszystkie</option>
+                    <option v-for="type in availableTypes" :key="type" :value="type">{{ getTypeLabel(type) }}</option>
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <span class="filter-group-label">Status</span>
+                  <select class="filter-select" v-model="filterStatus">
+                    <option value="">Wszystkie</option>
+                    <option value="active">Wolne</option>
+                    <option value="reserved">Zarezerwowane</option>
+                    <option value="soon_available">Wkrótce dostępne</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="filters-sort-row">
+                <span class="filter-sort-label">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 6h18M7 12h10M11 18h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  Sortuj:
+                </span>
+                <div class="filter-pills sort-pills">
+                  <button :class="['filter-pill', { active: sortBy === 'date_desc' }]" @click="sortBy = 'date_desc'">Najnowsze</button>
+                  <button :class="['filter-pill', { active: sortBy === 'date_asc' }]" @click="sortBy = 'date_asc'">Najstarsze</button>
+                  <button :class="['filter-pill', { active: sortBy === 'name_asc' }]" @click="sortBy = 'name_asc'">Nazwa A–Z</button>
+                  <button :class="['filter-pill', { active: sortBy === 'views' }]" @click="sortBy = 'views'">Wyświetlenia</button>
+                  <button :class="['filter-pill', { active: sortBy === 'phone_clicks' }]" @click="sortBy = 'phone_clicks'">Kliknięcia tel.</button>
+                </div>
+                <span class="filter-results-count">{{ filteredListings.length }} z {{ listings.length }}</span>
+              </div>
+            </div>
+
+            <div v-if="filteredListings.length === 0 && listings.length > 0" class="filter-empty">
+              Brak ogłoszeń pasujących do wybranych filtrów.
+            </div>
+
+            <div v-for="ad in filteredListings" :key="ad.id" :id="'listing-row-' + ad.id" class="listing-row" :class="{ expanded: expandedRows.has(ad.id) }">
               <div class="listing-summary" @click="toggleRow(ad.id)">
                 <div class="listing-thumbnail">
                   <WebPImage v-if="ad.image_url" :src="ad.image_url" :alt="ad.title" />
@@ -2199,6 +2325,191 @@ onBeforeUnmount(() => {
   gap: 1rem;
 }
 
+.listings-filters {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.filters-sort-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1.25rem;
+  background: #fafafa;
+  flex-wrap: wrap;
+}
+
+.filter-sort-label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.filter-results-count {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.filter-group-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.filter-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-search-icon {
+  position: absolute;
+  left: 10px;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.filter-search {
+  width: 100%;
+  padding: 0.5rem 2rem 0.5rem 2.1rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #374151;
+  background: #f9fafb;
+  transition: border-color 0.2s, background 0.2s;
+  outline: none;
+}
+
+.filter-search::placeholder {
+  color: #b0b7c3;
+}
+
+.filter-search:focus {
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
+}
+
+.filter-search-clear {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.filter-search-clear:hover {
+  color: #374151;
+}
+
+.filter-pills {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  padding: 0.3rem 0.75rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 20px;
+  background: white;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.filter-pill:hover {
+  border-color: #667eea;
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.04);
+}
+
+.filter-pill.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+}
+
+.sort-pills .filter-pill.active {
+  background: #1f2937;
+  border-color: transparent;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.filter-select {
+  padding: 0.4rem 0.7rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: #374151;
+  background: #f9fafb;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.filter-select:focus {
+  border-color: #667eea;
+  background: white;
+}
+
+.filter-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1rem;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
 .listing-row {
   background: white;
   border-radius: 12px;
@@ -2944,6 +3255,56 @@ onBeforeUnmount(() => {
   .stats-bar {
     padding: 1rem;
     gap: 1rem;
+  }
+
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .filter-search-wrapper {
+    min-width: unset;
+  }
+
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+  }
+
+  .filter-group-label {
+    font-size: 0.7rem;
+  }
+
+  .filter-group .filter-pills {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .filter-group .filter-pill {
+    text-align: center;
+    border-radius: 8px;
+    padding: 0.45rem 0.5rem;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+
+  .filters-sort-row {
+    gap: 0.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sort-pills {
+    width: 100%;
+  }
+
+  .filter-results-count {
+    margin-left: auto;
+    align-self: flex-end;
   }
 
   .listing-row {
