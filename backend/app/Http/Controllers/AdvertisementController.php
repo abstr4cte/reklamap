@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use App\Mail\ContactAdvertisementOwner;
 use App\Mail\AdCreatedConfirmationMail;
+use App\Mail\NewAdvertisementNotificationMail;
 use App\Rules\ProfanityRule;
 use App\Services\SearchAlertService;
 use App\Models\Newsletter;
@@ -406,6 +407,14 @@ class AdvertisementController extends Controller
             Mail::to($ad->owner_email)->send(new AdCreatedConfirmationMail($ad));
         } catch (\Exception $e) {
             \Log::error('Error sending ad creation confirmation email: ' . $e->getMessage());
+        }
+
+        if ($adminEmail = config('mail.admin_notification_email')) {
+            try {
+                Mail::to($adminEmail)->send(new NewAdvertisementNotificationMail($ad));
+            } catch (\Exception $e) {
+                \Log::error('Error sending admin notification email: ' . $e->getMessage());
+            }
         }
 
         // Check for search alerts
