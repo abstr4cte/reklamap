@@ -109,8 +109,8 @@ const categories = [
   { id: 'wszystkie', name: 'Wszystkie', path: '/blog' },
   { id: 'poradniki', name: 'Poradniki', path: '/blog/poradniki' },
   { id: 'trendy', name: 'Trendy', path: '/blog/trendy' },
-  { id: 'case-study', name: 'Case Study', path: '/blog/case-study' },
-  { id: 'rynek-ooh', name: 'Rynek OOH', path: '/blog/rynek-ooh' },
+  // { id: 'case-study', name: 'Case Study', path: '/blog/case-study' }, // brak artykułów — przywrócić gdy pojawią się treści
+  // { id: 'rynek-ooh', name: 'Rynek OOH', path: '/blog/rynek-ooh' }, // brak artykułów — przywrócić gdy pojawią się treści
   { id: 'prawo-i-regulacje', name: 'Prawo i regulacje', path: '/blog/prawo-i-regulacje' },
   { id: 'lokalizacje', name: 'Lokalizacje', path: '/blog/lokalizacje' }
 ]

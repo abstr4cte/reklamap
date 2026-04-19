@@ -74,7 +74,7 @@ class BlogPostForm
                     ->options([
                         'poradniki' => 'Poradniki',
                         'trendy' => 'Trendy',
-                        'case-study' => 'Case Study',
+                        // 'case-study' => 'Case Study', // nieaktywna kategoria
                         'rynek-ooh' => 'Rynek OOH',
                         'prawo-i-regulacje' => 'Prawo i regulacje',
                         'lokalizacje' => 'Lokalizacje',

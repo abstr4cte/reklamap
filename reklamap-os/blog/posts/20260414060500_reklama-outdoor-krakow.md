@@ -1,90 +1,134 @@
 ---
-title: "Reklama outdoor w Krakowie — przewodnik i ceny"
+title: "Reklama outdoor Kraków — lokalizacje i ceny 2026"
 slug: "reklama-outdoor-krakow"
 category: lokalizacje
-meta_description: "Reklama outdoor w Krakowie — billboardy, citylighty, ekrany LED. Poznaj najlepsze lokalizacje, aktualne ceny i specyfikę rynku reklamowego w Krakowie."
-image_alt: "Reklama zewnętrzna na ulicach Krakowa — billboard przy Rondzie Mogilskim"
-image_prompt: "Krakow city street with outdoor advertising, tram and urban architecture in background, professional photography style, no text on image"
+meta_description: "Reklama outdoor w Krakowie — ceny billboardów per dzielnica 2026, cennik MPK i 4 strefy uchwały krajobrazowej. Sprawdź →"
+image_alt: "Ulica Krakowa z nośnikami reklamowymi billboard i citylight, tramwaj w tle, fotografia miejska"
+image_prompt: "Krakow city street with outdoor advertising billboards and citylights, tram visible in background, historic urban architecture, modern OOH advertising formats, realistic professional photography, natural daylight, no text on image"
 keywords:
   - reklama outdoor Kraków
   - billboard Kraków
   - nośniki reklamowe Kraków
-  - reklama zewnętrzna Kraków
+  - reklama zewnętrzna Kraków cena
 word_count: ~1600
 published_at: "2026-04-14 06:05:00"
 status: draft
 ---
 
-# Reklama outdoor w Krakowie — przewodnik i ceny
+<!-- Angle: Przewodnik po reklamie outdoor w Krakowie — najlepsze lokalizacje i realne ceny dla każdego budżetu. Kluczowy wyróżnik: 4 strefy uchwały krajobrazowej z najostrzejszymi ograniczeniami dla Starego Miasta w Polsce + publiczny cennik MPK. -->
 
-Kraków to drugi co do wielkości rynek reklamy zewnętrznej w Polsce. Ponad 800 000 mieszkańców, kilkanaście milionów turystów rocznie i dynamicznie rozwijający się sektor biznesowy tworzą wyjątkowe warunki dla kampanii outdoor. Co sprawia, że reklama w Krakowie jest inna niż w innych polskich miastach?
+# Reklama outdoor Kraków — lokalizacje i ceny 2026
 
-## Specyfika krakowskiego rynku reklamowego
+Billboard 12×4 m przy krakowskim Śródmieściu kosztuje **6 000–10 000 zł miesięcznie** (netto, bez druku i montażu). Ten sam format w Nowej Hucie — 3 000–5 000 zł. Kraków liczy 810 590 mieszkańców (GUS, 30.06.2025) i jest drugim rynkiem turystycznym w Polsce — ale ma też jedną z najbardziej szczegółowych uchwał krajobrazowych w kraju. Stare Miasto zakazuje plakatów wolnostojących powyżej 2 m² i ogranicza szyldy do 1,2 m szerokości. Dlatego tutaj wybór dzielnicy decyduje nie tylko o cenie, ale o tym, czy reklama może legalnie stanąć.
 
-Kraków wyróżnia się na tle innych polskich miast kilkoma cechami:
+## Reklama outdoor Kraków — cennik według dzielnic 2026
 
-**Turystyka** — Kraków to jedno z najchętniej odwiedzanych miast Europy. Reklama w centrum i na trasach turystycznych dociera do gości z całego świata, co jest unikalne w skali polskiego rynku outdoor.
+Stawki netto za miesiąc, bez kosztów druku i montażu (źródło: billboard-x.pl 2026):
 
-**Uchwała krajobrazowa** — Kraków przyjął restrykcyjne przepisy regulujące reklamy zewnętrzne, szczególnie w historycznym centrum. Część lokalizacji w Starym Mieście i okolicach objęta jest zakazem nośników wielkoformatowych. Warto to sprawdzić przed wyborem lokalizacji.
+| Dzielnica / Lokalizacja | Billboard 12×4 m (48 m²) | Citylight (do 2 m²) |
+|-------------------------|--------------------------|---------------------|
+| Śródmieście / Stare Miasto | 6 000–10 000 zł | 2 500–4 500 zł |
+| Krowodrza | 4 500–7 000 zł | 2 000–3 500 zł |
+| Podgórze | 4 000–6 500 zł | 1 800–3 000 zł |
+| Nowa Huta | 3 000–5 000 zł | 1 500–2 500 zł |
+| Trasy wylotowe (DK/ekspresowe) | 3 500–6 000 zł | 1 200–2 500 zł |
 
-**Środowisko akademickie** — ponad 150 000 studentów to specyficzna, bardzo aktywna konsumencko grupa docelowa. Okolice AGH, UJ, Politechniki Krakowskiej i akademików to doskonałe miejsca dla marek kierujących ofertę do młodych.
+Dwa czynniki automatycznie podnoszą stawkę:
+- **Podświetlenie** — nośnik z oświetleniem to +30–50% do ceny bazowej
+- **Długi kontrakt** — przy umowach do 12 miesięcy dostępne rabaty 10–25%
 
-## Najlepsze lokalizacje w Krakowie
+Nie wiesz, jak wybrać właściwą lokalizację? → [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
 
-### Rondo Mogilskie i al. Jana Pawła II
+## Centrum i Śródmieście — premium z ograniczeniami
 
-Jeden z kluczowych węzłów komunikacyjnych Krakowa. Dziesiątki tysięcy aut dziennie, świetna widoczność nośników wielkoformatowych. To tutaj skupia się część największych bilbordów w mieście.
+Okolice Rynku Głównego, al. Jana Pawła II i trasy dojazdowe do centrum to lokalizacje z najwyższą ekspozycją w mieście. Miesza się tu ruch mieszkańców, dojeżdżających do pracy i turystów — Kraków jako drugi rynek turystyczny w Polsce zapewnia zasięg wśród gości z całego świata, czego nie oferuje żadne inne polskie miasto poza Warszawą.
 
-### Galeria Krakowska i okolice Dworca Głównego
+**Dla kogo:** marki ogólnopolskie, branże finansowa i deweloperska, usługi skierowane do turystów, kampanie wizerunkowe z szerokim zasięgiem demograficznym.
 
-Punkt tranzytowy dla ogromnej liczby osób — pasażerowie PKP, MPK, przyjeżdżający i wyjeżdżający. Wysoka rotacja odbiorców, skuteczny dla kampanii ogólnopolskich marek.
+Ważne: część Śródmieścia to strefa A uchwały krajobrazowej. Wielkoformatowe billboardy są tam zakazane — szczegóły w sekcji o uchwale poniżej. Przed podpisaniem umowy sprawdź strefę nośnika.
 
-### Krowodrza, Bronowice, Prądnik
+Szczegółowy cennik wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
 
-Rozległe dzielnice mieszkaniowe z rosnącą liczbą mieszkańców. Nośniki tutaj są tańsze niż w centrum, a zasięg lokalny — doskonały dla usług i sklepów adresowanych do mieszkańców.
+## Krowodrza, Podgórze i Nowa Huta — lokalizacje dzielnicowe
 
-### Okolice uczelni
+**Krowodrza** to rozległa dzielnica mieszkaniowa z centrum przy al. Kijowskiej. Nośniki są tu o 30–40% tańsze niż w Śródmieściu przy zbliżonym zasięgu wśród stałych mieszkańców. Dobry adres dla lokalnych usług, sklepów i inwestycji deweloperskich adresowanych do krakowian.
 
-AGH, UJ (Kampus Ruczaj), Politechnika — tereny kampusów i okoliczne ulice to idealne miejsce dla marek kierowanych do studentów. Citylighty i banery przy akademikach mają wyjątkowo długi czas kontaktu z odbiorcą.
+**Podgórze** — dzielnica w fazie intensywnego rozwoju. Zabłocie przyciąga biura kreatywne, restauracje i nową demografię z wyższą siłą nabywczą. Ceny billboardów (4 000–6 500 zł/mc) jeszcze nie odzwierciedlają rosnącego prestiżu tego rejonu.
 
-### Zabłocie i Podgórze
+**Nowa Huta** to najtańsza opcja: billboard 12×4 m od 3 000 zł/mc. Skuteczna dla kampanii zasięgowych z ograniczonym budżetem lub marek skierowanych do starszej, lokalnej demografii.
 
-Dynamicznie rozwijające się dzielnice z rosnącą liczbą biur, mieszkań i restauracji. Nowa, zamożna demografia, a ceny nośników wciąż niższe niż w centrum.
+**Insight ekspercki:** Podgórze (Zabłocie, okolice Bonarka City Center) to jedyna dzielnica Krakowa, gdzie rosnąca zamożność demograficzna wyprzedza stawki nośników. Warto sprawdzić dostępność lokalizacji tam, zanim ceny dogonią realia.
 
-## Ceny reklamy outdoor w Krakowie
+## Trasy wylotowe — dobry zasięg, przystępne stawki
 
-| Typ nośnika | Centrum | Dzielnice |
-|---|---|---|
-| Billboard 6×3 m | 3 500–12 000 zł/mies. | 1 200–4 000 zł/mies. |
-| Citylight | 1 200–4 000 zł/mies. | 400–1 500 zł/mies. |
-| Ekran LED | 2 000–6 000 zł/mies. | 800–2 500 zł/mies. |
-| Baner | 400–2 000 zł/mies. | 200–700 zł/mies. |
+Drogi wylotowe z Krakowa łączą centrum z podkrakowskimi gminami i docierają do kilkudziesięciu tysięcy pojazdów dziennie:
 
-Kraków jest zazwyczaj 20–40% tańszy niż Warszawa przy porównywalnych lokalizacjach, co czyni go atrakcyjnym rynkiem dla firm z ograniczonym budżetem.
+- **Billboard 12×4 m:** 3 500–6 000 zł/mc
+- **Citylight:** 1 200–2 500 zł/mc
 
-## Reklama w tramwajach MPK Kraków
+Optymalny format dla kampanii marek kierowanych do kierowców: motoryzacja, paliwa, centra handlowe przy trasach. W strefie D (trasy przemysłowe) uchwała krajobrazowa dopuszcza formaty do 18 m².
 
-Kraków ma jeden z najlepiej rozwiniętych systemów tramwajowych w Polsce. Reklama na zewnątrz i wewnątrz tramwajów to format szczególnie skuteczny — pojazdy kursują przez ścisłe centrum, trasy turystyczne i dzielnice mieszkaniowe.
+Gotowy porównać oferty? Przejrzyj nośniki dostępne w Krakowie → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)
 
-Szczegółowe oferty reklamy w komunikacji miejskiej Krakowa znajdziesz na [reklamap.pl/powierzchnie-reklamowe/reklama-w-transporcie](/powierzchnie-reklamowe/reklama-w-transporcie).
+## Reklama w MPK Kraków — tramwaje i autobusy z publicznym cennikiem
 
-## Jak znaleźć nośnik w Krakowie?
+MPK Kraków opublikował cennik obowiązujący od 01.12.2025 — to rzadkość wśród polskich przewoźników, bo większość wycenia indywidualnie:
 
-Platforma [ReklaMap](/powierzchnie-reklamowe) pozwala filtrować ogłoszenia według lokalizacji, dzielnic Krakowa, typu nośnika i budżetu. Bezpośredni kontakt z właścicielami — bez pośredników i agencyjnych prowizji.
+| Typ nośnika | Ekspozycja netto/mc | Koszt produkcji |
+|-------------|---------------------|-----------------|
+| Tramwaj E1/C3 — wagon pojedynczy | **4 244 zł** | 13 200–23 100 zł |
+| Tramwaj E1/C3 — skład podwójny | **7 516 zł** | 13 200–23 100 zł |
+| Tramwaj NGT6/EU8N/GT8N | wycena indywidualna | 21 800 zł |
+| Autobus full back | wycena indywidualna | 1 000 zł |
+| Autobus small back | wycena indywidualna | 600 zł |
+
+Źródło: mpk.krakow.pl, cennik od 01.12.2025. Przy kontraktach do 12 miesięcy dostępny rabat 20%.
+
+Koszt produkcji to wydatek jednorazowy — ekspozycja naliczana co miesiąc. Tramwaje krakowskie kursują przez ścisłe centrum, trasy turystyczne i osiedla mieszkaniowe, co daje zasięg w każdym segmencie demograficznym jednocześnie.
+
+Więcej o reklamie w transporcie: [Reklama w komunikacji miejskiej — co warto wiedzieć](/blog/reklama-w-transporcie-publicznym)
+
+## Uchwała krajobrazowa Kraków — 4 strefy, twarde ograniczenia
+
+Kraków ma jedne z najbardziej szczegółowych przepisów reklamowych w Polsce. Uchwała obowiązuje od **1 lipca 2020 r.**, zaktualizowana uchwałą Nr CXIX/3222/23 z 11 października 2023 r. (Rada Miasta Krakowa; źródło: bip.krakow.pl):
+
+**Strefa A — Stare Miasto (ochrona dziedzictwa):**
+- Szyldy wyłącznie do 1,2 m szerokości
+- Maksymalnie 1 reklama na elewację budynku
+- Zakaz plakatów wolnostojących powyżej 2 m²
+- Zakaz podświetlenia kolorowego
+
+**Strefa B — historyczne centrum:**
+- Limity wielkości nośników, zakaz dużych formatów
+
+**Strefa C — miejska:**
+- Standardowe nośniki OOH dozwolone
+- Citylighty w meblach miejskich, ekrany DOOH z timerem
+- Banery do 14 dni
+
+**Strefa D — przemysłowa / trasy wylotowe:**
+- Formaty do 18 m² dozwolone
+
+Krakowskie Stare Miasto ma najostrzejsze ograniczenia reklamowe spośród wszystkich polskich miast — szyldy powyżej 1,2 m szerokości są po prostu zakazane. Nowa uchwała jest w przygotowaniu na lata 2023–2026 (źródło: euroart.pl, bip.krakow.pl). Przed podpisaniem umowy najmu sprawdź strefę nośnika i jego status formalnoprawny. Właściciel nośnika odpowiada za zgodność z uchwałą — ale ryzyko przedwczesnej likwidacji kampanii poniesiesz Ty.
+
+Więcej o przepisach i formalnościach: [Tablica reklamowa — przepisy i pozwolenia](/blog/tablica-reklamowa)
 
 ## Najczęściej zadawane pytania
 
-**Czy w centrum Krakowa można stawiać billboardy?**
-W historycznym centrum (Stare Miasto i część Kazimierza) obowiązują ścisłe ograniczenia wynikające z uchwały krajobrazowej i ochrony zabytków. Nowe wielkoformatowe nośniki praktycznie nie są tam dopuszczane. Możliwe są citylighty i mniejsze formaty w wyznaczonych miejscach. Poza centrum historycznym przepisy są bardziej liberalne.
+**Ile kosztuje billboard w Krakowie?**
+Billboard 12×4 m kosztuje od 3 000 zł/mc (Nowa Huta) do 10 000 zł/mc (Śródmieście) netto, bez druku i montażu (wg billboard-x.pl 2026). Citylight to 1 200–4 500 zł/mc w zależności od dzielnicy. Do każdej stawki doliczyć należy koszty druku (jednorazowo) i ewentualnego montażu.
 
-**Jaka dzielnica Krakowa jest najlepsza dla reklamy B2B?**
-Dzielnice biznesowe rozwijają się głównie w rejonie al. 29 Listopada, Czyżyn (lotnicze centrum biznesowe) i Zabłocia. Dla B2B warto rozważyć też okolice biurowców przy al. Armii Krajowej i w okolicach Galerii Kazimierz.
+**Czy w centrum Krakowa na Starym Mieście można postawić billboard?**
+Nie. Strefa A uchwały krajobrazowej zakazuje plakatów wolnostojących powyżej 2 m² i ogranicza szyldy do 1,2 m szerokości — to najostrzejsze przepisy reklamowe w Polsce. Wielkoformatowa reklama outdoor w historycznym centrum Krakowa jest praktycznie wykluczona. Możliwe są citylighty w meblach miejskich i małe szyldy.
 
-**Czy warto reklamować się w Krakowie z myślą o turystach?**
-Zdecydowanie tak, szczególnie jeśli oferujesz usługi turystyczne, gastronomiczne lub hotelowe. Ale pamiętaj — w historycznym centrum dostępność nośników jest ograniczona, a ceny wyższe. Nośniki przy trasach wjazdowych do centrum mogą być równie skuteczne przy niższym koszcie.
+**Ile kosztuje reklama na tramwaju w Krakowie?**
+Ekspozycja na tramwaju E1/C3 (wagon pojedynczy) to 4 244 zł/mc netto + jednorazowy koszt produkcji oklejenia 13 200–23 100 zł (cennik MPK Kraków od 01.12.2025). Przy kontrakcie rocznym dostępny rabat 20%. Skład podwójny to 7 516 zł/mc ekspozycji.
+
+**Gdzie reklamować się w Krakowie, żeby dotrzeć do turystów?**
+Stare Miasto ma restrykcyjne przepisy — skuteczniejsze jest oklejenie tramwajów kursujących przez centrum i trasy turystyczne lub citylighty przy trasach dojazdowych do centrum w strefie C. Nośniki przy Rondzie Mogilskim i al. Jana Pawła II (strefa C/D) docierają zarówno do mieszkańców, jak i przyjezdnych.
 
 ---
 
-**Powiązane artykuły:** [Reklama outdoor w Warszawie](/blog/reklama-outdoor-warszawa) · [Reklama outdoor we Wrocławiu](/blog/reklama-outdoor-wroclaw) · [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/tablica-reklamowa)
 
-Znajdź idealny nośnik reklamowy w Krakowie i skontaktuj się bezpośrednio z właścicielem → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)
+Szukasz nośnika reklamowego w Krakowie? Przeglądaj dostępne oferty i kontaktuj się bezpośrednio z właścicielami — bez pośredników → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)

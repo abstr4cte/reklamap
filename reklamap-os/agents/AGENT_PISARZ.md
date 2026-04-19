@@ -231,9 +231,9 @@ Odpowiedź w 2–4 zdaniach.
 ## Workflow po wygenerowaniu posta (Akcje systemowe)
 
 Po tym, jak stworzysz gotowy tekst, wykonaj w tle (używając MCP filesystem) następujące kroki:
-1. Zapisz wygenerowany plik na dysku w ścieżce: `blog/posts/{YYYYMMDDHHMMSS}_{slug}.md`.
-2. Dodaj wpis o nowym poście do pliku `blog/INDEX.md` ze statusem `✍️ NAPISANY`.
-3. Dorzuć wpis do tablicy `$posts` w pliku `backend/database/seeders/BlogPostsSeeder.php` (ze statusem: `draft`).
+1. Pobierz aktualną datę i godzinę w strefie **Europe/Warsaw** (`TZ="Europe/Warsaw" date +"%Y%m%d%H%M%S"`). Użyj jej jako prefiksu nazwy pliku i wartości `published_at`. Zapisz plik: `blog/posts/{YYYYMMDDHHMMSS}_{slug}.md`. **Nigdy nie używaj dat sekwencyjnych ani dat z innych artykułów.**
+2. Dodaj wpis o nowym poście do pliku `blog/INDEX.md` ze statusem `✍️ NAPISANY` i aktualną datą.
+3. Dorzuć wpis do tablicy `$posts` w pliku `backend/database/seeders/BlogPostsSeeder.php` (ze statusem: `draft`). Pole `published_at` = rzeczywista data i godzina zapisu (Europe/Warsaw).
 
 ---
 

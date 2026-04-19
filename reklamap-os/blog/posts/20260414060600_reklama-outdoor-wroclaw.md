@@ -1,96 +1,131 @@
 ---
-title: "Reklama outdoor we Wrocławiu — lokalizacje i ceny"
+title: "Reklama outdoor Wrocław — lokalizacje i ceny 2026"
 slug: "reklama-outdoor-wroclaw"
 category: lokalizacje
-meta_description: "Reklama outdoor we Wrocławiu — billboardy, citylighty i ekrany LED. Poznaj najlepsze lokalizacje, ceny i specyfikę rynku reklamowego w stolicy Dolnego Śląska."
-image_alt: "Billboard reklamowy we Wrocławiu przy głównej arterii komunikacyjnej miasta"
-image_prompt: "Wroclaw city street with outdoor advertising, modern trams and historic architecture, professional photography, no text on image"
+meta_description: "Reklama outdoor we Wrocławiu — ceny billboardów per dzielnica, cennik MPK i Park Kulturowy zamiast uchwały krajobrazowej. Sprawdź →"
+image_alt: "Ulica Wrocławia z billboardami reklamowymi i tramwajem, historyczna architektura w tle"
+image_prompt: "Wroclaw city street with outdoor advertising billboards and citylights, tram passing by, historic architecture and modern urban environment, realistic professional photography, natural daylight, no text on image"
 keywords:
   - reklama outdoor Wrocław
   - billboard Wrocław
   - nośniki reklamowe Wrocław
-  - reklama zewnętrzna Wrocław
-word_count: ~1550
+  - reklama zewnętrzna Wrocław cena
+word_count: ~1600
 published_at: "2026-04-14 06:06:00"
 status: draft
 ---
 
-# Reklama outdoor we Wrocławiu — lokalizacje i ceny
+<!-- Angle: Przewodnik po reklamie outdoor we Wrocławiu — ceny per dzielnica i unikalna regulacja: Park Kulturowy zamiast uchwały krajobrazowej. Wrocław = polska stolica IT (66 200 zatrudnionych) jako unikalny kontekst B2B. -->
 
-Wrocław to jeden z najdynamiczniej rozwijających się rynków reklamowych w Polsce. Miasto z ponad 640 000 mieszkańców, silnym sektorem technologicznym i akademickim oraz rosnącą liczbą turystów tworzy doskonałe warunki dla kampanii outdoor. Sprawdź, gdzie i za ile warto inwestować w reklamę we Wrocławiu.
+# Reklama outdoor Wrocław — lokalizacje i ceny 2026
 
-## Dlaczego Wrocław to atrakcyjny rynek reklamowy?
+Billboard 12×4 m w centrum Wrocławia kosztuje **7 000–16 000 zł miesięcznie** (netto, bez druku i montażu). Ten sam format na Krzykach — 1 500–8 000 zł. Wrocław liczy 673 531 mieszkańców (GUS, 31.12.2024), zatrudnia 66 200 specjalistów IT i jest jednym z największych rynków biurowych w Polsce. Centrum objęte jest Parkiem Kulturowym „Stare Miasto" — innym narzędziem prawnym niż uchwała krajobrazowa, ale równie restrykcyjnym dla billboardów. Reszta miasta nie ma szczególnych ograniczeń dla reklamy OOH.
 
-Wrocław wyróżnia się kilkoma cechami, które sprawiają, że kampania outdoor może tu być wyjątkowo efektywna:
+## Reklama outdoor Wrocław — cennik według dzielnic 2026
 
-**Sektor IT i technologiczny** — Wrocław to jedno z głównych polskich centrów IT. Tysiące specjalistów technologicznych to zamożna, aktywna konsumencko grupa docelowa, trudna do osiągnięcia przez tradycyjne media.
+Stawki netto za miesiąc, bez kosztów druku i montażu (źródło: wedo.pl, billboard-x.pl, znajdzreklame.pl):
 
-**Studenci** — ponad 120 000 studentów na kilkudziesięciu uczelniach. Jeden z największych ośrodków akademickich w Polsce.
+| Dzielnica / Lokalizacja | Billboard 12×4 m (48 m²) | Billboard 6×3 m (18 m²) |
+|-------------------------|--------------------------|--------------------------|
+| Śródmieście / Stare Miasto | 7 000–16 000 zł | 1 500–8 000 zł |
+| Krzyki | 1 500–8 000 zł | 1 000–4 000 zł |
+| Fabryczna | 1 500–5 000 zł | 1 000–4 000 zł |
+| Psie Pole | 4 000–5 000 zł | 1 000–4 000 zł |
+| Trasy wylotowe | 4 200–12 000 zł | 1 000–4 000 zł |
 
-**Turystyka MICE** — Wrocław jest liderem turystyki biznesowej i kongresowej. Konferencje, targi i eventy korporacyjne sprowadzają dziesiątki tysięcy uczestników rocznie.
+Citylight w centrum (Śródmieście/Stare Miasto): od 790 zł/mc (wg znajdzreklame.pl).
 
-**Rozwinięta sieć tramwajowa** — Wrocław ma jedną z największych sieci tramwajowych w Polsce, co czyni reklamę w komunikacji miejskiej wyjątkowo zasięgowym narzędziem.
+Dwa czynniki automatycznie podnoszą stawkę:
+- **Podświetlenie** — nośnik z oświetleniem to +30–50% do ceny bazowej
+- **Długi kontrakt** — przy umowach wielomiesięcznych dostępne rabaty
 
-## Najlepsze lokalizacje we Wrocławiu
+Nie wiesz, jak wybrać właściwą lokalizację? → [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
 
-### Centrum i pl. Grunwaldzki
+## Centrum i Śródmieście — premium dla marek IT i B2B
 
-Most Grunwaldzki i plac Grunwaldzki to jeden z kluczowych węzłów komunikacyjnych łączących centrum z dzielnicami akademickimi. Ogromny ruch studencki i miejski — idealne dla marek targetujących młodych dorosłych.
+Okolice Rynku, ul. Świdnicka, pl. Grunwaldzki i okolice Dworca Głównego to lokalizacje z najwyższą ekspozycją w mieście. Wrocław wyróżnia się na tle innych polskich miast sektorem IT — 66 200 zatrudnionych specjalistów technologicznych i 1,37 mln m² powierzchni biurowej (wg wroclaw.pl) tworzą unikalną, zamożną demografię dla marek B2B i tech.
 
-### Fabryczna i okolice stacji kolejowej
+**Dla kogo:** marki technologiczne, fintech, deweloperzy, branża finansowa, kampanie wizerunkowe kierowane do klasy kreatywnej i profesjonalistów.
 
-Wrocław Główny to jeden z największych węzłów kolejowych w Polsce. Okolice Dworca Głównego i nowej Fabrycznej to duże natężenie ruchu i mix odbiorców: studenci, pracownicy, turyści.
+Uwaga: część Śródmieścia leży w granicach Parku Kulturowego „Stare Miasto" — szczegóły dotyczące ograniczeń reklamowych w sekcji poniżej.
 
-### Długa i ul. Świdnicka
+Szczegółowy cennik wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
 
-Ścisłe centrum handlowo-usługowe. Wysoki ruch pieszy, doskonała dla marek konsumenckich i retailu.
+## Krzyki, Fabryczna i Psie Pole — lokalizacje dzielnicowe
 
-### Psie Pole, Krzyki, Fabryczna — dzielnice mieszkaniowe
+**Krzyki** to największa dzielnica Wrocławia — rozległy obszar mieszkaniowy z centrami handlowymi (Borek, Bielany). Ceny billboardów 12×4 m od 1 500 zł/mc przy zasięgu wśród jednej z największych populacji w mieście.
 
-Wrocław rozrasta się na obrzeżach. Nowe osiedla przyciągają tysiące nowych mieszkańców. Nośniki w tych dzielnicach są tańsze, a lokalny zasięg — doskonały dla usług i sklepów.
+**Fabryczna** to dzielnica przemysłowo-biurowa z rosnącym sektorem logistycznym i technologicznym. Nośniki przy głównych arteriach docierają do pracowników strefy biznesowej i dojeżdżających z zachodnich obrzeży. Stawki 1 500–5 000 zł/mc za billboard 12×4 m.
 
-### Parktechno i Bielany Wrocławskie
+**Psie Pole** — północna dzielnica mieszkaniowa. Stawki 4 000–5 000 zł/mc za billboard 12×4 m. Dobra dla kampanii lokalnych i usług adresowanych do mieszkańców prawobrzeżnego Wrocławia.
 
-Centrum biznesowo-logistyczne. Dla B2B i branży przemysłowej — specyficzna, zamożna demografia.
+**Insight ekspercki:** Fabryczna i okolice ul. Legnickiej (Wrocławski Park Technologiczny) to jedyne miejsce w Polsce poza Warszawą, gdzie reklama outdoor w dzielnicy przemysłowej dociera do tysięcy specjalistów IT dziennie — przy cenach nawet trzykrotnie niższych niż centrum. Format niedoceniany przez marki z sektora tech i rekrutację.
 
-## Ceny reklamy outdoor we Wrocławiu
+Przeglądaj dostępne nośniki we Wrocławiu → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)
 
-| Typ nośnika | Centrum | Dzielnice |
-|---|---|---|
-| Billboard 6×3 m | 3 000–10 000 zł/mies. | 1 000–3 500 zł/mies. |
-| Citylight | 1 000–3 500 zł/mies. | 350–1 200 zł/mies. |
-| Ekran LED | 1 500–5 000 zł/mies. | 700–2 000 zł/mies. |
-| Baner | 300–1 500 zł/mies. | 150–600 zł/mies. |
+## Trasy wylotowe — szeroki zasięg, stabilne stawki
 
-Wrocław jest porównywalny cenowo z Krakowem i ok. 25–35% tańszy niż Warszawa przy podobnych lokalizacjach.
+Drogi wylotowe z Wrocławia obsługują ruch dojeżdżających z podwrocławskich gmin i tranzyt przez Dolny Śląsk:
 
-## Reklama w tramwajach MPK Wrocław
+- **Billboard 12×4 m:** 4 200–12 000 zł/mc
+- **Billboard 6×3 m:** 1 000–4 000 zł/mc
 
-Wrocław ma ponad 250 tramwajów kursujących na 24 liniach. Reklama na zewnątrz i wewnątrz wrocławskich tramwajów to format z ogromnym zasięgiem dziennym. Szczególnie skuteczny na liniach przebiegających przez centrum i dzielnice akademickie.
+Dziesiątki tysięcy pojazdów dziennie, mix mieszkańców aglomeracji i ruchu tranzytowego. Format optymalny dla centrów handlowych przy trasach, motoryzacji i kampanii zasięgowych z szeroką demografią.
 
-Sprawdź oferty reklamy w transporcie we Wrocławiu na [reklamap.pl/powierzchnie-reklamowe/reklama-w-transporcie](/powierzchnie-reklamowe/reklama-w-transporcie).
+## Reklama w MPK Wrocław — tramwaje i autobusy
 
-## Sezonowość rynku we Wrocławiu
+Wrocław ma jedną z największych sieci tramwajowych w Polsce — tramwaje kursują przez Rynek, pl. Grunwaldzki i wszystkie dzielnice mieszkaniowe. MPK Wrocław udostępnia cennik na mpk.wroc.pl/reklama-w-mpk/cennik:
 
-Wrocław ma wyraźną sezonowość reklamową. Jesień i zima to najgorętszy sezon — Q4 z kampaniami przed świętami, styczeń–luty to najsłabszy okres z najniższymi cenami. Wiosna i lato to dobry czas na kampanie związane z turystyką i eventami miejskimi, których Wrocław organizuje wyjątkowo dużo.
+| Typ nośnika | Ekspozycja netto/mc | Koszt demontażu |
+|-------------|---------------------|-----------------|
+| Tramwaj 105 NWr — lewa strona | 1 200 zł | 4 900 zł |
+| Tramwaj 105 NWr — całopojazdowy | 1 500 zł | 4 900 zł |
+| Tramwaj 204 WrAs — całopojazdowy | 1 800 zł | 4 900 zł |
+| Tramwaj Skoda 19T — całopojazdowy | **4 000 zł** | 7 000 zł |
+| Autobus solo — całopojazdowy | 1 500 zł | — |
+| Autobus przegubowy — całopojazdowy | 2 200 zł | — |
+| Fullback tył autobusu | ~1 200 zł | — |
 
-## Jak szukać nośników we Wrocławiu?
+Koszt produkcji (druk, montaż, przywrócenie barw MPK) — wycena indywidualna w Dziale Sprzedaży. Przy kontrakcie 12-miesięcznym rabat ~17% (tramwaj 105 NWr: 12 000 zł/12mc zamiast 14 400 zł).
 
-Na [ReklaMap](/powierzchnie-reklamowe) możesz filtrować ogłoszenia według Wrocławia i konkretnych dzielnic. Bezpośredni kontakt z właścicielami — bez agencyjnych marż. Wiele ofert zawiera dokładne adresy i zdjęcia z perspektywy odbiorcy, co ułatwia ocenę przed wizytą.
+Tramwaj Skoda 19T to najnowszy tabor MPK — kursuje na kluczowych liniach przez centrum. Najwyższa cena w ofercie, ale też najwyższy efekt wizualny i prestiż kampanii.
+
+Więcej o reklamie w transporcie: [Reklama w komunikacji miejskiej — co warto wiedzieć](/blog/reklama-w-transporcie-publicznym)
+
+## Park Kulturowy „Stare Miasto" — inne narzędzie niż uchwała krajobrazowa
+
+Wrocław **nie ma uchwały krajobrazowej** w rozumieniu ustawy z 2015 r. Centrum chroni inne narzędzie prawne: **Park Kulturowy „Stare Miasto"**, ustanowiony 10 kwietnia 2014 r. ze zmianami w 2021 r. (źródło: bip.um.wroc.pl).
+
+Obszar Parku (~210 ha) obejmuje:
+- Stare Miasto w granicach fosy miejskiej
+- Wyspy Odrzańskie i Ostrów Tumski
+- Ogród Botaniczny i park Słowackiego
+
+**W granicach Parku obowiązuje:**
+- Zakaz wolnostojących billboardów
+- Zakaz nośników naruszających historyczny charakter zabudowy
+- Dozwolone: dyskretne tablice, banery zgodne z ochroną konserwatorską
+
+**Poza Parkiem** (Krzyki, Fabryczna, Psie Pole, trasy wylotowe) — standardowe przepisy budowlane, brak szczególnych ograniczeń dla nośników OOH. To istotna różnica wobec Krakowa czy Warszawy, gdzie uchwały obejmują znacznie szerszy obszar miasta.
+
+Przed podpisaniem umowy sprawdź, czy nośnik leży w granicach Parku. Więcej o przepisach: [Tablica reklamowa — przepisy i pozwolenia](/blog/tablica-reklamowa)
 
 ## Najczęściej zadawane pytania
 
+**Ile kosztuje billboard we Wrocławiu?**
+Billboard 12×4 m kosztuje od 1 500 zł/mc (Krzyki, Fabryczna) do 16 000 zł/mc (Śródmieście) netto, bez druku i montażu (wg wedo.pl, billboard-x.pl). Citylight w centrum to od 790 zł/mc (wg znajdzreklame.pl).
+
 **Czy Wrocław ma uchwałę krajobrazową?**
-Tak, Wrocław przyjął uchwałę krajobrazową regulującą nośniki reklamowe. Centrum i obszary o szczególnym znaczeniu historycznym i architektonicznym mają ograniczenia. Poza tymi strefami przepisy są liberalniejsze. Właściciele legalnych nośników na ReklaMap mają uregulowaną dokumentację.
+Nie. Wrocław nie uchwalił uchwały krajobrazowej z ustawy 2015 r. Centrum chroni Park Kulturowy „Stare Miasto" (od 2014 r., ~210 ha), który zakazuje wolnostojących billboardów i nośników naruszających historyczny charakter. Poza Parkiem brak szczególnych ograniczeń.
 
-**Które dzielnice Wrocławia warto wybrać dla kampanii skierowanej do IT?**
-Okolice ul. Legnickiej (Wrocławski Park Technologiczny), Stare Miasto i Śródmieście (wiele firm IT ma tam biura) oraz Gaj i Krzyki (popularnie zamieszkiwane przez specjalistów IT). Ekrany LED w okolicach dużych biurowców to skuteczny format dla rekrutacji lub B2B software.
+**Ile kosztuje reklama na tramwaju we Wrocławiu?**
+Od 1 200 zł/mc (tramwaj 105 NWr, lewa strona) do 4 000 zł/mc (Skoda 19T, całopojazdowy). Przy kontrakcie 12-miesięcznym rabat ~17%. Koszt produkcji — wycena indywidualna w MPK Wrocław (mpk.wroc.pl).
 
-**Jak długo z wyprzedzeniem planować kampanię we Wrocławiu?**
-Minimum 3–4 tygodnie dla standardowych kampanii. Dla kluczowych lokalizacji w centrum lub przy eventach miejskich (np. Wrocław Good Food Festival, Brave Festival) warto planować 2–3 miesiące wcześniej — dobre nośniki bywają zajęte.
+**Gdzie reklamować się we Wrocławiu, żeby dotrzeć do sektora IT?**
+Okolice ul. Legnickiej i Wrocławskiego Parku Technologicznego (Fabryczna) oraz tramwaje Skoda 19T kursujące przez centrum biurowe. Jedyne miejsce w Polsce poza Warszawą z tak wysoką koncentracją specjalistów IT — przy cenach nośników niższych niż centrum.
 
 ---
 
-**Powiązane artykuły:** [Reklama outdoor w Warszawie](/blog/reklama-outdoor-warszawa) · [Reklama outdoor w Krakowie](/blog/reklama-outdoor-krakow) · [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/tablica-reklamowa)
 
-Znajdź idealną powierzchnię reklamową we Wrocławiu i negocjuj warunki bezpośrednio z właścicielem → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)
+Szukasz nośnika reklamowego we Wrocławiu? Przeglądaj dostępne oferty i kontaktuj się bezpośrednio z właścicielami — bez pośredników → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)

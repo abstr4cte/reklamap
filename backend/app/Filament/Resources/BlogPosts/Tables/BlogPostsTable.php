@@ -47,7 +47,7 @@ class BlogPostsTable
                     ->colors([
                         'info' => 'poradniki',
                         'warning' => 'trendy',
-                        'success' => 'case-study',
+                        // 'success' => 'case-study', // nieaktywna kategoria
                         'primary' => 'rynek-ooh',
                         'danger' => 'prawo-i-regulacje',
                         'gray' => 'lokalizacje',
@@ -55,7 +55,7 @@ class BlogPostsTable
                     ->formatStateUsing(fn (string $state): string => match($state) {
                         'poradniki' => 'Poradniki',
                         'trendy' => 'Trendy',
-                        'case-study' => 'Case Study',
+                        // 'case-study' => 'Case Study', // nieaktywna kategoria
                         'rynek-ooh' => 'Rynek OOH',
                         'prawo-i-regulacje' => 'Prawo i regulacje',
                         'lokalizacje' => 'Lokalizacje',
@@ -78,7 +78,7 @@ class BlogPostsTable
                     ->options([
                         'poradniki' => 'Poradniki',
                         'trendy' => 'Trendy',
-                        'case-study' => 'Case Study',
+                        // 'case-study' => 'Case Study', // nieaktywna kategoria
                         'rynek-ooh' => 'Rynek OOH',
                         'prawo-i-regulacje' => 'Prawo i regulacje',
                         'lokalizacje' => 'Lokalizacje',

@@ -288,7 +288,7 @@ const blogPosts: BlogPost[] = [
 const categories = [
   { id: 'poradniki', name: 'Poradniki' },
   { id: 'trendy', name: 'Trendy' },
-  { id: 'case-study', name: 'Case Study' },
+  // { id: 'case-study', name: 'Case Study' }, // brak artykułów — przywrócić gdy pojawią się treści
   { id: 'rynek-ooh', name: 'Rynek OOH' },
   { id: 'prawo-i-regulacje', name: 'Prawo i regulacje' },
   { id: 'lokalizacje', name: 'Lokalizacje' }

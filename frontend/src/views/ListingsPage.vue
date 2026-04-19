@@ -543,7 +543,7 @@ const getEnvironmentOptions = (type: string): { value: string, label: string }[]
 // Actions
 
 const openFiltersModal = () => { tempFilters.value = JSON.parse(JSON.stringify(filters.value)); tempLocationQuery.value = locationQuery.value; showFiltersModal.value = true }
-const closeFiltersModal = () => { showFiltersModal.value = false; tempFilters.value = null }
+const closeFiltersModal = () => { showFiltersModal.value = false; tempFilters.value = null; document.body.style.overflow = '' }
 const applyFilters = () => { 
   // Wyczyść mapBounds przy aplikowaniu filtrów, aby mapa mogła przybliżyć się do miasta/regionu
   const filtersWithoutMapBounds = { ...tempFilters.value, mapBounds: null }
@@ -1347,6 +1347,7 @@ onActivated(() => {
 
 onDeactivated(() => {
   isActive.value = false
+  closeFiltersModal()
 })
 
 const startAlertTimer = () => {
