@@ -49,7 +49,7 @@ Stawki netto za wynajem miesięczny (bez druku i montażu):
 
 Źródło: be-media.com.pl, wedo.pl
 
-Ceny nie obejmują zazwyczaj druku materiałów (50–100 zł/m² dla folii frontlight) ani montażu (120–220 zł za format). Pełne zestawienie kosztów produkcji znajdziesz w artykule [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+Ceny nie obejmują zazwyczaj druku materiałów (50–100 zł/m² dla folii frontlight) ani montażu (120–220 zł za format). Pełne zestawienie kosztów produkcji znajdziesz w artykule [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 ### Citylighty w Gdańsku
 
@@ -72,7 +72,7 @@ ZTM Gdańsk nie publikuje cennika online (stan 2026) — warunki ustala się bez
 | Full cover pojazdu | 15 000–30 000 zł |
 | Ramki wewnętrzne | 2 000–5 000 zł |
 
-To wyższy próg wejścia niż billboard, ale format ma przewagę: pojazd jeździ po całym Trójmieście, nie stoi w jednym miejscu. Dla kampanii skierowanych do codziennych użytkowników komunikacji — pracowników biurowych, studentów, dojeżdżających do centrów handlowych — zasięg jest trudny do pobicia. Szczegóły dotyczące formatów i planowania opisuje artykuł [Reklama w transporcie publicznym](/blog/reklama-w-transporcie-publicznym).
+To wyższy próg wejścia niż billboard, ale format ma przewagę: pojazd jeździ po całym Trójmieście, nie stoi w jednym miejscu. Dla kampanii skierowanych do codziennych użytkowników komunikacji — pracowników biurowych, studentów, dojeżdżających do centrów handlowych — zasięg jest trudny do pobicia. Szczegóły dotyczące formatów i planowania opisuje artykuł [Reklama w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym).
 
 ---
 
@@ -119,7 +119,7 @@ Kilka zasad specyficznych dla tego rynku:
 3. **Centrum to nie tylko billboardy** — w strefach historycznych citylight jest często jedyną dopuszczalną formą reklamy wolnostojącej. Sprawdź, zanim zamawiasz projekt pod duży format.
 4. **DOOH jako uzupełnienie** — ekrany LED dostępne od ok. 3 000 zł/pakiet spotów (wedo.pl, billboard-x.pl); możliwość daypartingu i zmiany kreacji bez druku.
 
-Systematyczne podejście do wyboru nośnika opisuje artykuł [Jak wybrać powierzchnię reklamową](/blog/jak-wybrac-powierzchnie-reklamowa).
+Systematyczne podejście do wyboru nośnika opisuje artykuł [Jak wybrać powierzchnię reklamową](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa).
 
 ---
 
@@ -144,6 +144,6 @@ Obwodnica S6 łączy Gdańsk z Gdynią i Sopotem — rynek trójmiejski to łąc
 ---
 
 **Powiązane artykuły:**
-[Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Reklama outdoor Warszawa](/blog/reklama-outdoor-warszawa) · [Reklama outdoor Kraków](/blog/reklama-outdoor-krakow) · [Reklama outdoor Wrocław](/blog/reklama-outdoor-wroclaw) · [Jak wybrać powierzchnię reklamową](/blog/jak-wybrac-powierzchnie-reklamowa)
+[Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Reklama outdoor Warszawa](/blog/lokalizacje/reklama-outdoor-warszawa) · [Reklama outdoor Kraków](/blog/lokalizacje/reklama-outdoor-krakow) · [Reklama outdoor Wrocław](/blog/lokalizacje/reklama-outdoor-wroclaw) · [Jak wybrać powierzchnię reklamową](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 Porównaj dostępne nośniki w Gdańsku i całym Trójmieście — bezpośrednio od właścicieli, bez prowizji agencji → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)

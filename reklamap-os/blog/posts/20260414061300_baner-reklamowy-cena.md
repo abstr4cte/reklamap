@@ -38,7 +38,7 @@ Do ceny druku doliczyć:
 
 Przykład: baner 5×2,4 m (12 m²) z PCV to druk 360–960 zł + montaż szacunkowo 60–180 zł.
 
-Porównanie kosztów wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+Porównanie kosztów wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 ## Ceny wynajmu miejsca pod baner reklamowy
 
@@ -68,7 +68,7 @@ Trzy standardowe formaty dominują na polskim rynku (źródło: billboard-x.pl, 
 
 **Insight ekspercki:** Format 5×2,4 m to jedyny nośnik outdoor, który można legalnie zawiesić przez 90 dni bez jakichkolwiek pozwoleń — i którego łączny koszt (druk + wynajem w małej miejscowości) może być niższy niż jeden miesiąc wynajmu billboardu 12×4 m w centrum. Dla lokalnych firm i kampanii sezonowych to najlepszy stosunek zasięgu do kosztu wejścia.
 
-Nie wiesz, który format pasuje do Twojej kampanii? → [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
+Nie wiesz, który format pasuje do Twojej kampanii? → [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 ## Mesh czy PCV — który baner wybrać?
 
@@ -92,7 +92,7 @@ Baner reklamowy to nośnik tymczasowy, ale przepisy i tak obowiązują (źródł
 
 Praktyczna wskazówka: kampania sezonowa (np. letnia, 2–3 miesiące) mieści się w limicie 90 dni — legalnie bez formalności. Kampania całoroczna wymaga zgłoszenia.
 
-Więcej o przepisach i formalnościach: [Tablica reklamowa — przepisy krok po kroku](/blog/tablica-reklamowa)
+Więcej o przepisach i formalnościach: [Tablica reklamowa — przepisy krok po kroku](/blog/poradniki/tablica-reklamowa)
 
 ## Najczęściej zadawane pytania
 
@@ -110,6 +110,6 @@ Gdy baner będzie na wysokim budynku, w strefie wietrznej (miasto nadmorskie), n
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/tablica-reklamowa)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/poradniki/tablica-reklamowa)
 
 Szukasz miejsca pod baner reklamowy w swojej okolicy? Przeglądaj ogłoszenia bezpośrednio od właścicieli — bez pośredników → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)

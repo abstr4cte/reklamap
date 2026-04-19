@@ -66,7 +66,7 @@ Do kary finansowej dochodzi **nakaz demontażu** na koszt właściciela nośnika
 
 **Insight ekspercki:** Likwidacja ~90% wolnostojących nośników w Gdańsku po wejściu uchwały to realny precedens. Dla sieci handlowych koszty adaptacji sięgały ~3 mln zł na sklep (źródło: ideanovum.pl). Właściciele nośników w miastach z aktywną uchwałą muszą ten koszt uwzględniać w wycenie najmu — stąd ceny w Krakowie i Gdańsku są relatywnie wyższe niż w miastach bez regulacji.
 
-Szczegóły kosztów OOH w miastach regulowanych: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+Szczegóły kosztów OOH w miastach regulowanych: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 ## Co się zmieniło po wyroku TK 2023
 
@@ -92,7 +92,7 @@ Pięć kroków weryfikacji:
 4. **Pytanie właściciela nośnika** o dokumenty — zezwolenie zarządcy drogi, decyzja o warunkach zabudowy lub zgłoszenie budowlane
 5. **Dom mediowy** — Jetline, Billboard-X i podobne firmy prowadzą własne bazy statusów uchwał i aktualizują je regularnie (źródło: jetline.pl)
 
-Jak wybrać nośnik z najniższym ryzykiem prawnym: [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
+Jak wybrać nośnik z najniższym ryzykiem prawnym: [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 ---
 
@@ -116,6 +116,6 @@ Stan na 2025/2026: Warszawa (uchylona 2020, nowa w konsultacjach), Wrocław, Szc
 
 ---
 
-**Powiązane artykuły:** [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Reklama zewnętrzna — rodzaje i ceny](/blog/reklama-zewnetrzna) · [Baner reklamowy — cena i przepisy](/blog/baner-reklamowy-cena)
+**Powiązane artykuły:** [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Reklama zewnętrzna — rodzaje i ceny](/blog/poradniki/reklama-zewnetrzna) · [Baner reklamowy — cena i przepisy](/blog/poradniki/baner-reklamowy-cena)
 
 Masz nośnik reklamowy z uregulowanym statusem prawnym? Wystaw go bezpłatnie i dotrzyj do reklamodawców szukających pewnych lokalizacji → [reklamap.pl/dodaj-powierzchnie-reklamowa](/dodaj-powierzchnie-reklamowa)

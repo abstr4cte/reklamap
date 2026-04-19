@@ -33,7 +33,7 @@ Stawki netto za produkcję i montaż (źródło: gigaprint.pl, oklejamysamochody
 
 Do ceny produkcji dochodzi projekt graficzny — zazwyczaj 300–800 zł jednorazowo. Montaż jest zwykle wliczony w cenę oklejenia.
 
-Szczegółowe porównanie kosztów wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+Szczegółowe porównanie kosztów wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 ## Formaty reklamy samochodowej — czym się różnią
 
@@ -90,7 +90,7 @@ Reklama na samochodzie to jedyna forma outdoor całkowicie wolna od pozwoleń ad
 **Podatki dla firm:**
 Oklejenie samochodu firmowego to koszt reklamy — **pełne odliczenie VAT** na podstawie art. 86a ust. 1 pkt 3 ustawy o VAT (pojazd wykorzystywany wyłącznie do działalności). Koszty produkcji i montażu są kosztem uzyskania przychodu dla CIT/PIT. Źródło: 360ksiegowosc.pl.
 
-Więcej o formatach reklamy mobilnej: [Reklama w komunikacji miejskiej](/blog/reklama-w-transporcie-publicznym)
+Więcej o formatach reklamy mobilnej: [Reklama w komunikacji miejskiej](/blog/poradniki/reklama-w-transporcie-publicznym)
 
 ## Najczęściej zadawane pytania
 
@@ -108,6 +108,6 @@ Tak. Dla przedsiębiorców oklejenie samochodu firmowego to koszt reklamy — pe
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Reklama w komunikacji miejskiej](/blog/reklama-w-transporcie-publicznym)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Reklama w komunikacji miejskiej](/blog/poradniki/reklama-w-transporcie-publicznym)
 
 Szukasz pojazdu do kampanii reklamowej lub chcesz wystawić swój samochód jako nośnik? Przeglądaj ogłoszenia i kontaktuj się bezpośrednio z właścicielami → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)

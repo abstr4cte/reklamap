@@ -66,7 +66,7 @@ Koszt muralu składa się z dwóch niezależnych elementów: wykonania grafiki n
 
 Źródło: murale-in.pl, wolfsmarketing.pl. Ceny wynajmu ściany w centrum Warszawy lub Krakowa mogą przekroczyć 50 000 zł/mc przy wyjątkowo eksponowanych lokalizacjach. Kontrakty podpisywane są zazwyczaj na 1–3 lata.
 
-Pełne porównanie kosztów wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+Pełne porównanie kosztów wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 ## Dlaczego murale działają skuteczniej niż billboardy?
 
@@ -115,7 +115,7 @@ Okresy dostosowania dla istniejących reklam: 3–5 lat od wejścia uchwały w �
 
 Praktyczna wskazówka: przed podpisaniem umowy z właścicielem ściany sprawdź status uchwały krajobrazowej w danej gminie. W Warszawie i Wrocławiu dopuszczalne strefy i wymogi estetyczne są jasno określone — w nich ryzyko formalne jest niskie.
 
-Zanim wybierzesz lokalizację, przeczytaj też: [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
+Zanim wybierzesz lokalizację, przeczytaj też: [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 ## Główni wykonawcy murali reklamowych w Polsce
 
@@ -139,7 +139,7 @@ Trzy kierunki, które zmieniają rynek murali reklamowych (źródło: nietak.eu,
 
 **Hybrydy 3D / LED** — murale z wbudowanymi modułami LED lub efektem 3D (złudzenie optyczne widoczne z konkretnego punktu widzenia). Droższe w wykonaniu (cena rośnie 2–4×), ale generują kilkukrotnie większy zasięg organiczny w social media.
 
-Jeśli rozważasz format cyfrowy zamiast tradycyjnego — sprawdź: [Telebim i ekran LED — reklama cyfrowa outdoor](/blog/telebim-ekran-led-reklama)
+Jeśli rozważasz format cyfrowy zamiast tradycyjnego — sprawdź: [Telebim i ekran LED — reklama cyfrowa outdoor](/blog/trendy/telebim-ekran-led-reklama)
 
 ## Najczęściej zadawane pytania
 
@@ -157,6 +157,6 @@ Gdy celem jest budowanie prestiżu marki, a nie natychmiastowa odpowiedź sprzed
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Telebim i ekran LED — reklama cyfrowa outdoor](/blog/telebim-ekran-led-reklama)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Telebim i ekran LED — reklama cyfrowa outdoor](/blog/trendy/telebim-ekran-led-reklama)
 
 Masz ścianę budynku, którą możesz zaoferować reklamodawcom? Dodaj ogłoszenie i zacznij zarabiać → [reklamap.pl/dodaj-powierzchnie-reklamowa](/dodaj-powierzchnie-reklamowa)

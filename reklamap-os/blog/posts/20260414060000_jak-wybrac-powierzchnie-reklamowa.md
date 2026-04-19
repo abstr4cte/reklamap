@@ -51,7 +51,7 @@ Ceny wynajmu zależą od dwóch zmiennych: formatu i lokalizacji. Poniższa tabe
 
 **Ważne:** Ceny zazwyczaj nie obejmują druku i montażu materiałów — dolicz 15–30% do budżetu kampanii. Zawsze dopytaj właściciela, co dokładnie jest wliczone w stawkę.
 
-Szczegółowe zestawienie kosztów produkcji i montażu znajdziesz w artykule [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor).
+Szczegółowe zestawienie kosztów produkcji i montażu znajdziesz w artykule [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor).
 
 ---
 
@@ -96,7 +96,7 @@ Dla billboardu o powierzchni 12 m² maksymalna opłata wynosi ok. 7,80 zł/dzie�
 
 Poszczególne gminy uchwalają własne regulacje. Poznań (od 2024/2025) ogranicza wolnostojące nośniki do 18 m² i wprowadza 8 stref z różnymi zasadami. Warszawa i Kraków mają podobne ograniczenia. Przed podpisaniem umowy sprawdź, czy nośnik ma uregulowany status prawny — to obowiązek właściciela, ale ryzyko przedwczesnej likwidacji poniesiesz Ty.
 
-Więcej o przepisach: [Tablica reklamowa — formalności i pozwolenia](/blog/tablica-reklamowa)
+Więcej o przepisach: [Tablica reklamowa — formalności i pozwolenia](/blog/poradniki/tablica-reklamowa)
 
 Szukasz nośnika z uregulowanym statusem prawnym? [Przeglądaj oferty na reklamap.pl →](/powierzchnie-reklamowe)
 
@@ -113,6 +113,6 @@ Tak, przy odpowiednim podejściu. Baner przy lokalnej ulicy lub billboard w mnie
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Tablica reklamowa — przepisy i formalności](/blog/tablica-reklamowa) · [Reklama zewnętrzna — kompletny przewodnik](/blog/reklama-zewnetrzna)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Tablica reklamowa — przepisy i formalności](/blog/poradniki/tablica-reklamowa) · [Reklama zewnętrzna — kompletny przewodnik](/blog/poradniki/reklama-zewnetrzna)
 
 Gotowy na wybór powierzchni? Przeglądaj tysiące nośników w całej Polsce i kontaktuj się bezpośrednio z właścicielami — bez pośredników → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)

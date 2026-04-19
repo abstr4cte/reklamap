@@ -37,7 +37,7 @@ Dwa czynniki automatycznie podnoszą stawkę:
 - **Podświetlenie** — nośnik z oświetleniem to +30–50% do ceny bazowej
 - **Długi kontrakt** — przy umowach do 12 miesięcy dostępne rabaty 10–25%
 
-Nie wiesz, jak wybrać właściwą lokalizację? → [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
+Nie wiesz, jak wybrać właściwą lokalizację? → [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 ## Centrum i Śródmieście — premium z ograniczeniami
 
@@ -47,7 +47,7 @@ Okolice Rynku Głównego, al. Jana Pawła II i trasy dojazdowe do centrum to lok
 
 Ważne: część Śródmieścia to strefa A uchwały krajobrazowej. Wielkoformatowe billboardy są tam zakazane — szczegóły w sekcji o uchwale poniżej. Przed podpisaniem umowy sprawdź strefę nośnika.
 
-Szczegółowy cennik wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+Szczegółowy cennik wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 ## Krowodrza, Podgórze i Nowa Huta — lokalizacje dzielnicowe
 
@@ -86,7 +86,7 @@ MPK Kraków opublikował cennik obowiązujący od 01.12.2025 — to rzadkość w
 
 Koszt produkcji to wydatek jednorazowy — ekspozycja naliczana co miesiąc. Tramwaje krakowskie kursują przez ścisłe centrum, trasy turystyczne i osiedla mieszkaniowe, co daje zasięg w każdym segmencie demograficznym jednocześnie.
 
-Więcej o reklamie w transporcie: [Reklama w komunikacji miejskiej — co warto wiedzieć](/blog/reklama-w-transporcie-publicznym)
+Więcej o reklamie w transporcie: [Reklama w komunikacji miejskiej — co warto wiedzieć](/blog/poradniki/reklama-w-transporcie-publicznym)
 
 ## Uchwała krajobrazowa Kraków — 4 strefy, twarde ograniczenia
 
@@ -111,7 +111,7 @@ Kraków ma jedne z najbardziej szczegółowych przepisów reklamowych w Polsce. 
 
 Krakowskie Stare Miasto ma najostrzejsze ograniczenia reklamowe spośród wszystkich polskich miast — szyldy powyżej 1,2 m szerokości są po prostu zakazane. Nowa uchwała jest w przygotowaniu na lata 2023–2026 (źródło: euroart.pl, bip.krakow.pl). Przed podpisaniem umowy najmu sprawdź strefę nośnika i jego status formalnoprawny. Właściciel nośnika odpowiada za zgodność z uchwałą — ale ryzyko przedwczesnej likwidacji kampanii poniesiesz Ty.
 
-Więcej o przepisach i formalnościach: [Tablica reklamowa — przepisy i pozwolenia](/blog/tablica-reklamowa)
+Więcej o przepisach i formalnościach: [Tablica reklamowa — przepisy i pozwolenia](/blog/poradniki/tablica-reklamowa)
 
 ## Najczęściej zadawane pytania
 
@@ -129,6 +129,6 @@ Stare Miasto ma restrykcyjne przepisy — skuteczniejsze jest oklejenie tramwaj�
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/tablica-reklamowa)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/poradniki/tablica-reklamowa)
 
 Szukasz nośnika reklamowego w Krakowie? Przeglądaj dostępne oferty i kontaktuj się bezpośrednio z właścicielami — bez pośredników → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)

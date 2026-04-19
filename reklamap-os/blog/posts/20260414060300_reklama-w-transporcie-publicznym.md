@@ -53,7 +53,7 @@ Ceny poniżej obejmują druk i montaż — inaczej niż przy billboardach, gdzie
 
 **Ważna różnica vs billboard:** Przy reklamie w transporcie cena zazwyczaj obejmuje druk i montaż materiałów. Przy billboardzie to osobny koszt — wyklejenie billboardu to dodatkowe 120–220 zł, a druk baneru 50–100 zł/m². Porównując budżety, zawsze sprawdź co wliczone w stawkę.
 
-Szczegółowe porównanie kosztów: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+Szczegółowe porównanie kosztów: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 Przeglądaj dostępne nośniki w transporcie w swojej okolicy → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)
 
@@ -90,7 +90,7 @@ Reklama wewnętrzna dociera przede wszystkim do pasażerów. Reklama zewnętrzna
 
 Transport sprawdza się lepiej przy komunikatach wymagających czasu na przeczytanie — szczegóły oferty, QR kod, numery telefonów. Billboard to format budowania zasięgu masowego z prostym, błyskawicznym przekazem.
 
-Jak wybrać odpowiedni format do celu kampanii: [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
+Jak wybrać odpowiedni format do celu kampanii: [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 ## Najczęściej zadawane pytania
 
@@ -105,6 +105,6 @@ Tak, operatorzy oferują zazwyczaj możliwość wskazania konkretnych linii lub 
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Reklama outdoor w Warszawie](/blog/reklama-outdoor-warszawa)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Reklama outdoor w Warszawie](/blog/lokalizacje/reklama-outdoor-warszawa)
 
 Szukasz nośników reklamowych w transporcie w swoim mieście? Przeglądaj dostępne oferty bezpośrednio od operatorów → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)

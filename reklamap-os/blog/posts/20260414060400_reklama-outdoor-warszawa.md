@@ -52,7 +52,7 @@ Trzy dzielnice o zbliżonym poziomie cenowym — to tu koncentruje się ruch biz
 
 **Dla kogo:** marki ogólnopolskie, kampanie wizerunkowe, branże finansowa, technologiczna, deweloperska.
 
-Szczegółowy cennik wszystkich formatów: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+Szczegółowy cennik wszystkich formatów: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 ## Poza centrum — Praga, Ursynów, Żoliborz
 
@@ -109,7 +109,7 @@ Warszawa **10 lipca 2025 r.** przystąpiła do nowej procedury uchwały krajobra
 
 Praktyczna wskazówka: przed podpisaniem umowy najmu sprawdź, czy nośnik ma uregulowany status formalnoprawny. Właściciel ponosi odpowiedzialność za zgodność z uchwałą — ale ryzyko przedwczesnej likwidacji kampanii poniesiesz Ty.
 
-Więcej o przepisach i formalnościach: [Tablica reklamowa — przepisy i pozwolenia](/blog/tablica-reklamowa)
+Więcej o przepisach i formalnościach: [Tablica reklamowa — przepisy i pozwolenia](/blog/poradniki/tablica-reklamowa)
 
 ## Najczęściej zadawane pytania
 
@@ -124,6 +124,6 @@ Pakiety podstawowe od 3 990 zł/mc. Ekspozycja na pojedynczej stacji to 10 000�
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/tablica-reklamowa)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/poradniki/tablica-reklamowa)
 
 Szukasz nośnika reklamowego w Warszawie? Przeglądaj dostępne oferty i kontaktuj się bezpośrednio z właścicielami — bez pośredników → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)

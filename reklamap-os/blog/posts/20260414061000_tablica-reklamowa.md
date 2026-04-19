@@ -69,7 +69,7 @@ Tablice bez podświetlenia nie generują kosztów stałych. Przy podświetleniu 
 
 Producenci systemów LED podają żywotność na poziomie **50 000 godzin** (15+ lat ciągłej pracy) przy barwie 4 000–5 000 K. Panele są wodoszczelne i wymagają minimalnej konserwacji.
 
-Szczegółowe zestawienie wszystkich kosztów reklamy zewnętrznej: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+Szczegółowe zestawienie wszystkich kosztów reklamy zewnętrznej: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 ## Materiały i trwałość — co wybrać?
 
@@ -112,7 +112,7 @@ Regulacje dotyczące tablic reklamowych w Polsce nakłada ustawa krajobrazowa or
 
 **Totem lub pylon** — gdy priorytetem jest identyfikacja miejsca i prestiż. Pionowa konstrukcja widoczna z daleka sygnalizuje obecność obiektu, który "tu jest na stałe".
 
-Jak dopasować format do celu kampanii: [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
+Jak dopasować format do celu kampanii: [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 ## Producenci tablic reklamowych w Polsce
 
@@ -142,6 +142,6 @@ Modernizacja istniejącej tablicy na LED (retrofit) to jednorazowy koszt 3 000�
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Baner reklamowy — cena i rodzaje](/blog/baner-reklamowy-cena)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Baner reklamowy — cena i rodzaje](/blog/poradniki/baner-reklamowy-cena)
 
 Posiadasz tablicę reklamową i szukasz reklamodawcy? Dodaj swoją powierzchnię bezpłatnie → [reklamap.pl/dodaj-powierzchnie-reklamowa](/dodaj-powierzchnie-reklamowa)

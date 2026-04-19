@@ -49,7 +49,7 @@ Ceny reklamy na ekranach LED zależą od lokalizacji, długości spotu i liczby 
 
 Kluczowa różnica wobec tradycyjnego billboardu: **jeden ekran obsługuje wielu reklamodawców w rotacji** — płacisz za slot czasowy, nie za wyłączność na nośniku. To obniża barierę wejścia, ale oznacza też, że Twoja reklama pokazuje się co kilka–kilkanaście sekund, nie non-stop.
 
-Porównanie kosztów wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+Porównanie kosztów wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 ## Zalety telebimów vs tradycyjne billboardy
 
@@ -80,7 +80,7 @@ Główni operatorzy w Polsce: Digital Network (ponad 30% udziału w DOOH), AMS (
 
 DOOH rośnie 8–9× szybciej niż tradycyjny OOH (32–36% vs ~4% r/r). Przy prognozowanym rynku 935 mln zł w 2026 r. cyfrowe ekrany mogą przekroczyć 30% całego OOH — co oznacza, że za 2–3 lata co trzecia złotówka na reklamę zewnętrzną trafi na ekran LED. Dla reklamodawców to sygnał, żeby zacząć testować DOOH teraz, zanim ceny wzrosną wraz z popytem.
 
-Jak wybrać odpowiedni nośnik dla swojej kampanii? → [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
+Jak wybrać odpowiedni nośnik dla swojej kampanii? → [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 ## Formalności — telebim a przepisy
 
@@ -92,7 +92,7 @@ Ekran LED to nośnik stały i podlega tym samym przepisom co billboard (źródł
 
 Dodatkowe ograniczenie: jasność ekranów w pobliżu skrzyżowań regulują przepisy ruchu drogowego — ekran nie może imitować sygnalizacji świetlnej ani rozpraszać kierowców.
 
-Więcej o przepisach dotyczących nośników stałych: [Tablica reklamowa — ceny i formalności](/blog/tablica-reklamowa)
+Więcej o przepisach dotyczących nośników stałych: [Tablica reklamowa — ceny i formalności](/blog/poradniki/tablica-reklamowa)
 
 ## Najczęściej zadawane pytania
 
@@ -110,6 +110,6 @@ Tak, jeśli ma powyżej 2,5 m² — wymagane jest pozwolenie budowlane (prawo bu
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/tablica-reklamowa)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/poradniki/tablica-reklamowa)
 
 Szukasz ekranu LED lub telebimów w swojej okolicy? Przeglądaj dostępne nośniki cyfrowe bezpośrednio od właścicieli → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)

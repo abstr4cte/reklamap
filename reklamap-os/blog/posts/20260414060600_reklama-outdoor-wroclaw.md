@@ -39,7 +39,7 @@ Dwa czynniki automatycznie podnoszą stawkę:
 - **Podświetlenie** — nośnik z oświetleniem to +30–50% do ceny bazowej
 - **Długi kontrakt** — przy umowach wielomiesięcznych dostępne rabaty
 
-Nie wiesz, jak wybrać właściwą lokalizację? → [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
+Nie wiesz, jak wybrać właściwą lokalizację? → [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 ## Centrum i Śródmieście — premium dla marek IT i B2B
 
@@ -49,7 +49,7 @@ Okolice Rynku, ul. Świdnicka, pl. Grunwaldzki i okolice Dworca Głównego to lo
 
 Uwaga: część Śródmieścia leży w granicach Parku Kulturowego „Stare Miasto" — szczegóły dotyczące ograniczeń reklamowych w sekcji poniżej.
 
-Szczegółowy cennik wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+Szczegółowy cennik wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 ## Krzyki, Fabryczna i Psie Pole — lokalizacje dzielnicowe
 
@@ -90,7 +90,7 @@ Koszt produkcji (druk, montaż, przywrócenie barw MPK) — wycena indywidualna 
 
 Tramwaj Skoda 19T to najnowszy tabor MPK — kursuje na kluczowych liniach przez centrum. Najwyższa cena w ofercie, ale też najwyższy efekt wizualny i prestiż kampanii.
 
-Więcej o reklamie w transporcie: [Reklama w komunikacji miejskiej — co warto wiedzieć](/blog/reklama-w-transporcie-publicznym)
+Więcej o reklamie w transporcie: [Reklama w komunikacji miejskiej — co warto wiedzieć](/blog/poradniki/reklama-w-transporcie-publicznym)
 
 ## Park Kulturowy „Stare Miasto" — inne narzędzie niż uchwała krajobrazowa
 
@@ -108,7 +108,7 @@ Obszar Parku (~210 ha) obejmuje:
 
 **Poza Parkiem** (Krzyki, Fabryczna, Psie Pole, trasy wylotowe) — standardowe przepisy budowlane, brak szczególnych ograniczeń dla nośników OOH. To istotna różnica wobec Krakowa czy Warszawy, gdzie uchwały obejmują znacznie szerszy obszar miasta.
 
-Przed podpisaniem umowy sprawdź, czy nośnik leży w granicach Parku. Więcej o przepisach: [Tablica reklamowa — przepisy i pozwolenia](/blog/tablica-reklamowa)
+Przed podpisaniem umowy sprawdź, czy nośnik leży w granicach Parku. Więcej o przepisach: [Tablica reklamowa — przepisy i pozwolenia](/blog/poradniki/tablica-reklamowa)
 
 ## Najczęściej zadawane pytania
 
@@ -126,6 +126,6 @@ Okolice ul. Legnickiej i Wrocławskiego Parku Technologicznego (Fabryczna) oraz 
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/tablica-reklamowa)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/poradniki/tablica-reklamowa)
 
 Szukasz nośnika reklamowego we Wrocławiu? Przeglądaj dostępne oferty i kontaktuj się bezpośrednio z właścicielami — bez pośredników → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)

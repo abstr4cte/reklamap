@@ -44,7 +44,7 @@ Dla kampanii pod klucz rynek oferuje pakiety obejmujące wynajem, produkcję i m
 
 Przy kampaniach pod klucz zawsze pytaj, co dokładnie wchodzi w stawkę — różnica między ceną samego wynajmu a pakietem z produkcją i montażem potrafi być znacząca.
 
-Pełne porównanie stawek we wszystkich miastach: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+Pełne porównanie stawek we wszystkich miastach: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 ## MPK Poznań — reklama w tramwajach i autobusach (cennik od 1 marca 2026)
 
@@ -78,7 +78,7 @@ Cennik spotów (netto/mc):
 | Spot 10 sekund | 8 700 zł |
 | Spot 15 sekund | 11 700 zł |
 
-Format DOOH wewnątrz pojazdu nie wymaga druku ani montażu przy każdej zmianie treści. Treść kampanii aktualizuje się zdalnie. Więcej o reklamie w pojazdach komunikacji miejskiej: [Reklama w transporcie publicznym](/blog/reklama-w-transporcie-publicznym)
+Format DOOH wewnątrz pojazdu nie wymaga druku ani montażu przy każdej zmianie treści. Treść kampanii aktualizuje się zdalnie. Więcej o reklamie w pojazdach komunikacji miejskiej: [Reklama w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym)
 
 ## Uchwała krajobrazowa Poznań — status 2025/2026
 
@@ -97,7 +97,7 @@ Kampanie łączone — billboard + totem + nośnik na elewacji — realizowane s
 
 **Ważne zastrzeżenie:** Brak uchwały nie zwalnia z przepisów ogólnych. Nośniki powyżej 2,5 m² nadal wymagają zgłoszenia lub pozwolenia budowlanego (Prawo budowlane, Dz.U.2024 poz.725). Opłata reklamowa nadal obowiązuje: 3,72 zł/dzień + 0,34 zł/m²/dzień. Uchwała reguluje *estetykę i strefowe ograniczenia lokalizacji* — jej brak usuwa te warstwy, nie wymogi budowlane.
 
-Jak wybrać nośnik przed podpisaniem umowy: [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
+Jak wybrać nośnik przed podpisaniem umowy: [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 ## Planowanie kampanii w Poznaniu — co sprawdzić
 
@@ -133,6 +133,6 @@ Do kampanii zasięgowych: trasy wylotowe (A2, S5) i główne arterie — ruch 14
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Reklama w transporcie publicznym](/blog/reklama-w-transporcie-publicznym) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Reklama w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 Masz nośnik w Poznaniu lub Wielkopolsce? Wystaw go bezpłatnie i dotrzyj do tysięcy reklamodawców → [reklamap.pl/dodaj-powierzchnie-reklamowa](/dodaj-powierzchnie-reklamowa)

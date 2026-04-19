@@ -29,15 +29,15 @@ Na polskim rynku działa kilka głównych formatów:
 
 **Billboard** to najbardziej rozpoznawalny nośnik reklamowy. Wielkoformatowe plansze przy drogach krajowych, ekspresowych i w centrach miast osiągają zasięg wzroku do kilkuset metrów. Sprawdza się przede wszystkim do budowania świadomości marki wśród kierowców i pasażerów.
 
-**Citylight** to podświetlana gablota reklamowa o wymiarach 1,2×1,8 m, montowana na słupach oświetleniowych i przy przystankach. Kontakt z reklamą trwa kilkanaście sekund i odbywa się na poziomie oczu pieszego. Szczegółowy opis formatu znajdziesz w artykule [Citylight — reklama na przystankach i chodnikach](/blog/citylight-reklama).
+**Citylight** to podświetlana gablota reklamowa o wymiarach 1,2×1,8 m, montowana na słupach oświetleniowych i przy przystankach. Kontakt z reklamą trwa kilkanaście sekund i odbywa się na poziomie oczu pieszego. Szczegółowy opis formatu znajdziesz w artykule [Citylight — reklama na przystankach i chodnikach](/blog/poradniki/citylight-reklama).
 
-**Telebim i ekrany LED (DOOH)** to cyfrowe nośniki, które wyświetlają rotacyjne spoty reklamowe, zazwyczaj 8-sekundowe. Umożliwiają zmianę treści bez kosztów druku, targetowanie według pory dnia i integrację z kampaniami online. Więcej o tym formacie przeczytasz w artykule [Telebim i ekran LED — reklama DOOH w Polsce](/blog/telebim-ekran-led-reklama).
+**Telebim i ekrany LED (DOOH)** to cyfrowe nośniki, które wyświetlają rotacyjne spoty reklamowe, zazwyczaj 8-sekundowe. Umożliwiają zmianę treści bez kosztów druku, targetowanie według pory dnia i integrację z kampaniami online. Więcej o tym formacie przeczytasz w artykule [Telebim i ekran LED — reklama DOOH w Polsce](/blog/trendy/telebim-ekran-led-reklama).
 
-**Baner reklamowy** to jeden z najbardziej elastycznych formatów — stosowany na rusztowaniach, ogrodzeniach i elewacjach budynków w trakcie remontów. Niski próg wejścia budżetowego i swoboda w doborze lokalizacji sprawiają, że jest popularny wśród mniejszych reklamodawców. Szczegóły kosztowe omawia artykuł [Baner reklamowy — ceny druku i wynajmu powierzchni](/blog/baner-reklamowy-cena).
+**Baner reklamowy** to jeden z najbardziej elastycznych formatów — stosowany na rusztowaniach, ogrodzeniach i elewacjach budynków w trakcie remontów. Niski próg wejścia budżetowego i swoboda w doborze lokalizacji sprawiają, że jest popularny wśród mniejszych reklamodawców. Szczegóły kosztowe omawia artykuł [Baner reklamowy — ceny druku i wynajmu powierzchni](/blog/poradniki/baner-reklamowy-cena).
 
-**Reklama w transporcie publicznym** obejmuje oklejanie całych pojazdów (autobusy, tramwaje, metro) lub umieszczanie plakatów w ramkach wewnątrz. Format zapewnia długi czas kontaktu z przekazem przy dużej liczbie dziennych odsłon. Wszystko o tym formacie w artykule [Reklama w transporcie publicznym — autobus, tramwaj, metro](/blog/reklama-w-transporcie-publicznym).
+**Reklama w transporcie publicznym** obejmuje oklejanie całych pojazdów (autobusy, tramwaje, metro) lub umieszczanie plakatów w ramkach wewnątrz. Format zapewnia długi czas kontaktu z przekazem przy dużej liczbie dziennych odsłon. Wszystko o tym formacie w artykule [Reklama w transporcie publicznym — autobus, tramwaj, metro](/blog/poradniki/reklama-w-transporcie-publicznym).
 
-**Mural reklamowy** to malowana lub drukowana grafika wielkoformatowa na ścianach budynków. Nośnik coraz chętniej wybierany przez marki, które chcą budować wizerunek w sposób niebanalny i zbierać organiczne posty użytkowników w mediach społecznościowych. Przegląd realizacji i cen znajdziesz w artykule [Murale reklamowe — reklama, która zostaje w pamięci](/blog/murale-reklamowe).
+**Mural reklamowy** to malowana lub drukowana grafika wielkoformatowa na ścianach budynków. Nośnik coraz chętniej wybierany przez marki, które chcą budować wizerunek w sposób niebanalny i zbierać organiczne posty użytkowników w mediach społecznościowych. Przegląd realizacji i cen znajdziesz w artykule [Murale reklamowe — reklama, która zostaje w pamięci](/blog/trendy/murale-reklamowe).
 
 ## Cennik reklamy zewnętrznej 2026 — wszystkie formaty
 
@@ -57,7 +57,7 @@ Ceny zależą od dwóch zmiennych: formatu i lokalizacji. Poniższa tabela zesta
 | Mural (wynajem ściany) | Od 100 m² | od 20 000 zł |
 | Baner (druk własny) | Za m² materiału | 39–190 zł/m² |
 
-Ceny nie obejmują zazwyczaj druku i montażu — te koszty mogą zwiększyć wydatek o 15–30%. Zawsze pytaj właściciela nośnika, co dokładnie jest wliczone w stawkę. Pełne omówienie kosztów znajdziesz w artykule [Ile kosztuje reklama outdoor? Cennik 2026](/blog/ile-kosztuje-reklama-outdoor).
+Ceny nie obejmują zazwyczaj druku i montażu — te koszty mogą zwiększyć wydatek o 15–30%. Zawsze pytaj właściciela nośnika, co dokładnie jest wliczone w stawkę. Pełne omówienie kosztów znajdziesz w artykule [Ile kosztuje reklama outdoor? Cennik 2026](/blog/poradniki/ile-kosztuje-reklama-outdoor).
 
 ---
 
@@ -144,6 +144,6 @@ Klasyczne OOH mierzy się wskaźnikami zasięgu i liczby kontaktów z nośnikiem
 ---
 
 **Powiązane artykuły:**
-[Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Citylight — format dla pieszych i pasażerów](/blog/citylight-reklama) · [Telebim i ekran LED — DOOH w Polsce](/blog/telebim-ekran-led-reklama) · [Baner reklamowy — cena i specyfikacje](/blog/baner-reklamowy-cena) · [Reklama w transporcie publicznym](/blog/reklama-w-transporcie-publicznym) · [Murale reklamowe](/blog/murale-reklamowe)
+[Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Citylight — format dla pieszych i pasażerów](/blog/poradniki/citylight-reklama) · [Telebim i ekran LED — DOOH w Polsce](/blog/trendy/telebim-ekran-led-reklama) · [Baner reklamowy — cena i specyfikacje](/blog/poradniki/baner-reklamowy-cena) · [Reklama w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym) · [Murale reklamowe](/blog/trendy/murale-reklamowe)
 
 Gotowy wybrać powierzchnię? Porównaj tysiące nośników w całej Polsce i skontaktuj się bezpośrednio z właścicielem — bez prowizji agencji → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)

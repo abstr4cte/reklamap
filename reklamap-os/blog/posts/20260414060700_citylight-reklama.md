@@ -59,7 +59,7 @@ Do wynajmu nośnika dochodzi koszt druku grafiki. Plakat do standardowego cityli
 
 Dla digital citylightów druk odpada — zamiast tego płacisz za przygotowanie pliku wideo lub animacji oraz czas na ekranie w modelu CPM lub flat fee.
 
-Jeśli interesuje Cię szersze zestawienie kosztów różnych formatów OOH, przeczytaj [ile kosztuje reklama outdoor](/blog/ile-kosztuje-reklama-outdoor).
+Jeśli interesuje Cię szersze zestawienie kosztów różnych formatów OOH, przeczytaj [ile kosztuje reklama outdoor](/blog/poradniki/ile-kosztuje-reklama-outdoor).
 
 ---
 
@@ -102,7 +102,7 @@ To najczęstsze pytanie przy planowaniu kampanii. Odpowiedź zależy od trzech c
 - Kampania promuje markę, nie wymaga szczegółowego przekazu
 - Dysponujesz budżetem pozwalającym na kilkanaście nośników w różnych częściach miasta
 
-Nie musisz wybierać jednego formatu — wiele kampanii łączy citylighty przy przystankach z jednym lub dwoma billboardami przy głównych arteriach wjazdowych. Jak podejść do wyboru bardziej systematycznie, opisujemy w artykule [jak wybrać powierzchnię reklamową](/blog/jak-wybrac-powierzchnie-reklamowa).
+Nie musisz wybierać jednego formatu — wiele kampanii łączy citylighty przy przystankach z jednym lub dwoma billboardami przy głównych arteriach wjazdowych. Jak podejść do wyboru bardziej systematycznie, opisujemy w artykule [jak wybrać powierzchnię reklamową](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa).
 
 ---
 
@@ -146,7 +146,7 @@ Format digital CL to ten sam gabarytem nośnik, ale z ekranem LED zamiast podśw
 
 Sieć AMS DOOH w Polsce dociera miesięcznie do 72,6% populacji w wieku 7–75 lat (dane Gemius Mediapanel). To wynik porównywalny z zasięgiem największych stacji telewizyjnych, przy czym komunikat trafia do odbiorcy w kontekście miejskim — przy przystanku, w drodze do sklepu.
 
-Jeśli interesuje Cię bardziej szczegółowe zestawienie formatów DOOH i ekranów LED, przeczytaj [telebim i ekran LED w reklamie outdoor](/blog/telebim-ekran-led-reklama).
+Jeśli interesuje Cię bardziej szczegółowe zestawienie formatów DOOH i ekranów LED, przeczytaj [telebim i ekran LED w reklamie outdoor](/blog/trendy/telebim-ekran-led-reklama).
 
 ---
 

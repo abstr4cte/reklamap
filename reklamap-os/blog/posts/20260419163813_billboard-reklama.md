@@ -34,7 +34,7 @@ Stawki netto za wynajem miesięczny (bez druku i montażu materiałów). Źród�
 | 12×3 m | Warszawa centrum | 8 000–15 000 zł |
 | 12×3 m | Warszawa peryferie | 3 000–6 000 zł |
 
-**Druk i montaż to osobny koszt** — wyklejenie formatu 48 m² to zazwyczaj kilkaset złotych jednorazowo, projekt graficzny 1 000–3 000 zł. Pełne zestawienie kosztów produkcji: [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor)
+**Druk i montaż to osobny koszt** — wyklejenie formatu 48 m² to zazwyczaj kilkaset złotych jednorazowo, projekt graficzny 1 000–3 000 zł. Pełne zestawienie kosztów produkcji: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
 ### Ile kosztuje budowa własnego billboardu?
 
@@ -71,7 +71,7 @@ Billboard nie jest najlepszym wyborem w każdej kampanii. Jest niezastąpiony w 
 
 **Insight ekspercki:** W strukturze rynku OOH Q1 2025 billboardy 18 m² przy drogach krajowych mają **20% udziału** w klasycznym OOH, a wielki format (108 m² i większe) — 11%. Citylighty dominują z 42% udziałem w miastach. Oznacza to, że billboard to format tranzytowy i zasięgowy — nie miejski. Kampanie lokalne w centrum dużego miasta często przynoszą lepszy zwrot z citylightu przy niższym koszcie wejścia (źródło: oohlife.org).
 
-Jak dobrać format do celu kampanii: [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
+Jak dobrać format do celu kampanii: [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 ## Efektywność billboardu — dane 2026
 
@@ -115,7 +115,7 @@ Zanim zarezerwujesz nośnik lub zaczniesz budowę, sprawdź trzy warstwy regulac
 
 ### Uchwała krajobrazowa i MPZP
 
-Gminy z aktywną uchwałą krajobrazową mogą ograniczać gabaryty, materiały i lokalizacje nośników — włącznie z całkowitym zakazem w centrach historycznych. Przed inwestycją sprawdź BIP swojej gminy. Szczegóły: [Uchwała krajobrazowa — co oznacza dla reklamy](/blog/uchwala-krajobrazowa-reklama)
+Gminy z aktywną uchwałą krajobrazową mogą ograniczać gabaryty, materiały i lokalizacje nośników — włącznie z całkowitym zakazem w centrach historycznych. Przed inwestycją sprawdź BIP swojej gminy. Szczegóły: [Uchwała krajobrazowa — co oznacza dla reklamy](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama)
 
 ### Formalności krok po kroku — od decyzji do montażu
 
@@ -142,6 +142,6 @@ To różne narzędzia dla różnych celów. CPM billboardu (0,50–5 zł) jest 1
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Reklama zewnętrzna — rodzaje i ceny](/blog/reklama-zewnetrzna) · [Uchwała krajobrazowa — co oznacza dla reklamy](/blog/uchwala-krajobrazowa-reklama)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Reklama zewnętrzna — rodzaje i ceny](/blog/poradniki/reklama-zewnetrzna) · [Uchwała krajobrazowa — co oznacza dla reklamy](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama)
 
 Masz billboard lub grunt pod nośnik? Wystaw ogłoszenie bezpłatnie i zacznij zarabiać na swojej lokalizacji → [reklamap.pl/dodaj-powierzchnie-reklamowa](/dodaj-powierzchnie-reklamowa)

@@ -84,7 +84,7 @@ Komunikacja miejska to osobna kategoria z innym modelem rozliczeniowym. Ceny obe
 | Całopojazdowa — tramwaj (Poznań) | 10 300–12 500 zł |
 | Autobus solo, min. 12 mc (Wrocław) | 833–1 000 zł/mc |
 
-Pełny przewodnik po formatach: [Reklama w transporcie publicznym](/blog/reklama-w-transporcie-publicznym)
+Pełny przewodnik po formatach: [Reklama w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym)
 
 ---
 
@@ -114,7 +114,7 @@ Produkcja i montaż to zazwyczaj **15–30% całkowitego kosztu kampanii**. Przy
 - **Sezonowość** — wyższy popyt w sezonie X–XII i wakacyjnym
 - **Wyłączność vs rotacja** — billboard to wyłączność, ekran LED to slot w rotacji
 
-Jak wybrać lokalizację i format do celu kampanii: [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa)
+Jak wybrać lokalizację i format do celu kampanii: [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 ## Jak porównywać ceny — wskaźnik CPM
 
@@ -137,6 +137,6 @@ Reklama modułowa boczna to 1 350–2 500 zł/mc z drukiem. Full cover autobusu 
 
 ---
 
-**Powiązane artykuły:** [Jak wybrać powierzchnię reklamową?](/blog/jak-wybrac-powierzchnie-reklamowa) · [Reklama w transporcie publicznym](/blog/reklama-w-transporcie-publicznym) · [Tablica reklamowa — przepisy i formalności](/blog/tablica-reklamowa)
+**Powiązane artykuły:** [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Reklama w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym) · [Tablica reklamowa — przepisy i formalności](/blog/poradniki/tablica-reklamowa)
 
 Szukasz nośnika w swoim budżecie? Przeglądaj setki ofert z cenami bezpośrednio od właścicieli — bez prowizji agencji → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)
