@@ -204,9 +204,9 @@ watch(ad, (newAd) => {
           'price': newAd.price,
           'priceCurrency': 'PLN',
           'priceValidUntil': priceValidUntil,
-          'seller': { '@type': 'Organization', 'name': 'ReklaMap' },
           'availability': newAd.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-          'url': cleanUrl
+          'url': cleanUrl,
+          'offeredBy': { '@type': 'Organization', 'name': 'ReklaMap', 'url': origin }
         }
       },
       {

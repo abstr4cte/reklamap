@@ -18,6 +18,8 @@ Route::get('/sitemap.xml', function () {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
+        $now = now()->toAtomString();
+
         // Static pages
         $staticPages = [
             '/' => ['priority' => '1.0', 'changefreq' => 'daily'],
@@ -33,8 +35,26 @@ Route::get('/sitemap.xml', function () {
         foreach ($staticPages as $page => $config) {
             $xml .= '<url>';
             $xml .= '<loc>' . htmlspecialchars($baseUrl . $page) . '</loc>';
+            $xml .= '<lastmod>' . $now . '</lastmod>';
             $xml .= '<changefreq>' . $config['changefreq'] . '</changefreq>';
             $xml .= '<priority>' . $config['priority'] . '</priority>';
+            $xml .= '</url>';
+        }
+
+        // Blog category pages
+        $blogCategories = ['poradniki', 'trendy', 'case-study', 'rynek-ooh', 'prawo-i-regulacje', 'lokalizacje'];
+        foreach ($blogCategories as $cat) {
+            $hasPublished = \App\Models\BlogPost::where('status', 'published')
+                ->where('category', $cat)
+                ->exists();
+            if (!$hasPublished) {
+                continue;
+            }
+            $xml .= '<url>';
+            $xml .= '<loc>' . htmlspecialchars($baseUrl . '/blog/' . $cat) . '</loc>';
+            $xml .= '<lastmod>' . $now . '</lastmod>';
+            $xml .= '<changefreq>weekly</changefreq>';
+            $xml .= '<priority>0.65</priority>';
             $xml .= '</url>';
         }
 

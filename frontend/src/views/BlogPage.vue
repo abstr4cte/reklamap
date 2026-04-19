@@ -63,6 +63,8 @@ const route = useRoute()
 
 const selectedCategory = computed(() => (route.params.category as string) || 'wszystkie')
 
+const noindexEmptyCategory = ref(false)
+
 const seoData = computed(() => {
   const cat = selectedCategory.value
   const meta = categoryMeta[cat] || categoryMeta['wszystkie']
@@ -77,7 +79,8 @@ const seoData = computed(() => {
     ogImageWidth: '1200',
     ogImageHeight: '630',
     ogImageAlt: 'ReklaMap Blog – reklama zewnętrzna OOH',
-    canonical
+    canonical,
+    noindex: noindexEmptyCategory.value
   }
 })
 
@@ -143,6 +146,10 @@ const filteredPosts = computed(() => {
     return blogPosts.value
   }
   return blogPosts.value.filter(post => post.category === selectedCategory.value)
+})
+
+watch([filteredPosts, isLoading], () => {
+  noindexEmptyCategory.value = !isLoading.value && filteredPosts.value.length === 0 && selectedCategory.value !== 'wszystkie'
 })
 
 const handleNewsletterSubmit = async () => {

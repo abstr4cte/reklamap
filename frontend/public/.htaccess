@@ -1,8 +1,3 @@
-AuthType Basic
-AuthName "Restricted Area"
-AuthUserFile /home/host831115/domains/reklamap.pl/reklamap/.htpasswd
-Require valid-user
-
 # Force correct MIME types for static assets
 <IfModule mod_mime.c>
   AddType text/css .css
@@ -48,9 +43,21 @@ Require valid-user
   ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>
 
+# Prerender.io token
+<IfModule mod_headers.c>
+  RequestHeader set X-Prerender-Token "BpQQORSsGLyICHuIPbuz"
+</IfModule>
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # Prerender.io — proxy bot requests to prerender service
+  RewriteCond %{HTTP_USER_AGENT} googlebot|bingbot|yandex|baiduspider|twitterbot|facebookexternalhit|rogerbot|linkedinbot|embedly|showyoubot|outbrain|pinterestbot|slackbot|vkShare|W3C_Validator|whatsapp|redditbot|applebot|duckduckbot [NC]
+  RewriteCond %{REQUEST_URI} !\.(js|css|xml|less|png|jpg|jpeg|gif|pdf|txt|ico|zip|mp3|mp4|webm|woff|woff2|ttf|svg|webp) [NC]
+  RewriteRule ^(.*)$ https://service.prerender.io/https://reklamap.pl/$1 [P,L]
+
+  # SPA fallback
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
