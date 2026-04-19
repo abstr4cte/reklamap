@@ -114,8 +114,14 @@ const router = createRouter({
       component: () => import('./views/BlogPostPage.vue'),
       beforeEnter: async (to, _from, next) => {
         try {
-          const { api } = await import('./services/api')
-          const post = await api.get(`/blog/${to.params.slug}`)
+          const isDev = import.meta.env.DEV
+          const apiUrl = isDev ? '/api' : 'https://api.reklamap.pl/api'
+          const appKey = import.meta.env.VITE_INTERNAL_APP_KEY as string
+          const res = await fetch(`${apiUrl}/blog/${to.params.slug}`, {
+            headers: { 'X-App-Key': appKey }
+          })
+          if (!res.ok) throw new Error()
+          const post = await res.json()
           next(`/blog/${post.category}/${to.params.slug}`)
         } catch {
           next({ name: 'not-found' })

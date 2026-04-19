@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { useSeo } from '../composables/useSeo'
@@ -99,54 +99,59 @@ function buildBreadcrumbSchema(p: BlogPost): object {
   }
 }
 
-// SEO Meta Tags
-watch(post, (newPost) => {
-  if (newPost) {
-    const base = typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'
-    const url = `${base}/blog/${newPost.category}/${newPost.slug}`
+// SEO Meta Tags — computed ref przekazany do useSeo na poziomie setup
+import { computed } from 'vue'
 
-    const blogPostingSchema = {
-      '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      'headline': newPost.title,
-      'url': url,
-      'mainEntityOfPage': { '@type': 'WebPage', '@id': url },
-      'articleSection': newPost.category,
-      'description': newPost.excerpt,
-      'image': newPost.image ? {
-        '@type': 'ImageObject',
-        'url': newPost.image,
-        'description': newPost.imageAlt ?? newPost.title
-      } : undefined,
-      'author': {
-        '@type': 'Person',
-        'name': newPost.author
-      },
-      'datePublished': newPost.dateIso ?? undefined,
-      'publisher': {
-        '@type': 'Organization',
-        'name': 'ReklaMap',
-        'logo': { '@type': 'ImageObject', 'url': logoImage }
-      }
+const seoOptions = computed(() => {
+  const newPost = post.value
+  if (!newPost) return { title: 'Blog | ReklaMap', description: '' }
+
+  const base = typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'
+  const url = `${base}/blog/${newPost.category}/${newPost.slug}`
+
+  const blogPostingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    'headline': newPost.title,
+    'url': url,
+    'mainEntityOfPage': { '@type': 'WebPage', '@id': url },
+    'articleSection': newPost.category,
+    'description': newPost.excerpt,
+    'image': newPost.image ? {
+      '@type': 'ImageObject',
+      'url': newPost.image,
+      'description': newPost.imageAlt ?? newPost.title
+    } : undefined,
+    'author': {
+      '@type': 'Person',
+      'name': newPost.author
+    },
+    'datePublished': newPost.dateIso ?? undefined,
+    'publisher': {
+      '@type': 'Organization',
+      'name': 'ReklaMap',
+      'logo': { '@type': 'ImageObject', 'url': logoImage }
     }
-
-    const schemas: object[] = [blogPostingSchema, buildBreadcrumbSchema(newPost)]
-    const faqSchema = extractFaqSchema(newPost.content ?? '')
-    if (faqSchema) schemas.push(faqSchema)
-
-    useSeo({
-      title: `${newPost.title} | Blog ReklaMap`,
-      description: newPost.excerpt,
-      keywords: `blog, reklama, outdoor, ${newPost.category}, ${newPost.title}`,
-      ogType: 'article',
-      ogImage: newPost.image || `${base}/og-image.png`,
-      ogUrl: url,
-      canonical: url,
-      publishedTime: newPost.dateIso ?? undefined,
-      structuredData: schemas
-    })
   }
-}, { immediate: true })
+
+  const schemas: object[] = [blogPostingSchema, buildBreadcrumbSchema(newPost)]
+  const faqSchema = extractFaqSchema(newPost.content ?? '')
+  if (faqSchema) schemas.push(faqSchema)
+
+  return {
+    title: `${newPost.title} | Blog ReklaMap`,
+    description: newPost.excerpt,
+    keywords: `blog, reklama, outdoor, ${newPost.category}, ${newPost.title}`,
+    ogType: 'article',
+    ogImage: newPost.image || `${base}/og-image.png`,
+    ogUrl: url,
+    canonical: url,
+    publishedTime: newPost.dateIso ?? undefined,
+    structuredData: schemas
+  }
+})
+
+useSeo(seoOptions)
 
 // Mock data - fallback if API fails
 const blogPosts: BlogPost[] = [
