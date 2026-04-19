@@ -58,6 +58,11 @@ const categoryMeta: Record<string, { title: string; description: string; keyword
   }
 }
 
+const router = useRouter()
+const route = useRoute()
+
+const selectedCategory = computed(() => (route.params.category as string) || 'wszystkie')
+
 const seoData = computed(() => {
   const cat = selectedCategory.value
   const meta = categoryMeta[cat] || categoryMeta['wszystkie']
@@ -79,9 +84,6 @@ const seoData = computed(() => {
 useSeo(seoData)
 
 const currentCategoryMeta = computed(() => categoryMeta[selectedCategory.value] || categoryMeta['wszystkie'])
-
-const router = useRouter()
-const route = useRoute()
 
 const newsletterEmail = ref('')
 const isSubmittingNewsletter = ref(false)
@@ -114,8 +116,6 @@ const categories = [
   { id: 'prawo-i-regulacje', name: 'Prawo i regulacje', path: '/blog/prawo-i-regulacje' },
   { id: 'lokalizacje', name: 'Lokalizacje', path: '/blog/lokalizacje' }
 ]
-
-const selectedCategory = computed(() => (route.params.category as string) || 'wszystkie')
 
 watch(
   () => route.params.category,
