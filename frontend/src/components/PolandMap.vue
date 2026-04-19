@@ -192,7 +192,7 @@ const initMap = () => {
 
   // Dodaj kontrolkę zoomu w odpowiednim miejscu
   L.control.zoom({
-    position: isMobile.value ? 'topright' : 'topleft'
+    position: 'topleft'
   }).addTo(map)
 
   // Zamknij wybraną reklamę przy kliknięciu w mapę

@@ -11,7 +11,7 @@ keywords:
   - MPK Poznań reklama
   - reklama outdoor Poznań cena
 word_count: ~1600
-published_at: "2026-04-19 06:00:00"
+published_at: "2026-04-17 08:00:00"
 status: draft
 ---
 

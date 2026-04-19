@@ -11,7 +11,7 @@ keywords:
   - billboard reklamowy cena
   - ile kosztuje billboard
 word_count: ~1700
-published_at: "2026-04-19 16:38:00"
+published_at: "2026-04-19 08:00:00"
 status: draft
 ---
 

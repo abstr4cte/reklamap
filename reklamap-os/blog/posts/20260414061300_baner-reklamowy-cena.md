@@ -11,7 +11,7 @@ keywords:
   - wynajem banera reklamowego
   - druk banera reklamowego cena
 word_count: ~1400
-published_at: "2026-04-14 06:13:00"
+published_at: "2026-04-15 08:00:00"
 status: draft
 ---
 

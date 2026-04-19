@@ -11,7 +11,7 @@ keywords:
   - mural reklamowy co to
   - reklama na ścianie budynku
 word_count: ~1500
-published_at: "2026-04-14 06:09:00"
+published_at: "2026-04-08 08:00:00"
 status: draft
 ---
 

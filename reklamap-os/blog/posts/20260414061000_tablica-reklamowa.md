@@ -11,7 +11,7 @@ keywords:
   - tablice reklamowe
   - tablica reklamowa cena
 word_count: ~1500
-published_at: "2026-04-14 06:10:00"
+published_at: "2026-04-10 08:00:00"
 status: draft
 ---
 

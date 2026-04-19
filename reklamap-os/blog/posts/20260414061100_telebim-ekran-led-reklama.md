@@ -11,7 +11,7 @@ keywords:
   - ekran LED reklama
   - DOOH reklama
 word_count: ~1500
-published_at: "2026-04-14 06:11:00"
+published_at: "2026-04-12 08:00:00"
 status: draft
 ---
 

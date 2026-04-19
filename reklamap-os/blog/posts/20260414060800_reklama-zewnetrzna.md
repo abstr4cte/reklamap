@@ -11,7 +11,7 @@ keywords:
   - reklama zewnętrzna rodzaje
   - OOH reklama
 word_count: ~1700
-published_at: "2026-04-14 06:08:00"
+published_at: "2026-04-06 08:00:00"
 status: draft
 ---
 

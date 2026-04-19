@@ -11,7 +11,7 @@ keywords:
   - reklama na samochodzie cena
   - oklejenie samochodu reklamą
 word_count: ~1500
-published_at: "2026-04-14 06:02:00"
+published_at: "2026-03-22 08:00:00"
 status: draft
 ---
 
