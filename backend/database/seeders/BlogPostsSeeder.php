@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\BlogPost;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\GithubFlavoredMarkdownConverter;
 use Symfony\Component\Yaml\Yaml;
 
 class BlogPostsSeeder extends Seeder
@@ -30,7 +30,7 @@ class BlogPostsSeeder extends Seeder
             return;
         }
 
-        $converter = new CommonMarkConverter([
+        $converter = new GithubFlavoredMarkdownConverter([
             'html_input'         => 'allow',
             'allow_unsafe_links' => true,
         ]);
