@@ -186,6 +186,10 @@ watch(ad, (newAd) => {
     const typeUrlPart = mapTypeToUrlFormat(newAd.type || 'other')
     const citySlug = slugify(newAd.city)
     const origin = typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'
+    const cleanUrl = `${origin}/powierzchnia-reklamowa/${typeUrlPart}/${citySlug}/${slugify(newAd.title)}-${newAd.id}`
+
+    const priceValidUntil = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+      .toISOString().split('T')[0]
 
     const structuredData = [
       {
@@ -199,8 +203,10 @@ watch(ad, (newAd) => {
           '@type': 'Offer',
           'price': newAd.price,
           'priceCurrency': 'PLN',
+          'priceValidUntil': priceValidUntil,
+          'seller': { '@type': 'Organization', 'name': 'ReklaMap' },
           'availability': newAd.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-          'url': typeof window !== 'undefined' ? window.location.href : ''
+          'url': cleanUrl
         }
       },
       {
@@ -235,8 +241,8 @@ watch(ad, (newAd) => {
       title,
       description,
       keywords,
-      canonical: typeof window !== 'undefined' ? window.location.href : '',
-      ogUrl: typeof window !== 'undefined' ? window.location.href : '',
+      canonical: cleanUrl,
+      ogUrl: cleanUrl,
       ogImage: imageUrl,
       ogType: 'product',
       structuredData

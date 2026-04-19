@@ -102,12 +102,16 @@ function buildBreadcrumbSchema(p: BlogPost): object {
 // SEO Meta Tags
 watch(post, (newPost) => {
   if (newPost) {
-    const url = typeof window !== 'undefined' ? window.location.href : ''
+    const base = typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'
+    const url = `${base}/blog/${newPost.category}/${newPost.slug}`
 
     const blogPostingSchema = {
       '@context': 'https://schema.org',
       '@type': 'BlogPosting',
       'headline': newPost.title,
+      'url': url,
+      'mainEntityOfPage': { '@type': 'WebPage', '@id': url },
+      'articleSection': newPost.category,
       'description': newPost.excerpt,
       'image': newPost.image ? {
         '@type': 'ImageObject',
@@ -135,7 +139,7 @@ watch(post, (newPost) => {
       description: newPost.excerpt,
       keywords: `blog, reklama, outdoor, ${newPost.category}, ${newPost.title}`,
       ogType: 'article',
-      ogImage: newPost.image || undefined,
+      ogImage: newPost.image || `${base}/og-image.png`,
       ogUrl: url,
       canonical: url,
       publishedTime: newPost.dateIso ?? undefined,

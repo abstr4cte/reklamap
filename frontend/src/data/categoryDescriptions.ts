@@ -85,13 +85,14 @@ export const categoryDescriptions: Record<string, CategoryDescription> = {
 
   // Totemy reklamowe
   'totemy-reklamowe': {
-    title: 'Totemy reklamowe - pionowe pylony informacyjne',
-    description: 'Totemy reklamowe to wysokie, wolnostojące konstrukcje umieszczane przy centrach handlowych, stacjach benzynowych i parkingach. Ich pionowa forma zapewnia doskonałą widoczność z daleka, pomagając klientom w nawigacji. Idealne dla marek retail i usług lokalnych.',
+    title: 'Totemy Reklamowe – Pylony Reklamowe przy Galeriach i Biurowcach',
+    description: 'Totemy reklamowe (pylony reklamowe) to wolnostojące, pionowe konstrukcje reklamowe umieszczane przy wjazdach do centrów handlowych, galerii, stacji benzynowych, biurowców i parkingów. Dzięki wysokości sięgającej od 3 do nawet 10 metrów, totem zapewnia doskonałą widoczność zarówno dla kierowców, jak i pieszych z odległości kilkudziesięciu metrów. Standardowy totem mieści od 1 do 5 kaset reklamowych, co pozwala na jednoczesną ekspozycję kilku najemców lub produktów. Nowoczesne wersje wyposażone są w podświetlenie LED, które gwarantuje pełną widoczność po zmroku i w trudnych warunkach atmosferycznych. Totem to niezbędny element oznakowania każdego centrum usługowego — pomaga klientom w nawigacji, jednocześnie budując rozpoznawalność marki w przestrzeni wokół obiektu. To niezastąpione medium dla sieci handlowych, restauracji, aptek i salonów samochodowych szukających ekspozycji bezpośrednio przy punkcie sprzedaży.',
     benefits: [
-      'Wysoka widoczność z dużej odległości',
-      'Pomoc w nawigacji dla klientów',
-      'Możliwość umieszczenia wielu marek na jednym totemu',
-      'Skuteczne przy centrach handlowych i usługowych'
+      'Widoczność z odległości do kilkudziesięciu metrów — zarówno dla kierowców, jak i pieszych',
+      'Możliwość ekspozycji 2–5 marek lub produktów jednocześnie na jednej konstrukcji',
+      'Podświetlenie LED gwarantuje widoczność przez całą dobę, niezależnie od warunków',
+      'Idealne dla retail, gastronomii i usług — bezpośrednia ekspozycja przy punkcie sprzedaży',
+      'Długa żywotność konstrukcji — jednorazowa inwestycja z wieloletnią ekspozycją marki'
     ]
   },
 

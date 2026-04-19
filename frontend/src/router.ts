@@ -107,6 +107,21 @@ const router = createRouter({
       name: 'blog-post',
       component: () => import('./views/BlogPostPage.vue')
     },
+    // Redirect /blog/:slug → /blog/:category/:slug (linki bez kategorii)
+    {
+      path: '/blog/:slug',
+      name: 'blog-post-redirect',
+      component: () => import('./views/BlogPostPage.vue'),
+      beforeEnter: async (to, _from, next) => {
+        try {
+          const { api } = await import('./services/api')
+          const post = await api.get(`/blog/${to.params.slug}`)
+          next(`/blog/${post.category}/${to.params.slug}`)
+        } catch {
+          next({ name: 'not-found' })
+        }
+      }
+    },
     {
       path: '/kontakt',
       name: 'contact',

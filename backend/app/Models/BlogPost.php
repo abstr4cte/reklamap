@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
 
 class BlogPost extends Model
 {
@@ -31,6 +32,12 @@ class BlogPost extends Model
         return [
             'published_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => Cache::forget('sitemap_xml'));
+        static::deleted(fn () => Cache::forget('sitemap_xml'));
     }
 
     public function user(): BelongsTo

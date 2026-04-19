@@ -76,21 +76,33 @@ const seoData = computed(() => {
   const typeLabel = typeSlug ? urlTypeToLabel[typeSlug] || deslugify(typeSlug) : null
   const cityName = citySlug ? deslugify(citySlug) : null
 
+  const typeCityKey = typeSlug && citySlug ? `${typeSlug}-${citySlug}` : null
+  const descObj = (typeCityKey && typeCityDescriptions[typeCityKey])
+    || (typeSlug && categoryDescriptions[typeSlug])
+    || (citySlug && cityDescriptions[citySlug])
+    || null
+
   let title: string
   let description: string
   let canonical: string
 
   if (typeLabel && cityName) {
     title = `${typeLabel} – ${cityName} | ReklaMap`
-    description = `Przeglądaj oferty ${typeLabel.toLowerCase()} w ${cityName}. Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.`
+    description = descObj
+      ? descObj.description.substring(0, 155) + '...'
+      : `Przeglądaj oferty ${typeLabel.toLowerCase()} w ${cityName}. Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.`
     canonical = `${window.location.origin}/powierzchnie-reklamowe/${typeSlug}/${citySlug}`
   } else if (typeLabel) {
     title = `${typeLabel} w Polsce | ReklaMap`
-    description = `Przeglądaj wszystkie oferty ${typeLabel.toLowerCase()} w Polsce. Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.`
+    description = descObj
+      ? descObj.description.substring(0, 155) + '...'
+      : `Przeglądaj wszystkie oferty ${typeLabel.toLowerCase()} w Polsce. Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.`
     canonical = `${window.location.origin}/powierzchnie-reklamowe/${typeSlug}`
   } else if (cityName) {
     title = `Powierzchnie reklamowe – ${cityName} | ReklaMap`
-    description = `Przeglądaj dostępne powierzchnie reklamowe w ${cityName}. Billboardy, banery, ekrany LED i więcej. Znajdź idealną lokalizację dla swojej reklamy.`
+    description = descObj
+      ? descObj.description.substring(0, 155) + '...'
+      : `Przeglądaj dostępne powierzchnie reklamowe w ${cityName}. Billboardy, banery, ekrany LED i więcej. Znajdź idealną lokalizację dla swojej reklamy.`
     canonical = `${window.location.origin}/powierzchnie-reklamowe/${citySlug}`
   } else {
     title = 'Powierzchnie reklamowe w Polsce | ReklaMap'
@@ -100,6 +112,9 @@ const seoData = computed(() => {
 
   const allowedQueryKeys = ['sort', 'page']
   const hasExtraFilters = Object.keys(route.query).some(k => !allowedQueryKeys.includes(k))
+
+  const pageNum = parseInt(route.query.page as string) || 1
+  const canonicalUrl = pageNum > 1 ? `${window.location.origin}${window.location.pathname}` : canonical
 
   const origin = window.location.origin
   const itemListSchema = paginatedListings.value.length > 0 ? {
@@ -122,8 +137,8 @@ const seoData = computed(() => {
     ogImageWidth: '1200',
     ogImageHeight: '630',
     ogImageAlt: 'ReklaMap – powierzchnie reklamowe w Polsce',
-    ogUrl: canonical,
-    canonical,
+    ogUrl: canonicalUrl,
+    canonical: canonicalUrl,
     keywords: 'powierzchnie reklamowe, billboardy, reklama zewnętrzna, outdoor, OOH',
     noindex: hasExtraFilters,
     ...(itemListSchema ? { structuredData: itemListSchema } : {})

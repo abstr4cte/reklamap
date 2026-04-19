@@ -73,8 +73,8 @@ Route::get('/sitemap.xml', function () {
         }
 
         // City + Category combinations (top cities only for most important combinations)
-        $topCities = ['Warszawa', 'Kraków', 'Wrocław', 'Poznań', 'Gdańsk'];
-        $topCategories = ['billboardy', 'citylighty', 'banery'];
+        $topCities = ['Warszawa', 'Kraków', 'Wrocław', 'Poznań', 'Gdańsk', 'Łódź', 'Katowice'];
+        $topCategories = ['billboardy', 'citylighty', 'banery', 'ekrany-led'];
         foreach ($topCities as $city) {
             $citySlug = Str::slug($city);
             foreach ($topCategories as $category) {
@@ -115,6 +115,20 @@ Route::get('/sitemap.xml', function () {
             $xml .= '<lastmod>' . $ad->updated_at->toAtomString() . '</lastmod>';
             $xml .= '<changefreq>weekly</changefreq>';
             $xml .= '<priority>0.7</priority>';
+            $xml .= '</url>';
+        }
+
+        // Blog posts
+        $blogPosts = \App\Models\BlogPost::where('status', 'published')
+            ->orderBy('published_at', 'desc')
+            ->get(['slug', 'category', 'published_at', 'updated_at']);
+
+        foreach ($blogPosts as $post) {
+            $xml .= '<url>';
+            $xml .= '<loc>' . htmlspecialchars($baseUrl . '/blog/' . $post->category . '/' . $post->slug) . '</loc>';
+            $xml .= '<lastmod>' . ($post->updated_at ?? $post->published_at)->toAtomString() . '</lastmod>';
+            $xml .= '<changefreq>monthly</changefreq>';
+            $xml .= '<priority>0.6</priority>';
             $xml .= '</url>';
         }
 
