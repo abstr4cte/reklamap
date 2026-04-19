@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSeo } from '../composables/useSeo'
 
@@ -8,6 +9,17 @@ useSeo({
   title: '404 – Strona nie znaleziona | ReklaMap',
   description: 'Nie znaleziono strony. Wróć na stronę główną ReklaMap i przeglądaj dostępne powierzchnie reklamowe w Polsce.',
   noindex: true
+})
+
+let prerenderMeta: HTMLMetaElement | null = null
+onMounted(() => {
+  prerenderMeta = document.createElement('meta')
+  prerenderMeta.setAttribute('name', 'prerender-status-code')
+  prerenderMeta.setAttribute('content', '404')
+  document.head.appendChild(prerenderMeta)
+})
+onUnmounted(() => {
+  if (prerenderMeta?.parentNode) prerenderMeta.parentNode.removeChild(prerenderMeta)
 })
 </script>
 
