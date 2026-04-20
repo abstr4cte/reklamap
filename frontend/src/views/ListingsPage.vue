@@ -4538,14 +4538,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 }
 
 .mobile-map-toggle--map-mode {
-  /* Domyślnie floatuje z oknem przeglądarki na mapie (bottom kontrolowany przez inline style) */
-  position: fixed !important;
-}
-
-.mobile-map-toggle--map-mode.is-clamped {
-  /* Zatrzymuje się na spądziku mapy gdy zjeżdżasz do footera sekcji SEO (nie leci dalej) */
   position: absolute !important;
-  /* Kiedy jest clamped ignorujemy inline style, bo na poziomie footera/SEO nie ma otwartej karty (zamyka się przy odkliknięciu w tło) */
   bottom: 20px !important;
   top: auto !important;
 }
