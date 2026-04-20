@@ -1185,8 +1185,14 @@ const handleScroll = () => {
   
   if (isMobile.value) {
     if (showMapOnMobile.value) {
-      // Tryb mapy: clampuj "Pokaż listę" gdy description-wrapper lub footer wjeżdża w viewport
-      isMobileClamped.value = isBottomSectionVisible
+      // Tryb mapy: clampuj "Pokaż listę" gdy dolna krawędź kontenera mapy zbliża się do dołu viewportu
+      const mapWrapper = document.querySelector('.map-container-wrapper')
+      if (mapWrapper) {
+        const mapRect = mapWrapper.getBoundingClientRect()
+        isMobileClamped.value = mapRect.bottom < window.innerHeight - 20
+      } else {
+        isMobileClamped.value = isBottomSectionVisible
+      }
     } else {
       // Tryb listy: clampuj "Pokaż mapę" gdy paginacja lub description-wrapper jest widoczna
       const pagination = document.querySelector('.pagination-container')
