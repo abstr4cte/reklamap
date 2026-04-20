@@ -730,15 +730,15 @@ const toggleMobileMap = () => {
   
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  if (showMapOnMobile.value) {
-    nextTick(() => {
+  nextTick(() => {
+    if (showMapOnMobile.value) {
       initMap();
       const header = document.querySelector('header');
       const headerOffset = header ? header.offsetHeight : 64;
       document.documentElement.style.setProperty('--header-height', `${headerOffset}px`);
-    });
-  }
-  handleScroll();
+    }
+    handleScroll();
+  });
 }
 
 const scrollToAd = (adId: number) => {
