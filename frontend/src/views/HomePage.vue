@@ -173,13 +173,13 @@ onActivated(() => {
   const savedPosition = sessionStorage.getItem(SCROLL_POSITION_KEY)
   if (savedPosition) {
     const position = parseInt(savedPosition, 10)
-    setTimeout(() => {
-      window.scrollTo({
-        top: position,
-        behavior: 'instant'
+    nextTick(() => {
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: position, behavior: 'instant' })
+        sessionStorage.removeItem(SCROLL_POSITION_KEY)
       })
-      sessionStorage.removeItem(SCROLL_POSITION_KEY)
-    }, 50)
+    })
+    return
   }
 
   // Synchronizuj filtry przy powrocie (keep-alive)
