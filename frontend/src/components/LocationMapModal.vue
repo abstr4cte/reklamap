@@ -425,7 +425,7 @@ onBeforeUnmount(() => {
   border-radius: 20px;
   width: 100%;
   max-width: 600px;
-  max-height: calc(100vh - 115px);
+  max-height: calc(100dvh - 115px);
   display: flex;
   flex-direction: column;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -651,7 +651,7 @@ onBeforeUnmount(() => {
   }
 
   .modal-content {
-    max-height: calc(100vh - 75px);
+    max-height: calc(100dvh - 75px);
     border-radius: 16px;
   }
 

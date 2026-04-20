@@ -1559,8 +1559,8 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           </button>
         </div>
 
-        <div v-show="!isLoading" class="results-count results-count-mobile">
-          Znaleziono {{ serverTotal > 0 ? serverTotal : filteredListings.length }} ogłoszeń
+        <div class="results-count results-count-mobile">
+          {{ isLoading ? 'Ładowanie...' : `Znaleziono ${serverTotal > 0 ? serverTotal : filteredListings.length} ogłoszeń` }}
         </div>
       </div>
     </div>
@@ -3037,7 +3037,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 /* Existing styles below */
 .listings-page {
-  height: calc(100vh - var(--header-height, 100px));
+  height: calc(100dvh - var(--header-height, 100px));
   padding-top: 1rem;
   background: var(--bg-secondary, #f9fafb);
   display: flex;
@@ -3245,7 +3245,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   flex-direction: column;
   flex: 1;
   overflow: hidden;
-  height: calc(100vh - var(--header-height, 100px)); /* Odejmujemy wysokość paska wyszukiwania */
+  height: calc(100dvh - var(--header-height, 100px)); /* Odejmujemy wysokość paska wyszukiwania */
   position: relative;
 }
 
@@ -3751,6 +3751,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   right: 0;
   width: 280px;
   height: 100vh;
+  height: 100dvh;
   background: var(--card-bg, white);
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
   z-index: 1100;
@@ -3980,7 +3981,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   border-radius: 16px;
   width: 90%;
   max-width: 600px;
-  max-height: calc(100vh - 120px);
+  max-height: calc(100dvh - 120px);
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
@@ -4484,14 +4485,14 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   .content-wrapper {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 400px;
-    height: calc(100vh - var(--header-height, 100px));
+    height: calc(100dvh - var(--header-height, 100px));
   }
 
   .ads-list-container {
     border-right: none;
     border-bottom: 2px solid #e5e7eb;
     height: auto;
-    max-height: calc(100vh - var(--header-height, 100px) - 400px); /* nagłówek + mapa */
+    max-height: calc(100dvh - var(--header-height, 100px) - 400px); /* nagłówek + mapa */
   }
   
   .map-container-wrapper {

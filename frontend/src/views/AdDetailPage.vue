@@ -755,39 +755,51 @@ defineExpose({
         <div class="modal-content actions-modal-content">
           <div class="modal-header">
             <h3>Opcje ogłoszenia</h3>
-            <button @click="showActionsMenu = false" class="btn-close">&times;</button>
+            <button @click="showActionsMenu = false" class="btn-close" aria-label="Zamknij">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6L6 18M6 6l12 12"/>
+              </svg>
+            </button>
           </div>
           <div class="modal-body">
             <div class="actions-grid">
               <button @click="toggleFavorite(); showActionsMenu = false" class="action-item" :class="{ active: isFavorite }">
-                <svg width="24" height="24" viewBox="0 0 24 24" :fill="isFavorite ? '#EF4444' : 'none'">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" :stroke="isFavorite ? '#EF4444' : 'currentColor'" stroke-width="2"/>
-                </svg>
+                <div class="action-icon" :class="{ 'action-icon--favorite': isFavorite }">
+                  <svg width="22" height="22" viewBox="0 0 24 24" :fill="isFavorite ? '#EF4444' : 'none'">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" :stroke="isFavorite ? '#EF4444' : '#EF4444'" stroke-width="2"/>
+                  </svg>
+                </div>
                 <span>Ulubione</span>
               </button>
-              
+
               <button @click="toggleComparison(); showActionsMenu = false" class="action-item" :class="{ active: isInComparison }">
-                <svg width="24" height="24" viewBox="0 0 24 24" :fill="isInComparison ? '#667eea' : 'none'">
-                  <rect x="3" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
-                  <rect x="14" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
-                  <rect x="3" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
-                  <rect x="14" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : 'currentColor'" stroke-width="2" rx="1"/>
-                </svg>
+                <div class="action-icon action-icon--compare" :class="{ 'action-icon--compare-active': isInComparison }">
+                  <svg width="22" height="22" viewBox="0 0 24 24" :fill="isInComparison ? '#667eea' : 'none'">
+                    <rect x="3" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : '#667eea'" stroke-width="2" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" :stroke="isInComparison ? '#667eea' : '#667eea'" stroke-width="2" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : '#667eea'" stroke-width="2" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" :stroke="isInComparison ? '#667eea' : '#667eea'" stroke-width="2" rx="1"/>
+                  </svg>
+                </div>
                 <span>Porównaj</span>
               </button>
 
               <button @click="handleDownloadPDF(); showActionsMenu = false" class="action-item">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <div class="action-icon action-icon--pdf">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
                 <span>PDF</span>
               </button>
 
               <button @click="showReportModal = true; showActionsMenu = false" class="action-item report">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <div class="action-icon action-icon--report">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
                 <span>Zgłoś</span>
               </button>
             </div>
@@ -1168,11 +1180,14 @@ defineExpose({
 .modal-content {
   background: white;
   border-radius: 16px;
-  padding: 2.5rem;
   max-width: 480px;
   width: 100%;
   position: relative;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.report-modal {
+  padding: 2.5rem;
 }
 
 .close-btn {
@@ -1531,7 +1546,10 @@ defineExpose({
 }
 
 .actions-modal-content {
-  max-width: 400px;
+  max-width: 380px;
+  border-radius: 24px;
+  padding: 0;
+  overflow: hidden;
 }
 
 .share-modal-content {
@@ -1614,57 +1632,106 @@ defineExpose({
 }
 
 .actions-modal-content .modal-header {
-  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  padding: 1.25rem 1.5rem 1rem;
   border-bottom: none;
+  background: rgba(102, 126, 234, 0.06);
+}
+
+.actions-modal-content .modal-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
 }
 
 .actions-modal-content .modal-body {
-  padding: 0 1.5rem 1.5rem 1.5rem;
+  padding: 1.25rem 1.5rem 1.5rem;
 }
 
 .actions-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 0.875rem;
 }
 
 .action-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.625rem;
   padding: 1.25rem 0.5rem;
   background: var(--card-bg, white);
-  border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 16px;
+  border: 1.5px solid var(--border-color, #e5e7eb);
+  border-radius: 18px;
   color: var(--text-main);
+  cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
 
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+.action-item:hover {
+  border-color: rgba(102, 126, 234, 0.35);
+  background: rgba(102, 126, 234, 0.03);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.12);
 }
 
 .action-item:active {
-  transform: scale(0.95);
-  background: var(--bg-secondary);
-}
-
-.action-item svg {
-  color: var(--primary-color, #667eea);
+  transform: scale(0.96);
+  box-shadow: none;
 }
 
 .action-item.active {
-  border-color: var(--primary-color);
+  border-color: rgba(102, 126, 234, 0.4);
   background: rgba(102, 126, 234, 0.05);
 }
 
-.action-item.report svg {
-  color: var(--error-color, #ef4444);
+.action-item.report:hover {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.03);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
 }
 
 .action-item span {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--text-main);
+  letter-spacing: 0.01em;
+}
+
+.action-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  transition: background 0.2s;
+}
+
+.action-icon--compare {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+}
+
+.action-icon--pdf {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.action-icon--report {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.action-icon--favorite {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.action-icon--compare-active {
+  background: rgba(102, 126, 234, 0.18);
 }
 
 .modal-header {
@@ -1674,11 +1741,23 @@ defineExpose({
 }
 
 .btn-close {
-  background: none;
+  background: #f3f4f6;
   border: none;
-  font-size: 1.5rem;
-  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
   cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-close:hover {
+  background: #e5e7eb;
+  color: #111827;
 }
 
 /* Skeleton Specifics */
@@ -1815,9 +1894,12 @@ defineExpose({
 /* Report Modal Mobile Styles */
 @media (max-width: 640px) {
   .modal-content {
-    padding: 1.5rem 1.25rem;
     max-height: 90vh;
     overflow-y: auto;
+  }
+
+  .report-modal {
+    padding: 1.5rem 1.25rem;
   }
 
   .modal-title,

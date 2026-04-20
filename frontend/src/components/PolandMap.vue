@@ -588,7 +588,7 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <div class="map-wrapper" :style="{ minHeight: `calc(100vh - ${headerHeight}px)` }">
+    <div class="map-wrapper" :style="{ minHeight: `calc(100dvh - ${headerHeight}px)` }">
       <div ref="mapContainer" class="map-container">
         <div v-if="!isMapActive" class="map-hint-overlay">
           <div class="map-hint-message">
@@ -950,6 +950,7 @@ onBeforeUnmount(() => {
   right: 0;
   width: 280px;
   height: 100vh;
+  height: 100dvh;
   background: white;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
   z-index: 4000;
