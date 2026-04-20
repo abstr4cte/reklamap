@@ -186,7 +186,7 @@ const initMap = () => {
     zoomControl: false,
     maxBounds: polandBounds,
     maxBoundsViscosity: 1.0,
-    minZoom: 3.5,
+    minZoom: 4.5,
     maxZoom: 18
   }).setView([52.0, 19.0], isMobile.value ? 5 : 6)
 
@@ -394,14 +394,12 @@ const updateMarkers = () => {
       
       // On all devices, show custom detail panel
       marker.on('click', () => {
-        selectedAd.value = ad
-
         if (!isMapActive.value) {
           enableMapInteractions()
           scrollToMap()
         }
 
-        
+        selectedAd.value = ad
       })
       
       marker.on('mouseover', () => {

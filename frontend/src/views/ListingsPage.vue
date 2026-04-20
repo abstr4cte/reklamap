@@ -1559,7 +1559,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           </button>
         </div>
 
-        <div v-if="!isLoading" class="results-count results-count-mobile">
+        <div v-show="!isLoading" class="results-count results-count-mobile">
           Znaleziono {{ serverTotal > 0 ? serverTotal : filteredListings.length }} ogłoszeń
         </div>
       </div>
