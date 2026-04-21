@@ -195,9 +195,12 @@ const initMap = () => {
     position: 'topleft'
   }).addTo(map)
 
-  // Zamknij wybraną reklamę przy kliknięciu w mapę
+  // Zamknij wybraną reklamę przy kliknięciu w tło mapy (nie pinezkę)
   map.on('click', (e: any) => {
-    // Check if the click was on the map itself, not a marker
+    if (!isMapActive.value) {
+      enableMapInteractions()
+      scrollToMap()
+    }
     if (e.originalEvent.target.classList.contains('leaflet-container')) {
       selectedAd.value = null
     }
@@ -216,13 +219,7 @@ const initMap = () => {
   // })
   // map.addLayer(markerClusterGroup)
 
-  // Enable interactions on click and hide hint
-  map.on('click', () => {
-    if (map && !isMapActive.value) {
-      enableMapInteractions()
-      scrollToMap()
-    }
-  })
+  // (logika aktywacji mapy jest teraz w głównym handlerze click powyżej)
   
   // Disable interactions when mouse leaves the map (desktop only)
   if (mapContainer.value && !isMobile.value) {
@@ -393,7 +390,9 @@ const updateMarkers = () => {
       // marker.bindPopup(popupContent, ...) - Disabled in favor of native Vue panels
       
       // On all devices, show custom detail panel
-      marker.on('click', () => {
+      marker.on('click', (e: L.LeafletMouseEvent) => {
+        L.DomEvent.stopPropagation(e)
+
         if (!isMapActive.value) {
           enableMapInteractions()
           scrollToMap()

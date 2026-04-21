@@ -839,7 +839,9 @@ const updateMarkers = () => {
     // Update markers with current listings
     // marker.bindPopup(...) - Disabled in favor of native Vue panels
 
-    marker.on('click', () => {
+    marker.on('click', (e: LType.LeafletMouseEvent) => {
+      L!.DomEvent.stopPropagation(e)
+
       selectedAdId.value = ad.id
 
       if (!isMapActive.value) {
