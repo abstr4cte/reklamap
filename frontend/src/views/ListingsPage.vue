@@ -807,7 +807,6 @@ const createCustomIcon = (type: string, hovered: boolean = false, selected: bool
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s;
         z-index: ${zIndex};
       ">
         <div style="
@@ -826,46 +825,56 @@ const createCustomIcon = (type: string, hovered: boolean = false, selected: bool
 }
 
 const updateMarkers = () => {
-  if (!map) return
-  
-  // Clear existing markers
-  markers.forEach(marker => map?.removeLayer(marker))
-  markers.clear()
+  if (!map || !L) return
+
+  // Usuń markery których nie ma już w danych
+  markers.forEach((marker, id) => {
+    if (!mapPins.value.find(ad => ad.id === id)) {
+      map?.removeLayer(marker)
+      markers.delete(id)
+    }
+  })
 
   mapPins.value.forEach(ad => {
-    const icon = createCustomIcon(ad.type, hoveredAdId.value === ad.id, selectedAdId.value === ad.id)
+    const isHovered = hoveredAdId.value === ad.id
+    const isSelected = selectedAdId.value === ad.id
+
+    if (markers.has(ad.id)) {
+      // Aktualizuj tylko ikonę istniejącego markera
+      const icon = createCustomIcon(ad.type, isHovered, isSelected)
+      if (icon) markers.get(ad.id)!.setIcon(icon)
+      return
+    }
+
+    // Utwórz nowy marker
+    const icon = createCustomIcon(ad.type, isHovered, isSelected)
     if (!icon) return
     const marker = L!.marker([ad.latitude, ad.longitude], { icon })
-    // Update markers with current listings
-    // marker.bindPopup(...) - Disabled in favor of native Vue panels
 
     marker.on('click', (e: LType.LeafletMouseEvent) => {
-      L!.DomEvent.stopPropagation(e)
-
+      L!.DomEvent.stopPropagation(e.originalEvent)
       selectedAdId.value = ad.id
-
       if (!isMapActive.value) {
         enableMapInteractions()
         scrollToMap()
       }
-
       if (!isMobile.value) {
         scrollToAd(ad.id)
       }
     })
-    marker.on('mouseover', () => { 
+    marker.on('mouseover', () => {
       if (!isMobile.value) {
-        const i = createCustomIcon(ad.type, true, selectedAdId.value === ad.id); 
-        if (i) marker.setIcon(i) 
+        const i = createCustomIcon(ad.type, true, selectedAdId.value === ad.id)
+        if (i) marker.setIcon(i)
       }
     })
-    marker.on('mouseout', () => { 
-      if (!isMobile.value && hoveredAdId.value !== ad.id) { 
-        const i = createCustomIcon(ad.type, false, selectedAdId.value === ad.id); 
-        if (i) marker.setIcon(i) 
+    marker.on('mouseout', () => {
+      if (!isMobile.value && hoveredAdId.value !== ad.id) {
+        const i = createCustomIcon(ad.type, false, selectedAdId.value === ad.id)
+        if (i) marker.setIcon(i)
       }
     })
-    
+
     marker.addTo(map!)
     markers.set(ad.id, marker)
   })
@@ -923,14 +932,13 @@ const initMap = async () => {
 
   // Enable interactions on click
   map.on('click', (e: any) => {
-    // Check if the click was on the map itself, not a marker
-    if (e.originalEvent.target.classList.contains('leaflet-container')) {
-      selectedAdId.value = null
-    }
-
     if (map && !isMapActive.value) {
       enableMapInteractions()
       scrollToMap()
+    }
+    const target = e.originalEvent?.target as HTMLElement | null
+    if (!target?.closest('.custom-marker')) {
+      selectedAdId.value = null
     }
   })
 

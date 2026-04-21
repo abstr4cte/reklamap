@@ -121,7 +121,6 @@ const createCustomIcon = (type: string, isHovered: boolean = false) => {
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s;
         z-index: ${zIndex};
       ">
         <div style="
@@ -201,7 +200,8 @@ const initMap = () => {
       enableMapInteractions()
       scrollToMap()
     }
-    if (e.originalEvent.target.classList.contains('leaflet-container')) {
+    const target = e.originalEvent?.target as HTMLElement | null
+    if (!target?.closest('.custom-marker')) {
       selectedAd.value = null
     }
   })
@@ -391,7 +391,7 @@ const updateMarkers = () => {
       
       // On all devices, show custom detail panel
       marker.on('click', (e: L.LeafletMouseEvent) => {
-        L.DomEvent.stopPropagation(e)
+        L.DomEvent.stopPropagation(e.originalEvent)
 
         if (!isMapActive.value) {
           enableMapInteractions()
