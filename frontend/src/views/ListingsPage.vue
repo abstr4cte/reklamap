@@ -851,17 +851,6 @@ const updateMarkers = () => {
     if (!icon) return
     const marker = L!.marker([ad.latitude, ad.longitude], { icon })
 
-    marker.on('click', (e: LType.LeafletMouseEvent) => {
-      L!.DomEvent.stopPropagation(e.originalEvent)
-      selectedAdId.value = ad.id
-      if (!isMapActive.value) {
-        enableMapInteractions()
-        scrollToMap()
-      }
-      if (!isMobile.value) {
-        scrollToAd(ad.id)
-      }
-    })
     marker.on('mouseover', () => {
       if (!isMobile.value) {
         const i = createCustomIcon(ad.type, true, selectedAdId.value === ad.id)
@@ -929,6 +918,29 @@ const initMap = async () => {
   //   maxClusterRadius: 50
   // })
   // map.addLayer(markerClusterGroup)
+
+  // Delegowany click handler dla markerów — jeden listener na kontenerze zamiast per-marker.
+  // marker.getElement() zwraca aktualny element nawet po setIcon() (hover scale).
+  mapContainer.value!.addEventListener('click', (e: MouseEvent) => {
+    const target = e.target as HTMLElement
+    for (const [id, marker] of markers) {
+      if (marker.getElement()?.contains(target)) {
+        e.stopPropagation()
+        const ad = mapPins.value.find(a => a.id === id)
+        if (ad) {
+          selectedAdId.value = ad.id
+          if (!isMapActive.value) {
+            enableMapInteractions()
+            scrollToMap()
+          }
+          if (!isMobile.value) {
+            scrollToAd(ad.id)
+          }
+        }
+        return
+      }
+    }
+  }, { capture: true })
 
   // Enable interactions on click
   map.on('click', (e: any) => {

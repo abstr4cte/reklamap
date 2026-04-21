@@ -194,6 +194,27 @@ const initMap = () => {
     position: 'topleft'
   }).addTo(map)
 
+  // Delegowany click handler dla markerów — jeden listener na kontenerze zamiast per-marker.
+  // marker.getElement() zwraca aktualny element nawet po setIcon() (hover scale),
+  // dlatego ta metoda jest odporna na wymianę DOM elementu przez Leaflet.
+  mapContainer.value.addEventListener('click', (e: MouseEvent) => {
+    const target = e.target as HTMLElement
+    for (const [id, marker] of markers) {
+      if (marker.getElement()?.contains(target)) {
+        e.stopPropagation()
+        const ad = props.listings.find(a => a.id === id)
+        if (ad) {
+          if (!isMapActive.value) {
+            enableMapInteractions()
+            scrollToMap()
+          }
+          selectedAd.value = ad
+        }
+        return
+      }
+    }
+  }, { capture: true })
+
   // Zamknij wybraną reklamę przy kliknięciu w tło mapy (nie pinezkę)
   map.on('click', (e: any) => {
     if (!isMapActive.value) {
@@ -387,20 +408,6 @@ const updateMarkers = () => {
       </div>
     `
 
-      // marker.bindPopup(popupContent, ...) - Disabled in favor of native Vue panels
-      
-      // On all devices, show custom detail panel
-      marker.on('click', (e: L.LeafletMouseEvent) => {
-        L.DomEvent.stopPropagation(e.originalEvent)
-
-        if (!isMapActive.value) {
-          enableMapInteractions()
-          scrollToMap()
-        }
-
-        selectedAd.value = ad
-      })
-      
       marker.on('mouseover', () => {
         if (!isMobile.value) {
           marker.setIcon(createCustomIcon(ad.type, true))
@@ -412,7 +419,7 @@ const updateMarkers = () => {
           marker.setIcon(createCustomIcon(ad.type, false))
         }
       })
-      
+
       marker.addTo(map!)
       markers.set(ad.id, marker)
     }
