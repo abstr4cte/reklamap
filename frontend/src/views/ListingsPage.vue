@@ -894,7 +894,7 @@ const initMap = async () => {
     touchZoom: false,
     doubleClickZoom: false,
     maxBounds: pBounds, 
-    minZoom: 5 
+    minZoom: isMobile.value ? 5 : 6,
   }).setView(pCenter, 6)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
   

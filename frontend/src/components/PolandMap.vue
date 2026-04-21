@@ -183,7 +183,7 @@ const initMap = () => {
     zoomControl: false,
     maxBounds: polandBounds,
     maxBoundsViscosity: 1.0,
-    minZoom: 5,
+    minZoom: isMobile.value ? 5 : 6,
     maxZoom: 18
   }).setView([52.0, 19.0], isMobile.value ? 5 : 6)
 
