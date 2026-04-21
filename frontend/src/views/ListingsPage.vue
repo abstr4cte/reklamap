@@ -4482,7 +4482,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 :deep(.custom-marker.hovered),
 :deep(.custom-marker.selected) {
-  transform: scale(1.3);
+  scale: 1.3;
   transform-origin: 50% 100%;
   z-index: 1000 !important;
 }
