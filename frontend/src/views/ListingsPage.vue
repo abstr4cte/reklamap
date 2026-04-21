@@ -176,9 +176,12 @@ const hoveredAdId = ref<number | null>(null)
 const selectedAdId = ref<number | null>(null)
 const selectedAd = ref<Advertisement | null>(null)
 
-watch(selectedAdId, async (id) => {
+watch(selectedAdId, async (id, oldId) => {
+  // Aktualizuj klasę CSS selected na markerach
+  if (oldId) markers.get(oldId)?.getElement()?.classList.remove('selected')
+  if (id) markers.get(id)?.getElement()?.classList.add('selected')
+
   if (!id) { selectedAd.value = null; return }
-  // First try current page for instant display, then fetch full data if needed
   const fromPage = listings.value.find(ad => ad.id === id)
   if (fromPage) { selectedAd.value = fromPage; return }
   const full = await api.getAdvertisement(id)
@@ -753,22 +756,8 @@ const scrollToAd = (adId: number) => {
 
 const handleAdHover = (adId: number | null) => {
   hoveredAdId.value = adId
-  if (adId && markers.has(adId)) {
-    const ad = mapPins.value.find(a => a.id === adId)
-    if (ad) {
-      const marker = markers.get(adId)!
-      const icon = createCustomIcon(ad.type, true, selectedAdId.value === adId)
-      if (icon) marker.setIcon(icon)
-    }
-  }
   markers.forEach((marker, id) => {
-    if (id !== adId) {
-      const ad = mapPins.value.find(a => a.id === id)
-      if (ad) {
-        const icon = createCustomIcon(ad.type, false, selectedAdId.value === id)
-        if (icon) marker.setIcon(icon)
-      }
-    }
+    marker.getElement()?.classList.toggle('hovered', id === adId)
   })
 }
 
@@ -786,41 +775,36 @@ const handleToggleComparison = async (id: number) => {
 }
 
 // Map Logic
-const createCustomIcon = (type: string, hovered: boolean = false, selected: boolean = false) => {
+const createCustomIcon = (type: string) => {
   if (!L || !L.divIcon) return null
   const color = typeColors[type] || '#6B7280'
-  const isHovered = hovered || selected
-  const scale = isHovered ? 1.3 : 1
-  const zIndex = isHovered ? 1000 : 500
-  
   return L.divIcon({
     className: 'custom-marker',
     html: `
       <div style="
         background: ${color};
-        width: ${32 * scale}px;
-        height: ${32 * scale}px;
+        width: 32px;
+        height: 32px;
         border-radius: 50% 50% 50% 0;
         transform: rotate(-45deg);
         border: 3px solid white;
-        box-shadow: 0 ${3 * scale}px ${10 * scale}px rgba(0,0,0,0.3);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.3);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: ${zIndex};
       ">
         <div style="
-          width: ${12 * scale}px;
-          height: ${12 * scale}px;
+          width: 12px;
+          height: 12px;
           background: white;
           border-radius: 50%;
           transform: rotate(45deg);
         "></div>
       </div>
     `,
-    iconSize: [32 * scale, 32 * scale],
-    iconAnchor: [16 * scale, 32 * scale],
-    popupAnchor: [0, -32 * scale]
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
   })
 }
 
@@ -840,28 +824,29 @@ const updateMarkers = () => {
     const isSelected = selectedAdId.value === ad.id
 
     if (markers.has(ad.id)) {
-      // Aktualizuj tylko ikonę istniejącego markera
-      const icon = createCustomIcon(ad.type, isHovered, isSelected)
-      if (icon) markers.get(ad.id)!.setIcon(icon)
+      // Aktualizuj tylko kolor (typ) istniejącego markera, hover/selected przez CSS klasy
+      const icon = createCustomIcon(ad.type)
+      if (icon) {
+        markers.get(ad.id)!.setIcon(icon)
+        const el = markers.get(ad.id)!.getElement()
+        if (el) {
+          el.classList.toggle('hovered', isHovered)
+          el.classList.toggle('selected', isSelected)
+        }
+      }
       return
     }
 
     // Utwórz nowy marker
-    const icon = createCustomIcon(ad.type, isHovered, isSelected)
+    const icon = createCustomIcon(ad.type)
     if (!icon) return
     const marker = L!.marker([ad.latitude, ad.longitude], { icon })
 
     marker.on('mouseover', () => {
-      if (!isMobile.value) {
-        const i = createCustomIcon(ad.type, true, selectedAdId.value === ad.id)
-        if (i) marker.setIcon(i)
-      }
+      if (!isMobile.value) marker.getElement()?.classList.add('hovered')
     })
     marker.on('mouseout', () => {
-      if (!isMobile.value && hoveredAdId.value !== ad.id) {
-        const i = createCustomIcon(ad.type, false, selectedAdId.value === ad.id)
-        if (i) marker.setIcon(i)
-      }
+      if (!isMobile.value) marker.getElement()?.classList.remove('hovered')
     })
 
     marker.addTo(map!)
@@ -927,9 +912,7 @@ const initMap = async () => {
       if (marker.getElement()?.contains(target)) {
         const ad = mapPins.value.find(a => a.id === id)
         if (ad) {
-          // Jawnie resetuj hover — mouseout nie odpala w Chromium po kliknięciu powodującym zmiany DOM
-          const resetIcon = createCustomIcon(ad.type, false, true)
-          if (resetIcon) marker.setIcon(resetIcon)
+          marker.getElement()?.classList.remove('hovered')
           selectedAdId.value = ad.id
           if (!isMapActive.value) {
             enableMapInteractions()
@@ -4495,6 +4478,13 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 :deep(.custom-marker) {
   background: transparent;
   border: none;
+}
+
+:deep(.custom-marker.hovered),
+:deep(.custom-marker.selected) {
+  transform: scale(1.3);
+  transform-origin: 50% 100%;
+  z-index: 1000 !important;
 }
 
 :deep(.leaflet-popup-content-wrapper) {

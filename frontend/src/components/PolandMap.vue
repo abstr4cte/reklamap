@@ -102,39 +102,35 @@ const regionCoordinates: Record<string, { lat: number; lng: number; zoom: number
   'zachodniopomorskie': { lat: 53.4285, lng: 14.5528, zoom: 8 }
 }
 
-const createCustomIcon = (type: string, isHovered: boolean = false) => {
+const createCustomIcon = (type: string) => {
   const color = typeColors[type] || '#6B7280'
-  const scale = isHovered ? 1.3 : 1
-  const zIndex = isHovered ? 1000 : 500
-  
   return L.divIcon({
     className: 'custom-marker',
     html: `
       <div style="
         background: ${color};
-        width: ${32 * scale}px;
-        height: ${32 * scale}px;
+        width: 32px;
+        height: 32px;
         border-radius: 50% 50% 50% 0;
         transform: rotate(-45deg);
         border: 3px solid white;
-        box-shadow: 0 ${3 * scale}px ${10 * scale}px rgba(0,0,0,0.3);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.3);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: ${zIndex};
       ">
         <div style="
-          width: ${12 * scale}px;
-          height: ${12 * scale}px;
+          width: 12px;
+          height: 12px;
           background: white;
           border-radius: 50%;
           transform: rotate(45deg);
         "></div>
       </div>
     `,
-    iconSize: [32 * scale, 32 * scale],
-    iconAnchor: [16 * scale, 32 * scale],
-    popupAnchor: [0, -32 * scale]
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
   })
 }
 
@@ -203,8 +199,7 @@ const initMap = () => {
       if (marker.getElement()?.contains(target)) {
         const ad = props.listings.find(a => a.id === id)
         if (ad) {
-          // Jawnie resetuj hover — mouseout nie odpala w Chromium po kliknięciu powodującym zmiany DOM
-          marker.setIcon(createCustomIcon(ad.type, false))
+          marker.getElement()?.classList.remove('hovered')
           if (!isMapActive.value) {
             enableMapInteractions()
             scrollToMap()
@@ -347,14 +342,15 @@ const updateMarkers = () => {
   props.listings.forEach((ad) => {
     const isHovered = props.hoveredAdId === ad.id
     
-    // Jeśli marker już istnieje, aktualizuj jego ikonę
+    // Jeśli marker już istnieje, aktualizuj tylko kolor (typ)
     if (markers.has(ad.id)) {
       const marker = markers.get(ad.id)!
-      marker.setIcon(createCustomIcon(ad.type, isHovered))
+      marker.setIcon(createCustomIcon(ad.type))
+      marker.getElement()?.classList.toggle('hovered', isHovered)
     } else {
       // Utwórz nowy marker
       const marker = L.marker([ad.latitude, ad.longitude], {
-        icon: createCustomIcon(ad.type, isHovered)
+        icon: createCustomIcon(ad.type)
       })
 
     const citySlug = slugify(ad.city)
@@ -410,15 +406,10 @@ const updateMarkers = () => {
     `
 
       marker.on('mouseover', () => {
-        if (!isMobile.value) {
-          marker.setIcon(createCustomIcon(ad.type, true))
-        }
+        if (!isMobile.value) marker.getElement()?.classList.add('hovered')
       })
-
       marker.on('mouseout', () => {
-        if (!isMobile.value && props.hoveredAdId !== ad.id) {
-          marker.setIcon(createCustomIcon(ad.type, false))
-        }
+        if (!isMobile.value) marker.getElement()?.classList.remove('hovered')
       })
 
       marker.addTo(map!)
@@ -457,14 +448,8 @@ watch(() => props.selectedLocationCoords, () => {
 
 watch(() => props.hoveredAdId, (newId) => {
   if (!map) return
-  
-  // Aktualizuj tylko ikony markerów, bez zmiany pozycji mapy
-  props.listings.forEach((ad) => {
-    if (markers.has(ad.id)) {
-      const marker = markers.get(ad.id)!
-      const isHovered = newId === ad.id
-      marker.setIcon(createCustomIcon(ad.type, isHovered))
-    }
+  markers.forEach((marker, id) => {
+    marker.getElement()?.classList.toggle('hovered', id === newId)
   })
 })
 
@@ -1193,6 +1178,12 @@ onBeforeUnmount(() => {
 :deep(.custom-marker) {
   background: transparent;
   border: none;
+}
+
+:deep(.custom-marker.hovered) {
+  transform: scale(1.3);
+  transform-origin: 50% 100%;
+  z-index: 1000 !important;
 }
 
 :deep(.leaflet-popup-content-wrapper) {
