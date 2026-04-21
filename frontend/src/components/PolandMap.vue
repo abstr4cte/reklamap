@@ -201,9 +201,10 @@ const initMap = () => {
     const target = e.target as HTMLElement
     for (const [id, marker] of markers) {
       if (marker.getElement()?.contains(target)) {
-        e.stopPropagation()
         const ad = props.listings.find(a => a.id === id)
         if (ad) {
+          // Jawnie resetuj hover — mouseout nie odpala w Chromium po kliknięciu powodującym zmiany DOM
+          marker.setIcon(createCustomIcon(ad.type, false))
           if (!isMapActive.value) {
             enableMapInteractions()
             scrollToMap()
@@ -213,7 +214,7 @@ const initMap = () => {
         return
       }
     }
-  }, { capture: true })
+  })
 
   // Zamknij wybraną reklamę przy kliknięciu w tło mapy (nie pinezkę)
   map.on('click', (e: any) => {

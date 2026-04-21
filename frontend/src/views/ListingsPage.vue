@@ -925,9 +925,11 @@ const initMap = async () => {
     const target = e.target as HTMLElement
     for (const [id, marker] of markers) {
       if (marker.getElement()?.contains(target)) {
-        e.stopPropagation()
         const ad = mapPins.value.find(a => a.id === id)
         if (ad) {
+          // Jawnie resetuj hover — mouseout nie odpala w Chromium po kliknięciu powodującym zmiany DOM
+          const resetIcon = createCustomIcon(ad.type, false, true)
+          if (resetIcon) marker.setIcon(resetIcon)
           selectedAdId.value = ad.id
           if (!isMapActive.value) {
             enableMapInteractions()
@@ -940,7 +942,7 @@ const initMap = async () => {
         return
       }
     }
-  }, { capture: true })
+  })
 
   // Enable interactions on click
   map.on('click', (e: any) => {
