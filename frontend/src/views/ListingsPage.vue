@@ -781,25 +781,27 @@ const createCustomIcon = (type: string) => {
   return L.divIcon({
     className: 'custom-marker',
     html: `
-      <div style="
-        background: ${color};
-        width: 32px;
-        height: 32px;
-        border-radius: 50% 50% 50% 0;
-        transform: rotate(-45deg);
-        border: 3px solid white;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      ">
+      <div class="marker-body" style="width: 32px; height: 32px;">
         <div style="
-          width: 12px;
-          height: 12px;
-          background: white;
-          border-radius: 50%;
-          transform: rotate(45deg);
-        "></div>
+          background: ${color};
+          width: 32px;
+          height: 32px;
+          border-radius: 50% 50% 50% 0;
+          transform: rotate(-45deg);
+          border: 3px solid white;
+          box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        ">
+          <div style="
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            transform: rotate(45deg);
+          "></div>
+        </div>
       </div>
     `,
     iconSize: [32, 32],
@@ -4482,9 +4484,13 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 :deep(.custom-marker.hovered),
 :deep(.custom-marker.selected) {
+  z-index: 1000 !important;
+}
+
+:deep(.custom-marker.hovered .marker-body),
+:deep(.custom-marker.selected .marker-body) {
   scale: 1.3;
   transform-origin: 50% 100%;
-  z-index: 1000 !important;
 }
 
 :deep(.leaflet-popup-content-wrapper) {
