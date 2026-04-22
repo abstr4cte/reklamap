@@ -210,7 +210,6 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   
   // Lokalizacja szczegółowa
   if (filters.street) params.street = normalizePolishChars(filters.street)
-  if (filters.locationLabel) params.loc = normalizePolishChars(filters.locationLabel)
 
   // Konwersja współrzędnych lokalizacji - usunięto z URL by nie zaśmiecać linków
 
@@ -334,7 +333,6 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   
   // Lokalizacja szczegółowa
   if (query.street) filters.street = query.street
-  if (query.loc) filters.locationLabel = query.loc
 
   // Współrzędne lokalizacji - przestarzałe w query params, upewniamy się że nie wpadną gubiąc domyślnie
   filters.selectedLocationCoords = null
