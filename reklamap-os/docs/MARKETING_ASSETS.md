@@ -246,6 +246,8 @@ Plik do wysłania agencji: dane w arkuszu, zdjęcia osobno (mail / WeTransfer / 
 
 **Pitch — skup się na tym dlaczego OLX nie działa dla powierzchni:**
 
+> Powiem Panu szczerze — problem z wynajmem powierzchni reklamowej dostrzega się dopiero w momencie gdy samemu się szuka. Jeśli miniesz billboard na ulicy — okej, jest numer, możesz zadzwonić. Ale jeśli szukasz czegoś konkretnego w internecie, chcesz zaplanować kampanię w innym mieście — to graniczy z cudem. Żadna platforma nie jest do tego przystosowana, nie ma gdzie szukać.
+>
 > Bo problem z OLX jest taki, że reklamodawcy tam po prostu nie szukają. Jak firma chce zaplanować kampanię, to nie wchodzi na OLX — tam jest wszystko, od samochodów po kanapy. Nasza platforma zbiera tylko i wyłącznie powierzchnie reklamowe, więc trafia do nas ktoś kto konkretnie szuka miejsca na reklamę.
 >
 > Użytkownik widzi interaktywną mapę z pinezkami, filtruje po typie, mieście, parametrach, ogląda okolicę przez Street View. Jest porównywarka. To narzędzie dla kogoś kto poważnie szuka, nie przegląda losowo.
