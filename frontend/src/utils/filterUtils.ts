@@ -153,7 +153,6 @@ export function filtersToQueryParams(filters: FilterParams): Record<string, stri
   if (filters.type) params.type = filters.type
   if (filters.region) params.region = normalizePolishChars(filters.region)
   if (filters.city) params.city = normalizePolishChars(filters.city)
-  if (filters.cityStrict) params.cityStrict = 'tak'
 
   // Wartości liczbowe
   if (filters.priceFrom !== null && filters.priceFrom !== undefined) {
@@ -282,7 +281,10 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   if (query.q) filters.keyword = query.q
   if (query.type) filters.type = query.type
   if (query.region) filters.region = query.region
-  if (query.city) filters.city = query.city
+  if (query.city) {
+    filters.city = query.city
+    filters.cityStrict = true
+  }
 
   // Wartości liczbowe
   if (query.priceFrom) filters.priceFrom = parseFloat(query.priceFrom) || null
@@ -328,7 +330,6 @@ export function queryParamsToFilters(query: Record<string, string>): FilterParam
   filters.hasLightingTypeBanner = query.hasLightingTypeBanner === 'tak' || query.hasLightingTypeBanner === 'true'
   filters.hasLightingTypeBillboard = query.hasLightingTypeBillboard === 'tak' || query.hasLightingTypeBillboard === 'true'
   filters.ambientLightControl = query.ambientLightControl === 'tak' || query.ambientLightControl === 'true'
-  filters.cityStrict = query.cityStrict === 'tak' || query.cityStrict === 'true'
   filters.priceIncludesMounting = query.priceIncludesMounting === 'tak' || query.priceIncludesMounting === 'true'
   
   // Lokalizacja szczegółowa

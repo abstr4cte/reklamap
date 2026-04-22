@@ -269,3 +269,17 @@ Plik do wysłania agencji: dane w arkuszu, zdjęcia osobno (mail / WeTransfer / 
 ## RIPOSTA NA OBIEKCJE
 
 *(Tu Agent Marketing dopisuje sprawdzone riposta na podstawie SALES_LOG.md)*
+
+---
+
+### OBIEKCJA: "Skoro platforma jest darmowa, to co wy z tego macie?"
+
+```
+Dla właścicieli nośników platforma jest i zostaje darmowa.
+Planujemy płatne funkcje dla reklamodawców — wyróżnienia,
+zaawansowane analizy, kalkulatory zasięgu.
+Pan jako właściciel na tym tylko zyskuje — większa
+widoczność bez żadnych kosztów z Pana strony.
+```
+
+**Zasada:** Nie rozwijaj. Jedno pytanie — jedna odpowiedź. Jeśli drąży dalej, dodaj: *"Zarabiamy na tych, którzy chcą do Pana dotrzeć — nie na Panu."*
