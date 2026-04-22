@@ -334,6 +334,15 @@ const breadcrumbs = computed(() => {
   return items
 })
 
+const noResultsContext = computed(() => {
+  const type = route.params.type as string
+  const city = route.params.city as string
+  const parts: string[] = []
+  if (type) parts.push(urlTypeToLabel[type] || deslugify(type))
+  if (city) parts.push(deslugify(city))
+  return parts.length ? parts.join(', ') : null
+})
+
 const currentDescription = computed(() => {
   const city = route.params.city as string
   const type = route.params.type as string
@@ -1629,7 +1638,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
             <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/>
           </svg>
-          <h3>Brak ogłoszeń</h3>
+          <h3>Brak ogłoszeń<template v-if="noResultsContext"> dla: <span class="empty-state-context">{{ noResultsContext }}</span></template></h3>
           <p>Nie znaleziono ogłoszeń pasujących do wyszukiwania</p>
           
           <SearchAlertBox 
@@ -3371,6 +3380,13 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   margin: 0 0 0.5rem 0;
   color: var(--text-main, #1f2937);
   font-size: 1.25rem;
+}
+
+.empty-state-context {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .empty-state p {
