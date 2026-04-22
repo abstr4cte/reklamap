@@ -1,31 +1,29 @@
-/**
- * reCAPTCHA v3 Service
- * Handles reCAPTCHA token generation and validation
- */
-
 const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
+const RECAPTCHA_TIMEOUT_MS = 5000
 
-/**
- * Get reCAPTCHA token for a specific action
- * @param action - The action name (e.g., 'submit_form', 'contact_us', 'add_ad')
- * @returns Promise with the reCAPTCHA token
- */
+function withTimeout<T>(promise: Promise<T>): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error('reCAPTCHA timeout')), RECAPTCHA_TIMEOUT_MS)
+    ),
+  ])
+}
+
 export async function getRecaptchaToken(action: string): Promise<string> {
-  if (!RECAPTCHA_SITE_KEY) {
-    return ''
-  }
+  if (!RECAPTCHA_SITE_KEY) return ''
 
   try {
-    // Wait for grecaptcha to be ready
-    await new Promise<void>((resolve) => {
-      (window as any).grecaptcha.ready(() => resolve());
-    });
+    const gr = (window as any).grecaptcha
+    if (!gr) return ''
 
-    const token = await (window as any).grecaptcha.execute(RECAPTCHA_SITE_KEY, {
-      action: action
-    })
+    await withTimeout(new Promise<void>((resolve) => gr.ready(resolve)))
+
+    const token = await withTimeout<string>(
+      gr.execute(RECAPTCHA_SITE_KEY, { action })
+    )
     return token
-  } catch (error) {
+  } catch {
     return ''
   }
 }
