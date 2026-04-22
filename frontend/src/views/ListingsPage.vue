@@ -1447,7 +1447,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
       <!-- SEO Breadcrumbs -->
       <Breadcrumbs :items="breadcrumbs" />
 
-      <h1 class="listings-title">{{ seoInfo.title.split(' | ')[0] }}</h1>
+      <h1 class="listings-title sr-only">{{ seoInfo.title.split(' | ')[0] }}</h1>
       
       <!-- Search and Filters Bar -->
       <div class="search-bar">
@@ -3088,14 +3088,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 
 @media (max-width: 768px) {
   .listings-title {
-    display: block;
-    font-size: 1.1875rem;
-    font-weight: 700;
-    color: var(--text-main, #111827);
-    letter-spacing: -0.01em;
-    line-height: 1.3;
-    margin: 0 0 0.75rem 0;
-    padding: 0 1rem;
+    display: none;
   }
 }
 

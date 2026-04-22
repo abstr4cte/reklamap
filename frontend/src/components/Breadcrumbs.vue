@@ -201,15 +201,19 @@ onUnmounted(() => {
     display: none;
   }
 
-  /* ...pokaż tylko bezpośredniego rodzica (drugi od końca) */
-  .breadcrumb-item:nth-last-child(2) {
+  /* ...pokaż rodzica (back link) i aktualny element */
+  .breadcrumb-item:nth-last-child(2),
+  .breadcrumb-item:last-child {
     display: flex;
     align-items: center;
   }
 
-  /* Ukryj separator za back linkiem */
+  /* Separator między rodzicem a aktualnym — pokaż tylko ten przy rodzicu */
   .breadcrumb-item:nth-last-child(2) .breadcrumb-separator {
-    display: none;
+    display: block;
+    width: 14px;
+    height: 14px;
+    color: var(--text-light, #d1d5db);
   }
 
   /* Styl back linka — mniejszy, subtelny */
@@ -241,6 +245,12 @@ onUnmounted(() => {
 
   .breadcrumb-item:nth-last-child(2) .breadcrumb-link:hover {
     color: var(--primary-color, #667eea);
+  }
+
+  /* Aktualny element — wyraźniejszy, gradient jak na desktopie */
+  .breadcrumb-item:last-child .breadcrumb-current {
+    font-size: 0.8125rem;
+    font-weight: 600;
   }
 
   /* Gdy lista ma tylko 1 element (np. strona bez rodzica), pokaż go */
