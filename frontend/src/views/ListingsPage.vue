@@ -3357,6 +3357,14 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
   min-height: 400px;
 }
 
+@media (max-width: 768px) {
+  .empty-state {
+    min-height: 0;
+    justify-content: flex-start;
+    padding: 2.5rem 1.5rem;
+  }
+}
+
 .spinner {
   width: 48px;
   height: 48px;
