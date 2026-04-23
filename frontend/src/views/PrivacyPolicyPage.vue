@@ -5,7 +5,7 @@ useSeo({
   title: 'Polityka Prywatności | ReklaMap',
   description: 'Zasady przetwarzania i ochrony danych osobowych na platformie ReklaMap.',
   keywords: 'prywatność, RODO, dane osobowe, polityka prywatności, ReklaMap',
-  noindex: true // Typically we don't need privacy policy to compete in search results, but it should be indexable if desired. Actually, 'noindex' is safer if you want to focus SEO on main pages, but usually it's fine to leave it. Let's keep it indexable but with low priority in sitemap.
+  noindex: true
 })
 </script>
 
@@ -35,7 +35,7 @@ useSeo({
           <h2>3. Zakres zbieranych danych osobowych</h2>
           <p>W związku z korzystaniem z Serwisu zbieramy następujące dane osobowe:</p>
           <ul>
-            <li><strong>Dane kontaktowe:</strong> imię, nazwisko (lub nazwa firmy), adres e-mail, numer telefonu</li>
+            <li><strong>Dane kontaktowe:</strong> adres e-mail (wymagany), numer telefonu (opcjonalny)</li>
             <li><strong>Dane lokalizacyjne:</strong> adres IP, informacje o lokalizacji (na podstawie adresu IP)</li>
             <li><strong>Dane dotyczące ogłoszeń:</strong> informacje zawarte w publikowanych ogłoszeniach (lokalizacja, typ nośnika, wymiary, cena, zdjęcia)</li>
             <li><strong>Dane techniczne:</strong> informacje o urządzeniu, przeglądarce, systemie operacyjnym, czas i data dostępu</li>
@@ -51,7 +51,7 @@ useSeo({
             <li><strong>Komunikacja:</strong> kontakt z Użytkownikami w sprawie ogłoszeń, odpowiedzi na zapytania, wysyłanie powiadomień</li>
             <li><strong>Weryfikacja:</strong> sprawdzenie autentyczności danych kontaktowych i zapobieganie nadużyciom</li>
             <li><strong>Statystyka i analiza:</strong> analiza korzystania z Serwisu, poprawa funkcjonalności i doświadczenia użytkownika</li>
-            <li><strong>Obowiązki prawne:</strong> realizacja obowiązków wynikających z przepisów prawa, w tym podatkowymi i rachunkowymi</li>
+            <li><strong>Obowiązki prawne:</strong> realizacja obowiązków wynikających z przepisów prawa</li>
             <li><strong>Bezpieczeństwo:</strong> ochrona przed nieautoryzowanym dostępem, oszustwami i innymi zagrożeniami</li>
           </ul>
         </section>
@@ -60,28 +60,23 @@ useSeo({
           <h2>5. Podstawa prawna przetwarzania</h2>
           <p>Przetwarzanie danych osobowych odbywa się na podstawie:</p>
           <ul>
-            <li>Zgody Użytkownika (art. 6 ust. 1 lit. a RODO) - dla danych zbieranych za pośrednictwem formularzy</li>
-            <li>Wykonania umowy (art. 6 ust. 1 lit. b RODO) - dla danych niezbędnych do świadczenia usług</li>
-            <li>Obowiązku prawnego (art. 6 ust. 1 lit. c RODO) - dla danych wymaganych przepisami prawa</li>
-            <li>Uzasadnionego interesu (art. 6 ust. 1 lit. f RODO) - dla danych analitycznych i bezpieczeństwa</li>
+            <li>Zgody Użytkownika (art. 6 ust. 1 lit. a RODO) — dla danych zbieranych za pośrednictwem formularzy</li>
+            <li>Wykonania umowy (art. 6 ust. 1 lit. b RODO) — dla danych niezbędnych do świadczenia usług</li>
+            <li>Obowiązku prawnego (art. 6 ust. 1 lit. c RODO) — dla danych wymaganych przepisami prawa</li>
+            <li>Uzasadnionego interesu (art. 6 ust. 1 lit. f RODO) — dla danych analitycznych i bezpieczeństwa</li>
           </ul>
         </section>
 
         <section>
           <h2>6. Udostępnianie danych osobowych</h2>
-          <p>Dane osobowe Użytkownika (imię, nazwisko, email, telefon) są widoczne dla innych Użytkowników w celu umożliwienia kontaktu w sprawie ogłoszeń. Dane nie są udostępniane stronom trzecim, z wyjątkiem:</p>
-          <ul>
-            <li>Dostawców usług technicznych (hosting, bazy danych) - na podstawie umów przetwarzania danych</li>
-            <li>Organów publicznych - na podstawie obowiązku prawnego</li>
-            <li>Firm zajmujących się bezpieczeństwem - w celu ochrony przed oszustwami</li>
-          </ul>
+          <p>Dane osobowe Użytkowników nie są udostępniane żadnym podmiotom trzecim. Kontakt z ogłoszeniodawcą odbywa się przez formularz wiadomości lub numer telefonu (jeśli podany) — adres email nie jest widoczny dla innych Użytkowników. Administrator może być zobowiązany do udostępnienia danych wyłącznie na żądanie uprawnionych organów publicznych, na podstawie obowiązujących przepisów prawa.</p>
         </section>
 
         <section>
           <h2>7. Pliki Cookies i technologie śledzące</h2>
           <p>Serwis używa plików cookies i podobnych technologii śledzących:</p>
           <ul>
-            <li><strong>Cookies niezbędne:</strong> umożliwiają funkcjonowanie Serwisu (sesja, bezpieczeństwo)</li>
+            <li><strong>Cookies niezbędne:</strong> umożliwiają podstawowe funkcjonowanie Serwisu (przechowywanie zgody na cookies, stanu ulubionych i porównań)</li>
             <li><strong>Cookies analityczne:</strong> zbierają informacje o korzystaniu z Serwisu (Google Analytics)</li>
             <li><strong>Cookies funkcjonalne:</strong> zapamiętują preferencje użytkownika (język, filtry wyszukiwania)</li>
             <li><strong>Cookies marketingowe:</strong> śledzą aktywność użytkownika w celu personalizacji treści</li>
@@ -93,11 +88,11 @@ useSeo({
           <h2>8. Okres przechowywania danych</h2>
           <p>Dane osobowe przechowywane są przez okres:</p>
           <ul>
-            <li><strong>Dane kontaktowe:</strong> przez czas korzystania z Serwisu i 3 lata po usunięciu konta</li>
-            <li><strong>Dane ogłoszeń:</strong> przez 90 dni od publikacji (okres aktywności ogłoszenia)</li>
+            <li><strong>Dane kontaktowe:</strong> przez czas aktywności ogłoszenia i do 3 lat po jego usunięciu</li>
+            <li><strong>Dane ogłoszeń:</strong> do czasu usunięcia ogłoszenia przez użytkownika lub administratora</li>
             <li><strong>Dane analityczne:</strong> przez 26 miesięcy</li>
             <li><strong>Dane techniczne:</strong> przez 30 dni</li>
-            <li><strong>Dane wymagane prawem:</strong> zgodnie z obowiązującymi przepisami (np. 5 lat dla danych podatkowych)</li>
+            <li><strong>Dane wymagane prawem:</strong> zgodnie z obowiązującymi przepisami prawa</li>
           </ul>
         </section>
 

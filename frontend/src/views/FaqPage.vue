@@ -74,7 +74,7 @@ const faqItems: FaqItem[] = [
     id: 2,
     category: 'podstawy',
     question: 'Czy korzystanie z platformy jest bezpłatne?',
-    answer: 'Tak, przeglądanie ogłoszeń i wyszukiwanie powierzchni reklamowych jest całkowicie bezpłatne. Dodawanie ogłoszeń również nie wiąże się z żadnymi kosztami. ReklaMap nie pobiera żadnych prowizji - jest to serwis bezpłatny dla wszystkich użytkowników.'
+    answer: 'Tak, przeglądanie ogłoszeń i wyszukiwanie powierzchni reklamowych jest całkowicie bezpłatne. Dodawanie ogłoszeń również nie wiąże się z żadnymi kosztami. ReklaMap nie pobiera żadnych prowizji — jest to serwis bezpłatny dla wszystkich użytkowników.'
   },
   {
     id: 3,
@@ -86,7 +86,7 @@ const faqItems: FaqItem[] = [
     id: 4,
     category: 'ogloszenia',
     question: 'Jak dodać ogłoszenie?',
-    answer: 'Kliknij przycisk "Dodaj ogłoszenie" w górnym menu. Wypełnij formularz w 4 krokach: 1) Typ nośnika i lokalizacja, 2) Wymiary i parametry techniczne, 3) Cena i jednostka ceny, 4) Zdjęcia i opis. Podaj wymagane dane kontaktowe (imię, nazwisko, email, telefon). Po zatwierdzeniu ogłoszenie pojawi się na stronie i będzie aktywne przez 90 dni.'
+    answer: 'Kliknij przycisk "Dodaj ogłoszenie" w górnym menu. Wypełnij formularz w 6 krokach: 1) Podstawy — typ nośnika i opis, 2) Cena — kwota i jednostka, 3) Lokalizacja — adres i mapa, 4) Opcje — dodatkowe parametry techniczne, 5) Zdjęcie, 6) Zgody. Wymagany jest adres email — opcjonalnie możesz podać numer telefonu. Po zatwierdzeniu ogłoszenie pojawi się na stronie i pozostaje aktywne bezterminowo, dopóki go nie usuniesz.'
   },
   {
     id: 5,
@@ -98,25 +98,25 @@ const faqItems: FaqItem[] = [
     id: 6,
     category: 'ogloszenia',
     question: 'Ile ogłoszeń mogę dodać?',
-    answer: 'Nie ma limitu liczby ogłoszeń, które możesz dodać. Możesz publikować dowolną liczbę ofert powierzchni reklamowych, o ile każda z nich zawiera prawdziwe i aktualne informacje. Każde ogłoszenie jest niezależne i ma swój własny kod PIN do zarządzania.'
+    answer: 'Nie ma limitu liczby ogłoszeń, które możesz dodać. Możesz publikować dowolną liczbę ofert powierzchni reklamowych, o ile każda z nich zawiera prawdziwe i aktualne informacje. Wszystkie ogłoszenia przypisane do Twojego adresu email zarządzasz z jednego miejsca w sekcji "Zarządzaj".'
   },
   {
     id: 7,
     category: 'ogloszenia',
     question: 'Jak edytować lub usunąć ogłoszenie?',
-    answer: 'Wejdź do sekcji "Zarządzaj" w górnym menu. Wpisz kod PIN, który otrzymałeś przy dodawaniu ogłoszenia. Po weryfikacji zobaczysz listę swoich ogłoszeń i będziesz mógł je edytować (zmienić dane, zdjęcia, cenę) lub usunąć. Możesz również przedłużyć ogłoszenie na kolejne 90 dni.'
+    answer: 'Wejdź do sekcji "Zarządzaj" w górnym menu. Podaj adres email, na który dodałeś ogłoszenie — otrzymasz na niego jednorazowy link z dostępem do panelu. Po kliknięciu w link zobaczysz listę swoich ogłoszeń i będziesz mógł je edytować (zmienić dane, zdjęcia, cenę) lub usunąć.'
   },
   {
     id: 8,
     category: 'ogloszenia',
     question: 'Jak długo ogłoszenie jest aktywne?',
-    answer: 'Ogłoszenie pozostaje aktywne przez 90 dni od daty publikacji. Po tym czasie ogłoszenie wygasa automatycznie. Przed wygaśnięciem możesz je przedłużyć bezpłatnie na kolejne 90 dni. Otrzymasz powiadomienie e-mail z przypomnieniem o zbliżającym się terminie wygaśnięcia.'
+    answer: 'Ogłoszenie pozostaje aktywne bezterminowo — nie wygasa automatycznie. Możesz je edytować lub usunąć w dowolnym momencie przez sekcję "Zarządzaj". Pamiętaj, żeby usunąć ogłoszenie, gdy powierzchnia nie jest już dostępna.'
   },
   {
     id: 9,
     category: 'ogloszenia',
     question: 'Jakie zdjęcia powinienem dodać?',
-    answer: 'Dodaj czytelne, wysokiej jakości zdjęcia pokazujące powierzchnię reklamową z różnych perspektyw. Warto pokazać: lokalizację i otoczenie, widoczność z różnych kierunków, stan techniczny nośnika, wymiary (jeśli to możliwe), oświetlenie (dla nośników nocnych). Możesz dodać maksymalnie 10 zdjęć. Zdjęcia powinny być w formacie JPG lub PNG.'
+    answer: 'Dodaj czytelne, wysokiej jakości zdjęcia pokazujące powierzchnię reklamową z różnych perspektyw. Warto pokazać: lokalizację i otoczenie, widoczność z różnych kierunków, stan techniczny nośnika, wymiary (jeśli to możliwe), oświetlenie (dla nośników nocnych). Możesz dodać maksymalnie 5 zdjęć. Zdjęcia powinny być w formacie JPG, PNG lub GIF, do 5 MB każde.'
   },
   {
     id: 10,
@@ -128,13 +128,13 @@ const faqItems: FaqItem[] = [
     id: 11,
     category: 'ogloszenia',
     question: 'Jak ustalić cenę?',
-    answer: 'Cena zależy od wielu czynników: typu nośnika, lokalizacji, wymiarów, natężenia ruchu, oświetlenia, czasu trwania kampanii i popytu na rynku. Możesz podać cenę w różnych jednostkach: dzień, tydzień, miesiąc, rok lub kampania (dla transportu). Platforma automatycznie przelicza ceny między jednostkami, aby ułatwić porównywanie ofert. Warto porównać ceny podobnych nośników w okolicy, aby ustalić konkurencyjną ofertę.'
+    answer: 'Cena zależy od wielu czynników: typu nośnika, lokalizacji, wymiarów, natężenia ruchu, oświetlenia, czasu trwania kampanii i popytu na rynku. Dostępne jednostki ceny różnią się w zależności od typu nośnika — do wyboru są: dzień, tydzień, miesiąc, rok, kampania i m². Platforma automatycznie przelicza ceny między jednostkami, aby ułatwić porównywanie ofert. Warto porównać ceny podobnych nośników w okolicy, aby ustalić konkurencyjną ofertę.'
   },
   {
     id: 12,
     category: 'platnosci',
     question: 'Jak działa system płatności?',
-    answer: 'ReklaMap nie pośredniczy w płatnościach. Po znalezieniu odpowiedniej powierzchni, potencjalny wynajmujący kontaktuje się bezpośrednio z Tobą (za pośrednictwem emaila lub telefonu podanego w ogłoszeniu). Uzgadniacie szczegóły współpracy, warunki wynajmu i formę płatności (przelew, gotówka, itp.). Możesz negocjować warunki i oferować rabaty dla dłuższych kampanii.'
+    answer: 'ReklaMap nie pośredniczy w płatnościach. Po znalezieniu odpowiedniej powierzchni kontaktujesz się bezpośrednio z właścicielem przez formularz lub telefon dostępny na stronie ogłoszenia. Razem uzgadniacie szczegóły współpracy, warunki wynajmu i formę płatności (przelew, gotówka, itp.).'
   },
   {
     id: 13,
@@ -152,7 +152,7 @@ const faqItems: FaqItem[] = [
     id: 15,
     category: 'techniczne',
     question: 'Co to jest mapa interaktywna?',
-    answer: 'Mapa interaktywna pokazuje rozmieszczenie wszystkich dostępnych powierzchni reklamowych w Polsce. Możesz kliknąć na znacznik, aby zobaczyć szczegóły danej lokalizacji, typ nośnika, cenę i zdjęcia. To świetne narzędzie do planowania kampanii regionalnych i wizualizacji dostępnych opcji na mapie.'
+    answer: 'Mapa interaktywna pokazuje rozmieszczenie wszystkich dostępnych powierzchni reklamowych w Polsce. Po kliknięciu w znacznik zobaczysz podgląd ogłoszenia — główne zdjęcie, nazwę, lokalizację i cenę. To świetne narzędzie do planowania kampanii regionalnych i wizualizacji dostępnych opcji na mapie.'
   },
   {
     id: 16,
@@ -164,25 +164,25 @@ const faqItems: FaqItem[] = [
     id: 17,
     category: 'techniczne',
     question: 'Jak działa lista ulubionych?',
-    answer: 'Kliknij ikonę serca na karcie ogłoszenia, aby dodać je do ulubionych. Twoje ulubione ogłoszenia są zapisywane lokalnie w przeglądarce (w cookies). Możesz do nich wrócić w każdej chwili, klikając ikonę serca w górnym menu. Ulubione ogłoszenia są dostępne tylko na tym urządzeniu i w tej przeglądarce.'
+    answer: 'Kliknij ikonę serca na karcie ogłoszenia, aby dodać je do ulubionych. Twoje ulubione ogłoszenia są zapisywane lokalnie w przeglądarce. Możesz do nich wrócić w każdej chwili, klikając ikonę serca w górnym menu. Ulubione ogłoszenia są dostępne tylko na tym urządzeniu i w tej przeglądarce.'
   },
   {
     id: 18,
     category: 'podstawy',
     question: 'Czy potrzebuję konta, aby korzystać z platformy?',
-    answer: 'Nie, nie musisz zakładać konta. Możesz przeglądać ogłoszenia, używać filtrów, mapy i porównania bez rejestracji. Aby dodać ogłoszenie, wystarczy podać imię, nazwisko, email i numer telefonu - nie jest wymagana pełna rejestracja. Otrzymasz kod PIN do zarządzania swoimi ogłoszeniami.'
+    answer: 'Nie, nie musisz zakładać konta. Możesz przeglądać ogłoszenia, używać filtrów, mapy i porównania bez rejestracji. Aby dodać ogłoszenie, wystarczy podać adres email — nie jest wymagana żadna rejestracja ani hasło. Dostęp do zarządzania ogłoszeniami uzyskujesz przez jednorazowy link wysyłany na podany adres email.'
   },
   {
     id: 19,
     category: 'techniczne',
     question: 'Jak mogę zobaczyć statystyki moich ogłoszeń?',
-    answer: 'Wejdź do sekcji "Zarządzaj" i podaj kod PIN. Dla każdego ogłoszenia zobaczysz statystyki: liczbę wyświetleń, kliknięcia na telefon, kliknięcia na email, oraz wykres zaangażowania z ostatnich 30 dni. Te informacje pomagają ocenić efektywność ogłoszenia i dostosować parametry.'
+    answer: 'Wejdź do sekcji "Zarządzaj" i podaj swój adres email — otrzymasz link z dostępem do panelu. Dla każdego ogłoszenia zobaczysz statystyki: liczbę wyświetleń, kliknięcia na telefon, wysłane wiadomości przez formularz, oraz wykres zaangażowania z ostatnich 30 dni. Te informacje pomagają ocenić efektywność ogłoszenia i dostosować parametry.'
   },
   {
     id: 20,
     category: 'techniczne',
     question: 'Czy mogę eksportować ogłoszenie do PDF?',
-    answer: 'Tak, na stronie szczegółów ogłoszenia (AdDetailPage) znajduje się przycisk "Pobierz PDF". Kliknij go, aby pobrać profesjonalny dokument PDF zawierający wszystkie informacje o powierzchni reklamowej, zdjęcia, mapę i szczegóły techniczne. PDF można wydrukować lub wysłać potencjalnym wynajmującym.'
+    answer: 'Tak, na stronie szczegółów ogłoszenia znajduje się przycisk "Pobierz PDF". Kliknij go, aby pobrać dokument PDF zawierający wszystkie informacje o powierzchni reklamowej, zdjęcia, mapę i szczegóły techniczne. PDF można wydrukować lub wysłać potencjalnym wynajmującym.'
   },
   {
     id: 21,
@@ -194,13 +194,31 @@ const faqItems: FaqItem[] = [
     id: 22,
     category: 'ogloszenia',
     question: 'Co zrobić, jeśli znalazłem błędne lub nieaktualne ogłoszenie?',
-    answer: 'Jeśli napotkasz ogłoszenie z nieprawidłowymi informacjami, skontaktuj się z nami przez formularz kontaktowy (dostępny w stopce strony) lub wyślij email na kontakt@reklamap.pl. Zweryfikujemy zgłoszenie i podejmiemy odpowiednie działania, w tym usunięcie ogłoszenia, jeśli jest to konieczne.'
+    answer: 'Na stronie każdego ogłoszenia znajdziesz przycisk "Zgłoś ogłoszenie". Kliknij go, wybierz powód zgłoszenia i opcjonalnie dodaj szczegóły. Zweryfikujemy zgłoszenie i podejmiemy odpowiednie działania.'
   },
   {
     id: 23,
     category: 'podstawy',
     question: 'Czy mogę się skontaktować z właścicielem powierzchni?',
-    answer: 'Tak, każde ogłoszenie zawiera dane kontaktowe właściciela: imię, nazwisko, email i numer telefonu. Możesz się z nim skontaktować bezpośrednio, aby omówić szczegóły wynajmu, cenę, dostępność i warunki współpracy. Właściciel będzie zainteresowany Twoją ofertą.'
+    answer: 'Tak, na stronie każdego ogłoszenia znajdziesz dostępne formy kontaktu z właścicielem — formularz wiadomości, numer telefonu lub oba, w zależności od preferencji ogłoszeniodawcy. Możesz się z nim skontaktować, aby omówić szczegóły wynajmu, cenę, dostępność i warunki współpracy.'
+  },
+  {
+    id: 33,
+    category: 'podstawy',
+    question: 'Czy ReklaMap ma bloga?',
+    answer: 'Tak, w sekcji "Blog" znajdziesz artykuły o rynku reklamy — poradniki, analizy trendów i wskazówki dotyczące planowania kampanii. Blog jest dostępny w górnym menu. Możesz też zapisać się tam na newsletter, aby otrzymywać aktualności z rynku reklamy na email.'
+  },
+  {
+    id: 31,
+    category: 'techniczne',
+    question: 'Czym są alerty wyszukiwania?',
+    answer: 'Alert wyszukiwania to powiadomienie e-mail, które otrzymasz, gdy na platformie pojawi się nowe ogłoszenie pasujące do Twoich filtrów. Możesz go ustawić na stronie głównej po wybraniu interesujących Cię kryteriów (typ nośnika, miasto, parametry) — kliknij przycisk "Zapisz się na powiadomienia". W każdej chwili możesz zrezygnować z subskrypcji.'
+  },
+  {
+    id: 32,
+    category: 'podstawy',
+    question: 'Czym jest newsletter ReklaMap?',
+    answer: 'Newsletter to opcjonalna subskrypcja, dzięki której będziesz otrzymywać e-mailem informacje o nowościach i aktualności z rynku reklamy. Możesz zapisać się na newsletter przy dodawaniu ogłoszenia (ostatni krok formularza) lub na stronie bloga. Subskrypcja jest bezpłatna i dobrowolna — możesz zrezygnować w dowolnym momencie.'
   }
 ]
 

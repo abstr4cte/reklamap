@@ -59,7 +59,7 @@ useSeo({
                 <dd>Treść publikowana przez Użytkownika w Serwisie, zawierająca informacje o dostępnej powierzchni reklamowej.</dd>
 
                 <dt>Administrator Serwisu</dt>
-                <dd>ReklaMap - podmiot prowadzący Serwis, odpowiedzialny za jego funkcjonowanie i rozwój.</dd>
+                <dd>ReklaMap — podmiot prowadzący Serwis, odpowiedzialny za jego funkcjonowanie i rozwój.</dd>
 
                 <dt>Regulamin</dt>
                 <dd>Niniejszy dokument określający zasady korzystania z Serwisu.</dd>
@@ -87,7 +87,7 @@ useSeo({
             <section id="dodawanie-ogloszen" class="section">
               <h2>4. Dodawanie ogłoszeń</h2>
               <ol class="numbered-list">
-                <li>Każdy Użytkownik może dodawać ogłoszenia po podaniu wymaganych danych kontaktowych (imię, nazwisko/nazwa firmy, email, telefon).</li>
+                <li>Każdy Użytkownik może dodawać ogłoszenia po podaniu adresu email. Podanie numeru telefonu jest opcjonalne.</li>
                 <li>Ogłoszenie powinno zawierać prawdziwe i aktualne informacje o oferowanej powierzchni reklamowej, w tym:
                   <ul>
                     <li>Typ nośnika (billboard, citylight, ekran LED, baner, ściana, totem, transport, mobile, inne)</li>
@@ -99,14 +99,13 @@ useSeo({
                   </ul>
                 </li>
                 <li>Użytkownik jest zobowiązany do aktualizowania informacji w ogłoszeniu, w szczególności do oznaczania powierzchni jako niedostępnych lub usuwania ogłoszeń, które nie są już aktualne.</li>
-                <li>Ogłoszenie może zawierać maksymalnie 10 zdjęć prezentujących powierzchnię reklamową. Zdjęcia powinny być wysokiej jakości i czytelne.</li>
-                <li>Ogłoszenie pozostaje aktywne przez 90 dni od daty publikacji. Po tym okresie Użytkownik może je przedłużyć bezpłatnie.</li>
+                <li>Ogłoszenie może zawierać maksymalnie 5 zdjęć prezentujących powierzchnię reklamową. Zdjęcia powinny być wysokiej jakości i czytelne.</li>
+                <li>Ogłoszenie pozostaje aktywne bezterminowo i nie wygasa automatycznie. Użytkownik może je usunąć lub edytować w dowolnym momencie.</li>
                 <li>Administrator zastrzega sobie prawo do:
                   <ul>
                     <li>Moderacji treści ogłoszeń</li>
                     <li>Usuwania ogłoszeń niezgodnych z Regulaminem lub zawierających nieprawdziwe informacje</li>
                     <li>Żądania weryfikacji danych kontaktowych</li>
-                    <li>Usuwania ogłoszeń, które nie zostały zaktualizowane przez 90 dni</li>
                   </ul>
                 </li>
               </ol>
@@ -137,11 +136,11 @@ useSeo({
                   <ul>
                     <li>Świadczenia usług Serwisu (dodawanie, edycja, usuwanie ogłoszeń)</li>
                     <li>Komunikacji z Użytkownikami (odpowiedzi na zapytania, powiadomienia o ogłoszeniach)</li>
-                    <li>Realizacji obowiązków prawnych i podatkowych</li>
+                    <li>Realizacji obowiązków prawnych</li>
                     <li>Statystyki i analiza korzystania z Serwisu</li>
                   </ul>
                 </li>
-                <li>Dane osobowe Użytkownika (imię, nazwisko, email, telefon) są widoczne dla innych Użytkowników w celu umożliwienia kontaktu w sprawie ogłoszeń.</li>
+                <li>Kontakt z Użytkownikiem w sprawie ogłoszenia odbywa się przez formularz wiadomości lub numer telefonu (jeśli podany) — adres email nie jest widoczny dla innych Użytkowników.</li>
                 <li>Użytkownik ma prawo do:
                   <ul>
                     <li>Dostępu do swoich danych osobowych</li>
@@ -169,7 +168,7 @@ useSeo({
                 </li>
                 <li>Reklamacja powinna zawierać:
                   <ul>
-                    <li>Dane kontaktowe Użytkownika</li>
+                    <li>Adres email do odpowiedzi</li>
                     <li>Opis problemu</li>
                     <li>Żądanie Użytkownika</li>
                   </ul>
@@ -183,7 +182,7 @@ useSeo({
               <h2>8. Postanowienia końcowe</h2>
               <ol class="numbered-list">
                 <li>Administrator zastrzega sobie prawo do zmiany Regulaminu z ważnych przyczyn technicznych lub prawnych.</li>
-                <li>O zmianach Regulaminu Użytkownicy zostaną poinformowani z 7-dniowym wyprzedzeniem.</li>
+                <li>Informacja o zmianie Regulaminu zostanie opublikowana w Serwisie z 7-dniowym wyprzedzeniem.</li>
                 <li>Kontynuowanie korzystania z Serwisu po wejściu w życie zmian oznacza akceptację nowego Regulaminu.</li>
                 <li>W sprawach nieuregulowanych w Regulaminie mają zastosowanie przepisy prawa polskiego.</li>
                 <li>Spory wynikające z korzystania z Serwisu będą rozstrzygane przez właściwy sąd powszechny.</li>
@@ -191,17 +190,25 @@ useSeo({
               </ol>
             </section>
 
-            <div class="info-box">
-              <h3>Masz pytania?</h3>
+            <div class="help-box">
+              <h2>Masz pytania?</h2>
               <p>Jeśli masz pytania dotyczące Regulaminu, skontaktuj się z nami:</p>
-              <ul>
-                <li>Email: kontakt@reklamap.pl</li>
-              </ul>
+              <div class="help-actions">
+                <router-link to="/kontakt" class="help-btn primary">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Formularz kontaktowy
+                </router-link>
+                <a href="mailto:kontakt@reklamap.pl" class="help-btn secondary">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  kontakt@reklamap.pl
+                </a>
+              </div>
             </div>
 
-            <div class="date-info">
-              Data ostatniej aktualizacji: 28 lutego 2026
-            </div>
           </main>
         </div>
       </div>
@@ -381,35 +388,65 @@ useSeo({
   list-style: disc;
 }
 
-.info-box {
+.help-box {
   background: linear-gradient(135deg, #f0f3ff 0%, #e8eaff 100%);
-  border-left: 4px solid #667eea;
-  border-radius: 8px;
-  padding: 2rem;
-  margin: 3rem 0;
+  border-radius: 16px;
+  padding: 3rem;
+  text-align: center;
+  margin-top: 3rem;
 }
 
-.info-box h3 {
-  margin: 0 0 1rem 0;
+.help-box h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
   color: #1f2937;
-  font-size: 1.25rem;
+  margin: 0 0 1rem 0;
 }
 
-.info-box p {
-  margin-bottom: 1rem;
-  color: #4b5563;
+.help-box p {
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin: 0 0 2rem 0;
 }
 
-.info-box ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.help-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-.info-box ul li {
-  padding: 0.5rem 0;
-  color: #4b5563;
-  font-weight: 500;
+.help-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.help-btn.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.help-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.help-btn.secondary {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.help-btn.secondary:hover {
+  background: #667eea;
+  color: white;
 }
 
 .date-info {
