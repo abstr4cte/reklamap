@@ -593,6 +593,7 @@ const clearSearchFlag = () => {
     />
     <AdGrid
       :listings="paginatedListings"
+      :total-count="searchStore.serverTotal > 0 ? searchStore.serverTotal : sortedAndFilteredListings.length"
       :is-loading="isLoading"
       :view-mode="viewMode"
       :sort-by="sortBy"

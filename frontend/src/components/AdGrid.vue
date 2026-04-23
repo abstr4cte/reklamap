@@ -13,6 +13,7 @@ const { filters } = storeToRefs(searchStore)
 
 const props = defineProps<{
   listings: Advertisement[]
+  totalCount?: number
   isLoading?: boolean
   viewMode?: 'grid' | 'list'
   sortBy?: string
@@ -193,8 +194,8 @@ onDeactivated(() => {
     <div class="section-title-wrapper">
       <h2 class="section-title">Dostępne ogłoszenia</h2>
       <p class="section-subtitle">
-        Znaleziono {{ listings.length }}
-        {{ listings.length === 1 ? 'ogłoszenie' : listings.length < 5 ? 'ogłoszenia' : 'ogłoszeń' }}
+        Znaleziono {{ totalCount ?? listings.length }}
+        {{ (totalCount ?? listings.length) === 1 ? 'ogłoszenie' : (totalCount ?? listings.length) < 5 ? 'ogłoszenia' : 'ogłoszeń' }}
       </p>
     </div>
 
