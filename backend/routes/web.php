@@ -13,7 +13,7 @@ Route::get('/', function () {
 Route::get('/sitemap.xml', function () {
     // Cache sitemap for 1 hour (cleared when new ad is added/updated)
     $xml = Cache::remember('sitemap_xml', 3600, function () {
-        $baseUrl = config('app.url');
+        $baseUrl = config('app.frontend_url');
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';

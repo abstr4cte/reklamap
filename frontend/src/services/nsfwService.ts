@@ -1,19 +1,27 @@
-// NSFWJS is loaded via CDN in index.html to save build memory
-declare const nsfwjs: any
+const NSFWJS_CDN = 'https://cdn.jsdelivr.net/npm/nsfwjs/dist/nsfwjs.min.js'
 
-// Singleton instance
+let scriptLoaded = false
 let model: any = null
+
+function loadScript(): Promise<void> {
+    if (scriptLoaded || (window as any).nsfwjs) {
+        scriptLoaded = true
+        return Promise.resolve()
+    }
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = NSFWJS_CDN
+        script.onload = () => { scriptLoaded = true; resolve() }
+        script.onerror = () => reject(new Error('Failed to load nsfwjs'))
+        document.head.appendChild(script)
+    })
+}
 
 export const nsfwService = {
     async loadModel() {
         if (!model) {
-            // Load the model from a public CDN to avoid needing to bundle it locally if not present
-            // or just let nsfwjs load its default model from unpkg/jsdelivr
-            try {
-                model = await nsfwjs.load('https://unpkg.com/nsfwjs/quant_nsfw_mobilenet/')
-            } catch (error) {
-                throw error
-            }
+            await loadScript()
+            model = await (window as any).nsfwjs.load('https://unpkg.com/nsfwjs/quant_nsfw_mobilenet/')
         }
         return model
     },
@@ -22,7 +30,6 @@ export const nsfwService = {
         try {
             const currentModel = await this.loadModel()
 
-            // Create an HTMLImageElement from the file
             const img = document.createElement('img')
             const objectUrl = URL.createObjectURL(file)
 
@@ -74,10 +81,7 @@ export const nsfwService = {
 
                 img.src = objectUrl
             })
-        } catch (error) {
-            // Fail open or closed? Let's fail open (allow image) to avoid blocking user if model fails
-            // Or fail closed (block image)? Safety first -> maybe return true (safe) but warn?
-            // Let's return safe=true if model fails to load, to not break the app.
+        } catch {
             return { isSafe: true, probability: 0, className: 'Error' }
         }
     }
