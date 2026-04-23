@@ -12,6 +12,8 @@ use App\Mail\ContactAdvertisementOwner;
 use App\Mail\AdCreatedConfirmationMail;
 use App\Mail\NewAdvertisementNotificationMail;
 use App\Mail\FeedbackConfirmationMail;
+use App\Mail\AdminFeedbackNotificationMail;
+use App\Mail\AdminReportNotificationMail;
 use App\Rules\ProfanityRule;
 use App\Services\SearchAlertService;
 use App\Models\Newsletter;
@@ -661,7 +663,15 @@ class AdvertisementController extends Controller
             $validated['details'] = '';
         }
 
-        \App\Models\Report::create($validated);
+        $report = \App\Models\Report::create($validated);
+
+        if ($adminEmail = config('mail.admin_notification_email')) {
+            try {
+                Mail::to($adminEmail)->send(new AdminReportNotificationMail($report));
+            } catch (\Exception $e) {
+                \Log::error('Error sending admin report notification: ' . $e->getMessage());
+            }
+        }
 
         return response()->json(['message' => 'Report submitted']);
     }
@@ -685,6 +695,14 @@ class AdvertisementController extends Controller
         ]);
 
         Mail::to($feedback->email)->send(new FeedbackConfirmationMail($feedback));
+
+        if ($adminEmail = config('mail.admin_notification_email')) {
+            try {
+                Mail::to($adminEmail)->send(new AdminFeedbackNotificationMail($feedback));
+            } catch (\Exception $e) {
+                \Log::error('Error sending admin feedback notification: ' . $e->getMessage());
+            }
+        }
 
         return response()->json(['message' => 'Feedback submitted successfully']);
     }
