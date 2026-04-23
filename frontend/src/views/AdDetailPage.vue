@@ -1092,6 +1092,7 @@ defineExpose({
   color: var(--text-main, #4b5563);
   line-height: 1.7;
   font-size: 1.1rem;
+  white-space: pre-wrap;
 }
 
 .map-section {

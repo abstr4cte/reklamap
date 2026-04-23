@@ -2,12 +2,17 @@
 
 namespace App\Filament\Resources\Feedback\Tables;
 
+use App\Mail\FeedbackReplyMail;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Mail;
 
 class FeedbackTable
 {
@@ -57,6 +62,25 @@ class FeedbackTable
                     ]),
             ])
             ->recordActions([
+                Action::make('reply')
+                    ->label('Odpowiedz')
+                    ->color('info')
+                    ->icon('heroicon-o-envelope')
+                    ->visible(fn ($record) => filled($record->email))
+                    ->form(fn ($record) => [
+                        Placeholder::make('original_message')
+                            ->label('Zgłoszenie użytkownika')
+                            ->content($record->message),
+                        Textarea::make('reply')
+                            ->label('Twoja odpowiedź')
+                            ->placeholder('Wpisz odpowiedź...')
+                            ->rows(5)
+                            ->required(),
+                    ])
+                    ->action(function ($record, array $data): void {
+                        Mail::to($record->email)->send(new FeedbackReplyMail($record, $data['reply']));
+                    })
+                    ->successNotificationTitle('Odpowiedź została wysłana'),
                 EditAction::make(),
             ])
             ->toolbarActions([

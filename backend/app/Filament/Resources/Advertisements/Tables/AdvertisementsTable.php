@@ -2,14 +2,17 @@
 
 namespace App\Filament\Resources\Advertisements\Tables;
 
+use App\Mail\AdRemovedMail;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class AdvertisementsTable
@@ -60,18 +63,53 @@ class AdvertisementsTable
                 Action::make('view')
                     ->label('Pokaż')
                     ->url(function ($record) {
-                        $type = $record->type; // Typ już powinien być w bazie
                         $city = Str::slug($record->city);
                         $title = Str::slug($record->title);
-                        $id = $record->id;
-                        return config('app.frontend_url') . "/powierzchnia-reklamowa/{$type}/{$city}/{$title}-{$id}";
+                        return config('app.frontend_url') . "/powierzchnia-reklamowa/{$record->type}/{$city}/{$title}-{$record->id}";
                     })
                     ->openUrlInNewTab()
                     ->color('info'),
+                Action::make('delete')
+                    ->label('Usuń')
+                    ->color('danger')
+                    ->icon('heroicon-o-trash')
+                    ->form([
+                        Textarea::make('reason')
+                            ->label('Powód usunięcia (opcjonalnie)')
+                            ->placeholder('Opisz powód usunięcia — zostanie wysłany do właściciela ogłoszenia...')
+                            ->rows(3),
+                    ])
+                    ->action(function ($record, array $data): void {
+                        $reason = trim($data['reason'] ?? '');
+                        if ($reason !== '' && $record->owner_email) {
+                            Mail::to($record->owner_email)->send(new AdRemovedMail($record, $reason));
+                        }
+                        $record->delete();
+                    })
+                    ->requiresConfirmation(false),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    BulkAction::make('delete')
+                        ->label('Usuń zaznaczone')
+                        ->color('danger')
+                        ->icon('heroicon-o-trash')
+                        ->form([
+                            Textarea::make('reason')
+                                ->label('Powód usunięcia (opcjonalnie)')
+                                ->placeholder('Opisz powód usunięcia — zostanie wysłany do każdego właściciela...')
+                                ->rows(3),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $reason = trim($data['reason'] ?? '');
+                            foreach ($records as $record) {
+                                if ($reason !== '' && $record->owner_email) {
+                                    Mail::to($record->owner_email)->send(new AdRemovedMail($record, $reason));
+                                }
+                                $record->delete();
+                            }
+                        })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
     }

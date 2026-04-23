@@ -2,7 +2,7 @@ const CACHE_VERSION = '__BUILD_TIMESTAMP__'; // automatycznie zastępowane przez
 const CACHE_NAME = `reklamap-${CACHE_VERSION}`;
 const ASSETS_TO_CACHE = [
   '/manifest.webmanifest',
-  '/pwa-icon-512.png'
+  '/web-app-manifest-512x512.png'
 ];
 
 // Install - cache podstawowe zasoby (bez index.html - zawsze serwujemy z sieci)

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Http;
 use App\Mail\ContactAdvertisementOwner;
 use App\Mail\AdCreatedConfirmationMail;
 use App\Mail\NewAdvertisementNotificationMail;
+use App\Mail\FeedbackConfirmationMail;
 use App\Rules\ProfanityRule;
 use App\Services\SearchAlertService;
 use App\Models\Newsletter;
@@ -675,13 +676,15 @@ class AdvertisementController extends Controller
             'userAgent' => 'nullable|string',
         ]);
 
-        \App\Models\Feedback::create([
+        $feedback = \App\Models\Feedback::create([
             'type' => $validated['type'],
             'email' => $validated['email'],
             'message' => $validated['message'],
             'url' => $validated['url'] ?? null,
             'user_agent' => $validated['userAgent'] ?? null,
         ]);
+
+        Mail::to($feedback->email)->send(new FeedbackConfirmationMail($feedback));
 
         return response()->json(['message' => 'Feedback submitted successfully']);
     }
