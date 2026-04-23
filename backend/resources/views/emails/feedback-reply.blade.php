@@ -138,7 +138,7 @@
 
             <p class="section-label">Nasza odpowiedź</p>
             <div class="reply-box">
-                <p class="reply-text">{{ $reply }}</p>
+                <p class="reply-text">{!! nl2br(e($reply)) !!}</p>
             </div>
 
             <div class="divider"></div>

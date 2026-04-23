@@ -170,7 +170,7 @@
 
             <div class="reason-box">
                 <p class="reason-label">Powód usunięcia</p>
-                <p class="reason-text">{{ $reason }}</p>
+                <p class="reason-text">{!! nl2br(e($reason)) !!}</p>
             </div>
 
             <p style="color: #4b5563; line-height: 1.6; margin: 0 0 20px 0;">
