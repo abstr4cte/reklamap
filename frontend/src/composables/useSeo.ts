@@ -94,8 +94,9 @@ export function useSeo(options: SeoOptions | Ref<SeoOptions>) {
     // Open Graph
     setMetaProp('og:locale', 'pl_PL')
     setMetaProp('og:site_name', 'ReklaMap')
-    if (opts.ogType) setMetaProp('og:type', opts.ogType)
-    if (opts.ogUrl) setMetaProp('og:url', opts.ogUrl)
+    setMetaProp('og:type', opts.ogType || 'website')
+    const ogUrlValue = opts.ogUrl || opts.canonical
+    if (ogUrlValue) setMetaProp('og:url', ogUrlValue)
 
     if (opts.ogImage) {
       setMetaProp('og:image', opts.ogImage)
