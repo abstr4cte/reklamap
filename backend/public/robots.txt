@@ -1,4 +1,5 @@
 # api.reklamap.pl - Backend API (not for indexing)
 User-agent: *
 Allow: /sitemap.xml
+Allow: /storage/
 Disallow: /
