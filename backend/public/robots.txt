@@ -1,15 +1,3 @@
-# ReklaMap - Robots.txt
+# api.reklamap.pl - Backend API (not for indexing)
 User-agent: *
-Allow: /
-
-# Blokuj API endpoints
-Disallow: /api/
-Disallow: /storage/temp/
-
-# Blokuj panele administracyjne i strony bez wartości SEO
-Disallow: /zarzadzaj
-Disallow: /zarzadzaj/
-Disallow: /porownaj
-
-# Sitemap
-Sitemap: https://reklamap.pl/sitemap.xml
+Disallow: /
