@@ -148,6 +148,8 @@ onMounted(() => {
         :src="ad.image_url"
         :alt="imageAlt"
         class="card-img"
+        width="400"
+        height="220"
       />
       <div v-else class="no-image-placeholder">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none">

@@ -64,7 +64,7 @@
 
             <div class="field">
                 <div class="label">Data</div>
-                <div class="value">{{ $feedback->created_at->format('d.m.Y H:i') }}</div>
+                <div class="value">{{ $feedback->created_at->timezone('Europe/Warsaw')->format('d.m.Y H:i') }}</div>
             </div>
         </div>
 

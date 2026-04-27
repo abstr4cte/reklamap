@@ -15,6 +15,7 @@ import { useSearchStore } from '../stores/useSearchStore'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
 import { storeToRefs } from 'pinia'
 import type { FilterParams } from '../types/filters'
+import { appUrl } from '../utils/url'
 
 // Define component name for keep-alive
 defineOptions({
@@ -287,23 +288,23 @@ useSeo({
   description: 'Znajdź i wynajmij powierzchnie reklamowe w całej Polsce. Billboardy, citylighty, banery, ściany reklamowe. Porównuj oferty, sprawdzaj ceny i lokalizacje na mapie.',
   keywords: 'powierzchnie reklamowe, billboardy, citylighty, banery reklamowe, wynajem billboardu, reklama zewnętrzna, outdoor, powierzchnie OOH',
   ogType: 'website',
-  ogImage: `${typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'}/og-image.png`,
+  ogImage: `${appUrl}/og-image.png`,
   ogImageWidth: '1200',
   ogImageHeight: '630',
   ogImageAlt: 'ReklaMap – platforma powierzchni reklamowych w Polsce',
-  canonical: typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl',
+  canonical: appUrl,
   structuredData: [
     {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       'name': 'ReklaMap',
-      'url': typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl',
+      'url': appUrl,
       'description': 'Platforma do wynajmu powierzchni reklamowych w całej Polsce',
       'potentialAction': {
         '@type': 'SearchAction',
         'target': {
           '@type': 'EntryPoint',
-          'urlTemplate': `${typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'}/powierzchnie-reklamowe?keyword={search_term_string}`
+          'urlTemplate': `${appUrl}/powierzchnie-reklamowe?keyword={search_term_string}`
         },
         'query-input': 'required name=search_term_string'
       }
@@ -312,8 +313,8 @@ useSeo({
       '@context': 'https://schema.org',
       '@type': 'Organization',
       'name': 'ReklaMap',
-      'url': typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl',
-      'logo': `${typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'}/logo.png`,
+      'url': appUrl,
+      'logo': `${appUrl}/logo.png`,
       'contactPoint': {
         '@type': 'ContactPoint',
         'contactType': 'customer service',

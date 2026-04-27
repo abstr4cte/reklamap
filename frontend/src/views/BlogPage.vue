@@ -4,6 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { api } from '../services/api'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 import { useSeo } from '../composables/useSeo'
+import { appUrl } from '../utils/url'
 import WebPImage from '../components/WebPImage.vue'
 
 const categoryMeta: Record<string, { title: string; description: string; keywords: string; heading: string; intro: string }> = {
@@ -68,14 +69,13 @@ const noindexEmptyCategory = ref(false)
 const seoData = computed(() => {
   const cat = selectedCategory.value
   const meta = categoryMeta[cat] || categoryMeta['wszystkie']
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'
-  const canonical = cat === 'wszystkie' ? `${origin}/blog` : `${origin}/blog/${cat}`
+  const canonical = cat === 'wszystkie' ? `${appUrl}/blog` : `${appUrl}/blog/${cat}`
   return {
     title: meta.title,
     description: meta.description,
     keywords: meta.keywords,
     ogType: 'website' as const,
-    ogImage: `${origin}/og-image.png`,
+    ogImage: `${appUrl}/og-image.png`,
     ogImageWidth: '1200',
     ogImageHeight: '630',
     ogImageAlt: 'ReklaMap Blog – reklama zewnętrzna OOH',

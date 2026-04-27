@@ -125,7 +125,7 @@
             </div>
 
             <div class="expiry-box">
-                <strong>Uwaga:</strong> Ten link wygaśnie za 30 dni ({{ $token->expires_at->format('d.m.Y H:i') }}). Po tym czasie będziesz musiał wygenerować nowy link.
+                <strong>Uwaga:</strong> Ten link wygaśnie za 30 dni ({{ $token->expires_at->timezone('Europe/Warsaw')->format('d.m.Y H:i') }}). Po tym czasie będziesz musiał wygenerować nowy link.
             </div>
 
             <div class="divider"></div>

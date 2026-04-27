@@ -13,6 +13,7 @@ import { type LocationResult, debouncedSearchLocations } from '../services/locat
 import { slugify, deslugify } from '../utils/slugify'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import { useSeo } from '../composables/useSeo'
+import { appUrl } from '../utils/url'
 import { filtersToQueryParams } from '../utils/filterUtils'
 import polishLocations from '../data/polishLocations.json'
 import { categoryDescriptions, cityDescriptions, typeCityDescriptions } from '../data/categoryDescriptions'
@@ -91,41 +92,47 @@ const seoData = computed(() => {
     description = descObj
       ? descObj.description.substring(0, 155) + '...'
       : `Przeglądaj oferty ${typeLabel.toLowerCase()} w ${cityName}. Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.`
-    canonical = `${window.location.origin}/powierzchnie-reklamowe/${typeSlug}/${citySlug}`
+    canonical = `${appUrl}/powierzchnie-reklamowe/${typeSlug}/${citySlug}`
   } else if (typeLabel) {
     title = `${typeLabel} w Polsce | ReklaMap`
     description = descObj
       ? descObj.description.substring(0, 155) + '...'
       : `Przeglądaj wszystkie oferty ${typeLabel.toLowerCase()} w Polsce. Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.`
-    canonical = `${window.location.origin}/powierzchnie-reklamowe/${typeSlug}`
+    canonical = `${appUrl}/powierzchnie-reklamowe/${typeSlug}`
   } else if (cityName) {
     title = `Powierzchnie reklamowe – ${cityName} | ReklaMap`
     description = descObj
       ? descObj.description.substring(0, 155) + '...'
       : `Przeglądaj dostępne powierzchnie reklamowe w ${cityName}. Billboardy, banery, ekrany LED i więcej. Znajdź idealną lokalizację dla swojej reklamy.`
-    canonical = `${window.location.origin}/powierzchnie-reklamowe/${citySlug}`
+    canonical = `${appUrl}/powierzchnie-reklamowe/${citySlug}`
   } else {
     title = 'Powierzchnie reklamowe w Polsce | ReklaMap'
     description = 'Przeglądaj i porównuj powierzchnie reklamowe w całej Polsce. Billboardy, citylighty, ekrany LED, banery i więcej. Znajdź idealne miejsce dla swojej reklamy.'
-    canonical = `${window.location.origin}/powierzchnie-reklamowe`
+    canonical = `${appUrl}/powierzchnie-reklamowe`
   }
 
   const filterQueryKeys = ['q', 'priceFrom', 'priceTo', 'priceUnit', 'rentalPeriod', 'orientation', 'widthFrom', 'widthTo', 'heightFrom', 'heightTo', 'trafficIntensity', 'offerType', 'status', 'hasBacklight', 'onlyWithImage', 'priceIncludesPrint', 'graphicDesignHelp', 'hasVatInvoice', 'hasLightingTypeBanner', 'hasLightingTypeBillboard', 'ambientLightControl', 'priceIncludesMounting', 'street', 'variant', 'roadClass', 'environment', 'trafficDirection', 'trafficType', 'transportScope', 'mobileExposureMode', 'operatingZone', 'lightingType', 'vehicleCountFrom', 'vehicleCountTo', 'dailyPassengersFrom', 'dailyPassengersTo', 'pixelPitchFrom', 'pixelPitchTo', 'brightnessFrom', 'brightnessTo', 'campaignDurationFrom', 'campaignDurationTo', 'locationTier']
   const hasExtraFilters = Object.keys(route.query).some(k => filterQueryKeys.includes(k))
 
   const pageNum = parseInt(route.query.page as string) || 1
-  const canonicalUrl = pageNum > 1 ? `${window.location.origin}${window.location.pathname}` : canonical
+  const canonicalUrl = pageNum > 1 ? `${appUrl}${window.location.pathname}` : canonical
 
-  const origin = window.location.origin
+  const prevPageUrl = pageNum > 1
+    ? `${appUrl}${window.location.pathname}${pageNum > 2 ? `?page=${pageNum - 1}` : ''}`
+    : undefined
+  const nextPageUrl = pageNum < totalPages.value
+    ? `${appUrl}${window.location.pathname}?page=${pageNum + 1}`
+    : undefined
+
   const itemListSchema = paginatedListings.value.length > 0 ? {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     'name': title,
-    'numberOfItems': paginatedListings.value.length,
+    'numberOfItems': serverTotal.value,
     'itemListElement': paginatedListings.value.map((ad, index) => ({
       '@type': 'ListItem',
       'position': index + 1,
-      'url': `${origin}/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`
+      'url': `${appUrl}/powierzchnia-reklamowa/${mapTypeToUrlFormat(ad.type)}/${slugify(ad.city)}/${slugify(ad.title)}-${ad.id}`
     }))
   } : undefined
 
@@ -133,7 +140,7 @@ const seoData = computed(() => {
     title,
     description,
     ogType: 'website',
-    ogImage: `${origin}/og-image.png`,
+    ogImage: `${appUrl}/og-image.png`,
     ogImageWidth: '1200',
     ogImageHeight: '630',
     ogImageAlt: 'ReklaMap – powierzchnie reklamowe w Polsce',
@@ -141,6 +148,8 @@ const seoData = computed(() => {
     canonical: canonicalUrl,
     keywords: 'powierzchnie reklamowe, billboardy, reklama zewnętrzna, outdoor, OOH',
     noindex: hasExtraFilters,
+    prevPage: prevPageUrl,
+    nextPage: nextPageUrl,
     ...(itemListSchema ? { structuredData: itemListSchema } : {})
   }
 })

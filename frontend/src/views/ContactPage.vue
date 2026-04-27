@@ -3,12 +3,13 @@ import { ref } from 'vue'
 import { api } from '../services/api'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 import { useSeo } from '../composables/useSeo'
+import { appUrl } from '../utils/url'
 
 useSeo({
   title: 'Kontakt | ReklaMap',
   description: 'Skontaktuj się z zespołem ReklaMap. Masz pytania dotyczące platformy, ogłoszeń lub współpracy? Napisz do nas — odpowiemy najszybciej jak to możliwe.',
   ogType: 'website',
-  canonical: `${window.location.origin}/kontakt`,
+  canonical: `${appUrl}/kontakt`,
   keywords: 'kontakt ReklaMap, pomoc, wsparcie'
 })
 

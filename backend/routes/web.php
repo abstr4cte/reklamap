@@ -59,10 +59,16 @@ Route::get('/sitemap.xml', function () {
         }
 
         // Category pages
-        $categories = ['billboardy', 'citylighty', 'banery', 'sciany-reklamowe', 'totemy-reklamowe', 'reklama-w-transporcie', 'reklama-mobilna', 'ekrany-led', 'inne'];
-        foreach ($categories as $category) {
+        $categoryTypeMap = [
+            'billboardy' => 'billboard', 'citylighty' => 'citylight', 'banery' => 'banner',
+            'sciany-reklamowe' => 'wall', 'totemy-reklamowe' => 'totem', 'reklama-w-transporcie' => 'transport',
+            'reklama-mobilna' => 'mobile', 'ekrany-led' => 'led_screen', 'inne' => 'other',
+        ];
+        foreach ($categoryTypeMap as $slug => $dbType) {
+            $lastmod = \App\Models\Advertisement::where('type', $dbType)->where('is_active', true)->max('updated_at');
             $xml .= '<url>';
-            $xml .= '<loc>' . htmlspecialchars($baseUrl . '/powierzchnie-reklamowe/' . $category) . '</loc>';
+            $xml .= '<loc>' . htmlspecialchars($baseUrl . '/powierzchnie-reklamowe/' . $slug) . '</loc>';
+            if ($lastmod) $xml .= '<lastmod>' . \Carbon\Carbon::parse($lastmod)->toAtomString() . '</lastmod>';
             $xml .= '<changefreq>daily</changefreq>';
             $xml .= '<priority>0.8</priority>';
             $xml .= '</url>';
@@ -70,23 +76,15 @@ Route::get('/sitemap.xml', function () {
 
         // Popular cities pages
         $popularCities = [
-            'Warszawa',
-            'Kraków',
-            'Wrocław',
-            'Poznań',
-            'Gdańsk',
-            'Łódź',
-            'Katowice',
-            'Szczecin',
-            'Bydgoszcz',
-            'Lublin',
-            'Białystok',
-            'Gdynia'
+            'Warszawa', 'Kraków', 'Wrocław', 'Poznań', 'Gdańsk', 'Łódź',
+            'Katowice', 'Szczecin', 'Bydgoszcz', 'Lublin', 'Białystok', 'Gdynia',
         ];
         foreach ($popularCities as $city) {
             $citySlug = Str::slug($city);
+            $lastmod = \App\Models\Advertisement::where('city', $city)->where('is_active', true)->max('updated_at');
             $xml .= '<url>';
             $xml .= '<loc>' . htmlspecialchars($baseUrl . '/powierzchnie-reklamowe/' . $citySlug) . '</loc>';
+            if ($lastmod) $xml .= '<lastmod>' . \Carbon\Carbon::parse($lastmod)->toAtomString() . '</lastmod>';
             $xml .= '<changefreq>daily</changefreq>';
             $xml .= '<priority>0.7</priority>';
             $xml .= '</url>';
@@ -94,12 +92,14 @@ Route::get('/sitemap.xml', function () {
 
         // City + Category combinations (top cities only for most important combinations)
         $topCities = ['Warszawa', 'Kraków', 'Wrocław', 'Poznań', 'Gdańsk', 'Łódź', 'Katowice'];
-        $topCategories = ['billboardy', 'citylighty', 'banery', 'ekrany-led'];
+        $topCategories = ['billboardy' => 'billboard', 'citylighty' => 'citylight', 'banery' => 'banner', 'ekrany-led' => 'led_screen'];
         foreach ($topCities as $city) {
             $citySlug = Str::slug($city);
-            foreach ($topCategories as $category) {
+            foreach ($topCategories as $catSlug => $dbType) {
+                $lastmod = \App\Models\Advertisement::where('type', $dbType)->where('city', $city)->where('is_active', true)->max('updated_at');
                 $xml .= '<url>';
-                $xml .= '<loc>' . htmlspecialchars($baseUrl . '/powierzchnie-reklamowe/' . $category . '/' . $citySlug) . '</loc>';
+                $xml .= '<loc>' . htmlspecialchars($baseUrl . '/powierzchnie-reklamowe/' . $catSlug . '/' . $citySlug) . '</loc>';
+                if ($lastmod) $xml .= '<lastmod>' . \Carbon\Carbon::parse($lastmod)->toAtomString() . '</lastmod>';
                 $xml .= '<changefreq>daily</changefreq>';
                 $xml .= '<priority>0.75</priority>';
                 $xml .= '</url>';

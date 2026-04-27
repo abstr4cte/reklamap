@@ -7,6 +7,8 @@ interface Props {
   alt: string
   class?: string
   eager?: boolean
+  width?: string | number
+  height?: string | number
 }
 
 const props = defineProps<Props>()
@@ -34,6 +36,8 @@ const jpgSrc = computed(() => {
       :class="props.class"
       :loading="props.eager ? 'eager' : 'lazy'"
       :fetchpriority="props.eager ? 'high' : 'auto'"
+      :width="props.width"
+      :height="props.height"
       decoding="async"
     >
   </picture>

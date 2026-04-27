@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { useSeo } from '../composables/useSeo'
+import { appUrl } from '../utils/url'
 import type { Advertisement } from '../types'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import WebPImage from '../components/WebPImage.vue'
@@ -19,7 +20,7 @@ useSeo({
   title: 'Porównanie powierzchni reklamowych | ReklaMap',
   description: 'Porównaj wybrane powierzchnie reklamowe. Zestawiaj parametry, ceny i lokalizacje billboardów, banerów, ekranów LED i innych nośników reklamowych.',
   ogType: 'website',
-  canonical: `${window.location.origin}/porownaj`,
+  canonical: `${appUrl}/porownaj`,
   noindex: true
 })
 

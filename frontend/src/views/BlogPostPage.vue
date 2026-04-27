@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { useSeo } from '../composables/useSeo'
+import { appUrl } from '../utils/url'
 import logoImage from '../assets/logo.webp'
 
 const route = useRoute()
@@ -87,14 +88,13 @@ function extractFaqSchema(html: string): object | null {
 
 // Buduje schema BreadcrumbList dla posta
 function buildBreadcrumbSchema(p: BlogPost): object {
-  const base = typeof window !== 'undefined' ? window.location.origin : ''
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     'itemListElement': [
-      { '@type': 'ListItem', 'position': 1, 'name': 'Strona główna', 'item': base },
-      { '@type': 'ListItem', 'position': 2, 'name': 'Blog', 'item': `${base}/blog` },
-      { '@type': 'ListItem', 'position': 3, 'name': p.title, 'item': `${base}/blog/${p.category}/${p.slug}` }
+      { '@type': 'ListItem', 'position': 1, 'name': 'Strona główna', 'item': appUrl },
+      { '@type': 'ListItem', 'position': 2, 'name': 'Blog', 'item': `${appUrl}/blog` },
+      { '@type': 'ListItem', 'position': 3, 'name': p.title, 'item': `${appUrl}/blog/${p.category}/${p.slug}` }
     ]
   }
 }
@@ -106,8 +106,7 @@ const seoOptions = computed(() => {
   const newPost = post.value
   if (!newPost) return { title: 'Blog | ReklaMap', description: '' }
 
-  const base = typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'
-  const url = `${base}/blog/${newPost.category}/${newPost.slug}`
+  const url = `${appUrl}/blog/${newPost.category}/${newPost.slug}`
 
   const blogPostingSchema = {
     '@context': 'https://schema.org',

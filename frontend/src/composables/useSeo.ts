@@ -15,6 +15,8 @@ interface SeoOptions {
   publishedTime?: string
   modifiedTime?: string
   noindex?: boolean
+  prevPage?: string
+  nextPage?: string
 }
 
 /**
@@ -186,6 +188,22 @@ export function useSeo(options: SeoOptions | Ref<SeoOptions>) {
       modifiedTag.setAttribute('content', opts.modifiedTime)
       document.head.appendChild(modifiedTag)
       metaTags.value.push(modifiedTag)
+    }
+
+    // Pagination rel=prev/next
+    if (opts.prevPage) {
+      const prevTag = document.createElement('link')
+      prevTag.setAttribute('rel', 'prev')
+      prevTag.setAttribute('href', opts.prevPage)
+      document.head.appendChild(prevTag)
+      linkTags.value.push(prevTag)
+    }
+    if (opts.nextPage) {
+      const nextTag = document.createElement('link')
+      nextTag.setAttribute('rel', 'next')
+      nextTag.setAttribute('href', opts.nextPage)
+      document.head.appendChild(nextTag)
+      linkTags.value.push(nextTag)
     }
 
     // Robots meta tag (noindex if specified)

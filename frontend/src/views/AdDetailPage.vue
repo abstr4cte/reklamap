@@ -8,6 +8,7 @@ import ToastNotification from '../components/ToastNotification.vue'
 import { formatPrice } from '../utils/formatPrice'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import { useSeo } from '../composables/useSeo'
+import { appUrl } from '../utils/url'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
 import { useSearchStore } from '../stores/useSearchStore'
 import { useStreetViewStore } from '../stores/useStreetViewStore'
@@ -185,8 +186,8 @@ watch(ad, (newAd) => {
     // Structured Data
     const typeUrlPart = mapTypeToUrlFormat(newAd.type || 'other')
     const citySlug = slugify(newAd.city)
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://reklamap.pl'
-    const cleanUrl = `${origin}/powierzchnia-reklamowa/${typeUrlPart}/${citySlug}/${slugify(newAd.title)}-${newAd.id}`
+    const origin = appUrl
+    const cleanUrl = `${appUrl}/powierzchnia-reklamowa/${typeUrlPart}/${citySlug}/${slugify(newAd.title)}-${newAd.id}`
 
     const priceValidUntil = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
       .toISOString().split('T')[0]
@@ -203,6 +204,7 @@ watch(ad, (newAd) => {
           '@type': 'Offer',
           'price': newAd.price,
           'priceCurrency': 'PLN',
+          'unitText': searchStore.getPriceUnitLabel(newAd.price_unit),
           'priceValidUntil': priceValidUntil,
           'availability': newAd.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
           'url': cleanUrl,

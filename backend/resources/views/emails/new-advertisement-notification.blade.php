@@ -39,7 +39,10 @@
             </div>
             <div class="field">
                 <div class="label">Cena</div>
-                <div class="value">{{ $ad->price }} zł / {{ $ad->price_unit }}</div>
+                @php
+                    $priceUnitLabels = ['day' => 'dzień', 'week' => 'tydzień', 'month' => 'miesiąc', 'year' => 'rok', 'campaign' => 'kampanię', 'sqm' => 'm²'];
+                @endphp
+                <div class="value">{{ $ad->price }} zł / {{ $priceUnitLabels[$ad->price_unit] ?? $ad->price_unit }}</div>
             </div>
             <div class="field">
                 <div class="label">Właściciel</div>
@@ -47,7 +50,7 @@
             </div>
             <div class="field">
                 <div class="label">Data dodania</div>
-                <div class="value">{{ $ad->created_at->format('d.m.Y H:i') }}</div>
+                <div class="value">{{ $ad->created_at->timezone('Europe/Warsaw')->format('d.m.Y H:i') }}</div>
             </div>
 
             <div class="divider"></div>

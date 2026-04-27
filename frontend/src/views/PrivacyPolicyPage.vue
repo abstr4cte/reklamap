@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useSeo } from '../composables/useSeo'
+import { appUrl } from '../utils/url'
 
 useSeo({
   title: 'Polityka Prywatności | ReklaMap',
   description: 'Zasady przetwarzania i ochrony danych osobowych na platformie ReklaMap.',
   keywords: 'prywatność, RODO, dane osobowe, polityka prywatności, ReklaMap',
-  noindex: true
+  canonical: `${appUrl}/polityka-prywatnosci`
 })
 </script>
 

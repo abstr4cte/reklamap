@@ -44,7 +44,7 @@
 
             <div class="field">
                 <div class="label">Data zgłoszenia</div>
-                <div class="value">{{ $report->created_at->format('d.m.Y H:i') }}</div>
+                <div class="value">{{ $report->created_at->timezone('Europe/Warsaw')->format('d.m.Y H:i') }}</div>
             </div>
 
             <div class="divider"></div>

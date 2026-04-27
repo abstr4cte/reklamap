@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { useSeo } from '../composables/useSeo'
+import { appUrl } from '../utils/url'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../services/recaptchaService'
 import ToastNotification from '../components/ToastNotification.vue'
 import LocationMapModal from '../components/LocationMapModal.vue'
@@ -24,7 +25,7 @@ useSeo({
   title: 'Dodaj powierzchnię reklamową | ReklaMap',
   description: 'Wystaw swoją powierzchnię reklamową na ReklaMap. Dodaj billboard, baner, ekran LED, citylight lub inne miejsce reklamowe i dotrzyj do tysięcy reklamodawców.',
   ogType: 'website',
-  canonical: `${window.location.origin}/dodaj-powierzchnie-reklamowa`,
+  canonical: `${appUrl}/dodaj-powierzchnie-reklamowa`,
   keywords: 'dodaj ogłoszenie, wystaw powierzchnię reklamową, billboard do wynajęcia, reklama zewnętrzna'
 })
 
