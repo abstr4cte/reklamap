@@ -20,7 +20,17 @@ curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
 $response = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$curlError = curl_error($ch);
 curl_close($ch);
+
+$logLine = date('Y-m-d H:i:s') . ' | IP: ' . ($_SERVER['REMOTE_ADDR'] ?? '-')
+    . ' | UA: ' . ($_SERVER['HTTP_USER_AGENT'] ?? '-')
+    . ' | URL: ' . $url
+    . ' | HTTP: ' . $httpCode
+    . ' | Size: ' . strlen($response ?: '')
+    . ' | Err: ' . ($curlError ?: 'none')
+    . "\n";
+file_put_contents('/tmp/prerender_debug.log', $logLine, FILE_APPEND | LOCK_EX);
 
 http_response_code($httpCode);
 header('Content-Type: text/html; charset=UTF-8');
