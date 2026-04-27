@@ -174,10 +174,10 @@ const handleImageClick = () => {
     <div class="main-image-wrapper">
       <div v-if="images.length > 0" class="image-container" @click="openImagePreview">
         <div class="main-image-bg">
-          <WebPImage :src="images[currentImageIndex]" :alt="imageAlt" :eager="currentImageIndex === 0" />
+          <WebPImage :src="images[currentImageIndex]" :alt="imageAlt" :eager="currentImageIndex === 0" width="800" height="500" />
         </div>
         <div class="main-image">
-          <WebPImage :src="images[currentImageIndex]" :alt="imageAlt" :eager="currentImageIndex === 0" />
+          <WebPImage :src="images[currentImageIndex]" :alt="imageAlt" :eager="currentImageIndex === 0" width="800" height="500" />
         </div>
         <div class="zoom-hint">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">

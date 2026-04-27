@@ -202,9 +202,14 @@ watch(ad, (newAd) => {
         'brand': { '@type': 'Brand', 'name': 'ReklaMap' },
         'offers': {
           '@type': 'Offer',
-          'price': newAd.price,
           'priceCurrency': 'PLN',
-          'unitText': searchStore.getPriceUnitLabel(newAd.price_unit),
+          'priceSpecification': {
+            '@type': 'UnitPriceSpecification',
+            'price': newAd.price,
+            'priceCurrency': 'PLN',
+            'unitText': searchStore.getPriceUnitLabel(newAd.price_unit),
+            'referenceQuantity': { '@type': 'QuantitativeValue', 'value': '1' }
+          },
           'priceValidUntil': priceValidUntil,
           'availability': newAd.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
           'url': cleanUrl,

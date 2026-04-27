@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /zarzadzaj/
+Disallow: /porownaj
 
 # Sitemaps
 Sitemap: https://reklamap.pl/sitemap.xml
