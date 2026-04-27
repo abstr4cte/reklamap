@@ -30,7 +30,7 @@ $logLine = date('Y-m-d H:i:s') . ' | IP: ' . ($_SERVER['REMOTE_ADDR'] ?? '-')
     . ' | Size: ' . strlen($response ?: '')
     . ' | Err: ' . ($curlError ?: 'none')
     . "\n";
-file_put_contents('/tmp/prerender_debug.log', $logLine, FILE_APPEND | LOCK_EX);
+file_put_contents(__DIR__ . '/prerender_debug.log', $logLine, FILE_APPEND | LOCK_EX);
 
 http_response_code($httpCode);
 header('Content-Type: text/html; charset=UTF-8');
