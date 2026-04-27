@@ -21,6 +21,7 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'X-Prerender-Token: ' . $token,
     'User-Agent: ' . ($_SERVER['HTTP_USER_AGENT'] ?? 'bot'),
 ]);
+curl_setopt($ch, CURLOPT_ENCODING, '');
 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
