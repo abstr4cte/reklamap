@@ -219,6 +219,30 @@ const faqItems: FaqItem[] = [
     category: 'podstawy',
     question: 'Czym jest newsletter ReklaMap?',
     answer: 'Newsletter to opcjonalna subskrypcja, dzięki której będziesz otrzymywać e-mailem informacje o nowościach i aktualności z rynku reklamy. Możesz zapisać się na newsletter przy dodawaniu ogłoszenia (ostatni krok formularza) lub na stronie bloga. Subskrypcja jest bezpłatna i dobrowolna — możesz zrezygnować w dowolnym momencie.'
+  },
+  {
+    id: 34,
+    category: 'podstawy',
+    question: 'Dlaczego ReklaMap nie wymaga zakładania konta? Czy to bezpieczne?',
+    answer: 'To celowy wybór projektowy — chcemy zminimalizować barierę dla właścicieli nośników, którzy chcą szybko wystawić ogłoszenie. Zamiast konta i hasła używamy mechanizmu "magic link": każde ogłoszenie powiązane jest z adresem e-mail podanym przy dodawaniu, a dostęp do panelu zarządzania uzyskujesz przez czasowy link wysyłany na ten e-mail (ważny 30 dni). To bezpieczne rozwiązanie — nie przechowujemy haseł, nie ma ryzyka wycieku danych logowania, a dostęp do panelu mają tylko osoby z dostępem do Twojej skrzynki pocztowej. Ten sam mechanizm stosują m.in. Slack, Notion czy Medium przy logowaniu.'
+  },
+  {
+    id: 35,
+    category: 'ogloszenia',
+    question: 'Co jeśli zgubię link do panelu zarządzania?',
+    answer: 'Nic się nie dzieje — link możesz wygenerować ponownie w dowolnym momencie. Wystarczy kliknąć przycisk "Zarządzaj" w górnym menu i podać ten sam adres e-mail, którego użyłeś przy dodawaniu ogłoszenia. Na skrzynkę przyjdzie nowy link, ważny 30 dni. Stary link automatycznie traci ważność. Nie ma żadnego limitu liczby wygenerowanych linków.'
+  },
+  {
+    id: 36,
+    category: 'platnosci',
+    question: 'Czy są jakieś ukryte opłaty albo prowizje od transakcji?',
+    answer: 'Nie. ReklaMap jest w 100% bezpłatny dla obu stron — zarówno dla właścicieli nośników wystawiających ogłoszenia, jak i dla reklamodawców szukających powierzchni. Nie pobieramy prowizji od transakcji, nie ma opłat za publikację, nie ma opłat abonamentowych ani premium subskrypcji. Kontakt między właścicielem a reklamodawcą odbywa się bezpośrednio (przez e-mail i telefon podany w ogłoszeniu) — platforma nie pośredniczy w transakcji ani w płatnościach. Cena, którą widzi reklamodawca, jest ceną, którą otrzymuje właściciel.'
+  },
+  {
+    id: 37,
+    category: 'ogloszenia',
+    question: 'Co jeśli zmienię adres e-mail lub stracę dostęp do skrzynki użytej przy dodawaniu ogłoszenia?',
+    answer: 'Adres e-mail jest jedynym identyfikatorem ogłoszenia, więc dostęp do panelu wymaga dostępu do tej skrzynki. Jeśli zmieniłeś e-mail lub straciłeś dostęp do oryginalnej skrzynki, skontaktuj się z nami przez formularz kontaktowy — po weryfikacji tożsamości i własności ogłoszenia (np. zdjęcia nośnika, lokalizacja) możemy zmienić e-mail przypisany do ogłoszenia lub przekazać dostęp na nowy adres. Najlepiej używaj przy dodawaniu adresu, do którego masz długoterminowy dostęp — najlepiej firmowego, nie tymczasowego.'
   }
 ]
 

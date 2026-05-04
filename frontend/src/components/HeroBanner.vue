@@ -560,7 +560,7 @@ onBeforeUnmount(() => {
         <button type="button" class="owner-hint animate-owner-hint" @click="scrollToOwnerCallout" aria-label="Zobacz jak wystawić powierzchnię reklamową bezpłatnie">
           <span class="owner-hint-full">
             Masz powierzchnię reklamową?
-            <strong>Wystaw ją bezpłatnie — bez kont, bez prowizji</strong>
+            <strong>Wystaw ją bezpłatnie — bez konta, bez prowizji</strong>
           </span>
           <span class="owner-hint-short">
             Masz powierzchnię? <strong>Wystaw bezpłatnie</strong>
