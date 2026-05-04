@@ -125,6 +125,12 @@ const clearLocation = () => {
   apiLocationResults.value = []
 }
 
+const scrollToOwnerCallout = (): void => {
+  const target = document.getElementById('owner-callout')
+  if (!target) return
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 const goToPolandMap = () => {
   const mapContainer = document.querySelector('[data-poland-map] .map-container')
   const header = document.querySelector('.app-header')
@@ -551,6 +557,16 @@ onBeforeUnmount(() => {
       <div class="hero-text">
         <h1 class="hero-title animate-title">Znajdź idealną powierzchnię reklamową</h1>
         <p class="hero-subtitle animate-subtitle">Tysiące ofert w całej Polsce. Sprawdź dostępność w Twojej okolicy!</p>
+        <button type="button" class="owner-hint animate-owner-hint" @click="scrollToOwnerCallout" aria-label="Zobacz jak wystawić powierzchnię reklamową bezpłatnie">
+          <span class="owner-hint-full">
+            Masz powierzchnię reklamową?
+            <strong>Wystaw ją bezpłatnie — bez kont, bez prowizji</strong>
+          </span>
+          <span class="owner-hint-short">
+            Masz powierzchnię? <strong>Wystaw bezpłatnie</strong>
+          </span>
+          <span class="arrow" aria-hidden="true">↓</span>
+        </button>
       </div>
 
       <div class="search-card animate-card">
@@ -1158,6 +1174,7 @@ onBeforeUnmount(() => {
           </div>
         </form>
       </div>
+
     </div>
   </section>
 </template>
@@ -1167,6 +1184,7 @@ onBeforeUnmount(() => {
   position: relative;
   min-height: 580px;
   overflow: visible;
+  background: #f4f5fc;
 }
 
 .hero-background {
@@ -1252,6 +1270,72 @@ onBeforeUnmount(() => {
   max-width: 1100px;
   transform: translateY(60px);
   margin-bottom: 60px;
+}
+
+.owner-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding: 0.7rem 1.4rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(255, 255, 255, 1);
+  border-radius: 999px;
+  color: #4f46e5;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.owner-hint strong {
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.owner-hint .arrow {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.owner-hint:hover {
+  background: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.owner-hint:hover .arrow {
+  transform: translateY(3px);
+}
+
+.animate-owner-hint {
+  animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+
+.owner-hint-full {
+  display: inline;
+}
+
+.owner-hint-short {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .owner-hint-full {
+    display: none;
+  }
+  .owner-hint-short {
+    display: inline;
+  }
 }
 
 .animate-card {
@@ -1784,6 +1868,14 @@ onBeforeUnmount(() => {
 
   .hero-subtitle {
     font-size: 1rem;
+  }
+
+  .owner-hint {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.95rem;
+    gap: 0.35rem;
+    flex-wrap: nowrap;
+    white-space: nowrap;
   }
 
   .search-card {

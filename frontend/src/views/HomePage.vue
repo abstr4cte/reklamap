@@ -3,6 +3,7 @@ import { ref, onMounted, computed, watch, nextTick, onBeforeUnmount, onActivated
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import EmailModal from '../components/EmailModal.vue'
 import HeroBanner from '../components/HeroBanner.vue'
+import OwnerCallout from '../components/OwnerCallout.vue'
 import PolandMap from '../components/PolandMap.vue'
 import AdGrid from '../components/AdGrid.vue'
 import Pagination from '../components/Pagination.vue'
@@ -507,7 +508,9 @@ const clearSearchFlag = () => {
     
     <EmailModal :is-open="isModalOpen" @close="isModalOpen = false" />
     <HeroBanner data-hero-banner @search="handleSearch" @reset="handleReset" />
-    
+
+    <OwnerCallout />
+
     <!-- Categories Section -->
     <section class="categories-section">
       <div class="categories-container">

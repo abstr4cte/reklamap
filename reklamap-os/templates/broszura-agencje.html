@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>ReklaMap — broszura dla agencji</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #1f2937;
+    background: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 0;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  .header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 32px 40px;
+    color: #fff;
+    text-align: center;
+  }
+  .header img { height: 50px; margin-bottom: 6px; }
+  .header .tagline {
+    color: rgba(255,255,255,0.92);
+    font-size: 13px;
+    margin: 6px 0 0;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+
+  .content {
+    padding: 28px 40px 28px;
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: #4b5563;
+  }
+  .content h2 {
+    font-size: 17px;
+    color: #1f2937;
+    margin: 22px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #667eea;
+    display: inline-block;
+  }
+  .content h2:first-child { margin-top: 0; }
+  .content p { margin: 0 0 12px; }
+  .content strong { color: #1f2937; }
+  .content ul { margin: 0 0 14px; padding-left: 20px; line-height: 1.8; }
+  .content li { margin-bottom: 4px; }
+
+  .lead {
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 18px;
+  }
+
+  .accent {
+    background-color: #f0f0ff;
+    border-left: 4px solid #667eea;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 0 0 18px;
+    font-size: 12.5px;
+    color: #1f2937;
+    line-height: 1.65;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .card {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .card-title {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .card-desc { font-size: 12px; color: #4b5563; margin: 0; line-height: 1.6; }
+
+  .types {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .type {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 14px 10px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .type-name { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+  .type-desc { font-size: 11px; opacity: 0.92; line-height: 1.4; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 6px 0 18px;
+  }
+  .stat {
+    text-align: center;
+    background: #f0f0ff;
+    border-radius: 8px;
+    padding: 14px 8px;
+  }
+  .stat-num { font-size: 20px; font-weight: 800; color: #667eea; }
+  .stat-label { font-size: 11px; color: #4b5563; margin-top: 2px; }
+
+  .url-box {
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 20px 24px;
+    border-radius: 10px;
+    margin: 16px 0;
+  }
+  .url-box-label {
+    font-size: 12px;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 4px;
+  }
+  .url-box-url {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: start;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 32px;
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .step-body { padding-top: 4px; }
+  .step-title { font-weight: 700; color: #1f2937; font-size: 13px; margin-bottom: 2px; }
+  .step-desc { font-size: 12px; color: #4b5563; margin: 0; line-height: 1.55; }
+
+  .footer {
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    padding: 14px 40px;
+    text-align: center;
+    font-size: 11px;
+    color: #6b7280;
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+  }
+  .footer .copy { color: #9ca3af; font-size: 10.5px; }
+
+  .pull-quote {
+    font-size: 14px;
+    color: #1f2937;
+    font-style: italic;
+    border-left: 3px solid #667eea;
+    padding: 4px 0 4px 14px;
+    margin: 4px 0 16px;
+  }
+
+  .metric-box {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 8px 0 14px;
+  }
+  .metric {
+    background: #fff;
+    border: 1.5px solid #667eea;
+    border-radius: 8px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+  .metric-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-radius: 50%;
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .metric-icon svg {
+    width: 18px; height: 18px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .metric-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 2px;
+  }
+  .metric-desc { font-size: 10.5px; color: #6b7280; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<!-- ============ STRONA 1 ============ -->
+<div class="page">
+  <div class="header">
+    <img src="logo-text.png" alt="ReklaMap">
+    <p class="tagline">Dla agencji reklamowych i pośredników OOH</p>
+  </div>
+
+  <div class="content">
+    <p class="lead">
+      <strong>ReklaMap</strong> to dodatkowy kanał sprzedaży powierzchni reklamowych dla
+      agencji i pośredników OOH — interaktywna mapa Polski z billboardami, banerami, ekranami
+      LED, citylightami, totemami i reklamą mobilną. Klienci szukają tu sami, bez cold callingu
+      z Państwa strony, a Państwo dostają gotowe leady prosto na skrzynkę.
+    </p>
+
+    <div class="pull-quote">
+      Bez prowizji. Bez abonamentu. Bez kont. Bez pośrednictwa platformy w transakcji.
+    </div>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-num">0&nbsp;zł</div>
+        <div class="stat-label">Wystawienie powierzchni</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0%</div>
+        <div class="stat-label">Prowizji od transakcji</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Kontaktu z klientem</div>
+      </div>
+    </div>
+
+    <h2>Co Państwo zyskują</h2>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Dodatkowy kanał dotarcia</div>
+        <p class="card-desc">
+          Klient szukający powierzchni reklamowej w konkretnej lokalizacji trafia do Państwa
+          przez mapę — kanał niezależny od cold callingu, sieci kontaktów i agencji partnerskich.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Leady prosto na e-mail</div>
+        <p class="card-desc">
+          Wiadomości z formularza i kliknięcia w numer telefonu trafiają bezpośrednio do
+          Państwa. Dalszy kontakt — na własnych zasadach, bez pośrednictwa platformy.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Panel analityczny</div>
+        <p class="card-desc">
+          Każda powierzchnia ma własne statystyki z 30 dni: wyświetlenia, kliknięcia w telefon,
+          wysłane wiadomości. Wszystko na czytelnych wykresach.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Optymalizacja oferty na podstawie danych</div>
+        <p class="card-desc">
+          Porównują Państwo aktywność między nośnikami i widzą, które zdjęcia, opisy i ceny
+          generują największe zainteresowanie — i odpowiednio iterują ofertę.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Brak narzutów dla klienta</div>
+        <p class="card-desc">
+          Państwa cena = cena, którą widzi klient. Brak prowizji platformy oznacza większą
+          konkurencyjność oferty i wyższą konwersję na zapytania.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Bez kont i administracji</div>
+        <p class="card-desc">
+          Cały panel zarządzania obsługiwany jest przez czasowe linki wysyłane na e-mail.
+          Brak haseł do dystrybucji w zespole, brak cofania dostępów po zmianach kadrowych.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="copy">ReklaMap — Portal powierzchni reklamowych &nbsp;·&nbsp; Strona 1 / 3</div>
+  </div>
+</div>
+
+<!-- ============ STRONA 2 ============ -->
+<div class="page">
+  <div class="content" style="padding-top: 36px;">
+
+    <h2>Panel właściciela — co dokładnie widzicie</h2>
+    <p>
+      Dla każdej wystawionej powierzchni dostępne są niezależne wykresy z trzema kluczowymi
+      metrykami z ostatnich <strong>30 dni</strong>:
+    </p>
+
+    <div class="metric-box">
+      <div class="metric">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <div class="metric-name">Wyświetlenia</div>
+        <div class="metric-desc">Ile razy ogłoszenie zostało otwarte przez reklamodawców</div>
+      </div>
+      <div class="metric">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="metric-name">Kliknięcia w telefon</div>
+        <div class="metric-desc">Ile razy klient ujawnił numer i prawdopodobnie zadzwonił</div>
+      </div>
+      <div class="metric">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="metric-name">Wysłane wiadomości</div>
+        <div class="metric-desc">Ile zapytań trafiło na Państwa e-mail z formularza</div>
+      </div>
+    </div>
+
+    <div class="accent">
+      <strong>Co to daje w praktyce?</strong> Widzą Państwo np. że nośnik A ma 10× więcej
+      wyświetleń niż B, ale B ma 3× więcej wysłanych wiadomości — sygnał, że oferta B
+      jest lepiej skonstruowana cenowo lub wizualnie. Można podejrzeć, co działa, i powielić
+      ten wzorzec na pozostałych powierzchniach. To ciągła optymalizacja portfela —
+      bez Google Analytics, bez tagów, bez integracji.
+    </div>
+
+    <h2>Jak zacząć — 4 kroki</h2>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Wystawienie powierzchni</div>
+        <p class="step-desc">
+          Formularz prowadzi krok po kroku — lokalizacja na mapie, zdjęcia, cena i kilka
+          parametrów charakterystycznych dla typu nośnika. Bez rejestracji, bez kont.
+          Wypełnienie zajmuje kilka minut na powierzchnię.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Klient znajduje Państwa nośnik</div>
+        <p class="step-desc">
+          Reklamodawcy filtrują mapę po typie, wymiarach, cenie i lokalizacji, oglądają
+          otoczenie w Street View bezpośrednio z ogłoszenia i porównują kilka powierzchni
+          obok siebie.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Lead trafia bezpośrednio do Państwa</div>
+        <p class="step-desc">
+          Wiadomość z formularza idzie na podany e-mail, telefon — to bezpośrednie połączenie.
+          Platforma nie pośredniczy w komunikacji ani w transakcji.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Optymalizacja na podstawie panelu</div>
+        <p class="step-desc">
+          Po kilku tygodniach widzą Państwo, które ogłoszenia generują największe
+          zainteresowanie. Edytują Państwo zdjęcia, opisy i ceny słabszych ogłoszeń — link
+          do panelu wysyłany jest e-mailem, ważny przez 30 dni, w każdej chwili można go
+          odnowić.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <div class="copy">ReklaMap — Portal powierzchni reklamowych &nbsp;·&nbsp; Strona 2 / 3</div>
+  </div>
+</div>
+
+<!-- ============ STRONA 3 ============ -->
+<div class="page">
+  <div class="content" style="padding-top: 36px;">
+
+    <h2>Wspierane typy nośników</h2>
+    <div class="types" style="margin-bottom: 18px;">
+      <div class="type">
+        <div class="type-name">Billboard</div>
+        <div class="type-desc">Wielkoformatowe tablice przy drogach</div>
+      </div>
+      <div class="type">
+        <div class="type-name">Baner</div>
+        <div class="type-desc">Reklama na ogrodzeniu, ścianie, rusztowaniu</div>
+      </div>
+      <div class="type">
+        <div class="type-name">Ekran LED</div>
+        <div class="type-desc">Cyfrowe ekrany z rotacją reklam</div>
+      </div>
+      <div class="type">
+        <div class="type-name">Citylight</div>
+        <div class="type-desc">Podświetlane gabloty na przystankach</div>
+      </div>
+      <div class="type">
+        <div class="type-name">Totem</div>
+        <div class="type-desc">Pylony reklamowe, słupy ogłoszeniowe</div>
+      </div>
+      <div class="type">
+        <div class="type-name">Ściana</div>
+        <div class="type-desc">Reklama malowana lub naklejana na ścianie</div>
+      </div>
+      <div class="type" style="grid-column: span 3;">
+        <div class="type-name">Reklama mobilna na pojazdach</div>
+        <div class="type-desc">Auta, busy, przyczepy reklamowe — z trasami i ETA dostępności</div>
+      </div>
+    </div>
+
+    <h2>Co dostają Państwa klienci</h2>
+    <p>
+      Reklamodawcy korzystają z platformy <strong>bez rejestracji</strong> — niższa bariera
+      wejścia oznacza więcej zapytań kierowanych do Państwa ogłoszeń.
+    </p>
+
+    <ul>
+      <li><strong>Interaktywna mapa Polski</strong> z pinezkami — od razu widać co i gdzie jest dostępne</li>
+      <li><strong>Widok Street View</strong> bezpośrednio przy ogłoszeniu — klient ocenia widoczność nośnika bez wyjazdu na miejsce</li>
+      <li><strong>Zaawansowane filtrowanie</strong> — typ nośnika, wymiary, zakres cen, ruch, widoczność, lokalizacja</li>
+      <li><strong>Porównywarka</strong> — kilka powierzchni obok siebie, z kluczowymi parametrami</li>
+      <li><strong>Ulubione i alerty wyszukiwania</strong> — klient zostawia kontakt i dostaje powiadomienie, gdy pojawi się nowa pasująca powierzchnia (sygnał gorącego leadu)</li>
+    </ul>
+
+    <h2>Dlaczego warto teraz</h2>
+    <div class="accent">
+      <strong>Aktualnie budujemy bazę powierzchni reklamowych.</strong> Pod koniec maja
+      planujemy kampanię marketingową skierowaną do reklamodawców. Agencje, które wystawią
+      swoje portfolio teraz, będą widoczne <strong>od pierwszego dnia kampanii</strong> —
+      i przejmą znaczącą część ruchu, zanim baza ofert się zagęści.
+    </div>
+
+    <div class="url-box">
+      <div class="url-box-label">Wystaw swoje powierzchnie na</div>
+      <div class="url-box-url">reklamap.pl</div>
+    </div>
+
+    <p style="text-align: center; font-size: 12px; color: #6b7280; margin: 0;">
+      Pytania? Napiszcie Państwo na <strong style="color: #1f2937;">kontakt@reklamap.pl</strong>
+      — odpisujemy zwykle tego samego dnia.
+    </p>
+
+  </div>
+
+  <div class="footer">
+    <div class="copy">ReklaMap — Portal powierzchni reklamowych &nbsp;·&nbsp; Strona 3 / 3</div>
+  </div>
+</div>
+
+</body>
+</html>

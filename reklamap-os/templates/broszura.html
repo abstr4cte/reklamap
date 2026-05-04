@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>ReklaMap — broszura informacyjna</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #1f2937;
+    background: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 0;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  .header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 32px 40px;
+    color: #fff;
+    text-align: center;
+  }
+  .header img { height: 60px; margin-bottom: 6px; }
+  .header .tagline {
+    color: rgba(255,255,255,0.92);
+    font-size: 14px;
+    margin: 4px 0 0;
+    letter-spacing: 0.3px;
+  }
+
+  .content {
+    padding: 28px 40px 24px;
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: #4b5563;
+  }
+  .content h2 {
+    font-size: 17px;
+    color: #1f2937;
+    margin: 22px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #667eea;
+    display: inline-block;
+  }
+  .content h2:first-child { margin-top: 0; }
+  .content p { margin: 0 0 12px; }
+  .content strong { color: #1f2937; }
+  .content ul { margin: 0 0 14px; padding-left: 20px; line-height: 1.8; }
+  .content li { margin-bottom: 4px; }
+
+  .lead {
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 18px;
+  }
+
+  .accent {
+    background-color: #f0f0ff;
+    border-left: 4px solid #667eea;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 0 0 18px;
+    font-size: 12.5px;
+    color: #1f2937;
+    line-height: 1.65;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .card {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .card-title {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .card-desc { font-size: 12px; color: #4b5563; margin: 0; }
+
+  .types {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .type {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 14px 10px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .type-name { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+  .type-desc { font-size: 11px; opacity: 0.92; line-height: 1.4; }
+
+  .faq-item {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 10px 0;
+  }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-q {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .faq-a { font-size: 12px; color: #4b5563; margin: 0; }
+
+  .cta {
+    text-align: center;
+    margin: 18px 0 12px;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    text-decoration: none;
+    padding: 14px 36px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .footer {
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    padding: 18px 40px;
+    text-align: center;
+    font-size: 11.5px;
+    color: #6b7280;
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+  }
+  .footer a { color: #1a0dab; text-decoration: underline; margin: 0 8px; }
+  .footer .copy { color: #9ca3af; font-size: 10.5px; margin-top: 8px; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 6px 0 16px;
+  }
+  .stat {
+    text-align: center;
+    background: #f0f0ff;
+    border-radius: 8px;
+    padding: 14px 8px;
+  }
+  .stat-num { font-size: 20px; font-weight: 800; color: #667eea; }
+  .stat-label { font-size: 11px; color: #4b5563; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ============ STRONA 1 ============ -->
+<div class="page">
+  <div class="header">
+    <img src="logo-text.png" alt="ReklaMap" style="height: 50px;">
+    <p class="tagline">Portal powierzchni reklamowych</p>
+  </div>
+
+  <div class="content">
+    <p class="lead">
+      <strong>ReklaMap</strong> to jedyna w Polsce platforma ogłoszeniowa dla powierzchni
+      reklamowych z interaktywną mapą — odpowiednik popularnych serwisów z nieruchomościami,
+      tylko dla billboardów, banerów, ekranów LED, citylightów, totemów i reklam na pojazdach.
+    </p>
+
+    <h2>Jak to działa?</h2>
+    <p>
+      Właściciele nośników wystawiają swoje powierzchnie z lokalizacją, zdjęciami i ceną.
+      Reklamodawcy odnajdują je na mapie z pinezkami, filtrują po typie, wymiarach i cenie,
+      a następnie kontaktują się <strong>bezpośrednio z właścicielem</strong> — bez pośredników
+      i bez prowizji.
+    </p>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-num">0&nbsp;zł</div>
+        <div class="stat-label">Wystawienie ogłoszenia</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0%</div>
+        <div class="stat-label">Prowizji od transakcji</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">bez&nbsp;konta</div>
+        <div class="stat-label">Bez rejestracji i haseł</div>
+      </div>
+    </div>
+
+    <h2>Dla właścicieli nośników</h2>
+    <p>
+      Wystawienie powierzchni jest <strong>całkowicie bezpłatne</strong> i <strong>nie wymaga
+      zakładania konta</strong>. Wystarczy wypełnić intuicyjny formularz: lokalizacja, zdjęcia,
+      cena oraz parametry charakterystyczne dla danego typu nośnika.
+    </p>
+    <p>
+      Wiadomości od reklamodawców trafiają <strong>bezpośrednio na maila</strong> właściciela —
+      dalszy kontakt odbywa się pomiędzy stronami, bez pośrednictwa platformy. Po podaniu
+      numeru telefonu reklamodawca może zadzwonić bezpośrednio.
+    </p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Zarządzanie ogłoszeniami</div>
+        <p class="card-desc">
+          Klikasz „Zarządzaj", podajesz e-mail użyty przy dodawaniu i otrzymujesz link
+          ważny <strong>30 dni</strong> do panelu z wszystkimi swoimi powierzchniami.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Statystyki w panelu</div>
+        <p class="card-desc">
+          Wyświetlenia, kliknięcia w numer telefonu i wysłane wiadomości — z ostatnich
+          <strong>30 dni</strong>, na czytelnych wykresach dla każdego nośnika.
+        </p>
+      </div>
+    </div>
+
+    <div class="accent">
+      <strong>Dobry moment, żeby dołączyć.</strong> Aktualnie budujemy bazę powierzchni
+      reklamowych — <em>pod koniec maja planujemy kampanię marketingową skierowaną do
+      reklamodawców</em>. Właściciele nośników, którzy wystawią ogłoszenia teraz, będą
+      widoczni od pierwszego dnia kampanii. <strong>Warto być z nami od początku.</strong>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://reklamap.pl">reklamap.pl</a>
+    <a href="https://reklamap.pl/kontakt">Kontakt</a>
+    <a href="https://reklamap.pl/regulamin">Regulamin</a>
+    <div class="copy">© 2026 ReklaMap. Wszelkie prawa zastrzeżone. &nbsp;·&nbsp; Strona 1 / 3</div>
+  </div>
+</div>
+
+<!-- ============ STRONA 2 ============ -->
+<div class="page">
+  <div class="content" style="padding-top: 40px;">
+
+    <h2>Dla reklamodawców</h2>
+    <p>
+      Wszystkie funkcje platformy są dostępne <strong>bez rejestracji</strong>. Wchodzisz,
+      filtrujesz, porównujesz i kontaktujesz się z właścicielem.
+    </p>
+
+    <ul>
+      <li><strong>Interaktywna mapa z pinezkami</strong> — widzisz od razu co i gdzie jest dostępne</li>
+      <li><strong>Widok Street View</strong> bezpośrednio przy ogłoszeniu — możesz ocenić otoczenie i widoczność nośnika bez wychodzenia z domu</li>
+      <li><strong>Zaawansowane filtrowanie</strong> — typ nośnika, wymiary, zakres cen, lokalizacja, ruch i widoczność</li>
+      <li><strong>Porównywarka</strong> — kilka powierzchni obok siebie, z kluczowymi parametrami</li>
+      <li><strong>Ulubione</strong> — zapisujesz interesujące powierzchnie, wracasz później</li>
+      <li><strong>Alerty wyszukiwania</strong> — powiadomienie e-mail, gdy pojawi się nowa pasująca powierzchnia</li>
+      <li><strong>Bezpośredni kontakt</strong> — bez pośredników, bez prowizji, bez narzutów</li>
+    </ul>
+
+    <h2>Wspierane typy nośników</h2>
+    <div class="types">
+      <div class="type">
+        <div class="type-name">Billboard</div>
+        <div class="type-desc">Wielkoformatowe tablice przy drogach</div>
+      </div>
+      <div class="type">
+        <div class="type-name">Baner</div>
+        <div class="type-desc">Reklama na ogrodzeniu, ścianie, rusztowaniu</div>
+      </div>
+      <div class="type">
+        <div class="type-name">Ekran LED</div>
+        <div class="type-desc">Cyfrowe ekrany z rotacją reklam</div>
+      </div>
+      <div class="type">
+        <div class="type-name">Citylight</div>
+        <div class="type-desc">Podświetlane gabloty na przystankach</div>
+      </div>
+      <div class="type">
+        <div class="type-name">Totem</div>
+        <div class="type-desc">Pylony reklamowe, słupy ogłoszeniowe</div>
+      </div>
+      <div class="type">
+        <div class="type-name">Ściana</div>
+        <div class="type-desc">Reklama malowana lub naklejana na ścianie</div>
+      </div>
+      <div class="type" style="grid-column: span 3;">
+        <div class="type-name">Reklama mobilna na pojazdach</div>
+        <div class="type-desc">Auta, busy, przyczepy reklamowe — z trasami i ETA dostępności</div>
+      </div>
+    </div>
+
+    <h2>Co wyróżnia ReklaMap?</h2>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Mapa zamiast listy</div>
+        <p class="card-desc">
+          Powierzchnia reklamowa to przede wszystkim lokalizacja. Na mapie widzisz natychmiast,
+          co jest dostępne w okolicy, której szukasz.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Street View w ogłoszeniu</div>
+        <p class="card-desc">
+          Oceniasz widoczność nośnika i jego otoczenie bez wyjazdu na miejsce — oszczędność
+          czasu i kosztów oględzin.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Bez kont i haseł</div>
+        <p class="card-desc">
+          Zarządzanie przez link wysyłany e-mailem. Mniej tarcia, mniej zapomnianych
+          haseł, większa konwersja.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Zero prowizji</div>
+        <p class="card-desc">
+          Platforma nie pobiera prowizji od transakcji. Cena, którą widzi reklamodawca,
+          to cena, którą dostaje właściciel nośnika.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://reklamap.pl">reklamap.pl</a>
+    <a href="https://reklamap.pl/kontakt">Kontakt</a>
+    <a href="https://reklamap.pl/regulamin">Regulamin</a>
+    <div class="copy">© 2026 ReklaMap. Wszelkie prawa zastrzeżone. &nbsp;·&nbsp; Strona 2 / 3</div>
+  </div>
+</div>
+
+<!-- ============ STRONA 3 ============ -->
+<div class="page">
+  <div class="content" style="padding-top: 40px;">
+
+    <h2>Najczęstsze pytania</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">Czy wystawienie ogłoszenia naprawdę jest darmowe?</div>
+      <p class="faq-a">
+        Tak — wystawienie i utrzymanie ogłoszenia jest całkowicie bezpłatne. Platforma nie
+        pobiera również prowizji od transakcji zawieranych między właścicielem a reklamodawcą.
+      </p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Czy muszę założyć konto?</div>
+      <p class="faq-a">
+        Nie. Zarówno dodawanie, jak i zarządzanie ogłoszeniami odbywa się przez czasowe linki
+        wysyłane na e-mail. Nie ma haseł, nie ma rejestracji.
+      </p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Jak wygląda kontakt z reklamodawcą?</div>
+      <p class="faq-a">
+        Wiadomości z formularza trafiają bezpośrednio na e-mail właściciela. Jeśli podasz
+        numer telefonu w ogłoszeniu, reklamodawca może zadzwonić — kontakt odbywa się
+        bezpośrednio, bez pośrednictwa platformy.
+      </p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Czy widzę, ile osób oglądało moje ogłoszenie?</div>
+      <p class="faq-a">
+        Tak. Panel właściciela pokazuje statystyki z ostatnich 30 dni: wyświetlenia, kliknięcia
+        w numer telefonu i wysłane wiadomości — w formie wykresów, dla każdego ogłoszenia osobno.
+      </p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Jak długo trwa wystawienie ogłoszenia?</div>
+      <p class="faq-a">
+        Kilka minut. Formularz prowadzi krok po kroku — lokalizacja na mapie, zdjęcia,
+        cena, kilka parametrów charakterystycznych dla typu nośnika i gotowe.
+      </p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Czy mogę edytować lub usunąć ogłoszenie później?</div>
+      <p class="faq-a">
+        Oczywiście. Klikasz „Zarządzaj", podajesz e-mail użyty przy dodawaniu i otrzymujesz
+        link do panelu z wszystkimi swoimi ogłoszeniami. Edytujesz, dezaktywujesz, usuwasz —
+        bez ograniczeń.
+      </p>
+    </div>
+
+    <h2>Zaczynamy?</h2>
+    <p>
+      Wystaw swoją pierwszą powierzchnię reklamową w kilka minut, albo przejdź na mapę
+      i sprawdź, co jest dostępne w Twojej okolicy. Wszystko bez rejestracji.
+    </p>
+
+    <div class="cta">
+      <a href="https://reklamap.pl" class="cta-btn">Przejdź do ReklaMap →</a>
+    </div>
+
+    <div class="accent" style="margin-top: 18px;">
+      <strong>Masz pytania?</strong> Napisz do nas na
+      <a href="mailto:kontakt@reklamap.pl" style="color:#667eea; text-decoration:underline;">kontakt@reklamap.pl</a>
+      lub przez formularz na stronie. Odpisujemy zwykle tego samego dnia.
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <a href="https://reklamap.pl">reklamap.pl</a>
+    <a href="https://reklamap.pl/kontakt">Kontakt</a>
+    <a href="https://reklamap.pl/regulamin">Regulamin</a>
+    <div class="copy">© 2026 ReklaMap. Wszelkie prawa zastrzeżone. &nbsp;·&nbsp; Strona 3 / 3</div>
+  </div>
+</div>
+
+</body>
+</html>

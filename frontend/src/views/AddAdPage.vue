@@ -1372,6 +1372,31 @@ onMounted(() => {
         </div>
       </div>
 
+      <details v-if="currentStep === 1" class="intro-banner">
+        <summary class="intro-summary">
+          <span class="intro-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </span>
+          <span class="intro-summary-text">
+            <strong>Bez kont i&nbsp;haseł</strong> — jak to&nbsp;działa?
+          </span>
+          <span class="intro-chevron" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </summary>
+        <p class="intro-text">
+          Ogłoszenie powiążemy z&nbsp;<strong>adresem e&#8209;mail</strong>, który podasz w&nbsp;formularzu —
+          to&nbsp;on zastępuje konto. Żeby później je&nbsp;edytować, klikasz <strong>„Zarządzaj"</strong>
+          w&nbsp;nawigacji i&nbsp;podajesz ten sam e&#8209;mail — na&nbsp;skrzynkę przychodzi link
+          do&nbsp;panelu (ważny <strong>30&nbsp;dni</strong>, możesz go&nbsp;wygenerować ponownie w&nbsp;każdej chwili).
+        </p>
+      </details>
+
       <div class="progress-bar">
         <div
           v-for="step in totalSteps"
@@ -2318,6 +2343,117 @@ onMounted(() => {
 .subtitle {
   font-size: 1.1rem;
   opacity: 0.9;
+}
+
+.intro-banner {
+  margin: 1.5rem 0 0.5rem;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.intro-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: background 0.2s ease;
+}
+
+.intro-summary::-webkit-details-marker {
+  display: none;
+}
+
+.intro-summary:hover {
+  background: #f9fafb;
+}
+
+.intro-icon {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intro-summary-text {
+  flex: 1;
+  font-size: 0.88rem;
+  color: #4b5563;
+  line-height: 1.4;
+  min-width: 0;
+}
+
+.intro-summary-text strong {
+  color: #1f2937;
+  font-weight: 700;
+}
+
+.intro-chevron {
+  flex-shrink: 0;
+  color: #9ca3af;
+  transition: transform 0.25s ease;
+  display: flex;
+}
+
+.intro-banner[open] .intro-chevron {
+  transform: rotate(180deg);
+}
+
+.intro-text {
+  margin: 0;
+  padding: 0 1rem 1rem 3rem;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #4b5563;
+  border-top: 1px solid #f0f1f5;
+  padding-top: 0.85rem;
+}
+
+.intro-text strong {
+  color: #1f2937;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .intro-banner {
+    margin: 1rem 0 0.25rem;
+  }
+
+  .intro-summary {
+    padding: 0.75rem 0.85rem;
+    gap: 0.6rem;
+  }
+
+  .intro-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .intro-icon svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .intro-summary-text {
+    font-size: 0.82rem;
+  }
+
+  .intro-text {
+    padding: 0.75rem 0.85rem 0.85rem 0.85rem;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
 }
 
 .toast-notification-map {
