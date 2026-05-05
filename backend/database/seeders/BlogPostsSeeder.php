@@ -76,11 +76,13 @@ class BlogPostsSeeder extends Seeder
 
     private function parseFrontMatter(string $raw): array
     {
-        if (!str_starts_with(ltrim($raw), '---')) {
+        $stripped = preg_replace('/^\s*<!--.*?-->\s*/s', '', $raw, 1);
+
+        if (!str_starts_with(ltrim($stripped), '---')) {
             return [[], $raw];
         }
 
-        $parts = preg_split('/^---\s*$/m', $raw, 3);
+        $parts = preg_split('/^---\s*$/m', $stripped, 3);
 
         if (count($parts) < 3) {
             return [[], $raw];
