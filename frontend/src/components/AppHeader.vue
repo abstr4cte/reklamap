@@ -195,7 +195,7 @@ watch(isMobileMenuOpen, (isOpen) => {
             </svg>
             <span class="badge-count" v-if="comparisonCount > 0" aria-hidden="true">{{ comparisonCount }}</span>
           </button>
-          <button @click="handleAddAdClick" class="add-listing-btn btn-interactive">
+          <button v-if="route.name !== 'add-ad'" @click="handleAddAdClick" class="add-listing-btn btn-interactive">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
@@ -212,7 +212,7 @@ watch(isMobileMenuOpen, (isOpen) => {
 
         <!-- Mobile Quick "Dodaj" Button (visible only on mobile/tablet) -->
         <button
-          v-if="route.path !== '/dodaj'"
+          v-if="route.name !== 'add-ad'"
           @click="handleAddAdClick"
           class="mobile-add-btn"
           aria-label="Dodaj ogłoszenie"
