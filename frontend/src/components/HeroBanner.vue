@@ -378,8 +378,8 @@ const handleClickOutside = (event: MouseEvent) => {
 
 // Wyczyść filtry specyficzne dla typu gdy typ się zmieni
 watch(() => filters.value.type, (newType, oldType) => {
-  // Nie rób nic przy pierwszym załadowaniu lub gdy typ się nie zmienił
-  if (!oldType || newType === oldType) {
+  // Nie rób nic gdy typ się nie zmienił
+  if (newType === oldType) {
     return
   }
   
@@ -393,12 +393,28 @@ watch(() => filters.value.type, (newType, oldType) => {
     locationLabel: filters.value.locationLabel,
     selectedLocationCoords: filters.value.selectedLocationCoords,
     cityStrict: filters.value.cityStrict,
-    priceFrom: filters.value.priceFrom,
-    priceTo: filters.value.priceTo,
-    priceUnit: (() => {
+    // Cena + jednostka: zachowujemy wybór użytkownika tylko gdy jednostka pasuje do nowego typu.
+    // Jeśli nie pasuje — czyścimy cenę i wracamy do najpopularniejszej jednostki dla typu,
+    // żeby nie zostawić ceny z niespójną jednostką.
+    ...(() => {
       const available = searchStore.getAvailablePriceUnits(newType ?? '')
       const current = filters.value.priceUnit
-      return available.some(u => u.value === current) ? current : (available[0]?.value ?? 'month')
+      const priceEntered = filters.value.priceFrom !== null || filters.value.priceTo !== null
+      const unitFits = available.some(u => u.value === current)
+      if (priceEntered && unitFits) {
+        return {
+          priceFrom: filters.value.priceFrom,
+          priceTo: filters.value.priceTo,
+          priceUnit: current
+        }
+      }
+      const preferred = ['month', 'day', 'week', 'year', 'campaign']
+      const fallback = preferred.find(p => available.some(u => u.value === p))
+      return {
+        priceFrom: null,
+        priceTo: null,
+        priceUnit: fallback ?? available[0]?.value ?? 'month'
+      }
     })(),
     status: filters.value.status,
     onlyWithImage: filters.value.onlyWithImage,
