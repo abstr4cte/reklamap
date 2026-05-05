@@ -54,14 +54,14 @@ const goToAddAd = (): void => {
           <div class="step-num">2</div>
           <div class="step-body">
             <h4 class="step-title">Ogłoszenie pojawia się na&nbsp;mapie</h4>
-            <p class="step-desc">Od&nbsp;razu widoczne dla reklamodawców szukających powierzchni w&nbsp;Twojej okolicy.</p>
+            <p class="step-desc">Od&nbsp;razu jest widoczne dla reklamodawców szukających powierzchni w&nbsp;Twojej okolicy.</p>
           </div>
         </li>
         <li class="step">
           <div class="step-num">3</div>
           <div class="step-body">
             <h4 class="step-title">Reklamodawca kontaktuje się bezpośrednio</h4>
-            <p class="step-desc">Wiadomości z&nbsp;formularza idą na&nbsp;Twój e&#8209;mail, a&nbsp;numer telefonu jest widoczny w&nbsp;ogłoszeniu –&nbsp;bez pośrednictwa platformy.</p>
+            <p class="step-desc">Wiadomości z&nbsp;formularza idą na&nbsp;Twój e&#8209;mail, a&nbsp;numer telefonu jest widoczny w&nbsp;ogłoszeniu <span class="nowrap">–&nbsp;bez</span> pośrednictwa platformy.</p>
           </div>
         </li>
       </ol>
@@ -140,10 +140,7 @@ const goToAddAd = (): void => {
   color: var(--text-muted, #6b7280);
   margin: 0 0 1.75rem 0;
   font-weight: 500;
-  text-align: justify;
-  text-justify: inter-word;
-  hyphens: auto;
-  -webkit-hyphens: auto;
+  text-wrap: pretty;
 }
 
 .usp-pills {
@@ -232,8 +229,13 @@ const goToAddAd = (): void => {
   font-size: 1rem;
   font-weight: 700;
   color: var(--text-main, #1f2937);
-  margin: 0.15rem 0 0.4rem 0;
+  margin: 0.15rem 0 0.6rem 0;
   line-height: 1.35;
+  min-height: calc(1.35em * 2);
+}
+
+.nowrap {
+  white-space: nowrap;
 }
 
 .step-desc {
@@ -241,10 +243,7 @@ const goToAddAd = (): void => {
   color: var(--text-muted, #6b7280);
   margin: 0;
   line-height: 1.55;
-  text-align: justify;
-  text-justify: inter-word;
-  hyphens: auto;
-  -webkit-hyphens: auto;
+  text-wrap: pretty;
 }
 
 .manage-info {
@@ -290,10 +289,7 @@ const goToAddAd = (): void => {
   color: var(--text-muted, #6b7280);
   margin: 0;
   line-height: 1.65;
-  text-align: justify;
-  text-justify: inter-word;
-  hyphens: auto;
-  -webkit-hyphens: auto;
+  text-wrap: pretty;
 }
 
 .manage-info-desc strong {
@@ -342,6 +338,10 @@ const goToAddAd = (): void => {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
+
+  .step-title {
+    min-height: 0;
+  }
 }
 
 @media (max-width: 768px) {
@@ -366,6 +366,18 @@ const goToAddAd = (): void => {
   .owner-subtitle {
     font-size: 0.95rem;
     margin-bottom: 1.25rem;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+
+  .step-desc,
+  .manage-info-desc {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
   }
 
   .usp-pills {
