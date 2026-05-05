@@ -366,18 +366,6 @@ const goToAddAd = (): void => {
   .owner-subtitle {
     font-size: 0.95rem;
     margin-bottom: 1.25rem;
-    text-align: justify;
-    text-justify: inter-word;
-    hyphens: auto;
-    -webkit-hyphens: auto;
-  }
-
-  .step-desc,
-  .manage-info-desc {
-    text-align: justify;
-    text-justify: inter-word;
-    hyphens: auto;
-    -webkit-hyphens: auto;
   }
 
   .usp-pills {
