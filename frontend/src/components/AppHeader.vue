@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import logoImage from '../assets/logo.webp'
 import logoTextImage from '../assets/logo-text.webp'
+
+const route = useRoute()
 
 
 const props = defineProps<{
@@ -206,6 +209,19 @@ watch(isMobileMenuOpen, (isOpen) => {
           </button>
 
         </div>
+
+        <!-- Mobile Quick "Dodaj" Button (visible only on mobile/tablet) -->
+        <button
+          v-if="route.path !== '/dodaj'"
+          @click="handleAddAdClick"
+          class="mobile-add-btn"
+          aria-label="Dodaj ogłoszenie"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="mobile-add-btn-label">Dodaj</span>
+        </button>
 
         <!-- Hamburger Button -->
         <button @click="toggleMobileMenu" class="hamburger-btn" :class="{ active: isMobileMenuOpen }" :aria-label="isMobileMenuOpen ? 'Zamknij menu' : 'Otwórz menu'" :aria-expanded="isMobileMenuOpen">
@@ -613,9 +629,98 @@ watch(isMobileMenuOpen, (isOpen) => {
 }
 
 .add-listing-btn {
-  background: var(--accent-color);
-  color: white;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #ffffff;
   white-space: nowrap;
+  border: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 2px 8px rgba(16, 185, 129, 0.4);
+  animation: cta-pulse 8s ease-out infinite;
+}
+
+.add-listing-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+  transition: left 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 1;
+}
+
+.add-listing-btn:hover::before {
+  left: 140%;
+}
+
+.add-listing-btn:hover {
+  animation: none;
+}
+
+/* 3 pulses (~1s each) + 5s idle pause = 8s total cycle */
+@keyframes cta-pulse {
+  /* Pulse 1 */
+  0% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 1px 3px rgba(0, 0, 0, 0.08),
+      0 0 0 0 rgba(255, 255, 255, 0.6);
+  }
+  12.5% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 1px 3px rgba(0, 0, 0, 0.08),
+      0 0 0 9px rgba(255, 255, 255, 0);
+  }
+  /* Pulse 2 */
+  12.51% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 1px 3px rgba(0, 0, 0, 0.08),
+      0 0 0 0 rgba(255, 255, 255, 0.6);
+  }
+  25% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 1px 3px rgba(0, 0, 0, 0.08),
+      0 0 0 9px rgba(255, 255, 255, 0);
+  }
+  /* Pulse 3 */
+  25.01% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 1px 3px rgba(0, 0, 0, 0.08),
+      0 0 0 0 rgba(255, 255, 255, 0.6);
+  }
+  37.5% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 1px 3px rgba(0, 0, 0, 0.08),
+      0 0 0 9px rgba(255, 255, 255, 0);
+  }
+  /* Idle pause */
+  37.51%, 100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 1px 3px rgba(0, 0, 0, 0.08),
+      0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .add-listing-btn,
+  .mobile-add-btn {
+    animation: none !important;
+  }
 }
 
 .theme-toggle-btn {
@@ -657,7 +762,10 @@ watch(isMobileMenuOpen, (isOpen) => {
 }
 
 .add-listing-btn:hover {
-  background: #059669;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 4px 14px rgba(16, 185, 129, 0.5);
 }
 
 .manage-btn:hover {
@@ -667,6 +775,82 @@ watch(isMobileMenuOpen, (isOpen) => {
 .add-listing-btn:active,
 .manage-btn:active {
   transform: translateY(0);
+}
+
+/* Mobile "Dodaj" quick button — visible only when hamburger is shown */
+.mobile-add-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  height: 40px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  border: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 2px 8px rgba(16, 185, 129, 0.4);
+  transition: transform 0.18s ease, box-shadow 0.25s ease, background 0.18s ease, border-color 0.18s ease;
+  z-index: 1101;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  animation: cta-pulse 8s ease-out infinite;
+}
+
+.mobile-add-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+  transition: left 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 1;
+}
+
+.mobile-add-btn:hover::before {
+  left: 140%;
+}
+
+.mobile-add-btn > * {
+  position: relative;
+  z-index: 2;
+}
+
+.mobile-add-btn:hover {
+  animation: none;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px) scale(1.03);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 4px 14px rgba(16, 185, 129, 0.5);
+}
+
+.mobile-add-btn:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 1px 3px rgba(16, 185, 129, 0.5);
+}
+
+.mobile-add-btn-label {
+  line-height: 1;
 }
 
 /* Hamburger & Mobile Menu */
@@ -952,14 +1136,21 @@ watch(isMobileMenuOpen, (isOpen) => {
   .hamburger-btn {
     display: flex;
   }
-  
+
   .hamburger-btn.active {
     opacity: 0;
     pointer-events: none;
   }
 
+  .mobile-add-btn {
+    display: inline-flex;
+  }
+
   .header-right {
     flex: 0;
+    gap: 0.5rem;
+    display: flex;
+    align-items: center;
   }
 
   .container {
