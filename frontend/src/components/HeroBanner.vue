@@ -1292,6 +1292,42 @@ onBeforeUnmount(() => {
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   transition: background 0.25s ease, transform 0.25s ease;
+  position: relative;
+}
+
+/* Halo lives on a sibling pseudo-element so the button itself isn't
+   continuously repainted (which was breaking the gradient-text repaint). */
+.owner-hint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  pointer-events: none;
+  box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+  animation: owner-hint-glow 14s ease-out infinite;
+}
+
+.owner-hint:hover::after {
+  animation: none;
+}
+
+/* Single soft pulse + long quiet — rare, not pushy */
+@keyframes owner-hint-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.45);
+  }
+  7% {
+    box-shadow: 0 0 0 12px rgba(102, 126, 234, 0);
+  }
+  7.01%, 100% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .owner-hint::after {
+    animation: none !important;
+  }
 }
 
 .owner-hint strong {
@@ -1300,6 +1336,14 @@ onBeforeUnmount(() => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  /* Force own stacking + compositor layer — prevents WebKit gradient-text
+     glitch during parent transform transitions and pulse-animation repaints. */
+  display: inline-block;
+  position: relative;
+  isolation: isolate;
+  transform: translateZ(0);
+  will-change: transform;
+  -webkit-font-smoothing: antialiased;
 }
 
 .owner-hint .arrow {
@@ -1309,8 +1353,7 @@ onBeforeUnmount(() => {
 
 .owner-hint:hover {
   background: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
 }
 
 .owner-hint:hover .arrow {
@@ -1318,7 +1361,7 @@ onBeforeUnmount(() => {
 }
 
 .animate-owner-hint {
-  animation: fadeInUp 0.8s ease-out 0.6s both;
+  animation: fadeInUp 0.8s ease-out 0.6s backwards;
 }
 
 .owner-hint-full {

@@ -805,27 +805,29 @@ watch(isMobileMenuOpen, (isOpen) => {
   animation: cta-pulse 8s ease-out infinite;
 }
 
-.mobile-add-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -120%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(
-    100deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.45) 50%,
-    transparent 100%
-  );
-  transform: skewX(-20deg);
-  pointer-events: none;
-  transition: left 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-  z-index: 1;
-}
+@media (hover: hover) and (pointer: fine) {
+  .mobile-add-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      100deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.45) 50%,
+      transparent 100%
+    );
+    transform: skewX(-20deg);
+    pointer-events: none;
+    transition: left 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 1;
+  }
 
-.mobile-add-btn:hover::before {
-  left: 140%;
+  .mobile-add-btn:hover::before {
+    left: 140%;
+  }
 }
 
 .mobile-add-btn > * {
