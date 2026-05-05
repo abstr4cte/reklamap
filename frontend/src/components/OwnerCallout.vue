@@ -102,7 +102,7 @@ const goToAddAd = (): void => {
   padding: 4.5rem 0;
   position: relative;
   overflow: hidden;
-  scroll-margin-top: 60px;
+  scroll-margin-top: 100px;
 }
 
 

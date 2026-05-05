@@ -51,21 +51,24 @@ class BlogPostsSeeder extends Seeder
             $body = preg_replace('/<!--.*?-->/s', '', $body);
             $html = $converter->convert($body)->getContent();
 
-            BlogPost::updateOrCreate(
-                ['slug' => $frontMatter['slug']],
-                [
-                    'title'        => $frontMatter['title']        ?? '',
-                    'category'     => $frontMatter['category']     ?? 'poradniki',
-                    'image_alt'    => $frontMatter['image_alt']    ?? '',
-                    'image_prompt' => $frontMatter['image_prompt'] ?? '',
-                    'published_at' => $frontMatter['published_at'] ?? now(),
-                    'content'      => $html,
-                    'user_id'      => $author->id,
-                    'status'       => 'draft',
-                ]
-            );
+            if (BlogPost::where('slug', $frontMatter['slug'])->exists()) {
+                $this->command->line("Pominięto (już istnieje): {$frontMatter['slug']}");
+                continue;
+            }
 
-            $this->command->info("Zsynchronizowano: {$frontMatter['slug']}");
+            BlogPost::create([
+                'slug'         => $frontMatter['slug'],
+                'title'        => $frontMatter['title']        ?? '',
+                'category'     => $frontMatter['category']     ?? 'poradniki',
+                'image_alt'    => $frontMatter['image_alt']    ?? '',
+                'image_prompt' => $frontMatter['image_prompt'] ?? '',
+                'published_at' => $frontMatter['published_at'] ?? now(),
+                'content'      => $html,
+                'user_id'      => $author->id,
+                'status'       => 'draft',
+            ]);
+
+            $this->command->info("Dodano nowy post: {$frontMatter['slug']}");
         }
 
         $this->command->info('Gotowe — ' . count($files) . ' postów zsynchronizowanych z plików .md.');
