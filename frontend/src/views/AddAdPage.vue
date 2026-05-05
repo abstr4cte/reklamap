@@ -1381,7 +1381,7 @@ onMounted(() => {
             </svg>
           </span>
           <span class="intro-summary-text">
-            <strong>Bez kont i&nbsp;haseł</strong> — jak to&nbsp;działa?
+            <strong>Bez kont i&nbsp;haseł</strong> –&nbsp;jak to&nbsp;działa?
           </span>
           <span class="intro-chevron" aria-hidden="true">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1390,10 +1390,10 @@ onMounted(() => {
           </span>
         </summary>
         <p class="intro-text">
-          Ogłoszenie powiążemy z&nbsp;<strong>adresem e&#8209;mail</strong>, który podasz w&nbsp;formularzu —
-          to&nbsp;on zastępuje konto. Żeby później je&nbsp;edytować, klikasz <strong>„Zarządzaj"</strong>
-          w&nbsp;nawigacji i&nbsp;podajesz ten sam e&#8209;mail — na&nbsp;skrzynkę przychodzi link
-          do&nbsp;panelu (ważny <strong>30&nbsp;dni</strong>, możesz go&nbsp;wygenerować ponownie w&nbsp;każdej chwili).
+          Ogłoszenie powiążemy z&nbsp;<strong>adresem e&#8209;mail</strong>, który podasz w&nbsp;formularzu –&nbsp;to&nbsp;on
+          zastępuje konto. Żeby później je&nbsp;edytować, klikasz <strong>„Zarządzaj"</strong>
+          w&nbsp;nawigacji i&nbsp;podajesz ten sam e&#8209;mail –&nbsp;na&nbsp;skrzynkę przychodzi link
+          do&nbsp;panelu –&nbsp;ważny <strong>30&nbsp;dni</strong>, możesz go&nbsp;wygenerować ponownie w&nbsp;każdej chwili.
         </p>
       </details>
 
@@ -2416,6 +2416,10 @@ onMounted(() => {
   color: #4b5563;
   border-top: 1px solid #f0f1f5;
   padding-top: 0.85rem;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 
 .intro-text strong {

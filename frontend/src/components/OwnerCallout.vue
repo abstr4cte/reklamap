@@ -61,7 +61,7 @@ const goToAddAd = (): void => {
           <div class="step-num">3</div>
           <div class="step-body">
             <h4 class="step-title">Reklamodawca kontaktuje się bezpośrednio</h4>
-            <p class="step-desc">Wiadomości z&nbsp;formularza idą na&nbsp;Twój e&#8209;mail, a&nbsp;numer telefonu jest widoczny w&nbsp;ogłoszeniu — bez pośrednictwa platformy.</p>
+            <p class="step-desc">Wiadomości z&nbsp;formularza idą na&nbsp;Twój e&#8209;mail, a&nbsp;numer telefonu jest widoczny w&nbsp;ogłoszeniu –&nbsp;bez pośrednictwa platformy.</p>
           </div>
         </li>
       </ol>
@@ -77,7 +77,7 @@ const goToAddAd = (): void => {
           <h3 class="manage-info-title">Jak później edytować ogłoszenie?</h3>
           <p class="manage-info-desc">
             Klikasz <strong>„Zarządzaj"</strong>, podajesz e&#8209;mail użyty przy dodawaniu i&nbsp;dostajesz link
-            do&nbsp;panelu ważny <strong>30&nbsp;dni</strong> — możesz go&nbsp;wygenerować ponownie
+            do&nbsp;panelu ważny <strong>30&nbsp;dni</strong> –&nbsp;możesz go&nbsp;wygenerować ponownie
             w&nbsp;każdej chwili. Z&nbsp;poziomu panelu edytujesz, usuwasz, sprawdzasz statystyki. Bez kont, bez haseł.
           </p>
         </div>
@@ -140,6 +140,10 @@ const goToAddAd = (): void => {
   color: var(--text-muted, #6b7280);
   margin: 0 0 1.75rem 0;
   font-weight: 500;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 
 .usp-pills {
@@ -237,6 +241,10 @@ const goToAddAd = (): void => {
   color: var(--text-muted, #6b7280);
   margin: 0;
   line-height: 1.55;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 
 .manage-info {
@@ -282,6 +290,10 @@ const goToAddAd = (): void => {
   color: var(--text-muted, #6b7280);
   margin: 0;
   line-height: 1.65;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 
 .manage-info-desc strong {
