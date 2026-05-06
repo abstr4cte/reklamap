@@ -362,6 +362,19 @@ const currentDescription = computed(() => {
     || categoryDescriptions['']
 })
 
+// H1 dynamiczny per URL — nadpisuje statyczny title z categoryDescriptions
+// gdy w route jest miasto (statyczne title nie zawierają nazwy miasta).
+const dynamicH1 = computed<string | undefined>(() => {
+  const typeSlug = route.params.type as string | undefined
+  const citySlug = route.params.city as string | undefined
+  const typeLabel = typeSlug ? urlTypeToLabel[typeSlug] || deslugify(typeSlug) : null
+  const cityName = citySlug ? deslugify(citySlug) : null
+
+  if (typeLabel && cityName) return `${typeLabel} – ${cityName}`
+  if (cityName) return `Powierzchnie reklamowe – ${cityName}`
+  return undefined
+})
+
 const seoInfo = computed(() => {
   const type = route.params.type as string
   const city = route.params.city as string
@@ -1465,8 +1478,6 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
       <!-- SEO Breadcrumbs -->
       <Breadcrumbs :items="breadcrumbs" />
 
-      <h1 class="listings-title sr-only">{{ seoInfo.title.split(' | ')[0] }}</h1>
-      
       <!-- Search and Filters Bar -->
       <div class="search-bar">
         <!-- Desktop View -->
@@ -2509,8 +2520,9 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
     
     <!-- Category/City Description for SEO - poza listings-page -->
     <div v-if="currentDescription" class="description-wrapper">
-      <CategoryDescription 
+      <CategoryDescription
         :description="currentDescription"
+        :custom-title="dynamicH1"
       />
     </div>
   </div> <!-- End of root div -->

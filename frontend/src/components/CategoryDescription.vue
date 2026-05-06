@@ -5,6 +5,7 @@ import type { CategoryDescription } from '../data/categoryDescriptions'
 const props = defineProps<{
   description: CategoryDescription
   count?: number
+  customTitle?: string
 }>()
 
 const isExpanded = ref(false)
@@ -17,7 +18,7 @@ const toggleExpanded = () => {
 <template>
   <div class="category-description">
     <div class="description-content">
-      <h1 class="description-title">{{ description.title }}</h1>
+      <h1 class="description-title">{{ props.customTitle || description.title }}</h1>
       
       <div class="description-stats" v-if="count !== undefined">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
