@@ -23,7 +23,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 
 useSeo({
   title: 'Dodaj powierzchnię reklamową | ReklaMap',
-  description: 'Wystaw swoją powierzchnię reklamową na ReklaMap. Dodaj billboard, baner, ekran LED, citylight lub inne miejsce reklamowe i dotrzyj do tysięcy reklamodawców.',
+  description: 'Wystaw swoją powierzchnię reklamową na ReklaMap. Dodaj billboard, baner, ekran LED, citylight lub inne miejsce reklamowe i dotrzyj do reklamodawców z całej Polski.',
   ogType: 'website',
   canonical: `${appUrl}/dodaj-powierzchnie-reklamowa`,
   keywords: 'dodaj ogłoszenie, wystaw powierzchnię reklamową, billboard do wynajęcia, reklama zewnętrzna'

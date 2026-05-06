@@ -175,7 +175,7 @@ const formatAvailableDate = (date: string | null | undefined) => {
 const seoOptions = ref<any>({ title: 'ReklaMap', description: 'Trwa ładowanie...' })
 const { updateMetaTags: _updateMetaTags } = useSeo(seoOptions)
 
-watch(ad, (newAd) => {
+watch([ad, similarAds], ([newAd, newSimilarAds]) => {
   if (newAd) {
     const adImages: string[] = Array.isArray(newAd.images) && newAd.images.length > 0
       ? newAd.images.map((i: string) => getFullImageUrl(i))
@@ -232,7 +232,14 @@ watch(ad, (newAd) => {
           'availability': newAd.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
           'url': cleanUrl,
           'offeredBy': { '@type': 'Organization', 'name': 'ReklaMap', 'url': origin }
-        }
+        },
+        ...(newSimilarAds && newSimilarAds.length > 0 ? {
+          'isRelatedTo': newSimilarAds.map((s: any) => ({
+            '@type': 'Product',
+            'name': s.title,
+            'url': `${origin}/powierzchnia-reklamowa/${mapTypeToUrlFormat(s.type || 'other')}/${slugify(s.city)}/${slugify(s.title)}-${s.id}`
+          }))
+        } : {})
       },
       ...(newAd.latitude && newAd.longitude ? [{
         '@context': 'https://schema.org',

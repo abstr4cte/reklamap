@@ -26,7 +26,7 @@ const faqItems: FaqItem[] = [
     id: 24,
     category: 'rynek',
     question: 'Ile kosztuje wynajem billboardu?',
-    answer: 'Koszt wynajmu billboardu w Polsce zależy od lokalizacji, formatu i czasu trwania kampanii. W małych miastach ceny zaczynają się od około 500–1000 zł miesięcznie, w średnich miastach wynoszą 1500–4000 zł, a w Warszawie i innych dużych aglomeracjach ceny premium osiągają 5000–15 000 zł miesięcznie za nośnik przy głównych arteriach. Standardowy format 12m² przy drodze krajowej kosztuje przeciętnie 2000–5000 zł netto za miesiąc. Na ReklaMap możesz bezpośrednio porównywać ceny bez prowizji pośredników.'
+    answer: 'Koszt wynajmu billboardu w Polsce zależy od lokalizacji, formatu i czasu trwania kampanii. W małych miastach ceny zaczynają się od około 500–1000 zł miesięcznie, w średnich miastach wynoszą 1500–4000 zł, a w Warszawie i innych dużych aglomeracjach ceny premium osiągają 5000–15 000 zł miesięcznie za nośnik przy głównych arteriach. Standardowy format 12m² przy drodze krajowej kosztuje przeciętnie 2000–5000 zł netto za miesiąc. Na ReklaMap możesz porównywać ceny ofert z różnych miast i typów nośników w jednym miejscu.'
   },
   {
     id: 25,

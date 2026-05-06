@@ -571,8 +571,8 @@ onBeforeUnmount(() => {
     <!-- ... rest of the code remains the same ... -->
     <div class="hero-content">
       <div class="hero-text">
-        <h1 class="hero-title animate-title">Znajdź idealną powierzchnię reklamową</h1>
-        <p class="hero-subtitle animate-subtitle">Tysiące ofert w całej Polsce. Sprawdź dostępność w Twojej okolicy!</p>
+        <h1 class="hero-title animate-title">Wynajem powierzchni reklamowych w Polsce – billboardy, citylighty, ekrany LED</h1>
+        <p class="hero-subtitle animate-subtitle">Sprawdź na mapie oferty w swojej okolicy, porównaj ceny i skontaktuj się z wystawcą.</p>
         <button type="button" class="owner-hint animate-owner-hint" @click="scrollToOwnerCallout" aria-label="Zobacz jak wystawić powierzchnię reklamową bezpłatnie">
           <span class="owner-hint-full">
             Masz powierzchnię reklamową?

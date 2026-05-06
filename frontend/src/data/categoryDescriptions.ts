@@ -8,10 +8,10 @@ export const categoryDescriptions: Record<string, CategoryDescription> = {
   // Wszystkie powierzchnie
   '': {
     title: 'Powierzchnie reklamowe w całej Polsce – Wynajem i Sprzedaż',
-    description: 'Witamy na ReklaMap – największej platformie agregującej powierzchnie reklamowe w Polsce. Nasz serwis to kompleksowe narzędzie dla firm i osób prywatnych, które chcą skutecznie promować swój biznes w przestrzeni publicznej. Oferujemy dostęp do tysięcy nośników: od tradycyjnych billboardów przy autostradach, przez eleganckie citylighty w centrach handlowych, po nowoczesne, cyfrowe ekrany LED (DOOH). Dzięki nam znajdziesz idealną lokalizację dla swojej kampanii, porównasz ceny i skontaktujesz się bezpośrednio z właścicielem nośnika, pomijając zbędnych pośredników. Nasza baza obejmuje zarówno duże aglomeracje, jak i mniejsze miejscowości, zapewniając pełne pokrycie ogólnopolskie.',
+    description: 'Witamy na ReklaMap – największej platformie agregującej powierzchnie reklamowe w Polsce. Nasz serwis to kompleksowe narzędzie dla firm i osób prywatnych, które chcą skutecznie promować swój biznes w przestrzeni publicznej. Oferujemy dostęp do rosnącej bazy nośników: od tradycyjnych billboardów przy autostradach, przez eleganckie citylighty w centrach handlowych, po nowoczesne, cyfrowe ekrany LED (DOOH). Dzięki nam znajdziesz idealną lokalizację dla swojej kampanii, porównasz ceny i skontaktujesz się bezpośrednio z właścicielem nośnika, pomijając zbędnych pośredników. Nasza baza obejmuje zarówno duże aglomeracje, jak i mniejsze miejscowości, zapewniając pełne pokrycie ogólnopolskie.',
     benefits: [
       'Największa i najbardziej aktualna baza powierzchni reklamowych w Polsce',
-      'Bezpośredni kontakt z właścicielami – brak ukrytych prowizji',
+      'Bezpośredni kontakt z wystawcą – ReklaMap jest bezpłatny',
       'Intuicyjna mapa interaktywna ułatwiająca wybór lokalizacji',
       'Możliwość porównania do 5 ogłoszeń jednocześnie według parametrów technicznych',
       'Zaawansowane filtry wyszukiwania: natężenie ruchu, oświetlenie, wymiary'
