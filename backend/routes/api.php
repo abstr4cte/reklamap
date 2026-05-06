@@ -6,6 +6,7 @@ use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\ManagementController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\SilosController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -32,6 +33,9 @@ Route::post('listings/daily-stats/multiple', [AdvertisementController::class, 'g
 
 Route::get('blog', [BlogController::class, 'index']);
 Route::get('blog/{slug}', [BlogController::class, 'show']);
+
+// Silosy internal linking — dane do komponentu RelatedSilos na froncie
+Route::get('silos', [SilosController::class, 'index']);
 
 // Wszystkie formularze publiczne - rate limit 10/h + reCAPTCHA
 Route::middleware(['throttle:10,60', 'verify.recaptcha'])->group(function () {

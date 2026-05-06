@@ -1047,6 +1047,9 @@ class AdvertisementController extends Controller
         // Clear sitemap cache
         Cache::forget('sitemap_xml');
 
+        // Cache silosów (SilosController) wygasa naturalnie po 1h — to akceptowalne
+        // opóźnienie dla nowo dodanych kombinacji typ × miasto.
+
         // Notify Google about sitemap update
         try {
             $sitemapUrl = config('app.url') . '/sitemap.xml';

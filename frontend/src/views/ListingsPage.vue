@@ -28,6 +28,7 @@ import SearchAlertModal from '../components/SearchAlertModal.vue'
 import SearchAlertBox from '../components/SearchAlertBox.vue'
 import SkeletonCard from '../components/SkeletonCard.vue'
 import AdCard from '../components/AdCard.vue'
+import RelatedSilos from '../components/RelatedSilos.vue'
 
 // Store and Routing
 const searchStore = useSearchStore()
@@ -2523,6 +2524,11 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
       <CategoryDescription
         :description="currentDescription"
         :custom-title="dynamicH1"
+      />
+      <RelatedSilos
+        :current-type-slug="route.params.type as string | undefined"
+        :current-city-slug="route.params.city as string | undefined"
+        :current-city-label="route.params.city ? deslugify(route.params.city as string) : undefined"
       />
     </div>
   </div> <!-- End of root div -->
