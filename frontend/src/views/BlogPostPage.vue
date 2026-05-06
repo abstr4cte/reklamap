@@ -20,6 +20,7 @@ interface BlogPost {
   imageAlt: string | null
   date: string
   dateIso: string | null
+  dateModifiedIso?: string | null
   readTime: string
   author: string
 }
@@ -126,6 +127,7 @@ const seoOptions = computed(() => {
       'name': newPost.author
     },
     'datePublished': newPost.dateIso ?? undefined,
+    'dateModified': newPost.dateModifiedIso ?? newPost.dateIso ?? undefined,
     'publisher': {
       '@type': 'Organization',
       'name': 'ReklaMap',
@@ -146,6 +148,7 @@ const seoOptions = computed(() => {
     ogUrl: url,
     canonical: url,
     publishedTime: newPost.dateIso ?? undefined,
+    modifiedTime: newPost.dateModifiedIso ?? undefined,
     structuredData: schemas
   }
 })

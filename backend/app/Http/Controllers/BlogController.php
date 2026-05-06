@@ -88,6 +88,7 @@ class BlogController extends Controller
             'imageAlt' => $post->image_alt ?? $post->title,
             'date' => $post->published_at ? $post->published_at->locale('pl')->translatedFormat('d F Y') : $post->created_at->locale('pl')->translatedFormat('d F Y'),
             'dateIso' => $post->published_at ? $post->published_at->toIso8601String() : $post->created_at->toIso8601String(),
+            'dateModifiedIso' => $post->updated_at ? $post->updated_at->toIso8601String() : null,
             'readTime' => $this->estimateReadTime($post->content),
             'author' => $post->user->name ?? 'Anonimowy',
         ], 200, [], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);

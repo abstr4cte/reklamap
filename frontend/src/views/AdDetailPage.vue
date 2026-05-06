@@ -182,9 +182,20 @@ watch(ad, (newAd) => {
       : (newAd.image_url ? [getFullImageUrl(newAd.image_url)] : [])
     const productImages: string[] = adImages.length > 0 ? adImages : [`${appUrl}/og-image.png`]
     const imageUrl = productImages[0]
-    const dims = (newAd.width && newAd.height) ? ` ${newAd.width}×${newAd.height}m,` : ''
+    // Wymiary w bazie są w metrach. Dla ekranów LED konwertujemy na mm — w metrach
+    // wartości typu 0.005 wyglądają w SERP jak błąd platformy.
+    const formatDimsForSeo = (): string | null => {
+      if (!newAd.width || !newAd.height) return null
+      if (newAd.type === 'led_screen') {
+        return `${Math.round(newAd.width * 1000)}×${Math.round(newAd.height * 1000)}mm`
+      }
+      return `${newAd.width}×${newAd.height}m`
+    }
+    const dimsForSeo = formatDimsForSeo()
+    const dims = dimsForSeo ? ` ${dimsForSeo},` : ''
     const title = `${newAd.title} –${dims} ${searchStore.getTypeLabel(newAd.type)}, ${newAd.city} | ReklaMap`
-    const description = `${newAd.title} – ${searchStore.getTypeLabel(newAd.type)} w ${newAd.city}. Wymiary: ${newAd.width}×${newAd.height}m. Cena: ${formatPrice(newAd.price)} PLN. ${(newAd.description || '').substring(0, 100)}...`
+    const dimsSentence = dimsForSeo ? ` Wymiary: ${dimsForSeo}.` : ''
+    const description = `${newAd.title} – ${searchStore.getTypeLabel(newAd.type)} w ${newAd.city}.${dimsSentence} Cena: ${formatPrice(newAd.price)} PLN. ${(newAd.description || '').substring(0, 100)}`
     const keywords = `${newAd.title}, ${searchStore.getTypeLabel(newAd.type)} ${newAd.city}, reklama zewnętrzna ${newAd.city}`
     
     // Structured Data
@@ -204,6 +215,8 @@ watch(ad, (newAd) => {
         'description': description,
         'image': productImages,
         'sku': `RM-${newAd.id}`,
+        ...(newAd.created_at ? { 'releaseDate': newAd.created_at } : {}),
+        ...(newAd.updated_at ? { 'dateModified': newAd.updated_at } : {}),
         'offers': {
           '@type': 'Offer',
           'priceCurrency': 'PLN',
@@ -260,6 +273,8 @@ watch(ad, (newAd) => {
       ogImageHeight: '630',
       ogImageAlt: newAd.title,
       ogType: 'product',
+      publishedTime: newAd.created_at,
+      modifiedTime: newAd.updated_at,
       structuredData
     }
   }
