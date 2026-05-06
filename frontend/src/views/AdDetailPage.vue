@@ -256,6 +256,9 @@ watch(ad, (newAd) => {
       canonical: cleanUrl,
       ogUrl: cleanUrl,
       ogImage: imageUrl,
+      ogImageWidth: '1200',
+      ogImageHeight: '630',
+      ogImageAlt: newAd.title,
       ogType: 'product',
       structuredData
     }
