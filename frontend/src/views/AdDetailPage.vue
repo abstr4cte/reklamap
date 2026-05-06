@@ -177,7 +177,11 @@ const { updateMetaTags: _updateMetaTags } = useSeo(seoOptions)
 
 watch(ad, (newAd) => {
   if (newAd) {
-    const imageUrl = newAd.image_url ? getFullImageUrl(newAd.image_url) : undefined
+    const adImages: string[] = Array.isArray(newAd.images) && newAd.images.length > 0
+      ? newAd.images.map((i: string) => getFullImageUrl(i))
+      : (newAd.image_url ? [getFullImageUrl(newAd.image_url)] : [])
+    const productImages: string[] = adImages.length > 0 ? adImages : [`${appUrl}/og-image.png`]
+    const imageUrl = productImages[0]
     const dims = (newAd.width && newAd.height) ? ` ${newAd.width}×${newAd.height}m,` : ''
     const title = `${newAd.title} –${dims} ${searchStore.getTypeLabel(newAd.type)}, ${newAd.city} | ReklaMap`
     const description = `${newAd.title} – ${searchStore.getTypeLabel(newAd.type)} w ${newAd.city}. Wymiary: ${newAd.width}×${newAd.height}m. Cena: ${formatPrice(newAd.price)} PLN. ${(newAd.description || '').substring(0, 100)}...`
@@ -198,8 +202,8 @@ watch(ad, (newAd) => {
         '@type': 'Product',
         'name': newAd.title,
         'description': description,
-        'image': imageUrl,
-        'brand': { '@type': 'Brand', 'name': 'ReklaMap' },
+        'image': productImages,
+        'sku': `RM-${newAd.id}`,
         'offers': {
           '@type': 'Offer',
           'priceCurrency': 'PLN',
@@ -211,15 +215,16 @@ watch(ad, (newAd) => {
             'referenceQuantity': { '@type': 'QuantitativeValue', 'value': '1' }
           },
           'priceValidUntil': priceValidUntil,
+          'itemCondition': 'https://schema.org/NewCondition',
           'availability': newAd.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
           'url': cleanUrl,
           'offeredBy': { '@type': 'Organization', 'name': 'ReklaMap', 'url': origin }
         }
       },
-      {
+      ...(newAd.latitude && newAd.longitude ? [{
         '@context': 'https://schema.org',
         '@type': 'Place',
-        'name': newAd.location,
+        'name': newAd.location || newAd.city,
         'geo': {
           '@type': 'GeoCoordinates',
           'latitude': newAd.latitude,
@@ -230,7 +235,7 @@ watch(ad, (newAd) => {
           'addressLocality': newAd.city,
           'addressCountry': 'PL'
         }
-      },
+      }] : []),
       {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
