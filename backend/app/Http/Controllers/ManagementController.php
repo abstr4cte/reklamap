@@ -26,7 +26,7 @@ class ManagementController extends Controller
 
         if (!Advertisement::where('owner_email', $validated['email'])->exists()) {
             return response()->json([
-                'message' => 'Nie znaleziono ogłoszeń przypisanych do tego adresu e-mail.',
+                'message' => 'Brak ogłoszeń przypisanych do tego e-maila.',
             ], 422);
         }
 

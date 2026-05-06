@@ -67,7 +67,11 @@ const handleSubmit = async () => {
       handleClose()
     }, 3000)
   } catch (error) {
-    errorMessage.value = 'Wystąpił błąd podczas wysyłania linku. Spróbuj ponownie.'
+    if (axios.isAxiosError(error) && error.response?.status === 422) {
+      errorMessage.value = error.response.data?.message || 'Brak ogłoszeń przypisanych do tego e-maila.'
+    } else {
+      errorMessage.value = 'Wystąpił błąd podczas wysyłania linku. Spróbuj ponownie.'
+    }
   } finally {
     isSubmitting.value = false
   }
