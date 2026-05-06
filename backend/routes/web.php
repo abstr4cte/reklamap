@@ -87,45 +87,45 @@ Route::get('/sitemap.xml', function () {
             $xml .= '</url>';
         }
 
-        // Popular cities pages
-        $popularCities = [
-            'Warszawa', 'Kraków', 'Wrocław', 'Poznań', 'Gdańsk', 'Łódź',
-            'Katowice', 'Szczecin', 'Bydgoszcz', 'Lublin', 'Białystok', 'Gdynia',
-        ];
-        foreach ($popularCities as $city) {
-            $citySlug = Str::slug($city);
-            $lastmod = \App\Models\Advertisement::where('city', $city)->where('is_active', true)->max('updated_at');
+        // Strony miast — wszystkie miasta z aktywnymi ogłoszeniami z bazy
+        // (wcześniej hardkodowana top-12, co wykluczało long tail typu Płock, Mszczonów).
+        $citiesAggregated = \App\Models\Advertisement::where('is_active', true)
+            ->select('city', \Illuminate\Support\Facades\DB::raw('MAX(updated_at) as lastmod'))
+            ->groupBy('city')
+            ->get();
+
+        foreach ($citiesAggregated as $row) {
+            $citySlug = Str::slug($row->city);
             $xml .= '<url>';
             $xml .= '<loc>' . htmlspecialchars($baseUrl . '/powierzchnie-reklamowe/' . $citySlug) . '</loc>';
-            if ($lastmod) $xml .= '<lastmod>' . \Carbon\Carbon::parse($lastmod)->toAtomString() . '</lastmod>';
+            $xml .= '<lastmod>' . \Carbon\Carbon::parse($row->lastmod)->toAtomString() . '</lastmod>';
             $xml .= '<changefreq>daily</changefreq>';
             $xml .= '<priority>0.7</priority>';
             $xml .= '</url>';
         }
 
-        // City + Category combinations (all major cities × all categories, only if ads exist)
-        $topCities = [
-            'Warszawa', 'Kraków', 'Wrocław', 'Poznań', 'Gdańsk', 'Łódź', 'Katowice',
-            'Szczecin', 'Bydgoszcz', 'Lublin', 'Białystok', 'Gdynia',
+        // Kombinacje typ × miasto — wszystkie pary z aktywnymi ogłoszeniami.
+        // Single query z GROUP BY zamiast pętli (była ~50 miast × 9 typów = 450 query).
+        $typeDbToSlug = [
+            'billboard' => 'billboardy', 'citylight' => 'citylighty', 'banner' => 'banery',
+            'wall' => 'sciany-reklamowe', 'totem' => 'totemy-reklamowe', 'transport' => 'reklama-w-transporcie',
+            'mobile' => 'reklama-mobilna', 'led_screen' => 'ekrany-led', 'other' => 'inne',
         ];
-        $topCategories = [
-            'billboardy' => 'billboard', 'citylighty' => 'citylight', 'banery' => 'banner',
-            'ekrany-led' => 'led_screen', 'totemy-reklamowe' => 'totem',
-            'sciany-reklamowe' => 'wall', 'reklama-w-transporcie' => 'transport',
-            'reklama-mobilna' => 'mobile', 'inne' => 'other',
-        ];
-        foreach ($topCities as $city) {
-            $citySlug = Str::slug($city);
-            foreach ($topCategories as $catSlug => $dbType) {
-                $lastmod = \App\Models\Advertisement::where('type', $dbType)->where('city', $city)->where('is_active', true)->max('updated_at');
-                if (!$lastmod) continue;
-                $xml .= '<url>';
-                $xml .= '<loc>' . htmlspecialchars($baseUrl . '/powierzchnie-reklamowe/' . $catSlug . '/' . $citySlug) . '</loc>';
-                $xml .= '<lastmod>' . \Carbon\Carbon::parse($lastmod)->toAtomString() . '</lastmod>';
-                $xml .= '<changefreq>daily</changefreq>';
-                $xml .= '<priority>0.75</priority>';
-                $xml .= '</url>';
-            }
+
+        $typeCityCombos = \App\Models\Advertisement::where('is_active', true)
+            ->select('type', 'city', \Illuminate\Support\Facades\DB::raw('MAX(updated_at) as lastmod'))
+            ->groupBy('type', 'city')
+            ->get();
+
+        foreach ($typeCityCombos as $row) {
+            $catSlug = $typeDbToSlug[$row->type] ?? 'inne';
+            $citySlug = Str::slug($row->city);
+            $xml .= '<url>';
+            $xml .= '<loc>' . htmlspecialchars($baseUrl . '/powierzchnie-reklamowe/' . $catSlug . '/' . $citySlug) . '</loc>';
+            $xml .= '<lastmod>' . \Carbon\Carbon::parse($row->lastmod)->toAtomString() . '</lastmod>';
+            $xml .= '<changefreq>daily</changefreq>';
+            $xml .= '<priority>0.75</priority>';
+            $xml .= '</url>';
         }
 
         // All active advertisements
