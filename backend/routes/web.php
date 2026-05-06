@@ -18,24 +18,37 @@ Route::get('/sitemap.xml', function () {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
-        $now = now()->toAtomString();
+        // Realny lastmod z bazy — nie używamy now(), bo Google traci zaufanie do sitemapy
+        // gdy lastmod zmienia się przy każdym pobraniu mimo że treść się nie zmieniła.
+        $latestAdAt = \App\Models\Advertisement::where('is_active', true)->max('updated_at');
+        $latestBlogAt = \App\Models\BlogPost::where('status', 'published')->max('updated_at');
+
+        $latestAdIso = $latestAdAt ? \Carbon\Carbon::parse($latestAdAt)->toAtomString() : null;
+        $latestBlogIso = $latestBlogAt ? \Carbon\Carbon::parse($latestBlogAt)->toAtomString() : null;
+
+        // Strony "regulaminowe" — stała data ostatniej zmiany contentu (aktualizować ręcznie przy edycji).
+        $legalLastmod = \Carbon\Carbon::parse('2026-04-01T00:00:00+02:00')->toAtomString();
+
+        $homeLastmod = collect([$latestAdIso, $latestBlogIso])->filter()->max();
 
         // Static pages
         $staticPages = [
-            '/' => ['priority' => '1.0', 'changefreq' => 'daily'],
-            '/powierzchnie-reklamowe' => ['priority' => '0.9', 'changefreq' => 'daily'],
-            '/dodaj-powierzchnie-reklamowa' => ['priority' => '0.8', 'changefreq' => 'weekly'],
-            '/blog' => ['priority' => '0.7', 'changefreq' => 'weekly'],
-            '/faq' => ['priority' => '0.6', 'changefreq' => 'monthly'],
-            '/kontakt' => ['priority' => '0.6', 'changefreq' => 'monthly'],
-            '/regulamin' => ['priority' => '0.5', 'changefreq' => 'monthly'],
-            '/polityka-prywatnosci' => ['priority' => '0.5', 'changefreq' => 'monthly'],
+            '/' => ['priority' => '1.0', 'changefreq' => 'daily', 'lastmod' => $homeLastmod],
+            '/powierzchnie-reklamowe' => ['priority' => '0.9', 'changefreq' => 'daily', 'lastmod' => $latestAdIso],
+            '/dodaj-powierzchnie-reklamowa' => ['priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => $legalLastmod],
+            '/blog' => ['priority' => '0.7', 'changefreq' => 'weekly', 'lastmod' => $latestBlogIso],
+            '/faq' => ['priority' => '0.6', 'changefreq' => 'monthly', 'lastmod' => $legalLastmod],
+            '/kontakt' => ['priority' => '0.6', 'changefreq' => 'monthly', 'lastmod' => $legalLastmod],
+            '/regulamin' => ['priority' => '0.5', 'changefreq' => 'monthly', 'lastmod' => $legalLastmod],
+            '/polityka-prywatnosci' => ['priority' => '0.5', 'changefreq' => 'monthly', 'lastmod' => $legalLastmod],
         ];
 
         foreach ($staticPages as $page => $config) {
             $xml .= '<url>';
             $xml .= '<loc>' . htmlspecialchars($baseUrl . $page) . '</loc>';
-            $xml .= '<lastmod>' . $now . '</lastmod>';
+            if (!empty($config['lastmod'])) {
+                $xml .= '<lastmod>' . $config['lastmod'] . '</lastmod>';
+            }
             $xml .= '<changefreq>' . $config['changefreq'] . '</changefreq>';
             $xml .= '<priority>' . $config['priority'] . '</priority>';
             $xml .= '</url>';
@@ -44,15 +57,15 @@ Route::get('/sitemap.xml', function () {
         // Blog category pages
         $blogCategories = ['poradniki', 'trendy', 'case-study', 'rynek-ooh', 'prawo-i-regulacje', 'lokalizacje'];
         foreach ($blogCategories as $cat) {
-            $hasPublished = \App\Models\BlogPost::where('status', 'published')
+            $catLastmod = \App\Models\BlogPost::where('status', 'published')
                 ->where('category', $cat)
-                ->exists();
-            if (!$hasPublished) {
+                ->max('updated_at');
+            if (!$catLastmod) {
                 continue;
             }
             $xml .= '<url>';
             $xml .= '<loc>' . htmlspecialchars($baseUrl . '/blog/' . $cat) . '</loc>';
-            $xml .= '<lastmod>' . $now . '</lastmod>';
+            $xml .= '<lastmod>' . \Carbon\Carbon::parse($catLastmod)->toAtomString() . '</lastmod>';
             $xml .= '<changefreq>weekly</changefreq>';
             $xml .= '<priority>0.65</priority>';
             $xml .= '</url>';
