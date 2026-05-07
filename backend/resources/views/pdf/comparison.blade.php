@@ -34,7 +34,7 @@
         }
 
         .header-logo {
-            height: 52px;
+            height: 150px;
             width: auto;
         }
 
