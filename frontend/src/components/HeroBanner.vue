@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
 import polishLocations from '../data/polishLocations.json'
 import { debouncedSearchLocations, type LocationResult } from '../services/locationService'
 import bannerImage from '../assets/banner.webp'
@@ -21,6 +22,7 @@ const emit = defineEmits<{
 const showAdvanced = ref(false)
 const activeMode = ref<'search' | 'owner'>('search')
 const searchStore = useSearchStore()
+const router = useRouter()
 
 const switchMode = (mode: 'search' | 'owner'): void => {
   if (activeMode.value === mode) return
@@ -30,7 +32,9 @@ const switchMode = (mode: 'search' | 'owner'): void => {
     filters.value = { ...searchStore.filters, _priceDisplayUnit: undefined }
     locationQuery.value = ''
     apiLocationResults.value = []
-    emit('reset', searchStore.filters)
+    if (Object.keys(router.currentRoute.value.query).length > 0) {
+      router.replace({ query: {} }).catch(() => {})
+    }
   }
 }
 const isUserEditing = ref(false)
