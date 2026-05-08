@@ -39,6 +39,7 @@ const handleSortOptionClick = (value: string) => {
 }
 
 const handleFilterButtonClick = () => {
+  window.dispatchEvent(new CustomEvent('hero:switch-to-search'))
   const headerHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 100
   const heroBanner = document.querySelector('[data-hero-banner]')
   if (heroBanner) {

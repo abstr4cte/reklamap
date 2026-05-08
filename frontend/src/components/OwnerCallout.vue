@@ -74,11 +74,13 @@ const goToAddAd = (): void => {
           </svg>
         </div>
         <div class="manage-info-body">
-          <h3 class="manage-info-title">Jak później edytować ogłoszenie?</h3>
+          <h3 class="manage-info-title">Jak później edytować ogłoszenia?</h3>
           <p class="manage-info-desc">
             Klikasz <strong>„Zarządzaj"</strong>, podajesz e&#8209;mail użyty przy dodawaniu i&nbsp;dostajesz link
             do&nbsp;panelu ważny <strong>30&nbsp;dni</strong> –&nbsp;możesz go&nbsp;wygenerować ponownie
-            w&nbsp;każdej chwili. Z&nbsp;poziomu panelu edytujesz, usuwasz, sprawdzasz statystyki. Bez kont, bez haseł.
+            w&nbsp;każdej chwili. <strong>Wszystkie ogłoszenia dodane na&nbsp;ten sam e&#8209;mail</strong>
+            znajdziesz w&nbsp;jednym panelu –&nbsp;bez limitu liczby ofert. Edytujesz, usuwasz,
+            sprawdzasz statystyki. Bez kont, bez haseł.
           </p>
         </div>
       </div>

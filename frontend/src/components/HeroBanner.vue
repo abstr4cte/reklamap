@@ -19,7 +19,20 @@ const emit = defineEmits<{
 }>()
 
 const showAdvanced = ref(false)
+const activeMode = ref<'search' | 'owner'>('search')
 const searchStore = useSearchStore()
+
+const switchMode = (mode: 'search' | 'owner'): void => {
+  if (activeMode.value === mode) return
+  activeMode.value = mode
+  if (mode === 'owner') {
+    searchStore.resetFilters()
+    filters.value = { ...searchStore.filters, _priceDisplayUnit: undefined }
+    locationQuery.value = ''
+    apiLocationResults.value = []
+    emit('reset', searchStore.filters)
+  }
+}
 const isUserEditing = ref(false)
 let editingTimeout: ReturnType<typeof setTimeout> | null = null
 
@@ -477,11 +490,18 @@ watch(() => filters.value.variant, () => {
   }
 })
 
+const handleSwitchToSearch = (): void => {
+  if (activeMode.value !== 'search') {
+    activeMode.value = 'search'
+  }
+}
+
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   loadLastSearch()
   if (typeof window !== 'undefined') {
     window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('hero:switch-to-search', handleSwitchToSearch)
   }
 })
 
@@ -551,6 +571,7 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
   if (typeof window !== 'undefined') {
     window.removeEventListener('scroll', handleScroll)
+    window.removeEventListener('hero:switch-to-search', handleSwitchToSearch)
   }
 })
 </script>
@@ -572,20 +593,78 @@ onBeforeUnmount(() => {
     <div class="hero-content">
       <div class="hero-text">
         <h1 class="hero-title animate-title">Wynajem powierzchni reklamowych w Polsce – billboardy, citylighty, ekrany LED</h1>
-        <p class="hero-subtitle animate-subtitle">Sprawdź na mapie oferty w swojej okolicy, porównaj ceny i skontaktuj się z wystawcą.</p>
-        <button type="button" class="owner-hint animate-owner-hint" @click="scrollToOwnerCallout" aria-label="Zobacz jak wystawić powierzchnię reklamową bezpłatnie">
-          <span class="owner-hint-full">
-            Masz powierzchnię reklamową?
-            <strong>Wystaw ją bezpłatnie — bez konta, bez prowizji</strong>
-          </span>
-          <span class="owner-hint-short">
-            Masz powierzchnię? <strong>Wystaw bezpłatnie</strong>
-          </span>
-          <span class="arrow" aria-hidden="true">↓</span>
+        <p class="hero-subtitle animate-subtitle">Znajdź miejsce na reklamę lub wystaw własną powierzchnię — bezpłatnie i bez prowizji.</p>
+      </div>
+
+      <div class="intent-tabs animate-card" role="tablist" aria-label="Wybierz cel">
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="activeMode === 'search'"
+          class="intent-tab"
+          :class="{ active: activeMode === 'search' }"
+          @click="switchMode('search')"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M14 14L18 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span>Szukam powierzchni reklamowej</span>
+        </button>
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="activeMode === 'owner'"
+          class="intent-tab"
+          :class="{ active: activeMode === 'owner' }"
+          @click="switchMode('owner')"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="2.5" y="3.5" width="15" height="11" rx="1.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M6 17h8M10 14.5V17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span>Mam powierzchnię — chcę ją wynająć</span>
         </button>
       </div>
 
-      <div class="search-card animate-card">
+      <div v-if="activeMode === 'owner'" class="owner-card animate-card">
+        <h2 class="owner-card-title">Wystaw swoją powierzchnię reklamową</h2>
+        <p class="owner-card-subtitle">Dotrzyj do firm szukających miejsca na kampanię — bez konta, bez prowizji, bez kosztów.</p>
+        <ul class="owner-benefits">
+          <li>
+            <span class="owner-benefit-icon" aria-hidden="true">✓</span>
+            <div>
+              <strong>0 zł za wystawienie</strong>
+              <span>Brak abonamentu i prowizji od transakcji</span>
+            </div>
+          </li>
+          <li>
+            <span class="owner-benefit-icon" aria-hidden="true">✓</span>
+            <div>
+              <strong>Bezpośredni kontakt</strong>
+              <span>Klient pisze i dzwoni prosto do Ciebie</span>
+            </div>
+          </li>
+          <li>
+            <span class="owner-benefit-icon" aria-hidden="true">✓</span>
+            <div>
+              <strong>Statystyki ogłoszenia</strong>
+              <span>Widzisz wyświetlenia, kliknięcia w telefon i ilość wysłanych wiadomości</span>
+            </div>
+          </li>
+        </ul>
+        <div class="owner-card-actions">
+          <router-link to="/dodaj-powierzchnie-reklamowa" class="owner-cta-primary">
+            Dodaj ogłoszenie bezpłatnie
+            <span aria-hidden="true">→</span>
+          </router-link>
+          <button type="button" class="owner-cta-secondary" @click="scrollToOwnerCallout">
+            Zobacz, jak to działa
+          </button>
+        </div>
+      </div>
+
+      <div v-else class="search-card animate-card">
         <form @submit.prevent="handleSearch" class="search-form">
           <div class="basic-filters">
             <div class="search-row">
@@ -1200,7 +1279,7 @@ onBeforeUnmount(() => {
   position: relative;
   min-height: 580px;
   overflow: visible;
-  background: #f4f5fc;
+  /* background: #f4f5fc; */
 }
 
 .hero-background {
@@ -1286,6 +1365,218 @@ onBeforeUnmount(() => {
   max-width: 1100px;
   transform: translateY(60px);
   margin-bottom: 60px;
+}
+
+.intent-tabs {
+  display: inline-flex;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.intent-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.95);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.intent-tab:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.intent-tab.active {
+  background: white;
+  color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.intent-tab svg {
+  flex-shrink: 0;
+}
+
+.owner-card {
+  background: var(--card-bg, white);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  box-shadow: var(--card-shadow, 0 20px 60px rgba(0, 0, 0, 0.3));
+  width: 100%;
+  max-width: 1100px;
+  transform: translateY(60px);
+  margin-bottom: 60px;
+  text-align: center;
+}
+
+.owner-card-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--text-main, #1f2937);
+  margin: 0 0 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.owner-card-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-muted, #6b7280);
+  margin: 0 0 2rem;
+  line-height: 1.6;
+}
+
+.owner-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  text-align: left;
+}
+
+.owner-benefits li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.owner-benefit-icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.owner-benefits strong {
+  display: block;
+  color: var(--text-main, #1f2937);
+  font-size: 1rem;
+  margin-bottom: 0.15rem;
+}
+
+.owner-benefits span {
+  display: block;
+  color: var(--text-muted, #6b7280);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.owner-card-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.owner-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.95rem 1.75rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.owner-cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+}
+
+.owner-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.95rem 1.75rem;
+  background: rgba(102, 126, 234, 0.12);
+  color: #4f46e5;
+  border: 2px solid #667eea;
+  border-radius: 999px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.owner-cta-secondary:hover {
+  background: rgba(102, 126, 234, 0.2);
+  border-color: #4f46e5;
+  color: #4338ca;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(102, 126, 234, 0.3);
+}
+
+.owner-cta-secondary:active {
+  transform: translateY(0);
+  background: rgba(102, 126, 234, 0.25);
+}
+
+@media (max-width: 768px) {
+  .intent-tabs {
+    width: 100%;
+    flex-direction: column;
+    border-radius: 16px;
+    padding: 0.4rem;
+  }
+
+  .intent-tab {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .owner-card {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .owner-card-title {
+    font-size: 1.45rem;
+  }
+
+  .owner-benefits {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .owner-card-actions {
+    flex-direction: column;
+  }
+
+  .owner-cta-primary,
+  .owner-cta-secondary {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 .owner-hint {

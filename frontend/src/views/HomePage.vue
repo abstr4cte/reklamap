@@ -4,6 +4,7 @@ import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import EmailModal from '../components/EmailModal.vue'
 import HeroBanner from '../components/HeroBanner.vue'
 import OwnerCallout from '../components/OwnerCallout.vue'
+import PlatformFeatures from '../components/PlatformFeatures.vue'
 import PolandMap from '../components/PolandMap.vue'
 import AdGrid from '../components/AdGrid.vue'
 import Pagination from '../components/Pagination.vue'
@@ -286,8 +287,8 @@ watch(() => route.query, (newQuery) => {
 // SEO Meta Tags
 useSeo({
   title: 'ReklaMap - Wynajem Powierzchni Reklamowych w Polsce | Billboardy, Citylighty, Banery',
-  description: 'Znajdź i wynajmij powierzchnie reklamowe w całej Polsce. Billboardy, citylighty, banery, ściany reklamowe. Porównuj oferty, sprawdzaj ceny i lokalizacje na mapie.',
-  keywords: 'powierzchnie reklamowe, billboardy, citylighty, banery reklamowe, wynajem billboardu, reklama zewnętrzna, outdoor, powierzchnie OOH',
+  description: 'Znajdź i wynajmij powierzchnie reklamowe w całej Polsce lub wystaw własną bezpłatnie. Billboardy, citylighty, banery, ściany reklamowe. Bez konta, bez prowizji.',
+  keywords: 'powierzchnie reklamowe, billboardy, citylighty, banery reklamowe, wynajem billboardu, wystaw billboard, reklama zewnętrzna, outdoor, powierzchnie OOH',
   ogType: 'website',
   ogImage: `${appUrl}/og-image.png`,
   ogImageWidth: '1200',
@@ -508,6 +509,8 @@ const clearSearchFlag = () => {
     
     <EmailModal :is-open="isModalOpen" @close="isModalOpen = false" />
     <HeroBanner data-hero-banner @search="handleSearch" @reset="handleReset" />
+
+    <PlatformFeatures />
 
     <OwnerCallout />
 
