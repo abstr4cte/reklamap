@@ -1249,6 +1249,15 @@ const handleSubmit = async () => {
   } catch (error: any) {
     isSubmitting.value = false;
 
+    // 409 Conflict — backend wykrył duplikat (ten sam właściciel + lokalizacja w 5 min).
+    // Najczęściej: refresh, autofill, dwie karty albo timeout sieci z ponowieniem.
+    if (error.response && error.response.status === 409) {
+      const message = error.response.data?.message
+        || 'Wygląda na to, że to ogłoszenie już zostało dodane. Sprawdź skrzynkę.'
+      toast.value?.add(message, 'info')
+      return
+    }
+
     if (error.response && error.response.data && error.response.data.errors) {
       const fieldTranslations: Record<string, string> = {
         title: 'Tytuł',

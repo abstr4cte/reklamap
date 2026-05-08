@@ -389,6 +389,26 @@ class AdvertisementController extends Controller
         ]);
 
 
+        // Zabezpieczenie przed nieumyślnym dublem (refresh, autofill, dwie karty,
+        // klient zerwał połączenie i ponowił). Wymagamy zgodności wszystkich
+        // czterech pól: właściciel + lokalizacja + tytuł, w oknie 5 minut.
+        // Tytuł jest potrzebny, bo użytkownicy bez precyzyjnej pinezki mogą
+        // dostać centroid miasta (np. "Warszawa") i dwa różne ogłoszenia
+        // miałyby wtedy identyczne lat/lng.
+        $existing = Advertisement::where('owner_email', $validated['owner_email'])
+            ->where('latitude', $validated['latitude'])
+            ->where('longitude', $validated['longitude'])
+            ->where('title', $validated['title'])
+            ->where('created_at', '>=', now()->subMinutes(5))
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'message' => 'Przed chwilą dodałeś ogłoszenie w tej lokalizacji. Sprawdź skrzynkę — link do zarządzania został wysłany na e-mail.',
+                'duplicate_id' => $existing->id,
+            ], 409);
+        }
+
         // Set defaults if not present (though migration has defaults, explicit is good)
         $validated['status'] = $request->input('status', 'active');
         $validated['is_active'] = $request->input('is_active', true);
@@ -398,13 +418,6 @@ class AdvertisementController extends Controller
         // Generate slug after the ad is created and has an ID
         $ad->slug = Str::slug($ad->title) . '-' . $ad->id;
         $ad->save();
-
-        // Generate map screenshot
-        try {
-            $this->generateMapScreenshot($ad);
-        } catch (\Exception $e) {
-            \Log::error('Error generating map screenshot: ' . $e->getMessage());
-        }
 
         try {
             Mail::to($ad->owner_email)->send(new AdCreatedConfirmationMail($ad));
@@ -526,14 +539,15 @@ class AdvertisementController extends Controller
 
         $ad->update($validated);
 
-        // Regenerate map screenshot if location changed
-        if ($locationChanged) {
-            try {
-                $this->generateMapScreenshot($ad);
-            } catch (\Throwable $e) {
-                \Log::error('Error regenerating map screenshot on update: ' . $e->getMessage());
-                // Don't fail the update if screenshot generation fails
+        // Lokalizacja się zmieniła — kasujemy stary screenshot mapy. Nowy zostanie
+        // wygenerowany leniwie przy najbliższym żądaniu PDF (generatePdf()).
+        if ($locationChanged && $ad->map_screenshot_path) {
+            $oldPath = storage_path('app/public/' . $ad->map_screenshot_path);
+            if (is_file($oldPath)) {
+                @unlink($oldPath);
             }
+            $ad->map_screenshot_path = null;
+            $ad->save();
         }
 
         // Clear sitemap cache and notify Google
@@ -789,6 +803,22 @@ class AdvertisementController extends Controller
     public function generatePdf(string $id)
     {
         $ad = Advertisement::findOrFail($id);
+
+        // Screenshot mapy generujemy leniwie — dopiero gdy faktycznie potrzebny
+        // do PDF. Większość ogłoszeń nigdy nie wygeneruje PDF, więc nie ma sensu
+        // robić go przy każdym dodawaniu/edycji.
+        $needsScreenshot = !$ad->map_screenshot_path
+            || !is_file(storage_path('app/public/' . $ad->map_screenshot_path));
+
+        if ($needsScreenshot) {
+            try {
+                $this->generateMapScreenshot($ad);
+            } catch (\Throwable $e) {
+                \Log::error('Lazy map screenshot generation failed for ad ' . $ad->id . ': ' . $e->getMessage());
+                // PDF wygenerujemy bez mapy — szablon i tak ma fallback na if($advertisement->map_screenshot_path)
+            }
+        }
+
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.advertisement', ['advertisement' => $ad]);
         return $pdf->download('ogloszenie-' . $ad->id . '.pdf');
     }
