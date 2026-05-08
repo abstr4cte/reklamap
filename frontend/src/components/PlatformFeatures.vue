@@ -1,4 +1,31 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goToComparison = (): void => {
+  router.push('/porownaj')
+}
+
+const goToListings = (): void => {
+  const listingsSection = document.querySelector('.listings-section')
+  const header = document.querySelector('.app-header')
+
+  if (listingsSection && header) {
+    const headerRect = header.getBoundingClientRect()
+    const headerStyles = window.getComputedStyle(header)
+    const headerHeight = headerRect.height + parseFloat(headerStyles.marginTop) + parseFloat(headerStyles.marginBottom)
+
+    const elementPosition = listingsSection.getBoundingClientRect().top + window.pageYOffset
+    const offsetPosition = elementPosition - headerHeight
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
+  }
+}
+
 const goToMap = (): void => {
   const mapContainer = document.querySelector('[data-poland-map] .map-container')
   const header = document.querySelector('.app-header')
@@ -46,7 +73,7 @@ const goToMap = (): void => {
           <span class="feature-cta">Zobacz mapę →</span>
         </button>
 
-        <div class="feature-card feature-card-static">
+        <button type="button" class="feature-card" @click="goToListings">
           <div class="feature-icon" aria-hidden="true">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -58,10 +85,10 @@ const goToMap = (): void => {
             Sprawdź otoczenie nośnika bez wyjazdu na miejsce — bezpośrednio
             z poziomu ogłoszenia.
           </p>
-          <span class="feature-cta feature-cta-muted">Dostępne w każdym ogłoszeniu</span>
-        </div>
+          <span class="feature-cta">Zobacz ogłoszenia ↓</span>
+        </button>
 
-        <div class="feature-card feature-card-static">
+        <button type="button" class="feature-card" @click="goToComparison">
           <div class="feature-icon" aria-hidden="true">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
@@ -76,8 +103,8 @@ const goToMap = (): void => {
             kliknij ikonę porównywarki na kafelku ogłoszenia lub w jego widoku.
             Porównywać można nośniki tego samego typu.
           </p>
-          <span class="feature-cta feature-cta-muted">Przycisk na każdym kafelku i w ogłoszeniu</span>
-        </div>
+          <span class="feature-cta">Otwórz porównywarkę →</span>
+        </button>
       </div>
     </div>
   </section>
@@ -125,31 +152,27 @@ const goToMap = (): void => {
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  background: #f9fafb;
-  border: 1.5px solid var(--border-color, #e5e7eb);
+  background: #ffffff;
+  border: 1px solid rgba(102, 126, 234, 0.15);
   border-radius: 16px;
   padding: 1.75rem;
   font-family: inherit;
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .feature-card:hover {
-  transform: translateY(-4px);
-  background: #ffffff;
-  border-color: rgba(102, 126, 234, 0.4);
-  box-shadow: 0 12px 28px -10px rgba(102, 126, 234, 0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.18);
 }
 
-.feature-card-static {
-  cursor: default;
+button.feature-card {
+  cursor: pointer;
 }
 
-.feature-card-static:hover {
-  transform: none;
-  background: #f9fafb;
-  border-color: var(--border-color, #e5e7eb);
-  box-shadow: none;
+button.feature-card:hover .feature-cta {
+  color: #4338ca;
+  text-decoration: underline;
 }
 
 .feature-icon {

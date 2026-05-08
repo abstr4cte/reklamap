@@ -376,9 +376,38 @@ onUnmounted(() => {
             <rect x="3" y="14" width="7" height="7" stroke="#d1d5db" stroke-width="2" rx="1"/>
             <rect x="14" y="14" width="7" height="7" stroke="#d1d5db" stroke-width="2" rx="1"/>
           </svg>
-          <h2>Brak ogłoszeń do porównania</h2>
-          <p>Dodaj ogłoszenia do porównania, aby zobaczyć różnice między nimi</p>
-          <button @click="router.push('/')" class="btn-primary">
+          <h2>Twoja porównywarka jest pusta</h2>
+          <p>
+            Zestaw kilka powierzchni reklamowych obok siebie i&nbsp;porównaj parametry,
+            ceny, lokalizacje i&nbsp;ruch — wszystko w&nbsp;jednej tabeli, gotowej
+            do&nbsp;wydruku PDF.
+          </p>
+
+          <ul class="empty-features">
+            <li>
+              <span class="empty-feature-icon" aria-hidden="true">✓</span>
+              <div>
+                <strong>Dodaj ikoną na kafelku</strong>
+                <span>Na liście ogłoszeń kliknij ikonę porównywarki w prawym górnym rogu kafelka.</span>
+              </div>
+            </li>
+            <li>
+              <span class="empty-feature-icon" aria-hidden="true">✓</span>
+              <div>
+                <strong>Dodaj z widoku ogłoszenia</strong>
+                <span>W szczegółach ogłoszenia kliknij przycisk „Dodaj do porównania".</span>
+              </div>
+            </li>
+            <li>
+              <span class="empty-feature-icon" aria-hidden="true">✓</span>
+              <div>
+                <strong>Do 5 ogłoszeń tego samego typu</strong>
+                <span>Porównujesz np. billboardy z billboardami, citylighty z citylightami itp.</span>
+              </div>
+            </li>
+          </ul>
+
+          <button @click="router.push('/powierzchnie-reklamowe')" class="btn-primary">
             Przejdź do listy ogłoszeń
           </button>
         </div>
@@ -706,8 +735,60 @@ onUnmounted(() => {
   margin: 0 0 2rem 0;
   font-size: 1.1rem;
   color: #6b7280;
-  max-width: 500px;
+  max-width: 560px;
   line-height: 1.6;
+}
+
+.empty-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 560px;
+  width: 100%;
+  text-align: left;
+}
+
+.empty-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.06);
+}
+
+.empty-feature-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.empty-features strong {
+  display: block;
+  color: #1f2937;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+  font-weight: 700;
+}
+
+.empty-features span {
+  display: block;
+  color: #6b7280;
+  font-size: 0.92rem;
+  line-height: 1.55;
 }
 
 .btn-primary {
