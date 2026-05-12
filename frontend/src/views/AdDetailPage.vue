@@ -9,6 +9,7 @@ import { formatPrice } from '../utils/formatPrice'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import { useSeo } from '../composables/useSeo'
 import { appUrl } from '../utils/url'
+import { truncateAtWord } from '../utils/text'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
 import { useSearchStore } from '../stores/useSearchStore'
 import { useStreetViewStore } from '../stores/useStreetViewStore'
@@ -175,6 +176,25 @@ const formatAvailableDate = (date: string | null | undefined) => {
 const seoOptions = ref<any>({ title: 'ReklaMap', description: 'Trwa ładowanie...' })
 const { updateMetaTags: _updateMetaTags } = useSeo(seoOptions)
 
+// Prerender.io status code — usunięte/wygasłe ogłoszenie musi zwrócić 404 dla botów,
+// inaczej powstaje soft 404 (HTTP 200 z pustą treścią) i Google indeksuje śmieci.
+const prerenderStatusMeta = ref<HTMLMetaElement | null>(null)
+const setPrerenderStatus = (code: number) => {
+  if (typeof document === 'undefined') return
+  if (!prerenderStatusMeta.value) {
+    prerenderStatusMeta.value = document.createElement('meta')
+    prerenderStatusMeta.value.setAttribute('name', 'prerender-status-code')
+    document.head.appendChild(prerenderStatusMeta.value)
+  }
+  prerenderStatusMeta.value.setAttribute('content', String(code))
+}
+const clearPrerenderStatus = () => {
+  if (prerenderStatusMeta.value?.parentNode) {
+    prerenderStatusMeta.value.parentNode.removeChild(prerenderStatusMeta.value)
+  }
+  prerenderStatusMeta.value = null
+}
+
 watch([ad, similarAds], ([newAd, newSimilarAds]) => {
   if (newAd) {
     const adImages: string[] = Array.isArray(newAd.images) && newAd.images.length > 0
@@ -195,7 +215,8 @@ watch([ad, similarAds], ([newAd, newSimilarAds]) => {
     const dims = dimsForSeo ? ` ${dimsForSeo},` : ''
     const title = `${newAd.title} –${dims} ${searchStore.getTypeLabel(newAd.type)}, ${newAd.city} | ReklaMap`
     const dimsSentence = dimsForSeo ? ` Wymiary: ${dimsForSeo}.` : ''
-    const description = `${newAd.title} – ${searchStore.getTypeLabel(newAd.type)} w ${newAd.city}.${dimsSentence} Cena: ${formatPrice(newAd.price)} PLN. ${(newAd.description || '').substring(0, 100)}`
+    const descTail = newAd.description ? ` ${truncateAtWord(newAd.description, 100)}` : ''
+    const description = `${newAd.title} – ${searchStore.getTypeLabel(newAd.type)} w ${newAd.city}.${dimsSentence} Cena: ${formatPrice(newAd.price)} PLN.${descTail}`
     const keywords = `${newAd.title}, ${searchStore.getTypeLabel(newAd.type)} ${newAd.city}, reklama zewnętrzna ${newAd.city}`
     
     // Structured Data
@@ -215,6 +236,8 @@ watch([ad, similarAds], ([newAd, newSimilarAds]) => {
         'description': description,
         'image': productImages,
         'sku': `RM-${newAd.id}`,
+        'category': searchStore.getTypeLabel(newAd.type),
+        'brand': { '@type': 'Organization', 'name': 'ReklaMap', 'url': origin },
         ...(newAd.created_at ? { 'releaseDate': newAd.created_at } : {}),
         ...(newAd.updated_at ? { 'dateModified': newAd.updated_at } : {}),
         'offers': {
@@ -539,7 +562,8 @@ const loadAd = async () => {
   const id = route.params.id as string
   isLoading.value = true
   notFound.value = false
-  
+  clearPrerenderStatus()
+
   // Reset state
   showPhone.value = false
   showStreetView.value = false
@@ -589,7 +613,15 @@ const loadAd = async () => {
       initMap()
     }
   } catch (e: any) {
-    if (e.response?.status === 404) notFound.value = true
+    if (e.response?.status === 404) {
+      notFound.value = true
+      seoOptions.value = {
+        title: '404 – Powierzchnia niedostępna | ReklaMap',
+        description: 'To ogłoszenie zostało usunięte lub wygasło. Przeglądaj aktualne powierzchnie reklamowe w całej Polsce na ReklaMap.',
+        noindex: true
+      }
+      setPrerenderStatus(404)
+    }
     isLoading.value = false
   }
 }
@@ -609,6 +641,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (map) map.remove()
+  clearPrerenderStatus()
   document.body.classList.remove('has-sticky-actions')
   document.body.style.overflow = ''
   document.documentElement.style.overflow = ''
@@ -745,7 +778,7 @@ defineExpose({
           <div id="contact-form-section">
             <AdContactForm 
               v-if="ad.contact_preference !== 'phone'" 
-              :adId="ad.id"
+              :adId="String(ad.id)"
               @success="toast?.add($event, 'success')"
               @error="toast?.add($event, 'error')"
             />

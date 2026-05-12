@@ -52,8 +52,14 @@
   RewriteCond %{HTTP_HOST} ^www\.reklamap\.pl$ [NC]
   RewriteRule ^ https://reklamap.pl%{REQUEST_URI} [R=301,L]
 
+  # Legacy URL → nowe ścieżki (twarde 301, żeby przekazać link equity i wyczyścić indeks).
+  # Odpowiedniki istnieją też w router.ts jako fallback dla nawigacji wewnątrz SPA.
+  RewriteRule ^dodaj-ogloszenie/?$ /dodaj-powierzchnie-reklamowa [R=301,L]
+  RewriteRule ^ogloszenia/?$ /powierzchnie-reklamowe [R=301,L]
+  RewriteRule ^ogloszenie/([^/]+)/([^/]+)/([0-9]+)/?$ /powierzchnia-reklamowa/inne/$1/$2-$3 [R=301,L]
+
   # Prerender.io — proxy bot requests via PHP (mod_proxy not required)
-  RewriteCond %{HTTP_USER_AGENT} googlebot|bingbot|yandex|baiduspider|twitterbot|facebookexternalhit|facebot|rogerbot|linkedinbot|embedly|showyoubot|outbrain|pinterestbot|slackbot|vkShare|W3C_Validator|whatsapp|redditbot|applebot|duckduckbot [NC]
+  RewriteCond %{HTTP_USER_AGENT} googlebot|adsbot-google|google-inspectiontool|bingbot|yandex|baiduspider|twitterbot|facebookexternalhit|facebot|rogerbot|linkedinbot|embedly|showyoubot|outbrain|pinterestbot|slackbot|vkShare|W3C_Validator|whatsapp|redditbot|applebot|duckduckbot [NC]
   RewriteCond %{REQUEST_URI} !\.(js|css|xml|less|png|jpg|jpeg|gif|pdf|txt|ico|zip|mp3|mp4|webm|woff|woff2|ttf|svg|webp) [NC]
   RewriteCond %{REQUEST_URI} !^/prerender-proxy\.php
   RewriteRule ^(.*)$ /prerender-proxy.php?url=https://reklamap.pl/$1 [L,QSA]

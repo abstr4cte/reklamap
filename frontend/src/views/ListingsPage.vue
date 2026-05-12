@@ -11,6 +11,7 @@ import { usePreferencesStore } from '../stores/usePreferencesStore'
 import { api, getFullImageUrl } from '../services/api'
 import { type LocationResult, debouncedSearchLocations } from '../services/locationService'
 import { slugify, deslugify } from '../utils/slugify'
+import { truncateAtWord } from '../utils/text'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
 import { useSeo } from '../composables/useSeo'
 import { appUrl } from '../utils/url'
@@ -72,11 +73,25 @@ const urlTypeToLabel: Record<string, string> = {
   'inne': 'Inne powierzchnie reklamowe'
 }
 
+// Nazwa miasta do wyświetlania — preferuj poprawną pisownię (z polskimi znakami):
+// 1) z załadowanych ogłoszeń, 2) ze słownika polskich miast, 3) deslugify (gubi ogonki).
+const resolveCityName = (citySlug: string): string => {
+  const fromListings = listings.value.find(ad => slugify(ad.city) === citySlug)?.city
+  if (fromListings) return fromListings
+  const fromDict = (polishLocations.cities as { name: string }[]).find(c => slugify(c.name) === citySlug)?.name
+  if (fromDict) return fromDict
+  return deslugify(citySlug)
+}
+const cityDisplayName = computed<string | null>(() => {
+  const citySlug = route.params.city as string | undefined
+  return citySlug ? resolveCityName(citySlug) : null
+})
+
 const seoData = computed(() => {
   const typeSlug = route.params.type as string | undefined
   const citySlug = route.params.city as string | undefined
   const typeLabel = typeSlug ? urlTypeToLabel[typeSlug] || deslugify(typeSlug) : null
-  const cityName = citySlug ? deslugify(citySlug) : null
+  const cityName = citySlug ? resolveCityName(citySlug) : null
 
   const typeCityKey = typeSlug && citySlug ? `${typeSlug}-${citySlug}` : null
   const descObj = (typeCityKey && typeCityDescriptions[typeCityKey])
@@ -91,19 +106,19 @@ const seoData = computed(() => {
   if (typeLabel && cityName) {
     title = `${typeLabel} – ${cityName} | ReklaMap`
     description = descObj
-      ? descObj.description.substring(0, 155) + '...'
+      ? truncateAtWord(descObj.description, 155)
       : `Przeglądaj oferty ${typeLabel.toLowerCase()} w ${cityName}. Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.`
     canonical = `${appUrl}/powierzchnie-reklamowe/${typeSlug}/${citySlug}`
   } else if (typeLabel) {
     title = `${typeLabel} w Polsce | ReklaMap`
     description = descObj
-      ? descObj.description.substring(0, 155) + '...'
+      ? truncateAtWord(descObj.description, 155)
       : `Przeglądaj wszystkie oferty ${typeLabel.toLowerCase()} w Polsce. Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.`
     canonical = `${appUrl}/powierzchnie-reklamowe/${typeSlug}`
   } else if (cityName) {
     title = `Powierzchnie reklamowe – ${cityName} | ReklaMap`
     description = descObj
-      ? descObj.description.substring(0, 155) + '...'
+      ? truncateAtWord(descObj.description, 155)
       : `Przeglądaj dostępne powierzchnie reklamowe w ${cityName}. Billboardy, banery, ekrany LED i więcej. Znajdź idealną lokalizację dla swojej reklamy.`
     canonical = `${appUrl}/powierzchnie-reklamowe/${citySlug}`
   } else {
@@ -339,7 +354,7 @@ const breadcrumbs = computed(() => {
   }
   if (route.params.city) {
     items[items.length - 1].path = route.params.type ? `/powierzchnie-reklamowe/${route.params.type}` : '/powierzchnie-reklamowe'
-    items.push({ label: deslugify(route.params.city as string) })
+    items.push({ label: resolveCityName(route.params.city as string) })
   }
   return items
 })
@@ -349,7 +364,7 @@ const noResultsContext = computed(() => {
   const city = route.params.city as string
   const parts: string[] = []
   if (type) parts.push(urlTypeToLabel[type] || deslugify(type))
-  if (city) parts.push(deslugify(city))
+  if (city) parts.push(resolveCityName(city))
   return parts.length ? parts.join(', ') : null
 })
 
@@ -369,7 +384,7 @@ const dynamicH1 = computed<string | undefined>(() => {
   const typeSlug = route.params.type as string | undefined
   const citySlug = route.params.city as string | undefined
   const typeLabel = typeSlug ? urlTypeToLabel[typeSlug] || deslugify(typeSlug) : null
-  const cityName = citySlug ? deslugify(citySlug) : null
+  const cityName = citySlug ? resolveCityName(citySlug) : null
 
   if (typeLabel && cityName) return `${typeLabel} – ${cityName}`
   if (cityName) return `Powierzchnie reklamowe – ${cityName}`
@@ -382,13 +397,13 @@ const seoInfo = computed(() => {
   let title = 'Powierzchnie Reklamowe w Polsce'
   let description = 'Billboardy, citylighty i inne.'
   if (type && city) {
-    const tl = getTypeLabel(type); const cn = deslugify(city)
+    const tl = getTypeLabel(type); const cn = resolveCityName(city)
     title = `${tl} ${cn} - Wynajem | ReklaMap`; description = `Wynajmij ${tl.toLowerCase()} w ${cn}. ${listings.value.length} ofert.`
   } else if (type) {
     const tl = getTypeLabel(type)
     title = `${tl} - Wynajem w Polsce | ReklaMap`; description = `Promuj się na ${tl.toLowerCase()}. ${listings.value.length} ofert.`
   } else if (city) {
-    const cn = deslugify(city)
+    const cn = resolveCityName(city)
     title = `Powierzchnie Reklamowe ${cn} | ReklaMap`; description = `Oferty z ${cn}. ${listings.value.length} ofert.`
   }
   return { title, description, keywords: 'powierzchnie reklamowe' }
@@ -1664,7 +1679,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           
           <SearchAlertBox 
             v-if="totalFiltersCount > 0"
-            :location-label="filters?.city || (route.params.city ? deslugify(route.params.city as string) : '')"
+            :location-label="filters?.city || cityDisplayName || ''"
             :ad-type-label="filters?.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
             @click="showSearchAlertModal = true"
           />
@@ -1721,7 +1736,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           <SearchAlertBox 
             v-if="!isLoading && listings.length > 0 && totalFiltersCount > 0" 
             class="listings-alert" 
-            :location-label="filters?.city || (route.params.city ? deslugify(route.params.city as string) : '')"
+            :location-label="filters?.city || cityDisplayName || ''"
             :ad-type-label="filters?.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
             @click="showSearchAlertModal = true"
           />
@@ -2512,7 +2527,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
       <SearchAlertModal 
         v-if="showSearchAlertModal && filters"
         :active-filters="filters"
-        :location-label="locationQuery || (route.params.city ? deslugify(route.params.city as string) : '')"
+        :location-label="locationQuery || cityDisplayName || ''"
         @close="showSearchAlertModal = false"
         @submit="handleSearchAlertSubmit"
       />
@@ -2528,7 +2543,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
       <RelatedSilos
         :current-type-slug="route.params.type as string | undefined"
         :current-city-slug="route.params.city as string | undefined"
-        :current-city-label="route.params.city ? deslugify(route.params.city as string) : undefined"
+        :current-city-label="cityDisplayName || undefined"
       />
     </div>
   </div> <!-- End of root div -->

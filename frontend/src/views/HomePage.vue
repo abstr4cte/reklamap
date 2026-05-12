@@ -306,7 +306,7 @@ useSeo({
         '@type': 'SearchAction',
         'target': {
           '@type': 'EntryPoint',
-          'urlTemplate': `${appUrl}/powierzchnie-reklamowe?keyword={search_term_string}`
+          'urlTemplate': `${appUrl}/powierzchnie-reklamowe?q={search_term_string}`
         },
         'query-input': 'required name=search_term_string'
       }

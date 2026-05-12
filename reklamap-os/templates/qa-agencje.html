@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>ReklaMap — pytania zarządu agencji</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #1f2937;
+    background: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 0;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  .header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 26px 40px;
+    color: #fff;
+  }
+  .header h1 { margin: 0; font-size: 22px; }
+  .header .sub { margin: 4px 0 0; font-size: 12px; opacity: 0.92; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .content {
+    padding: 20px 40px 60px;
+    font-size: 12px;
+    line-height: 1.55;
+    color: #374151;
+  }
+
+  .category {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #667eea;
+    margin: 16px 0 8px;
+    padding-bottom: 3px;
+    border-bottom: 2px solid #667eea;
+  }
+  .category:first-child { margin-top: 0; }
+
+  .qa {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-left: 4px solid #667eea;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 9px;
+    page-break-inside: avoid;
+  }
+  .q {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 12.5px;
+    margin: 0 0 5px;
+  }
+  .q::before {
+    content: "P: ";
+    color: #667eea;
+    font-weight: 800;
+  }
+  .a {
+    background: #fff;
+    border-left: 3px solid #059669;
+    padding: 6px 10px;
+    margin: 4px 0;
+    font-size: 11.5px;
+    color: #1f2937;
+    border-radius: 3px;
+    line-height: 1.55;
+  }
+  .a::before { content: "O: "; color: #059669; font-weight: 800; }
+
+  .avoid {
+    font-size: 10.5px;
+    color: #7f1d1d;
+    margin: 3px 0 0;
+    padding-left: 14px;
+    position: relative;
+  }
+  .avoid::before { content: "✗"; position: absolute; left: 0; color: #dc2626; font-weight: 800; }
+
+  .footer {
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    padding: 10px 40px;
+    text-align: center;
+    font-size: 10.5px;
+    color: #9ca3af;
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+  }
+
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 297mm;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    text-align: center;
+    padding: 40px;
+  }
+  .cover h1 { font-size: 36px; margin: 0 0 8px; }
+  .cover .lead { font-size: 16px; opacity: 0.95; max-width: 480px; margin: 0 0 28px; line-height: 1.5; }
+  .cover .meta-box {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 10px;
+    padding: 16px 22px;
+    font-size: 13px;
+    line-height: 1.7;
+    max-width: 460px;
+    text-align: left;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="page">
+  <div class="cover">
+    <h1>Pytania zarządu</h1>
+    <p class="lead">Co zapytają i co odpowiedzieć — bez ściemy</p>
+    <div class="meta-box">
+      <strong>Jak korzystać:</strong> każde pytanie ma gotową odpowiedź do powiedzenia.
+      Niektóre mają też pułapki językowe — czego unikać pod presją.<br><br>
+      <strong>Główny przekaz:</strong> ReklaMap jest na etapie <strong>budowania marki
+      i bazy nośników</strong>. W najbliższym czasie <strong>nie są planowane żadne
+      płatne opcje</strong>. Prowizji nie będzie nigdy.<br><br>
+      <strong>Zasada:</strong> jeśli nie znacie odpowiedzi — „Sprawdzę i odeślę
+      mailem dziś wieczorem". Zarząd to docenia bardziej niż improwizację.
+    </div>
+  </div>
+</div>
+
+<!-- ============ STRONA 2 — Pieniądze ============ -->
+<div class="page">
+  <div class="header">
+    <h1>Pieniądze i model</h1>
+    <div class="sub">Najczęstsze pytania zarządu</div>
+  </div>
+
+  <div class="content">
+    <div class="category">Model biznesowy</div>
+
+    <div class="qa">
+      <p class="q">Z czego platforma żyje? Darmowe to nie jest model biznesowy.</p>
+      <div class="a">W tej chwili priorytet to budowanie marki i bazy nośników — przez najbliższy czas żadne płatne opcje nie są planowane. W dalszej perspektywie, gdy baza dojdzie do około pięciu tysięcy ogłoszeń i pojedyncze powierzchnie zaczną „znikać w gąszczu", dwa konkretne kierunki: <strong>wyróżnianie ogłoszeń</strong> dla agencji, którym zależy żeby ich nośnik był widoczny wyżej w wynikach, oraz <strong>zaawansowane statystyki</strong> — kalkulatory ROI i szacowanego zasięgu oparte o publiczne dane o ruchu z GDDKiA. Trzeci kierunek — współprace z partnerami technicznymi (drukarnie, montaż) — to na ten moment tylko gdybanie, nie konkretny plan. Podstawowe wystawienie nośnika zostanie darmowe na zawsze. Prowizji od transakcji nie będzie nigdy.</div>
+      <p class="avoid">„Jeszcze nie wiem". Brzmi jak hobby. Lepiej powiedzieć wprost: teraz budujemy markę, model dochodów wprowadzimy z wyprzedzeniem i bez naruszania darmowego listingu.</p>
+    </div>
+
+    <div class="qa">
+      <p class="q">A jak wprowadzicie opłaty albo prowizje za rok?</p>
+      <div class="a">Prowizji od transakcji nie będzie nigdy — to nie jest kwestia „kiedy", tylko świadoma decyzja modelowa. Cała komunikacja idzie bezpośrednio między Państwem a klientem, platforma nie zna kwoty transakcji ani momentu zawarcia umowy. Jeśli kiedykolwiek pojawią się płatne produkty dodatkowe — najpewniej wyróżnianie ogłoszeń, gdy baza będzie duża, oraz zaawansowane statystyki z kalkulatorami ROI — to jako opcje do wyboru. Podstawowy listing pozostaje darmowy.</div>
+    </div>
+
+    <div class="qa">
+      <p class="q">Ile osób tam pracuje?</p>
+      <div class="a">Zespół jest mały i operuje lean — to świadoma decyzja na etapie budowy bazy. Zatrudnianie działu sprzedaży bez bazy nośników to spalanie pieniędzy. Architektura platformy jest gotowa do skali.</div>
+      <p class="avoid">Konkretna liczba osób, której nie da się obronić w LinkedIn.</p>
+    </div>
+
+    <div class="qa">
+      <p class="q">Macie inwestora?</p>
+      <div class="a">Na tym etapie projekt jest finansowany ze środków własnych. Świadoma decyzja — szybki inwestor wymusza przedwczesny model biznesowy. Budżet kampanii marketingowej na maj/czerwiec to [X] zł, kanały to Google Ads, LinkedIn, content.</div>
+      <p class="avoid">Nazwy funduszy, których nie ma. Pytanie kontrolne demaskuje to natychmiast.</p>
+    </div>
+
+    <div class="qa">
+      <p class="q">A skąd pieniądze na tę kampanię w maju?</p>
+      <div class="a">Budżet kampanii jest zabezpieczony i zaplanowany, finansowany ze środków własnych projektu. Szczegółów operacyjnych nie ujawniamy, ale efekt widać będzie publicznie — kampania ruszy w mediach pod koniec maja.</div>
+    </div>
+
+    <div class="qa">
+      <p class="q">A co dokładnie planujecie w tych „kalkulatorach ROI"?</p>
+      <div class="a">Wszystkie podstawowe statystyki — wyświetlenia, kliknięcia w telefon, wysłane wiadomości — pozostaną darmowe na zawsze. W dalszej perspektywie planowane jest dodanie modułu, który łączy dane o ruchu drogowym (publiczne dane GDDKiA — średnie dobowe natężenie ruchu na konkretnych odcinkach) z lokalizacją nośnika i pokazuje szacowany dzienny zasięg oraz koszt kontaktu. Przydatne dla agencji, które chcą przekonać klienta liczbami, a nie tylko „dużo aut przejeżdża". Premiera nie jest jeszcze datowana — priorytet to baza nośników.</div>
+    </div>
+  </div>
+
+  <div class="footer">ReklaMap — Pytania zarządu agencji &nbsp;·&nbsp; Strona 2 / 5</div>
+</div>
+
+<!-- ============ STRONA 3 — Skala ============ -->
+<div class="page">
+  <div class="header">
+    <h1>Skala i ruch</h1>
+    <div class="sub">Pytania o liczby — najtrudniejsze, bo platforma jest świeża</div>
+  </div>
+
+  <div class="content">
+    <div class="category">Liczby i ruch</div>
+
+    <div class="qa">
+      <p class="q">Ile macie obecnie użytkowników miesięcznie?</p>
+      <div class="a">Platforma wystartowała 1 kwietnia 2026. Jesteśmy w fazie budowania bazy nośników przed kampanią z końca maja. Dlatego ta rozmowa odbywa się teraz — agencje, które wejdą przed kampanią, przejmą pierwszą falę ruchu. Po starcie kampanii konkretne liczby będą widoczne w panelach Państwa nośników.</div>
+      <p class="avoid">Wymyślone liczby. Similarweb sprawdza to w 30 sekund.</p>
+    </div>
+
+    <div class="qa">
+      <p class="q">Jak my zweryfikujemy, że ta kampania się odbędzie?</p>
+      <div class="a">W bardzo prosty sposób — po starcie kampanii widzicie ruch na własnych nośnikach w panelu statystyk. Wyświetlenia, kliknięcia w telefon, wiadomości od klientów. Jeśli po 30 dniach nie ma wzrostu, oznacza to że kampania nie zadziałała — wycofujecie ogłoszenia jednym kliknięciem, bez żadnych kosztów. Nie musicie Państwo niczego brać na słowo, weryfikacja idzie wprost z danych.</div>
+      <p class="avoid">„Zaufajcie nam". W B2B działa odwrotnie.</p>
+    </div>
+
+    <div class="qa">
+      <p class="q">A jeśli nie będzie leadów? Jak długo czekamy?</p>
+      <div class="a">Każda powierzchnia ma własny panel ze statystykami z ostatnich 30 dni — wyświetlenia, kliknięcia w telefon, wysłane wiadomości. Mogą Państwo śledzić to na bieżąco. Jeśli w którymś momencie uznają Państwo, że to nie ma sensu — wycofują ogłoszenia jednym kliknięciem. Bez okresu próbnego, bez wypowiedzenia, bez kosztów.</div>
+    </div>
+
+    <div class="category">Konkurencja</div>
+
+    <div class="qa">
+      <p class="q">Czym różnicie się od AMS, Stroera, dużych operatorów?</p>
+      <div class="a">Operatorzy mają własne nośniki i konkurują z Państwem o tych samych klientów. ReklaMap nie ma żadnych własnych nośników — jest marketplace'em, łączy reklamodawców z dostawcami. Nie zarabia na sprzedawaniu Państwa powierzchni, tylko na ułatwianiu kontaktu.</div>
+      <p class="avoid">Krytyka konkurencji. W OOH wszyscy się znają — brzmi nieprofesjonalnie.</p>
+    </div>
+
+    <div class="qa">
+      <p class="q">Czemu nie zrobić tego samego na OLX?</p>
+      <div class="a">Na OLX reklama nośnika ginie między mieszkaniami i samochodami. ReklaMap jest wertykalny — wchodzą tu wyłącznie firmy szukające powierzchni reklamowej. Plus filtry specyficzne dla OOH: wymiary, widoczność, ruch, Street View — tego na OLX nie da się zrobić.</div>
+    </div>
+  </div>
+
+  <div class="footer">ReklaMap — Pytania zarządu agencji &nbsp;·&nbsp; Strona 3 / 5</div>
+</div>
+
+<!-- ============ STRONA 4 — Operacyjne ============ -->
+<div class="page">
+  <div class="header">
+    <h1>Operacyjne i prawne</h1>
+    <div class="sub">Wprowadzenie nośników, RODO, umowy</div>
+  </div>
+
+  <div class="content">
+    <div class="category">Wprowadzanie nośników</div>
+
+    <div class="qa">
+      <p class="q">Mamy 800 nośników. Nie będziemy ręcznie wprowadzać.</p>
+      <div class="a">Po Państwa stronie potrzebne są tylko trzy rzeczy: <strong>Excel z parametrami obowiązkowymi</strong> (adres, typ nośnika, wymiary, cena), <strong>zdjęcia w folderach pogrupowanych po nośniku</strong> oraz <strong>adres e-mail</strong>, pod którym mają zostać założone ogłoszenia. Wysyłamy krótką instrukcję jak nazwać foldery, żebyśmy mogli dopasować zdjęcia do ogłoszeń. Resztę robimy my — zakładamy każdą powierzchnię pod ten adres, a Państwo dostają na niego <strong>maila potwierdzającego</strong> z liczbą dodanych ogłoszeń, listą adresów i linkami do edycji. Od tego momentu każde ogłoszenie jest przypisane do tego maila: z niego można je edytować, na niego wpadają wiadomości od klientów. Statystyki pokazują wejścia, kliknięcia i wiadomości dla każdej powierzchni — można porównywać, który nośnik zbiera największy ruch.</div>
+      <p class="avoid">„Muszą Państwo wprowadzić ręcznie". Po tym kończy się rozmowa.</p>
+    </div>
+
+    <div class="qa">
+      <p class="q">Czy klient widzi, że to my, czy myśli że to bezpośrednio właściciel nośnika?</p>
+      <div class="a">Państwo decydują. Można pokazać nazwę i logo agencji, można wystawić z neutralnymi danymi. Niektóre agencje wolą się ujawniać, niektóre pośredniczą i wolą pozostać w cieniu — platforma obsługuje oba modele.</div>
+    </div>
+
+    <div class="qa">
+      <p class="q">Co jeśli inna agencja wystawi ten sam nośnik?</p>
+      <div class="a">Zasada pierwszeństwa — pierwsza agencja, która wystawi nośnik, dostaje wyłączność na to ogłoszenie. Duplikaty weryfikujemy i kasujemy.</div>
+      <p class="avoid">„To się nie zdarza". Zdarza się i zarząd o tym wie.</p>
+    </div>
+
+    <div class="qa">
+      <p class="q">Wspominaliście o partnerach technicznych — drukarnie, montaż. Czy to nie kanibalizuje naszych podwykonawców?</p>
+      <div class="a">To na ten moment tylko gdybanie, nie konkretny plan ani uruchomiony produkt. Główne kierunki rozwoju to wyróżnianie ogłoszeń i zaawansowane statystyki — partnerzy techniczni to ewentualność, którą rozważymy o ile w ogóle pojawi się sensowna potrzeba u klientów. Państwa wykonawcy w żadnym scenariuszu nie są wypychani z systemu.</div>
+    </div>
+
+    <div class="category">RODO, regulamin, formalności</div>
+
+    <div class="qa">
+      <p class="q">Co z RODO?</p>
+      <div class="a">Platforma nie przetwarza treści wiadomości od klientów. Klient wysyła wiadomość przez formularz, ona idzie bezpośrednio na Państwa e-mail. Administratorem danych klienta są Państwo, od momentu otrzymania maila.</div>
+    </div>
+
+    <div class="qa">
+      <p class="q">Jaką umowę podpisujemy?</p>
+      <div class="a">Żadnej. Akceptacja regulaminu przez checkbox przy wystawieniu pierwszego nośnika — tak jak na OLX. Brak zobowiązań finansowych = brak osobnej umowy. Jeśli dział prawny preferuje pisemne porozumienie potwierdzające warunki, możemy takie przygotować po spotkaniu.</div>
+    </div>
+
+    <div class="qa">
+      <p class="q">Macie firmę? VAT? Regulamin?</p>
+      <div class="a">Tak — [pełna nazwa firmy, NIP]. Regulamin i polityka prywatności są w stopce reklamap.pl. Komplet dokumentów formalnych prześlemy mailem do weryfikacji.</div>
+      <p class="avoid">„Jeszcze zakładam firmę". Bez tego zarząd nie podejmie decyzji — załóżcie JDG zanim ktokolwiek pójdzie na spotkanie.</p>
+    </div>
+  </div>
+
+  <div class="footer">ReklaMap — Pytania zarządu agencji &nbsp;·&nbsp; Strona 4 / 5</div>
+</div>
+
+<!-- ============ STRONA 5 — Strategiczne ============ -->
+<div class="page">
+  <div class="header">
+    <h1>Strategiczne</h1>
+    <div class="sub">Kanibalizacja, ryzyko, długi termin</div>
+  </div>
+
+  <div class="content">
+    <div class="category">Kanibalizacja i ryzyko</div>
+
+    <div class="qa">
+      <p class="q">Czy nie kanibalizujecie naszego działu sprzedaży?</p>
+      <div class="a">Państwa handlowcy obsługują stałych klientów i duże kampanie — klientów, do których opłaca się dzwonić i jeździć. ReklaMap przyciąga małych reklamodawców szukających jednego, dwóch nośników — czyli klientów, do których Państwa handlowiec by nie zadzwonił, bo koszt obsługi byłby wyższy niż przychód. To dodatkowy segment, nie kanibalizacja.</div>
+    </div>
+
+    <div class="qa">
+      <p class="q">Co jeśli platforma padnie?</p>
+      <div class="a">Nic się nie zmienia. Sprzedają Państwo dalej swoimi kanałami, jak teraz. ReklaMap jest dodatkiem, nie zastępstwem. Ryzyko po Państwa stronie = zero.</div>
+    </div>
+
+    <div class="qa">
+      <p class="q">A jeśli wykupi was większy gracz i zmieni model?</p>
+      <div class="a">Brak lock-inu po Państwa stronie — wycofanie nośników to jedno kliknięcie. Bez kar umownych, bez wypowiedzenia. Decyzja w 30 sekund, gdyby cokolwiek się zmieniło.</div>
+    </div>
+
+    <div class="category">Długoterminowe</div>
+
+    <div class="qa">
+      <p class="q">Plan na 12 miesięcy?</p>
+      <div class="a">Trzy cele, wszystkie wokół budowy marki i bazy. Pięć tysięcy aktywnych nośników w bazie. Pięćdziesiąt agencji z aktywnym portfolio. Rozpoznawalność wśród reklamodawców na poziomie pierwszego wyboru przy szukaniu powierzchni OOH. Płatne produkty dodatkowe to perspektywa dalsza, nie 12-miesięczna.</div>
+      <p class="avoid">„Zobaczymy". Brak wizji w oczach zarządu = projekt nie przeżyje roku.</p>
+    </div>
+
+    <div class="qa">
+      <p class="q">Możemy dostać ekskluzywność na nasze województwo?</p>
+      <div class="a">Ekskluzywności regionu nie. Wykluczyłoby to mniejsze agencje i właścicieli prywatnych — a to oni dają platformie różnorodność oferty. Możemy zagwarantować, że konkretne nośniki Państwa nie zostaną wystawione przez nikogo innego. Jeśli interesuje Państwa wyższa widoczność w wynikach — to jest produkt premium, możemy o nim porozmawiać po pilotażu.</div>
+    </div>
+
+    <div class="qa">
+      <p class="q">Pytanie, na które nie znacie odpowiedzi.</p>
+      <div class="a">„To dobre pytanie, nie chcę improwizować. Sprawdzę i odeślę konkretną odpowiedź mailem jeszcze dziś wieczorem. Mogę zapisać pytanie?"</div>
+      <p class="avoid">Improwizacja, „myślę że...". Pod presją zarząd słyszy ściemę z odległości kilometra.</p>
+    </div>
+  </div>
+
+  <div class="footer">ReklaMap — Pytania zarządu agencji &nbsp;·&nbsp; Strona 5 / 5</div>
+</div>
+
+</body>
+</html>

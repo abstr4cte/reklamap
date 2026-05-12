@@ -1648,7 +1648,10 @@ onMounted(() => {
             </div>
 
             <div class="form-group">
-              <label class="form-label">Wysokość (m) <span class="required">*</span></label>
+              <label class="form-label">
+                Wysokość (m)
+                <span v-if="requiresDimensions" class="required">*</span>
+              </label>
               <input
                 :value="formData.height"
                 @input="(e) => { const val = handleNumberInput((e.target as HTMLInputElement).value, true); formData.height = val ? parseFloat(val) : null }"

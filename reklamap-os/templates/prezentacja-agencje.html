@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>ReklaMap — skrypt prezentacji dla zarządu agencji</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #1f2937;
+    background: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 0;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  .header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 28px 40px;
+    color: #fff;
+  }
+  .header h1 { margin: 0; font-size: 22px; }
+  .header .sub { margin: 4px 0 0; font-size: 12px; opacity: 0.92; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .content {
+    padding: 22px 40px 60px;
+    font-size: 12px;
+    line-height: 1.55;
+    color: #374151;
+  }
+  .content h2 {
+    font-size: 14px;
+    color: #1f2937;
+    margin: 16px 0 8px;
+    padding-bottom: 3px;
+    border-bottom: 2px solid #667eea;
+    display: inline-block;
+  }
+  .content h2:first-child { margin-top: 0; }
+  .content ul { margin: 0 0 10px; padding-left: 20px; }
+  .content li { margin-bottom: 3px; }
+
+  .slide {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+  }
+  .slide-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .slide-num {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 2px 9px;
+    border-radius: 12px;
+  }
+  .slide-time { font-size: 10.5px; color: #6b7280; }
+  .slide-title { font-weight: 700; color: #1f2937; font-size: 13px; margin: 0 0 6px; }
+
+  .say {
+    background: #fff;
+    border-left: 3px solid #667eea;
+    padding: 7px 11px;
+    margin: 6px 0;
+    color: #1f2937;
+    border-radius: 4px;
+    font-size: 11.5px;
+    line-height: 1.55;
+  }
+
+  .tip {
+    font-size: 11px;
+    color: #6b7280;
+    margin: 4px 0;
+    padding-left: 14px;
+    position: relative;
+  }
+  .tip::before { content: "→"; position: absolute; left: 0; color: #667eea; font-weight: 800; }
+
+  .checklist {
+    background: #f0f0ff;
+    border: 1.5px solid #667eea;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+  }
+  .checklist-title {
+    font-weight: 800;
+    color: #1f2937;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .checklist ul { list-style: none; padding: 0; margin: 0; }
+  .checklist li {
+    padding: 3px 0 3px 20px;
+    position: relative;
+    font-size: 11.5px;
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0;
+    top: 3px;
+    color: #667eea;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .footer {
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    padding: 10px 40px;
+    text-align: center;
+    font-size: 10.5px;
+    color: #9ca3af;
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+  }
+
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 297mm;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    text-align: center;
+    padding: 40px;
+  }
+  .cover h1 { font-size: 38px; margin: 0 0 8px; }
+  .cover .lead { font-size: 16px; opacity: 0.95; max-width: 460px; margin: 0 0 28px; line-height: 1.5; }
+  .cover .meta-box {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 10px;
+    padding: 18px 26px;
+    font-size: 13px;
+    line-height: 1.7;
+    max-width: 440px;
+    text-align: left;
+  }
+
+  .closing-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  .closing-box .label {
+    text-transform: uppercase;
+    font-size: 10.5px;
+    letter-spacing: 0.6px;
+    opacity: 0.9;
+    margin-bottom: 4px;
+  }
+  .closing-box .quote {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="page">
+  <div class="cover">
+    <h1>Skrypt prezentacji</h1>
+    <p class="lead">Co po kolei powiedzieć na spotkaniu z zarządem agencji OOH</p>
+    <div class="meta-box">
+      <strong>Cel:</strong> wyjść z listą nośników do wprowadzenia<br>
+      <strong>Czas:</strong> 15 min prezentacji + Q&amp;A<br>
+      <strong>Format:</strong> rozmowa z broszurą w ręku, bez demo na żywo<br>
+      <strong>Co NIE robicie:</strong> nie podpisujecie żadnych umów
+    </div>
+  </div>
+</div>
+
+<!-- ============ STRONA 2 ============ -->
+<div class="page">
+  <div class="header">
+    <h1>Przed wejściem</h1>
+    <div class="sub">Checklist i nastawienie</div>
+  </div>
+
+  <div class="content">
+    <div class="checklist">
+      <div class="checklist-title">Co zabrać</div>
+      <ul>
+        <li>Wydrukowana broszura — po jednym egz. dla każdej osoby przy stole + 2 zapasowe</li>
+        <li>Wizytówka / kartka z e-mailem i telefonem do dalszego kontaktu</li>
+        <li>Notatnik i długopis — spisać pytania i nazwiska</li>
+        <li>Butelka wody</li>
+      </ul>
+    </div>
+
+    <div class="checklist">
+      <div class="checklist-title">Nastawienie</div>
+      <ul>
+        <li>To nie jest sprzedaż — to propozycja darmowego kanału leadów. Pozycja silniejsza, niż się wydaje</li>
+        <li>Mówić wolno. Po ważnym zdaniu — sekunda ciszy</li>
+        <li>Patrzeć na osobę, która zadała pytanie</li>
+        <li>Nie wiesz odpowiedzi? „Sprawdzę i odeślę mailem dziś" — to lepsze niż improwizacja</li>
+        <li>Nie używać słowa „startup" — w polskim B2B brzmi jak „nie przeżyje roku". Mówić „platforma", „portal"</li>
+      </ul>
+    </div>
+
+    <div class="slide">
+      <div class="slide-head">
+        <span class="slide-num">SLAJD 1</span>
+        <span class="slide-time">~1 min</span>
+      </div>
+      <p class="slide-title">Otwarcie</p>
+      <div class="say">
+        „Dzień dobry, dziękuję za zaproszenie. Reprezentuję platformę ReklaMap.
+        Zajmę około piętnastu minut, a potem chętnie odpowiem na pytania."
+      </div>
+      <p class="tip">Jeśli wiesz coś o ich portfolio (region, liczba nośników) — dodaj jedno zdanie pokazujące, że ich znacie. Jeśli nie wiesz — pomiń, lepiej cisza niż blef.</p>
+    </div>
+
+    <div class="slide">
+      <div class="slide-head">
+        <span class="slide-num">SLAJD 2</span>
+        <span class="slide-time">~2 min</span>
+      </div>
+      <p class="slide-title">O co chodzi — w skrócie</p>
+      <div class="say">
+        „Rynek OOH ma dwa stałe bóle: pustostany na nośnikach i koszt pozyskania klienta.
+        ReklaMap to mapa Polski, na której reklamodawca sam znajduje powierzchnię i pisze
+        bezpośrednio do właściciela. Bez prowizji, bez abonamentu, bez pośrednictwa platformy
+        w transakcji. Państwa nośniki dostają dodatkowy kanał, klient dostaje wybór."
+      </div>
+      <p class="tip">Krótka pauza po tym zdaniu. Niech to wybrzmi.</p>
+    </div>
+  </div>
+
+  <div class="footer">ReklaMap — Skrypt prezentacji &nbsp;·&nbsp; Strona 2 / 4</div>
+</div>
+
+<!-- ============ STRONA 3 ============ -->
+<div class="page">
+  <div class="header">
+    <h1>Część główna</h1>
+    <div class="sub">Co dostają + jak utrzymuje się platforma</div>
+  </div>
+
+  <div class="content">
+    <div class="slide">
+      <div class="slide-head">
+        <span class="slide-num">SLAJD 3</span>
+        <span class="slide-time">~3 min</span>
+      </div>
+      <p class="slide-title">Co Państwo dostają — konkretnie</p>
+      <div class="say">
+        „Cztery rzeczy. Po pierwsze — dodatkowy kanał leadów, niezależny od cold callingu.
+        Po drugie — wiadomości i telefon od klienta trafiają bezpośrednio do Państwa,
+        platforma nie pośredniczy w rozmowie. Po trzecie — panel ze statystykami dla każdej powierzchni:
+        wyświetlenia, kliknięcia w telefon, wysłane wiadomości z ostatnich 30 dni.
+        Po czwarte — zero opłat. Cena Państwa = cena, którą widzi klient."
+      </div>
+      <p class="tip">Otwórz broszurę na stronie 1 — punkt po punkcie. Pozwól im wodzić wzrokiem po kafelkach.</p>
+    </div>
+
+    <div class="slide">
+      <div class="slide-head">
+        <span class="slide-num">SLAJD 4</span>
+        <span class="slide-time">~2 min — uprzedź pytanie</span>
+      </div>
+      <p class="slide-title">Etap budowy marki — żadnych płatnych opcji w najbliższym czasie</p>
+      <div class="say">
+        „Pewnie pojawi się pytanie — z czego ReklaMap żyje. Powiem wprost: w tej chwili priorytet
+        to budowa marki i bazy nośników, w najbliższym czasie żadne płatne opcje nie są planowane.
+        W dalszej perspektywie — kiedy baza dojdzie do około pięciu tysięcy ogłoszeń i pojedyncze
+        nośniki zaczną znikać w gąszczu — dwa konkretne kierunki: <strong>wyróżnianie ogłoszeń</strong>
+        dla agencji, którym zależy żeby ich nośnik był wyżej w wynikach, oraz <strong>zaawansowane
+        statystyki</strong> z kalkulatorami ROI i zasięgu opartymi o publiczne dane o ruchu z GDDKiA.
+        Wszystko opcjonalne, podstawowy listing zostaje darmowy. Jest też mglista możliwość współprac
+        z partnerami technicznymi — drukarniami, montażem — ale to na ten moment tylko gdybanie,
+        nie żaden konkretny plan. <strong>Prowizji od transakcji nie będzie nigdy</strong> —
+        platforma nie pośredniczy w komunikacji ani w transakcji, więc nawet technicznie nie ma
+        jak naliczać prowizji."
+      </div>
+      <p class="tip">Powiedzieć to ZANIM zapytają. Szczerość rozbraja. Po tym zdaniu — patrz im w oczy i czekaj.</p>
+    </div>
+
+    <div class="slide">
+      <div class="slide-head">
+        <span class="slide-num">SLAJD 5</span>
+        <span class="slide-time">~2 min</span>
+      </div>
+      <p class="slide-title">Co jest po Państwa stronie</p>
+      <div class="say">
+        „Zero ryzyka. Zero kosztu wejścia. Zero zobowiązań na piśmie — wystawienie nośnika to to samo
+        co wystawienie ogłoszenia na OLX. W każdej chwili można wycofać portfolio, jednym kliknięciem.
+        Jeśli ReklaMap nie zadziała — sprzedają Państwo dalej swoimi kanałami, jak dotąd."
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">ReklaMap — Skrypt prezentacji &nbsp;·&nbsp; Strona 3 / 4</div>
+</div>
+
+<!-- ============ STRONA 4 ============ -->
+<div class="page">
+  <div class="header">
+    <h1>Domknięcie</h1>
+    <div class="sub">Konkretna propozycja + zamknięcie spotkania</div>
+  </div>
+
+  <div class="content">
+    <div class="slide">
+      <div class="slide-head">
+        <span class="slide-num">SLAJD 6</span>
+        <span class="slide-time">~3 min — KLUCZOWY</span>
+      </div>
+      <p class="slide-title">Propozycja — zero pracy po Państwa stronie</p>
+      <div class="say">
+        „Konkret: po Państwa stronie potrzebne są dwie rzeczy — <strong>Excel z danymi
+        powierzchni</strong> (tylko parametry obowiązkowe: adres, typ nośnika, wymiary, cena)
+        oraz <strong>zdjęcia w folderach pogrupowanych po nośniku</strong>. Wysyłamy krótką
+        instrukcję jak nazwać foldery, żebyśmy mogli przypisać zdjęcia do właściwych ogłoszeń —
+        to wszystko. Excel pewnie już mają Państwo wewnętrznie, zdjęcia też. Plus jedna rzecz —
+        <strong>adres e-mail</strong>, pod którym mają zostać założone ogłoszenia. Resztę robimy my:
+        zakładamy każdą powierzchnię na platformie pod ten adres, a Państwo dostają na niego
+        <strong>maila potwierdzającego</strong> — ile ogłoszeń zostało dodanych, listę z adresami
+        i linkami do edycji. Każde ogłoszenie jest na stałe przypisane do tego maila: z niego idą
+        czasowe linki do edycji i na niego wpadają wiadomości od klientów. W statystykach widzą Państwo wejścia,
+        kliknięcia w telefon i wiadomości dla każdej powierzchni — i mogą porównywać między
+        nośnikami, który zbiera największy ruch. Jeśli w którymś momencie uznają Państwo, że to
+        nie ma sensu — wycofujemy ogłoszenia. Zero kosztu, zero godzin pracy zespołu."
+      </div>
+      <p class="tip">Po tej propozycji — cisza minimum 3 sekundy. Pozwól im się zastanowić. Nie wypełniaj ciszy.</p>
+    </div>
+
+    <div class="slide">
+      <div class="slide-head">
+        <span class="slide-num">SLAJD 7</span>
+        <span class="slide-time">~1 min</span>
+      </div>
+      <p class="slide-title">Dlaczego teraz</p>
+      <div class="say">
+        „Pod koniec maja startuje kampania marketingowa skierowana do reklamodawców — Google Ads,
+        LinkedIn, content. Agencje, które wystawią nośniki przed kampanią, będą widoczne od dnia
+        pierwszego. Dlatego rozmawiamy o tym dziś, a nie za trzy miesiące."
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-head">
+        <span class="slide-num">SLAJD 8</span>
+        <span class="slide-time">— do końca</span>
+      </div>
+      <p class="slide-title">Otwarcie na pytania</p>
+      <div class="say">
+        „To tyle z mojej strony. Chętnie odpowiem na pytania."
+      </div>
+      <p class="tip">Usiąść spokojnie. Nie wypełniać ciszy. Pierwsza osoba, która się odezwie — masz ich uwagę.</p>
+    </div>
+
+    <h2>Na koniec spotkania — wymuś konkret</h2>
+
+    <div class="closing-box">
+      <div class="label">Powiedzieć słowo w słowo</div>
+      <div class="quote">
+        „Żeby spotkanie nie skończyło się ogólnikiem — proponuję jeden konkret. W tym tygodniu
+        wyślemy maila z podsumowaniem rozmowy oraz krótką instrukcją jak przesłać dane: jakie
+        kolumny powinien zawierać Excel z parametrami obowiązkowymi i jak pogrupować zdjęcia
+        po folderach. Wystarczy, że Państwo odpiszą załączając te dwie rzeczy. Resztę robimy my.
+        Z kim mamy się skontaktować — kto z Państwa zespołu powinien dostać tego maila?"
+      </div>
+    </div>
+
+    <p style="margin-top: 10px; font-size: 11.5px;">
+      Trzy efekty tego zdania: wymusza konkretną osobę kontaktową, daje jasny następny krok,
+      pokazuje że nie znikniecie po spotkaniu.
+    </p>
+
+    <h2>Po spotkaniu — tego samego dnia</h2>
+    <ul>
+      <li>Mail z podsumowaniem w ciągu 4 godzin (nie tygodnia)</li>
+      <li>Spisać wszystkie pytania, które padły — przyda się na kolejne agencje</li>
+      <li>Jeśli czegoś nie wiedzieliście — odpowiedzieć na to w follow-upie</li>
+    </ul>
+  </div>
+
+  <div class="footer">ReklaMap — Skrypt prezentacji &nbsp;·&nbsp; Strona 4 / 4</div>
+</div>
+
+</body>
+</html>

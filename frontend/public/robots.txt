@@ -15,6 +15,8 @@ Allow: /
 Disallow: /api/
 Disallow: /zarzadzaj/
 Disallow: /porownaj
+Disallow: /*?_v=
+Disallow: /*&_v=
 
 # Sitemaps
 Sitemap: https://reklamap.pl/sitemap.xml
