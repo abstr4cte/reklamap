@@ -99,6 +99,20 @@ const seoData = computed(() => {
     || (citySlug && cityDescriptions[citySlug])
     || null
 
+  // Liczba ofert na tej stronie listy (po załadowaniu) — używana do:
+  // 1) wzbogacenia generycznego opisu, gdy nie ma ręcznego wpisu w *Descriptions,
+  // 2) noindex dla cienkich stron (mało/zero ofert) — patrz isThinPage niżej.
+  const resultCount = !isLoading.value
+    ? (serverTotal.value > 0 ? serverTotal.value : listings.value.length)
+    : null
+  // Prosta odmiana zgodna z konwencją z szablonu (count < 5 → forma "mnoga krótka").
+  const offersWord = (n: number) => n === 1 ? 'oferta' : (n < 5 ? 'oferty' : 'ofert')
+  // Generyczny opis z wpiętą liczbą ofert (gdy znamy ją i jest > 0).
+  const genericDesc = (subject: string, suffix: string) =>
+    (resultCount && resultCount > 0)
+      ? `${resultCount} ${offersWord(resultCount)} — ${subject}. Porównuj ceny, lokalizacje i dostępne terminy na ReklaMap.`
+      : `${subject}. ${suffix}`
+
   let title: string
   let description: string
   let canonical: string
@@ -107,19 +121,19 @@ const seoData = computed(() => {
     title = `${typeLabel} – ${cityName} | ReklaMap`
     description = descObj
       ? truncateAtWord(descObj.description, 155)
-      : `Przeglądaj oferty ${typeLabel.toLowerCase()} w ${cityName}. Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.`
+      : genericDesc(`${typeLabel} w ${cityName}`, 'Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.')
     canonical = `${appUrl}/powierzchnie-reklamowe/${typeSlug}/${citySlug}`
   } else if (typeLabel) {
     title = `${typeLabel} w Polsce | ReklaMap`
     description = descObj
       ? truncateAtWord(descObj.description, 155)
-      : `Przeglądaj wszystkie oferty ${typeLabel.toLowerCase()} w Polsce. Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.`
+      : genericDesc(`${typeLabel} w całej Polsce`, 'Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.')
     canonical = `${appUrl}/powierzchnie-reklamowe/${typeSlug}`
   } else if (cityName) {
     title = `Powierzchnie reklamowe – ${cityName} | ReklaMap`
     description = descObj
       ? truncateAtWord(descObj.description, 155)
-      : `Przeglądaj dostępne powierzchnie reklamowe w ${cityName}. Billboardy, banery, ekrany LED i więcej. Znajdź idealną lokalizację dla swojej reklamy.`
+      : genericDesc(`Powierzchnie reklamowe w ${cityName} — billboardy, banery, ekrany LED i więcej`, 'Znajdź idealną lokalizację dla swojej reklamy.')
     canonical = `${appUrl}/powierzchnie-reklamowe/${citySlug}`
   } else {
     title = 'Powierzchnie reklamowe w Polsce | ReklaMap'
@@ -129,6 +143,14 @@ const seoData = computed(() => {
 
   const filterQueryKeys = ['q', 'priceFrom', 'priceTo', 'priceUnit', 'rentalPeriod', 'orientation', 'widthFrom', 'widthTo', 'heightFrom', 'heightTo', 'trafficIntensity', 'offerType', 'status', 'hasBacklight', 'onlyWithImage', 'priceIncludesPrint', 'graphicDesignHelp', 'hasVatInvoice', 'hasLightingTypeBanner', 'hasLightingTypeBillboard', 'ambientLightControl', 'priceIncludesMounting', 'street', 'variant', 'roadClass', 'environment', 'trafficDirection', 'trafficType', 'transportScope', 'mobileExposureMode', 'operatingZone', 'lightingType', 'vehicleCountFrom', 'vehicleCountTo', 'dailyPassengersFrom', 'dailyPassengersTo', 'pixelPitchFrom', 'pixelPitchTo', 'brightnessFrom', 'brightnessTo', 'campaignDurationFrom', 'campaignDurationTo', 'locationTier']
   const hasExtraFilters = Object.keys(route.query).some(k => filterQueryKeys.includes(k))
+
+  // Cienka strona = strona typu/miasta/typu×miasta z liczbą ofert poniżej progu.
+  // Taka strona nie powinna trafiać do indeksu (doorway/thin content) — niezależnie
+  // od tego, czy ma ręcznie napisany opis. Warunek !isLoading chroni przed false-noindex
+  // w trakcie ładowania (resultCount jest wtedy null → isThinPage = false).
+  const THIN_PAGE_THRESHOLD = 3
+  const isFilteredListPage = !!(typeLabel || cityName)
+  const isThinPage = isFilteredListPage && resultCount !== null && resultCount < THIN_PAGE_THRESHOLD
 
   const pageNum = parseInt(route.query.page as string) || 1
   const canonicalUrl = pageNum > 1 ? `${appUrl}${window.location.pathname}` : canonical
@@ -163,7 +185,7 @@ const seoData = computed(() => {
     ogUrl: canonicalUrl,
     canonical: canonicalUrl,
     keywords: 'powierzchnie reklamowe, billboardy, reklama zewnętrzna, outdoor, OOH',
-    noindex: hasExtraFilters,
+    noindex: hasExtraFilters || isThinPage,
     prevPage: prevPageUrl,
     nextPage: nextPageUrl,
     ...(itemListSchema ? { structuredData: itemListSchema } : {})
