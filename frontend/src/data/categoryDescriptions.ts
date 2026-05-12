@@ -187,7 +187,7 @@ export const cityDescriptions: Record<string, CategoryDescription> = {
 
   'gdansk': {
     title: 'Powierzchnie reklamowe w Gdańsku – reklama w Trójmieście',
-    description: 'Powierzchnie reklamowe w Gdańsku docierają do mieszkańców Trójmiasta, kadry biurowej z Oliwy i — w sezonie — turystów nad Bałtykiem. Gdańsk to ważny port i jeden z mocniejszych ośrodków IT na północy kraju, a rynek ma tu wyraźną sezonowość — latem zasięg nośników rośnie wraz z napływem odwiedzających. Warto go rozpatrywać razem z Gdynią i Sopotem — kampania w aglomeracji łatwo obejmuje wszystkie trzy miasta. Sprawdza się tu zarówno reklama wizerunkowa i B2B kierowana do mieszkańców i firm, jak i promocje sezonowe oraz turystyczne. Konkretne formaty i lokalizacje znajdziesz w ofertach billboardów, citylightów, ekranów LED i banerów w Gdańsku.',
+    description: 'Powierzchnie reklamowe w Gdańsku docierają do mieszkańców Trójmiasta, kadry biurowej z Oliwy i — w sezonie — turystów nad Bałtykiem. Gdańsk to ważny port i jeden z mocniejszych ośrodków IT na północy kraju, a rynek ma tu wyraźną sezonowość — latem zasięg nośników rośnie wraz z napływem odwiedzających. Warto go rozpatrywać razem z Gdynią i Sopotem — kampania w aglomeracji łatwo obejmuje wszystkie trzy miasta. Sprawdza się tu zarówno reklama wizerunkowa i B2B, jak i promocje sezonowe oraz turystyczne. Konkretne formaty i lokalizacje znajdziesz w ofertach billboardów, citylightów, ekranów LED i banerów w Gdańsku.',
     benefits: [
       'Dotarcie do mieszkańców Trójmiasta, kadry biurowej i — w sezonie — turystów nad Bałtykiem',
       'Wyraźna sezonowość rynku — latem zasięg nośników rośnie wraz z napływem odwiedzających',
@@ -271,7 +271,7 @@ export const cityDescriptions: Record<string, CategoryDescription> = {
 
   'gdynia': {
     title: 'Powierzchnie reklamowe w Gdyni – reklama w Trójmieście',
-    description: 'Powierzchnie reklamowe w Gdyni trafiają do zamożnych mieszkańców, pracowników nowoczesnych biurowców i turystów odwiedzających Skwer Kościuszki. Gdynia to mniej zabytkowej turystyki niż Gdańsk, a więcej biznesu — silny sektor morski i technologiczny skupiony m.in. wokół Pomorskiego Parku Naukowo-Technologicznego i biurowców przy ulicy Łużyckiej, plus duże wydarzenia jak Open’er podnoszące zasięg ponad lokalny. Oferta to billboardy przy Estakadzie Kwiatkowskiego, nośniki wielkoformatowe wzdłuż Drogi Gdyńskiej oraz powierzchnie w prestiżowym Orłowie. Miasto pasuje markom premium, usługom finansowym i firmom z branży morskiej oraz nowych technologii — a w razie potrzeby kampanię łatwo rozszerzyć na resztę Trójmiasta.',
+    description: 'Powierzchnie reklamowe w Gdyni trafiają do zamożnych mieszkańców, pracowników nowoczesnych biurowców i turystów odwiedzających Skwer Kościuszki. Gdynia to mniej zabytkowej turystyki niż Gdańsk, a więcej biznesu — silny sektor morski i technologiczny skupiony m.in. wokół Pomorskiego Parku Naukowo-Technologicznego i biurowców przy ulicy Łużyckiej, a do tego duże wydarzenia jak Open’er podnoszące zasięg ponad lokalny. Oferta to billboardy przy Estakadzie Kwiatkowskiego, nośniki wielkoformatowe wzdłuż Drogi Gdyńskiej oraz powierzchnie w prestiżowym Orłowie. Miasto pasuje markom premium, usługom finansowym i firmom z branży morskiej oraz nowych technologii — a w razie potrzeby kampanię łatwo rozszerzyć na resztę Trójmiasta.',
     benefits: [
       'Zamożni mieszkańcy i kadra biurowców — dobre tło dla marek premium i usług finansowych',
       'Silny sektor morski i technologiczny — m.in. Pomorski Park Naukowo-Technologiczny',
