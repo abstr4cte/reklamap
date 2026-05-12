@@ -1,8 +1,8 @@
 ---
-title: "Citylight reklama — co to jest i ile kosztuje? 2026"
+title: "Citylight reklama — co to jest, cennik 2026, kiedy wybrać"
 slug: "citylight-reklama"
 category: poradniki
-meta_description: "Citylight reklama — format 1,2×1,8 m, widoczny całą dobę. Wynajem od 200 zł/mc. Ceny, operatorzy, porównanie z billboardem. Sprawdź →"
+meta_description: "Citylight reklama — cennik 2026: wynajem od 200 zł/mc, druk plakatu 50–130 zł. Co to jest, operatorzy, porównanie z billboardem. Sprawdź →"
 image_alt: "Podświetlany citylight na przystanku autobusowym w centrum miasta nocą"
 image_prompt: "A backlit citylight advertising panel at a city bus stop at night, aluminium frame with glass front, glowing advertisement visible in urban street scene, no text on the display"
 keywords:
@@ -10,16 +10,16 @@ keywords:
   - citylight cena
   - citylight co to
   - reklama citylight
-word_count: ~1500
-published_at: "2026-04-04 08:00:00"
+word_count: ~1900
+published_at: "2026-05-12 23:00:00"
 status: draft
 ---
 
-<!-- angle: Co to jest citylight, ile kosztuje wynajem i kiedy wybrać vs billboard -->
+<!-- angle: Co to jest citylight, pełny cennik 2026 (klasyczny i digital, po miastach, single vs pakiet, od czego zależy cena), kiedy wybrać vs billboard, lokalizacje i formalności. -->
 
-# Citylight reklama — co to jest i ile kosztuje? 2026
+# Citylight reklama — co to jest, cennik 2026, kiedy wybrać
 
-Citylight to podświetlana tablica reklamowa w formacie 1,2×1,8 m, osadzona w aluminiowej ramie z szybą i oświetlona backlightem — co oznacza pełną widoczność przez całą dobę. Wynajem standardowego nośnika kosztuje od 200 zł/mc netto w mniejszych miastach do 4 000 zł/mc netto w centrum Warszawy. Format ten generował w 2024 roku 145 mln zł przychodów klasycznego OOH i pozostaje numerem jeden wśród nośników naziemnych w Polsce. Poniżej znajdziesz dokładne ceny, zestawienie operatorów i odpowiedź na pytanie, kiedy citylight bije billboard na głowę.
+Citylight to podświetlana tablica reklamowa w formacie 1,2×1,8 m, osadzona w aluminiowej ramie z szybą i oświetlona backlightem — co oznacza pełną widoczność przez całą dobę. Wynajem standardowego nośnika kosztuje od 200 zł/mc netto w mniejszych miastach do 4 000 zł/mc netto w centrum Warszawy, do tego dochodzi druk plakatu 50–130 zł netto. Format ten generował w 2024 roku 145 mln zł przychodów klasycznego OOH i pozostaje numerem jeden wśród nośników naziemnych w Polsce. Poniżej znajdziesz pełny cennik (klasyczny i digital), zestawienie operatorów, listę najlepszych lokalizacji i odpowiedź na pytanie, kiedy citylight bije billboard na głowę.
 
 ---
 
@@ -57,9 +57,21 @@ Do wynajmu nośnika dochodzi koszt druku grafiki. Plakat do standardowego cityli
 - Papier 135g: **50–90 zł netto/szt.**
 - Folia backlight (do podświetlenia): **110–130 zł netto/szt.**
 
-Dla digital citylightów druk odpada — zamiast tego płacisz za przygotowanie pliku wideo lub animacji oraz czas na ekranie w modelu CPM lub flat fee.
+### Od czego zależy cena citylightu
 
-Jeśli interesuje Cię szersze zestawienie kosztów różnych formatów OOH, przeczytaj [ile kosztuje reklama outdoor](/blog/poradniki/ile-kosztuje-reklama-outdoor).
+Te same wymiary nośnika potrafią kosztować 200 zł albo 4 500 zł miesięcznie — różnicę robi pięć rzeczy:
+
+1. **Lokalizacja** — centrum dużego miasta vs peryferie vs miasto mniejsze; w obrębie miasta najdroższe są deptaki handlowe, węzły komunikacyjne i przystanki przy największych galeriach.
+2. **Operator** — AMS, Ströer, Clear Channel i Mini Media mają różne sieci i różne polityki cenowe; ten sam przystanek u różnych operatorów może mieć różną stawkę.
+3. **Single vs pakiet** — pojedynczy nośnik jest zawsze droższy w przeliczeniu na sztukę; kampania pakietowa (kilkanaście–kilkadziesiąt CL w jednym mieście) obniża cenę jednostkową i jest standardem przy kampaniach świadomościowych.
+4. **Klasyczny vs digital** — przy klasycznym płacisz czynsz za nośnik plus druk; przy digital CL płacisz za czas/wyświetlenia (patrz niżej), bez kosztu druku.
+5. **Czas trwania i sezon** — u operatorów minimalny okres to zwykle 14 dni, rozliczenie miesięczne; w sezonach o dużym popycie (np. przedświątecznym) ceny rosną.
+
+### Ile kosztuje citylight digital (DOOH)
+
+Przy digital citylightcie nie płacisz czynszu za nośnik ani za druk — rozliczenie odbywa się za **czas na ekranie** (flat fee za okres kampanii) albo za **liczbę wyświetleń w modelu CPM**, w tym programmatic (zakup aukcyjny). Konkretna stawka zależy od liczby ekranów w pakiecie, lokalizacji i daypartingu (różne kreacje rano/po południu/wieczorem). Zamiast kosztu druku pojawia się koszt przygotowania pliku wideo lub animacji. Pełne zestawienie kosztów różnych formatów OOH znajdziesz w artykule [ile kosztuje reklama outdoor](/blog/poradniki/ile-kosztuje-reklama-outdoor).
+
+Przeglądaj dostępne citylighty z cenami bezpośrednio od właścicieli → [reklamap.pl/powierzchnie-reklamowe/citylighty](/powierzchnie-reklamowe/citylighty)
 
 ---
 
@@ -96,13 +108,14 @@ To najczęstsze pytanie przy planowaniu kampanii. Odpowiedź zależy od trzech c
 - Zależy Ci na precyzyjnej lokalizacji (konkretny przystanek, pasaż)
 - Chcesz zachować czytelność małych detali — format 1,2×1,8 m jest obserwowany z odległości 2–5 m
 - Planujesz digital OOH z daypartingiem (np. rano — kawa, wieczorem — rozrywka)
+- Liczy się niższy próg wejścia — pojedynczy CL w mniejszym mieście od 200 zł/mc
 
 **Billboard sprawdza się lepiej, gdy:**
 - Chcesz dotrzeć do kierowców i uzyskać szybki masowy zasięg
 - Kampania promuje markę, nie wymaga szczegółowego przekazu
 - Dysponujesz budżetem pozwalającym na kilkanaście nośników w różnych częściach miasta
 
-Nie musisz wybierać jednego formatu — wiele kampanii łączy citylighty przy przystankach z jednym lub dwoma billboardami przy głównych arteriach wjazdowych. Jak podejść do wyboru bardziej systematycznie, opisujemy w artykule [jak wybrać powierzchnię reklamową](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa).
+Nie musisz wybierać jednego formatu — wiele kampanii łączy citylighty przy przystankach z jednym lub dwoma billboardami przy głównych arteriach wjazdowych. Pełny cennik i formalności dla tego drugiego formatu opisujemy w artykule [billboard reklama — cennik i formalności](/blog/poradniki/billboard-reklama), a jak podejść do wyboru bardziej systematycznie — w [jak wybrać powierzchnię reklamową](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa).
 
 ---
 
@@ -116,6 +129,8 @@ Nośnik działa najefektywniej tam, gdzie piesi mają czas na kontakt wzrokowy. 
 4. **Centra handlowe** — galerie zazwyczaj same są operatorem CL wewnątrz obiektu
 5. **Strefy turystyczne** — centra historyczne, okolice zabytków
 6. **Centra biznesowe** — dotarcie do pracowników biurowych przed i po pracy
+
+Citylighty przy przystankach to w praktyce część szerszego ekosystemu reklamy w komunikacji — więcej o nośnikach związanych z transportem miejskim w artykule [reklama w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym).
 
 Szukasz konkretnego nośnika? Przeglądaj dostępne [powierzchnie reklamowe w Polsce](/powierzchnie-reklamowe) i filtruj po typie oraz lokalizacji.
 
@@ -152,6 +167,12 @@ Jeśli interesuje Cię bardziej szczegółowe zestawienie formatów DOOH i ekran
 
 ## FAQ — najczęstsze pytania o citylight
 
+**Ile kosztuje citylight?**
+Wynajem jednego nośnika: od **200 zł/mc** netto w mniejszym mieście (pakiety miejskie, np. Łódź) do **2 000–4 500 zł/mc** netto w ścisłym centrum Warszawy czy Krakowa; peryferie dużych miast to zwykle 800–1 500 zł/mc. Do tego dochodzi druk plakatu: 50–90 zł za papier 135g, 110–130 zł za folię backlight. Przy digital citylightcie druk odpada — płacisz za czas na ekranie (flat fee) lub za wyświetlenia (CPM/programmatic).
+
+**Czy citylight jest tańszy niż billboard?**
+Na poziomie pojedynczego nośnika w centrum dużego miasta zwykle tak: citylight 1,2×1,8 m to 2 000–4 000 zł/mc, a billboard 6×3 m — 4 000–8 000 zł/mc, format 12×3 m — nawet 8 000–15 000 zł/mc (porównanie w tabeli wyżej i w artykule [billboard reklama](/blog/poradniki/billboard-reklama)). Billboard za to daje większy zasięg masowy i niższy koszt dotarcia (CPM) przy kampaniach świadomościowych do kierowców — to inne narzędzie do innego celu.
+
 **Czym różni się citylight od banneru reklamowego?**
 Citylight to stały, podświetlony nośnik z aluminiową ramą i szybą, montowany na stałe przy przystankach lub chodnikach. Baner to tymczasowa powierzchnia (siatka lub folia) mocowana do rusztowania lub ściany — niższy koszt produkcji, brak podświetlenia, krótszy czas ekspozycji.
 
@@ -165,6 +186,10 @@ Przy klasycznym citylighcie — zazwyczaj 5–10 dni roboczych: zamówienie, dru
 Tak. Oświetlenie backlight lub LED działa przez całą dobę (lub w godzinach ustalonych przez operatora). To jeden z kluczowych powodów, dla których format ma wyższy OTS niż nieoświetlone tablice.
 
 ---
+
+---
+
+**Powiązane artykuły:** [Reklama zewnętrzna — rodzaje i ceny](/blog/poradniki/reklama-zewnetrzna) · [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Billboard reklama — cennik i formalności](/blog/poradniki/billboard-reklama) · [Telebim i ekran LED w reklamie](/blog/trendy/telebim-ekran-led-reklama) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
 ## Masz nośnik typu citylight? Dodaj go na ReklaMap
 

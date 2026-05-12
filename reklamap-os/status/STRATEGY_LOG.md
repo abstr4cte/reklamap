@@ -26,17 +26,20 @@
 
 | 2026-04-19 | billboard reklama / billboard-reklama | poradniki | ✅ ZRECENZOWANY | Ahrefs: frazy <100 Easy KD — piszemy dla topical authority (brak artykułu o billboardzie jako core formatu). Dane z Perplexity: cennik wynajmu 500–10 000 zł/mc, budowa 18–75 tys. zł, CPM 0,50–5 zł, ROI 320–497%, przepisy (≤12 m² zgłoszenie, >12 m² pozwolenie 539 zł), odległości od dróg, rynek OOH 882 mln zł 2025. Źródła: billboard-x.pl, wirtualnygarwolin.pl, nowymarketing.pl, oohlife.org, synergicmedia.pl. |
 
-| 2026-05-05 | reklama outdoor Łódź / reklama-outdoor-lodz | lokalizacje | 🛠️ Brudnopis gotowy - czeka na Pisarza | ATP brak wyników (typowe dla geo-fraz). Ahrefs: `reklama zewnętrzna Łódź` >100 KD N/A (≈Easy), pozostałe <100. Decyzja: piszemy dla topical authority + uzupełnienie silosu "duże miasta" (Łódź = 4. miasto PL). Dane z Perplexity: ceny per dzielnica (5 dzielnic, 950–2 400 zł), MPK Łódź cennik 03.2025 (autobusy 250 szt., PESA SWING 34, MODERUS 60), uchwała krajobrazowa od 16.11.2016 (zakaz murali, max 18 m², 3 strefy), 639 890 mieszk. (GUS 31.12.2025), G8 OOH. Insight: Łódź ~3–7× tańsza od Warszawy w centrum. Źródła: truso.tv, lcw.lodz.pl, mpk.lodz.pl, jetline.pl, polskawliczbach.pl, gruparw.pl, annamiotk.pl. |
+| 2026-05-05 | reklama outdoor Łódź / reklama-outdoor-lodz | lokalizacje | ✅ ZRECENZOWANY (opublikowany) | ATP brak wyników (typowe dla geo-fraz). Ahrefs: `reklama zewnętrzna Łódź` >100 KD N/A (≈Easy), pozostałe <100. Decyzja: piszemy dla topical authority + uzupełnienie silosu "duże miasta" (Łódź = 4. miasto PL). Dane z Perplexity: ceny per dzielnica (5 dzielnic, 950–2 400 zł), MPK Łódź cennik 03.2025 (autobusy 250 szt., PESA SWING 34, MODERUS 60), uchwała krajobrazowa od 16.11.2016 (zakaz murali, max 18 m², 3 strefy), 639 890 mieszk. (GUS 31.12.2025), G8 OOH. Insight: Łódź ~3–7× tańsza od Warszawy w centrum. Źródła: truso.tv, lcw.lodz.pl, mpk.lodz.pl, jetline.pl, polskawliczbach.pl, gruparw.pl, annamiotk.pl. |
+| 2026-05-12 | REFRESH: billboard-reklama (odświeżenie istniejącego artykułu) | poradniki | ✅ ZRECENZOWANY (refresh) — czeka na publikację w panelu | Trigger: brief Analityka — poz. 13.2 / 220 impresji, tuż za 1. stroną. Bez researchu: rozbudowa ~1300→~2100 słów, tabela porównawcza formatów OOH, nowa sekcja „ile zarobisz na billboardzie na działce", FAQ 4→6, linkowanie 1→11. Pisarz + Korektor 2026-05-12. |
+| 2026-05-12 | REFRESH: citylight-reklama (wzmocnienie pod frazę cenową) | poradniki | ✅ ZRECENZOWANY (refresh) — czeka na publikację w panelu | Trigger: brief Analityka — `citylighty cena` poz. 10.4, intencja zakupowa, wisienka. Bez researchu: rozbudowa ~1500→~1900 słów, sekcja cenowa wzmocniona („od czego zależy cena" — 5 czynników, podsekcja „ile kosztuje citylight digital"), FAQ 4→6 (2 pytania cenowe), title/meta z „cennik", link zwrotny do `billboard-reklama` + pillar. Pisarz + Korektor 2026-05-12. |
 
 ---
 ## 📋 Kolejka tematów (zwalidowane, czekają na pisanie)
 
 | Priorytet | Temat / Słowo Kluczowe | Silos | Walidacja Ahrefs | Planowany termin | Uwagi |
 |:---|:---|:---|:---|:---|:---|
-| 1 | reklama outdoor Katowice | lokalizacje | ⚠️ KD N/A, wszystkie frazy <100 vol. — topical authority | ✅ Brudnopis 2026-05-05 | Brudnopis gotowy — czeka na Pisarza. Twarde dane: ceny BB centrum 1 500–3 000 zł (vs Wrocław 2 000–4 000, Kraków 2 500–5 000), oficjalny cennik ZTM GZM (cały autobus 3 000 zł, bok 1 500 zł), 277,9 tys. mieszkańców Katowic (US 30.06.2025), 11 016 zł średnia, 1,7% bezrobocie, 58 609 firm + 288 tys. REGON GZM. Uchwała krajobrazowa: prace, brak wdrożenia. Źródła: be-media.com.pl, metropoliaztm.pl, katowice.stat.gov.pl, jetline.pl. |
-| 2 | DOOH / programmatic outdoor | trendy | ⚠️ Easy KD, wszystkie frazy <100 vol. | ~2026-05-26 | Topical authority — silos trendy ma tylko 3 artykuły. Walidować ponownie za 2-3 mies. |
-| — | Łódź | lokalizacje | ✅ ZROBIONE 2026-05-05 | — | — |
-| — | opłata reklamowa | prawo-i-regulacje | ✅ ZROBIONE 2026-05-05 | — | — |
+| 1 | DOOH / programmatic outdoor | trendy | ⚠️ Easy KD, wszystkie frazy <100 vol. | ~2026-05-26 | Topical authority — silos trendy ma tylko 3 artykuły. Walidować ponownie za 2-3 mies. |
+| — | citylight-reklama → wzmocnienie pod `citylighty cena` (poz. 10.4) | poradniki | n/d (refresh) | ✅ ZROBIONE 2026-05-12 (czeka na publikację) | — |
+| — | reklama outdoor Katowice | lokalizacje | — | ✅ ZROBIONE 2026-05-05 (opublikowany) | — |
+| — | Łódź | lokalizacje | — | ✅ ZROBIONE 2026-05-05 | — |
+| — | opłata reklamowa | prawo-i-regulacje | — | ✅ ZROBIONE 2026-05-05 (czeka na publikację w panelu) | — |
 
 ---
 ## Wykonane Analizy i Research:

@@ -51,13 +51,16 @@ Najnowszy wpis na górze. Nie nadpisuj — dopisuj.
 - **Zdarzenia kontaktu nie trafiają do GA4** — UWAGA (ustalenie Architekta): są zdefiniowane w `frontend/src/utils/analytics.ts` (`contact_phone_click`, `contact_email_click`, `contact_form_submit`, `view_item`), ale **nie są wpięte w `AdDetailPage.vue`** — ten widok w ogóle nie importuje `analytics`. Stąd w GA4 brak tych zdarzeń. Fix: wpiąć wywołania w przyciski telefon/e-mail/formularz na stronie ogłoszenia + oznaczyć je jako kluczowe zdarzenia w GA4 Admin. Bez tego nie zmierzymy wartości marketplace ani konwersji żadnego kanału. (To pół-techniczne, ale decyzja "co liczymy jako konwersję" jest biznesowa.)
 - **Lejek dodawania ogłoszenia ~34%** — czy to OK, czy formularz jest za długi? Przy ~120 startach/mies. odzyskanie nawet 10 pp = +12 ogłoszeń/mies.
 
-### Status wdrożenia (do uzupełnienia przy kolejnym przeglądzie)
-- [ ] GA4: filtr ruchu wewnętrznego (IP)
-- [ ] GA4: zdarzenia `click_phone` / `click_email` / `contact_form_submit` + oznaczenie kluczowych zdarzeń
-- [ ] Architekt: 301 www→non-www (lub odwrotnie)
-- [ ] Architekt: poprawa title/description dla `reklama tranzytowa krakow/poznan`, `citylight olsztyn`
-- [ ] Strateg: brief powyżej → research → Pisarz
-- [ ] UTM-y na linkach zewnętrznych
+### Status wdrożenia (aktualizacja 2026-05-12 wieczór)
+- [ ] **GA4: filtr ruchu wewnętrznego (IP)** — instrukcja przekazana userowi, czeka na wykonanie w GA4 Admin
+- [~] **GA4: zdarzenia kontaktu** — ✅ KOD wdrożony (`AdDetailPage.vue` + `AdContactForm.vue`: `view_item`, `contact_phone_click`, `contact_form_submit`); ⏳ czeka na **deploy frontu** + oznaczenie kluczowych zdarzeń w GA4 Admin (`add_listing_success` od razu; `contact_phone_click`/`contact_form_submit` po deployu)
+- [ ] **Architekt: 301 www→non-www** — rozwiązanie wskazane (panel histido → „Wymuś przekierowanie" → `reklamap.pl`); czeka na klik usera + sprawdzenie `VITE_APP_URL`/`APP_URL` na prod
+- [~] **Architekt: title/description** — ✅ KOD wdrożony: szablonowy `<title>`/`<meta>` na stronie ogłoszenia (zamiast surowego tytułu wystawcy, fix dla `citylight olsztyn`); strony kategorii `reklama-w-transporcie/krakow` i `/poznan` dostały dedykowane opisy z frazą transakcyjną (Pisarz); syntezowany fallback opisu dla kombinacji typ×miasto bez ręcznego wpisu. Czeka na deploy.
+- [~] **Strateg: brief → Pisarz** — ✅ ZROBIONE w zakresie blogowym: `billboard-reklama` (poz. 13/220 impr) i `citylight-reklama` (`citylighty cena` poz. 10.4) odświeżone i zrecenzowane (czekają na publikację w panelu). Pozostałe punkty briefu = strony kategorii (✅ opisy dodane: olsztyn/gdynia/bydgoszcz citylighty, transport krakow/poznan, mobilna bydgoszcz/warszawa/krakow, totemy poznan, banery lodz, miasta olsztyn/koszalin) lub robota Architekta (✅ kod). Nic z briefu nie wymaga już nowego artykułu blogowego.
+- [ ] **UTM-y na linkach zewnętrznych** (`?utm_source=outreach&utm_medium=phone&utm_campaign=olx-supply` na linkach do sprzedawców) — zadanie behawioralne usera, nie kod
+- [x] **B-1: zdarzenia per-krok formularza „dodaj ogłoszenie"** (`add_listing_step_view`/`add_listing_step_complete`) — ✅ KOD wdrożony w `AddAdPage.vue`; czeka na deploy (potem analiza, na którym kroku spadek → B-2)
+
+**Legenda:** `[x]` zrobione · `[~]` kod gotowy, czeka na deploy/działanie usera · `[ ]` do zrobienia (po stronie usera).
 
 ---
 
