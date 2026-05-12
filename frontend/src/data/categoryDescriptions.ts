@@ -291,6 +291,18 @@ export const cityDescriptions: Record<string, CategoryDescription> = {
       'Brama do Krainy Wielkich Jezior — latem zasięg rośnie o ruch turystyczny',
       'Okolice Galerii Warmińskiej, Aury i kampusu w Kortowie jako naturalne punkty handlu i ruchu'
     ]
+  },
+
+  'koszalin': {
+    title: 'Powierzchnie reklamowe w Koszalinie – reklama nad morzem',
+    description: 'Powierzchnie reklamowe w Koszalinie docierają do mieszkańców największego miasta środkowego Pomorza, studentów Politechniki Koszalińskiej oraz turystów, dla których miasto jest węzłem w drodze na bałtyckie kurorty — Mielno, Sarbinowo, Kołobrzeg. Przez Koszalin biegnie trasa S6/S11, więc do ruchu lokalnego dochodzi sezonowy potok wakacyjny, który latem wyraźnie podnosi zasięg. W bazie znajdziesz billboardy przy obwodnicy i trasach wjazdowych, nośniki wielkoformatowe wzdłuż ulic Zwycięstwa, Gnieźnieńskiej i Władysława IV oraz powierzchnie w okolicach galerii Forum i Emka czy u stóp Góry Chełmskiej. To dobry rynek pod kampanie turystyczne i sezonowe, retail oraz komunikaty lokalnych usług — a w okresie wakacyjnym także pod marki celujące w urlopowiczów zmierzających nad morze.',
+    benefits: [
+      'Węzeł w drodze na kurorty Bałtyku (Mielno, Sarbinowo, Kołobrzeg) — latem duży ruch wakacyjny',
+      'Trasa S6/S11 przez miasto — ruch tranzytowy obok lokalnego',
+      'Społeczność studencka Politechniki Koszalińskiej',
+      'Billboardy przy obwodnicy i wzdłuż ulic Zwycięstwa, Gnieźnieńskiej i Władysława IV',
+      'Galerie Forum i Emka oraz okolice Góry Chełmskiej jako punkty wzmożonego ruchu'
+    ]
   }
 }
 
