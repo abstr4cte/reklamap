@@ -1,0 +1,4 @@
+# Surowe eksporty (GSC / GA4) — duże, generowane na potrzeby przeglądu Analityka.
+# Nie wersjonujemy ich; po przeglądzie zostają lokalnie jako backup, prune ręcznie co ~3 mies.
+imports/
+.~lock.*#

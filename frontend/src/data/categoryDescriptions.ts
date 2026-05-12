@@ -279,6 +279,18 @@ export const cityDescriptions: Record<string, CategoryDescription> = {
       'Profil bardziej biznesowy niż turystyczny — mniej zabytkowego ruchu niż w Gdańsku, więcej korporacji',
       'W trakcie dużych wydarzeń, jak Open’er, zasięg wykracza poza lokalny'
     ]
+  },
+
+  'olsztyn': {
+    title: 'Powierzchnie reklamowe w Olsztynie – reklama na Warmii',
+    description: 'Powierzchnie reklamowe w Olsztynie docierają do mieszkańców stolicy Warmii i Mazur, dużej społeczności studenckiej Uniwersytetu Warmińsko-Mazurskiego oraz turystów, dla których miasto jest bramą do Krainy Wielkich Jezior. Olsztyn ma jedyną w regionie sieć tramwajową, więc do ruchu samochodowego dochodzi gęsty potok pasażerów komunikacji miejskiej. W bazie znajdziesz billboardy przy trasach wlotowych S51 i S16, nośniki wielkoformatowe wzdłuż al. Sikorskiego i ul. Sybiraków, citylighty przy przystankach w centrum oraz powierzchnie w okolicach Galerii Warmińskiej, Aury i kampusu w Kortowie. Latem zasięg rośnie o ruch wakacyjny w stronę Mazur. To dobry rynek pod kampanie edukacyjne, turystyczne, retailowe i komunikaty lokalnych usług.',
+    benefits: [
+      'Duża społeczność studencka UWM — mocne tło dla kampanii edukacyjnych i rekrutacyjnych',
+      'Jedyna w regionie sieć tramwajowa — dodatkowy, gęsty potok pasażerów komunikacji',
+      'Billboardy przy trasach wlotowych S51 i S16 oraz wzdłuż al. Sikorskiego',
+      'Brama do Krainy Wielkich Jezior — latem zasięg rośnie o ruch turystyczny',
+      'Okolice Galerii Warmińskiej, Aury i kampusu w Kortowie jako naturalne punkty handlu i ruchu'
+    ]
   }
 }
 
@@ -604,6 +616,136 @@ export const typeCityDescriptions: Record<string, CategoryDescription> = {
     benefits: [
       'Mnóstwo lokalizacji przy budowach — Wyspa Spichrzów, Młode Miasto, rewitalizowane Śródmieście',
       'Ogrodzenia, rusztowania i elewacje remontowanych kamienic jako gotowe powierzchnie',
+      'Można postawić szybko i na konkretny etap inwestycji — od „tu powstaje” po sprzedaż',
+      'Pierwszy wybór deweloperów i generalnych wykonawców',
+      'Niedrogi, robiony na wymiar i łatwy do wymiany w trakcie kampanii'
+    ]
+  },
+
+  // ── CITYLIGHTY (kolejne miasta) ───────────────────────────────────────────
+
+  'citylighty-olsztyn': {
+    title: 'Citylighty w Olsztynie – reklama przy przystankach',
+    description: 'Citylighty w Olsztynie to format pod marki celujące w mieszkańców i studentów codziennie korzystających z komunikacji — Olsztyn ma jedyną w regionie sieć tramwajową, a przystanki przy trasach tramwajowych i autobusowych skupiają potok pasażerów na głównych ciągach centrum: przy ul. 1 Maja, w okolicach Starego Miasta, dworca oraz kampusu UWM w Kortowie. Standardowy format 120×180 cm podświetlany od środka utrzymuje pełną widoczność po zmroku i daje kilka minut kontaktu przy każdym oczekiwaniu na pojazd. To nośnik dla retailu, usług lokalnych, branży edukacyjnej i promocji wydarzeń kulturalnych — a w sezonie wakacyjnym łapie też ruch turystyczny zmierzający na Mazury.',
+    benefits: [
+      'Przystanki tramwajowe i autobusowe na głównych ciągach centrum — duży potok pasażerów',
+      'Wysoki czas kontaktu — kilka minut przy każdym oczekiwaniu na pojazd',
+      'Podświetlenie od środka gwarantuje widoczność przez całą dobę',
+      'Dobre dla retailu, usług lokalnych, branży edukacyjnej i wydarzeń kulturalnych',
+      'Okolice dworca i kampusu UWM w Kortowie jako punkty wzmożonego ruchu pieszego'
+    ]
+  },
+
+  'citylighty-gdynia': {
+    title: 'Citylighty w Gdyni – reklama przy przystankach',
+    description: 'Citylighty w Gdyni docierają do zamożnych mieszkańców, kadry nowoczesnych biurowców i turystów na głównych ciągach pieszych — przystanki ZKM i trasy trolejbusowe wzdłuż ul. Świętojańskiej, 10 Lutego, przy Skwerze Kościuszki, na Wzgórzu Św. Maksymiliana oraz w okolicach Orłowa i biurowców przy ul. Łużyckiej. Format 120×180 cm podświetlany od środka pracuje przy każdym oczekiwaniu na pojazd, a w sezonie i podczas dużych wydarzeń, jak Open’er, zasięg wykracza poza lokalny. To dobre tło dla marek premium, usług finansowych, gastronomii i retailu — a kampanię łatwo rozszerzyć na resztę Trójmiasta.',
+    benefits: [
+      'Główne ciągi piesze — Świętojańska, 10 Lutego, Skwer Kościuszki, Wzgórze Św. Maksymiliana',
+      'Zamożni mieszkańcy i kadra biurowców — tło dla marek premium i usług finansowych',
+      'Sieć ZKM i trolejbusów zapewnia gęstość nośników przy przystankach',
+      'W sezonie i podczas dużych wydarzeń (Open’er) zasięg ponadlokalny',
+      'Łatwe rozszerzenie kampanii na Gdańsk i Sopot — wspólny rynek trójmiejski'
+    ]
+  },
+
+  'citylighty-bydgoszcz': {
+    title: 'Citylighty w Bydgoszczy – reklama przy przystankach',
+    description: 'Citylighty w Bydgoszczy to format pod dotarcie do mieszkańców w codziennych dojazdach i studentów — przystanki tramwajowe i autobusowe MZK na głównych ciągach: ul. Gdańskiej, Dworcowej, przy placu Wolności, w okolicach Wyspy Młyńskiej, dworca Bydgoszcz Główna oraz uczelni. Standardowy format 120×180 cm podświetlany od środka daje kilka minut kontaktu przy każdym oczekiwaniu na pojazd i pełną widoczność po zmroku. To nośnik dla retailu, usług lokalnych, gastronomii i promocji wydarzeń kulturalnych — w okolicach galerii (Galeria Pomorska, Focus Mall) i instytucji takich jak Opera Nova ruch pieszy jest wyraźnie większy.',
+    benefits: [
+      'Przystanki tramwajowe i autobusowe MZK na ul. Gdańskiej, Dworcowej i przy placu Wolności',
+      'Wysoki czas kontaktu i widoczność przez całą dobę dzięki podświetleniu',
+      'Okolice dworca Bydgoszcz Główna i uczelni jako punkty wzmożonego ruchu',
+      'Dobre dla retailu, gastronomii, usług lokalnych i wydarzeń kulturalnych',
+      'Większy ruch pieszy przy galeriach (Galeria Pomorska, Focus Mall) i Operze Nova'
+    ]
+  },
+
+  // ── REKLAMA W TRANSPORCIE (miasta) ────────────────────────────────────────
+
+  'reklama-w-transporcie-krakow': {
+    title: 'Reklama w transporcie Kraków – autobusy i tramwaje MPK',
+    description: 'Reklama w transporcie w Krakowie jeździ po mieście razem z pojazdami MPK — autobusami i tramwajami kursującymi przez Stare Miasto, Kazimierz, Podgórze, Nową Hutę i okolice kampusów AGH oraz UJ. W ofertach znajdziesz pełne i częściowe oklejenia pojazdów (full i half wrap), tablice wewnątrz oraz ekrany w systemie informacji pasażerskiej. Ten sam pojazd kursuje stałą trasą wiele razy dziennie, więc reklama buduje wysoką częstotliwość kontaktu przy niskim koszcie dotarcia. Kraków ma jeden z największych w Polsce rynków studenckich i ogromny ruch turystyczny — to nośnik pod kampanie rekrutacyjne, promocje lokalne i komunikaty do szerokiego, miejskiego odbiorcy. Bywają dostępne konkretne linie obsługujące wybrane dzielnice.',
+    benefits: [
+      'Pojazdy MPK kursujące przez Stare Miasto, Kazimierz, Podgórze, Nową Hutę i kampusy',
+      'Pełne i częściowe oklejenia, tablice wewnątrz i ekrany w systemie informacji pasażerskiej',
+      'Wysoka częstotliwość kontaktu — jeden pojazd przejeżdża trasę wiele razy dziennie',
+      'Ogromny rynek studencki i ruch turystyczny — dobre pod rekrutację i promocje lokalne',
+      'Możliwy wybór konkretnych linii obsługujących wybrane dzielnice'
+    ]
+  },
+
+  'reklama-w-transporcie-poznan': {
+    title: 'Reklama w transporcie Poznań – autobusy i tramwaje MPK',
+    description: 'Reklama w transporcie w Poznaniu jeździ po mieście razem z pojazdami MPK — autobusami i tramwajami kursującymi przez Stary Rynek, Półwiejską, Jeżyce, Wildę, okolice dworca Poznań Główny oraz kampus UAM na Morasku. W ofertach znajdziesz pełne i częściowe oklejenia pojazdów (full i half wrap), tablice wewnątrz oraz ekrany w systemie informacji pasażerskiej. Ten sam pojazd kursuje stałą trasą wiele razy dziennie, więc reklama buduje wysoką częstotliwość kontaktu przy niskim koszcie dotarcia. W sezonie targowym do ruchu lokalnego dochodzą goście Międzynarodowych Targów Poznańskich — to nośnik pod kampanie targowe, rekrutacyjne i komunikaty do szerokiego, miejskiego odbiorcy. Bywają dostępne konkretne linie obsługujące wybrane dzielnice.',
+    benefits: [
+      'Pojazdy MPK kursujące przez Stary Rynek, Półwiejską, Jeżyce, Wildę i kampus UAM',
+      'Pełne i częściowe oklejenia, tablice wewnątrz i ekrany informacji pasażerskiej',
+      'Wysoka częstotliwość kontaktu — jeden pojazd przejeżdża trasę wiele razy dziennie',
+      'W sezonie targowym zasięg rośnie o gości Międzynarodowych Targów Poznańskich',
+      'Możliwy wybór konkretnych linii obsługujących wybrane dzielnice'
+    ]
+  },
+
+  // ── REKLAMA MOBILNA (miasta) ──────────────────────────────────────────────
+
+  'reklama-mobilna-warszawa': {
+    title: 'Reklama mobilna Warszawa – przyczepy i mobile billboard',
+    description: 'Reklama mobilna w Warszawie to przyczepa albo oklejony pojazd, który dowozisz dokładnie tam, gdzie chcesz — pod Złote Tarasy, Galerię Mokotów czy Arkadię, na Pole Mokotowskie, w okolice biurowców na Woli i Służewcu albo pod wydarzenia na PGE Narodowym. Trasę i godziny przejazdu ustawiasz pod szczyty komunikacyjne lub konkretny event, a mobile billboard wjedzie tam, gdzie nie ma stałych nośników — w ścisłe centrum i strefę płatnego parkowania. Sprawdza się przy otwarciach lokali, premierach, akcjach last-minute i kampaniach sezonowych. Dobrze domyka plan mediów: dociąga zasięg w miejscach, których siatka billboardów w stolicy nie objęła.',
+    benefits: [
+      'Dowieziesz nośnik pod konkretny adres — galerie, biurowce Woli i Służewca, PGE Narodowy',
+      'Trasa i godziny pod szczyty komunikacyjne albo pod wybrane wydarzenie',
+      'Wjeżdża w ścisłe centrum i strefę płatnego parkowania, gdzie brak stałych konstrukcji',
+      'Dobre przy otwarciach, premierach i kampaniach last-minute',
+      'Domyka plan mediów — dociąga zasięg tam, gdzie siatka billboardów ma luki'
+    ]
+  },
+
+  'reklama-mobilna-krakow': {
+    title: 'Reklama mobilna Kraków – przyczepy reklamowe w ruchu',
+    description: 'Reklama mobilna w Krakowie to przyczepa albo oklejony pojazd dowieziony tam, gdzie chcesz — pod Galerię Krakowską, Bonarkę, w okolice placów handlowych, na tereny eventowe przy Tauron Arenie i Błoniach albo w pobliże kampusów. Trasę i godziny przejazdu układasz pod szczyty komunikacyjne lub konkretne wydarzenie, z uwzględnieniem ograniczeń ruchu w ścisłym centrum. To format pod otwarcia lokali, festiwale, akcje last-minute i kampanie sezonowe, gdzie liczy się obecność tu i teraz. Sprawdza się też jako uzupełnienie kampanii outdoorowej — dociąga zasięg w strefie ograniczonego ruchu i tam, gdzie stałych nośników brakuje.',
+    benefits: [
+      'Dowieziesz nośnik pod galerie, place handlowe i tereny eventowe (Tauron Arena, Błonia)',
+      'Trasa i godziny pod szczyty komunikacyjne lub konkretne wydarzenie',
+      'Działa w strefie ograniczonego ruchu w centrum, gdzie nie ma stałych konstrukcji',
+      'Dobre przy otwarciach, festiwalach i kampaniach sezonowych',
+      'Uzupełnia kampanię outdoorową — dociąga zasięg tam, gdzie plan mediów ma luki'
+    ]
+  },
+
+  'reklama-mobilna-bydgoszcz': {
+    title: 'Reklama mobilna Bydgoszcz – przyczepy reklamowe',
+    description: 'Reklama mobilna w Bydgoszczy to przyczepa albo oklejony pojazd dowieziony dokładnie tam, gdzie chcesz — pod Galerię Pomorską, Focus Mall, w okolice ronda Jagiellonów i centrum, na tereny eventowe przy Operze Nova i Wyspie Młyńskiej albo do Fordonu. Trasę i godziny przejazdu ustawiasz pod szczyty komunikacyjne lub konkretne wydarzenie, a mobile billboard wjedzie w wąskie ulice śródmieścia i miejsca, których stałe nośniki nie obsłużą. Sprawdza się przy otwarciach lokali, akcjach last-minute i kampaniach sezonowych. Dobrze działa też jako uzupełnienie kampanii billboardowej — domyka zasięg tam, gdzie plan stałych nośników ma luki.',
+    benefits: [
+      'Dowieziesz nośnik pod galerie (Galeria Pomorska, Focus Mall), centrum i tereny eventowe',
+      'Trasa i godziny pod szczyty komunikacyjne lub konkretne wydarzenie',
+      'Wjeżdża w wąskie ulice śródmieścia i miejsca niedostępne dla stałych konstrukcji',
+      'Dobre przy otwarciach lokali, akcjach last-minute i kampaniach sezonowych',
+      'Uzupełnia kampanię billboardową — domyka zasięg w lukach planu mediów'
+    ]
+  },
+
+  // ── TOTEMY REKLAMOWE (miasta) ─────────────────────────────────────────────
+
+  'totemy-reklamowe-poznan': {
+    title: 'Totemy reklamowe Poznań – pylony przy galeriach',
+    description: 'Totem reklamowy w Poznaniu to wolnostojący pylon przy wjazdach do galerii (m.in. Posnania, Galeria Malta, okolice Starego Browaru), parków handlowych przy obwodnicy i autostradzie A2, stacji paliw na trasach wylotowych oraz biurowców na Grunwaldzie i przy ul. Głogowskiej. Konstrukcja ma zwykle od trzech do około dziesięciu metrów wysokości i mieści kilka kaset, więc na jednym pylonie pokazuje się naraz kilku najemców. Podświetlenie LED utrzymuje widoczność po zmroku i w gorszą pogodę. To nośnik dla sieci handlowych, gastronomii, aptek i salonów samochodowych — m.in. w okolicach Franowa — pracuje dokładnie tam, gdzie klient podejmuje decyzję, czyli przy punkcie sprzedaży, i pełni funkcję nawigacyjną kierując kierowców do obiektu.',
+    benefits: [
+      'Pylony przy wjazdach do galerii (Posnania, Galeria Malta) i parków handlowych przy A2',
+      'Jedna konstrukcja mieści kilka kaset — równoległa ekspozycja kilku marek',
+      'Podświetlenie LED utrzymuje widoczność po zmroku i w gorszych warunkach',
+      'Dla sieci handlowych, gastronomii, aptek i salonów samochodowych (m.in. Franowo)',
+      'Pełni funkcję nawigacyjną — kieruje kierowców do obiektu i utrwala markę w jego otoczeniu'
+    ]
+  },
+
+  // ── BANERY (miasta) ───────────────────────────────────────────────────────
+
+  'banery-lodz': {
+    title: 'Banery reklamowe w Łodzi – wielki format na budowach',
+    description: 'Banery reklamowe w Łodzi najczęściej towarzyszą rewitalizacji — Księży Młyn, Off Piotrkowska, okolice EC1 i Nowego Centrum Łodzi, a do tego setki remontowanych kamienic wzdłuż ul. Piotrkowskiej tworzą jeden wielki plac inwestycyjny. Ogrodzenia, rusztowania i elewacje przebudowywanych fabryk i kamienic to gotowe powierzchnie pod siatki mesh i banery wielkoformatowe. Baner postawisz szybko i na dowolny etap inwestycji: od „tu powstaje” po „wprowadź się”. To pierwszy wybór deweloperów i generalnych wykonawców, ale sprawdza się też przy obiektach handlowych i kulturalnych w centrum. Format niedrogi, robiony na wymiar i łatwy do wymiany w trakcie kampanii.',
+    benefits: [
+      'Mnóstwo lokalizacji przy rewitalizacji — Księży Młyn, Off Piotrkowska, EC1, Nowe Centrum Łodzi',
+      'Remontowane kamienice wzdłuż ul. Piotrkowskiej jako gotowe powierzchnie pod wielki format',
       'Można postawić szybko i na konkretny etap inwestycji — od „tu powstaje” po sprzedaż',
       'Pierwszy wybór deweloperów i generalnych wykonawców',
       'Niedrogi, robiony na wymiar i łatwy do wymiany w trakcie kampanii'

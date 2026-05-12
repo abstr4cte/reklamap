@@ -10,6 +10,7 @@ import Breadcrumbs from '../components/Breadcrumbs.vue'
 import { useSeo } from '../composables/useSeo'
 import { appUrl } from '../utils/url'
 import { truncateAtWord } from '../utils/text'
+import { analytics } from '../utils/analytics'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
 import { useSearchStore } from '../stores/useSearchStore'
 import { useStreetViewStore } from '../stores/useStreetViewStore'
@@ -72,6 +73,7 @@ const handlePhoneCall = () => {
     showPhone.value = true
     // Track phone click in statistics
     api.incrementPhoneClicks(ad.value.id).catch(() => {})
+    analytics.clickPhone(String(ad.value.id), ad.value.title)
   }
 }
 
@@ -81,6 +83,7 @@ const handleShowPhone = () => {
     showPhone.value = true
     // Track phone click in statistics
     api.incrementPhoneClicks(ad.value.id).catch(() => {})
+    analytics.clickPhone(String(ad.value.id), ad.value.title)
   }
 }
 
@@ -212,12 +215,21 @@ watch([ad, similarAds], ([newAd, newSimilarAds]) => {
       return `${newAd.width}×${newAd.height}m`
     }
     const dimsForSeo = formatDimsForSeo()
-    const dims = dimsForSeo ? ` ${dimsForSeo},` : ''
-    const title = `${newAd.title} –${dims} ${searchStore.getTypeLabel(newAd.type)}, ${newAd.city} | ReklaMap`
+    const typeLabel = searchStore.getTypeLabel(newAd.type)
+    const typeLabelCap = typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1)
+    // Lokalizacja od wystawcy bywa długa i zawiera już miasto — do title nie bierzemy jej w ogóle
+    // (gwarantowana czysta fraza "typ + miasto"), do description dokładamy skrócony fragment.
+    const rawLoc = (newAd.location || '').trim()
+    const locForDesc = rawLoc && rawLoc.toLowerCase() !== newAd.city.toLowerCase()
+      ? ` (${truncateAtWord(rawLoc, 60)})`
+      : ''
+    // <title> i <meta description> budujemy z pól ogłoszenia, NIE z surowego tytułu wystawcy —
+    // ten bywa bełkotem ("citylight olsztyn dywizjonu 303 ...") i zabija CTR w wynikach Google.
+    // Surowy tytuł zostaje jako <h1> na stronie.
+    const title = `${typeLabelCap} ${newAd.city} – wynajem | ReklaMap`
     const dimsSentence = dimsForSeo ? ` Wymiary: ${dimsForSeo}.` : ''
-    const descTail = newAd.description ? ` ${truncateAtWord(newAd.description, 100)}` : ''
-    const description = `${newAd.title} – ${searchStore.getTypeLabel(newAd.type)} w ${newAd.city}.${dimsSentence} Cena: ${formatPrice(newAd.price)} PLN.${descTail}`
-    const keywords = `${newAd.title}, ${searchStore.getTypeLabel(newAd.type)} ${newAd.city}, reklama zewnętrzna ${newAd.city}`
+    const description = `${typeLabelCap} w ${newAd.city}${locForDesc}.${dimsSentence} Cena: ${formatPrice(newAd.price)} PLN. Sprawdź dokładną lokalizację na mapie i skontaktuj się bezpośrednio z wystawcą — bez prowizji i pośredników.`
+    const keywords = `${typeLabel} ${newAd.city}, wynajem ${typeLabel.toLowerCase()} ${newAd.city}, reklama zewnętrzna ${newAd.city}`
     
     // Structured Data
     const typeUrlPart = mapTypeToUrlFormat(newAd.type || 'other')
@@ -575,7 +587,12 @@ const loadAd = async () => {
     const adId = lastPart || id
     const response = await axios.get(`/api/listings/${adId}`)
     ad.value = response.data
-    
+
+    // GA4: obejrzenie ogłoszenia
+    if (ad.value) {
+      analytics.viewAd(String(ad.value.id), ad.value.title, ad.value.city)
+    }
+
     // Increment view count after 2s
     setTimeout(() => {
       axios.post(`/api/listings/${adId}/increment-views`)

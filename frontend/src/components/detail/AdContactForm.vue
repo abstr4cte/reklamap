@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import axios from '../../api/axios'
 import { api } from '../../services/api'
+import { analytics } from '../../utils/analytics'
 import { getRecaptchaToken, isRecaptchaAvailable } from '../../services/recaptchaService'
 
 const props = defineProps<{
@@ -60,6 +61,8 @@ const submitContactForm = async () => {
     
     // Track email click in statistics
     api.incrementEmailClicks(props.adId).catch(() => {})
+    // GA4: wysłanie formularza kontaktowego (konwersja)
+    analytics.sendAdMessage(props.adId)
     
     setTimeout(() => {
       contactSuccess.value = false

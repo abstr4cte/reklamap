@@ -120,10 +120,12 @@ Dla każdego zadania **wykraczającego poza czystą edycję kodu** — zacznij o
 | Pisanie artykułu SEO | `AGENT_PISARZ` |
 | Korekta tekstu, usuwanie AI-izmów, ocena naturalności | `AGENT_KOREKTOR` |
 | Cold calling, skrypty sprzedażowe, pozyskiwanie nośników | `AGENT_MARKETER` |
+| Analiza danych (GSC, GA4, `stats.php`), raporty, brief z tematami pod SEO, rekomendacje kanałów promocji | `AGENT_ANALITYK` |
 
 **Procedury specjalne** (szczegóły w ROUTING.md):
 - "Narada" → Biznesowy + Architekt jednocześnie
 - Nowy artykuł → Strateg → Pisarz → Korektor
+- Przegląd danych / "w którą stronę pod SEO" → Analityk → Strateg → Pisarz → Korektor
 - Brak pasującego agenta → działam sam, rozważam czy zasugerować nowego agenta
 
 ---
@@ -142,6 +144,13 @@ Projekt posiada zespół wyspecjalizowanych agentów AI w `reklamap-os/agents/`.
 | `AGENT_ARCHITEKT_SEO.md` | Audyt techniczny SEO kodu (Laravel + Vue) |
 | `AGENT_BIZNESOWY.md` | Strategia produktu, monetyzacja, backlog RICE |
 | `AGENT_MARKETER.md` | Cold calling, skrypty sprzedażowe, pozyskiwanie nośników |
+| `AGENT_ANALITYK.md` | Analiza danych (GSC, GA4, `stats.php`), raporty, brief z tematami/frazami dla Stratega |
+
+### Workflow analityczny (Data → Treść)
+
+1. **Wywołaj Agenta Analityka** — zbiera eksporty (GSC: zapytania/strony/wisienki 5–20, GA4: pozyskiwanie/strony/konwersje, `php scripts/stats.php`), robi raport i dopisuje brief do `reklamap-os/status/ANALYTICS_LOG.md` (blok `➡️ DLA STRATEGA`)
+2. **Wywołaj Agenta Stratega** — bierze brief z `ANALYTICS_LOG.md` jako punkt wyjścia researchu
+3. Dalej standardowy Content Pipeline (Pisarz → Korektor)
 
 ### Workflow bloga (Content Pipeline)
 
@@ -156,6 +165,7 @@ Projekt posiada zespół wyspecjalizowanych agentów AI w `reklamap-os/agents/`.
 - `reklamap-os/status/BRUDNOPIS_SEO.md` — dane z researchu dla bieżącego artykułu
 - `reklamap-os/status/STRATEGY_LOG.md` — historia researchu SEO
 - `reklamap-os/status/SALES_LOG.md` — wyniki rozmów sprzedażowych
+- `reklamap-os/status/ANALYTICS_LOG.md` — historia przeglądów danych i briefów Analityka
 - `reklamap-os/docs/PRODUCT_BACKLOG.md` — backlog produktowy z RICE
 - `reklamap-os/docs/MARKETING_ASSETS.md` — skrypty i szablony sprzedażowe
 - `reklamap-os/blog/INDEX.md` — indeks wszystkich postów blogowych

@@ -17,7 +17,7 @@ import { useSeo } from '../composables/useSeo'
 import { appUrl } from '../utils/url'
 import { filtersToQueryParams } from '../utils/filterUtils'
 import polishLocations from '../data/polishLocations.json'
-import { categoryDescriptions, cityDescriptions, typeCityDescriptions } from '../data/categoryDescriptions'
+import { categoryDescriptions, cityDescriptions, typeCityDescriptions, type CategoryDescription as CategoryDescriptionData } from '../data/categoryDescriptions'
 import type * as LType from 'leaflet'
 import WebPImage from '../components/WebPImage.vue'
 import type { Advertisement } from '../types'
@@ -94,10 +94,18 @@ const seoData = computed(() => {
   const cityName = citySlug ? resolveCityName(citySlug) : null
 
   const typeCityKey = typeSlug && citySlug ? `${typeSlug}-${citySlug}` : null
-  const descObj = (typeCityKey && typeCityDescriptions[typeCityKey])
+  const comboObj = (typeCityKey && typeCityDescriptions[typeCityKey]) || null
+  const descObj = comboObj
     || (typeSlug && categoryDescriptions[typeSlug])
     || (citySlug && cityDescriptions[citySlug])
     || null
+  // Czy `descObj` pasuje 1:1 do bieżącego URL-a? Wpis samego typu NIE pasuje do strony
+  // typ×miasto (brak nazwy miasta w title/opisie) — wtedy zostają szablony niżej.
+  const descObjMatchesUrl = !!(
+    comboObj
+    || (typeSlug && !citySlug && categoryDescriptions[typeSlug])
+    || (citySlug && !typeSlug && cityDescriptions[citySlug])
+  )
 
   // Liczba ofert na tej stronie listy (po załadowaniu) — używana do:
   // 1) wzbogacenia generycznego opisu, gdy nie ma ręcznego wpisu w *Descriptions,
@@ -118,9 +126,9 @@ const seoData = computed(() => {
   let canonical: string
 
   if (typeLabel && cityName) {
-    title = `${typeLabel} – ${cityName} | ReklaMap`
-    description = descObj
-      ? truncateAtWord(descObj.description, 155)
+    title = `${typeLabel} ${cityName} – wynajem | ReklaMap`
+    description = comboObj
+      ? truncateAtWord(comboObj.description, 155)
       : genericDesc(`${typeLabel} w ${cityName}`, 'Porównuj ceny, lokalizacje i dostępne terminy. Znajdź idealną powierzchnię reklamową na ReklaMap.')
     canonical = `${appUrl}/powierzchnie-reklamowe/${typeSlug}/${citySlug}`
   } else if (typeLabel) {
@@ -145,7 +153,7 @@ const seoData = computed(() => {
   // jest lepszym meta <title> niż szablon z `urlTypeToLabel` — zawiera frazę transakcyjną
   // (np. „Wynajem billboardów – reklama wielkoformatowa OOH"). Sufiks brandu doklejamy tu,
   // dlatego wpisy w danych są bez „| ReklaMap". Gdy wpisu brak — zostaje wzorzec ustawiony wyżej.
-  if (descObj) {
+  if (descObj && descObjMatchesUrl) {
     title = `${descObj.title} | ReklaMap`
   }
 
@@ -398,12 +406,45 @@ const noResultsContext = computed(() => {
   return parts.length ? parts.join(', ') : null
 })
 
-const currentDescription = computed(() => {
-  const city = route.params.city as string
-  const type = route.params.type as string
+// Pierwsze zdanie tekstu (do "sklejania" syntetycznych opisów).
+const firstSentence = (txt: string): string => {
+  const m = txt.match(/^[^.]*\.(?=\s|$)/)
+  return m ? m[0].trim() : txt
+}
+
+// Gdy dla kombinacji typ×miasto NIE ma ręcznego wpisu, składamy unikalny opis z:
+// (1) pierwszego zdania opisu typu (czym jest nośnik), (2) pierwszego zdania opisu miasta
+// (kontekst lokalny — jeśli istnieje), (3) stałej zachęty do porównania i kontaktu.
+// Cel: strona typ×miasto nie jest duplikatem generycznego opisu typu (thin/doorway).
+const synthesizeTypeCity = (typeSlug: string, citySlug: string): CategoryDescriptionData | null => {
+  const typeDesc = categoryDescriptions[typeSlug]
+  if (!typeDesc) return null
+  const cityDesc = cityDescriptions[citySlug]
+  const typeLabel = urlTypeToLabel[typeSlug] || deslugify(typeSlug)
+  const cityName = resolveCityName(citySlug)
+  const typeIntro = firstSentence(typeDesc.description)
+  const cityIntro = cityDesc ? firstSentence(cityDesc.description) : ''
+  const bridge = cityIntro
+    ? ` ${cityIntro} ${typeLabel} w ${cityName} wpisuje się w ten kontekst — porównasz dostępne nośniki po lokalizacji, parametrach technicznych i cenie, a potem skontaktujesz się bezpośrednio z wystawcą, bez prowizji i pośredników.`
+    : ` ${typeLabel} w ${cityName} przeglądasz po lokalizacji, parametrach technicznych i cenie, a kontakt z wystawcą jest bezpośredni — bez prowizji i pośredników.`
+  return {
+    title: `${typeLabel} – ${cityName}`,
+    description: `${typeIntro}${bridge}`,
+    benefits: typeDesc.benefits
+  }
+}
+
+const currentDescription = computed<CategoryDescriptionData | null>(() => {
+  const city = route.params.city as string | undefined
+  const type = route.params.type as string | undefined
   const combinedKey = type && city ? `${type}-${city}` : null
-  return (combinedKey && typeCityDescriptions[combinedKey])
-    || (city && cityDescriptions[city])
+  if (combinedKey && typeCityDescriptions[combinedKey]) return typeCityDescriptions[combinedKey]
+  // typ×miasto bez ręcznego wpisu → syntezujemy (unikalny opis zamiast duplikatu opisu typu)
+  if (type && city) {
+    const synth = synthesizeTypeCity(type, city)
+    if (synth) return synth
+  }
+  return (city && cityDescriptions[city])
     || (type && categoryDescriptions[type])
     || categoryDescriptions['']
 })
