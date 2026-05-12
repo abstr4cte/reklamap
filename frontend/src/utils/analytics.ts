@@ -39,6 +39,13 @@ export const analytics = {
     finishAddAd: (type: string, city: string) =>
         trackEvent('add_listing_success', { ad_type: type, ad_city: city }),
 
+    // Funnel: kroki formularza dodawania ogłoszenia — żeby wiedzieć, na którym kroku ludzie odpadają
+    addAdStepView: (step: number, type: string) =>
+        trackEvent('add_listing_step_view', { step_number: step, ad_type: type || 'unknown' }),
+
+    addAdStepComplete: (step: number, type: string) =>
+        trackEvent('add_listing_step_complete', { step_number: step, ad_type: type || 'unknown' }),
+
     // Search & Filters
     search: (keyword: string) =>
         trackEvent('search', { search_term: keyword }),

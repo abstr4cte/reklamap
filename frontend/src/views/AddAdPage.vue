@@ -286,6 +286,7 @@ const resolveAddressFromInput = async (query: string) => {
 onMounted(() => {
   // Track start of adding an advertisement
   analytics.startAddAd()
+  analytics.addAdStepView(currentStep.value, formData.value.type)
 
   if (currentStep.value === 3) {
     initMap()
@@ -295,6 +296,12 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
+})
+
+// GA4: śledzenie kroków lejka „dodaj ogłoszenie" — `step_view` przy każdym wejściu na krok
+// (do przodu i wstecz). Krok 1 raportowany w onMounted, więc tu bez `immediate`.
+watch(currentStep, (step) => {
+  analytics.addAdStepView(step, formData.value.type)
 })
 
 // Automatyczne ustawienie jednostki ceny przy zmianie typu
@@ -1046,6 +1053,7 @@ const validateStep = (step: number): boolean => {
 
 const nextStep = async () => {
   if (validateStep(currentStep.value)) {
+    analytics.addAdStepComplete(currentStep.value, formData.value.type)
     if (currentStep.value < totalSteps) {
       currentStep.value++
       if (currentStep.value === 3) {
