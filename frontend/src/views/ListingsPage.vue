@@ -141,6 +141,14 @@ const seoData = computed(() => {
     canonical = `${appUrl}/powierzchnie-reklamowe`
   }
 
+  // Gdy dla tego URL istnieje ręcznie napisany wpis w *Descriptions, jego pole `title`
+  // jest lepszym meta <title> niż szablon z `urlTypeToLabel` — zawiera frazę transakcyjną
+  // (np. „Wynajem billboardów – reklama wielkoformatowa OOH"). Sufiks brandu doklejamy tu,
+  // dlatego wpisy w danych są bez „| ReklaMap". Gdy wpisu brak — zostaje wzorzec ustawiony wyżej.
+  if (descObj) {
+    title = `${descObj.title} | ReklaMap`
+  }
+
   const filterQueryKeys = ['q', 'priceFrom', 'priceTo', 'priceUnit', 'rentalPeriod', 'orientation', 'widthFrom', 'widthTo', 'heightFrom', 'heightTo', 'trafficIntensity', 'offerType', 'status', 'hasBacklight', 'onlyWithImage', 'priceIncludesPrint', 'graphicDesignHelp', 'hasVatInvoice', 'hasLightingTypeBanner', 'hasLightingTypeBillboard', 'ambientLightControl', 'priceIncludesMounting', 'street', 'variant', 'roadClass', 'environment', 'trafficDirection', 'trafficType', 'transportScope', 'mobileExposureMode', 'operatingZone', 'lightingType', 'vehicleCountFrom', 'vehicleCountTo', 'dailyPassengersFrom', 'dailyPassengersTo', 'pixelPitchFrom', 'pixelPitchTo', 'brightnessFrom', 'brightnessTo', 'campaignDurationFrom', 'campaignDurationTo', 'locationTier']
   const hasExtraFilters = Object.keys(route.query).some(k => filterQueryKeys.includes(k))
 
