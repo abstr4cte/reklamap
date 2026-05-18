@@ -22,6 +22,12 @@ Zgłoszenie z Google Search Console: „Błąd serwera (5xx)", 31 stron, pierwsz
 | 3 | Weryfikacja limitu/błędów po stronie dostawcy | dashboard prerender.io (konto, quota, error rate, cache hit) | użytkownik | 🟠 | TODO — sprawdzić czy 5xx to quota czy timeout renderu |
 | 4 | Crawl surface za duży — każda cienka kombinacja typ×miasto to osobny render | `noindex` na cienkich kombinacjach (powiązane z poz. #4 audytu 2026-05-12) | dev | 🟡 | TODO — mniej URL-i do renderu = mniej spalonego limitu |
 
+**ROZSTRZYGNIĘCIE 2026-05-18 (log produkcyjny):** `prerender-proxy.php` dochodzi, ale prerender.io oddaje **`HTTP 429 | Size 0` na każdy request bota** (Googlebot/AdsBot/Bingbot, cały dzień) — **trial prerender.io wygasł**, nie timeout. Dodatkowo log nie ma kolumny `Served:` → wcześniejszy deploy fixu proxy nie wszedł na produkcję. Decyzja: zamiast naprawiać deploy proxy / stawiać self-host — **najprostsza droga: całkowite wyłączenie prerendera**.
+
+| # | Rozwiązanie finalne | Plik | Status |
+|---|---|---|---|
+| 5 | Zakomentowany blok przekierowania botów do `prerender-proxy.php` — boty dostają ten sam SPA (200) co użytkownik, Googlebot renderuje JS sam. Zero PHP/Node/cache do utrzymania, zero kosztu, źródło 429 znika trwale. `prerender-proxy.php` zostaje w repo (martwy) na wypadek przyszłego self-hostu | `frontend/public/.htaccess`, `frontend/dist/.htaccess` (blok Prerender zakomentowany) | ✅ kod 2026-05-18. Deploy = wgranie samego `.htaccess` (czytany live, bez restartu lsphp) |
+
 **Niuans poz. 2:** flip następuje przy pierwszym realnym `title`. Strony data-driven ustawiają `seoOptions` w watcherze po API (np. `AdDetailPage` na `[ad, similarAds]`) → snapshot z prawdziwą treścią. Gdyby któraś strona ustawiała generyczny title przed danymi — snapshot byłby minimalnie wczesny, ale i tak 200 z poprawnym meta (nieporównywalnie lepsze niż 5xx). Jeśli GSC pokaże ubogie snapshoty — dociążyć per-stronę.
 
 ---

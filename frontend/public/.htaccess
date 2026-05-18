@@ -58,11 +58,14 @@
   RewriteRule ^ogloszenia/?$ /powierzchnie-reklamowe [R=301,L]
   RewriteRule ^ogloszenie/([^/]+)/([^/]+)/([0-9]+)/?$ /powierzchnia-reklamowa/inne/$1/$2-$3 [R=301,L]
 
-  # Prerender.io — proxy bot requests via PHP (mod_proxy not required)
-  RewriteCond %{HTTP_USER_AGENT} googlebot|adsbot-google|google-inspectiontool|bingbot|yandex|baiduspider|twitterbot|facebookexternalhit|facebot|rogerbot|linkedinbot|embedly|showyoubot|outbrain|pinterestbot|slackbot|vkShare|W3C_Validator|whatsapp|redditbot|applebot|duckduckbot [NC]
-  RewriteCond %{REQUEST_URI} !\.(js|css|xml|less|png|jpg|jpeg|gif|pdf|txt|ico|zip|mp3|mp4|webm|woff|woff2|ttf|svg|webp) [NC]
-  RewriteCond %{REQUEST_URI} !^/prerender-proxy\.php
-  RewriteRule ^(.*)$ /prerender-proxy.php?url=https://reklamap.pl/$1 [L,QSA]
+  # Prerender WYŁĄCZONY 2026-05-18 — prerender.io trial wygasł (429 na każdy request
+  # bota => deindeks w GSC). Boty dostają teraz ten sam SPA co użytkownik (200);
+  # Googlebot renderuje JS samodzielnie. Aby przywrócić prerender (self-host),
+  # odkomentuj poniższe i ustaw $prerenderUrl w prerender-proxy.php na 127.0.0.1.
+  # RewriteCond %{HTTP_USER_AGENT} googlebot|adsbot-google|google-inspectiontool|bingbot|yandex|baiduspider|twitterbot|facebookexternalhit|facebot|rogerbot|linkedinbot|embedly|showyoubot|outbrain|pinterestbot|slackbot|vkShare|W3C_Validator|whatsapp|redditbot|applebot|duckduckbot [NC]
+  # RewriteCond %{REQUEST_URI} !\.(js|css|xml|less|png|jpg|jpeg|gif|pdf|txt|ico|zip|mp3|mp4|webm|woff|woff2|ttf|svg|webp) [NC]
+  # RewriteCond %{REQUEST_URI} !^/prerender-proxy\.php
+  # RewriteRule ^(.*)$ /prerender-proxy.php?url=https://reklamap.pl/$1 [L,QSA]
 
   # SPA fallback
   RewriteRule ^index\.html$ - [L]
