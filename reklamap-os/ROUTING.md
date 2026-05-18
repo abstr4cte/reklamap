@@ -55,6 +55,7 @@ Jako Dyrektor masz prawo sugerować zmiany w zespole. Jeśli zauważysz, że:
    - `status/BRUDNOPIS_SEO.md` — aktualny brudnopis dla Pisarza (czy jest wypełniony?)
    - `status/SALES_LOG.md` — wyniki rozmów sprzedażowych Marketera
    - `status/ANALYTICS_LOG.md` — historia przeglądów danych i briefów Analityka (czy jest świeży brief dla Stratega?)
+   - `status/SEO_TECH_AUDIT.md` — log audytów technicznych SEO Architekta (co naprawione, co czeka na deploy)
 3. **ŚCIEŻKI PLIKÓW:** Twoja baza to katalog `reklamap-os/`. Korzystaj z narzędzi MCP, aby czytać pliki z subfolderów `agents/`, `blog/`, `docs/` i `status/`.
 
 ---

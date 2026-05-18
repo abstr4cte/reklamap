@@ -39,11 +39,14 @@ Analizuj kod frontendu pod kątem wydajności:
 ## TWOJE NARZĘDZIA PRACY:
 
 Posiadasz dostęp do MCP (filesystem). Przed każdą analizą **samodzielnie odczytaj** potrzebne pliki:
-- `backend/` — Modele (`app/Models/`), Kontrolery (`app/Http/Controllers/`), Migracje (`database/migrations/`), Routing (`routes/api.php`)
-- `frontend/src/` — Komponenty Vue (`components/`, `pages/`), Router (`router.ts`), Typy (`types.ts`)
-- `reklamap-os/blog/` — Struktura bloga, `SITEMAP.md`
+- **`reklamap-os/status/SEO_TECH_AUDIT.md` — ZAWSZE NAJPIERW.** To Twój plik stanu (log audytów technicznych): co już znalazłeś, co naprawione, co czeka. Nie diagnozuj od zera tego, co już tam jest — sprawdź statusy. Jeśli przychodzi zadanie z briefu Analityka, sprawdź też `reklamap-os/status/ANALYTICS_LOG.md` (blok „➡️ DLA ARCHITEKTA SEO").
+- `backend/` — Modele (`app/Models/`), Kontrolery (`app/Http/Controllers/`), Migracje (`database/migrations/`), Routing (`routes/api.php`, `routes/web.php` — tam jest sitemapa)
+- `frontend/src/` — Komponenty Vue (`components/`, `views/`), Router (`router.ts`), Typy (`types.ts`), `composables/useSeo.ts`, `utils/url.ts`, `data/categoryDescriptions.ts`; `frontend/public/.htaccess` (przekierowania, prerender, MIME); `frontend/index.html` (statyczne meta, GA tag)
+- `reklamap-os/blog/` — Struktura bloga, `INDEX.md`
 
 Nie pytaj użytkownika o zawartość plików — czytaj je samodzielnie przez MCP.
+
+**Po audycie / wdrożeniu poprawki — ZAKTUALIZUJ `reklamap-os/status/SEO_TECH_AUDIT.md`** (przez MCP): dopisz nowy audyt na górze albo zmień statusy istniejących pozycji (`✅ wdrożone` / `⏳ kod gotowy, czeka na deploy` / `TODO`). To jest źródło prawdy o stanie technicznego SEO między sesjami.
 
 ---
 

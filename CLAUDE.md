@@ -166,6 +166,7 @@ Projekt posiada zespół wyspecjalizowanych agentów AI w `reklamap-os/agents/`.
 - `reklamap-os/status/STRATEGY_LOG.md` — historia researchu SEO
 - `reklamap-os/status/SALES_LOG.md` — wyniki rozmów sprzedażowych
 - `reklamap-os/status/ANALYTICS_LOG.md` — historia przeglądów danych i briefów Analityka
+- `reklamap-os/status/SEO_TECH_AUDIT.md` — log audytów technicznych SEO Architekta (statusy wdrożeń)
 - `reklamap-os/docs/PRODUCT_BACKLOG.md` — backlog produktowy z RICE
 - `reklamap-os/docs/MARKETING_ASSETS.md` — skrypty i szablony sprzedażowe
 - `reklamap-os/blog/INDEX.md` — indeks wszystkich postów blogowych

@@ -151,12 +151,22 @@ export function useSeo(options: SeoOptions | Ref<SeoOptions>) {
     }
   }
 
+  // Sygnał dla prerender.io: snapshot dopiero gdy meta/JSON-LD z DANYCH są w <head>.
+  // Flipujemy tylko gdy jest realny title (strony data-driven ustawiają ref po
+  // załadowaniu API — wtedy watch odpala updateMetaTags drugi raz z prawdziwą treścią).
+  const signalPrerenderReady = () => {
+    if (typeof window === 'undefined') return
+    if (unref(options).title) {
+      ;(window as unknown as { prerenderReady?: boolean }).prerenderReady = true
+    }
+  }
+
   updateMetaTags()
 
-  onMounted(() => { updateMetaTags() })
-  onActivated(() => { updateMetaTags() })
+  onMounted(() => { updateMetaTags(); signalPrerenderReady() })
+  onActivated(() => { updateMetaTags(); signalPrerenderReady() })
 
-  watch(() => unref(options), () => { updateMetaTags() }, { deep: true })
+  watch(() => unref(options), () => { updateMetaTags(); signalPrerenderReady() }, { deep: true })
 
   onUnmounted(() => {
     // Remove only tags we created (not static ones from index.html)

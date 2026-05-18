@@ -26,9 +26,17 @@ curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
 $response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlError = curl_error($ch);
 curl_close($ch);
+
+// Prerender uznajemy za udany tylko przy 2xx/3xx z niepustą treścią.
+// Wszystko inne (5xx od prerender.io, timeout curl => httpCode 0, pusta odpowiedź)
+// NIE może wyciekać do Googlebota jako 5xx — to powoduje deindeks i utratę pozycji.
+$prerenderOk = $response !== false
+    && $response !== ''
+    && $httpCode >= 200
+    && $httpCode < 400;
 
 $logLine = date('Y-m-d H:i:s') . ' | IP: ' . ($_SERVER['REMOTE_ADDR'] ?? '-')
     . ' | UA: ' . ($_SERVER['HTTP_USER_AGENT'] ?? '-')
@@ -36,9 +44,27 @@ $logLine = date('Y-m-d H:i:s') . ' | IP: ' . ($_SERVER['REMOTE_ADDR'] ?? '-')
     . ' | HTTP: ' . $httpCode
     . ' | Size: ' . strlen($response ?: '')
     . ' | Err: ' . ($curlError ?: 'none')
+    . ' | Served: ' . ($prerenderOk ? 'prerender' : 'fallback-spa')
     . "\n";
 @file_put_contents('/tmp/prerender_debug.log', $logLine, FILE_APPEND | LOCK_EX);
 
-http_response_code($httpCode);
 header('Content-Type: text/html; charset=UTF-8');
-echo $response;
+
+if ($prerenderOk) {
+    http_response_code($httpCode);
+    echo $response;
+    exit;
+}
+
+// Graceful fallback: oddaj statyczny SPA z kodem 200.
+// Słabsze SEO niż prerender, ale Google dostaje działającą stronę zamiast 5xx.
+$fallback = @file_get_contents(__DIR__ . '/index.html');
+if ($fallback !== false) {
+    http_response_code(200);
+    echo $fallback;
+} else {
+    // Ostateczność: 503 z Retry-After (a NIE goły 5xx) — sygnał „spróbuj później",
+    // nie „strona martwa". W praktyce nieosiągalne, bo index.html jest obok.
+    http_response_code(503);
+    header('Retry-After: 3600');
+}

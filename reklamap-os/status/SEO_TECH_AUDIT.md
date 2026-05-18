@@ -4,6 +4,28 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 
 ---
 
+## 2026-05-18 — INCYDENT: 5xx w GSC na 31 URL-ach (od 16.05.2026)
+
+Zgłoszenie z Google Search Console: „Błąd serwera (5xx)", 31 stron, pierwsze wykrycie 16.05.2026, pełny przekrój (home, blog, kategorie, ogłoszenia). Użytkownik sprawdził link w przeglądarce — działał.
+
+| # | Problem | Plik / miejsce | Kto | Wysiłek | Priorytet | Status |
+|---|---|---|---|---|---|---|
+| 1 | `prerender-proxy.php` ślepo przekazywał kod odpowiedzi prerender.io do Googlebota (`http_response_code($httpCode)`, linia 42). 5xx/timeout prerender.io (a `$httpCode=0` przy padzie curl) → Googlebot dostawał 5xx, choć SPA dla ludzi działa (ścieżka bot vs człowiek rozdzielona w `.htaccess:62-65` po User-Agent) | `frontend/public/prerender-proxy.php`, `frontend/dist/prerender-proxy.php` | dev | ~30 min | 🔴 | ✅ kod wdrożony 2026-05-18 — graceful fallback: przy braku 2xx/3xx lub pustej odpowiedzi proxy serwuje lokalny `index.html` z kodem 200 (nigdy 5xx do bota); ostateczność = 503 + `Retry-After` zamiast gołego 5xx; log dopisuje `Served: prerender|fallback-spa`. **Pozostało: deploy `dist/` na produkcję + w GSC „Sprawdź poprawność" na raporcie 5xx** |
+
+**Weryfikacja źródła:** wbudowany log proxy — `https://reklamap.pl/prerender-proxy.php?showlog=rm2024debug` — szukać `HTTP: 5xx` / `HTTP: 0` z datami od ~16.05. Po deployu te same wpisy powinny mieć `Served: fallback-spa` (200) zamiast propagacji 5xx.
+
+**Działanie następcze:** ustalić *dlaczego* prerender.io zwraca 5xx (limit konta / timeout renderu ciężkiego SPA z mapą). Fallback ratuje indeks, ale prerender daje lepsze SEO niż surowy SPA — to obejście, nie rozwiązanie przyczyny.
+
+| # | Lek na przyczynę | Plik / miejsce | Kto | Priorytet | Status |
+|---|---|---|---|---|---|
+| 2 | **Brak `window.prerenderReady`** w całym froncie → prerender.io leci na pełny timeout na ciężkich stronach (mapa Leaflet + async API) → 504/5xx + spalanie limitu konta przy każdym crawlu | `frontend/index.html` (init `=false`), `frontend/src/composables/useSeo.ts` (`signalPrerenderReady()` po `updateMetaTags`, flip `=true` gdy jest realny title) | dev | 🔴 | ✅ kod wdrożony 2026-05-18, `vue-tsc` czysto. Czeka na deploy `dist/` |
+| 3 | Weryfikacja limitu/błędów po stronie dostawcy | dashboard prerender.io (konto, quota, error rate, cache hit) | użytkownik | 🟠 | TODO — sprawdzić czy 5xx to quota czy timeout renderu |
+| 4 | Crawl surface za duży — każda cienka kombinacja typ×miasto to osobny render | `noindex` na cienkich kombinacjach (powiązane z poz. #4 audytu 2026-05-12) | dev | 🟡 | TODO — mniej URL-i do renderu = mniej spalonego limitu |
+
+**Niuans poz. 2:** flip następuje przy pierwszym realnym `title`. Strony data-driven ustawiają `seoOptions` w watcherze po API (np. `AdDetailPage` na `[ad, similarAds]`) → snapshot z prawdziwą treścią. Gdyby któraś strona ustawiała generyczny title przed danymi — snapshot byłby minimalnie wczesny, ale i tak 200 z poprawnym meta (nieporównywalnie lepsze niż 5xx). Jeśli GSC pokaże ubogie snapshoty — dociążyć per-stronę.
+
+---
+
 ## 2026-05-12 — audyt na bazie pierwszego przeglądu Analityka (`ANALYTICS_LOG.md`)
 
 Źródło: dane GSC/GA4 z 14 kwi–11 maj 2026 + przegląd kodu (`useSeo.ts`, `analytics.ts`, `index.html`, `AdDetailPage.vue`, `ListingsPage.vue`, `categoryDescriptions.ts`).
@@ -11,7 +33,7 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 | # | Problem | Plik / miejsce | Kto | Wysiłek | Priorytet | Status |
 |---|---|---|---|---|---|---|
 | 1 | Zdarzenia kontaktu zdefiniowane w `analytics.ts`, ale nie wpięte w widok ogłoszenia | `frontend/src/views/AdDetailPage.vue`, `frontend/src/components/detail/AdContactForm.vue` | dev | ~1 h | 🔴 | ✅ kod wdrożony 2026-05-12 (viewAd, clickPhone, sendAdMessage). Pozostało: deploy + oznaczyć kluczowe zdarzenia w GA4 Admin |
-| 2 | Duplikacja www vs non-www — obie wersje URL odpowiadają 200, GSC indeksuje osobno | panel hostingu (histido) → „Wymuś przekierowanie"; `frontend/src/utils/url.ts` (już OK: `appUrl = https://reklamap.pl`) | użytkownik | ~5 min | 🟠 | ⏳ rozwiązanie wskazane: w panelu histido, „Modyfikuj reklamap.pl" → „Wymuś przekierowanie" → wybrać **`reklamap.pl`**. Czeka na kliknięcie + sprawdzenie `VITE_APP_URL`/`APP_URL` na prod = bez www |
+| 2 | Duplikacja www vs non-www — Google miał zaindeksowane wersje `www` z kodem 200 | `frontend/public/.htaccess` (już zawiera 301 `www`→non-www, dodane ~2026-05-07); `frontend/src/utils/url.ts` (`appUrl = https://reklamap.pl`); `backend/.env` (`FRONTEND_URL=https://reklamap.pl` ✓) | — | — | 🟠→✅ | ✅ FAKTYCZNIE ZAŁATWIONE — `.htaccess` robi 301 `www.reklamap.pl/*` → `reklamap.pl/*`; GSC potwierdza (URL-e `www` w raporcie indeksowania mają status „Strona zawiera przekierowanie"). Krok w panelu histido („Wymuś przekierowanie") — ZBĘDNY, redundantny. Pozostało tylko czekać, aż Google skonsoliduje stare wpisy `www` (200) na wersję kanoniczną — dzieje się automatycznie. |
 | 3 | `<title>`/`<meta description>` strony ogłoszenia budowane z surowego tytułu wystawcy (często bełkot) zamiast szablonu z parametrów | `frontend/src/views/AdDetailPage.vue` (watcher `[ad, similarAds]`, `seoOptions`) | dev | ~0.5 dnia | 🟡 | ✅ kod wdrożony 2026-05-12 — title `{Typ} {Miasto} – wynajem \| ReklaMap`, description z typu/miasta/lokalizacji/wymiarów/ceny + CTA; surowy tytuł wystawcy zostaje jako `<h1>`. Czeka na deploy |
 | 4 | Strony typ+miasto bez treści per-miasto → thin content, fallback „X ofert" | `frontend/src/data/categoryDescriptions.ts`, `frontend/src/views/ListingsPage.vue` | Pisarz + dev | ~1–2 dni | 🟡 | ✅ kod wdrożony 2026-05-12 — (1) Pisarz dodał 10 opisów typ+miasto (citylighty: olsztyn/gdynia/bydgoszcz; transport: krakow/poznan; mobilna: warszawa/krakow/bydgoszcz; totemy: poznan; banery: lodz) + opis miasta Olsztyn, zweryfikowane przez Korektora; (2) `ListingsPage.vue` — dla kombinacji typ×miasto bez ręcznego wpisu syntezuje unikalny opis (pierwsze zdanie opisu typu + pierwsze zdanie opisu miasta + zachęta) zamiast pokazywać generyczny opis typu; `<title>`/`<meta description>` strony typ×miasto są teraz miastowo-specyficzne (`{Typ} {Miasto} – wynajem \| ReklaMap`) zamiast generycznego title typu. Typecheck + testy czyste. Pozostało (opcjonalnie): wzmocnić istniejące opisy `billboardy/[miasto]` które rankują 23–36. Czeka na deploy |
 | 5 | GA Measurement ID na sztywno w `index.html`; brak filtra ruchu wewnętrznego w GA4 | `frontend/index.html`; GA4 Admin | devops | ~15 min | ⚪ | TODO |

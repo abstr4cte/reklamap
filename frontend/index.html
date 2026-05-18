@@ -5,6 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- Prerender.io: blokuj snapshot dopóki SPA nie wstrzyknie meta/JSON-LD z danych
+       (useSeo flipuje to na true po updateMetaTags). Bez tego prerender.io leci na
+       pełny timeout na ciężkich stronach z mapą => 504/5xx u Googlebota. -->
+  <script>window.prerenderReady = false;</script>
+
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
