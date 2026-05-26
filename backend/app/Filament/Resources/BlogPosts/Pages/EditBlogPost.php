@@ -29,6 +29,17 @@ class EditBlogPost extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data['user_id'] = auth()->id();
+
+        // Pierwsze przejście draft → published ustawia realną datę publikacji,
+        // chyba że administrator podał własną (backdate). Kolejne edycje
+        // opublikowanego wpisu nie ruszają daty.
+        $wasPublished = $this->record->status === 'published';
+        $willBePublished = ($data['status'] ?? null) === 'published';
+
+        if (!$wasPublished && $willBePublished && empty($data['published_at'])) {
+            $data['published_at'] = now();
+        }
+
         return $data;
     }
 

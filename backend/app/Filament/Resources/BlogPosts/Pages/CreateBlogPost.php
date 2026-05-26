@@ -15,6 +15,13 @@ class CreateBlogPost extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['user_id'] = auth()->id();
+
+        // Ustaw datę publikacji w momencie faktycznego opublikowania,
+        // chyba że administrator podał własną (backdate).
+        if (($data['status'] ?? null) === 'published' && empty($data['published_at'])) {
+            $data['published_at'] = now();
+        }
+
         return $data;
     }
 

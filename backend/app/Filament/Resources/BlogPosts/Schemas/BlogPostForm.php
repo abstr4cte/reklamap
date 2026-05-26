@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BlogPosts\Schemas;
 
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
@@ -89,6 +90,12 @@ class BlogPostForm
                         $state === null ? true : $state === 'published'
                     ))
                     ->dehydrateStateUsing(fn ($state) => $state ? 'published' : 'draft'),
+                DateTimePicker::make('published_at')
+                    ->label('Data publikacji')
+                    ->helperText('Zostaw puste — ustawi się automatycznie przy pierwszej publikacji. Wypełnij, aby nadać własną datę (np. backdate).')
+                    ->seconds(false)
+                    ->native(false)
+                    ->nullable(),
                 FileUpload::make('image')
                     ->label('Obrazek')
                     ->image()

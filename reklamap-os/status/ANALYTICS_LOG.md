@@ -5,6 +5,35 @@ Najnowszy wpis na górze. Nie nadpisuj — dopisuj.
 
 ---
 
+## 2026-05-25 — brief uzupełniający (bez świeżych eksportów)
+
+**Dane wejściowe:** brak nowych eksportów (ostatni przegląd 13 dni temu — 12.05). Analiza oparta na pozostałych, niewykorzystanych sygnałach z briefu 12.05 + audyt luk w `blog/INDEX.md` i `STRATEGY_LOG.md`.
+
+**Powód uzupełnienia:** user zlecił 2-3 nowe artykuły. Pełny refresh danych można zrobić, gdy będzie deploy zdarzeń kontaktu + UTM-y na outreachu (wtedy GSC/GA4 dadzą jakościowo nowe info). Na teraz wystarczą sygnały z 12.05, które nie zostały przerobione na blog.
+
+### Top wnioski (uzupełnienie do 12.05)
+1. **Olsztyn = mocny sygnał miejski, brak artykułu lokalizacyjnego.** `reklama citylight olsztyn` poz 6.8 / 37 impr (3. najmocniejsza fraza miejska po Poznaniu i Bydgoszczy). Strona kategorii dostała opis, ale silos `lokalizacje` nie ma `reklama-outdoor-olsztyn`. To pierwsze "średnie miasto" z potwierdzonym popytem — naturalne rozszerzenie silosu po pokryciu G8.
+2. **Białe plamy cenowe dla LED.** `citylighty cena` (poz 10.4) wzmocnione refreshem `citylight-reklama` 12.05. Analogicznej, dedykowanej treści cenowej brakuje dla LED: mamy `telebim-ekran-led-reklama` (trendy/koncepcyjny), nie cenowy. Frazy `ekran led cena`, `reklama led cena`, `telebim cena` — do walidacji przez Stratega (intencja zakupowa, prawdopodobnie wisienki w GSC po 30+ dniach).
+3. **DOOH/programmatic — dojrzało do walidacji.** Termin z `STRATEGY_LOG.md` (~26.05) zbiega się z dzisiejszym zleceniem. Silos `trendy` ma 3 artykuły — głodny. Strateg robi rewalidację Ahrefsem.
+
+### ➡️ DLA STRATEGA (brief — 3 tematy do produkcji, wybrane przez foundera 2026-05-25)
+| Priorytet | Fraza / temat | Potencjał (impr / poz) | Silos | Akcja |
+|---|---|---|---|---|
+| 1 | `reklama outdoor olsztyn` (+ frazy citylight/billboard Olsztyn) | wisienka GSC 12.05: `reklama citylight olsztyn` poz 6.8 / 37 impr | lokalizacje | Nowy artykuł `reklama-outdoor-olsztyn`. Pomiń ATP/Ahrefs (geo-frazy), idź w Perplexity: ceny per dzielnica, MZK Olsztyn (cennik tramwaj+autobus), uchwała krajobrazowa (czy jest?), populacja, ruch turystyczny (Mazury), największe ulice/centra handlowe. Wzorzec: artykuł Łódź/Katowice. |
+| 2 | `ekran led cena` / `reklama led cena` / `telebim cena` | sygnał pośredni: `ekrany led kraków/warszawa` poz 13–19 (briefem 12.05); brak danych volume dla fraz cenowych | poradniki | Nowy artykuł — sugerowany slug `ekran-led-cena` (lub po walidacji `reklama-led-cena`). Walidacja Ahrefs: która z fraz ma >100 vol i Easy KD. Perplexity: cennik wynajmu LED (małe/średnie/duże), CPM digital vs static, formaty (mobile LED, citylight digital, telebim stadionowy), koszty produkcji spotu, formalności (>2,5 m² pozwolenie). Linki wewnętrzne: `telebim-ekran-led-reklama` (trendy), `citylight-reklama` (cena CL digital), `ile-kosztuje-reklama-outdoor` (pillar). |
+| 3 | `dooh` / `programmatic outdoor` / `programmatic ooh` | z kolejki Stratega (termin ~26.05), brak danych GSC | trendy | Rewalidacja Ahrefs — jeśli wszystkie frazy <100 vol, piszemy pod topical authority (silos trendy = 3 art.). Perplexity: udział DOOH w rynku PL 2025/2026, programmatic OOH definicja, ekosystem (Hivestack/Vistar/Broadsign), case studies, prognoza wzrostu, audience-based buying, modele transakcyjne (private deal / open exchange). |
+
+> Uwaga dla Stratega: temat #3 wymaga walidacji Ahrefs (już zaplanowanej w kolejce). Tematy #1 i #2 są zatwierdzone — przy #2 walidacja Ahrefs decyduje tylko o ostatecznym wyborze slug-a/keyworda głównego.
+
+### ➡️ DLA UŻYTKOWNIKA
+Bez nowości — kanały bez zmian względem 12.05 (faza PODAŻY, Direct/outreach to wciąż główny driver). Pełny przegląd po deployach: zdarzeń kontaktu (`contact_phone_click`/`contact_form_submit`) i lejka per krok `add_listing_step_*` — wtedy będzie sens uruchomić nowe eksporty GA4.
+
+### Status wdrożenia
+- [ ] Pełny przegląd danych (stats.php + GSC + GA4) — odłożony do momentu, aż na produkcji będą zdarzenia kontaktu i lejek per krok (≥7 dni od deployu)
+- [→] Brief 3 tematów przekazany Strategowi (A + B + C)
+
+---
+
 ## 2026-05-12 — pierwszy przegląd
 
 **Dane wejściowe:**

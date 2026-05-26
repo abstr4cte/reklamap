@@ -31,5 +31,8 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 | 2026-05-05 10:55 | reklama-outdoor-lodz | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260505105504_reklama-outdoor-lodz.md) |
 | 2026-05-05 11:36 | oplata-reklamowa | prawo-i-regulacje | ✅ ZRECENZOWANY | [Link](posts/20260505113610_oplata-reklamowa.md) |
 | 2026-05-05 11:47 | reklama-outdoor-katowice | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260505114741_reklama-outdoor-katowice.md) |
+| 2026-05-25 22:01 | reklama-outdoor-olsztyn | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260525220136_reklama-outdoor-olsztyn.md) |
+| 2026-05-25 22:44 | reklama-outdoor-bydgoszcz | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260525224446_reklama-outdoor-bydgoszcz.md) |
+| 2026-05-25 23:22 | dooh-reklama-programatyczna | trendy | ✅ ZRECENZOWANY | [Link](posts/20260525232247_dooh-reklama-programatyczna.md) |
 | **Kategoria: /blog/prawo-i-regulacje** | | | | |
 | 2026-04-19 16:23 | uchwala-krajobrazowa-reklama | prawo-i-regulacje | ✅ ZRECENZOWANY | [Link](posts/20260419162332_uchwala-krajobrazowa-reklama.md) |
