@@ -58,6 +58,11 @@
   RewriteRule ^ogloszenia/?$ /powierzchnie-reklamowe [R=301,L]
   RewriteRule ^ogloszenie/([^/]+)/([^/]+)/([0-9]+)/?$ /powierzchnia-reklamowa/inne/$1/$2-$3 [R=301,L]
 
+  # Sitemapa jest generowana dynamicznie przez backend (api.reklamap.pl) z realnym
+  # lastmod. Bez tego 301 SPA-fallback poniżej łapie /sitemap.xml i oddaje botowi
+  # index.html (text/html) zamiast XML — Google traci kanał discovery/refresh.
+  RewriteRule ^sitemap\.xml$ https://api.reklamap.pl/sitemap.xml [R=301,L]
+
   # Prerender WYŁĄCZONY 2026-05-18 — prerender.io trial wygasł (429 na każdy request
   # bota => deindeks w GSC). Boty dostają teraz ten sam SPA co użytkownik (200);
   # Googlebot renderuje JS samodzielnie. Aby przywrócić prerender (self-host),

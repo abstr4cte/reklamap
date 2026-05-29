@@ -5,6 +5,62 @@ Najnowszy wpis na górze. Nie nadpisuj — dopisuj.
 
 ---
 
+## 2026-05-29 — pełny przegląd (pierwszy z danymi konwersji)
+
+**Dane wejściowe:**
+- `stats-2026-05-29.md` — 30 dni, tylko realne ogłoszenia (seed wykluczony)
+- GSC: `imports/gsc-2026-05-29/` — Zapytania (≈230 fraz), Strony (124 URL), Wykres dzienny, Kraje, Urządzenia. Zakres: **ostatnie 3 miesiące** (bez kolumny porównania okresów, ale Wykres daje trend dzienny)
+- GA4: `imports/ga4-2026-05-29/` — Pozyskiwanie ruchu (kanały), Zdarzenia, Strony i ekrany. Zakres: **2026-03-01 – 2026-05-29** (90 dni)
+
+**Czego zabrakło:** brak rozkładu Referral po source/medium (nie wiadomo, skąd 10 sesji referral), brak eksportu ogłoszeń (nie powiązano konwersji z typem nośnika), GA4 zagregowane za 90 dni (bez trendu tygodniowego, ale to nieistotne — patrz niżej).
+
+**Faza projektu:** nadal **PODAŻ** (cold-calling do agencji/sprzedawców OOH). Founder potwierdził: **ostatni tydzień bez telefonów = zastój** w pozyskiwaniu (to tłumaczy ewentualny spadek Direct w ostatnim tygodniu, NIE jest to problem kanału). Reklama dla reklamodawców (popyt) jeszcze nie ruszyła.
+
+### Top wnioski
+1. **🚨 SEO LECI W DÓŁ OD ~18.05 — najpewniej skutek wyłączenia prerendera.** `Wykres.csv`: wyświetlenia 08.05 = 347, szczyt 18.05 = 389, potem zjazd do ~80/dzień (27.05); śr. pozycja z ~24 → ~32. Spadek ~4–5× impresji + pogorszenie pozycji tuż po dacie padu prerender.io (18.05, [[project_prerender_disabled]]). Boty dostają goły SPA → Google przestaje renderować/wypada ze SERP. **To unieważnia sens pisania nowych treści, dopóki nie przywrócimy renderowania dla botów.** Priorytet #1.
+2. **Marka i Direct ciągną wszystko; SEO non-brand prawie nie konwertuje.** GSC: `reklamap` 77/93 klików (CTR 83%) — reszta klików to pojedyncze sztuki. GA4: Direct 483 sesje (73%), 21 z 22 kluczowych zdarzeń, 210 s/sesję; Organic Search 153 sesje / 90 dni, ale **1 kluczowe zdarzenie**, 92 s/sesję. Silnik = telefony foundera, nie organic.
+3. **🟢 Pierwsze realne dane popytowe — mimo braku akcji reklamowej.** Zdarzenia kontaktu wreszcie fire'ują: `contact_phone_click` 16 (4 userów), `contact_form_submit` 3 (2), `view_item` 122 (29). ~6/29 oglądających ogłoszenie podjęło kontakt (~20%). Liczby mikre, ale mechanizm pomiaru działa i jest wczesny sygnał popytu.
+4. **⚠️ Zdarzenia per-krok lejka są BEZUŻYTECZNE.** `add_listing_step_view` 152 zdarzeń / **5 userów**, `add_listing_step_complete` 118 / **3 userów** — przy 49, którzy zaczęli (`add_listing_start`). Albo deploy świeższy niż 7 dni, albo eventy re-fire'ują (30–39 zdarzeń/usera). Najważniejsza dźwignia z 12.05 (diagnoza przecieku lejka) wciąż zablokowana danymi. → dev/Biznesowy.
+5. **Lejek „dodaj ogłoszenie" zdrowy:** 49 userów start → 28 sukces = **57%** (user-level; event 279→127 = 45%). Lepiej niż 34% z 12.05 (inne zakresy, ale kierunek dodatni). `/dodaj-powierzchnie-reklamowa`: 612 s śr. zaangażowania, 22 kluczowe zdarzenia — strona-silnik podaży.
+6. **Blog martwy w zaangażowaniu:** najlepsze artykuły 1–5 wyświetleń, czas 0,3–5,6 s (bounce) albo n=1. `billboard-reklama` mimo 348 impr w GSC (poz 12) → 2 kliki, 0,3 s. Częściowo skutek prerendera, ale blog dziś nie dowozi.
+7. **Podaż rośnie:** 63 realne ogłoszenia, +56 w 30 dni, +13 w 7 dni (mimo zastoju w telefonach). 5 109 odsłon/30 dni, 1 zapytanie przez formularz (norma fazy podaży).
+
+### ➡️ DLA STRATEGA (brief — po przywróceniu prerendera; sort wg potencjał/wysiłek)
+| Priorytet | Fraza / temat | Potencjał (impr / poz, GSC 3 mies.) | Silos | Akcja |
+|---|---|---|---|---|
+| 1 | **ekran led cena / reklama led cena** + miasta LED | `reklama na ekranach led kraków` 41/14, `...warszawa` 39/15, `ekrany led kraków` 38/19; białe plamy cenowe `reklama led cena` poz 40, `ekrany reklamowe led cena` poz 63. Kategoria /ekrany-led: 278 impr GSC + 94 wejścia GA4 / 147 s | poradniki + kategorie | **DOKOŃCZYĆ artykuł `ekran-led-cena`** (briefem 25.05 #2, nigdy nie napisany — dane GSC teraz potwierdzają popyt). Plus rozbudowa kategorii `ekrany-led/krakow` i `ekrany-led/warszawa`. Walidacja Ahrefs: `ekran led cena` vs `reklama led cena`. |
+| 2 | **reklama outdoor Lublin** | BIAŁA PLAMA: `powierzchnie reklamowe lublin` poz **7.7** / 41 impr (wisienka, 0 klików!), `reklama na ekranach led lublin` 23, `reklama na uczelniach lublin` poz 10.7, `citylight lublin` 10. 3 realne ogłoszenia w bazie, BRAK artykułu lokalizacyjnego | lokalizacje | Nowy artykuł `reklama-outdoor-lublin` (wzorzec Łódź/Olsztyn/Bydgoszcz). Pomiń ATP/Ahrefs (geo). Perplexity: ceny per dzielnica, MPK Lublin (trolejbusy!), uchwała krajobrazowa, **angle uczelniany** (`reklama na uczelniach lublin` poz 10.7 — UMCS/KUL, miasto studenckie), demografia. |
+| 3 | **reklama mobilna (przyczepki) — pillar/poradnik** | Klaster popytu: `reklama mobilna bydgoszcz` **104**/16.7, `reklama mobilna kraków` 32/19, `reklama mobilna warszawa` 25/19, kategoria /reklama-mobilna 133 impr. Mamy `reklama-na-samochodzie`, ale brak treści pod mobilne przyczepki/billboardy LED na lawecie | poradniki | Rozbudowa istniejącego `reklama-na-samochodzie` lub nowy artykuł pod przyczepki reklamowe + wzmocnienie kategorii `reklama-mobilna/[miasto]`. Bydgoszcz (104 impr, 0 klików) — sprawdzić, czy artykuł `reklama-outdoor-bydgoszcz` dobrze pokrywa frazę mobilną. |
+| 4 | **totemy reklamowe + miasta** | Wisienki: `totemy reklamowe wrocław` 39/12, `totemy reklamowe poznan` 24/17, `totemy reklamowe katowice` 12/9 | trendy/kategorie | Wzmocnienie kategorii `totemy-reklamowe/[miasto]` + link z artykułu `totem-reklamowy`. Niższy priorytet (mniejsze impresje). |
+
+> Uwaga dla Stratega: temat #1 (`ekran-led-cena`) to dług z briefu 25.05 — był zatwierdzony, ale nie powstał. Dane GSC z 29.05 go potwierdzają mocniej. Sprawdź kolejkę prawno-regulacyjną w STRATEGY_LOG (pozwolenie/zgłoszenie tablicy) — te zostają, ale po LED/Lublin.
+
+### ➡️ DLA UŻYTKOWNIKA (kanały — faza PODAŻY)
+- **Wznów telefony.** Zastój = zatrzymanie jedynego działającego kanału podaży (Direct 73%, 21/22 kluczowych zdarzeń). To nie SEO Cię utrzymuje — to Twoje rozmowy.
+- **UTM-y wciąż niewdrożone** — Direct nadal nierozdzielony (telefony vs prawdziwy direct). Powtórka rekomendacji z 12.05: linki do dzwonionych z `?utm_source=outreach&utm_medium=phone&utm_campaign=ooh-agencje`.
+- **Organic Social = martwy** (7 sesji / 3 s). Nie inwestuj, dopóki nie ma gęstej bazy do pokazania.
+- **Referral 10 sesji — zbadać źródło** (potrzebny eksport GA4 source/medium): jeśli to wartościowa domena branżowa, warto tam być.
+
+### ➡️ DLA ARCHITEKTA SEO
+- **🚨 PRZYWRÓCIĆ PRERENDERING — pilne.** Spadek impresji/pozycji od 18.05 = deindeksacja przez SPA dla botów. Nowy provider / self-host prerender / SSR. To blokuje całe SEO. ([[project_prerender_disabled]])
+- **CTR-owe trupy (dobra pozycja, 0 klików):** `reklama tranzytowa kraków` poz **3.55**, `reklama citylight olsztyn` poz 7.8 / 64 impr, `powierzchnie reklamowe lublin` poz 7.7 / 41 impr, `citylighty warszawa` poz 8.1, `reklama na ekranach led katowice` poz 6.4. Title/description + dopasowanie URL do intencji. (Uwaga: część „0 klików" może być wtórna do deindeksacji — rewalidować po fixie prerendera.)
+- **www vs non-www nadal w danych** (`/powierzchnie-reklamowe/poznan` www poz 5.5 vs non-www poz 10.1; analogicznie lodz, banery). Zweryfikować, czy 301 z 07.05 jest skonsolidowane przez Google.
+- **Osierocone/błędne URL-e bloga w GA4:** `/blog/pozwolenie-na-billboard-jak-uzyskac`, `/blog/rynek-ooh/ooh-vs-digital-porownanie` (artykuł+kategoria spoza INDEX), `/blog/ile-kosztuje-reklama-outdoor` i `/blog/reklama-w-transporcie-publicznym` (bez segmentu kategorii). Sprawdzić 404 / niespójne linkowanie / stare ścieżki w sitemapie.
+
+### ➡️ DLA BIZNESOWEGO
+- **Zdarzenia per-krok lejka nie nadają się do analizy** (3–5 userów). Najważniejsza dźwignia z 12.05 (gdzie przecieka „dodaj ogłoszenie") wciąż zablokowana. Decyzja: zweryfikować implementację (re-fire?) + dać 2–3 tyg. zbierania, zanim B-2 ruszy.
+- **Pierwsze sygnały popytu są** (16 klików w telefon, 3 formularze) mimo braku akcji reklamowej. Punkt decyzyjny: kiedy flip w fazę popytu — ale dopiero po (a) fixie prerendera, (b) gęstszej bazie.
+
+### Status wdrożenia (do weryfikacji przy kolejnym przeglądzie)
+- [ ] **🚨 Przywrócenie prerenderingu** — NOWE, priorytet #1 (Architekt/dev)
+- [ ] **Zdarzenia per-krok lejka** — weryfikacja re-fire + dosbieranie danych (dev/Biznesowy)
+- [ ] **UTM-y na outreachu** — wciąż niezrobione (zadanie usera)
+- [→] **Brief 4 tematów dla Stratega** (LED cena + Lublin + reklama mobilna + totemy)
+- [ ] **GA4: Referral source/medium** — dobrać przy następnym eksporcie
+- [→] **Wznowienie cold-callingu** (user)
+
+---
+
 ## 2026-05-25 — brief uzupełniający (bez świeżych eksportów)
 
 **Dane wejściowe:** brak nowych eksportów (ostatni przegląd 13 dni temu — 12.05). Analiza oparta na pozostałych, niewykorzystanych sygnałach z briefu 12.05 + audyt luk w `blog/INDEX.md` i `STRATEGY_LOG.md`.

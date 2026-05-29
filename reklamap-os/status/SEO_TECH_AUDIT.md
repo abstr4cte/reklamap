@@ -4,6 +4,34 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 
 ---
 
+## 2026-05-29 — audyt na bazie briefu Analityka (spadek ruchu od 18.05)
+
+Źródło: brief Analityka 2026-05-29 (`ANALYTICS_LOG.md` — impresje GSC 389 @18.05 → ~80 @27.05, poz. 24→32) + **żywe testy produkcji** (curl jako Googlebot) + przegląd `frontend/public/.htaccess`, `prerender-proxy.php`, `index.html`, `useSeo.ts`, `backend/routes/web.php`, `frontend/src/config.ts`.
+
+**Ustalona topologia produkcji:** frontend SPA na `reklamap.pl` (docroot = `frontend/dist`), backend Laravel na **`api.reklamap.pl`** (`API_URL=https://api.reklamap.pl/api`). To kluczowe dla #1.
+
+**Korekta hipotezy Analityka:** spadek od 18.05 to NIE „SPA zamiast prerendera" jako główna przyczyna. Wyłączenie prerendera (18.05) było *lekiem* na 5xx 429, nie sprawcą. Realny mix: (a) dogasający efekt deindeksu z incydentu 5xx 16–18.05 (Google zrzuca URL-e tygodniami po błędzie), (b) **martwa sitemapa na kanonicznym hoście** (#1 — nowe), (c) wolniejsze indeksowanie surowego SPA. Nie zgadujemy proporcji — weryfikujemy w GSC (#2).
+
+| # | Problem | Plik / miejsce | Kto | Wysiłek | Priorytet | Status |
+|---|---|---|---|---|---|---|
+| 1 | **Sitemapa na kanonicznym hoście zwraca HTML.** `robots.txt` deklaruje `Sitemap: https://reklamap.pl/sitemap.xml`, ale ten URL łapie SPA-fallback `.htaccess` (`RewriteRule . /index.html`) → bot dostaje `text/html` (4259 B SPA) zamiast XML. Poprawny XML żyje pod `https://api.reklamap.pl/sitemap.xml` (200, `application/xml`, realny `lastmod`). Google nie ma działającej sitemapy → discovery/refresh tylko z crawl | `frontend/public/.htaccess` (przed SPA-fallback) | dev | ~10 min | 🔴 | ⏳ KOD WDROŻONY 2026-05-29 — `301 ^sitemap\.xml$ → api.reklamap.pl/sitemap.xml` dodany w `public/.htaccess` przed SPA-fallback. **Pozostało: deploy `.htaccess` na produkcję (okno wg usera) + GSC → Mapy witryn → przesłać `https://reklamap.pl/sitemap.xml`, sprawdzić „Pobrano pomyślnie"** |
+| 2 | **Diagnoza spadku — zweryfikować w GSC, nie zgadywać.** Rozróżnić: recovery po 5xx vs. niedostateczne renderowanie SPA. Bez tego nie wolno podejmować decyzji o self-host prerenderze | GSC: raport Indeksowanie stron (czy 31 URL-i 5xx wraca?), URL Inspection → „Przetestuj URL na żywo" → karta Renderowany HTML (czy Google widzi treść SPA?), „Sprawdź poprawność" na starym raporcie 5xx | użytkownik | ~30 min | 🔴 | TODO |
+| 3 | **Decyzja o przywróceniu prerendera (self-host).** Infra GOTOWA: `window.prerenderReady=false` w `index.html` (l.11) + `signalPrerenderReady()` w `useSeo.ts` (l.157–169) wpięte; `prerender-proxy.php` w repo (`$prerenderUrl` l.15 = nadal `service.prerender.io` — zmienić na `127.0.0.1:3000`); blok botów w `.htaccess` l.65–68 zakomentowany. Robić TYLKO jeśli #2 pokaże, że Google źle renderuje SPA, albo gdy zabolą social previews/Bing | dedyk hostido (self-host node) + `frontend/public/.htaccess` + `prerender-proxy.php` | dev/devops | ~0.5–1 dzień | 🟠 (warunkowy) | TODO — wg [[feedback_infra_changes_respect_user_timing]]: staging first, okno nocne, plan rollback. NIE robić ad-hoc |
+| 4 | **CTR-trupy z briefu** (`reklama tranzytowa kraków` poz 3.55/0, `reklama citylight olsztyn` 7.8/0, `powierzchnie reklamowe lublin` 7.7/0, `citylighty warszawa` 8.1/0). Title/desc szablonowe wdrożone 2026-05-12 (audyt niżej #3), ale „0 klików" może być wtórne do deindeksu 5xx/SPA | `AdDetailPage.vue`, `categoryDescriptions.ts` | — | — | 🟡 | ⏳ rewalidować PO #1+#2 (nie ruszać, póki nie wiadomo, czy to CTR czy indeksacja) |
+| 5 | **Lokalna higiena:** `frontend/dist/.htaccess` (artefakt builda, maj 18) jest STARSZY niż `public/.htaccess` — brak legacy-301 i węższa lista botów. Produkcja OK (legacy `dodaj-ogloszenie`→301 żywy, czyli prod ma wersję z `public/`), ale lokalny `dist/` myli. Przebudować przy następnym deployu | `frontend/dist/` (rebuild) | dev | ~2 min | ⚪ | TODO — nie wpływa na produkcję |
+
+### Rekomendacja #1 — fix sitemapy (gotowy snippet)
+W `frontend/public/.htaccess`, **przed** blokiem `# SPA fallback` (l.70), dodać 301 na host backendu (Google podąża za przekierowaniem sitemapy):
+```apache
+# Sitemapa generowana dynamicznie przez backend (api.reklamap.pl) — przekieruj,
+# żeby nie złapał jej SPA-fallback i nie oddał HTML zamiast XML.
+RewriteRule ^sitemap\.xml$ https://api.reklamap.pl/sitemap.xml [R=301,L]
+```
+Alternatywa (bez ruszania `.htaccess`): zmienić w `robots.txt` linię `Sitemap:` na `https://api.reklamap.pl/sitemap.xml` i zgłosić ten URL w GSC — działa, jeśli usługa GSC jest typu **Domena** (`reklamap.pl`) albo `api.reklamap.pl` jest osobno zweryfikowana. Wariant z 301 jest pewniejszy (nie zależy od typu usługi). Po wdrożeniu: GSC → Mapy witryn → przesłać `https://reklamap.pl/sitemap.xml`, sprawdzić status „Pobrano pomyślnie".
+**Zysk:** przywrócenie kanału discovery/refresh z `lastmod` → szybsza (re)indeksacja ogłoszeń i kategorii, wsparcie recovery po 5xx.
+
+---
+
 ## 2026-05-18 — INCYDENT: 5xx w GSC na 31 URL-ach (od 16.05.2026)
 
 Zgłoszenie z Google Search Console: „Błąd serwera (5xx)", 31 stron, pierwsze wykrycie 16.05.2026, pełny przekrój (home, blog, kategorie, ogłoszenia). Użytkownik sprawdził link w przeglądarce — działał.
