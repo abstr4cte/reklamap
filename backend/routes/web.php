@@ -87,11 +87,20 @@ Route::get('/sitemap.xml', function () {
             $xml .= '</url>';
         }
 
-        // Strony miast — wszystkie miasta z aktywnymi ogłoszeniami z bazy
-        // (wcześniej hardkodowana top-12, co wykluczało long tail typu Płock, Mszczonów).
+        // Próg cienkiej strony — MUSI być zgodny z THIN_PAGE_THRESHOLD w
+        // frontend/src/views/ListingsPage.vue. Strony miasta / typ×miasto z mniejszą
+        // liczbą aktywnych ogłoszeń front oznacza `noindex`, więc nie wolno ich
+        // reklamować w sitemapie (sprzeczny sygnał + marnowanie crawl budgetu na cienkie
+        // near-duplikaty — potwierdzone w GSC 2026-05-29: 149 URL-i „Wykryta – obecnie
+        // niezindeksowana"). Leaf-ogłoszenia zostają bez progu.
+        $thinPageThreshold = 3;
+
+        // Strony miast — miasta z co najmniej $thinPageThreshold aktywnymi ogłoszeniami
+        // (wcześniej wszystkie, co zalewało indeks cienkimi stronami wiosek z 1 ofertą).
         $citiesAggregated = \App\Models\Advertisement::where('is_active', true)
             ->select('city', \Illuminate\Support\Facades\DB::raw('MAX(updated_at) as lastmod'))
             ->groupBy('city')
+            ->havingRaw('COUNT(*) >= ?', [$thinPageThreshold])
             ->get();
 
         foreach ($citiesAggregated as $row) {
@@ -104,7 +113,8 @@ Route::get('/sitemap.xml', function () {
             $xml .= '</url>';
         }
 
-        // Kombinacje typ × miasto — wszystkie pary z aktywnymi ogłoszeniami.
+        // Kombinacje typ × miasto — pary z co najmniej $thinPageThreshold ogłoszeniami
+        // (próg jw. — cienkie pary typ×miasto są noindex we froncie, więc poza sitemapą).
         // Single query z GROUP BY zamiast pętli (była ~50 miast × 9 typów = 450 query).
         $typeDbToSlug = [
             'billboard' => 'billboardy', 'citylight' => 'citylighty', 'banner' => 'banery',
@@ -115,6 +125,7 @@ Route::get('/sitemap.xml', function () {
         $typeCityCombos = \App\Models\Advertisement::where('is_active', true)
             ->select('type', 'city', \Illuminate\Support\Facades\DB::raw('MAX(updated_at) as lastmod'))
             ->groupBy('type', 'city')
+            ->havingRaw('COUNT(*) >= ?', [$thinPageThreshold])
             ->get();
 
         foreach ($typeCityCombos as $row) {
