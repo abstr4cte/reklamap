@@ -7,7 +7,7 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 | **Kategoria: /blog/poradniki** | | | | |
 | 2026-04-14 06:00 | jak-wybrac-powierzchnie-reklamowa | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414060000_jak-wybrac-powierzchnie-reklamowa.md) |
 | 2026-04-14 06:01 | ile-kosztuje-reklama-outdoor | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414060100_ile-kosztuje-reklama-outdoor.md) |
-| 2026-04-14 06:02 | reklama-na-samochodzie | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414060200_reklama-na-samochodzie.md) |
+| 2026-04-14 06:02 | reklama-na-samochodzie | poradniki | ✅ ZRECENZOWANY (rozbudowa: reklama mobilna/przyczepki) | [Link](posts/20260414060200_reklama-na-samochodzie.md) |
 | 2026-04-14 06:03 | reklama-w-transporcie-publicznym | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414060300_reklama-w-transporcie-publicznym.md) |
 | **Kategoria: /blog/lokalizacje** | | | | |
 | 2026-04-14 06:04 | reklama-outdoor-warszawa | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260414060400_reklama-outdoor-warszawa.md) |

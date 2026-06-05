@@ -266,6 +266,53 @@ Plik do wysłania agencji: dane w arkuszu, zdjęcia osobno (mail / WeTransfer / 
 
 ---
 
+### SKRYPT CC-04 — Agencja "ciepła ale martwa" (reaktywacja) | 2026-06-02
+
+**CEL:** Reaktywacja agencji, która była na „tak" na pierwszej rozmowie, ale nie wysłała Excela ani nie dodała żadnego nośnika.
+**RODO:** Numer z KRS/strony = uzasadniony interes. Zgoda na maila wymagana (jak CC-02).
+
+**DIAGNOZA (dlaczego zamarli):**
+- Entuzjazm na rozmowie ≠ zadanie na czyimś biurku — w agencji „dodawanie ogłoszeń" to niczyja robota.
+- Zrobili z tego projekt, nie zadanie: usłyszeli „wrzućcie ofertę" → „ktoś musi przepisać X nośników" → ląduje na „kiedyś".
+- **Zero pilności — bo realnie nie ma jeszcze ruchu.** Kampania do reklamodawców NIE ruszyła, bo główne miasta nie mają gęstości podaży. Agencja to wyczuwa: „dodam, jak zacznie ktoś pytać".
+
+**KLUCZOWY RUCH:** Graj w otwarte karty. Powiedz wprost, że kampanii nie odpaliłeś, bo miasta puste — to zdejmuje z agencji poczucie winy (nie unikają tematu z zażenowania) i robi z nich brakujący element, nie kolejny lead. Dorzuć dowód społeczny (**jedna agencja przysłała gotową listę 250 nośników jednym plikiem** — jeszcze nie wgrane, bo czekamy na zdjęcia; NIE mów że „są na mapie") i poproś o ICH konkretne miasto. Nie proś o całą bazę ani „1 dziennie" — Excel z 10 pozycjami albo jeden nośnik na żywo.
+
+**SKRYPT (wersja ludzka — founder, pierwsza osoba, szczerze):**
+
+> Dzień dobry, [imię] z ReklaMap, jak leci? Słuchaj — gadaliśmy jakiś czas temu o wrzuceniu Waszych nośników na mapę, byliście na tak, i potem temat ucichł. Dzwonię po prostu dopytać, czy jeszcze żyje.
+>
+> Powiem Ci szczerze, jak jest. Kampanii do reklamodawców jeszcze nie odpaliłem — czekam, aż główne miasta się zapełnią nośnikami. Bo nie ma sensu ściągać kogoś, kto szuka billboardu w Krakowie, jak w Krakowie wisi jeden. Więc po Waszej stronie nic się nie zadziało głównie dlatego, że ruchu jeszcze nie ma. To bardziej na mnie niż na Was.
+>
+> No i właśnie dlatego dzwonię. Niedawno jedna agencja przysłała mi od razu całą listę — 250 nośników w jednym pliku; czekam tylko na zdjęcia, żeby je wgrać. Więc widać, że jak ktoś się zdecyduje, idzie to szybko. A Wy macie [miasto / rejon], którego mi brakuje, żeby to w ogóle ruszyć.
+>
+> Nie chcę, żebyście przepisywali całą bazę. Wyślijcie mi choćby Excela z tym, co macie pod ręką — choćby dziesięć pozycji — albo zostańmy chwilę na linii i wrzućmy jeden teraz, żebyś zobaczył jak to wygląda. Wgranie reszty biorę na siebie.
+>
+> Co Ty na to?
+
+**TON — pilnuj:**
+- Nie przepraszaj za dużo. „To na mnie" raz wystarczy — przesada brzmi jak słabość produktu.
+- Nie zdradzaj nazwy agencji od 250 nośników. „Jedna agencja" wystarcza i jest bezpieczniejsze.
+
+**RIPOSTY:**
+
+- *„Dobra, podeślijcie Excela, uzupełnimy"* (= znów utknie):
+  > Jasne, wyślę. Ale umówmy się, że jeden dodajemy teraz na linii — żeby nie wylądowało znowu w skrzynce. Excel zrobicie spokojnie, jak będzie chwila.
+
+- *„Nie mamy teraz czasu tego ogarniać":*
+  > Dlatego nie proszę o całą bazę — jeden nośnik, dwie minuty, ja prowadzę. Resztę kiedy będzie czas, bez ciśnienia.
+
+- *„Muszę to przegadać wewnętrznie / z szefem":*
+  > Super — a żeby było co pokazać, dodajmy jeden teraz. Pokaże Pan szefowi gotowy nośnik na mapie zamiast tłumaczyć słownie. Łatwiej się sprzedaje coś, co już działa.
+
+**PYTANIE O ZGODĘ (gdy mimo wszystko nie chce dodawać na żywo):**
+
+> To wyślę Wam linka i szablon na maila — tylko plik roboczy, żadnego mailingu. Dobrze?
+
+> ⚠️ **Uwaga o hooku kampanii:** Kampania do reklamodawców NIE ruszyła (stan na 2026-06) — czeka na gęstość podaży w głównych miastach. NIE mów „na początku maja ruszamy" (CC-01/02/03) ani że kampania już trwa. Mów prawdę: „odpalę kampanię, gdy główne miasta się zapełnią — dlatego do Was dzwonię". To uczciwie i działa lepiej niż fałszywa pilność.
+
+---
+
 ## RIPOSTA NA OBIEKCJE
 
 *(Tu Agent Marketing dopisuje sprawdzone riposta na podstawie SALES_LOG.md)*
@@ -283,3 +330,19 @@ widoczność bez żadnych kosztów z Pana strony.
 ```
 
 **Zasada:** Nie rozwijaj. Jedno pytanie — jedna odpowiedź. Jeśli drąży dalej, dodaj: *"Zarabiamy na tych, którzy chcą do Pana dotrzeć — nie na Panu."*
+
+---
+
+### OBIEKCJA: "Nie chcemy publikować cen / cena jest zmienna"
+
+**FAKT (sprawdzone w kodzie):** pole `price` jest **wymagane** (`required|numeric`) — nie da się dodać ogłoszenia bez konkretnej kwoty ani podać „orientacyjnej". Jest natomiast osobny przełącznik `price_negotiable` („cena do negocjacji").
+
+```
+Cenę trzeba podać konkretną, na przykład 800 zł za miesiąc —
+to wymagane pole. Ale jest osobny przełącznik „cena do negocjacji",
+który można zaznaczyć. Wtedy ta kwota jest punktem wyjścia,
+a ostateczną ustalają Państwo indywidualnie z każdym reklamodawcą.
+Nie wiąże to Państwa sztywno tą ceną.
+```
+
+**NIE mów** „można dać cenę orientacyjną / od X zł" — to nieprawda, system tego nie obsługuje.

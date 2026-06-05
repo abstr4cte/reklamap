@@ -10,7 +10,10 @@ keywords:
   - reklama na samochodach
   - reklama na samochodzie cena
   - oklejenie samochodu reklamą
-word_count: ~1500
+  - reklama mobilna
+  - przyczepka reklamowa
+  - mobilny billboard led
+word_count: ~1950
 published_at: "2026-03-22 08:00:00"
 status: draft
 ---
@@ -51,6 +54,36 @@ Wybór formatu zależy od budżetu, czasu trwania kampanii i charakteru pojazdu:
 **Oklejenie szyb One Way Vision (OWV)** — folia perforowana widoczna z zewnątrz, ale nie blokująca widoczności dla kierowcy i pasażerów. Dobry format do tylnej szyby dostawczaka lub autobusu.
 
 Szukasz pojazdu do oklejenia reklamowego? → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)
+
+## Reklama mobilna na przyczepce i mobilny billboard LED
+
+Oklejony samochód to nie jedyna forma reklamy mobilnej. Drugi wariant to **przyczepka reklamowa** — osobny nośnik holowany lub parkowany w punkcie o dużym natężeniu ruchu: pod galerią handlową, przy wjeździe na osiedle, w pobliżu eventu czy stadionu. Coraz częściej zamiast statycznego plakatu montuje się na niej **ekran LED na lawecie**, który wyświetla animowane spoty i pozwala podmieniać kreację bez ponownego druku.
+
+Różnica wobec oklejenia jest zasadnicza — to dwa różne modele, nie dwie wersje tego samego:
+
+| Cecha | Oklejony samochód | Przyczepka / mobilny LED |
+|--------|-------------------|--------------------------|
+| Nośnik | Twój pojazd w codziennej trasie | Osobna przyczepka holowana lub parkowana |
+| Ekspozycja | Trasa kierowcy (przypadkowa) | Wybrany punkt o dużym ruchu (celowana) |
+| Format | Folia / grafika | Plakat lub ekran LED (wideo) |
+| Rozliczenie | Oklejenie raz lub pay-per-car | Wynajem nośnika na dni/tygodnie |
+
+Cena zależy przede wszystkim od technologii — rynek dzieli się tu na dwie klasy:
+
+| Nośnik | Stawka (netto) | Co obejmuje |
+|--------|----------------|-------------|
+| Przyczepka plakatowa/banerowa | 25–200 zł/doba; ok. 600–1 200 zł/tydzień–miesiąc | dwustronny baner (np. 2× 5×2 m), zwykle kaucja ok. 500 zł |
+| Mobilny billboard LED na lawecie | 4 000–5 900 zł/dzień | ekran ok. 12 m² (pixel pitch 3.9 mm), spoty wideo, transport i obsługa |
+
+Przykładowo przyczepka banerowa w Bydgoszczy kosztuje 200 zł za dobę, 600 zł za tydzień i 1 200 zł za miesiąc (reklamamobilna.bydgoszcz.pl), a oferta stacjonarna spod Janowa Lubelskiego — 99 zł/doba, 399 zł/tydzień, 999 zł/miesiąc (eurocarjanowlubelski.pl). Mobilny ekran LED to inna półka: **4 000–5 900 zł netto za dzień kampanii** (led-star.pl, led.reklamatv24.pl) — drożej o zasilanie, transport, montaż i konfigurację.
+
+**Insight ekspercki:** przyczepka plakatowa to tani nośnik „parkingowy" — stawka dobowa jak za kilka kaw. Mobilny LED na lawecie należy już do premium DOOH: wejście liczone w tysiącach złotych za dzień, nie w setkach. To dwie różne kampanie, nie dwa warianty tej samej.
+
+Najwięcej ofert przyczepek i mobilnych ekranów jest w największych ośrodkach: [reklama mobilna w Bydgoszczy](/powierzchnie-reklamowe/reklama-mobilna/bydgoszcz), [Krakowie](/powierzchnie-reklamowe/reklama-mobilna/krakow) i [Warszawie](/powierzchnie-reklamowe/reklama-mobilna/warszawa).
+
+**Uwaga prawna — stojąca przyczepka to nie jeżdżące auto.** Oklejony samochód w codziennej trasie nie wymaga pozwoleń. Przyczepka reklamowa zaparkowana na dłużej w pasie drogowym to już inna sprawa: zajęcie pasa drogowego na cele reklamowe wymaga zezwolenia zarządcy drogi (art. 40 ustawy o drogach publicznych) i opłaty, a w centrach miast dochodzi uchwała krajobrazowa (np. Warszawa). Nie każde zaparkowanie przyczepy z reklamą jest automatycznie „reklamą w pasie drogowym" — liczą się okoliczności i cel ustawienia — ale gdy nośnik faktycznie służy ekspozycji, brak zgody grozi karą i wykroczeniem z art. 63a Kodeksu wykroczeń. Źródła: bilbordy.info, sm.wejherowo.pl, zds.org.pl.
+
+Zobacz dostępne pojazdy i przyczepki reklamowe w swoim mieście → [przeglądaj reklamę mobilną](/powierzchnie-reklamowe/reklama-mobilna)
 
 ## Jak zarobić na reklamie w swoim samochodzie
 
@@ -101,10 +134,16 @@ Pełne oklejenie osobówki to 3 000–6 000 zł netto (gigaprint.pl, oklejamysam
 Tak. Platformy pośredniczące płacą 400–700 zł/mc za pełne oklejenie, 300–500 zł/mc za magnetyczne. Bolt płaci do 1 200 zł/mc w Warszawie (dopłata 1,80 zł/kurs + bonusy). Warunki: min. 500–1 000 km/mc, umowa 6 mc, auto do 5 lat.
 
 **Czy potrzebne jest pozwolenie na reklamę na samochodzie?**
-Nie. Reklama mobilna nie podlega prawu budowlanemu ani uchwałom krajobrazowym. Jedyne ograniczenia wynikają z przepisów ruchu drogowego: nie zasłaniać szyby przedniej, lusterek i świateł.
+Nie. Oklejony, jeżdżący samochód nie podlega prawu budowlanemu ani uchwałom krajobrazowym. Jedyne ograniczenia wynikają z przepisów ruchu drogowego: nie zasłaniać szyby przedniej, lusterek i świateł. Inaczej jest z przyczepką reklamową stojącą na dłużej w pasie drogowym — ta może już wymagać zgody zarządcy drogi.
 
 **Czy oklejenie reklamowe można odliczyć od podatku?**
 Tak. Dla przedsiębiorców oklejenie samochodu firmowego to koszt reklamy — pełne odliczenie VAT (art. 86a ust. 1 pkt 3 ustawy o VAT) i koszt uzyskania przychodu dla CIT/PIT (wg 360ksiegowosc.pl).
+
+**Czym różni się przyczepka reklamowa od oklejenia samochodu?**
+Oklejenie zamienia w nośnik Twój własny pojazd, który jeździ po losowej trasie. Przyczepka reklamowa (mobilny billboard, często z ekranem LED) to osobny nośnik, który ustawiasz lub holujesz w konkretne, wybrane miejsce o dużym ruchu — i wynajmujesz na dni lub tygodnie zamiast oklejać na stałe.
+
+**Ile kosztuje wynajem przyczepki reklamowej?**
+Przyczepka plakatowa/banerowa to 25–200 zł netto za dobę, a przy dłuższym najmie ok. 600–1 200 zł netto za tydzień lub miesiąc (np. Bydgoszcz: 200 zł/doba, 1 200 zł/miesiąc). Mobilny billboard LED na lawecie jest dużo droższy — 4 000–5 900 zł netto za dzień kampanii.
 
 ---
 

@@ -32,9 +32,10 @@ useSeo({
                 <li><a href="#zasady-korzystania">3. Zasady korzystania</a></li>
                 <li><a href="#dodawanie-ogloszen">4. Dodawanie ogłoszeń</a></li>
                 <li><a href="#odpowiedzialnosc">5. Odpowiedzialność</a></li>
-                <li><a href="#dane-osobowe">6. Ochrona danych osobowych</a></li>
-                <li><a href="#reklamacje">7. Reklamacje</a></li>
-                <li><a href="#postanowienia-koncowe">8. Postanowienia końcowe</a></li>
+                <li><a href="#zglaszanie-naruszen">6. Zgłaszanie naruszeń</a></li>
+                <li><a href="#dane-osobowe">7. Ochrona danych osobowych</a></li>
+                <li><a href="#reklamacje">8. Reklamacje</a></li>
+                <li><a href="#postanowienia-koncowe">9. Postanowienia końcowe</a></li>
               </ul>
             </nav>
           </aside>
@@ -89,6 +90,7 @@ useSeo({
               <h2>4. Dodawanie ogłoszeń</h2>
               <ol class="numbered-list">
                 <li>Każdy Użytkownik może dodawać ogłoszenia po podaniu adresu email. Podanie numeru telefonu jest opcjonalne.</li>
+                <li>Dodając ogłoszenie, Użytkownik oświadcza, że jest właścicielem lub zarządcą oferowanej powierzchni reklamowej albo posiada zgodę uprawnionego podmiotu na jej wystawienie, oraz że jest uprawniony do ustalenia warunków i ceny zawartych w ogłoszeniu. Wystawienie cudzej powierzchni bez takiego tytułu jest zabronione i stanowi naruszenie Regulaminu.</li>
                 <li>Ogłoszenie powinno zawierać prawdziwe i aktualne informacje o oferowanej powierzchni reklamowej, w tym:
                   <ul>
                     <li>Typ nośnika (billboard, citylight, ekran LED, baner, ściana, totem, transport, mobile, inne)</li>
@@ -129,8 +131,24 @@ useSeo({
               </ol>
             </section>
 
+            <section id="zglaszanie-naruszen" class="section">
+              <h2>6. Zgłaszanie naruszeń i nielegalnych treści</h2>
+              <ol class="numbered-list">
+                <li>Każda osoba lub podmiot — w tym niebędący Użytkownikiem Serwisu — może zgłosić ogłoszenie, które uważa za niezgodne z prawem, naruszające prawa osób trzecich lub postanowienia niniejszego Regulaminu.</li>
+                <li>Zgłoszenia można dokonać:
+                  <ul>
+                    <li>za pomocą przycisku „Zgłoś błąd / naruszenie" dostępnego przy każdym ogłoszeniu,</li>
+                    <li>drogą elektroniczną na adres: kontakt@reklamap.pl.</li>
+                  </ul>
+                </li>
+                <li>Zgłoszenie powinno zawierać: wskazanie ogłoszenia (link lub opis pozwalający je zidentyfikować), opis naruszenia oraz — jeśli dotyczy — wskazanie, jakie prawa zgłaszającego zostały naruszone.</li>
+                <li>Administrator rozpatruje zgłoszenia bez zbędnej zwłoki. W przypadku stwierdzenia, że ogłoszenie jest niezgodne z prawem lub Regulaminem, Administrator niezwłocznie usuwa je lub blokuje do niego dostęp, a o podjętej decyzji informuje zgłaszającego oraz Użytkownika, który dodał ogłoszenie.</li>
+                <li>Powyższy mechanizm stanowi realizację obowiązków Administratora jako dostawcy usług pośrednich w rozumieniu rozporządzenia Parlamentu Europejskiego i Rady (UE) 2022/2065 (akt o usługach cyfrowych, DSA) oraz ustawy o świadczeniu usług drogą elektroniczną.</li>
+              </ol>
+            </section>
+
             <section id="dane-osobowe" class="section">
-              <h2>6. Ochrona danych osobowych</h2>
+              <h2>7. Ochrona danych osobowych</h2>
               <ol class="numbered-list">
                 <li>Administrator przetwarza dane osobowe Użytkowników zgodnie z przepisami RODO (Rozporządzenie (UE) 2016/679).</li>
                 <li>Dane osobowe są przetwarzane w celu:
@@ -158,7 +176,7 @@ useSeo({
             </section>
 
             <section id="reklamacje" class="section">
-              <h2>7. Reklamacje</h2>
+              <h2>8. Reklamacje</h2>
               <ol class="numbered-list">
                 <li>Użytkownik ma prawo do złożenia reklamacji dotyczącej funkcjonowania Serwisu.</li>
                 <li>Reklamację można złożyć:
@@ -180,7 +198,7 @@ useSeo({
             </section>
 
             <section id="postanowienia-koncowe" class="section">
-              <h2>8. Postanowienia końcowe</h2>
+              <h2>9. Postanowienia końcowe</h2>
               <ol class="numbered-list">
                 <li>Administrator zastrzega sobie prawo do zmiany Regulaminu z ważnych przyczyn technicznych lub prawnych.</li>
                 <li>Informacja o zmianie Regulaminu zostanie opublikowana w Serwisie z 7-dniowym wyprzedzeniem.</li>

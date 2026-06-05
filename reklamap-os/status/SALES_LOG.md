@@ -42,3 +42,19 @@ Przedstawiciel dużej agencji OOH (ta sama, z którą founder ma poniedziałkowe
 **Argumentacja na poniedziałkowy pitch:** 3 ścieżki współpracy zamiast prowizji — Partner Założycielski (darmowy, status + ekspozycja), Concierge (płatna usługa za nasz czas, nie za platformę), Premium visibility (gdy uruchomimy, pierwszeństwo dla założycieli). Skrypt 60-sekundowy w odpowiedzi Agenta Biznesowego z 2026-05-13.
 
 **Materiał argumentacyjny do kolejnych rozmów:** „inna agencja sama zaproponowała prowizję — odmówiliśmy, bo trzymamy się modelu" → buduje wiarygodność dyscypliny.
+
+---
+
+## 2026-06-02 — reaktywacja agencji „ciepłych ale martwych"
+
+Problem: agencje z pierwszej fali były na „tak", ale nie wysłały Excela ani nie dodały żadnego nośnika.
+
+**Diagnoza:** (1) entuzjazm ≠ zadanie na czyimś biurku — dodawanie to niczyja robota; (2) zrobili z tego projekt („przepisać całą bazę"), nie zadanie → utknęło na „kiedyś"; (3) **zero pilności, bo kampania do reklamodawców REALNIE nie ruszyła** — główne miasta nie mają jeszcze gęstości podaży. Agencja to wyczuwa.
+
+**Dowód społeczny (świeży):** jedna agencja przysłała gotową listę **250 nośników jednym plikiem**. ⚠️ Jeszcze NIE wgrane — czekamy na zdjęcia. W rozmowach NIE mówić „są na mapie", tylko „przysłała całą listę, czekam na zdjęcia" (pokazuje skalę + że jak ktoś się zdecyduje, idzie szybko). Bez podawania nazwy.
+
+**Uwaga procesowa:** import concierge jest u nas zablokowany na zdjęciach. Wg `MARKETING_ASSETS.md` nośnik bez zdjęcia można aktywować (niższa widoczność) lub trzymać jako szkic — decyzja foundera, żeby czekać na zdjęcia.
+
+**Rozwiązanie → skrypt CC-04 w `MARKETING_ASSETS.md` (wersja ludzka):** grać w otwarte karty — „kampanii nie odpaliłem, bo miasta puste, dlatego do Was dzwonię". Zdejmuje poczucie winy z agencji, robi z nich brakujący element. Prosić o ICH miasto, dowód społeczny 250 nośników, fallback: Excel z 10 pozycjami albo 1 nośnik na żywo. Import biorę na siebie.
+
+**Korekta wcześniejszego TODO:** hook „na początku maja ruszamy" z CC-01/02/03 jest fałszywy NIE dlatego, że maj minął — kampania w ogóle nie wystartowała (brak podaży w miastach). Mówić prawdę: „odpalę, gdy główne miasta się zapełnią".
