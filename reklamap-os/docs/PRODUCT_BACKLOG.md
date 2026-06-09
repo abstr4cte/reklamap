@@ -108,3 +108,46 @@ _(puste)_
 - **Premium visibility** (gdy uruchomimy): featured listing, opt-in, abonament — Partnerzy Założycielscy mają pierwszeństwo.
 
 **Co z tego sygnału płynie:** plan monetyzacji premium ma realne pokrycie w willingness-to-pay — to nie tylko PowerPoint. Pierwszy twardy dowód. Zapisać w `SALES_LOG.md` jako materiał argumentacyjny do kolejnych rozmów (pokazuje dyscyplinę modelu: „odmówiliśmy prowizji, bo trzymamy się słowa").
+
+---
+
+## RESEARCH 2026-06-09 — luki OOH pod narzędzia AI (deep research, ~25 kandydatów)
+
+**Zlecenie foundera:** znaleźć luki w branży OOH (PL + benchmark świata) sprzedawalne **abonamentowo** jako narzędzia dla agencji/reklamodawców — w tym narzędzia AI **niezależne od danych z platformy** (działające przy pustej mapie), żeby firmy korzystały z usług ReklaMap. Punkt odniesienia: „coś jak OTS na danych GDDKiA, ale mocniejszego".
+
+**Metoda:** workflow wieloagentowy — 8 obszarów badawczych z web search → konsolidacja/dedup → **adwersaryjna weryfikacja** każdego kandydata (czy już istnieje, zwł. w PL? czy darmowy ChatGPT to zabija? willingness-to-pay? dostępność danych w PL?) → scoring pod strategię ReklaMap. **Z ~25 kandydatów przeżyły 4 — żaden jako „buduj i pobieraj abonament teraz".** Rynek OOH-adtech jest dojrzały, większość oczywistych pomysłów zajęta, często w PL.
+
+### 🔑 GŁÓWNY WNIOSEK (reframe — najważniejszy efekt researchu)
+**Abonamentowa monetyzacja po stronie POPYTU przy zimnym starcie nie działa — agencje płacą za zasięg/dane, nie za „listę nośników".** Zdrowy model jest odwrotny: **abonament po stronie PODAŻY** (operatorzy płacą za widoczność + narzędzia compliance/yield) **+ dane/raporty sprzedawane agencjom**. Potwierdza kierunek **B-4** i linię FREE/PREMIUM (nie wywraca jej). AI = **warstwa uwartościowiająca agregację długiego ogona**, NIE osobna subskrypcja konkurująca z incumbentami o głowę rynku.
+
+Dodatkowo: **pierwotny pomysł „OTS na GDDKiA" efektywnie odpadł** — (a) neutralny standard pomiaru widowni OOH już powstał (Gemius/Mediapanel + IBO/OOHlife, 2024–26); (b) GDDKiA GPR pokrywa tylko drogi krajowe/wojewódzkie, jest ślepy w miastach, gdzie siedzi popyt.
+
+### Co przeżyło (4) — status i RICE
+| Pomysł | Co to | Werdykt | RICE |
+|---|---|---|---|
+| **Compliance-as-data** (API/feed uchwał krajobrazowych + opłat) | baza „gdzie i co wolno + stawki + status sądowy" sprzedawana innym firmom jako dane, nie jako appka | **MAYBE / ICEBOX** — nie standalone; cienka warstwa monetyzacji na korpusie compliance, z **firmą n8n foundera jako pierwszym płatnikiem walidującym**. Działa przy pustej mapie (aktyw danych), realna fosa, ale drogie ETL z ~82 BIP-ów + cienki TAM | ~0,3 |
+| **Yield / podpowiadacz ceny** dla właścicieli | sugerowana stawka (GDDKiA + atrybuty nośnika) + alerty o wygasających umowach | **BUDUJ jako DARMOWY wabik** podażowy, nie płatny SaaS — zgrany z obecną fazą (akwizycja podaży) | ~24–60 (jako wabik) |
+| **Self-serve media planer + PDF** | reklamodawca: cel+budżet → plan nośników + oferta PDF | **NIE teraz** — zero-liquidity zabija (planer nad pustą mapą bezużyteczny). Później **freemium**; najlepszy fit z n8n + łapie sygnał popytu | rośnie z gęstością |
+| **RFP→deck** dla niezależnych agencji | sklejanie ofert operatorów w porównanie + prezentację | **MAYBE silnie ku KILL** — nie ruszać bez dowodu >20–30 płacących agencji PL i legalnego dostępu do danych zasięgu; rdzeń komodytyzowany przez LLM | ~0,15 |
+
+### ❌ CMENTARZ — odrzucone, bo już istnieje (z konkurentem)
+- **Pełny silnik compliance „czy legalny?"** → Kraków ma darmowy oficjalny checker per-adres, `uchwalakrajobrazowa.pl`, płatne audyty (Billboard-X, Kiel Legal). Dane z ~82 BIP-ów + chwiejne prawo (NSA→TSUE) = wieczny koszt prawny.
+- **Niezależna waluta pomiaru OTS** → Gemius/Mediapanel + IBO/OOHlife (standard powstał 2024–26). Teza „brak waluty" nieaktualna.
+- **Self-serve checkout / rezerwacja online** → AMS Lokalnie (`amslokalnie.pl`), Cityboard Online. *(ale: tylko inwentarz pojedynczego operatora — głowa, nie ogon).*
+- **Planer dla agencji** → OMI / Xeneco (dominujący), GroupM Advanced DOOH, Publicis Precision.
+- **Atrybucja footfall/QR dla MŚP** → AdQuick (self-serve), Proxi.cloud, Selectivv, ZnajdźReklamę.
+- **AI copilot brief→plan** → AdQuick Copilot, OneScreen.ai. + przedwczesne (downstream od podaży, której nie ma).
+- **Studio/generator kreacji OOH** → Canva, AdQuick AI, Cape.io, Brief.ai, kreatory drukarni.
+- **Most programmatic long-tail DOOH** → Screenverse, Trillboards, Airsqreen, Broadsign Reach.
+- **CRM/kalendarz operatora** → Apparatix, SignDash; PL: bs4, Media CRM, PROGPOL.
+- **Proof-of-play / audyt ekspozycji** → Gemius gDE (już dla Jet Line w PL), AAM, Carroll Media.
+- **CMS-lite DOOH (1–50 ekranów)** → Xibo, Yodeck, OptiSigns, NoviSign (freemium od ~$8/ekran).
+- Wcześniej (runda 1): porównywarka cen (cold-start trap), rekoncyliacja faktur (Bionic), bulk-booking (OOH.pl/ZnajdźReklamę), cross-media dedup (Mediapanel), RODO-DOOH (Dr RODO/ODO24), standaryzacja metadanych (IAB Polska — darmowa).
+
+> **Niuans do weryfikacji przez foundera (z wiedzy z cold-calli):** wiele „już istnieje" = *dla GŁOWY rynku* (AMS/Ströer, 10 aglomeracji, single-operator). **Długi ogon** (drobni właściciele, miasta 20–150 tys.) wciąż pominięty w pomiarze/checkoutcie/planowaniu. To nie produkt do osobnej sprzedaży, ale uwiarygadnia agregację ReklaMap. Otwarta opcja: druga runda weryfikacji *tylko* pod kątem długiego ogona.
+
+### ➡️ Rekomendowana kolejność (wynik researchu)
+1. **Zdejmij wąskie gardło, nie buduj narzędzi → gęstość podaży w 1–2 miastach.** Wszystko (popyt, planer, pomiar, premium) jest na niej gated; research potwierdził, że nie ma narzędzia-skrótu. Konkret: odblokuj agencję z 250 nośnikami (czeka na zdjęcia), wznów cold-calle (analityka flagowała zastój 29.05), skup ogień na 1–2 miastach zamiast rozsmarowywać po PL.
+2. **Tanio, równolegle — dwa narzędzia zmniejszające tarcie w DODAWANIU** (pomagają #1, z nikim nie konkurują): darmowy **podpowiadacz ceny** + **auto-uzupełnianie ogłoszenia ze zdjęcia** (jest już skill `ads-photo-scanner`) — to wprost lek na „dodawanie to niczyja robota" (CC-04).
+3. **Jeden telefon, nie projekt:** zwaliduj **compliance-as-data** przez n8n — zapytaj jednego ciepłego klienta, czy zapłaci za moduł „legalność nośnika". WTP za cenę rozmowy.
+4. **NIE ruszaj teraz:** planer, pomiar, jakikolwiek płatny tool dla reklamodawców — wszystkie czekają na gęstość.

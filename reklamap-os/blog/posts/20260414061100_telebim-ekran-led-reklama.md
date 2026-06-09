@@ -35,17 +35,9 @@ Telebim i ekran LED to w praktyce synonimy — oba określają ten sam typ nośn
 
 Norma IP65 (outdoor) oznacza pełną odporność na kurz i deszcz. Kąt widzenia 140° H/V gwarantuje czytelność z boku. Źródło: cma.pl, ledsee.pl.
 
-## Ile kosztuje reklama na telebimie — cennik 2026
+## Ile kosztuje reklama na telebimie?
 
-Ceny reklamy na ekranach LED zależą od lokalizacji, długości spotu i liczby emisji dziennie (źródło: intercube.pl, reklama.jga.pl):
-
-| Lokalizacja / Format | Cena netto/mc |
-|----------------------|---------------|
-| Warszawa centrum (10s spot, 100 emisji/dzień) | 15 000–50 000 zł |
-| Mniejsze miasta / lokalizacje poza centrum | 3 000–8 000 zł |
-| Pojedynczy telebim (5s, emisja co 3 min) | ~600 zł |
-| Pakiet godzinowy (100 emisji) | 500–2 000 zł |
-| Pojedyncza emisja 10s | ~35 zł/dzień |
+Stawki zaczynają się od ~35 zł za pojedynczą emisję i ~600 zł/mc za mały telebim, a w centrum Warszawy sięgają 50 000 zł/mc. Pełny cennik — wynajem za emisję, dobę i miesiąc, CPM programmatic oraz koszt produkcji spotu — rozpisaliśmy osobno: **[Ekran LED — cena reklamy i cennik 2026](/blog/poradniki/ekran-led-cena)**.
 
 Kluczowa różnica wobec tradycyjnego billboardu: **jeden ekran obsługuje wielu reklamodawców w rotacji** — płacisz za slot czasowy, nie za wyłączność na nośniku. To obniża barierę wejścia, ale oznacza też, że Twoja reklama pokazuje się co kilka–kilkanaście sekund, nie non-stop.
 
@@ -100,7 +92,7 @@ Więcej o przepisach dotyczących nośników stałych: [Tablica reklamowa — ce
 Telebim to ekran wizyjny zbudowany z matrycy diod LED — pełnokolorowy wyświetlacz modułowy używany do emisji reklamy cyfrowej (DOOH). Outdoor LED ma jasność 4 000 nitów i działa w każdych warunkach pogodowych (IP65). Termin „telebim" i „ekran LED" są stosowane wymiennie w branży reklamowej.
 
 **Ile kosztuje reklama na telebimie?**
-Od ~600 zł/mc za pojedynczy telebim (emisja 5s co 3 min) do 50 000 zł/mc za lokalizację premium w centrum Warszawy (10s spot, 100 emisji/dzień). Pakiety godzinowe (100 emisji) kosztują 500–2 000 zł. Źródło: intercube.pl, reklama.jga.pl.
+Od ~35 zł za pojedynczą emisję i ~600 zł/mc za mały telebim do 50 000 zł/mc za lokalizację premium w centrum Warszawy. Pełne widełki (wynajem, CPM, produkcja spotu) w przewodniku [Ekran LED — cena](/blog/poradniki/ekran-led-cena).
 
 **Czym różni się telebim od billboardu?**
 Billboard to statyczny nośnik z wydrukowaną grafiką — jeden reklamodawca, wyłączność, brak możliwości zmiany treści bez druku. Telebim emituje animacje i filmy, obsługuje wielu reklamodawców w rotacji i pozwala zmieniać kreację zdalnie w ciągu minut.
