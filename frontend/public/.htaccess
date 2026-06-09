@@ -63,6 +63,14 @@
   # index.html (text/html) zamiast XML — Google traci kanał discovery/refresh.
   RewriteRule ^sitemap\.xml$ https://api.reklamap.pl/sitemap.xml [R=301,L]
 
+  # OG-shim (2026-06-09): scrapery social NIE renderują JS, więc dostają z SPA pusty
+  # karton. Kierujemy je do og-meta.php, który wstrzykuje og:/twitter z danych ogłoszenia.
+  # ŚWIADOMIE BEZ googlebot/bingbot — te renderują JS same (useSeo) i mają zostać na SPA.
+  RewriteCond %{HTTP_USER_AGENT} facebookexternalhit|facebot|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|vkshare|redditbot|pinterest|discordbot|telegrambot|embedly|skypeuripreview|nuzzel|bitlybot|flipboard|tumblr|mastodon|googlebot-image [NC]
+  RewriteCond %{REQUEST_URI} !\.(js|css|xml|less|png|jpg|jpeg|gif|pdf|txt|ico|zip|mp3|mp4|webm|woff|woff2|ttf|svg|webp|json|webmanifest)$ [NC]
+  RewriteCond %{REQUEST_URI} !^/og-meta\.php
+  RewriteRule ^(.*)$ /og-meta.php?path=$1 [L,QSA]
+
   # Prerender WYŁĄCZONY 2026-05-18 — prerender.io trial wygasł (429 na każdy request
   # bota => deindeks w GSC). Boty dostają teraz ten sam SPA co użytkownik (200);
   # Googlebot renderuje JS samodzielnie. Aby przywrócić prerender (self-host),

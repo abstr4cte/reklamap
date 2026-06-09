@@ -4,6 +4,56 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 
 ---
 
+## 2026-06-09 — pełny audyt + DECYZJA (nowy zrzut GSC „Stan indeksowania")
+
+Źródło: zrzut GSC „Dlaczego strony nie są zindeksowane" z 2026-06-09 + **żywe testy produkcji** (curl jako Googlebot: robots.txt, `/`, 18 URL-i z sitemap, `/porownaj`, `/zarzadzaj`) + re-read stanu wdrożonego: `frontend/index.html`, `frontend/src/composables/useSeo.ts`, `frontend/public/.htaccess`, `backend/routes/web.php` (sitemap).
+
+**⚠️ KOREKTA wcześniejszej (chat) tezy „pusty shell = strony nie wchodzą do indeksu".** Surowy HTML faktycznie jest generycznym shellem dla każdego URL (ten sam `<title>`, brak og:/JSON-LD — `useSeo.ts` wstrzykuje meta dopiero klient-side). ALE to NIE jest przyczyną niezaindeksowania: Googlebot renderuje JS (dowód: 165+ stron w indeksie i rankujące frazy), a bucket „Wykryta–niezindeksowana" **spadł 149 (29.05) → 80 (09.06)** mimo niezmienionej architektury. To potwierdza, że lek z 29.05 (przycięcie crawl surface) **działa** i recovery trwa. Hipoteza „prerender potrzebny do indeksacji" pozostaje **odrzucona** (zgodnie z poz. #3 z 29.05).
+
+### Porównanie bucketów (delta 29.05 → 09.06)
+
+| Bucket GSC | 29.05 | 09.06 | Odczyt |
+|---|---|---|---|
+| Wykryta – niezindeksowana | 149 | **80** | 🟢 −69, główny efekt przyciętej sitemapy + recovery |
+| Zeskanowana – niezindeksowana | 12 | 12 | bez zmian, cienkie agregaty na granicy progu |
+| Błąd serwera (5xx) | 30 | 30 | **zaległa walidacja** — 18/18 testów live = 200, brak w przyciętej sitemapie |
+| Nie znaleziono (404) | 28 | 28 | jw. — stare/zewnętrzne URL-e poza sitemapą, wygasają |
+| Wykluczona `noindex` | — | 10 | „Niepowodzenie" walidacji = nadal noindex (cienkie <3 — zamierzone, ktoś omyłkowo odpalił walidację) |
+| Przekierowanie | — | 35 | www→non-www + legacy 301 + 301 sitemapy — konsolidacja, benign |
+| Zablokowana robots.txt | — | 4 | `/porownaj`, `/zarzadzaj` itp. — zamierzone |
+| Alternatywna z canonical | — | 4 | warianty kanonikalizowane — OK |
+| 401 | — | 1 | chroniona ścieżka — OK |
+
+### 🎯 DECYZJA (o co prosił użytkownik)
+
+| # | Kwestia | Decyzja | Uzasadnienie |
+|---|---|---|---|
+| A | **Przywrócić prerender / SSR dla indeksacji?** | **NIE.** | Recovery potwierdzone danymi (149→80, green rośnie, 18/18 live=200, 165+ w indeksie). Prerender nie ruszy igły (nie wyrenderuje stron, których bot z braku priorytetu nie crawl-uje) i przywraca tryb awarii 429/quota z 18.05. |
+| B | **Czy architektura SPA-only ma realną lukę?** | **TAK — jedną: social/non-JS og:.** | Surowy HTML nie ma og:title/og:image/og:description (jest tylko `<meta description>`). Google renderuje JS → indeks OK, ale FB/LinkedIn/WhatsApp/Slack/Twitter NIE renderują → puste/generyczne podglądy udostępnianych linków. Istotne PRZY AKTYWNYM OUTREACHU (maile z linkami, pitch agencyjny, cold calling). |
+| C | **Jak załatać B bez powrotu do prerendera?** | Lekki **PHP og-shim** tylko dla UA scraperów social (NIE Googlebot): pobiera dane ogłoszenia z `api.reklamap.pl` i wstrzykuje og: do `index.html`. Bez headless, bez Node, bez quota/429. | Reużywa martwego wzorca `prerender-proxy.php`, ale uproszczonego do string-inject meta z JSON. P2 — do greenlightu, nie blokuje recovery. |
+
+### Akcje operacyjne (nie-kod, po stronie użytkownika w GSC)
+
+| # | Akcja | Priorytet | Status |
+|---|---|---|---|
+| 1 | **5xx (30) i 404 (28): walidacja JUŻ W TOKU („Rozpoczęto") — czekać, ZERO akcji.** GSC wygasza „Sprawdź poprawność" w trakcie walidacji (nie da się zrestartować — i nie wolno anulować, bo licznik rusza od zera). 5xx: live 18/18=200 → przejdzie sama (dni–~4 tyg). 404: może wrócić „Niepowodzenie" i to OK — stare/zewnętrzne URL-e poza sitemapą, wypadną przez re-crawl niezależnie od wyniku walidacji. | ⚪ | ⏳ w toku po stronie Google, bez akcji usera |
+| 2 | **noindex (10): wyeksportuj listę URL z GSC.** Jeśli to cienkie `<3 ogł.` → zostawić, NIE walidować (noindex jest celowy). Jeśli któraś POWINNA być w indeksie → zgłoś, to bug do naprawy. | 🟡 | ⏳ czeka na eksport URL |
+| 3 | Przekierowanie (35), robots (4), canonical (4), 401 (1) — **bez akcji**, zamierzone/benign, konsolidują się same. | ⚪ | — |
+
+### Rekomendacja kodu (C) — ✅ WDROŻONA W KODZIE 2026-06-09 (czeka na deploy `dist/`)
+
+**Problem:** `frontend/index.html` miał tylko `<meta name="description">` i `<title>` — zero og:/twitter w surowym HTML. `useSeo.ts` wstrzykuje og:/twitter/JSON-LD, ale klient-side (po JS).
+**Ryzyko SEO/biznes:** udostępniony link (np. agencja wkleja ofertę na Slacku/LinkedIn) renderuje pusty/generyczny karton zamiast „Billboardy Warszawa – wynajem" + zdjęcie → niższy CTR z social/DM w trakcie akwizycji.
+**Co zbudowano (3 pliki):**
+- **`frontend/public/og-meta.php`** (NOWY) — shim: parsuje `{id}` z końcówki sluga ogłoszenia, GET `api.reklamap.pl/api/listings/{id}` (nagłówek `X-App-Key`, timeout 5s), wstrzykuje do `index.html` `<title>` + og:/twitter z pól ogłoszenia (typ→etykieta, miasto, lokalizacja, wymiary z konwersją LED→mm, cena, pierwsze zdjęcie ze `STORAGE_URL`). Szablon **lustrzany** wobec `AdDetailPage.vue`. Fallback (błąd API / ogłoszenie nieaktywne / strona nie-ogłoszeniowa) = czysty `index.html` (zawsze 200, nigdy 5xx). Log diagnostyczny: `?showlog=rm2024debug`.
+- **`frontend/public/.htaccess`** — przed SPA-fallback dodany routing **tylko dla UA scraperów social** (facebookexternalhit, linkedinbot, slackbot, whatsapp, discordbot, telegrambot, twitterbot, pinterest, redditbot, embedly…) → `og-meta.php`. **ŚWIADOMIE bez googlebot/bingbot** — Google renderuje JS sam (useSeo).
+- **`frontend/index.html`** — dodane statyczne, domyślne og:/twitter (website) → home/kategorie/blog i fallback shima mają sensowny karton; `useSeo`/`og-meta.php` je nadpisują per-route.
+**Testy 2026-06-09 (php built-in server + curl UA Facebook, żywe API prod):** ogłoszenie 111 → og podmienione na „Billboardy Nowa Ruda – wynajem", og:image = realne zdjęcie ze storage, og:type=product, **zero duplikatów**; home/blog/nieistniejące ID → baseline `og:type=website` bez wywołania API; `php -l` czysto. Każdy przypadek = HTTP 200.
+**Deploy:** wgrać na `reklamap.pl` (docroot=`dist/`): `og-meta.php`, zaktualizowany `.htaccess`, przebudowany `index.html` (`npm run build` kopiuje `public/*` do `dist/` i przetwarza `index.html` — przy okazji odświeża stary `dist/.htaccess` z poz. #5 z 29.05). Po deployu: walidator FB Sharing Debugger / LinkedIn Post Inspector na URL ogłoszenia.
+**Przewidywany zysk:** bogate podglądy linków na FB/LinkedIn/WhatsApp/Slack/Twitter → wyższy CTR udostępnień w outreachu. Zero wpływu (pozytywnego ani negatywnego) na indeksację Google.
+
+---
+
 ## 2026-05-29 — audyt na bazie briefu Analityka (spadek ruchu od 18.05)
 
 Źródło: brief Analityka 2026-05-29 (`ANALYTICS_LOG.md` — impresje GSC 389 @18.05 → ~80 @27.05, poz. 24→32) + **żywe testy produkcji** (curl jako Googlebot) + przegląd `frontend/public/.htaccess`, `prerender-proxy.php`, `index.html`, `useSeo.ts`, `backend/routes/web.php`, `frontend/src/config.ts`.

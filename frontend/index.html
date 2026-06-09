@@ -68,6 +68,26 @@
 
   <title>Wynajem powierzchni reklamowych w Polsce | ReklaMap</title>
 
+  <!-- Open Graph / Twitter — domyślne (statyczne). Strony data-driven nadpisują je
+       per-route: w przeglądarce przez useSeo.ts (JS), a dla scraperów social bez JS
+       przez og-meta.php. Bez tych defaultów scrapery na home/kategoriach/blogu
+       renderują pusty karton. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ReklaMap" />
+  <meta property="og:locale" content="pl_PL" />
+  <meta property="og:title" content="Wynajem powierzchni reklamowych w Polsce | ReklaMap" />
+  <meta property="og:description"
+    content="Powierzchnie reklamowe w całej Polsce – billboardy, citylighty, banery, ekrany LED. Sprawdź oferty na mapie, porównaj ceny i skontaktuj się z wystawcą." />
+  <meta property="og:url" content="https://reklamap.pl/" />
+  <meta property="og:image" content="https://reklamap.pl/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Wynajem powierzchni reklamowych w Polsce | ReklaMap" />
+  <meta name="twitter:description"
+    content="Powierzchnie reklamowe w całej Polsce – billboardy, citylighty, banery, ekrany LED." />
+  <meta name="twitter:image" content="https://reklamap.pl/og-image.png" />
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-0ZL0NS8F9W"></script>
   <script>
