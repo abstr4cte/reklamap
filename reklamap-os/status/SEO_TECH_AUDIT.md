@@ -4,6 +4,265 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 
 ---
 
+## 2026-06-09 — audyt wdrożeniowy briefu SEO_RESEARCH
+
+> **Weryfikacja (Claude, 2026-06-09):** finding A1 potwierdzony w kodzie i seederze — `BlogPostPage.vue:104` duplikował `import {computed}` (już w l.2), a l.147 używała niezadeklarowanego `base` (jedyne wystąpienie w pliku; nie eksportowane z `utils/url.ts`); `BlogPostsSeeder.php:63-68` ustawia `image_alt`/`image_prompt`, ale NIE `image`. **Sprostowanie streszczenia:** to NIE „blog się nie buduje" — build przechodzi (esbuild toleruje duplikat), crash jest RUNTIME'owy i tylko dla artykułów z pustym `image` (każdy świeżo seedowany). Istniejące opublikowane artykuły renderują się, bo mają ustawiony `image` (operator `||` nie sięga `base`). **A1 NAPRAWIONE w tej sesji** (`base`→`appUrl`, usunięty duplikat importu w BlogPostPage.vue) — czeka na `npm run build` + deploy `dist/`. Pozostałe findingi (A2/C/D) ugruntowane w plik:linia, nieprzeklikane linia-po-linii.
+
+### ✅ Stan wdrożenia (Claude, 2026-06-09 — część kodowa)
+
+Zaimplementowane i zweryfikowane w tej sesji (`vue-tsc --noEmit` czysto, **127/127 testów** zielone, `php -l og-meta.php` czysto):
+
+| # | Co zrobione | Pliki |
+|---|---|---|
+| **A1** | `base`→`appUrl` + usunięty duplikat `import {computed}` | `BlogPostPage.vue` |
+| **A2** | Gałąź bloga w og-shim: `fetchBlogPost` + `injectBlogMeta` (og:type=article, fetch `/api/blog/{slug}`, fallback og-image dla artykułów bez hero) | `public/og-meta.php` |
+| **C1** | Statyczny `@graph` (Organization+WebSite z `@id`, `?q=`) w `<head>`; usunięta imperatywna injekcja; usunięte Org/WebSite z useSeo home | `index.html`, `App.vue`, `HomePage.vue` |
+| **C2** | BreadcrumbList tylko ze współdzielonego `<Breadcrumbs>` (usunięty duplikat z ogłoszenia); `publisher`/`brand`/`offeredBy` jako `{@id}`; usunięty import `logo.webp` | `AdDetailPage.vue`, `BlogPostPage.vue` |
+| **D1** | „Czytaj więcej" jako `<router-link>` → crawlowalny `<a href>` (graf hub→artykuł bez JS) | `BlogPage.vue` |
+| **D2** | `onContentClick` — linki wewnętrzne w `v-html` jako SPA-nav (href zostaje dla bota) | `BlogPostPage.vue` |
+| **B2** | Dodane opisy `rzeszow` i `torun` do `cityDescriptions` | `categoryDescriptions.ts` |
+| **E2** | ❌ **COFNIĘTE po weryfikacji treści** — artykuły mają już CTA wpisane ręcznie w treści (16/25 ma supply-CTA, reszta demand, często geo-specyficzne, np. „Wystaw swój nośnik w Łodzi"). Dołączany komponent dublowałby/konfliktował (demand box pod artykułem kończącym się supply-CTA). CTA pozostaje robotą Pisarza per artykuł. Usunięto `ArticleCta.vue` + `config/supplyArticles.ts` | — |
+| **D3** | „Powiązane artykuły" — 3 posty z tej samej kategorii (bez bieżącego), reużyty endpoint `/api/blog?category=`, crawlowalne `<router-link>` na dole artykułu (blog→blog, silos) | `BlogPostPage.vue` |
+
+**⚠️ KOREKTA rekomendacji audytu (C2/D1):** audyt sugerował usunięcie JSON-LD z `Breadcrumbs.vue` — to zregresowałoby ListingsPage (jedyne źródło BreadcrumbList tam, bo komponent jest współdzielony). Zamiast tego usunięto duplikat z `AdDetailPage`. D1: zamiast przerabiać całą kartę na `<a>` (ryzyko layoutu — `.blog-card` to `<article>`), crawlowalnym `<a href>` uczyniono „Czytaj więcej" i zachowano `@click` karty.
+
+**⏳ Czeka na DEPLOY (user/dev):** `npm run build` + wgranie `dist/` i `og-meta.php` na `reklamap.pl`; potem walidacja FB Sharing Debugger / LinkedIn Post Inspector na URL artykułu.
+
+**⛔ Zależne od usera:** `sameAs` w `@graph` (najpierw założyć profile social); publikacja draft→published w panelu PRZED rozsyłką linków.
+
+**⬜ Pozostałe NIEzrobione (świadomie — decyzje/proces):** linkowanie kategoria→blog (drugi kierunek silosu — `relatedArticle` w `categoryDescriptions` → wymaga zmiany interfejsu + render w `ListingsPage`); supply-CTA w treści 8 artykułów, które go nie mają (`jak-wybrac-powierzchnie`, `ile-kosztuje-reklama-outdoor`, `reklama-w-transporcie-publicznym`, `reklama-outdoor-warszawa`/`krakow`/`wroclaw`, `telebim-ekran-led-reklama`, `baner-reklamowy-cena`) — robota Pisarza w markdownie; F2 kategoria `dla-wlascicieli` (decyzja Biznesowy — czysty silos podażowy); D4 `INTENT_MAP_PRAWO.md` (Strateg); F1 `Disallow` filtrów (po danych GSC).
+
+Źródło: brief `reklamap-os/status/SEO_RESEARCH_2026-06-09.md` (5 pytań technicznych) + **żywy re-read kodu** (`BlogPostPage.vue`, `og-meta.php`, `App.vue`, `HomePage.vue`, `router.ts`, `BlogPage.vue`, `backend/routes/web.php`, `BlogPostsSeeder.php`, `categoryDescriptions.ts`, `ListingsPage.vue`, `AdDetailPage.vue`, `Breadcrumbs.vue`). Bazuje na stanie z audytu 2026-06-09 (og-shim WDROŻONY W KODZIE dla ogłoszeń, sitemap z progiem ≥3, recovery 149→80) — rzeczy już rozwiązane NIE diagnozuję od zera.
+
+**Werdykt:** architektura jest gotowa w ~80%. Fundament bloga (canonical per-URL, BlogPosting/Breadcrumb/FAQ schema, enum kategorii pod miasta i prawo, data-driven sitemap) STOI. Ale **dwa twarde blokery zerują ROI dystrybucji** (priorytet 1) + encja marki wymaga konsolidacji (priorytet 2). Reszta to plumbing i procesy.
+
+---
+
+### A) Co BLOKUJE rozsyłkę treści podażowej (og: dla artykułów)
+
+#### A1. 🔴 BLOCKER — blog się NIE buduje/wysypuje: duplikat importu `computed` + niezadeklarowane `${base}`
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | `frontend/src/views/BlogPostPage.vue:2` importuje `import { ref, computed, onMounted, watch } from 'vue'`, a **l.104 PONOWNIE** `import { computed } from 'vue'` (wstrzyknięty w środek `<script setup>`). Dodatkowo **l.147**: `ogImage: newPost.image \|\| ` + szablon `` `${base}/og-image.png` `` — zmienna `base` **nigdzie nie zadeklarowana** (import w l.6 to `appUrl`, nie `base`). esbuild toleruje duplikat importu, więc `npm run build` przechodzi (cichy dług). `computed` jest leniwy: artykuł Z obrazkiem omija gałąź `${base}` i działa; artykuł BEZ hero (`image=null`) rzuca `ReferenceError: base is not defined` przy obliczaniu `seoOptions`. **Seeder NIE ustawia pola `image`** (`BlogPostsSeeder.php:68` ustawia tylko status), więc każdy seedowany artykuł podażowy → `image=null` → crash. |
+| **Ryzyko SEO** | WYSOKIE / blocker priorytetu #5 z briefu. Każdy artykuł bez hero (cały net-new klaster) → ReferenceError przy renderze → `useSeo` nie wstrzykuje meta/og/BlogPosting/Breadcrumb/FAQ JSON-LD, `prerenderReady` nie flipuje, ryzyko białej strony. Zero treści dla bota i usera. ROI całego klastra = 0. |
+| **Rekomendacja** | `frontend/src/views/BlogPostPage.vue`: (1) usunąć l.104 `import { computed } from 'vue'`; (2) l.147 zmienić `` `${base}/og-image.png` `` → `` `${appUrl}/og-image.png` `` (`appUrl` już zaimportowane w l.6). Po fixie `npm run build` + redeploy `dist/`. |
+| **Przewidywany zysk** | Odblokowanie renderu WSZYSTKICH artykułów (istniejących i podażowych); spójny fallback og:image (jak `AdDetailPage.vue` i `BlogPage.vue`). |
+| **Stan** | do-zrobienia |
+
+#### A2. 🔴 BLOCKER — og-shim pokrywa TYLKO ogłoszenia, blog dostaje generyczny default
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | `frontend/public/og-meta.php:64` — JEDYNY regex to `#^powierzchnia-reklamowa/[^/]+/[^/]+/.+-(\d+)$#` (pasuje wyłącznie do leaf-ogłoszeń); fetch z `/api/listings/{id}` (l.85). Brak gałęzi dla `^blog/...` → dla artykułu `$served='fallback'` (l.59) i oddawany jest statyczny default og (`og:type=website`, `og:image=/og-image.png` z `index.html`). `.htaccess:69-72` routuje scrapery social (facebookexternalhit/linkedinbot/whatsapp/slackbot/discordbot/telegrambot…) do shima dla KAŻDEJ ścieżki — więc `/blog/{kat}/{slug}` **trafia** do shima, ale shim go nie obsługuje i zwraca generyk. `useSeo.ts` ustawia per-post og klient-side (po JS), czego scraper NIE wykona. |
+| **Ryzyko SEO** | WYSOKIE / blokuje ROI dystrybucji. Brief Next action #1 wprost: og-shim PRZED jakąkolwiek dystrybucją w social. Klaster podażowy ma być rozsyłany prospektom po cold callu (LinkedIn DM/WhatsApp/Slack/Messenger). Bez per-artykuł og: każdy link wyświetli identyczny karton „Wynajem powierzchni… \| ReklaMap" bez tytułu/excerptu/hero → zerowy CTR z DM, zmarnowana dystrybucja. **NIE jest pokryte** mimo że audyt mówi „shim wdrożony" — wdrożony TYLKO dla ogłoszeń. |
+| **Rekomendacja** | `frontend/public/og-meta.php` — dodać gałąź bloga **przed** `logLine`/`echo` (po l.72). Slug bez numerycznego ID, fetch po slugu. Snippet:<br>```php<br>// Strona artykułu bloga: blog/{kategoria?}/{slug}<br>elseif (preg_match('#^blog/(?:[a-z0-9-]+/)?([a-z0-9-]+)$#', $path, $mb)) {<br>    $post = fetchBlogPost($mb[1]);   // GET API_BASE.'/blog/'.$slug, X-App-Key, timeout 5s<br>    if ($post !== null) { $indexHtml = injectBlogMeta($indexHtml, $post, $path); $served = 'og-blog'; }<br>}<br>```<br>`injectBlogMeta` lustrzane do ogłoszeń: `og:title = $post['title'].' \| Blog ReklaMap'`, `og:description = $post['excerpt']`, `og:image = $post['image'] ?? OG_FALLBACK_IMAGE`, **`og:type = 'article'`** (spójnie z `BlogPostPage.vue:146`), `og:url = APP_URL.'/'.$path`, `twitter:card = summary_large_image`. `fetchBlogPost` analogiczna do `fetchAd` (`BlogController::show` zwraca title/excerpt/image/category — image jako absolutny URL przez `url('storage/...')`). Zaktualizować komentarz nagłówkowy (l.8-9 mówi tylko „dane ogłoszenia"). |
+| **Przewidywany zysk** | Odblokowuje całą dystrybucję klastra: poprawny social preview (tytuł+excerpt+hero) → realny CTR z cold calli. Domyka pytania #1 i #5 z briefu. |
+| **Stan** | do-zrobienia |
+
+#### A3. ⚪ Spójność og:type — po A2 domknięte; NIE rozszerzać shima na home/listy
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | `og-meta.php:156` dla ogłoszenia ustawia `og:type=product` (spójne z `AdDetailPage.vue`) — OK. Strony `/blog` (lista), `/blog/{kat}` (kategoria), home, kategorie ogłoszeń NIE są wzbogacane (brak gałęzi) i dostają default `og:type=website` z `index.html`. Dla artykułów gałąź z A2 ustawi `og:type=article`. |
+| **Ryzyko SEO** | NISKIE. Strony indeksowe (listy/kategorie) na default `website` są poprawne — to indeksy, nie pojedyncze treści do udostępniania. |
+| **Rekomendacja** | Gałąź A2 załatwia `og:type=article`. **NIE** rozszerzać shima na home/listy — default `website` jest dla nich poprawny (zgodnie z audytem 2026-06-09). Zero pracy poza A2. |
+| **Przewidywany zysk** | Spójność `og:type` article między shimem a `useSeo` dla artykułów; brak nadmiarowego wzbogacania. |
+| **Stan** | do-zrobienia (w ramach A2) |
+
+---
+
+### B) Architektura URL / sitemap dla nowych miast (pytanie #2)
+
+#### B1. ✅ Architektura URL bloga udźwignie net-new miasta i silos prawny BEZ zmian kodu
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | `frontend/src/router.ts:101,106` definiuje `/blog/:category(poradniki\|trendy\|case-study\|rynek-ooh\|prawo-i-regulacje\|lokalizacje)/:slug`. Miasta (Szczecin/Białystok/Rzeszów/Toruń/Gdynia) → kategoria `lokalizacje`; silos prawny → `prawo-i-regulacje`/`poradniki` — **wszystkie już w enumie**. `router.ts:111-130` obsługuje legacy `/blog/{slug}` przez lookup API + redirect. `backend/routes/web.php:175,181` wrzuca KAŻDY post `status=published` do sitemapy z URL `/blog/{category}/{slug}` (bez progu); l.60-67 dorzuca stronę kategorii. `BlogPost::booted` czyści cache sitemapy przy save/delete. |
+| **Ryzyko SEO** | NISKIE. Jedyny haczyk: kategoria spoza enuma → router rzuca `not-found`. Strateg/Pisarz NIE mogą wymyślić nowej kategorii (np. `podaz`) bez dopisania w 4 miejscach (patrz F2). |
+| **Rekomendacja** | BEZ zmian kodu dla planowanych klastrów. Procedura Pisarza: `category` w front-matter ∈ {poradniki, trendy, case-study, rynek-ooh, prawo-i-regulacje, lokalizacje}. |
+| **Przewidywany zysk** | Zero długu inżynierskiego — odblokowanie Pisarza bez czekania na deploy. |
+| **Stan** | juz-jest |
+
+#### B2. ⚪ Strony transakcyjne miast tier-2 gated progiem ≥3 — ruch łapać artykułem, nie kategorią
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | DWA różne URL na miasto, których nie wolno mylić: **(A)** ARTYKUŁ `/blog/lokalizacje/{slug}` — wchodzi do sitemapy bez progu po publikacji. **(B)** STRONA KATEGORII `/powierzchnie-reklamowe/{city}` — `backend/routes/web.php:103,128` dodaje do sitemapy TYLKO przy `havingRaw('COUNT(*) >= ?')` (próg = `THIN_PAGE_THRESHOLD`=3); równolegle `ListingsPage.vue` ustawia noindex gdy `resultCount<3`. Miasta tier-2 w fazie budowania podaży = 0 ofert → strona (B) jest noindex I poza sitemapą. Ręczny tekst w `categoryDescriptions.ts` istnieje dla szczecin/bialystok/gdynia, BRAK dla **rzeszow i torun**. Próg ignoruje obecność opisu (celowo, anti-doorway). |
+| **Ryzyko SEO** | To poprawne zachowanie, NIE bug (doorway/thin był przyczyną 149 „wykryta-niezindeksowana"). Ryzyko interpretacyjne: artykuł o mieście zafunkcjonuje od razu, ale strona transakcyjna NIE zindeksuje się bez ≥3 nośników. Liczenie na ruch transakcyjny z tier-2 przed pozyskaniem podaży = błąd planu. Matryca format×miasto (`router.ts` /{type}/{city}, `web.php:116-140`) — to samo: URL istnieją strukturalnie, ale gated; `typeCityDescriptions` ma tekst tylko dla ~10 dużych miast. |
+| **Rekomendacja** | Architektonicznie BEZ ZMIAN (próg słuszny). Dane: (1) dopisać `rzeszow` i `torun` do `cityDescriptions` w `frontend/src/data/categoryDescriptions.ts` (wzorem szczecin/bialystok) — gotowy unikalny tekst w chwili przekroczenia progu. (2) Komunikat dla Stratega/Biznesowego: tier-2 i frazy `billboard {miasto}` przechwytywać sekcją H2 w artykule `/blog/lokalizacje/{miasto}`, NIE stroną kategorii. W artykule linkować do `/powierzchnie-reklamowe/{miasto}` (link zadziała po przekroczeniu progu). |
+| **Przewidywany zysk** | Brak rozjazdu oczekiwań; zero opóźnienia indeksacji po osiągnięciu podaży; realistyczne planowanie treści. |
+| **Stan** | czesciowo |
+
+#### B3. ⚪ Pułapka `status=draft` — opublikowany ≠ odnajdywalny
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | `backend/routes/web.php:175` filtruje `where('status','published')`; `BlogPostsSeeder.php:68` ustawia `'status' => 'draft'` (świadoma decyzja — publikacja ręczna przez panel). `BlogController::show` wymaga `published` → bezpośredni link do draftu zwróci 404, scraper/bot dostanie not-found. |
+| **Ryzyko SEO** | Średnie operacyjnie: artykuł rozesłany prospektowi w DM, pozostając draftem → martwy link (negatywny pierwszy kontakt + zmarnowany sygnał social). |
+| **Rekomendacja** | Procedura (nie kod): po `php artisan db:seed --class=BlogPostsSeeder` — OBOWIĄZKOWO publikacja przez panel admina PRZED rozesłaniem. Weryfikacja: `curl -s https://api.reklamap.pl/sitemap.xml \| grep '{slug}'`. Cache sitemapy czyści się sam (`BlogPost.php`). Opcjonalnie: w panelu admina wizualny status „w sitemapie / poza". |
+| **Przewidywany zysk** | Eliminacja ryzyka rozesłania linku 404 w cold callach. |
+| **Stan** | juz-jest |
+
+---
+
+### C) Schema.org / encja marki (pytanie #4)
+
+#### C1. 🟡 Organization/WebSite duplikowana (App.vue + HomePage), `sameAs` puste, tylko klient-side
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | Schema Organization+WebSite wstrzykiwana DWUKROTNIE: **(a)** `frontend/src/App.vue:62-103` — imperatywnie w `onMounted` na KAŻDEJ stronie (`document.createElement` + `appendChild`, **bez cleanup**), `logo='https://reklamap.pl/logo.png'`, **`sameAs: []`** (l.76); **(b)** `frontend/src/views/HomePage.vue:298-326` przez `useSeo` — kolejny komplet WebSite+Organization. Na home Google widzi **2× Organization i 2× WebSite**, z rozjeżdżającymi się polami (App.vue ma description+sameAs+email, HomePage nie) i dwoma URL logo (bezwzględny vs `${appUrl}`). **Brak `@id`** w obu — nie da się skonsolidować w graf. Cała encja powstaje dopiero po JS (index.html w surowym HTML NIE ma żadnego `ld+json`). `logo.png` istnieje (`public/logo.png`, 109 KB). |
+| **Ryzyko SEO** | ŚREDNIE-WYSOKIE. Brief sekcja 1: marka `reklamap` kolizyjna (reklama.pl, reklamapl.pl, turecki reklamap.com) + brak Knowledge Graph. Zduplikowana, sprzeczna encja rozmywa sygnał tożsamości dokładnie tam, gdzie marka jest kolizyjna — Google może wybrać losowo jeden wariant lub zignorować oba. `sameAs:[]` = zero profili = zero szans na disambiguację i Knowledge Panel. Encja zależna od renderu JS jest najmiększym sygnałem tam, gdzie powinien być najtwardszy. |
+| **Rekomendacja** | **(1)** Usunąć CAŁKOWICIE imperatywną injekcję z `frontend/src/App.vue:62-103` (cały blok org/website + appendChild). **(2)** Przenieść JEDEN połączony graf do **statycznego** `<script type="application/ld+json">` w `frontend/index.html` (`<head>`, przy reszcie og):<br>```json<br>{"@context":"https://schema.org","@graph":[<br> {"@type":"Organization","@id":"https://reklamap.pl/#organization","name":"ReklaMap","url":"https://reklamap.pl/","logo":{"@type":"ImageObject","url":"https://reklamap.pl/logo.png","width":512,"height":512},"foundingDate":"2026-04-01","areaServed":"PL","contactPoint":{"@type":"ContactPoint","email":"kontakt@reklamap.pl","contactType":"customer service","availableLanguage":"Polish"},"sameAs":["<FACEBOOK>","<LINKEDIN>","<INSTAGRAM>"]},<br> {"@type":"WebSite","@id":"https://reklamap.pl/#website","name":"ReklaMap","url":"https://reklamap.pl/","publisher":{"@id":"https://reklamap.pl/#organization"},"inLanguage":"pl-PL","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://reklamap.pl/powierzchnie-reklamowe?q={search_term_string}"},"query-input":"required name=search_term_string"}}<br>]}<br>```<br>**(3)** Usunąć bloki Organization+WebSite z `HomePage.vue:298-326` (zostawić ew. WebPage/CollectionPage). **(4)** `sameAs` wypełnić TYLKO realnymi profilami — pusta/fikcyjna tablica gorsza niż brak; jeśli profili brak, to **zadanie usera/Marketera** (założyć profile) PRZED wpisaniem. |
+| **Przewidywany zysk** | Jeden, render-niezależny, niezdublowany sygnał encji z `@id` → punkt zaczepienia pod Knowledge Graph i disambiguację od marek-kolizji; `@id` pozwala spiąć publisher na blogu i Product.brand bez powielania. |
+| **Stan** | czesciowo |
+
+#### C2. 🟡 Publisher logo na blogu + Product.brand jako trzecia kopia encji; podwójny BreadcrumbList na ogłoszeniu
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | `BlogPostPage.vue:7,134` używa `logoImage` z importu `../assets/logo.webp` jako `publisher.logo.url` → po buildzie zhashowany, zmienny URL `/assets/logo-[hash].webp`. `AdDetailPage.vue` ma `Product.brand` jako odrębny Organization inline (bez `@id`) — trzeci wariant encji. Na ogłoszeniu **BreadcrumbList renderowany 2×**: raz w `AdDetailPage` structuredData, raz przez komponent `Breadcrumbs.vue` (sam wstrzykuje JSON-LD). Reszta schematów poprawna: Product+Offer+UnitPriceSpecification+Place, ItemList na listingu, BlogPosting+Breadcrumb(3 poziomy)+FAQ na artykule. |
+| **Ryzyko SEO** | Zmienny URL logo łamie ciągłość encji wydawcy między buildami. Podwójny BreadcrumbList → ostrzeżenie w Rich Results Test. `Product.brand` inline = kolejne rozmycie encji marki. |
+| **Rekomendacja** | Po wdrożeniu `@id` (C1): `BlogPostPage.vue:131-135` zmienić `publisher` na `{ '@id': `${appUrl}/#organization` }` i usunąć import `logoImage` (l.7); `AdDetailPage.vue` `brand`/`offeredBy` → `{ '@id': appUrl+'/#organization' }`. BreadcrumbList: usunąć wstrzykiwanie JSON-LD z `frontend/src/components/Breadcrumbs.vue` (zostawić wizualny markup), zostawić blok w `AdDetailPage` (pełne 5 poziomów z item URL). Breadcrumb bloga: w `buildBreadcrumbSchema` (`BlogPostPage.vue:91-101`) dodać 4. poziom kategorii między Blog a artykuł (`/blog/{category}`) — wzmacnia sygnał silosu. |
+| **Przewidywany zysk** | Stabilne logo wydawcy, jedna spójna encja referencjonowana z Product/blog, czyste breadcrumbs (mniej ostrzeżeń GSC). |
+| **Stan** | czesciowo |
+
+---
+
+### D) Linkowanie / anti-kanibalizacja
+
+#### D1. 🟡 Kafelki bloga to nie `<a href>` — bot bez JS nie widzi linków hub→artykuł
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | `frontend/src/views/BlogPage.vue:247-252` — karta posta to `<article @click="router.push(...)" style="cursor:pointer">` z `<button class=read-more>` w środku (l.278). To NIE `<a href>`. Nawigacja kategorii owszem używa `<router-link :to=category.path>` (l.235-243). Przejście `/blog → artykuł` wymaga JS. Posty są w sitemapie (`web.php:181`), więc Googlebot je znajdzie — ale on-page graf linków `/blog→post` jest pusty dla nie-JS. |
+| **Ryzyko SEO** | Średnie/wysokie dla klastra: (1) zerowy on-page link equity z huba do artykułów (Google polega tylko na sitemapie); (2) scrapery social i część botów AI nie odkryją artykułów; (3) niespójność a11y (button-in-clickable). |
+| **Rekomendacja** | `frontend/src/views/BlogPage.vue:247-252` — owinąć kartę w `<router-link class="blog-card" :to="`/blog/${post.category}/${post.slug}`">`, usunąć `@click` i `<button class=read-more>` (zagnieżdżony button-in-link). Vue Router wyrenderuje `<a href="/blog/...">` czytelny dla bota bez JS. |
+| **Przewidywany zysk** | Graf linków hub→artykuł czytelny dla każdego bota; lepsza dystrybucja link equity do klastra; poprawa a11y. |
+| **Stan** | do-zrobienia |
+
+#### D2. ⚪ Linki w treści `v-html` powodują full reload zamiast SPA-nav
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | `BlogPostPage.vue:251` renderuje treść przez `v-html`. Linki w treści (`<a href="/blog/...">` z konwersji markdown) to surowe anchory DOM, których Vue Router NIE przechwytuje → klik = pełny reload SPA (re-bootstrap, ponowne wstrzykiwanie meta przez useSeo, utrata scroll). |
+| **Ryzyko SEO** | NISKIE dla crawla (href poprawny, indeksowalny — plus). Ryzyko UX/CWV: pełny reload przy każdym przejściu w klastrze → wolniej, gorszy INP, wyższy bounce, krótsze sesje (pośredni sygnał jakości). |
+| **Rekomendacja** | `frontend/src/views/BlogPostPage.vue` — delegowany handler na `.post-content`:<br>```ts<br>const onContentClick = (e: MouseEvent) => {<br>  const a = (e.target as HTMLElement).closest('a'); if (!a) return<br>  const href = a.getAttribute('href') || ''<br>  if (href.startsWith('/') && !href.startsWith('//')) { e.preventDefault(); router.push(href) }<br>}<br>```<br>w template: `<article class="post-content" @click="onContentClick"><div v-html="post.content"></div></article>`. Zachowuje href dla bota + SPA-nav dla usera. |
+| **Przewidywany zysk** | Płynna nawigacja w klastrze bez utraty crawl-friendly href. |
+| **Stan** | do-zrobienia |
+
+#### D3. 🟡 Brak komponentu „powiązane artykuły" + linkowanie silosu jednokierunkowe
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | `BlogPostPage.vue` NIE renderuje sekcji related/next/prev (szablon kończy się na `.share-section`). `RelatedSilos.vue` istnieje, ale odpytuje `/api/silos` i jest dla LISTINGÓW, nie bloga. Całe linkowanie wewnętrzne jest ręczne w markdownie. Dystrybucja nierówna (hub-and-spoke ciąży do 2 starych artykułów z 30-34 linkami; świeże tematy startują od zera). Dodatkowo silos jednokierunkowy: artykuły linkują DO `/powierzchnie-reklamowe` (48× w md), ale strony kategorii (najsilniejsze, 157 URL sitemapy) NIE linkują do bloga — `ListingsPage.vue` grep `/blog` = 0. |
+| **Ryzyko SEO** | Średnie-wysokie. Klaster (kotwica + 5 satelitów) wymaga gęstego, spójnego meshu; ręczne linkowanie zależy od pamięci Pisarza → orphan-risk dla net-new. Najmocniejsze strony serwisu nie karmią bloga → niepełny silos lokalny i podażowy. |
+| **Rekomendacja** | **(1)** Backend: endpoint zwracający 3 posty tej samej kategorii (exclude bieżący) w `BlogController` (`index` już wspiera filtr kategorii). **(2)** Frontend: w `BlogPostPage.vue` po `.share-section` (~l.285) sekcja `<section class="related-section">` z `<router-link>` do sąsiadów. **(3)** Dwukierunkowość: rozszerzyć `CategoryDescription` w `frontend/src/data/categoryDescriptions.ts` o opcjonalne `relatedArticle?: { slug, category, title }` i wyrenderować link pod opisem kategorii w `ListingsPage.vue` (np. `cityDescriptions['szczecin'].relatedArticle`). **(4)** Na `/dodaj-powierzchnie-reklamowa` link do kotwicy podażowej. |
+| **Przewidywany zysk** | Spójny, powtarzalny przepływ PageRank w silosie; eliminacja orphan-risk; zamknięcie obiegu link juice (kategoria↔blog); dłuższy dwell time. |
+| **Stan** | do-zrobienia |
+
+#### D4. 🟡 Anti-kanibalizacja silosu prawnego — brak egzekwowanej mapy intencji per-URL
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | Canonical poprawny i self-ref: `BlogPostPage.vue:149` (`canonical: url`, url z kategorią i slugiem), `router.ts:111-130` wymusza jeden kanoniczny URL per artykuł → na poziomie URL artykuły się NIE skleją. ALE brak artefaktu mapy intencji. Frazy-cel przyszłego silosu (`12 m²`/`bez pozwolenia`/`zgłoszenie budowlane`) są JUŻ rozsiane po ~10 istniejących artykułach (jak-wybrac, baner-cena, billboard, reklama-zewnetrzna, oplata-reklamowa, uchwala-krajobrazowa, totem, olsztyn…). Canonical NIE rozwiązuje kanibalizacji między różnymi URL o różnej treści — chroni tylko przed duplikatami. |
+| **Ryzyko SEO** | WYSOKIE (główne z briefu pkt #3/#4): (a) nowe dedykowane artykuły konkurują o `reklama bez pozwolenia`/`próg 12 m²`; (b) rozsiane wzmianki w starych artykułach rozcieńczają autorytet dedykowanego URL (Google może wyświetlić starszy, gorszy artykuł). |
+| **Rekomendacja** | Utworzyć artefakt `reklamap-os/status/INTENT_MAP_PRAWO.md` PRZED pisaniem silosu: tabela `URL(slug) \| fraza-kotwica (1 per URL) \| frazy-poboczne \| frazy ZAKAZANE`. Proponowany podział bez nakładania: `zgloszenie-vs-pozwolenie-tablica` = procedura admin. + próg 12 m² (WŁAŚCICIEL fraz „12 m²"/„bez pozwolenia"); `reklama-na-ogrodzeniu` = odległości od drogi wg klasy (NIE powtarza progu — tylko linkuje); `dzierzawa-gruntu` = umowa + stawki; `podatek-ryczalt-8.5` = PIT-28; `elewacja-wspolnoty` = uchwała + zgoda udziałów. ENFORCEMENT: każdy nowy artykuł linkuje do „właściciela" frazy zamiast ją rozwijać; audyt 10 starych artykułów — zamienić rozsiane wzmianki na link do dedykowanego URL. |
+| **Przewidywany zysk** | Eliminacja kanibalizacji (jeden URL = jeden cel); skonsolidowany autorytet per fraza. Bezpośrednia odpowiedź na pytanie #3. |
+| **Stan** | do-zrobienia |
+
+---
+
+### E) Plumbing klastra podażowego + CWV (pytanie #5)
+
+#### E1. ✅ Canonical + BlogPosting/Breadcrumb/FAQ schema — fundament STOI (klient-side)
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | `BlogPostPage.vue:112-136` BlogPosting (headline, articleSection=category, author, datePublished/Modified z API), `91-101` BreadcrumbList, `50-88` warunkowy FAQPage (parsuje H2 „Najczęściej zadawane pytania"). Canonical self-ref per slug (l.149). Wszystko przez `useSeo` PO renderze JS. Distinct slug → distinct canonical. |
+| **Ryzyko SEO** | NISKIE-ŚREDNIE — schema istnieje tylko po JS; Googlebot renderuje (recovery odrobione), ale scrapery/walidatory bez JS nie. To granica SSR, nie luka linkowania. Po A2 (og dla bloga) scrapery dostaną przynajmniej og. |
+| **Rekomendacja** | Brak zmian architektonicznych — DZIAŁA. Drobne wzmocnienie: 4. poziom kategorii w breadcrumb (patrz C2). |
+| **Przewidywany zysk** | Potwierdzenie, że plumbing canonical/schema pod anti-kanibalizację i klaster STOI bez dodatkowej pracy poza A2. |
+| **Stan** | juz-jest |
+
+#### E2. 🟡 CTA do `/dodaj-powierzchnie-reklamowa` — działa przez linki w treści, brak strukturalnego bloku
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | Trasa istnieje (`router.ts:19`, redirect z `/dodaj-ogloszenie`). Artykuły linkują markdownem (21× `dodaj-powierzchnie`/`dodaj-ogloszenie`), klik obsłużony przez router (po fixie D2 — SPA). Komponent `OwnerCallout.vue` (CTA „Wystaw bezpłatnie" → `/dodaj-powierzchnie-reklamowa`) istnieje, ale NIE używany na artykule (grep w BlogPostPage = 0). |
+| **Ryzyko SEO** | NISKIE. CTA działa przez linki inline, ale brak ustandaryzowanego, mocnego bloku na końcu artykułu — w klastrze podażowym to klucz konwersji właściciela. |
+| **Rekomendacja** | Osadzić gotowy `OwnerCallout` na dole artykułu (`BlogPostPage.vue` po `.post-content`), warunkowo dla kategorii podażowej: `import OwnerCallout from '../components/OwnerCallout.vue'`; `<OwnerCallout v-if="post && (post.category === 'poradniki' || post.category === 'dla-wlascicieli')" />`. Minimalnie inwazyjne. |
+| **Przewidywany zysk** | Powtarzalny CTA konwertujący ruch organiczny na akwizycję podaży (główna konwersja klastra). |
+| **Stan** | czesciowo |
+
+#### E3. ⚪ CWV artykułu — hero jako CSS background (LCP), brak `<img>` w treści (CLS OK)
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | Artykuły .md NIE mają obrazów w treści (grep `![`/`<img>` = 0) → CLS niskie (tekst/tabele stabilne). Hero wstrzykiwany jako CSS `background-image` inline (`BlogPostPage.vue:230`) w sekcji 60vh — nie da się preloadować ani `fetchpriority=high`, odkrywany późno (po JS→fetch→post.image→parse CSS). `WebPImage.vue` (poprawny lazy/eager/width/height/fetchpriority) NIE używany na artykule. Dopóki posty seedera nie mają `image` → hero to tylko gradient, LCP = `<h1>` (lekkie, OK). |
+| **Ryzyko SEO** | CLS niskie. LCP: dla artykułów Z hero ryzyko >2,5 s na mobile (obraz późno odkryty, niski priorytet). |
+| **Rekomendacja** | PRZED publikacją klastra zdecydować, czy artykuły dostają hero. Jeśli TAK — render jako `<img>`/`<picture>` przez `WebPImage.vue` (`eager`+`width`/`height`) zamiast CSS-tła, lub `<link rel=preload as=image>`. Jeśli NIE — gradient jest CWV-bezpieczny. |
+| **Przewidywany zysk** | Stabilny LCP <2,5 s na mobile przy skalowaniu klastra. |
+| **Stan** | czesciowo |
+
+---
+
+### F) Pozostałe (niskie priorytety / decyzje produktowe)
+
+#### F1. ⚪ Crawl budget — filtry noindex egzekwowane klient-side
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | `ListingsPage.vue` ustawia noindex dla stron z parametrami filtra (~50 kluczy); `robots.txt` blokuje `/porownaj` i `/*?_v=`. Filtrowane URL nie są blokowane w robots.txt — bot pobierze je zanim zobaczy noindex (wstrzykiwany po JS). Leak teoretyczny (filtry to JS, nie linki — bot raczej ich nie odkryje). Paginacja: canonical strony >1 → ścieżka bez `?page` + prev/next rel. |
+| **Ryzyko SEO** | NISKIE-ŚREDNIE, znany kompromis SPA bez SSR (zgodny z notatką soft-404). |
+| **Rekomendacja** | Bez akcji prewencyjnej. Jeśli GSC pokaże filtrowane URL w „wykryta-niezindeksowana" → selektywny `Disallow: /*?q=` itd. w `robots.txt` (NIE blokować `?page=`). Decyzja PO danych (Analityk). |
+| **Przewidywany zysk** | Potencjalna oszczędność crawl-budgetu — tylko jeśli dane potwierdzą leak. |
+| **Stan** | czesciowo |
+
+#### F2. ⚪ Brak dedykowanej kategorii podażowej (`dla-wlascicieli`) — decyzja produktowa
+
+| Pole | Treść |
+|---|---|
+| **Analiza** | Enum kategorii zamknięty w 4 miejscach: migracje (`2026_01_25..` i `2026_04_14_..`), `router.ts:101,106`, `BlogPostPage.vue:158-165`, `BlogPage.vue` categories. Klaster podażowy zmieści się w `poradniki`/`prawo-i-regulacje`, ale bez dedykowanego huba treść podażowa rozpłynie się w popytowych poradnikach (słabszy topical clustering, mylące UX właściciel vs reklamodawca). |
+| **Ryzyko SEO** | Jeśli `poradniki`: rozmycie intencji. Jeśli nowa kategoria BEZ aktualizacji wszystkich 4 miejsc: 404/redirect-not-found lub sitemap pokaże kategorię, której front nie wyrenderuje. |
+| **Rekomendacja** | Decyzja produktowa (Biznesowy). Na 6 artykułów osobny hub `dla-wlascicieli` ma sens — wymaga 4 SPÓJNYCH zmian: (1) migracja `ALTER TABLE blog_posts MODIFY COLUMN category ENUM(...,'dla-wlascicieli')`; (2) `router.ts:101,106` dopisać `\|dla-wlascicieli`; (3) `BlogPostPage.vue:158-165`; (4) `BlogPage.vue` categories + meta. Alternatywa (zero kodu): podażowe w `poradniki`, prawno-podażowe w `prawo-i-regulacje`. |
+| **Przewidywany zysk** | Czytelny silos podażowy = lepszy topical authority pod akwizycję + jaśniejsze UX dla właściciela nośnika. |
+| **Stan** | do-zrobienia |
+
+---
+
+### Rekomendowana kolejność wdrożeń
+
+1. **KROK 0 (A1, dev, ~15 min):** fix `BlogPostPage.vue:104` (duplikat import) + `:147` (`base`→`appUrl`). Blocker — bez tego cały blog się nie renderuje.
+2. **KROK 1 (A2, dev, ~1h):** gałąź bloga w `og-meta.php`. Blocker dystrybucji.
+3. **KROK 2 (deploy, dev, ~30 min):** `npm run build` + redeploy `dist/` (KROK 0+1) + deploy `og-meta.php`. **Weryfikacja:** FB Sharing Debugger / LinkedIn Post Inspector na URL artykułu.
+4. **KROK 3 (C1+C2, dev, ~1h):** konsolidacja encji marki (statyczny `@graph` w index.html, usunięcie duplikatów App.vue/HomePage, `@id` w publisher/brand, jeden BreadcrumbList).
+5. **KROK 4 (C1 sameAs, user/Marketer → dev):** założyć profile social → dev wpisuje URL do `sameAs`. Zależność.
+6. **KROK 5 (D1+D2+E2+D3, dev, ~2h):** kafelki→router-link, handler v-html, OwnerCallout, related-posts.
+7. **KROK 6 (B2+D3, dev/data, ~1h):** rzeszow/torun w categoryDescriptions, relatedArticle dwukierunkowy.
+8. **KROK 7 (D4+B3+E2, user/Strateg-Pisarz, proces):** INTENT_MAP_PRAWO.md, standard redakcyjny CTA/linki, obowiązkowa publikacja draft→published przed rozsyłką.
+9. **KROK 8 (F1+F2, po danych):** kategoria `dla-wlascicieli` (decyzja Biznesowy), Disallow filtrów (po GSC).
+
+### Zadania dev vs user
+
+| Zadanie | Dev (kod/deploy) | User (GSC/proces/off-site) |
+|---|---|---|
+| A1 fix build-blocker | ✅ | — |
+| A2 og-shim blog + deploy | ✅ | walidacja w FB/LinkedIn debugger |
+| C1 graf @graph w index.html | ✅ | — |
+| C1 sameAs (URL profili) | wpisanie URL | **założenie profili social** |
+| C2 publisher/brand @id, BreadcrumbList | ✅ | — |
+| D1/D2/D3/E2 plumbing | ✅ | — |
+| B2 rzeszow/torun, relatedArticle | ✅ | — |
+| D4 INTENT_MAP_PRAWO.md | — | **Strateg/Pisarz** |
+| B3 publikacja draft→published | — | **panel admina przed rozsyłką** |
+| F2 kategoria dla-wlascicieli | ✅ (4 zmiany) | **decyzja Biznesowy** |
+| F1 Disallow filtrów | ✅ (warunkowo) | **eksport URL z GSC** |
+
+
+---
+
 ## 2026-06-09 — pełny audyt + DECYZJA (nowy zrzut GSC „Stan indeksowania")
 
 Źródło: zrzut GSC „Dlaczego strony nie są zindeksowane" z 2026-06-09 + **żywe testy produkcji** (curl jako Googlebot: robots.txt, `/`, 18 URL-i z sitemap, `/porownaj`, `/zarzadzaj`) + re-read stanu wdrożonego: `frontend/index.html`, `frontend/src/composables/useSeo.ts`, `frontend/public/.htaccess`, `backend/routes/web.php` (sitemap).

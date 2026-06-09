@@ -275,12 +275,12 @@ const handleNewsletterSubmit = async () => {
               <p class="card-excerpt">{{ post.excerpt }}</p>
               <div class="card-footer">
 
-                <button class="read-more">
+                <router-link class="read-more" :to="`/blog/${post.category}/${post.slug}`" @click.stop>
                   Czytaj więcej
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
-                </button>
+                </router-link>
               </div>
             </div>
           </article>

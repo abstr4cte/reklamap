@@ -88,6 +88,48 @@
     content="Powierzchnie reklamowe w całej Polsce – billboardy, citylighty, banery, ekrany LED." />
   <meta name="twitter:image" content="https://reklamap.pl/og-image.png" />
 
+  <!-- Encja marki (statyczna, render-niezależna) — jeden @graph z @id. Lek na kolizję
+       marki „reklamap" (reklama.pl / reklamapl.pl / turecki reklamap.com) i brak Knowledge
+       Graph. og-meta.php oraz useSeo NIE dotykają tego bloku (useSeo usuwa tylko tagi,
+       które sam tworzy). sameAs: dopisać realne profile social, gdy powstaną — pusta
+       tablica jest gorsza niż jej brak, więc na razie pomijamy. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://reklamap.pl/#organization",
+        "name": "ReklaMap",
+        "url": "https://reklamap.pl/",
+        "logo": { "@type": "ImageObject", "url": "https://reklamap.pl/logo.png" },
+        "description": "Platforma do wynajmu powierzchni reklamowych w całej Polsce — billboardy, citylighty, banery, ekrany LED.",
+        "foundingDate": "2026-04-01",
+        "areaServed": "PL",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "kontakt@reklamap.pl",
+          "contactType": "customer service",
+          "availableLanguage": "Polish"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://reklamap.pl/#website",
+        "name": "ReklaMap",
+        "url": "https://reklamap.pl/",
+        "inLanguage": "pl-PL",
+        "publisher": { "@id": "https://reklamap.pl/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": { "@type": "EntryPoint", "urlTemplate": "https://reklamap.pl/powierzchnie-reklamowe?q={search_term_string}" },
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
+  }
+  </script>
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-0ZL0NS8F9W"></script>
   <script>

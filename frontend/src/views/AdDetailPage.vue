@@ -249,7 +249,7 @@ watch([ad, similarAds], ([newAd, newSimilarAds]) => {
         'image': productImages,
         'sku': `RM-${newAd.id}`,
         'category': searchStore.getTypeLabel(newAd.type),
-        'brand': { '@type': 'Organization', 'name': 'ReklaMap', 'url': origin },
+        'brand': { '@id': `${appUrl}/#organization` },
         ...(newAd.created_at ? { 'releaseDate': newAd.created_at } : {}),
         ...(newAd.updated_at ? { 'dateModified': newAd.updated_at } : {}),
         'offers': {
@@ -266,7 +266,7 @@ watch([ad, similarAds], ([newAd, newSimilarAds]) => {
           'itemCondition': 'https://schema.org/NewCondition',
           'availability': newAd.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
           'url': cleanUrl,
-          'offeredBy': { '@type': 'Organization', 'name': 'ReklaMap', 'url': origin }
+          'offeredBy': { '@id': `${appUrl}/#organization` }
         },
         ...(newSimilarAds && newSimilarAds.length > 0 ? {
           'isRelatedTo': newSimilarAds.map((s: any) => ({
@@ -290,18 +290,9 @@ watch([ad, similarAds], ([newAd, newSimilarAds]) => {
           'addressLocality': newAd.city,
           'addressCountry': 'PL'
         }
-      }] : []),
-      {
-        '@context': 'https://schema.org',
-        '@type': 'BreadcrumbList',
-        'itemListElement': [
-          { '@type': 'ListItem', 'position': 1, 'name': 'Strona główna', 'item': origin },
-          { '@type': 'ListItem', 'position': 2, 'name': 'Powierzchnie reklamowe', 'item': `${origin}/powierzchnie-reklamowe` },
-          { '@type': 'ListItem', 'position': 3, 'name': searchStore.getTypeLabel(newAd.type), 'item': `${origin}/powierzchnie-reklamowe/${typeUrlPart}` },
-          { '@type': 'ListItem', 'position': 4, 'name': newAd.city, 'item': `${origin}/powierzchnie-reklamowe/${typeUrlPart}/${citySlug}` },
-          { '@type': 'ListItem', 'position': 5, 'name': newAd.title }
-        ]
-      }
+      }] : [])
+      // BreadcrumbList emituje współdzielony komponent <Breadcrumbs> (też na ListingsPage).
+      // Usunięty stąd, by nie dublować schematu breadcrumbów na stronie ogłoszenia.
     ]
     
     seoOptions.value = {

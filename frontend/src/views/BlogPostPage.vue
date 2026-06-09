@@ -4,7 +4,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { useSeo } from '../composables/useSeo'
 import { appUrl } from '../utils/url'
-import logoImage from '../assets/logo.webp'
 
 const route = useRoute()
 const router = useRouter()
@@ -26,8 +25,22 @@ interface BlogPost {
 }
 
 const post = ref<BlogPost | null>(null)
+const relatedPosts = ref<BlogPost[]>([])
 const isLoading = ref(true)
 const notFound = ref(false)
+
+// Powiązane artykuły z tej samej kategorii (bez bieżącego), max 3 — wzmacnia silos.
+// Reużywa istniejącego endpointu z filtrem kategorii; błąd = sekcja po prostu się nie pokaże.
+const loadRelatedPosts = async (category: string, currentSlug: string) => {
+  try {
+    const response = await api.get(`/blog?category=${encodeURIComponent(category)}`)
+    relatedPosts.value = (Array.isArray(response) ? response : [])
+      .filter((p: BlogPost) => p.slug !== currentSlug)
+      .slice(0, 3)
+  } catch {
+    relatedPosts.value = []
+  }
+}
 
 const loadBlogPost = async () => {
   try {
@@ -35,6 +48,7 @@ const loadBlogPost = async () => {
     const slug = route.params.slug as string
     const response = await api.get(`/blog/${slug}`)
     post.value = response
+    loadRelatedPosts(response.category, response.slug)
   } catch (error) {
     notFound.value = true
   } finally {
@@ -101,8 +115,6 @@ function buildBreadcrumbSchema(p: BlogPost): object {
 }
 
 // SEO Meta Tags — computed ref przekazany do useSeo na poziomie setup
-import { computed } from 'vue'
-
 const seoOptions = computed(() => {
   const newPost = post.value
   if (!newPost) return { title: 'Blog | ReklaMap', description: '' }
@@ -128,11 +140,7 @@ const seoOptions = computed(() => {
     },
     'datePublished': newPost.dateIso ?? undefined,
     'dateModified': newPost.dateModifiedIso ?? newPost.dateIso ?? undefined,
-    'publisher': {
-      '@type': 'Organization',
-      'name': 'ReklaMap',
-      'logo': { '@type': 'ImageObject', 'url': logoImage }
-    }
+    'publisher': { '@id': `${appUrl}/#organization` }
   }
 
   const schemas: object[] = [blogPostingSchema, buildBreadcrumbSchema(newPost)]
@@ -144,7 +152,7 @@ const seoOptions = computed(() => {
     description: newPost.excerpt,
     keywords: `blog, reklama, outdoor, ${newPost.category}, ${newPost.title}`,
     ogType: 'article',
-    ogImage: newPost.image || `${base}/og-image.png`,
+    ogImage: newPost.image || `${appUrl}/og-image.png`,
     ogUrl: url,
     canonical: url,
     publishedTime: newPost.dateIso ?? undefined,
@@ -191,6 +199,18 @@ const shareToSocial = (platform: 'facebook' | 'twitter' | 'whatsapp' | 'linkedin
   }
   
   window.open(shareUrl, '_blank', 'width=600,height=400')
+}
+
+// Linki wewnętrzne w treści (v-html) klikają jako SPA-nav zamiast pełnego reloadu.
+// href zostaje w DOM (crawl-friendly) — przechwytujemy tylko realny klik użytkownika.
+const onContentClick = (e: MouseEvent) => {
+  const anchor = (e.target as HTMLElement).closest('a')
+  if (!anchor) return
+  const href = anchor.getAttribute('href') || ''
+  if (href.startsWith('/') && !href.startsWith('//')) {
+    e.preventDefault()
+    router.push(href)
+  }
 }
 </script>
 
@@ -247,9 +267,24 @@ const shareToSocial = (platform: 'facebook' | 'twitter' | 'whatsapp' | 'linkedin
           Wróć do bloga
         </button>
 
-        <article class="post-content">
+        <article class="post-content" @click="onContentClick">
           <div v-html="post.content || '<p>Treść artykułu w przygotowaniu...</p>'"></div>
         </article>
+
+        <section v-if="relatedPosts.length" class="related-section" aria-labelledby="related-heading">
+          <h2 id="related-heading" class="related-heading">Powiązane artykuły</h2>
+          <div class="related-grid">
+            <router-link
+              v-for="related in relatedPosts"
+              :key="related.id"
+              class="related-card"
+              :to="`/blog/${related.category}/${related.slug}`"
+            >
+              <span class="related-card__title">{{ related.title }}</span>
+              <span class="related-card__meta">{{ related.date }} • {{ related.readTime }} czytania</span>
+            </router-link>
+          </div>
+        </section>
 
         <div class="share-section">
           <h3>Udostępnij ten artykuł</h3>
@@ -711,5 +746,51 @@ h1 {
   .container {
     padding: 0 1.5rem;
   }
+}
+.related-section {
+  margin: 2.5rem 0;
+}
+
+.related-heading {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-main, #1f2937);
+  margin: 0 0 1.25rem 0;
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.related-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--border-color, #e5e7eb);
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.related-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.12);
+  border-color: rgba(102, 126, 234, 0.4);
+}
+
+.related-card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main, #1f2937);
+  line-height: 1.35;
+}
+
+.related-card__meta {
+  font-size: 0.8rem;
+  color: var(--text-muted, #6b7280);
 }
 </style>

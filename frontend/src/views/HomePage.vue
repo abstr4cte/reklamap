@@ -295,35 +295,7 @@ useSeo({
   ogImageHeight: '630',
   ogImageAlt: 'ReklaMap – platforma powierzchni reklamowych w Polsce',
   canonical: appUrl,
-  structuredData: [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      'name': 'ReklaMap',
-      'url': appUrl,
-      'description': 'Platforma do wynajmu powierzchni reklamowych w całej Polsce',
-      'potentialAction': {
-        '@type': 'SearchAction',
-        'target': {
-          '@type': 'EntryPoint',
-          'urlTemplate': `${appUrl}/powierzchnie-reklamowe?q={search_term_string}`
-        },
-        'query-input': 'required name=search_term_string'
-      }
-    },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'Organization',
-      'name': 'ReklaMap',
-      'url': appUrl,
-      'logo': `${appUrl}/logo.png`,
-      'contactPoint': {
-        '@type': 'ContactPoint',
-        'contactType': 'customer service',
-        'availableLanguage': 'Polish'
-      }
-    }
-  ]
+  // Organization/WebSite są teraz w statycznym @graph w index.html (jeden sygnał encji z @id).
 })
 
 const categories = [

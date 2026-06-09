@@ -5,8 +5,9 @@
  * Po co: front to SPA. Meta og:/twitter wstrzykuje dopiero JS (useSeo.ts), więc
  * scrapery, które NIE renderują JS (Facebook, LinkedIn, WhatsApp, Slack, Discord,
  * Twitter/X, Telegram...), dostają surowy index.html z generycznym kartonem.
- * Ten shim — wołany tylko dla tych UA z `.htaccess` — pobiera dane ogłoszenia z API
- * i wstrzykuje og:title/description/image z realnych pól (typ, miasto, cena, zdjęcie).
+ * Ten shim — wołany tylko dla tych UA z `.htaccess` — pobiera dane ogłoszenia LUB
+ * artykułu bloga z API i wstrzykuje og:title/description/image z realnych pól
+ * (ogłoszenie: typ, miasto, cena, zdjęcie; artykuł: tytuł, zajawka, hero).
  *
  * Googlebot/Bingbot TU NIE TRAFIAJĄ (renderują JS samodzielnie) — patrz `.htaccess`.
  * Zero headless/Node/quota → brak ryzyka 429 jak przy prerender.io.
@@ -68,6 +69,15 @@ if (preg_match('#^powierzchnia-reklamowa/[^/]+/[^/]+/.+-(\d+)$#', $path, $m)) {
     if ($ad !== null && isAdPublic($ad)) {
         $indexHtml = injectAdMeta($indexHtml, $ad, $path);
         $served = 'og';
+    }
+}
+// Strona artykułu bloga: blog/{kategoria}/{slug} lub legacy blog/{slug}.
+// API (BlogController::show) zwraca 404 dla draftów/nieistniejących → null → baseline.
+elseif (preg_match('#^blog/(?:[a-z0-9-]+/)?([a-z0-9-]+)$#', $path, $mb)) {
+    $post = fetchBlogPost($mb[1]);
+    if ($post !== null) {
+        $indexHtml = injectBlogMeta($indexHtml, $post, $path);
+        $served = 'og-blog';
     }
 }
 
@@ -158,6 +168,66 @@ function injectAdMeta(string $html, array $ad, string $path): string
     $html = setMeta($html, 'property', 'og:image', $image);
     $html = setMeta($html, 'property', 'og:image:width', '1200');
     $html = setMeta($html, 'property', 'og:image:height', '630');
+    $html = setMeta($html, 'name', 'twitter:card', 'summary_large_image');
+    $html = setMeta($html, 'name', 'twitter:title', $title);
+    $html = setMeta($html, 'name', 'twitter:description', $description);
+    $html = setMeta($html, 'name', 'twitter:image', $image);
+
+    return $html;
+}
+
+/** GET /blog/{slug} z nagłówkiem X-App-Key. Null przy błędzie/404 (draft/nieistniejący). */
+function fetchBlogPost(string $slug): ?array
+{
+    $ch = curl_init();
+    curl_setopt_array($ch, [
+        CURLOPT_URL            => API_BASE . '/blog/' . rawurlencode($slug),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 5,
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_HTTPHEADER     => ['X-App-Key: ' . APP_KEY, 'Accept: application/json'],
+    ]);
+    $body = curl_exec($ch);
+    $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($body === false || $code < 200 || $code >= 300) {
+        return null;
+    }
+    $json = json_decode($body, true);
+    return is_array($json) ? $json : null;
+}
+
+/** og:/twitter dla artykułu bloga — lustrzane wobec BlogPostPage.vue (seoOptions).
+ *  Pola z BlogController::show: title, excerpt, image (pełny URL lub null), dateIso, dateModifiedIso. */
+function injectBlogMeta(string $html, array $post, string $path): string
+{
+    $title       = trim((string) ($post['title'] ?? '')) . ' | Blog ReklaMap';
+    $description = trim((string) ($post['excerpt'] ?? ''));
+    $image       = !empty($post['image']) ? (string) $post['image'] : OG_FALLBACK_IMAGE;
+    $url         = APP_URL . '/' . $path;
+
+    $html = preg_replace('#<title>[^<]*</title>#i',
+        '<title>' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '</title>', $html, 1);
+
+    $html = setMeta($html, 'name', 'description', $description);
+    $html = setMeta($html, 'property', 'og:title', $title);
+    $html = setMeta($html, 'property', 'og:description', $description);
+    $html = setMeta($html, 'property', 'og:type', 'article');
+    $html = setMeta($html, 'property', 'og:url', $url);
+    $html = setMeta($html, 'property', 'og:image', $image);
+    // Wymiary deklarujemy tylko dla znanego fallbacku (1200×630). Realne hero o nieznanych
+    // wymiarach zostawiamy scraperowi do wykrycia — lepiej brak niż błędne wartości.
+    if ($image === OG_FALLBACK_IMAGE) {
+        $html = setMeta($html, 'property', 'og:image:width', '1200');
+        $html = setMeta($html, 'property', 'og:image:height', '630');
+    }
+    if (!empty($post['dateIso'])) {
+        $html = setMeta($html, 'property', 'article:published_time', (string) $post['dateIso']);
+    }
+    if (!empty($post['dateModifiedIso'])) {
+        $html = setMeta($html, 'property', 'article:modified_time', (string) $post['dateModifiedIso']);
+    }
     $html = setMeta($html, 'name', 'twitter:card', 'summary_large_image');
     $html = setMeta($html, 'name', 'twitter:title', $title);
     $html = setMeta($html, 'name', 'twitter:description', $description);

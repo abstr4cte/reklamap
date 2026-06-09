@@ -49,5 +49,39 @@
 | — | opłata reklamowa | prawo-i-regulacje | — | ✅ ZROBIONE 2026-05-05 (czeka na publikację w panelu) | — |
 
 ---
+## 🔬 Net-new z deep researchu 2026-06-09 (do walidacji Ahrefs)
+
+Źródło: `status/SEO_RESEARCH_2026-06-09.md` (44 agenty, research zewnętrzny ugruntowany w GSC/inwentarzu; 81 → 36 → 32). Pełne kąty, dowody popytu i źródła w pliku briefu.
+
+**🚩 KOLEJNOŚĆ: dług z twardym GSC PRZED net-new poniżej** — najpierw `ekran-led-cena` (GSC poz. 40–63, zatwierdzony, nigdy nienapisany), potem `reklama-outdoor-lublin` (poz. 7.7), potem silos prawny (#1–#3 wyżej). Tematy NN niżej mają ZERO wisienek GSC — to nowa przestrzeń, stąd obowiązkowa walidacja Ahrefs przed pisaniem. Miasta wg wielkości: Szczecin > Białystok > Rzeszów/Toruń/Gdynia.
+
+| Priorytet | Temat / Słowo Kluczowe | Silos | Walidacja Ahrefs | Strona | Uwagi |
+|:---|:---|:---|:---|:---|:---|
+| **NN-1** | jak zarobić na wynajmie powierzchni (ściana/działka/płot) | poradniki | ⏳ do walidacji | podaż | Kotwica klastra podażowego; pierwsza treść podażowa w blogu (9/9 obecnych = popytowe). CTA dodaj-nośnik |
+| **NN-1** | dzierżawa gruntu — umowa, stawki, podatek właściciela | prawo-i-regulacje | ⏳ do walidacji | podaż | Aspekt umowny/podatkowy. Koordynować z silosem prawnym (permitting), by nie kanibalizować |
+| **NN-1** | reklama outdoor Szczecin | lokalizacje | ⏳ do walidacji | oba | 7. miasto PL > Bydgoszcz. LCD-tramwaje + „81% nielegalnych". Zweryfikować 85 vs 144 ekrany |
+| **NN-2** | reklama na ogrodzeniu/płocie — przepisy | prawo-i-regulacje | ⏳ do walidacji | oba | Najniższy próg podaży; koordynacja intencji z #1/#2 prawnym |
+| **NN-2** | elewacja wspólnoty (uchwała, fundusz remontowy) | prawo-i-regulacje | ⏳ do walidacji | podaż | Mnożnik: 1 zarządca = wiele ścian. Uwaga: dochód nie zwolniony z CIT |
+| **NN-2** | czy opłaca się wynajmować powierzchnię (wady/zalety) | poradniki | ⏳ do walidacji | podaż | Filar decyzyjny góry lejka |
+| **NN-2** | podatek od wynajmu — ryczałt 8,5% | prawo-i-regulacje | ⏳ do walidacji | podaż | Wsparcie cold calli. YMYL — disclaimer, różny od opłaty reklamowej |
+| **NN-2** | umowa najmu — wzór dla właściciela | prawo-i-regulacje | ⏳ do walidacji | podaż | Możliwa konsolidacja z dzierżawą gruntu w jeden hub umowny |
+| **NN-2** | reklama outdoor Białystok | lokalizacje | ⏳ do walidacji | oba | 10. miasto; transit = autobusy (miasto bez tramwajów) |
+| **NN-2** | reklama outdoor Gdynia | lokalizacje | ⏳ do walidacji | oba | Trolejbusy PKT (unikat); distinct od Gdańska, NIE rozbudowa |
+| **NN-3** | jak mierzyć skuteczność OOH (VAC/GRP/CPM + atrybucja) | poradniki | ⏳ do walidacji | popyt | Domknik lejka; po aktywacji popytu |
+| **NN-3** | jak zaprojektować billboard (kreacja) | poradniki | ⏳ do walidacji | popyt | Next-step po wyborze nośnika |
+| **NN-3** | media plan OOH krok po kroku (hub) | poradniki | ⏳ do walidacji | popyt | Pillar; potem skrócić sekcję w reklama-zewnetrzna |
+| **NN-3** | reklama outdoor vs Google/FB Ads | poradniki | ⏳ do walidacji | popyt | Punkt decyzyjny MŚP; dane CPM do re-weryfikacji |
+| **NN-3** | reklama outdoor dla salonu/komisu samochodowego | poradniki | ⏳ do walidacji | popyt | Pierwszy wertykal aplikacyjny (szablon) |
+| **NN-3** | reklama na lotnisku | trendy | ⏳ do walidacji | popyt | TOFU autorytet (monopol operatorów) |
+| **NN-3** | reklama na paczkomatach InPost | trendy | ⏳ do walidacji | oba | Net-new format, duży inwentarz podaży |
+| **NN-3** | billboard/LED jako inwestycja — kupić vs wydzierżawić | poradniki | ⏳ do walidacji | podaż | PO ekran-led-cena (anti-kanibalizacja) |
+| **NN-3** | reklama outdoor Rzeszów | lokalizacje | ⏳ do walidacji | oba | A4/S19. NIE wyprzedzać Lublina |
+| **NN-3** | reklama outdoor Toruń | lokalizacje | ⏳ do walidacji | oba | UNESCO/konserwator; brak uchwały od 2021 |
+| **NN-4** | silos branżowy (deweloper/hotel/employer branding) | poradniki | ⏳ do walidacji | popyt | Po aktywacji kampanii popytowej |
+| **NN-4** | promocja eventu/koncertu w OOH (krótkoterminowo) | poradniki | ⏳ do walidacji | popyt | Niszowy, sezonowy (lato/festiwale) |
+
+**Odrzucone jako duplikaty (NIE pisać nowych URL-i):** pylon (jest w `totem-reklamowy`), mesh/rusztowanie (`baner-reklamowy-cena` + `murale-reklamowe`), gastronomia (rozbuduj `citylight-reklama`), Outdoor Track/Mediapanel (rozsiane w `reklama-zewnetrzna`/`billboard-reklama`). **Defer:** baner wyborczy → Q3–Q4 2027.
+
+---
 ## Wykonane Analizy i Research:
 *(Tu Strateg będzie dopisywał wnioski z Ahrefs/ATP)*

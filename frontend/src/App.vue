@@ -59,48 +59,8 @@ onMounted(() => {
   if (typeof window !== 'undefined') {
     updateHeaderHeight()
     window.addEventListener('resize', updateHeaderHeight)
-    // Add Organization and WebSite structured data for SEO
-    const organizationSchema = {
-      '@context': 'https://schema.org',
-      '@type': 'Organization',
-      'name': 'ReklaMap',
-      'url': 'https://reklamap.pl',
-      'logo': 'https://reklamap.pl/logo.png',
-      'description': 'Platforma do wynajmu powierzchni reklamowych w całej Polsce',
-      'contactPoint': {
-        '@type': 'ContactPoint',
-        'email': 'kontakt@reklamap.pl',
-        'contactType': 'customer service',
-        'availableLanguage': 'Polish'
-      },
-      'sameAs': []
-    }
-    
-    const websiteSchema = {
-      '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      'name': 'ReklaMap',
-      'url': 'https://reklamap.pl',
-      'potentialAction': {
-        '@type': 'SearchAction',
-        'target': {
-          '@type': 'EntryPoint',
-          'urlTemplate': 'https://reklamap.pl/powierzchnie-reklamowe?keyword={search_term_string}'
-        },
-        'query-input': 'required name=search_term_string'
-      }
-    }
-    
-    // Add schemas to head
-    const orgScript = document.createElement('script')
-    orgScript.type = 'application/ld+json'
-    orgScript.textContent = JSON.stringify(organizationSchema)
-    document.head.appendChild(orgScript)
-    
-    const websiteScript = document.createElement('script')
-    websiteScript.type = 'application/ld+json'
-    websiteScript.textContent = JSON.stringify(websiteSchema)
-    document.head.appendChild(websiteScript)
+    // Organization/WebSite (JSON-LD) przeniesione do statycznego @graph w index.html
+    // (jeden render-niezalezny sygnal encji z @id). Tu juz ich nie wstrzykujemy.
   }
   prefStore.syncStores()
   nextTick(() => {

@@ -303,6 +303,30 @@ export const cityDescriptions: Record<string, CategoryDescription> = {
       'Billboardy przy obwodnicy i wzdłuż ulic Zwycięstwa, Gnieźnieńskiej i Władysława IV',
       'Galerie Forum i Emka oraz okolice Góry Chełmskiej jako punkty wzmożonego ruchu'
     ]
+  },
+
+  'rzeszow': {
+    title: 'Powierzchnie reklamowe w Rzeszowie – nośniki OOH na Podkarpaciu',
+    description: 'Powierzchnie reklamowe w Rzeszowie docierają do mieszkańców stolicy Podkarpacia, dużej społeczności studenckiej oraz podróżnych na skrzyżowaniu autostrady A4 i drogi ekspresowej S19 (Via Carpathia). To jeden z najszybciej rozwijających się ośrodków południowo-wschodniej Polski, z silnym sektorem lotniczym Doliny Lotniczej i portem lotniczym Rzeszów-Jasionka. W bazie znajdziesz billboardy przy węzłach A4 i S19, nośniki wielkoformatowe wzdłuż al. Powstańców Warszawy oraz powierzchnie przy centrach handlowych jak Millenium Hall czy Galeria Rzeszów. Reklama na autobusach MPK jest tu ograniczona do treści niekomercyjnych, więc ciężar kampanii przejmują billboardy, citylighty i ekrany LED. To dobry rynek pod kampanie rekrutacyjne dla przemysłu lotniczego, edukacyjne i handlowe.',
+    benefits: [
+      'Skrzyżowanie A4 i S19 (Via Carpathia) — silny ruch tranzytowy obok lokalnego',
+      'Dolina Lotnicza i port lotniczy Jasionka — tło dla kampanii rekrutacyjnych przemysłu',
+      'Duża społeczność studencka (Politechnika Rzeszowska, Uniwersytet Rzeszowski)',
+      'Reklama na autobusach MPK ograniczona do niekomercyjnej — kluczowe billboardy, citylighty i LED',
+      'Nośniki przy Millenium Hall i Galerii Rzeszów oraz wzdłuż al. Powstańców Warszawy'
+    ]
+  },
+
+  'torun': {
+    title: 'Powierzchnie reklamowe w Toruniu – nośniki OOH',
+    description: 'Powierzchnie reklamowe w Toruniu docierają do mieszkańców, licznej społeczności studenckiej Uniwersytetu Mikołaja Kopernika oraz turystów odwiedzających wpisaną na listę UNESCO toruńską Starówkę. Zabytkowe centrum jest objęte ochroną konserwatorską, więc nośniki komercyjne koncentrują się poza Starym Miastem — przy trasach wlotowych w pobliżu autostrady A1, wzdłuż głównych arterii i przy centrach handlowych jak Toruń Plaza czy Atrium Copernicus. Miasto nie ma uchwały krajobrazowej (stan od 2021), a reklama wielkoformatowa na rusztowaniach przy remontowanych elewacjach wymaga odwzorowania fasady. Komunikację obsługują tramwaje i autobusy MZK, które dokładają nośniki transit. To dobry rynek pod kampanie edukacyjne, turystyczne i handlowe.',
+    benefits: [
+      'Duży ośrodek akademicki (UMK) — wysoka częstotliwość kontaktu przy uczelni i akademikach',
+      'Turystyka wokół Starówki UNESCO (Kopernik, toruńskie pierniki) — sezonowy wzrost zasięgu',
+      'Reżim konserwatora w centrum — nośniki komercyjne głównie poza Starym Miastem',
+      'Bliskość autostrady A1 i trasy wlotowe — ruch tranzytowy obok lokalnego',
+      'Tramwaje i autobusy MZK jako nośniki transit uzupełniające billboardy i citylighty'
+    ]
   }
 }
 
