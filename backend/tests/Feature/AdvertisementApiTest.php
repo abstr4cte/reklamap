@@ -262,4 +262,65 @@ class AdvertisementApiTest extends TestCase
             'is_active' => true,
         ]);
     }
+
+    /**
+     * Test default sort diversifies by operator (B-6 anti-flood):
+     * a single operator with a large portfolio must not push smaller
+     * operators off the first page. Without diversification the lone
+     * small-operator ad would land in 6th place (pure created_at DESC);
+     * with it, it is interleaved into the top of the list.
+     */
+    public function test_default_sort_diversifies_by_operator(): void
+    {
+        // Duży operator — 5 nośników, wszystkie najnowsze
+        Advertisement::factory()->count(5)->create([
+            'is_active' => true,
+            'owner_email' => 'big@operator.pl',
+            'created_at' => now(),
+        ]);
+        // Mały operator — 1 nośnik, starszy (bez dywersyfikacji byłby ostatni)
+        $small = Advertisement::factory()->create([
+            'is_active' => true,
+            'owner_email' => 'small@operator.pl',
+            'created_at' => now()->subDay(),
+        ]);
+
+        $response = $this->getJson('/api/listings', $this->appKeyHeaders());
+
+        $response->assertStatus(200);
+        $ids = array_column($response->json('data'), 'id');
+        $this->assertContains(
+            $small->id,
+            array_slice($ids, 0, 2),
+            'Mały operator powinien być przeplatany na górze listy, nie zepchnięty na koniec przez duże portfolio.'
+        );
+    }
+
+    /**
+     * Test explicit ?sort=newest is pure chronological (NOT diversified).
+     * The diversified order is reserved for the default ("Polecane") mode.
+     */
+    public function test_explicit_newest_sort_is_pure_chronological(): void
+    {
+        Advertisement::factory()->count(5)->create([
+            'is_active' => true,
+            'owner_email' => 'big@operator.pl',
+            'created_at' => now(),
+        ]);
+        $small = Advertisement::factory()->create([
+            'is_active' => true,
+            'owner_email' => 'small@operator.pl',
+            'created_at' => now()->subDay(),
+        ]);
+
+        $response = $this->getJson('/api/listings?sort=newest', $this->appKeyHeaders());
+
+        $response->assertStatus(200);
+        $ids = array_column($response->json('data'), 'id');
+        $this->assertNotContains(
+            $small->id,
+            array_slice($ids, 0, 2),
+            'Jawny "Najnowsze" = czysta data: starszy nośnik małego operatora nie powinien trafić w top 2.'
+        );
+    }
 }

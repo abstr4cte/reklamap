@@ -8,9 +8,11 @@ import { getFullImageUrl } from '../services/api'
 import WebPImage from './WebPImage.vue'
 import { useSearchStore, typeColors } from '../stores/useSearchStore'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
-// import 'leaflet.markercluster'
-// import 'leaflet.markercluster/dist/MarkerCluster.css'
-// import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import 'leaflet.markercluster'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import { createClusterGroup } from '../utils/mapCluster'
+import '../assets/mapCluster.css'
 
 const searchStore = useSearchStore()
 const isActive = ref(true)
@@ -66,7 +68,7 @@ const emit = defineEmits<{
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 let resizeObserver: ResizeObserver | null = null
-// let markerClusterGroup: any = null
+let markerClusterGroup: any = null
 const markers: Map<number, L.Marker> = new Map()
 const isMapActive = ref(false)
 const isScrollingToMap = ref(false)
@@ -229,14 +231,10 @@ const initMap = () => {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map)
 
-  // Initialize marker cluster group - DISABLED
-  // markerClusterGroup = (L as any).markerClusterGroup({
-  //   showCoverageOnHover: false,
-  //   spiderfyOnMaxZoom: true,
-  //   zoomToBoundsOnClick: true,
-  //   maxClusterRadius: 50
-  // })
-  // map.addLayer(markerClusterGroup)
+  // Grupowanie bliskich pinów w klastry (liczba w okręgu), rozwijają się przy zoomie.
+  // Bez tego gęsta podaż (np. ~110 nośników w aglomeracji śląskiej) zlewa się w plamę.
+  markerClusterGroup = createClusterGroup(L)
+  map.addLayer(markerClusterGroup)
 
   // (logika aktywacji mapy jest teraz w głównym handlerze click powyżej)
   
@@ -335,7 +333,7 @@ const updateMarkers = () => {
   // Usuń markery, których nie ma już w danych
   markers.forEach((marker, id) => {
     if (!props.listings.find(ad => ad.id === id)) {
-      map?.removeLayer(marker)
+      markerClusterGroup?.removeLayer(marker)
       markers.delete(id)
     }
   })
@@ -414,7 +412,7 @@ const updateMarkers = () => {
         if (!isMobile.value) marker.getElement()?.classList.remove('hovered')
       })
 
-      marker.addTo(map!)
+      markerClusterGroup.addLayer(marker)
       markers.set(ad.id, marker)
     }
   })
@@ -1181,6 +1179,9 @@ onBeforeUnmount(() => {
   background: transparent;
   border: none;
 }
+
+/* Style klastrów przeniesione do globalnego src/assets/mapCluster.css
+   (współdzielone z listą ogłoszeń). */
 
 :deep(.custom-marker.hovered) {
   z-index: 1000 !important;

@@ -93,7 +93,9 @@ export const useSearchStore = defineStore('search', () => {
   const mapPins = ref<MapPin[]>([])
   const isLoading = ref(false)
   const filters = ref<FilterParams>({ ...DEFAULT_FILTERS })
-  const sortBy = ref('newest')
+  // 'default' = tryb „Polecane": kolejność z serwera (dywersyfikacja per operator,
+  // anti-flood). NIE re-sortujemy go po stronie klienta — patrz blok sortowania.
+  const sortBy = ref('default')
   const priceDisplay = ref<'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign'>('day')
   const viewMode = ref<'grid' | 'list'>('grid')
   const currentPage = ref(1)
@@ -304,7 +306,7 @@ export const useSearchStore = defineStore('search', () => {
 
   const resetFilters = () => {
     filters.value = { ...DEFAULT_FILTERS }
-    sortBy.value = 'newest'
+    sortBy.value = 'default'
     priceDisplay.value = 'day'
     currentPage.value = 1
     pathParamsFilters.value = {}
@@ -339,7 +341,7 @@ export const useSearchStore = defineStore('search', () => {
     
     // Reset other state to avoid stale pagination or sorting
     currentPage.value = 1
-    sortBy.value = 'newest'
+    sortBy.value = 'default'
     
     // Reset path params tracking
     pathParamsFilters.value = {}
@@ -561,6 +563,7 @@ export const useSearchStore = defineStore('search', () => {
   }
 
   const sortOptions = [
+    { value: 'default', label: 'Polecane', description: 'Najświeższe od różnych wystawców' },
     { value: 'newest', label: 'Najnowsze', description: 'Od najnowszych' },
     { value: 'oldest', label: 'Najstarsze', description: 'Od najstarszych' },
     { value: 'name-asc', label: 'Nazwa A-Z', description: 'Alfabetycznie rosnąco' },

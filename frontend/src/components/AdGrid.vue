@@ -22,7 +22,7 @@ const props = defineProps<{
 }>()
 
 const showSortPanel = ref(false)
-const localSortBy = ref(props.sortBy || 'newest')
+const localSortBy = ref(props.sortBy || 'default')
 const isDesktopClamped = ref(false)
 const isMobileClamped = ref(false)
 
@@ -163,7 +163,7 @@ const emit = defineEmits<{
   'update:hoveredAdId': [id: number | null]
 }>()
 
-const sortBy = ref(props.sortBy || 'newest')
+const sortBy = ref(props.sortBy || 'default')
 
 onMounted(() => {
   if (typeof window !== 'undefined') {
@@ -239,6 +239,7 @@ onDeactivated(() => {
             </button>
           </div>
           <select v-model="sortBy" @change="emit('update:sortBy', sortBy)" class="sort-select">
+            <option value="default">Polecane</option>
             <option value="newest">Najnowsze</option>
             <option value="oldest">Najstarsze</option>
             <option value="name-asc">Nazwa A-Z</option>

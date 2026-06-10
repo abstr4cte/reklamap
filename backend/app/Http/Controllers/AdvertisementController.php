@@ -39,7 +39,7 @@ class AdvertisementController extends Controller
         $query = $this->buildFilteredQuery($request);
 
         // --- Sorting ---
-        $sort = $request->input('sort', 'newest');
+        $sort = $request->input('sort', 'default');
         $pricePerDaySql = "
             CASE
                 WHEN price_unit = 'day'      THEN price
@@ -52,6 +52,8 @@ class AdvertisementController extends Controller
         ";
 
         switch ($sort) {
+            case 'newest': // jawny wybór z dropdowna — czysta data, bez dywersyfikacji
+                $query->orderBy('created_at', 'desc')->orderBy('id', 'desc'); break;
             case 'oldest':
                 $query->orderBy('created_at', 'asc'); break;
             case 'name-asc':
@@ -74,8 +76,15 @@ class AdvertisementController extends Controller
                 $query->orderByRaw("CASE WHEN width > 0 AND height > 0 THEN ($pricePerDaySql) / (width * height) ELSE 99999999 END ASC"); break;
             case 'price-sqm-desc':
                 $query->orderByRaw("CASE WHEN width > 0 AND height > 0 THEN ($pricePerDaySql) / (width * height) ELSE 0 END DESC"); break;
-            default: // newest
-                $query->orderBy('created_at', 'desc');
+            default: // newest — z dywersyfikacją per operator (anti-flood, B-6).
+                // ROW_NUMBER per owner_email przeplata wystawców: pierwszy ekran =
+                // po jednym (najnowszym) nośniku każdego operatora, potem drugi rząd
+                // itd. Pojedynczy operator z dużym portfolio (np. import 192 nośników)
+                // nie zalewa pierwszych stron. Wewnątrz operatora i jako tie-break —
+                // od najnowszych. Stabilne przy paginacji (tie-break po id).
+                $query->orderByRaw("ROW_NUMBER() OVER (PARTITION BY owner_email ORDER BY created_at DESC, id DESC) ASC")
+                      ->orderBy('created_at', 'desc')
+                      ->orderBy('id', 'desc');
         }
 
         $perPage = min(max((int) $request->input('per_page', 24), 1), 200);

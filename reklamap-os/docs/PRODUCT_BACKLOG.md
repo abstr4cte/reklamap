@@ -15,6 +15,8 @@ Faza projektu: **budowanie podaży** (właściciele nośników) — patrz `rekla
 | B-2 | Krok „opcjonalny" — wszystkie nieobowiązkowe pola na jednym, pomijalnym kroku + wskaźnik kompletności + prompt po publikacji | ~150/mies. | 3 | 75% | 1 tyg | **450** | TODO (zależne od danych z B-1) |
 | B-3 | Zapis wersji roboczej + powrót do niedokończonego ogłoszenia (mail/link); publikacja bez zdjęcia z nudge'em | ~100/mies. (porzucający) | 2 | 60% | 1.5 tyg | **80** | TODO |
 | B-4 | Konta operatorów + self-serve bulk import nośników z pliku (Excel/CSV) — z walidacją per wiersz, moderacją, weryfikacją konta | duzi operatorzy/agencje | 3 | 60% | 4–6 tyg | — | ICEBOX (faza monetyzacji podaży, nie teraz) |
+| B-5 | Struktura kosztów OOH: kwotowe pola montaż/demontaż/druk + standard netto + kalkulator pełnego kosztu kampanii | ~150/mies. dodawanych + cała baza w wyświetlaniu | 2 | 80% | ~1–1.5 tyg | **240** | TODO (ujawnione realnym cennikiem agencji 2026-06-10) |
+| B-6 | Domyślny sort listy z dywersyfikacją per operator (anti-flood) — `ROW_NUMBER() OVER (PARTITION BY owner_email)` zamiast czystej daty | wszyscy odwiedzający listę | 2 | 85% | ~0.5 tyg | **510** | PILNE — przed importem 192 nośników Optokom (2026-06-10) |
 
 ---
 
@@ -62,6 +64,23 @@ Faza projektu: **budowanie podaży** (właściciele nośników) — patrz `rekla
 - **ZALEŻNOŚĆ / TIMING:** Faza monetyzacji podaży — czyli **dopiero gdy będzie popyt** (reklamodawcy aktywnie szukają, marketplace dowozi leady) i będziesz mieć dźwignię. Self-serve bulk upload zbudować **zanim** odetniesz darmowy concierge, nie wcześniej. Teraz: nic z tego, dalej cold-calling + ręczny import, model anonimowy.
 - **RICE:** nie scoruję — to icebox, faza projektu to budowanie podaży, nie monetyzacja. Wstępnie: Impact 3 (dla strony podażowej przy skali), Confidence ~60%, Effort ~4–6 tyg.
 
+### B-5 — Struktura kosztów OOH (kwotowe montaż/demontaż/druk + netto + kalkulator kampanii)
+- **PROBLEMATYKA:** Realny cennik agencji (2026-06-10) pokazał, że cena nośnika OOH to nie jedna liczba, lecz: **najem/mc + montaż + demontaż + druk, wszystko netto** (druk zależny od technologii: papier vs backlight). Obecny model (`price` + `price_unit` + booleany `price_includes_print/mounting`) oddaje tylko stawkę cykliczną i fakt „wliczone/nie" — nie kwoty jednorazowe ani netto/brutto. Struktura powtórzy się u każdego operatora OOH.
+- **PROPONOWANA FUNKCJA:**
+  - Pola kwotowe (opcjonalne, jednorazowe): `setup_fee`, `teardown_fee`, `print_cost` (netto). Zostawiają `price` jako **czystą stawkę najmu /mc** — jedyną porównywalną i filtrowalną liczbę. **Nigdy** nie sumować kosztów jednorazowych do `price` (amortyzują się przez długość kampanii → rozwaliłyby filtr budżetu i sortowanie).
+  - **Standard netto** dla całej platformy, jawnie oznaczony w UI („ceny netto"). Flaga netto/brutto per-ogłoszenie = na razie overkill; ryzyko: mieszanie netto i brutto bez oznaczenia → kłamliwe porównanie. (`has_vat_invoice` to osobna rzecz — czy operator wystawia FV, nie czy cena netto.)
+  - **Kalkulator pełnego kosztu kampanii:** `setup_fee + teardown_fee + print_cost + (price × miesiące)` na karcie nośnika i w porównywarce. To wprost fundament przyszłego media planera / oferty PDF (TCO kampanii = to, za co zapłaci agencja).
+- **MONETYZACJA:** Pośrednio teraz (jakość + porównywalność podaży); bezpośrednio później — kalkulator TCO i pełna oferta PDF z rozbiciem kosztów to rdzeń płatnego media planera (research 2026-06-09).
+- **ZALEŻNOŚĆ / TIMING:** Nie blokuje bieżącego importu — ten cennik wstawiamy teraz ze stawką/mc jako `price`, koszty jednorazowe w ustrukturyzowanym `description`, `price_includes_*`=false. B-5 robimy, gdy struktura zacznie się powtarzać w kolejnych cennikach (sygnał: 2.+ operator z rozbiciem montaż/druk).
+- **RICE:** Reach ~150 dodawanych/mies. + cała baza w wyświetlaniu · Impact 2 · Confidence 80% (jasny wymóg z realnego cennika) · Effort ~1–1.5 tyg (4 pola + migracja + walidacja + display + kalkulator) → **240**.
+
+### B-6 — Domyślny sort z dywersyfikacją per operator (anti-flood) — PILNE
+- **PROBLEMATYKA:** Domyślny sort listy = `created_at DESC` (`AdvertisementController.php:78`). Import 192 nośników Optokom jednym seederem → niemal identyczny timestamp → blok jednego operatora na pierwszych stronach. Psuje różnorodność, wygląda jak spam, krzywdzi pozostałych wystawców, a problem wróci przy każdym kolejnym dużym imporcie.
+- **PROPONOWANA FUNKCJA:** Zmienić TYLKO domyślny sort (`default`/`newest`) na przeplot wystawców: `ROW_NUMBER() OVER (PARTITION BY owner_email ORDER BY created_at DESC)` jako klucz pierwszorzędny, potem `created_at DESC`, tie-break po `id`. Jawne sorty (data/cena/nazwa) bez zmian. Window functions OK w SQLite (testy) i MySQL/Postgres (prod). Deterministyczne i stabilne przy paginacji.
+- **NIE robić:** sztucznego rozsiewania `created_at` wstecz przy imporcie — to fałszowanie danych, mylące dla sortu „najnowsze" i nieodporne na kolejne importy.
+- **ZALEŻNOŚĆ:** wdrożyć PRZED importem Optokom, żeby 192 nośniki od razu wpadły w zdrowy ranking. Później rozszerzyć ranking o kompletność ogłoszenia + aktywność (→ B-4).
+- **RICE:** Reach ~wszyscy odwiedzający listę · Impact 2 · Confidence 85% · Effort ~0.5 tyg → **510**.
+
 ---
 
 ## NOTKA: linia podziału FREE / PREMIUM — statystyki i analityka operatora (icebox, faza monetyzacji podaży)
@@ -87,6 +106,21 @@ Zasada nadrzędna: **nigdy nie zabieramy tego, co już jest darmowe i dostępne*
 
 ## ZREALIZOWANE / ODRZUCONE
 _(puste)_
+
+---
+
+## DECYZJE PRODUKTOWE (twarde)
+
+### ❌ Cena jako pole opcjonalne / „cena na zapytanie" (decyzja 2026-06-10)
+**Kontekst:** Operatorzy w cold-callach sygnalizują, że „ceny są ustalane indywidualnie" → pytanie, czy zrobić cenę pustą/opcjonalną. Sygnał o indywidualnych cenach jest realny (rate card w OOH to często punkt wyjścia), ale **pustego pola nie wprowadzamy.**
+
+**Powody:**
+1. Puste pole wypada z filtra cenowego (budżet) → niewidoczne dla reklamodawców z pieniędzmi.
+2. „Price on application" to znany anty-pattern marketplace'u — niszczy rdzeń przewagi (widzę cenę bez dzwonienia), cofa nas do katalogu z telefonami.
+3. Magnes na jałowe „ile to kosztuje?" → niższe zaufanie i gorszy sygnał popytu.
+4. Spójne z B-2/B-4: cena = pole twardo wymagane.
+
+**Zamiast tego (wentyl, nie dziura):** cena zostaje obowiązkowa, ale przepozycjonowana jako **„cena wywoławcza / od"** (zmiana labelki + tooltip) + istniejąca flaga `price_negotiable` („do negocjacji") + jednostka `/kampania` dla wycen projektowych + konwencja `~` dla estymat. Ból „nie wiem ile wpisać" adresuje **darmowy podpowiadacz ceny** (research 2026-06-09, rekomendacja #2), nie puste pole.
 
 ---
 
@@ -125,7 +159,7 @@ Dodatkowo: **pierwotny pomysł „OTS na GDDKiA" efektywnie odpadł** — (a) ne
 ### Co przeżyło (4) — status i RICE
 | Pomysł | Co to | Werdykt | RICE |
 |---|---|---|---|
-| **Compliance-as-data** (API/feed uchwał krajobrazowych + opłat) | baza „gdzie i co wolno + stawki + status sądowy" sprzedawana innym firmom jako dane, nie jako appka | **MAYBE / ICEBOX** — nie standalone; cienka warstwa monetyzacji na korpusie compliance, z **firmą n8n foundera jako pierwszym płatnikiem walidującym**. Działa przy pustej mapie (aktyw danych), realna fosa, ale drogie ETL z ~82 BIP-ów + cienki TAM | ~0,3 |
+| **Compliance-as-data** (API/feed uchwał krajobrazowych + opłat) | baza „gdzie i co wolno + stawki + status sądowy" sprzedawana innym firmom jako dane, nie jako appka | **ICEBOX / bliżej KILL** — zakładało **firmę n8n foundera jako pierwszego płatnika; ta firma to tylko koncept, nie istnieje** (2026-06-09) → kandydat traci jedynego realnego klienta. Działa przy pustej mapie (aktyw danych), realna fosa, ale drogie ETL z ~82 BIP-ów + cienki TAM + brak kupca | ~0,3 |
 | **Yield / podpowiadacz ceny** dla właścicieli | sugerowana stawka (GDDKiA + atrybuty nośnika) + alerty o wygasających umowach | **BUDUJ jako DARMOWY wabik** podażowy, nie płatny SaaS — zgrany z obecną fazą (akwizycja podaży) | ~24–60 (jako wabik) |
 | **Self-serve media planer + PDF** | reklamodawca: cel+budżet → plan nośników + oferta PDF | **NIE teraz** — zero-liquidity zabija (planer nad pustą mapą bezużyteczny). Później **freemium**; najlepszy fit z n8n + łapie sygnał popytu | rośnie z gęstością |
 | **RFP→deck** dla niezależnych agencji | sklejanie ofert operatorów w porównanie + prezentację | **MAYBE silnie ku KILL** — nie ruszać bez dowodu >20–30 płacących agencji PL i legalnego dostępu do danych zasięgu; rdzeń komodytyzowany przez LLM | ~0,15 |
@@ -149,5 +183,5 @@ Dodatkowo: **pierwotny pomysł „OTS na GDDKiA" efektywnie odpadł** — (a) ne
 ### ➡️ Rekomendowana kolejność (wynik researchu)
 1. **Zdejmij wąskie gardło, nie buduj narzędzi → gęstość podaży w 1–2 miastach.** Wszystko (popyt, planer, pomiar, premium) jest na niej gated; research potwierdził, że nie ma narzędzia-skrótu. Konkret: odblokuj agencję z 250 nośnikami (czeka na zdjęcia), wznów cold-calle (analityka flagowała zastój 29.05), skup ogień na 1–2 miastach zamiast rozsmarowywać po PL.
 2. **Tanio, równolegle — dwa narzędzia zmniejszające tarcie w DODAWANIU** (pomagają #1, z nikim nie konkurują): darmowy **podpowiadacz ceny** + **auto-uzupełnianie ogłoszenia ze zdjęcia** (jest już skill `ads-photo-scanner`) — to wprost lek na „dodawanie to niczyja robota" (CC-04).
-3. **Jeden telefon, nie projekt:** zwaliduj **compliance-as-data** przez n8n — zapytaj jednego ciepłego klienta, czy zapłaci za moduł „legalność nośnika". WTP za cenę rozmowy.
+3. **Compliance-as-data — odłożone:** zakładało firmę n8n jako pierwszego płatnika; firma to tylko koncept (2026-06-09), founder nie ma ciepłych leadów → brak realnego pierwszego klienta. Nie ruszać, dopóki nie pojawi się konkretny kupiec.
 4. **NIE ruszaj teraz:** planer, pomiar, jakikolwiek płatny tool dla reklamodawców — wszystkie czekają na gęstość.

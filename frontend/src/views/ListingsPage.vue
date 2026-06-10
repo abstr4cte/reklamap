@@ -19,6 +19,8 @@ import { filtersToQueryParams } from '../utils/filterUtils'
 import polishLocations from '../data/polishLocations.json'
 import { categoryDescriptions, cityDescriptions, typeCityDescriptions, type CategoryDescription as CategoryDescriptionData } from '../data/categoryDescriptions'
 import type * as LType from 'leaflet'
+import { createClusterGroup } from '../utils/mapCluster'
+import '../assets/mapCluster.css'
 import WebPImage from '../components/WebPImage.vue'
 import type { Advertisement } from '../types'
 
@@ -227,7 +229,7 @@ const mapContainer = ref<HTMLElement | null>(null)
 let map: LType.Map | null = null
 let resizeObserver: ResizeObserver | null = null
 const markers: Map<number, LType.Marker> = new Map()
-// let markerClusterGroup: any = null
+let markerClusterGroup: any = null
 const showMapOnMobile = ref(false)
 const showSortPanel = ref(false)
 const showSearchAlertModal = ref(false)
@@ -372,9 +374,9 @@ const loadLeaflet = async () => {
   L = LModule.default || LModule
   await import('leaflet/dist/leaflet.css')
   // @ts-ignore
-  // await import('leaflet.markercluster')
-  // await import('leaflet.markercluster/dist/MarkerCluster.css')
-  // await import('leaflet.markercluster/dist/MarkerCluster.Default.css')
+  await import('leaflet.markercluster')
+  await import('leaflet.markercluster/dist/MarkerCluster.css')
+  await import('leaflet.markercluster/dist/MarkerCluster.Default.css')
   return L
 }
 
@@ -934,7 +936,7 @@ const updateMarkers = () => {
   // Usuń markery których nie ma już w danych
   markers.forEach((marker, id) => {
     if (!mapPins.value.find(ad => ad.id === id)) {
-      map?.removeLayer(marker)
+      markerClusterGroup?.removeLayer(marker)
       markers.delete(id)
     }
   })
@@ -969,7 +971,7 @@ const updateMarkers = () => {
       if (!isMobile.value) marker.getElement()?.classList.remove('hovered')
     })
 
-    marker.addTo(map!)
+    markerClusterGroup.addLayer(marker)
     markers.set(ad.id, marker)
   })
 }
@@ -1015,14 +1017,9 @@ const initMap = async () => {
     minZoom: isMobile.value ? 5 : 6,
   }).setView(pCenter, 6)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
-  
-  // markerClusterGroup = (L as any).markerClusterGroup({
-  //   showCoverageOnHover: false,
-  //   spiderfyOnMaxZoom: true,
-  //   zoomToBoundsOnClick: true,
-  //   maxClusterRadius: 50
-  // })
-  // map.addLayer(markerClusterGroup)
+
+  markerClusterGroup = createClusterGroup(L)
+  map.addLayer(markerClusterGroup)
 
   // Delegowany click handler dla markerów — jeden listener na kontenerze zamiast per-marker.
   // marker.getElement() zwraca aktualny element nawet po setIcon() (hover scale).
@@ -1591,6 +1588,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           </button>
 
           <select v-model="sortBy" class="sort-select">
+            <option value="default">Polecane</option>
             <option value="newest">Najnowsze</option>
             <option value="oldest">Najstarsze</option>
             <option value="name-asc">Nazwa A-Z</option>
