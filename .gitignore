@@ -1,0 +1,4 @@
+
+# Artefakty robocze importu Optokom (regenerowane przez scripts/import_optokom.py)
+backend/database/seeders/data/optokom_geocache.json
+backend/database/seeders/data/optokom_mail_draft.txt
