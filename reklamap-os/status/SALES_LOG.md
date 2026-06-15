@@ -58,3 +58,36 @@ Problem: agencje z pierwszej fali były na „tak", ale nie wysłały Excela ani
 **Rozwiązanie → skrypt CC-04 w `MARKETING_ASSETS.md` (wersja ludzka):** grać w otwarte karty — „kampanii nie odpaliłem, bo miasta puste, dlatego do Was dzwonię". Zdejmuje poczucie winy z agencji, robi z nich brakujący element. Prosić o ICH miasto, dowód społeczny 250 nośników, fallback: Excel z 10 pozycjami albo 1 nośnik na żywo. Import biorę na siebie.
 
 **Korekta wcześniejszego TODO:** hook „na początku maja ruszamy" z CC-01/02/03 jest fałszywy NIE dlatego, że maj minął — kampania w ogóle nie wystartowała (brak podaży w miastach). Mówić prawdę: „odpalę, gdy główne miasta się zapełnią".
+
+---
+
+## Operatorzy z zaimportowanym portfolio (podaż)
+
+Rejestr realnych partnerów podażowych, których oferta trafiła do bazy. Uzupełniać przy każdym kolejnym imporcie.
+
+### Optokom — ~2026-06-10 · 192 nośniki · ZAIMPORTOWANY (prod)
+
+- **Skala:** 192 billboardy (~65% ówczesnego katalogu; baza urosła 104 → 296).
+- **Charakterystyka:** wszystkie 5,04×2,38 m (12 m²), `status=reserved` ale `is_active=true`, opis **templatowany** (różni się adres/miasto/cena), wspólny obraz `advertisements/optokom-placeholder.jpg`.
+- **Import:** `scripts/import_optokom.py` / `OptokomSeeder`. Robocze artefakty (geocache, draft maila) usunięte w commicie `4c368b1`.
+- **Otwarty problem (SEO):** placeholder + thin/near-duplicate opisy → Google „crawled/discovered, not indexed" (skok niezaindeksowanych, audyt `SEO_TECH_AUDIT.md` 2026-06-15). **Najsilniejszy lewar: realne zdjęcia** (Optokom ma dosłać) — unikalny obraz = unikalna strona = odblokowana indeksacja. Wymusiło też B-6 (anty-flood sortu listy).
+- **Aktualizacja 2026-06-15:** realne zdjęcia **pobrane ze strony optokom.pl** (`scripts/fetch_optokom_images.py` — crawl /lokalizacje → galerie po kodzie `ref`, fallback `design/{ref}.webp`, konwersja jpg+webp). **168/192 nośników ma teraz unikalne foto** (24 bez galerii zostają na placeholderze). `optokom.json` zaktualizowany, przeseedowano. To wprost adresuje lewar #1 z audytu SEO (unikalny obraz = unikalna strona).
+- **TODO:** dopytać Optokom o foto dla pozostałych 24; zróżnicować opisy per nośnik (thin-content).
+
+### Outdoor 3miasto — 2026-06-15 · 12 nośników · ZAIMPORTOWANY (lokalnie, test)
+
+- **Kontakt:** Michał Parafianowicz (koordynator ds. administracji i marketingu), `koordynator@outdoor3miasto.com`. Wszedł po mailu reaktywacyjnym (`biuro@outdoor3miasto.com` był na liście 72) — odpisał **wypełnionym naszym Excelem + paczką zdjęć**.
+- **Skala:** 12 wybranych billboardów (Pomorskie/Mazowieckie/Warmińsko-maz.: Chwaszczyno S6, Mińsk Maz. A2, Olsztyn, Toruń, Słupsk, Reda…). Część wielkoformatowa 12×6 m przy S6/A2 (3100–3600 zł/mc), reszta 5,04×2,38 m (~850 zł/mc).
+- **Dane:** bogaty Excel (orientacja, klasa drogi, natężenie, kierunek/typ ruchu, opisy gotowe), część z gotowymi współrzędnymi WGS84. Wszystkie 12 ze **zdjęciem** (lokalne pliki z paczki → jpg+webp w storage). Wszystkie zgeokodowane.
+- **Import:** `scripts/import_outdoor3miasto.py` (Excel→`outdoor3miasto.json`, mapowanie PL→kanoniczne, kopiowanie+konwersja zdjęć) → `Outdoor3miastoSeeder`. Wszystkie `status=active`.
+- **Czeka na:** numer telefonu (podadzą później — kontakt na razie mailowy, NIE blokuje publikacji). Odpowiedź mailowa do Michała: panel = magic-link na `reklamap.pl/zarzadzaj` (per e-mail), oferta „więcej nośników w dowolnym formacie / ze strony pobierzemy sami".
+- **Wzorzec:** druga agencja, która odpisała Excelem/linkiem (po reklama.ai). Warto dodać do `MARKETING_ASSETS.md` szablon „odpowiedź na zgłoszenie agencji".
+
+### reklama.ai — 2026-06-15 · 411 nośników · ZAIMPORTOWANY (lokalnie, test)
+
+- **Kontakt:** Ewelina@reklama.ai, tel. 602 534 843. Wszedł po mailu reaktywacyjnym (kampania 72 agencje, 2026-06-15) — odpisał linkiem do swojej strony z ofertą.
+- **Skala:** 411 nośników (409 billboardów + 2 ekrany LED), 48 miejscowości, gros wokół Kłodzka/Dzierżoniowa. 36 wolnych, reszta zajęte.
+- **Cena:** 45 zł/m² netto **/mc** → przeliczone na kwotę miesięczną per nośnik (270–6165 zł, mediana ~810). Wszystkie: **cena do negocjacji = tak**, **faktura VAT = tak**.
+- **Pozyskanie danych:** scrapowane ze strony (statyczny HTML, paginacja) — `scripts/import_reklama_ai.py` → `reklamap-os/status/reklama_ai_nosniki.csv`. **Mają własne zdjęcia** (placeholder z logo niepotrzebny). Zgoda na pobranie: udzielona telefonicznie/mailowo.
+- **Import do bazy:** `php artisan import:reklama-ai --purge` (lokalnie). 34 active (wolne) · 374 reserved (zajęte) · **3 draft/ukryte** (telebim1, telebim2, siatka 137 m² nr 461 — niepewna wycena /m²).
+- **Czeka na:** mail do Eweliny — potwierdzenie stawki dla LED i siatki 137 m² (wtedy 3 drafty → active/reserved). Do produkcji: pobrać zdjęcia do własnego storage (teraz hotlink), dograć dokładne współrzędne (teraz geokod na poziomie miasta + offset).

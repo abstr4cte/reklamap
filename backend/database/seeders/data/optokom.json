@@ -16,9 +16,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/be04-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/be04-1.jpg",
+      "advertisements/optokom/be04-2.jpg",
+      "advertisements/optokom/be04-3.jpg",
+      "advertisements/optokom/be04-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -54,9 +57,11 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/be02-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/be02-1.jpg",
+      "advertisements/optokom/be02-2.jpg",
+      "advertisements/optokom/be02-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -92,9 +97,13 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/be05-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/be05-1.jpg",
+      "advertisements/optokom/be05-2.jpg",
+      "advertisements/optokom/be05-3.jpg",
+      "advertisements/optokom/be05-4.jpg",
+      "advertisements/optokom/be05-5.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -130,9 +139,11 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/be08-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/be08-1.jpg",
+      "advertisements/optokom/be08-2.jpg",
+      "advertisements/optokom/be08-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -168,9 +179,11 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/be09-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/be09-1.jpg",
+      "advertisements/optokom/be09-2.jpg",
+      "advertisements/optokom/be09-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -206,9 +219,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/be10-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/be10-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -244,9 +257,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/be11-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/be11-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -320,9 +333,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/be15-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/be15-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -358,9 +371,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/cz01-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/cz01-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -396,9 +409,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/cz02-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/cz02-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -434,9 +447,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/cz07-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/cz07-1.jpg",
+      "advertisements/optokom/cz07-2.jpg",
+      "advertisements/optokom/cz07-3.jpg",
+      "advertisements/optokom/cz07-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -472,9 +488,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/cz11-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/cz11-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -548,9 +564,13 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/cz13-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/cz13-1.jpg",
+      "advertisements/optokom/cz13-2.jpg",
+      "advertisements/optokom/cz13-3.jpg",
+      "advertisements/optokom/cz13-4.jpg",
+      "advertisements/optokom/cz13-5.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -586,9 +606,11 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/cz14-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/cz14-1.jpg",
+      "advertisements/optokom/cz14-2.jpg",
+      "advertisements/optokom/cz14-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -624,9 +646,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/cz17-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/cz17-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -662,9 +684,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/cz18-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/cz18-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -700,9 +722,11 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/cz19-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/cz19-1.jpg",
+      "advertisements/optokom/cz19-2.jpg",
+      "advertisements/optokom/cz19-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -738,9 +762,13 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg02-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg02-1.jpg",
+      "advertisements/optokom/dg02-2.jpg",
+      "advertisements/optokom/dg02-3.jpg",
+      "advertisements/optokom/dg02-4.jpg",
+      "advertisements/optokom/dg02-5.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -776,9 +804,16 @@
     "orientation": "portrait",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg04-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg04-1.jpg",
+      "advertisements/optokom/dg04-2.jpg",
+      "advertisements/optokom/dg04-3.jpg",
+      "advertisements/optokom/dg04-4.jpg",
+      "advertisements/optokom/dg04-5.jpg",
+      "advertisements/optokom/dg04-6.jpg",
+      "advertisements/optokom/dg04-7.jpg",
+      "advertisements/optokom/dg04-8.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -812,9 +847,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg07-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg07-1.jpg",
+      "advertisements/optokom/dg07-2.jpg",
+      "advertisements/optokom/dg07-3.jpg",
+      "advertisements/optokom/dg07-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -850,9 +888,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg08-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg08-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -888,9 +926,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg13-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg13-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -926,9 +964,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg14-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg14-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -964,9 +1002,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg16-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg16-1.jpg",
+      "advertisements/optokom/dg16-2.jpg",
+      "advertisements/optokom/dg16-3.jpg",
+      "advertisements/optokom/dg16-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1002,9 +1043,12 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg17-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg17-1.jpg",
+      "advertisements/optokom/dg17-2.jpg",
+      "advertisements/optokom/dg17-3.jpg",
+      "advertisements/optokom/dg17-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1040,9 +1084,16 @@
     "orientation": "portrait",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg18-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg18-1.jpg",
+      "advertisements/optokom/dg18-2.jpg",
+      "advertisements/optokom/dg18-3.jpg",
+      "advertisements/optokom/dg18-4.jpg",
+      "advertisements/optokom/dg18-5.jpg",
+      "advertisements/optokom/dg18-6.jpg",
+      "advertisements/optokom/dg18-7.jpg",
+      "advertisements/optokom/dg18-8.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1076,9 +1127,11 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg24-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg24-1.jpg",
+      "advertisements/optokom/dg24-2.jpg",
+      "advertisements/optokom/dg24-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1114,9 +1167,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg25-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg25-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1152,9 +1205,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg27-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg27-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1190,9 +1243,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg29-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg29-1.jpg",
+      "advertisements/optokom/dg29-2.jpg",
+      "advertisements/optokom/dg29-3.jpg",
+      "advertisements/optokom/dg29-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1228,9 +1284,11 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg30-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg30-1.jpg",
+      "advertisements/optokom/dg30-2.jpg",
+      "advertisements/optokom/dg30-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1266,9 +1324,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg31-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg31-1.jpg",
+      "advertisements/optokom/dg31-2.jpg",
+      "advertisements/optokom/dg31-3.jpg",
+      "advertisements/optokom/dg31-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1304,9 +1365,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg33-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg33-1.jpg",
+      "advertisements/optokom/dg33-2.jpg",
+      "advertisements/optokom/dg33-3.jpg",
+      "advertisements/optokom/dg33-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1342,9 +1406,11 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg34-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg34-1.jpg",
+      "advertisements/optokom/dg34-2.jpg",
+      "advertisements/optokom/dg34-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1380,9 +1446,10 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg37-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg37-1.jpg",
+      "advertisements/optokom/dg37-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1418,9 +1485,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg38-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg38-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1456,9 +1523,13 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg40-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg40-1.jpg",
+      "advertisements/optokom/dg40-2.jpg",
+      "advertisements/optokom/dg40-3.jpg",
+      "advertisements/optokom/dg40-4.jpg",
+      "advertisements/optokom/dg40-5.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1494,9 +1565,10 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg41-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg41-1.jpg",
+      "advertisements/optokom/dg41-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1532,9 +1604,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg50-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg50-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1570,9 +1642,11 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg52-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg52-1.jpg",
+      "advertisements/optokom/dg52-2.jpg",
+      "advertisements/optokom/dg52-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1608,9 +1682,12 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg53-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg53-1.jpg",
+      "advertisements/optokom/dg53-2.jpg",
+      "advertisements/optokom/dg53-3.jpg",
+      "advertisements/optokom/dg53-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1646,9 +1723,11 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg54-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg54-1.jpg",
+      "advertisements/optokom/dg54-2.jpg",
+      "advertisements/optokom/dg54-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1684,9 +1763,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg55-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg55-1.jpg",
+      "advertisements/optokom/dg55-2.jpg",
+      "advertisements/optokom/dg55-3.jpg",
+      "advertisements/optokom/dg55-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1722,9 +1804,11 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg56-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg56-1.jpg",
+      "advertisements/optokom/dg56-2.jpg",
+      "advertisements/optokom/dg56-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1760,9 +1844,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg57-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg57-1.jpg",
+      "advertisements/optokom/dg57-2.jpg",
+      "advertisements/optokom/dg57-3.jpg",
+      "advertisements/optokom/dg57-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1798,9 +1885,13 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg58-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg58-1.jpg",
+      "advertisements/optokom/dg58-2.jpg",
+      "advertisements/optokom/dg58-3.jpg",
+      "advertisements/optokom/dg58-4.jpg",
+      "advertisements/optokom/dg58-5.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1836,9 +1927,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg59-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg59-1.jpg",
+      "advertisements/optokom/dg59-2.jpg",
+      "advertisements/optokom/dg59-3.jpg",
+      "advertisements/optokom/dg59-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1874,9 +1968,13 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg60-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg60-1.jpg",
+      "advertisements/optokom/dg60-2.jpg",
+      "advertisements/optokom/dg60-3.jpg",
+      "advertisements/optokom/dg60-4.jpg",
+      "advertisements/optokom/dg60-5.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1912,9 +2010,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg61-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg61-1.jpg",
+      "advertisements/optokom/dg61-2.jpg",
+      "advertisements/optokom/dg61-3.jpg",
+      "advertisements/optokom/dg61-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1950,9 +2051,19 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg62-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg62-1.jpg",
+      "advertisements/optokom/dg62-2.jpg",
+      "advertisements/optokom/dg62-3.jpg",
+      "advertisements/optokom/dg62-4.jpg",
+      "advertisements/optokom/dg62-5.jpg",
+      "advertisements/optokom/dg62-6.jpg",
+      "advertisements/optokom/dg62-7.jpg",
+      "advertisements/optokom/dg62-8.jpg",
+      "advertisements/optokom/dg62-9.jpg",
+      "advertisements/optokom/dg62-10.jpg",
+      "advertisements/optokom/dg62-11.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -1988,9 +2099,13 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg63-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg63-1.jpg",
+      "advertisements/optokom/dg63-2.jpg",
+      "advertisements/optokom/dg63-3.jpg",
+      "advertisements/optokom/dg63-4.jpg",
+      "advertisements/optokom/dg63-5.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2026,9 +2141,14 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg64-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg64-1.jpg",
+      "advertisements/optokom/dg64-2.jpg",
+      "advertisements/optokom/dg64-3.jpg",
+      "advertisements/optokom/dg64-4.jpg",
+      "advertisements/optokom/dg64-5.jpg",
+      "advertisements/optokom/dg64-6.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2064,9 +2184,11 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg71-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg71-1.jpg",
+      "advertisements/optokom/dg71-2.jpg",
+      "advertisements/optokom/dg71-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2102,9 +2224,14 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg72-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg72-1.jpg",
+      "advertisements/optokom/dg72-2.jpg",
+      "advertisements/optokom/dg72-3.jpg",
+      "advertisements/optokom/dg72-4.jpg",
+      "advertisements/optokom/dg72-5.jpg",
+      "advertisements/optokom/dg72-6.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2140,9 +2267,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg76-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg76-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2178,9 +2305,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg77-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg77-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2216,9 +2343,13 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg78-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg78-1.jpg",
+      "advertisements/optokom/dg78-2.jpg",
+      "advertisements/optokom/dg78-3.jpg",
+      "advertisements/optokom/dg78-4.jpg",
+      "advertisements/optokom/dg78-5.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2254,9 +2385,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg79-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg79-1.jpg",
+      "advertisements/optokom/dg79-2.jpg",
+      "advertisements/optokom/dg79-3.jpg",
+      "advertisements/optokom/dg79-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2292,9 +2426,11 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg80-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg80-1.jpg",
+      "advertisements/optokom/dg80-2.jpg",
+      "advertisements/optokom/dg80-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2330,9 +2466,11 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg84-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg84-1.jpg",
+      "advertisements/optokom/dg84-2.jpg",
+      "advertisements/optokom/dg84-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2368,9 +2506,10 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg85-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg85-1.jpg",
+      "advertisements/optokom/dg85-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2406,9 +2545,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg86-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg86-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2444,9 +2583,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg87-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg87-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2482,9 +2621,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg88-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg88-1.jpg",
+      "advertisements/optokom/dg88-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2520,9 +2660,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg89-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg89-1.jpg",
+      "advertisements/optokom/dg89-2.jpg",
+      "advertisements/optokom/dg89-3.jpg",
+      "advertisements/optokom/dg89-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2558,9 +2701,11 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg90-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg90-1.jpg",
+      "advertisements/optokom/dg90-2.jpg",
+      "advertisements/optokom/dg90-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2596,9 +2741,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg91-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg91-1.jpg",
+      "advertisements/optokom/dg91-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2634,9 +2780,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg92-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg92-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2672,9 +2818,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg93-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg93-1.jpg",
+      "advertisements/optokom/dg93-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2710,9 +2857,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg94-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg94-1.jpg",
+      "advertisements/optokom/dg94-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2748,9 +2896,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg95-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg95-1.jpg",
+      "advertisements/optokom/dg95-2.jpg",
+      "advertisements/optokom/dg95-3.jpg",
+      "advertisements/optokom/dg95-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2786,9 +2937,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg96-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg96-1.jpg",
+      "advertisements/optokom/dg96-2.jpg",
+      "advertisements/optokom/dg96-3.jpg",
+      "advertisements/optokom/dg96-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2824,9 +2978,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg97-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg97-1.jpg",
+      "advertisements/optokom/dg97-2.jpg",
+      "advertisements/optokom/dg97-3.jpg",
+      "advertisements/optokom/dg97-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2862,9 +3019,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg98-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg98-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2900,9 +3057,14 @@
     "orientation": "portrait",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg99-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg99-1.jpg",
+      "advertisements/optokom/dg99-2.jpg",
+      "advertisements/optokom/dg99-3.jpg",
+      "advertisements/optokom/dg99-4.jpg",
+      "advertisements/optokom/dg99-5.jpg",
+      "advertisements/optokom/dg99-6.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2936,9 +3098,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg100-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg100-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -2974,9 +3136,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/dg101-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/dg101-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3012,9 +3174,11 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so07-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so07-1.jpg",
+      "advertisements/optokom/so07-2.jpg",
+      "advertisements/optokom/so07-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3050,9 +3214,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so08-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so08-1.jpg",
+      "advertisements/optokom/so08-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3088,9 +3253,11 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so09-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so09-1.jpg",
+      "advertisements/optokom/so09-2.jpg",
+      "advertisements/optokom/so09-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3126,9 +3293,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so10-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so10-1.jpg",
+      "advertisements/optokom/so10-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3278,9 +3446,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so24-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so24-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3316,9 +3484,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so25-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so25-1.jpg",
+      "advertisements/optokom/so25-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3354,9 +3523,11 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so28-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so28-1.jpg",
+      "advertisements/optokom/so28-2.jpg",
+      "advertisements/optokom/so28-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3392,9 +3563,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so29-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so29-1.jpg",
+      "advertisements/optokom/so29-2.jpg",
+      "advertisements/optokom/so29-3.jpg",
+      "advertisements/optokom/so29-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3430,9 +3604,12 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so30-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so30-1.jpg",
+      "advertisements/optokom/so30-2.jpg",
+      "advertisements/optokom/so30-3.jpg",
+      "advertisements/optokom/so30-4.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3468,9 +3645,11 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so32-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so32-1.jpg",
+      "advertisements/optokom/so32-2.jpg",
+      "advertisements/optokom/so32-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3506,9 +3685,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so53-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so53-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3544,9 +3723,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so54-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so54-1.jpg",
+      "advertisements/optokom/so54-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3582,9 +3762,10 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so55-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so55-1.jpg",
+      "advertisements/optokom/so55-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3620,9 +3801,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so56-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so56-1.jpg",
+      "advertisements/optokom/so56-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3658,9 +3840,11 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so58-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so58-1.jpg",
+      "advertisements/optokom/so58-2.jpg",
+      "advertisements/optokom/so58-3.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3696,9 +3880,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so59-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so59-1.jpg",
+      "advertisements/optokom/so59-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3734,9 +3919,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so60-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so60-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3772,9 +3957,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/so62-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/so62-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3810,9 +3995,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/n01-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/n01-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3848,9 +4033,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/n02-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/n02-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3886,9 +4071,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/za01-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/za01-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3924,9 +4109,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/za02-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/za02-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -3962,9 +4147,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/za03-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/za03-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4000,9 +4185,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/za04-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/za04-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4038,9 +4223,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/za05-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/za05-1.jpg",
+      "advertisements/optokom/za05-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4076,9 +4262,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/za06-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/za06-1.jpg",
+      "advertisements/optokom/za06-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4152,9 +4339,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/kce03-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/kce03-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4190,9 +4377,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/kce04-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/kce04-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4228,9 +4415,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/kce09-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/kce09-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4266,9 +4453,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/kce10-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/kce10-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4304,9 +4491,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/kce11-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/kce11-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4342,9 +4529,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/kce12-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/kce12-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4380,9 +4567,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/kce15-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/kce15-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4452,9 +4639,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/cho01-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/cho01-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4524,9 +4711,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/j21-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/j21-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4562,9 +4749,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/j22-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/j22-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4600,9 +4787,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/j25-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/j25-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4638,9 +4825,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/j27-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/j27-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4676,9 +4863,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/j29-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/j29-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4714,9 +4901,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/j30-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/j30-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4752,9 +4939,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/j32-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/j32-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4790,9 +4977,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/buk01-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/buk01-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4828,9 +5015,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/zo01-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/zo01-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4866,9 +5053,10 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/zo02-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/zo02-1.jpg",
+      "advertisements/optokom/zo02-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4904,9 +5092,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/chr02-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/chr02-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4942,9 +5130,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/chr03-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/chr03-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -4980,9 +5168,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/chr05-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/chr05-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5018,9 +5206,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/tr01-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/tr01-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5056,9 +5244,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/im01-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/im01-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5094,9 +5282,13 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/my10-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/my10-1.jpg",
+      "advertisements/optokom/my10-2.jpg",
+      "advertisements/optokom/my10-3.jpg",
+      "advertisements/optokom/my10-4.jpg",
+      "advertisements/optokom/my10-5.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5132,9 +5324,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/my13-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/my13-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5170,9 +5362,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/my14-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/my14-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5208,9 +5400,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/my15-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/my15-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5246,9 +5438,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/my16-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/my16-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5284,9 +5476,10 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/my17-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/my17-1.jpg",
+      "advertisements/optokom/my17-2.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5322,9 +5515,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/my18-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/my18-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5360,9 +5553,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/my19-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/my19-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5398,9 +5591,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/my21-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/my21-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5436,9 +5629,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/zab09-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/zab09-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5474,9 +5667,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/waw01-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/waw01-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5626,9 +5819,9 @@
     "orientation": "landscape",
     "has_backlight": true,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/om01-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/om01-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5662,9 +5855,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/om02-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/om02-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5700,9 +5893,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/om03-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/om03-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5738,9 +5931,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/om04-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/om04-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5776,9 +5969,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/om05-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/om05-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5814,9 +6007,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/om06-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/om06-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5852,9 +6045,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/om07-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/om07-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5890,9 +6083,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp01-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp01-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5928,9 +6121,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp02-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp02-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -5966,9 +6159,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp03-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp03-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6004,9 +6197,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp04-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp04-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6042,9 +6235,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp05-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp05-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6080,9 +6273,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp06-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp06-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6118,9 +6311,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp07-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp07-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6156,9 +6349,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp08-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp08-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6194,9 +6387,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp09-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp09-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6232,9 +6425,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp10-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp10-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6270,9 +6463,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp11-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp11-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6308,9 +6501,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp12-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp12-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6346,9 +6539,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp13-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp13-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6384,9 +6577,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp14-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp14-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6422,9 +6615,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp15-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp15-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6460,9 +6653,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp16-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp16-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6498,9 +6691,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp17-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp17-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6536,9 +6729,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp18-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp18-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6574,9 +6767,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp19-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp19-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6612,9 +6805,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp20-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp20-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6650,9 +6843,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp21-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp21-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6688,9 +6881,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp22-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp22-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6726,9 +6919,9 @@
     "orientation": "landscape",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp23-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp23-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
@@ -6764,9 +6957,9 @@
     "orientation": "portrait",
     "has_backlight": false,
     "has_image": true,
-    "image_url": "advertisements/optokom-placeholder.jpg",
+    "image_url": "advertisements/optokom/bp24-1.jpg",
     "images": [
-      "advertisements/optokom-placeholder.jpg"
+      "advertisements/optokom/bp24-1.jpg"
     ],
     "owner_email": "biuro@optokom.pl",
     "phone": "666 926 666",
