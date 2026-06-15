@@ -139,8 +139,16 @@ Route::get('/sitemap.xml', function () {
             $xml .= '</url>';
         }
 
-        // All active advertisements
+        // Leaf-ogłoszenia: tylko REALNIE WYNAJMOWALNE. Nośniki `reserved` (zajęte) i
+        // `draft` (niepubliczne) nie trafiają do sitemapy — strona takiego nośnika
+        // sygnalizuje OutOfStock (AdDetailPage), więc reklamowanie jej w Google to
+        // crawl waste + thin/near-duplicate (potwierdzone w GSC 2026-06-15 po imporcie
+        // Optokom: 192 nośniki, część reserved, skok „Wykryta–niezindeksowana" 80→289).
+        // Strony-agregaty miast/typ×miasto liczą próg na `is_active` (zgodnie z frontowym
+        // resultCount), więc zajęty nośnik nadal zasila gęstość kategorii — tylko nie
+        // dostaje własnego URL w sitemapie.
         $advertisements = \App\Models\Advertisement::where('is_active', true)
+            ->whereIn('status', ['active', 'soon_available'])
             ->orderBy('updated_at', 'desc')
             ->get();
 
@@ -157,7 +165,7 @@ Route::get('/sitemap.xml', function () {
         ];
 
         foreach ($advertisements as $ad) {
-            $slug = Str::slug($ad->title);
+            $slug = \App\Models\Advertisement::slugifyTitle($ad->title);
             $typeSlug = $typeMapping[$ad->type] ?? 'inne';
             $citySlug = Str::slug($ad->city);
 

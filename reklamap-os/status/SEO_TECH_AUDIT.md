@@ -4,6 +4,43 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 
 ---
 
+## 2026-06-15 — diagnoza nowego zrzutu GSC (skok niezaindeksowanych = import Optokom)
+
+Źródło: 3 zrzuty GSC od usera (15.06) + **żywe odpytanie prod API** (listingi 241/215/172, `total=296`), `optokom.json` (192 rekordy), `git show 4c368b1`, live `robots.txt` (reklamap.pl, api, www.api), live 301 www→non-www.
+
+### Rekonsyliacja bucketów (09.06 → 15.06)
+
+| Bucket GSC | 09.06 | 15.06 | Δ | Odczyt |
+|---|---|---|---|---|
+| **Wykryta – niezindeksowana** | 80 | **289** | **+209** | 🔴 import Optokom (192 nośniki, baza 104→296). Leaf bez progu → Google odkrył wszystkie naraz. NIE regresja kodu — backlog crawl na młodej domenie |
+| Zeskanowana – niezindeksowana | 12 | 27 | +15 | część Optokom już scrawlowana → thin/near-dup → odrzucona z indeksu |
+| noindex (Niepowodzenie) | 10 | 10 | 0 | celowe cienkie <3; walidacja zawsze „Niepowodzenie" — OK |
+| 5xx / 404 / Przekierowanie (Rozpoczęto) | 30/28/35 | 30/28/35 | 0 | goją się same, bez akcji |
+| robots-blocked / canonical-alt / 401 | 4/4/1 | 4/4/1 | 0 | zamierzone/benign |
+| **[NOWY, „Popraw wygląd"] Zindeksowana ale zablokowana robots** | — | 2 | +2 | `/` + `/powierzchnie-reklamowe/warszawa` — STRONY SĄ W INDEKSIE; flaga kosmetyczna |
+
+### Ustalenia (żywy kod/prod)
+
+- **Optokom = 192 nośniki, ~65% katalogu.** Wszystkie billboardy 5,04×2,38 m (12 m²), dzielą `advertisements/optokom-placeholder.jpg`, opis **templatowany** (różni się adres/miasto/cena), część `status=reserved` ale `is_active=true` → **w sitemapie** (potwierdzone: leaf 215 reserved był crawlowany). Klasyczny profil thin/near-duplicate → dokładnie to, na co Google odpowiada „crawled, not indexed". To powtórka problemu z maja (doorway/thin), tym razem na poziomie leaf.
+- **Bug sluga:** `AdvertisementController:428` `slug=Str::slug($ad->title)`. Title „Billboard 5.04×2.38 m – Jaworzno" → `Str::slug` zjada „×" i „." → `billboard-504238-m-jaworzno`. Wszystkie 12 m² dzielą stem „504238" → URL brzydki + wygląda na duplikat.
+- **„Zindeksowana ale zablokowana robots" (2):** live `reklamap.pl/robots.txt` ma `Allow: /` i ZERO Disallow pasującego do `/` ani `/powierzchnie-reklamowe/warszawa`. Flaga jest STALE/transient — najpewniej chwilowy nieudany fetch robots.txt w oknie 5xx (pierwsze wykrycie 9.06 zbiega się z trwającą walidacją 5xx; Google przy nieosiągalnym robots defensywnie blokuje ostatnio crawlowane URL). Klasa „Popraw wygląd" = strony SĄ w indeksie. Akcja: jeden klik „Sprawdź poprawność".
+- **`www.api.reklamap.pl/`** (był w zrzucie zeskanowana): `www.api.reklamap.pl/robots.txt` → `Disallow: /` — już pokryte, wypadnie samo. Host www na subdomenie api to kosmetyka (opcjonalny 301 www.api→api).
+- www→non-www 301 działa (curl: `billboardy/poznan` → 301 na non-www). Bez zmian.
+
+### Rekomendacje (priorytety)
+
+| # | Akcja | Plik / miejsce | Kto | Prio | Status |
+|---|---|---|---|---|---|
+| 1 | **Realne zdjęcia zamiast `optokom-placeholder.jpg`** — najsilniejszy lewar (unikalny obraz = unikalna strona, odblokowuje indeksację leaf) | dane/operacyjne (Optokom dośle foty) | user/Marketer | 🔴 | TODO |
+| 2 | **Wykluczyć z sitemapy nośniki nierentowalne** (`reserved`/`draft`) — rentować się nie da, nie reklamuj w Google; zostaw `active`+`soon_available`. Zmniejsza crawl surface | `backend/routes/web.php` (leaf-query — `whereIn('status',['active','soon_available'])` obok `is_active`) | dev | 🟡 | ✅ WDROŻONE W KODZIE 2026-06-15 — smoke prod-like: 181 wynajmowalnych / 643 is_active (462 `reserved` znika z leaf-sitemapy). Agregaty miast/typ×miasto BEZ zmian (próg liczy `is_active`, zgodnie z frontowym resultCount). Czeka na deploy backendu |
+| 3 | **Fix sluga wymiarów** — normalizacja wymiarów PRZED slugify. Single source of truth: helper `Advertisement::slugifyTitle()` (PHP) + lustrzany `slugify()` (TS), używany w kontrolerze/sederze/sitemapie i wszystkich 12+ miejscach budujących URL we froncie | `Advertisement.php` (helper), `AdvertisementController.php`, `OptokomSeeder.php`, `web.php`, `frontend/src/utils/slugify.ts` + migracja backfill | dev | 🟡 | ✅ WDROŻONE W KODZIE 2026-06-15 — `billboard-504238-m-jaworzno` → `billboard-5-04-x-2-38-m-jaworzno`. PHP==TS potwierdzone testem (11/11 backend + 131/131 front, `vue-tsc` czysto). Resolucja po `{id}` → stare URL-e nadal 200, canonical wskazuje nowy slug (Google konsoliduje; leafy w większości jeszcze niezaindeksowane). Migracja `2026_06_15_000000_backfill_advertisement_slugs` przelicza istniejące (tylko zmienione, bez dotykania `updated_at`). Czeka na deploy + `php artisan migrate` |
+| 4 | Lekkie zróżnicowanie opisu importu (zdanie o otoczeniu/widoczności per nośnik) + stagger przy kolejnych importach | `scripts/import_optokom.py` / `OptokomSeeder` | dev/Pisarz | ⚪ | TODO |
+| 5 | GSC: **NIE re-walidować** noindex(10)/zeskanowana(27) — „Niepowodzenie" jest oczekiwane dla thin/near-dup, walidacja nie przejdzie bez poprawy treści (#1). „Zindeksowana-ale-robots"(2) — jeden klik walidacji | GSC | user | ⚪ | — |
+
+**Werdykt:** skok 80→289 to NIE awaria — to fallout legalnego importu podaży (founder buduje gęstość nośników). 289 spadnie samo w miarę crawlu, **o ile** poprawi się jakość leaf (zdjęcia #1) i odetnie nierentowalne z sitemapy (#2). Strona główna jest zaindeksowana — „zablokowana robots" to kosmetyka.
+
+---
+
 ## 2026-06-09 — audyt wdrożeniowy briefu SEO_RESEARCH
 
 > **Weryfikacja (Claude, 2026-06-09):** finding A1 potwierdzony w kodzie i seederze — `BlogPostPage.vue:104` duplikował `import {computed}` (już w l.2), a l.147 używała niezadeklarowanego `base` (jedyne wystąpienie w pliku; nie eksportowane z `utils/url.ts`); `BlogPostsSeeder.php:63-68` ustawia `image_alt`/`image_prompt`, ale NIE `image`. **Sprostowanie streszczenia:** to NIE „blog się nie buduje" — build przechodzi (esbuild toleruje duplikat), crash jest RUNTIME'owy i tylko dla artykułów z pustym `image` (każdy świeżo seedowany). Istniejące opublikowane artykuły renderują się, bo mają ustawiony `image` (operator `||` nie sięga `base`). **A1 NAPRAWIONE w tej sesji** (`base`→`appUrl`, usunięty duplikat importu w BlogPostPage.vue) — czeka na `npm run build` + deploy `dist/`. Pozostałe findingi (A2/C/D) ugruntowane w plik:linia, nieprzeklikane linia-po-linii.

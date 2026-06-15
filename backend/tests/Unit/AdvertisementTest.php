@@ -205,4 +205,34 @@ class AdvertisementTest extends TestCase
         $this->assertIsNumeric($ad->price);
         $this->assertGreaterThan(0, $ad->price);
     }
+
+    /**
+     * Test that slugifyTitle keeps dimensions readable instead of collapsing them.
+     * Regresja: „Billboard 5.04×2.38 m" → stary Str::slug dawał „billboard-504238-m".
+     */
+    public function test_slugify_title_keeps_dimensions_readable(): void
+    {
+        $this->assertSame(
+            'billboard-5-04-x-2-38-m-jaworzno',
+            Advertisement::slugifyTitle('Billboard 5.04×2.38 m – Jaworzno')
+        );
+
+        // wariant z literą „x" i przecinkiem dziesiętnym
+        $this->assertSame(
+            'baner-3-2-x-1-5-m',
+            Advertisement::slugifyTitle('Baner 3,2x1,5 m')
+        );
+    }
+
+    /**
+     * Test that slugifyTitle leaves dimensionless titles untouched (no regression
+     * for zwykłe tytuły / nazwy miast).
+     */
+    public function test_slugify_title_leaves_plain_titles_unchanged(): void
+    {
+        $this->assertSame(
+            'citylight-przystanek-centrum',
+            Advertisement::slugifyTitle('Citylight przystanek Centrum')
+        );
+    }
 }

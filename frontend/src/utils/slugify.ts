@@ -15,6 +15,13 @@ export const slugify = (text: string): string => {
     return text
         .toString()
         .toLowerCase()
+        // Czytelne wymiary PRZED usuwaniem znaków: krok .replace(/[^\w\-]+/g,'') niżej
+        // kasuje kropkę i znak „×" bez separatora, przez co wymiary zlewają się w
+        // nieczytelny ciąg („5.04×2.38" → „504238"). Najpierw 5.04→5-04 i 5×2→5 x 2.
+        // Dotyczy tylko sekwencji cyfra–separator–cyfra (slugi miast/zwykłe tytuły bez zmian).
+        // MUSI pozostać zgodny z Advertisement::slugifyTitle() w backendzie.
+        .replace(/(\d)[.,](\d)/g, '$1-$2')
+        .replace(/(\d)\s*[×x]\s*(\d)/g, '$1 x $2')
         // Zamień polskie znaki na ASCII
         .split('')
         .map(char => polishChars[char] || char)

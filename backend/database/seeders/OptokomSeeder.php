@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Advertisement;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 /**
  * Import nośników agencji Optokom z arkusza "LISTA LOKALIZACJI 2026".
@@ -47,7 +46,7 @@ class OptokomSeeder extends Seeder
                 unset($rec['ref']); // pole pomocnicze, nie kolumna
 
                 $ad = Advertisement::create($rec);
-                $ad->slug = Str::slug($ad->title) . '-' . $ad->id;
+                $ad->slug = Advertisement::slugifyTitle($ad->title) . '-' . $ad->id;
                 $ad->save();
 
                 $counts[$rec['status']] = ($counts[$rec['status']] ?? 0) + 1;

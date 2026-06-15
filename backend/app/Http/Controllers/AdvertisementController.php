@@ -425,7 +425,7 @@ class AdvertisementController extends Controller
         $ad = Advertisement::create($validated);
 
         // Generate slug after the ad is created and has an ID
-        $ad->slug = Str::slug($ad->title) . '-' . $ad->id;
+        $ad->slug = Advertisement::slugifyTitle($ad->title) . '-' . $ad->id;
         $ad->save();
 
         try {

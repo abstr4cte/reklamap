@@ -131,6 +131,28 @@ class Advertisement extends Model
         return $this->status ?? 'active';
     }
 
+    /**
+     * Slug tekstowy z tytułu ogłoszenia (bez sufiksu `-{id}`).
+     *
+     * Normalizuje wymiary PRZED `Str::slug`, bo inaczej kropka dziesiętna i znak `×`
+     * są usuwane bez separatora i wymiary zlewają się w nieczytelny ciąg
+     * (np. „Billboard 5.04×2.38 m" → „billboard-504238-m"). Po normalizacji:
+     * „billboard-5-04-x-2-38-m". Wzorzec dotyczy wyłącznie sekwencji cyfra–separator–cyfra,
+     * więc tytuły bez wymiarów pozostają bez zmian.
+     *
+     * MUSI pozostać zgodny z `slugify()` we froncie (frontend/src/utils/slugify.ts) —
+     * sitemap (PHP) i canonical/linki (TS) generują slug niezależnie i muszą dać ten sam wynik.
+     */
+    public static function slugifyTitle(string $title): string
+    {
+        // 5.04 / 5,04 → 5-04 (separator dziesiętny między cyframi)
+        $title = preg_replace('/(\d)[.,](\d)/', '$1-$2', $title);
+        // 5×2 / 5x2 → 5 x 2 (znak mnożenia/„x" między cyframi zostaje jako litera „x")
+        $title = preg_replace('/(\d)\s*[×xX]\s*(\d)/u', '$1 x $2', $title);
+
+        return \Illuminate\Support\Str::slug($title);
+    }
+
     public function getFullUrlAttribute(): string
     {
         $typeMapping = [
