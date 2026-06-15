@@ -31,9 +31,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zelazno/"
+        "available_from": null
     },
     {
         "title": "Billboard Żelazno — Pałac Żelazno",
@@ -67,9 +65,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zelazno/"
+        "available_from": null
     },
     {
         "title": "Billboard Żelazno — Trasa nr33 (ob. zabudowany)",
@@ -103,9 +99,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zelazno/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — TRASA NR 8",
@@ -139,9 +133,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — TRASA NR 8",
@@ -175,9 +167,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Gołogłowy — 3km od Kłodzka",
@@ -211,9 +201,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/gologlowy/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — Kudowa Zdrój",
@@ -247,9 +235,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn",
@@ -283,9 +269,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Zjazd na Polanicę Zdrój",
@@ -319,9 +303,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica Zdrój — Wjazd od strony Kłodzka",
@@ -355,9 +337,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica Zdrój — Polanica Zdrój",
@@ -391,9 +371,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — TRASA NR 8",
@@ -427,9 +405,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Orlen, ul.Dusznicka",
@@ -463,9 +439,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Orlen, ul.Dusznicka",
@@ -499,9 +473,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Tablica podświetlana",
@@ -535,9 +507,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Tablica podświetlana",
@@ -571,9 +541,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn, wjazd do Kłodzka",
@@ -607,9 +575,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -643,9 +609,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -679,9 +643,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Centrum, przy markecie E.Leclerc",
@@ -715,9 +677,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn, wjazd do Kłodzka",
@@ -751,9 +711,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka",
@@ -787,9 +745,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka",
@@ -823,9 +779,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie",
@@ -859,9 +813,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie",
@@ -895,9 +847,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn, wjazd do Kłodzka",
@@ -931,9 +881,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn, wyjazd z Kłodzka",
@@ -967,9 +915,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie",
@@ -1003,9 +949,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie",
@@ -1039,9 +983,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Wjazd od Bystrzycy Kłodzkiej",
@@ -1075,9 +1017,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka",
@@ -1111,9 +1051,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka",
@@ -1147,9 +1085,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Ul.Noworudzka",
@@ -1183,9 +1119,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Ul.Noworudzka",
@@ -1219,9 +1153,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Ul.Noworudzka",
@@ -1255,9 +1187,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica Zdrój — Biedronka",
@@ -1291,9 +1221,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica Zdrój — Biedronka",
@@ -1327,9 +1255,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Centrum, przy markecie E.Leclerc",
@@ -1363,9 +1289,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Braszowice — Wyjazd z terenu zabudowanego",
@@ -1399,9 +1323,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/braszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Żelazno — Pałac Żelazno",
@@ -1435,9 +1357,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zelazno/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie",
@@ -1471,9 +1391,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Pierwsze światła od Wrocławia",
@@ -1507,9 +1425,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Wilków wielki — Przy drodze krajowej nr 8",
@@ -1543,9 +1459,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/wilkow-wielki/"
+        "available_from": null
     },
     {
         "title": "Billboard Nowa Ruda — Słupiec, przy CH Intermarche",
@@ -1579,9 +1493,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/nowa-ruda/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Wyjazd na drogę krajową nr8",
@@ -1615,9 +1527,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Rondo przy Galerii Twierdza, ul.Objazdowa",
@@ -1651,9 +1561,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Wjazd od strony Wrocławia",
@@ -1687,9 +1595,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Wyjazd w kierunku Wrocławia",
@@ -1723,9 +1629,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Żelazno — Pałac Żelazno",
@@ -1759,9 +1663,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zelazno/"
+        "available_from": null
     },
     {
         "title": "Billboard Żelazno — Pałac Żelazno",
@@ -1795,9 +1697,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zelazno/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Wjazd od Bystrzycy, ul.Wyspiańskiego",
@@ -1831,9 +1731,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Rondo przy Galerii Twierdza, ul.Noworudzka",
@@ -1867,9 +1765,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn, wjazd do Kłodzko",
@@ -1903,9 +1799,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -1939,9 +1833,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -1975,9 +1867,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -2011,9 +1901,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -2047,9 +1935,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Złoty Stok — Przy stacji benzynowej.",
@@ -2083,9 +1969,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zloty-stok/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Rondo przy Galerii Twierdza, ul.Noworudzka",
@@ -2119,9 +2003,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Jaszkówka, wjazd od Nysy",
@@ -2155,9 +2037,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka",
@@ -2191,9 +2071,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka",
@@ -2227,9 +2105,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Orlen, ul.Dusznicka",
@@ -2263,9 +2139,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Orlen, ul.Dusznicka",
@@ -2299,9 +2173,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Rondo obok Castoramy",
@@ -2335,9 +2207,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Rondo obok Castoramy",
@@ -2371,9 +2241,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — Jeleniów",
@@ -2407,9 +2275,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — Jeleniów",
@@ -2443,9 +2309,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Bystrzyca Kłodzka — ul. Sienkiewicza (kier. centrum)",
@@ -2479,9 +2343,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bystrzyca-klodzka/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — Jeleniów",
@@ -2515,9 +2377,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Nowa Ruda — Słupiec, naprzeciw marketu Intermarche",
@@ -2551,9 +2411,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/nowa-ruda/"
+        "available_from": null
     },
     {
         "title": "Billboard Bystrzyca Kłodzka — obwodnica miasta",
@@ -2587,9 +2445,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bystrzyca-klodzka/"
+        "available_from": null
     },
     {
         "title": "Billboard Bystrzyca Kłodzka — obwodnica miasta",
@@ -2623,9 +2479,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bystrzyca-klodzka/"
+        "available_from": null
     },
     {
         "title": "Billboard Bystrzyca Kłodzka — obwodnica miasta",
@@ -2659,9 +2513,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bystrzyca-klodzka/"
+        "available_from": null
     },
     {
         "title": "Billboard Bystrzyca Kłodzka — wyjazd na obwodnicę",
@@ -2695,9 +2547,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bystrzyca-klodzka/"
+        "available_from": null
     },
     {
         "title": "Billboard Bystrzyca Kłodzka — wyjazd na obwodnicę miasta",
@@ -2731,9 +2581,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bystrzyca-klodzka/"
+        "available_from": null
     },
     {
         "title": "Billboard Bystrzyca Kłodzka — wjazd do miasta",
@@ -2767,9 +2615,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bystrzyca-klodzka/"
+        "available_from": null
     },
     {
         "title": "Billboard Bystrzyca Kłodzka — ul. Sienkiewicza, obok Netto",
@@ -2803,9 +2649,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bystrzyca-klodzka/"
+        "available_from": null
     },
     {
         "title": "Billboard Łagiewniki — Przy stacji Orlen",
@@ -2839,9 +2683,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/lagiewniki/"
+        "available_from": null
     },
     {
         "title": "Billboard Łagiewniki — Przy stacji Orlen",
@@ -2875,9 +2717,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/lagiewniki/"
+        "available_from": null
     },
     {
         "title": "Billboard Nowa Ruda — Słupiec, przy przejeździe kolejowym",
@@ -2911,9 +2751,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/nowa-ruda/"
+        "available_from": null
     },
     {
         "title": "Billboard Nowa Ruda — Słupiec, przy przejeździe kolejowym.",
@@ -2947,9 +2785,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/nowa-ruda/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — Jeleniów",
@@ -2983,9 +2819,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -3019,9 +2853,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie",
@@ -3055,9 +2887,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie",
@@ -3091,9 +2921,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -3127,9 +2955,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Ul.Objazdowa, obok Agrolu",
@@ -3163,9 +2989,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Ul.Objazdowa, obok Agrolu",
@@ -3199,9 +3023,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Paczków — Skrzyżowanie z drogą na Czechy",
@@ -3235,9 +3057,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/paczkow/"
+        "available_from": null
     },
     {
         "title": "Billboard Paczków — Skrzyżowanie z drogą na Czechy",
@@ -3271,9 +3091,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/paczkow/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Ul.Noworudzka",
@@ -3307,9 +3125,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Ul.Noworudzka",
@@ -3343,9 +3159,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Ul.Noworudzka",
@@ -3379,9 +3193,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Ul.Noworudzka",
@@ -3415,9 +3227,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn, wjazd do Kłodzka",
@@ -3451,9 +3261,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Rondo przy Galerii Twierdza, ul.Objazdowa",
@@ -3487,9 +3295,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Międzylesie — Międzylesie, Wyjazd na Kłodzko, ul.Warszawska",
@@ -3523,9 +3329,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/miedzylesie/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Ul.Noworudzka",
@@ -3559,9 +3363,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — CH E.Leclerc",
@@ -3595,9 +3397,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — CH E.Leclerc",
@@ -3631,9 +3431,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Braszowice — poza terenem zabudowlanym",
@@ -3667,9 +3465,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/braszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Braszowice — poza terenem zabudowlanym",
@@ -3703,9 +3499,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/braszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Kościuszki",
@@ -3739,9 +3533,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Kościuszki",
@@ -3775,9 +3567,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Kościuszki",
@@ -3811,9 +3601,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Kościuszki",
@@ -3847,9 +3635,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Bierkowice, obok sklepu",
@@ -3883,9 +3669,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Bierkowice",
@@ -3919,9 +3703,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Osiedle, ul.Wyszyńskiego",
@@ -3955,9 +3737,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Przy stacji Orlen",
@@ -3991,9 +3771,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Przy stacji Orlen",
@@ -4027,9 +3805,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Wyjazd w stronę Kłodzka",
@@ -4063,9 +3839,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Wjazd od strony Kłodzka",
@@ -4099,9 +3873,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Przy stacji Orlen",
@@ -4135,9 +3907,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Przy stacji Orlen",
@@ -4171,9 +3941,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Łagiewniki — Łagiewniki",
@@ -4207,9 +3975,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/lagiewniki/"
+        "available_from": null
     },
     {
         "title": "Billboard Łagiewniki — Łagiewniki",
@@ -4243,9 +4009,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/lagiewniki/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, ul.Piłsudskiego",
@@ -4279,9 +4043,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, ul.Piłsudskiego",
@@ -4315,9 +4077,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, ul.Piłsudskiego",
@@ -4351,9 +4111,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, ul.Piłsudskiego",
@@ -4387,9 +4145,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Bardo — Wyjazd na Kłodzko, ul.Kolejowa",
@@ -4423,9 +4179,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bardo/"
+        "available_from": null
     },
     {
         "title": "Billboard Bardo — Wjazd od Kłodzka, ul.Kolejowa",
@@ -4459,9 +4213,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bardo/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Szalejów Górny",
@@ -4495,9 +4247,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie",
@@ -4531,9 +4281,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie",
@@ -4567,9 +4315,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Wjazd do centrum od strony Kłodzka",
@@ -4603,9 +4349,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Wyjazd z centrum miasta, ul.Kłodzka",
@@ -4639,9 +4383,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Zjazd na Polanicę Zdrój",
@@ -4675,9 +4417,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Zjazd na Polanicę Zdrój",
@@ -4711,9 +4451,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Paczków — Droga krajowa nr 46",
@@ -4747,9 +4485,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/paczkow/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Wjazd do miasta od strony Kłodzka",
@@ -4783,9 +4519,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Centrum miasta, ul. Legnicka",
@@ -4819,9 +4553,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Szczytna — Przy stacji paliw MOYA",
@@ -4855,9 +4587,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szczytna/"
+        "available_from": null
     },
     {
         "title": "Billboard Szczytna — Przy stacji paliw MOYA",
@@ -4891,9 +4621,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szczytna/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — Kudowa Zdrój",
@@ -4927,9 +4655,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Przy Urzędzie Pocztowym",
@@ -4963,9 +4689,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Ul.Objazdowa, za Agrolem",
@@ -4999,9 +4723,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Ul.Objazdowa, przed Agrolem",
@@ -5035,9 +4757,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Kościuszki",
@@ -5071,9 +4791,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Kościuszki",
@@ -5107,9 +4825,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Żelazno — Trasa nr33, wyjazd na Kłodzko",
@@ -5143,9 +4859,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zelazno/"
+        "available_from": null
     },
     {
         "title": "Billboard Żelazno — Trasa nr33, wyjazd na Kłodzko",
@@ -5179,9 +4893,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zelazno/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn, wjazd do Kłodzka",
@@ -5215,9 +4927,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn, wjazd do Kłodzka",
@@ -5251,9 +4961,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn",
@@ -5287,9 +4995,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn, za stacją ORLEN",
@@ -5323,9 +5029,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Żelazno — Pałac Żelazno",
@@ -5359,9 +5063,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zelazno/"
+        "available_from": null
     },
     {
         "title": "Billboard Żelazno — Pałac Żelazno",
@@ -5395,9 +5097,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zelazno/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — TRASA NR 8",
@@ -5431,9 +5131,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — TRASA NR 8",
@@ -5467,9 +5165,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn, wyjazd z Kłodzka",
@@ -5503,9 +5199,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Bierkowice",
@@ -5539,9 +5233,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Duszniki — TRASA NR 8",
@@ -5575,9 +5267,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/duszniki/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — TRASA NR 8",
@@ -5611,9 +5301,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — TRASA NR 8",
@@ -5647,9 +5335,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — Droga Krajowa nr 8",
@@ -5683,9 +5369,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — TRASA NR 8",
@@ -5719,9 +5403,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Szczytna — Przy wjeździe na Chopin Golf",
@@ -5755,9 +5437,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szczytna/"
+        "available_from": null
     },
     {
         "title": "Billboard Szczytna — Przy wjeździe na Chopin Golf",
@@ -5791,9 +5471,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szczytna/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Wyjazd w kierunku Kłodzka",
@@ -5827,9 +5505,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, przy Galerii Twierdza",
@@ -5863,9 +5539,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, przy Galerii Twierdza",
@@ -5899,9 +5573,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Wjazd od strony Kłodzka",
@@ -5935,9 +5607,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Łagiewniki — Centrum miasta",
@@ -5971,9 +5641,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/lagiewniki/"
+        "available_from": null
     },
     {
         "title": "Billboard Łagiewniki — Przy skrzyżowaniu z Biedronką",
@@ -6007,9 +5675,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/lagiewniki/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, przy Galerii Twierdza",
@@ -6043,9 +5709,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, przy Galerii Twierdza",
@@ -6079,9 +5743,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice — Wjazd do miasta przed stacją Orlen",
@@ -6115,9 +5777,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice — Wjazd od strony Wrocławia",
@@ -6151,9 +5811,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice — Wyjazd od strony Wrocławia",
@@ -6187,9 +5845,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Ziębice — ul. Wałowa",
@@ -6223,9 +5879,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/ziebice/"
+        "available_from": null
     },
     {
         "title": "Billboard Ziębice — ul.Wałowa",
@@ -6259,9 +5913,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/ziebice/"
+        "available_from": null
     },
     {
         "title": "Billboard Ziębice — ul. Wałowa",
@@ -6295,9 +5947,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/ziebice/"
+        "available_from": null
     },
     {
         "title": "Billboard Łagiewniki — Przy zajeździe VENA",
@@ -6331,9 +5981,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/lagiewniki/"
+        "available_from": null
     },
     {
         "title": "Billboard Złoty Stok — Złoty Stok",
@@ -6367,9 +6015,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zloty-stok/"
+        "available_from": null
     },
     {
         "title": "Billboard Złoty Stok — Złoty Stok",
@@ -6403,9 +6049,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zloty-stok/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Rynek",
@@ -6439,9 +6083,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Wjazd do Szalejowa w kierunku Kłodzka",
@@ -6475,9 +6117,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Wyjazd z Szalejowa w kierunku Kudowy",
@@ -6511,9 +6151,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Łagiewniki — Przy Banku Spółdzielczym",
@@ -6547,9 +6185,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/lagiewniki/"
+        "available_from": null
     },
     {
         "title": "Billboard Łagiewniki — Przy Banku Spółdzielczym",
@@ -6583,9 +6219,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/lagiewniki/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn, wjazd do Kłodzko",
@@ -6619,9 +6253,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Droga tranzytowa, ul.Warty",
@@ -6655,9 +6287,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Droga tranzytowa, ul.Warty",
@@ -6691,9 +6321,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice — TRASA NR 8",
@@ -6727,9 +6355,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice — Wjazd przy stacji Orlen",
@@ -6763,9 +6389,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice — Wyjazd przy stacji Orlen",
@@ -6799,9 +6423,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -6835,9 +6457,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -6871,9 +6491,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Wyjazd w kierunku Kłodzka",
@@ -6907,9 +6525,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -6943,9 +6559,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Trzebieszowice — Trzebieszowice, Droga: 392",
@@ -6979,9 +6593,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/trzebieszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Trzebieszowice — Trzebieszowice, Droga: 392",
@@ -7015,9 +6627,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/trzebieszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Wrocław — rondo przy ul. Wałbrzyskiej i Karmelkowej",
@@ -7051,9 +6661,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/wroclaw/"
+        "available_from": null
     },
     {
         "title": "Billboard Wrocław — rondo przy ul. Wałbrzyskiej i Karmelkowej",
@@ -7087,9 +6695,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/wroclaw/"
+        "available_from": null
     },
     {
         "title": "Billboard Wrocław — rondo przy ul. Wałbrzyskiej i Karmelkowej",
@@ -7123,9 +6729,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/wroclaw/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica Zdrój — Deptak",
@@ -7159,9 +6763,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Jaszkówka, wjazd od Nysy",
@@ -7195,9 +6797,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Trzebieszowice — Trzebieszowice, Droga: 392",
@@ -7231,9 +6831,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/trzebieszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Trzebieszowice — Trzebieszowice, Droga: 392",
@@ -7267,9 +6865,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/trzebieszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Objazdowa - KPM Meble",
@@ -7303,9 +6899,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Objazdowa - KPM Meble",
@@ -7339,9 +6933,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Objazdowa",
@@ -7375,9 +6967,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Objazdowa",
@@ -7411,9 +7001,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Objazdowa - Mała Twierdza",
@@ -7447,9 +7035,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Wyspiańskiego - Mikron",
@@ -7483,9 +7069,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Wyspiańskiego - Leviatan",
@@ -7519,9 +7103,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Wyspiańskiego - Myśliwska",
@@ -7555,9 +7137,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka (Stacja LPG)",
@@ -7591,9 +7171,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka (Stacja LPG)",
@@ -7627,9 +7205,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Stacja LPG",
@@ -7663,9 +7239,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — przy stacji LPG",
@@ -7699,9 +7273,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Kościuszki",
@@ -7735,9 +7307,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Kościuszki",
@@ -7771,9 +7341,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Kościuszki",
@@ -7807,9 +7375,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Kościuszki",
@@ -7843,9 +7409,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Kusocińskiego (Salus)",
@@ -7879,9 +7443,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Kusocińskiego (Salus)",
@@ -7915,9 +7477,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — przy myjni samochodowej",
@@ -7951,9 +7511,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — TRASA NR 8",
@@ -7987,9 +7545,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — TRASA NR 8",
@@ -8023,9 +7579,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Szczytna — Pole golfowe. Długi najazd",
@@ -8059,9 +7613,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szczytna/"
+        "available_from": null
     },
     {
         "title": "Billboard Szczytna — Pole golfowe. Długi najazd",
@@ -8095,9 +7647,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szczytna/"
+        "available_from": null
     },
     {
         "title": "Billboard Szczytna — Pole golfowe. Długi najazd.",
@@ -8131,9 +7681,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szczytna/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — TRASA NR 8",
@@ -8167,9 +7715,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Bierkowice, przy stawach",
@@ -8203,9 +7749,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Bierkowice, przy stawach",
@@ -8239,9 +7783,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Połabska",
@@ -8275,9 +7817,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Połabska",
@@ -8311,9 +7851,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Połabska",
@@ -8347,9 +7885,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica-Zdrój — Wjazd do miasta",
@@ -8383,9 +7919,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Oława — ul.Opolska",
@@ -8419,9 +7953,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/olawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Oława — ul.Opolska",
@@ -8455,9 +7987,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/olawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — TRASA NR 8",
@@ -8491,9 +8021,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -8527,9 +8055,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -8563,9 +8089,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -8599,9 +8123,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -8635,9 +8157,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -8671,9 +8191,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -8707,9 +8225,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, ul.Piłsudskiego",
@@ -8743,9 +8259,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, ul.Piłsudskiego",
@@ -8779,9 +8293,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Wyjazd w kierunku Kłodzka",
@@ -8815,9 +8327,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Wyjazd w kierunku Kłodzka",
@@ -8851,9 +8361,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Wjazd od Kłodzka",
@@ -8887,9 +8395,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica-Zdrój — Wyjazd z miasta",
@@ -8923,9 +8429,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica-Zdrój — Wjazd do miasta",
@@ -8959,9 +8463,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Magnice — Wjazd na AOW",
@@ -8995,9 +8497,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/magnice/"
+        "available_from": null
     },
     {
         "title": "Billboard Magnice — Zjazd z AOW",
@@ -9031,9 +8531,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/magnice/"
+        "available_from": null
     },
     {
         "title": "Billboard Bystrzyca Kłodzka — wyjazd na obwodnicę miasta",
@@ -9067,9 +8565,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bystrzyca-klodzka/"
+        "available_from": null
     },
     {
         "title": "Billboard Bystrzyca Kłodzka — wjazd do miasta",
@@ -9103,9 +8599,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bystrzyca-klodzka/"
+        "available_from": null
     },
     {
         "title": "Billboard Magnice — Zjazd z autostradowej obwodnicy Wrocławia (AOW)",
@@ -9139,9 +8633,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/magnice/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Jaszkówka, wjazd od Nysy",
@@ -9175,9 +8667,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — wjazd do miasta",
@@ -9211,9 +8701,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — wjazd do miasta",
@@ -9247,9 +8735,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Rondo przy Galerii Twierdza, ul.Objazdowa",
@@ -9283,9 +8769,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Braszowice — Wyjazd z terenu zabudowanego",
@@ -9319,9 +8803,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/braszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Braszowice — Wyjazd z terenu zabudowanego",
@@ -9355,9 +8837,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/braszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Zgorzelec — obwodnica miasta",
@@ -9391,9 +8871,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zgorzelec/"
+        "available_from": null
     },
     {
         "title": "Billboard Zgorzelec — przy obwodnicy miasta",
@@ -9427,9 +8905,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zgorzelec/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn",
@@ -9463,9 +8939,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Boguszyn, za stacją ORLEN",
@@ -9499,9 +8973,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Zjazd na Polanicę-Zdrój",
@@ -9535,9 +9007,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Otmuchów — wylot z miasta",
@@ -9571,9 +9041,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/otmuchow/"
+        "available_from": null
     },
     {
         "title": "Billboard Otmuchów — wjazd do miasta",
@@ -9607,9 +9075,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/otmuchow/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, przy Galerii Twierdza",
@@ -9643,9 +9109,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica Zdrój — Parking Biedronka",
@@ -9679,9 +9143,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica Zdrój — Parking Biedronka",
@@ -9715,9 +9177,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Bardo — Wyjazd z Barda, dojazd do Kłodzka",
@@ -9751,9 +9211,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bardo/"
+        "available_from": null
     },
     {
         "title": "Billboard Bardo — Wjazd do Barda",
@@ -9787,9 +9245,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bardo/"
+        "available_from": null
     },
     {
         "title": "Billboard Bardo — Wyjazd z Barda, dojazd do Kłodzka",
@@ -9823,9 +9279,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bardo/"
+        "available_from": null
     },
     {
         "title": "Billboard Bardo — Wjazd do Barda",
@@ -9859,9 +9313,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bardo/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica Zdrój — Polanica-Zdrój - Wolany",
@@ -9895,9 +9347,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica Zdrój — Polanica-Zdrój - Wolany",
@@ -9931,9 +9381,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Szalejów Górny",
@@ -9967,9 +9415,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Szalejów Górny",
@@ -10003,9 +9449,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Sidzina — Droga nr 46 Opole - Nysa",
@@ -10039,9 +9483,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/sidzina/"
+        "available_from": null
     },
     {
         "title": "Billboard Sidzina — Droga nr 46 Nysa - Opole",
@@ -10075,9 +9517,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/sidzina/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie, nowa obwodnica",
@@ -10111,9 +9551,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie, nowa obwodnica",
@@ -10147,9 +9585,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie, nowa obwodnica",
@@ -10183,9 +9619,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie, nowa obwodnica",
@@ -10219,9 +9653,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — Ząbkowice Śląskie, nowa obwodnica",
@@ -10255,9 +9687,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Jaszkówka — Wyjazd w kierunku Kłodzka",
@@ -10291,9 +9721,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jaszkowka/"
+        "available_from": null
     },
     {
         "title": "Billboard Nowa Ruda — Wyjazd w kierunku Kłodzka",
@@ -10327,9 +9755,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/nowa-ruda/"
+        "available_from": null
     },
     {
         "title": "Billboard Przerzeczyn-Zdrój — obszar zabudowany, droga tranzytowa",
@@ -10363,9 +9789,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/przerzeczyn-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Warty, wjad do Kłodzka",
@@ -10399,9 +9823,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Złoty Stok — ul. Kłodzka, obok marketów",
@@ -10435,9 +9857,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zloty-stok/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Kłodzko, ul. Dusznicka",
@@ -10471,9 +9891,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -10507,9 +9925,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -10543,9 +9959,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Braszowice — Braszowice",
@@ -10579,9 +9993,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/braszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Braszowice — Braszowice",
@@ -10615,9 +10027,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/braszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Szklary — Szklary",
@@ -10651,9 +10061,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szklary/"
+        "available_from": null
     },
     {
         "title": "Billboard Szklary — Szklary",
@@ -10687,9 +10095,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szklary/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka, kier. Galeria Twierdza",
@@ -10723,9 +10129,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka, kier. centrum",
@@ -10759,9 +10163,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka, kier. Galeria Twierdza",
@@ -10795,9 +10197,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka, kier. centrum",
@@ -10831,9 +10231,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka, kier. Galeria Twierdza",
@@ -10867,9 +10265,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka, kier. centrum",
@@ -10903,9 +10299,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka, kier. Galeria Twierdza",
@@ -10939,9 +10333,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka, kier. centrum",
@@ -10975,9 +10367,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice — Wjazd od strony Wrocławia",
@@ -11011,9 +10401,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — DK-8 kier. centrum od granicy",
@@ -11047,9 +10435,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — DK-8 kier. Kłodzko",
@@ -11083,9 +10469,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — DK-8 kier. Wrocław",
@@ -11119,9 +10503,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Krosnowice — Obwodnica Kłodzka DK-33",
@@ -11155,9 +10537,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/krosnowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Krosnowice — Obwodnica Kłodzka DK-33",
@@ -11191,9 +10571,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/krosnowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Złoty Stok — ul. Kłodzka, obok marketów",
@@ -11227,9 +10605,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zloty-stok/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Kłodzko, ul. Dusznicka",
@@ -11263,9 +10639,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Rondo obok Castoramy",
@@ -11299,9 +10673,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Rondo obok Castoramy",
@@ -11335,9 +10707,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Krosnowice — Obwodnica Kłodzka DK-33",
@@ -11371,9 +10741,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/krosnowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Krosnowice — Obwodnica Kłodzka DK-33",
@@ -11407,9 +10775,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/krosnowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Krosnowice — Obwodnica Kłodzka DK-33",
@@ -11443,9 +10809,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/krosnowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Krosnowice — Obwodnica Kłodzka DK-33",
@@ -11479,9 +10843,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/krosnowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, przy Galerii Twierdza",
@@ -11515,9 +10877,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -11551,9 +10911,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka",
@@ -11587,9 +10945,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Duszniki-Zdrój — Duszniki-Zdrój",
@@ -11623,9 +10979,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/duszniki-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Szklary-Huta — Szklary-Huta, DK-8",
@@ -11659,9 +11013,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szklary-huta/"
+        "available_from": null
     },
     {
         "title": "Billboard Szklary-Huta — Szklary-Huta, DK-8",
@@ -11695,9 +11047,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szklary-huta/"
+        "available_from": null
     },
     {
         "title": "Billboard Wilków Wielki — Wilków Wielki DK-8",
@@ -11731,9 +11081,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/wilkow-wielki/"
+        "available_from": null
     },
     {
         "title": "Billboard Wilków Wielki — Wilków Wielki DK-8",
@@ -11767,9 +11115,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/wilkow-wielki/"
+        "available_from": null
     },
     {
         "title": "Billboard Wilków Wielki — Wilków Wielki DK-8",
@@ -11803,9 +11149,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/wilkow-wielki/"
+        "available_from": null
     },
     {
         "title": "Billboard Wilków Wielki — Wilków Wielki DK-8",
@@ -11839,9 +11183,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/wilkow-wielki/"
+        "available_from": null
     },
     {
         "title": "Billboard Jaszkówka — Jaszkówka",
@@ -11875,9 +11217,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jaszkowka/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Kłodzko, wyjazd i wjazd do miasta",
@@ -11911,9 +11251,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Braszowice — Braszowice DK-8",
@@ -11947,9 +11285,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/braszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, ul.Piłsudskiego",
@@ -11983,9 +11319,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Obwodnica Kłodzka, ul.Piłsudskiego",
@@ -12019,9 +11353,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — Spółdzielcza, przy rondzie",
@@ -12055,9 +11387,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Przerzeczyn-Zdrój — obszar zabudowany, droga tranzytowa",
@@ -12091,9 +11421,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/przerzeczyn-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — Jeleniów, DK-8",
@@ -12127,9 +11455,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — Jeleniów, DK-8",
@@ -12163,9 +11489,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — obok E.Leclerc",
@@ -12199,9 +11523,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — obok E.Leclerc",
@@ -12235,9 +11557,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka",
@@ -12271,9 +11591,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Noworudzka",
@@ -12307,9 +11625,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Niemcza — Skrzyżowanie przy stacji BP",
@@ -12343,9 +11659,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/niemcza/"
+        "available_from": null
     },
     {
         "title": "Billboard Niemcza — Skrzyżowanie przy stacji BP",
@@ -12379,9 +11693,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/niemcza/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Szalejów Górny",
@@ -12415,9 +11727,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Szalejów Górny",
@@ -12451,9 +11761,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Szalejów Górny",
@@ -12487,9 +11795,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Szalejów Górny",
@@ -12523,9 +11829,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -12559,9 +11863,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -12595,9 +11897,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Nowa Ruda — Słupiec, ul. Kłodzka",
@@ -12631,9 +11931,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/nowa-ruda/"
+        "available_from": null
     },
     {
         "title": "Billboard Bożków — Bożków",
@@ -12667,9 +11965,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bozkow/"
+        "available_from": null
     },
     {
         "title": "Billboard Bożków — Bożków",
@@ -12703,9 +11999,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bozkow/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -12739,9 +12033,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -12775,9 +12067,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Szalejów Górny",
@@ -12811,9 +12101,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Szalejów Górny",
@@ -12847,9 +12135,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Szalejów Górny",
@@ -12883,9 +12169,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Szalejów Górny — Szalejów Górny",
@@ -12919,9 +12203,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szalejow-gorny/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul.Kościuszki",
@@ -12955,9 +12237,7 @@
         "has_image": true,
         "status": "draft",
         "is_active": false,
-        "available_from": null,
-        "display_status": "draft",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Letnia",
@@ -12991,9 +12271,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Kłodzko — ul. Letnia",
@@ -13027,9 +12305,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/klodzko/"
+        "available_from": null
     },
     {
         "title": "Billboard Szklary-Huta — Szklary-Huta, DK-8",
@@ -13063,9 +12339,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szklary-huta/"
+        "available_from": null
     },
     {
         "title": "Billboard Magnice — Zjazd z autostradowej obwodnicy Wrocławia (AOW)",
@@ -13099,9 +12373,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/magnice/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -13135,9 +12407,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -13171,9 +12441,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — przy Biedronce",
@@ -13207,9 +12475,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Ząbkowice Śląskie — przy Biedronce",
@@ -13243,9 +12509,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/zabkowice-slaskie/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica Zdrój — Polanica-Zdrój",
@@ -13279,9 +12543,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Polanica Zdrój — Polanica-Zdrój",
@@ -13315,9 +12577,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/polanica-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — TRASA NR 8",
@@ -13351,9 +12611,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Kudowa Zdrój — TRASA NR 8",
@@ -13387,9 +12645,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/kudowa-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - miasto",
@@ -13423,9 +12679,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - wjazd od Ząbkowic",
@@ -13459,9 +12713,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - od Ząbkowic",
@@ -13495,9 +12747,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - miasto",
@@ -13531,9 +12781,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - miasto",
@@ -13567,9 +12815,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - miasto",
@@ -13603,9 +12849,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - miasto",
@@ -13639,9 +12883,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - Kościuszki",
@@ -13675,9 +12917,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - Kościuszki",
@@ -13711,9 +12951,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - ul.Kościuszki Globgranit",
@@ -13747,9 +12985,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - Kościuszki Globgranit",
@@ -13783,9 +13019,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - nowa Obwodnica",
@@ -13819,9 +13053,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - Kołaczów",
@@ -13855,9 +13087,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - Batalionów Chłopskich",
@@ -13891,9 +13121,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Bielawa — Bielawa Żeromskiego 24 kier LM",
@@ -13927,9 +13155,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bielawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Bielawa — Bielawa Żeromskiego 24 kier miasto",
@@ -13963,9 +13189,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bielawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Bielawa — Bielawa Sikorskiego 37 kier LM",
@@ -13999,9 +13223,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bielawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Bielawa — Bielawa Sikorskiego 37 kier miasto",
@@ -14035,9 +13257,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bielawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Bielawa — Bielawa Rondo przy Galerii W.Polskiego k. Galeria",
@@ -14071,9 +13291,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bielawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Bielawa — Bielawa Rondo przy Galerii W.Polskiego k. Dzierżoniów",
@@ -14107,9 +13325,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bielawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Bielawa — Bielawa Rondo Dzierżoniowska 31",
@@ -14143,9 +13359,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bielawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Bielawa — Bielawa Wolności 141a",
@@ -14179,9 +13393,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bielawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Bielawa — Bielawa ul.Kasztanowa rondo Wysoka",
@@ -14215,9 +13427,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bielawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Bielawa — Bielawa ul.Kasztanowa rondo Wysoka",
@@ -14251,9 +13461,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bielawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Bielawa — Bielawa Ostroszowicka 11",
@@ -14287,9 +13495,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bielawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Bielawa — Bielawa Boh Getta przejazd kolejowy",
@@ -14323,9 +13529,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/bielawa/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów - Dobrocin",
@@ -14359,9 +13563,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów Ząbkowicka",
@@ -14395,9 +13597,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów — Dzierżoniów Batalionów Chłopskich",
@@ -14431,9 +13631,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów-Pieszyce — Pieszyce - Kościuszki",
@@ -14467,9 +13665,7 @@
         "has_image": true,
         "status": "active",
         "is_active": true,
-        "available_from": null,
-        "display_status": "active",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow-pieszyce/"
+        "available_from": null
     },
     {
         "title": "Billboard Dzierżoniów-Pieszyce — Pieszyce - Kościuszki",
@@ -14503,9 +13699,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/dzierzoniow-pieszyce/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -14539,9 +13733,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Jordanów Śląski — Przy drodze krajowej nr 8",
@@ -14575,9 +13767,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/jordanow-slaski/"
+        "available_from": null
     },
     {
         "title": "Billboard Braszowice — Braszowice DK-8",
@@ -14611,9 +13801,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/braszowice/"
+        "available_from": null
     },
     {
         "title": "Billboard Szczytna — Borowina",
@@ -14647,9 +13835,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/szczytna/"
+        "available_from": null
     },
     {
         "title": "Billboard Lądek-Zdrój — Lądek-Zdr, ul. Mickiewicza, przed Rondem",
@@ -14683,9 +13869,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/ladek-zdroj/"
+        "available_from": null
     },
     {
         "title": "Billboard Lądek-Zdrój — Lądek-Zdr., ul. Mickiewicza, za Rondem",
@@ -14719,9 +13903,7 @@
         "has_image": true,
         "status": "reserved",
         "is_active": true,
-        "available_from": null,
-        "display_status": "reserved",
-        "full_url": "/powierzchnia-reklamowa/billboardy/ladek-zdroj/"
+        "available_from": null
     },
     {
         "title": "Ekran LED Kłodzko — ul. Kościuszki",
@@ -14755,9 +13937,7 @@
         "has_image": true,
         "status": "draft",
         "is_active": false,
-        "available_from": null,
-        "display_status": "draft",
-        "full_url": "/powierzchnia-reklamowa/ekrany-led/klodzko/"
+        "available_from": null
     },
     {
         "title": "Ekran LED Kłodzko — ul. Noworudzka",
@@ -14791,8 +13971,6 @@
         "has_image": true,
         "status": "draft",
         "is_active": false,
-        "available_from": null,
-        "display_status": "draft",
-        "full_url": "/powierzchnia-reklamowa/ekrany-led/klodzko/"
+        "available_from": null
     }
 ]
