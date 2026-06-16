@@ -21,7 +21,8 @@ import { fileURLToPath as toPath } from 'node:url';
 import puppeteer from 'puppeteer';
 
 const DIST = join(toPath(new URL('../dist/', import.meta.url)));
-const SITEMAP = process.env.SITEMAP_URL || 'https://reklamap.pl/sitemap.xml';
+// wprost z backendu (reklamap.pl/sitemap.xml robi 301 → api; w CI redirect bywał gubiony)
+const SITEMAP = process.env.SITEMAP_URL || 'https://api.reklamap.pl/sitemap.xml';
 const PORT = Number(process.env.PORT || 5199);
 const CONCURRENCY = Number(process.env.CONCURRENCY || 4);
 const FILTER = process.env.ROUTE_FILTER ? new RegExp(process.env.ROUTE_FILTER) : null;
@@ -49,7 +50,8 @@ function startServer() {
 }
 
 async function routesFromSitemap() {
-  const xml = await (await fetch(SITEMAP)).text();
+  const res = await fetch(SITEMAP, { headers: { 'User-Agent': 'reklamap-prerender/1.0' }, redirect: 'follow' });
+  const xml = await res.text();
   let paths = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].replace(/https?:\/\/[^/]+/, '') || '/');
   paths = [...new Set(paths)];
   if (FILTER) paths = paths.filter((p) => FILTER.test(p));
@@ -87,6 +89,11 @@ async function render(browser, p, stats) {
 const srv = await startServer();
 const routes = await routesFromSitemap();
 console.log(`Tras do prerenderu: ${routes.length} (z ${SITEMAP})`);
+if (routes.length === 0) {
+  console.error('BŁĄD: sitemap zwróciła 0 tras — przerywam, żeby NIE wdrożyć pustego builda.');
+  srv.close();
+  process.exit(1);
+}
 const browser = await puppeteer.launch({
   headless: 'new',
   args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security', '--disable-features=IsolateOrigins,site-per-process'],
