@@ -27,6 +27,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Sprawdź wymagane sekrety (bez nich NIE deployujemy)
+        run: |
+          miss=0
+          for s in SSH_PRIVATE_KEY DEPLOY_PATH VITE_INTERNAL_APP_KEY VITE_GOOGLE_MAPS_API_KEY VITE_RECAPTCHA_SITE_KEY VITE_APP_URL; do
+            case "$s" in
+              SSH_PRIVATE_KEY) v="${{ secrets.SSH_PRIVATE_KEY }}" ;;
+              DEPLOY_PATH) v="${{ secrets.DEPLOY_PATH }}" ;;
+              VITE_INTERNAL_APP_KEY) v="${{ secrets.VITE_INTERNAL_APP_KEY }}" ;;
+              VITE_GOOGLE_MAPS_API_KEY) v="${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" ;;
+              VITE_RECAPTCHA_SITE_KEY) v="${{ secrets.VITE_RECAPTCHA_SITE_KEY }}" ;;
+              VITE_APP_URL) v="${{ secrets.VITE_APP_URL }}" ;;
+            esac
+            [ -n "$v" ] || { echo "::error::Brak sekretu $s — przerwane (nie wdrażamy niekompletnego builda)"; miss=1; }
+          done
+          [ "$miss" = 0 ] || exit 1
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
