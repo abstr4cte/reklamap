@@ -50,13 +50,27 @@ function startServer() {
 }
 
 async function routesFromSitemap() {
-  const res = await fetch(SITEMAP, { headers: { 'User-Agent': 'reklamap-prerender/1.0' }, redirect: 'follow' });
-  const xml = await res.text();
-  let paths = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].replace(/https?:\/\/[^/]+/, '') || '/');
-  paths = [...new Set(paths)];
-  if (FILTER) paths = paths.filter((p) => FILTER.test(p));
-  if (LIMIT) paths = paths.slice(0, LIMIT);
-  return paths;
+  const urls = [SITEMAP, 'https://reklamap.pl/sitemap.xml'];   // api + fallback (reklamap.pl→301→api)
+  const UA = 'Mozilla/5.0 (compatible; ReklaMapPrerender/1.0; +https://reklamap.pl)';
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    for (const u of urls) {
+      try {
+        const xml = await (await fetch(u, { headers: { 'User-Agent': UA }, redirect: 'follow' })).text();
+        let paths = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].replace(/https?:\/\/[^/]+/, '') || '/');
+        if (paths.length > 0) {
+          paths = [...new Set(paths)];
+          if (FILTER) paths = paths.filter((p) => FILTER.test(p));
+          if (LIMIT) paths = paths.slice(0, LIMIT);
+          return paths;
+        }
+        console.log(`  sitemap próba ${attempt} (${u}): 0 tras — ponawiam`);
+      } catch (e) {
+        console.log(`  sitemap próba ${attempt} (${u}) błąd: ${e.message}`);
+      }
+    }
+    await new Promise((r) => setTimeout(r, 3000));
+  }
+  return [];
 }
 
 const outPath = (p) => (p === '/' ? join(DIST, 'index.html') : join(DIST, p.replace(/^\//, ''), 'index.html'));
