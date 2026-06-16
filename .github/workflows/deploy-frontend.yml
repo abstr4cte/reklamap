@@ -1,0 +1,79 @@
+name: Deploy frontend (prerender → Hostido)
+
+# Po pushu na master (gdy zmienił się front lub ten workflow): zbuduj z prerenderem
+# i wgraj na Hostido przez rsync/SSH. Build leci na runnerze GitHuba (tam Chromium działa) —
+# na Hostido trafia gotowy statyczny HTML. Deploy tylko gdy testy frontu przejdą.
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-frontend.yml'
+  workflow_dispatch: {}   # możliwość ręcznego odpalenia z zakładki Actions
+
+# Nie pozwól dwóm deployom nadpisywać się nawzajem
+concurrency:
+  group: deploy-frontend-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      # cache pobranego Chromium dla puppeteer (przyspiesza kolejne buildy)
+      - name: Cache puppeteer Chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/puppeteer
+          key: puppeteer-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Frontend tests (bramka)
+        run: npm run test -- --run
+
+      - name: Build + prerender
+        env:
+          VITE_INTERNAL_APP_KEY: ${{ secrets.VITE_INTERNAL_APP_KEY }}
+          VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
+          VITE_RECAPTCHA_SITE_KEY: ${{ secrets.VITE_RECAPTCHA_SITE_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_APP_URL: ${{ secrets.VITE_APP_URL }}
+        run: npm run build:seo
+
+      - name: Setup SSH (klucz + known_hosts)
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${{ secrets.SSH_PORT }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy (rsync dist → serwer)
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }}" \
+            dist/ \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
+
+      - name: Weryfikacja (bot widzi treść)
+        run: |
+          sleep 5
+          T=$(curl -s -A "Googlebot/2.1" "https://reklamap.pl/powierzchnie-reklamowe/billboardy/koszalin" | grep -oiE '<title>[^<]*</title>' | head -1)
+          echo "Tytuł u bota: $T"
+          echo "$T" | grep -qi "Billboardy Koszalin" && echo "✅ prerender serwowany" || (echo "⚠️ sprawdź .htaccess / ścieżkę deploya" && exit 1)
