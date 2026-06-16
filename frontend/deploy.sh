@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Deploy frontu z prerenderem na produkcję (Hostido).
+# Build+prerender LECI LOKALNIE (api.reklamap.pl jest stąd osiągalne; z runnerów GitHuba
+# Hostido blokuje burst ~435 żądań prerenderu jako nadużycie). Na serwer idzie gotowy dist.
+#
+# Użycie: cd frontend && ./deploy.sh
+set -euo pipefail
+cd "$(dirname "$0")"
+
+SSH_KEY="$HOME/.ssh/reklamap_deploy"
+SSH_PORT=64321
+SSH_DEST="host831115@host831115.hostido.net.pl"
+DOCROOT="/home/host831115/domains/reklamap.pl/reklamap/frontend/dist"   # realny docroot reklamap.pl
+
+echo "==> 1/3 build + prerender (lokalnie)"
+npm run build:seo
+
+echo "==> 2/3 rsync dist → prod docroot"
+rsync -az --delete \
+  -e "ssh -p $SSH_PORT -i $SSH_KEY -o StrictHostKeyChecking=accept-new" \
+  dist/ \
+  "$SSH_DEST:$DOCROOT/"
+
+echo "==> 3/3 weryfikacja (bot widzi treść)"
+sleep 3
+T=$(curl -s -A "Googlebot/2.1" "https://reklamap.pl/powierzchnie-reklamowe/billboardy/koszalin" | grep -oiE '<title>[^<]*</title>' | head -1)
+echo "Tytuł u bota: $T"
+echo "$T" | grep -qi "Billboardy Koszalin" \
+  && echo "✅ DEPLOY OK — prerender serwowany" \
+  || { echo "⚠️ strona oddaje generyczny tytuł — sprawdź docroot/.htaccess"; exit 1; }

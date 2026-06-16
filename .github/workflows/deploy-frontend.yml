@@ -4,13 +4,12 @@ name: Deploy frontend (prerender → Hostido)
 # i wgraj na Hostido przez rsync/SSH. Build leci na runnerze GitHuba (tam Chromium działa) —
 # na Hostido trafia gotowy statyczny HTML. Deploy tylko gdy testy frontu przejdą.
 
+# UWAGA: auto-deploy z CI jest WYŁĄCZONY. Prerender robi ~435 żądań do api.reklamap.pl;
+# z IP runnerów GitHuba Hostido blokuje to jako nadużycie (sitemap/API zwraca 0 → pusty build).
+# Niezawodna ścieżka to lokalny `frontend/deploy.sh` (build+prerender lokalnie → rsync).
+# Ten workflow zostaje jako ręczny (gdyby kiedyś doszedł self-hosted runner / allowlist IP).
 on:
-  push:
-    branches: [master]
-    paths:
-      - 'frontend/**'
-      - '.github/workflows/deploy-frontend.yml'
-  workflow_dispatch: {}   # możliwość ręcznego odpalenia z zakładki Actions
+  workflow_dispatch: {}
 
 # Nie pozwól dwóm deployom nadpisywać się nawzajem
 concurrency:
