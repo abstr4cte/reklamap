@@ -28,3 +28,9 @@ echo "Tytuł u bota: $T"
 echo "$T" | grep -qi "Billboardy Koszalin" \
   && echo "✅ DEPLOY OK — prerender serwowany" \
   || { echo "⚠️ strona oddaje generyczny tytuł — sprawdź docroot/.htaccess"; exit 1; }
+
+echo ""
+echo "==> PO WDROŻENIU (SEO): Google Search Console"
+echo "    Dla nowych/zmienionych stron: 'Sprawdź URL' → 'Poproś o zaindeksowanie'."
+echo "    Zgłoszone 2026-06-16: strona główna + /powierzchnie-reklamowe/billboardy/koszalin."
+echo "    Po większym imporcie nośników ponów też zgłoszenie sitemap.xml w GSC."
