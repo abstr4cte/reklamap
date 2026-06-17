@@ -554,6 +554,22 @@ onMounted(() => {
         if (!map) return
         isProgrammaticMove.value = true
         map.invalidateSize()
+        // Przebuduj markery OD ZERA. Gdy strona była nieaktywna (keep-alive), watcher
+        // props.listings nadal działał i przebudowywał klaster względem zerowego/ukrytego
+        // viewportu (np. 776→1→776 przy wizycie na listingu). Po powrocie istniejące markery
+        // nie są ponownie dodawane (markers.has===true → tylko zmiana ikony), więc klaster
+        // zostaje w stanie policzonym dla złych wymiarów i nie renderuje pinezek. Czyścimy
+        // klaster i dodajemy wszystko ponownie, już przy poprawnym rozmiarze mapy.
+        // Reset stanu renderowania klastra po keep-alive: gdy kontener mapy był odpięty
+        // z DOM (nieaktywna strona), markercluster gubi wiązanie z viewportem i kolejne
+        // addLayer NIE malują pinezek, mimo że markery są w grupie, a grupa jest na mapie
+        // (potwierdzone logami: listings=776, clusterOnMap=true, a render=0). Zdjęcie
+        // i ponowne dodanie warstwy wymusza onRemove/onAdd → przeliczenie i przerysowanie
+        // klastrów przy aktualnym widoku.
+        if (markerClusterGroup && map.hasLayer(markerClusterGroup)) {
+          map.removeLayer(markerClusterGroup)
+          map.addLayer(markerClusterGroup)
+        }
         updateMarkers()
       })
     })
