@@ -1,0 +1,62 @@
+Do: info@biggroup.pl
+Temat: ReklaMap — Wasze nośniki są już na mapie (kilka pytań)
+
+Dzień dobry,
+
+dziękujemy za przesłane cenniki — wszystkie powierzchnie są już na reklamap.pl
+pod profilem firmowym info@biggroup.pl.
+
+W skrócie, co wgraliśmy:
+- 53 nośniki: 24 billboardy przy A2, 15 powierzchni wielkoformatowych na
+  elewacjach (Wrocław, Poznań, Września, Gniezno, Kościan) i 14 podświetlanych
+  (backlighty i citylighty w przejściach dworcowych w Poznaniu).
+- 52 widoczne od razu, 1 oznaczony jako „zarezerwowany" (Jawornicka/Babimojska —
+  w cenniku sprzedany we wszystkich miesiącach).
+- 9 billboardów A2 ustawionych jako „wkrótce dostępne", zgodnie z datami
+  z kolumny dostępności (wrzesień, październik 2026, luty 2027).
+
+Zdjęcia pobraliśmy ze stron produktowych, do których linkowaliście w cennikach.
+Jeśli macie je w wyższej rozdzielczości, prześlijcie osobno (mailem albo przez
+WeTransfer) — podmienimy, bo wersje ze stron bywają pomniejszone.
+
+Przy imporcie kilka rzeczy musieliśmy założyć — prosimy o potwierdzenie albo korektę:
+
+1. Cena wiodąca. Platforma pokazuje przy każdym nośniku jedną cenę główną,
+   po której użytkownik filtruje wyniki. Jako tę cenę ustawiliśmy najem za
+   1 miesiąc (z rabatem). Pasuje, czy wolicie pokazywać inną stawkę jako wiodącą
+   (np. najtańszą, przy umowie 6+ miesięcy)?
+
+2. Sposób prezentacji cen. Pełną tabelę stawek (1 / 3 / 6+ mc) wpisaliśmy do opisu
+   każdego nośnika. Druk potraktowaliśmy jako koszt osobny (nie wliczony w najem),
+   a montaż i demontaż jako wliczony w najem przy nośnikach miejskich i jako osobną
+   pozycję przy A2. Wszystkie ceny jako netto + VAT 23%. Zgadza się?
+
+3. Kategorie nośników. Powierzchnie wielkoformatowe na elewacjach wrzuciliśmy jako
+   „ściany reklamowe", tablice przy autostradzie jako „billboardy", a backlighty
+   i citylighty z dworca jako „citylighty (podświetlane)". Pasuje, czy coś
+   przenieść do innej kategorii?
+
+4. „Cały nośnik" przy A2. Dodaliśmy poszczególne strony osobno (front / tył / bok).
+   Wariantów „cały nośnik" (front + tył + bok razem) na razie nie wystawiliśmy —
+   chcecie, żebyśmy dodali je jako osobne oferty pakietowe?
+
+5. Dwa boki A2. Przy bokach w Lubowidzy i Powodowie Trzecim w cenniku był wpisany
+   format „całego nośnika" zamiast samego boku — przyjęliśmy standardowy format
+   boku 2,4 × 11,5 m. Dajcie znać, jeśli wymiary są inne.
+
+6. Kontakt. Na razie kontakt do Was idzie przez formularz na nośniku (wiadomości
+   trafiają na info@biggroup.pl). Jeśli chcecie, możemy obok pokazać też numer
+   telefonu — dajcie znać, czy i który numer dodać.
+
+7. Opinia o panelu. Jesteście jednym z pierwszych operatorów z tak dużym portfolio
+   u nas, więc zależy nam na Waszych uwagach. Wejdźcie na reklamap.pl/zarzadzaj
+   i podajcie adres info@biggroup.pl — dostaniecie jeden link do panelu ze wszystkimi
+   nośnikami naraz. Można tam edytować opisy, ceny i statusy, dodawać zdjęcia oraz
+   podejrzeć statystyki z 30 dni (wejścia, kliknięcia w telefon, wiadomości).
+   Dajcie znać, co działa wygodnie, a co byście zmienili.
+
+Status „zarezerwowany" odblokowuje się jednym kliknięciem w panelu, gdy nośnik znów
+będzie wolny. Cokolwiek wymaga poprawki — wystarczy odpisać na tego maila.
+
+Pozdrawiamy,
+zespół ReklaMap
