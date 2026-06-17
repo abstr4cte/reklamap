@@ -13,6 +13,7 @@ import { type LocationResult, debouncedSearchLocations } from '../services/locat
 import { slugify, deslugify } from '../utils/slugify'
 import { truncateAtWord } from '../utils/text'
 import { mapTypeToUrlFormat } from '../utils/typeMapping'
+import { restoreScrollResilient } from '../utils/scrollRestore'
 import { useSeo } from '../composables/useSeo'
 import { appUrl } from '../utils/url'
 import { filtersToQueryParams } from '../utils/filterUtils'
@@ -305,21 +306,16 @@ onActivated(() => {
   if (savedScroll) {
     try {
       const { container, window: windowY } = JSON.parse(savedScroll)
-      // nextTick czeka aż Vue zakończy aktualizację DOM po aktywacji keep-alive,
-      // requestAnimationFrame czeka na następną klatkę — wtedy kontener jest gotowy do scrolla
+      sessionStorage.removeItem(LISTINGS_SCROLL_KEY)
+      sessionStorage.removeItem(LISTINGS_PAGE_KEY)
+      // nextTick czeka aż Vue zakończy aktualizację DOM po aktywacji keep-alive.
+      // restoreScrollResilient ponawia scroll przez kilka klatek, aż strona urośnie do celu
+      // (lazy treść/obrazki) — inaczej pojedyncza klatka przycina scroll do stopki.
       nextTick(() => {
-        requestAnimationFrame(() => {
-          // Przywróć scroll kontenera listy
-          if (listContainerRef.value && container) {
-            listContainerRef.value.scrollTop = container
-          }
-          // Przywróć scroll okna (na mobile lista jest w normalnym flow)
-          if (windowY) {
-            window.scrollTo({ top: windowY, behavior: 'instant' })
-          }
-          // Wyczyść zapisaną pozycję po przywróceniu
-          sessionStorage.removeItem(LISTINGS_SCROLL_KEY)
-          sessionStorage.removeItem(LISTINGS_PAGE_KEY)
+        restoreScrollResilient({
+          windowY: windowY || undefined,
+          el: listContainerRef.value,
+          elTop: container || undefined,
         })
       })
     } catch (e) {
@@ -1587,7 +1583,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             <span v-if="totalFiltersCount > 0" class="filter-badge">{{ totalFiltersCount }}</span>
           </button>
 
-          <select v-model="sortBy" class="sort-select">
+          <select v-model="sortBy" @change="searchStore.applyFilters({})" class="sort-select">
             <option value="default">Polecane</option>
             <option value="newest">Najnowsze</option>
             <option value="oldest">Najstarsze</option>

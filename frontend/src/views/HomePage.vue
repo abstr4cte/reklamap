@@ -11,6 +11,7 @@ import Pagination from '../components/Pagination.vue'
 import SearchAlertBox from '../components/SearchAlertBox.vue'
 import SearchAlertModal from '../components/SearchAlertModal.vue'
 import { filtersToQueryParams, queryParamsToFilters } from '../utils/filterUtils'
+import { restoreScrollResilient } from '../utils/scrollRestore'
 import { useSeo } from '../composables/useSeo'
 import polishLocations from '../data/polishLocations.json'
 import { useSearchStore } from '../stores/useSearchStore'
@@ -176,12 +177,10 @@ onActivated(() => {
   const savedPosition = sessionStorage.getItem(SCROLL_POSITION_KEY)
   if (savedPosition) {
     const position = parseInt(savedPosition, 10)
-    nextTick(() => {
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: position, behavior: 'instant' })
-        sessionStorage.removeItem(SCROLL_POSITION_KEY)
-      })
-    })
+    sessionStorage.removeItem(SCROLL_POSITION_KEY)
+    // Ponawiamy scroll przez kilka klatek, aż strona urośnie do celu (lazy treść po
+    // reaktywacji) — pojedyncza klatka przycina do stopki, gdy strona jest jeszcze krótka.
+    nextTick(() => restoreScrollResilient({ windowY: position }))
     return
   }
 
@@ -202,13 +201,8 @@ onMounted(() => {
   const savedPosition = sessionStorage.getItem(SCROLL_POSITION_KEY)
   if (savedPosition) {
     const position = parseInt(savedPosition, 10)
-    nextTick(() => {
-      window.scrollTo({
-        top: position,
-        behavior: 'instant'
-      })
-      sessionStorage.removeItem(SCROLL_POSITION_KEY)
-    })
+    sessionStorage.removeItem(SCROLL_POSITION_KEY)
+    nextTick(() => restoreScrollResilient({ windowY: position }))
   }
 })
 

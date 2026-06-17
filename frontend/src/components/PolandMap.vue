@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, onBeforeUnmount, onActivated, onDeactivated } from 'vue'
+import { ref, onMounted, watch, onBeforeUnmount, onActivated, onDeactivated, nextTick } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { MapPin } from '../types'
@@ -543,6 +543,20 @@ onMounted(() => {
   onActivated(() => {
     isActive.value = true
     selectedAd.value = null
+    // Keep-alive: kontener mapy mógł mieć zerowy/nieaktualny rozmiar gdy strona była
+    // nieaktywna (odpięta z DOM). Bez invalidateSize() Leaflet nie przelicza wymiarów
+    // i kafelki ORAZ markery się nie renderują — mapa wygląda na pustą mimo pobranych
+    // pinów (props.listings są poprawne). ResizeObserver nie zawsze to łapie przy
+    // reaktywacji, więc wymuszamy odświeżenie jawnie. Markery odbudowujemy, bo cluster
+    // mógł je rozmieścić względem zerowego viewportu.
+    nextTick(() => {
+      requestAnimationFrame(() => {
+        if (!map) return
+        isProgrammaticMove.value = true
+        map.invalidateSize()
+        updateMarkers()
+      })
+    })
     // mapBounds to efemeryczny stan viewport — czyścimy przy powrocie na stronę,
     // żeby bbox ustawiony np. na ListingsPage nie filtrował ogłoszeń do 0.
     if (searchStore.filters.mapBounds) {
