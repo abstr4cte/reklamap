@@ -28,7 +28,7 @@ STORE_DIR = os.path.join(ROOT, "backend/storage/app/public/advertisements/outdoo
 REL_PREFIX = "advertisements/outdoor3miasto"
 
 OWNER_EMAIL = "koordynator@outdoor3miasto.com"
-PHONE = None  # podadzą później; kontakt na razie mailowy
+PHONE = "602244800"  # potwierdzone mailem 2026-06-18 — pokazywać przy ogłoszeniach
 
 ORIENT = {"pozioma": "landscape", "pionowa": "portrait"}
 ROADCLASS = {"autostrada": "highway", "ekspresowa": "expressway", "krajowa": "national",
@@ -188,6 +188,7 @@ def main() -> int:
             "campaign_duration": int(g(r, "Długość kampanii [dni]")) if g(r, "Długość kampanii [dni]") else None,
             "owner_email": OWNER_EMAIL,
             "phone": PHONE,
+            "contact_preference": "both" if PHONE else "form",
             "offer_type": "agency",
             "image_url": img_rel,
             "images": [img_rel] if img_rel else [],

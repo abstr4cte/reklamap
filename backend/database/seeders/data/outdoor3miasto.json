@@ -31,7 +31,7 @@
     "has_vat_invoice": true,
     "campaign_duration": null,
     "owner_email": "koordynator@outdoor3miasto.com",
-    "phone": null,
+    "phone": "602244800",
     "offer_type": "agency",
     "image_url": "advertisements/outdoor3miasto/o3m-1.jpg",
     "images": [
@@ -40,7 +40,8 @@
     "has_image": true,
     "status": "active",
     "is_active": true,
-    "available_from": null
+    "available_from": null,
+    "contact_preference": "both"
   },
   {
     "ref": "O3M02",
@@ -74,7 +75,7 @@
     "has_vat_invoice": true,
     "campaign_duration": null,
     "owner_email": "koordynator@outdoor3miasto.com",
-    "phone": null,
+    "phone": "602244800",
     "offer_type": "agency",
     "image_url": "advertisements/outdoor3miasto/o3m-2.jpg",
     "images": [
@@ -83,7 +84,8 @@
     "has_image": true,
     "status": "active",
     "is_active": true,
-    "available_from": null
+    "available_from": null,
+    "contact_preference": "both"
   },
   {
     "ref": "O3M03",
@@ -117,7 +119,7 @@
     "has_vat_invoice": true,
     "campaign_duration": null,
     "owner_email": "koordynator@outdoor3miasto.com",
-    "phone": null,
+    "phone": "602244800",
     "offer_type": "agency",
     "image_url": "advertisements/outdoor3miasto/o3m-3.jpg",
     "images": [
@@ -126,7 +128,8 @@
     "has_image": true,
     "status": "active",
     "is_active": true,
-    "available_from": null
+    "available_from": null,
+    "contact_preference": "both"
   },
   {
     "ref": "O3M04",
@@ -160,7 +163,7 @@
     "has_vat_invoice": true,
     "campaign_duration": null,
     "owner_email": "koordynator@outdoor3miasto.com",
-    "phone": null,
+    "phone": "602244800",
     "offer_type": "agency",
     "image_url": "advertisements/outdoor3miasto/o3m-4.jpg",
     "images": [
@@ -169,7 +172,8 @@
     "has_image": true,
     "status": "active",
     "is_active": true,
-    "available_from": null
+    "available_from": null,
+    "contact_preference": "both"
   },
   {
     "ref": "O3M05",
@@ -204,7 +208,7 @@
     "has_vat_invoice": true,
     "campaign_duration": null,
     "owner_email": "koordynator@outdoor3miasto.com",
-    "phone": null,
+    "phone": "602244800",
     "offer_type": "agency",
     "image_url": "advertisements/outdoor3miasto/o3m-5.jpg",
     "images": [
@@ -213,7 +217,8 @@
     "has_image": true,
     "status": "active",
     "is_active": true,
-    "available_from": null
+    "available_from": null,
+    "contact_preference": "both"
   },
   {
     "ref": "O3M06",
@@ -245,7 +250,7 @@
     "has_vat_invoice": true,
     "campaign_duration": null,
     "owner_email": "koordynator@outdoor3miasto.com",
-    "phone": null,
+    "phone": "602244800",
     "offer_type": "agency",
     "image_url": "advertisements/outdoor3miasto/o3m-6.jpg",
     "images": [
@@ -254,7 +259,8 @@
     "has_image": true,
     "status": "active",
     "is_active": true,
-    "available_from": null
+    "available_from": null,
+    "contact_preference": "both"
   },
   {
     "ref": "O3M07",
@@ -286,7 +292,7 @@
     "has_vat_invoice": true,
     "campaign_duration": null,
     "owner_email": "koordynator@outdoor3miasto.com",
-    "phone": null,
+    "phone": "602244800",
     "offer_type": "agency",
     "image_url": "advertisements/outdoor3miasto/o3m-7.jpg",
     "images": [
@@ -295,7 +301,8 @@
     "has_image": true,
     "status": "active",
     "is_active": true,
-    "available_from": null
+    "available_from": null,
+    "contact_preference": "both"
   },
   {
     "ref": "O3M08",
@@ -328,7 +335,7 @@
     "has_vat_invoice": true,
     "campaign_duration": null,
     "owner_email": "koordynator@outdoor3miasto.com",
-    "phone": null,
+    "phone": "602244800",
     "offer_type": "agency",
     "image_url": "advertisements/outdoor3miasto/o3m-8.jpg",
     "images": [
@@ -337,7 +344,8 @@
     "has_image": true,
     "status": "active",
     "is_active": true,
-    "available_from": null
+    "available_from": null,
+    "contact_preference": "both"
   },
   {
     "ref": "O3M09",
@@ -371,7 +379,7 @@
     "has_vat_invoice": true,
     "campaign_duration": null,
     "owner_email": "koordynator@outdoor3miasto.com",
-    "phone": null,
+    "phone": "602244800",
     "offer_type": "agency",
     "image_url": "advertisements/outdoor3miasto/o3m-9.jpg",
     "images": [
@@ -380,7 +388,8 @@
     "has_image": true,
     "status": "active",
     "is_active": true,
-    "available_from": null
+    "available_from": null,
+    "contact_preference": "both"
   },
   {
     "ref": "O3M10",
@@ -414,7 +423,7 @@
     "has_vat_invoice": true,
     "campaign_duration": null,
     "owner_email": "koordynator@outdoor3miasto.com",
-    "phone": null,
+    "phone": "602244800",
     "offer_type": "agency",
     "image_url": "advertisements/outdoor3miasto/o3m-10.jpg",
     "images": [
@@ -423,7 +432,8 @@
     "has_image": true,
     "status": "active",
     "is_active": true,
-    "available_from": null
+    "available_from": null,
+    "contact_preference": "both"
   },
   {
     "ref": "O3M11",
@@ -457,7 +467,7 @@
     "has_vat_invoice": true,
     "campaign_duration": null,
     "owner_email": "koordynator@outdoor3miasto.com",
-    "phone": null,
+    "phone": "602244800",
     "offer_type": "agency",
     "image_url": "advertisements/outdoor3miasto/o3m-11.jpg",
     "images": [
@@ -466,7 +476,8 @@
     "has_image": true,
     "status": "active",
     "is_active": true,
-    "available_from": null
+    "available_from": null,
+    "contact_preference": "both"
   },
   {
     "ref": "O3M12",
@@ -500,7 +511,7 @@
     "has_vat_invoice": true,
     "campaign_duration": null,
     "owner_email": "koordynator@outdoor3miasto.com",
-    "phone": null,
+    "phone": "602244800",
     "offer_type": "agency",
     "image_url": "advertisements/outdoor3miasto/o3m-12.jpg",
     "images": [
@@ -509,6 +520,7 @@
     "has_image": true,
     "status": "active",
     "is_active": true,
-    "available_from": null
+    "available_from": null,
+    "contact_preference": "both"
   }
 ]
