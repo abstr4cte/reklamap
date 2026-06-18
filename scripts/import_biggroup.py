@@ -42,9 +42,8 @@ STORE_DIR = os.path.join(ROOT, "backend/storage/app/public/advertisements/biggro
 REL_PREFIX = "advertisements/biggroup"
 
 OWNER_EMAIL = "info@biggroup.pl"
-# Telefonu NIE wstawiamy — agencja nie poprosiła o jego publikację (prosili tylko
-# o profil na info@biggroup.pl). Kontakt idzie przez formularz na adres profilu.
-# Numery z cenników (602702648 Filip, 784784244 A2) — dopiero po potwierdzeniu mailem.
+# Telefon publikowany za zgodą agencji (mail 2026-06-18, Ad 6): jeden numer dla wszystkich.
+PHONE = "784784244"
 
 UA = "Mozilla/5.0 (compatible; reklamap-import/1.0; +kontakt@reklamap.pl)"
 FETCH_IMAGES = "--no-images" not in sys.argv
@@ -119,12 +118,19 @@ def is_sold_out(text: str) -> bool:
 # ---------- typ nośnika z numeru katalogowego ----------
 
 def classify(catalog: str):
-    """catalog -> (type, environment, is_highway, is_backlight)."""
+    """catalog -> (type, environment, is_highway, is_backlight).
+
+    Mapowanie typów po ustaleniach z agencją:
+      A2     -> billboard (autostrada)
+      BL-    -> billboard (backlight; agencja prosiła, by backlighty były billboardami)
+      CL-    -> citylight (klasyczny citylight)
+      WF-... -> wall (siatka wielkoformatowa na elewacji)
+    """
     c = (catalog or "").upper()
     if "A2" in c:
         return "billboard", "outdoor", True, False
     if c.startswith("BL-"):
-        return "citylight", "indoor", False, True
+        return "billboard", "indoor", False, True
     if c.startswith("CL-"):
         return "citylight", "indoor", False, True
     # WF-<miasto> bez A2 = siatka wielkoformatowa na elewacji
@@ -390,7 +396,7 @@ def _finalize(s, cfg):
     rec = {
         "ref": catalog,
         "typ_meta": {"type": typ, "env": env, "highway": is_highway, "backlight": is_backlight},
-        "title": _make_title(typ, city, loc_parts, dims_str),
+        "title": _make_title(typ, city, loc_parts, dims_str, is_highway, is_backlight),
         "type": typ,
         "location": location,
         "city": city,
@@ -412,14 +418,15 @@ def _finalize(s, cfg):
         "price_negotiable": False,
         "has_vat_invoice": True,
         "owner_email": OWNER_EMAIL,
-        "phone": None,
-        "contact_preference": "form",
+        "phone": PHONE,
+        "contact_preference": "both",
         "offer_type": "agency",
         "status": "reserved" if s.get("sold_out") else "active",
         "is_active": True,
         "available_from": parse_available_from(s["availability"]),
         "_traffic": s.get("traffic"),
         "_area": area,
+        "_is_backlight": is_backlight,
         "_product_url": s["product_url"],
         # pola pomocnicze do opisu (usuwane przed zapisem JSON? — zostają, seeder zignoruje przez fillable? NIE)
         "_price_map": price_map,
@@ -430,7 +437,12 @@ def _finalize(s, cfg):
     # typ-zależne pola
     if typ == "billboard":
         rec["variant"] = "standard"
-        rec["road_class"] = "highway" if is_highway else "urban"
+        if is_highway:
+            rec["road_class"] = "highway"
+        elif is_backlight:
+            # backlight zaklasyfikowany jako billboard — wewnątrz (przejście dworcowe),
+            # podświetlany; road_class nie dotyczy
+            rec["environment"] = "indoor"
     elif typ == "citylight":
         rec["variant"] = "single"
         rec["environment"] = "indoor"
@@ -442,7 +454,7 @@ def _finalize(s, cfg):
     return rec
 
 
-def _make_title(typ, city, loc_parts, dims_str):
+def _make_title(typ, city, loc_parts, dims_str, is_highway=False, is_backlight=False):
     dims = (dims_str[:-2].strip() if dims_str else "")  # bez końcówki ' m'
     # pierwszy atom niebędący kierunkiem/stroną — opis miejsca
     place = next((p for p in loc_parts
@@ -451,11 +463,15 @@ def _make_title(typ, city, loc_parts, dims_str):
                   and not p.startswith("(")), city)
     dpart = f" {dims} m" if dims else ""
     if typ == "billboard":
-        kier = next((p for p in loc_parts if p.lower().startswith("kier")), "")
-        side = next((p for p in loc_parts if p.lower() in ("front", "tył", "tyl", "bok")), "")
-        kier = re.sub(r'(?i)^kierunek', 'kier.', kier).strip()
-        tail = ", ".join(x for x in (kier, side) if x)
-        return f"Billboard przy A2{dpart} – {city}" + (f", {tail}" if tail else "")
+        if is_highway:
+            kier = next((p for p in loc_parts if p.lower().startswith("kier")), "")
+            side = next((p for p in loc_parts if p.lower() in ("front", "tył", "tyl", "bok")), "")
+            kier = re.sub(r'(?i)^kierunek', 'kier.', kier).strip()
+            tail = ", ".join(x for x in (kier, side) if x)
+            return f"Billboard przy A2{dpart} – {city}" + (f", {tail}" if tail else "")
+        if is_backlight:
+            return f"Backlight podświetlany{dpart} – {city}, {place}"
+        return f"Billboard{dpart} – {city}, {place}"
     if typ == "citylight":
         return f"Powierzchnia podświetlana{dpart} – {city}, {place}"
     return f"Powierzchnia wielkoformatowa{dpart} – {city}, {place}"
@@ -467,7 +483,11 @@ def _make_description(rec):
     lines = []
     typ = rec["type"]
 
-    if typ == "billboard":
+    if typ == "billboard" and rec.get("_is_backlight"):
+        intro = (f"Podświetlany nośnik wielkoformatowy (backlight) w lokalizacji "
+                 f"o dużym natężeniu ruchu pieszego ({rec['location']}). Ekspozycja przez "
+                 f"całą dobę dzięki podświetleniu, świetnie widoczny także po zmroku.")
+    elif typ == "billboard":
         intro = (f"Wolnostojąca tablica wielkoformatowa przy autostradzie A2 "
                  f"({rec['location']}). Nośnik w ciągu ruchu o bardzo dużym natężeniu, "
                  f"doskonale widoczny dla kierowców na długim, prostym odcinku trasy.")
