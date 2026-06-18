@@ -201,6 +201,18 @@ def strcells(row):
     return [str(c).strip() for c in row if isinstance(c, str) and str(c).strip()]
 
 
+def _norm(s: str) -> str:
+    """Małe litery, bez spacji i bez polskich znaków — do dopasowań typu 'cały nośnik'."""
+    s = (s or "").lower().replace(" ", "")
+    repl = str.maketrans("ąćęłńóśźż", "acelnoszz")
+    return s.translate(repl)
+
+
+def is_caly_nosnik(cells) -> bool:
+    """Wiersz pakietu 'cały nośnik' (front+tył+bok razem) — nagłówek bez linku /product/."""
+    return any("calynosnik" in _norm(c) for c in cells if isinstance(c, str))
+
+
 def atoms(cells):
     """Rozbij komórki lokalizacji na atomy (w cennikach lokalizacja bywa w jednej
     komórce rozdzielona ' | ') i odfiltruj szum (LINK, #VALUE!, dostępność, NOŚNIK)."""
@@ -212,7 +224,8 @@ def atoms(cells):
                 continue
             up = p.upper()
             low = p.lower()
-            if up in ("LINK", "#VALUE!") or "NOŚNIK" in up:
+            # „NOŚNIK" oraz rozstrzelone „C A Ł Y  N O Ś N I K" (z odstępami) — _norm zdejmuje spacje
+            if up in ("LINK", "#VALUE!") or "nosnik" in _norm(p):
                 continue
             if any(k in low for k in ("dostępn", "sprzedan", "rezerwacja", "osób")):
                 continue
@@ -238,8 +251,10 @@ def parse_tall(path, cfg):
     cur = None
     for i, row in enumerate(rows, start=1):
         purl = row_has_product(prod, i)
-        if purl:
-            # nowy nośnik — wiersz nagłówkowy
+        caly = is_caly_nosnik(row)
+        # Nagłówek nośnika: wiersz z linkiem /product/ ALBO pakiet „cały nośnik"
+        # (front+tył+bok — bez własnej strony produktowej, link do strony ogólnej).
+        if purl or caly:
             if cur:
                 surfaces.append(cur)
             ss = strcells(row)
@@ -247,6 +262,7 @@ def parse_tall(path, cfg):
             loc_parts = atoms(ss)
             cur = {
                 "product_url": purl,
+                "is_caly": caly,
                 "loc_parts": loc_parts,
                 "prices": numcells(row),
                 "availability": avail,
@@ -352,11 +368,7 @@ def pick_locality(parts):
 
 def _finalize(s, cfg):
     catalog = s["catalog"] or ""
-    # pomiń „cały nośnik" (ABC) — brak strony produktowej, redundancja
-    if catalog.upper().endswith("ABC"):
-        return None
-    if any("cały nośnik" in p.lower() for p in s["loc_parts"]):
-        return None
+    is_caly = bool(s.get("is_caly")) or catalog.upper().endswith("ABC")
 
     typ, env, is_highway, is_backlight = classify(catalog)
     w, h = parse_dims(s["fmt"])
@@ -365,7 +377,9 @@ def _finalize(s, cfg):
 
     # Źródłowy błąd cennika: komórka FORMAT niektórych boków A2 zawiera format
     # „całego nośnika". Wszystkie boki A2 są jednolite: 2,4 × 11,5 m (27,6 m²).
-    if (w is None or h is None) and catalog.upper().endswith("C") and is_highway:
+    # Uwaga: „...ABC" też kończy się na „C" — pakiet całego nośnika wykluczamy.
+    if (w is None or h is None) and is_highway and not is_caly \
+            and catalog.upper().endswith("C"):
         w, h, area = 2.4, 11.5, 27.6
 
     dims_str = f"{_num(w)}×{_num(h)} m" if (w and h) else ""
@@ -396,7 +410,7 @@ def _finalize(s, cfg):
     rec = {
         "ref": catalog,
         "typ_meta": {"type": typ, "env": env, "highway": is_highway, "backlight": is_backlight},
-        "title": _make_title(typ, city, loc_parts, dims_str, is_highway, is_backlight),
+        "title": _make_title(typ, city, loc_parts, dims_str, is_highway, is_backlight, is_caly),
         "type": typ,
         "location": location,
         "city": city,
@@ -410,7 +424,7 @@ def _finalize(s, cfg):
         "orientation": ("landscape" if (w or 0) >= (h or 0) else "portrait") if (w and h) else "landscape",
         "traffic_intensity": "high",
         "traffic_direction": tdir,
-        "traffic_type": (["vehicular"] if typ in ("billboard", "wall") else ["pedestrian"]),
+        "traffic_type": (["pedestrian"] if (is_backlight or typ == "citylight") else ["vehicular"]),
         "has_backlight": is_backlight,
         "price_includes_print": False,
         "price_includes_mounting": not is_highway,  # A2: montaż osobno
@@ -427,6 +441,7 @@ def _finalize(s, cfg):
         "_traffic": s.get("traffic"),
         "_area": area,
         "_is_backlight": is_backlight,
+        "_is_caly": is_caly,
         "_product_url": s["product_url"],
         # pola pomocnicze do opisu (usuwane przed zapisem JSON? — zostają, seeder zignoruje przez fillable? NIE)
         "_price_map": price_map,
@@ -454,7 +469,7 @@ def _finalize(s, cfg):
     return rec
 
 
-def _make_title(typ, city, loc_parts, dims_str, is_highway=False, is_backlight=False):
+def _make_title(typ, city, loc_parts, dims_str, is_highway=False, is_backlight=False, is_caly=False):
     dims = (dims_str[:-2].strip() if dims_str else "")  # bez końcówki ' m'
     # pierwszy atom niebędący kierunkiem/stroną — opis miejsca
     place = next((p for p in loc_parts
@@ -463,6 +478,8 @@ def _make_title(typ, city, loc_parts, dims_str, is_highway=False, is_backlight=F
                   and not p.startswith("(")), city)
     dpart = f" {dims} m" if dims else ""
     if typ == "billboard":
+        if is_caly:
+            return f"Billboard przy A2 – cały nośnik (front + tył + bok) – {city}"
         if is_highway:
             kier = next((p for p in loc_parts if p.lower().startswith("kier")), "")
             side = next((p for p in loc_parts if p.lower() in ("front", "tył", "tyl", "bok")), "")
@@ -483,7 +500,11 @@ def _make_description(rec):
     lines = []
     typ = rec["type"]
 
-    if typ == "billboard" and rec.get("_is_backlight"):
+    if typ == "billboard" and rec.get("_is_caly"):
+        intro = (f"Cały nośnik wielkoformatowy przy autostradzie A2 — wszystkie strony "
+                 f"(front, tył i bok) w jednym pakiecie ({rec['location']}). Maksymalna "
+                 f"ekspozycja w obu kierunkach ruchu o bardzo dużym natężeniu.")
+    elif typ == "billboard" and rec.get("_is_backlight"):
         intro = (f"Podświetlany nośnik wielkoformatowy (backlight) w lokalizacji "
                  f"o dużym natężeniu ruchu pieszego ({rec['location']}). Ekspozycja przez "
                  f"całą dobę dzięki podświetleniu, świetnie widoczny także po zmroku.")
@@ -504,6 +525,8 @@ def _make_description(rec):
     if rec.get("width") and rec.get("height"):
         a = f" (ok. {rec['_area']:.0f} m²)" if rec.get("_area") else ""
         lines.append(f"Format: {_num(rec['width'])} × {_num(rec['height'])} m{a}.")
+    elif rec.get("_is_caly") and rec.get("_area"):
+        lines.append(f"Łączna powierzchnia ekspozycji (front + tył + bok): ok. {rec['_area']:.0f} m².")
 
     # tabela cen najmu
     tier_lines = []
@@ -594,6 +617,16 @@ def main():
             if os.path.exists(jpg) and os.path.exists(webp):
                 img_rel = f"{REL_PREFIX}/{ref}.jpg"   # już pobrane — nie ściągaj ponownie
                 print(f"  {r['ref']}: cache")
+            elif r.get("_is_caly") and ref.endswith("abc"):
+                # pakiet „cały nośnik" nie ma własnej strony/zdjęcia — użyj fotki frontu
+                # tego samego pylonu (ref ...abc → ...a)
+                front = ref[:-3] + "a"
+                if os.path.exists(os.path.join(STORE_DIR, f"{front}.jpg")):
+                    img_rel = f"{REL_PREFIX}/{front}.jpg"
+                    print(f"  {r['ref']}: foto frontu ({front})")
+                else:
+                    img_rel = None
+                    print(f"  {r['ref']}: BRAK (brak frontu {front})")
             else:
                 og = fetch_og_image(r["_product_url"])
                 img_rel = save_photo(og, ref) if og else None

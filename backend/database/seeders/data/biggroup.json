@@ -117,6 +117,45 @@
     "has_image": true
   },
   {
+    "title": "Billboard przy A2 – cały nośnik (front + tył + bok) – Nagradowice",
+    "type": "billboard",
+    "location": "POZNAŃ - KONIN, Nagradowice k. Poznania, kierunek Berlin i Warszawa",
+    "city": "Nagradowice",
+    "latitude": 52.307986,
+    "longitude": 17.171333,
+    "price": 12000.0,
+    "price_unit": "month",
+    "width": null,
+    "height": null,
+    "orientation": "landscape",
+    "traffic_intensity": "high",
+    "traffic_direction": [],
+    "traffic_type": [
+      "vehicular"
+    ],
+    "has_backlight": false,
+    "price_includes_print": false,
+    "price_includes_mounting": false,
+    "graphic_design_help": false,
+    "price_negotiable": false,
+    "has_vat_invoice": true,
+    "owner_email": "info@biggroup.pl",
+    "phone": "784784244",
+    "contact_preference": "both",
+    "offer_type": "agency",
+    "status": "active",
+    "is_active": true,
+    "available_from": null,
+    "variant": "standard",
+    "road_class": "highway",
+    "description": "Cały nośnik wielkoformatowy przy autostradzie A2 — wszystkie strony (front, tył i bok) w jednym pakiecie (POZNAŃ - KONIN, Nagradowice k. Poznania, kierunek Berlin i Warszawa). Maksymalna ekspozycja w obu kierunkach ruchu o bardzo dużym natężeniu.\nŁączna powierzchnia ekspozycji (front + tył + bok): ok. 308 m².\nNajem (im dłuższa umowa, tym niższa stawka miesięczna):\n  • umowa 1 mc: 12 000 zł netto / mc\n  • umowa 3 mce: 9 000 zł netto / mc\n  • umowa 6+ mcy: 7 500 zł netto / mc\nKoszty dodatkowe: druk grafiki: 7 700 zł netto; montaż i demontaż: 5 000 zł netto.\nWszystkie ceny netto — należy doliczyć VAT 23%.\nDostępność: Dostępny.",
+    "image_url": "advertisements/biggroup/wf-poz-a2-02a.jpg",
+    "images": [
+      "advertisements/biggroup/wf-poz-a2-02a.jpg"
+    ],
+    "has_image": true
+  },
+  {
     "title": "Billboard przy A2 12,15×11,5 m – Zimin, kier. Warszawa, front",
     "type": "billboard",
     "location": "POZNAŃ - KONIN, Zimin k. Poznania, kierunek Warszawa, front",
@@ -230,6 +269,45 @@
     "image_url": "advertisements/biggroup/wf-poz-a2-03c.jpg",
     "images": [
       "advertisements/biggroup/wf-poz-a2-03c.jpg"
+    ],
+    "has_image": true
+  },
+  {
+    "title": "Billboard przy A2 – cały nośnik (front + tył + bok) – Zimin",
+    "type": "billboard",
+    "location": "POZNAŃ - KONIN, Zimin k. Poznania, kierunek Poznań i Warszawa",
+    "city": "Zimin",
+    "latitude": 52.306825,
+    "longitude": 17.1708,
+    "price": 12000.0,
+    "price_unit": "month",
+    "width": null,
+    "height": null,
+    "orientation": "landscape",
+    "traffic_intensity": "high",
+    "traffic_direction": [],
+    "traffic_type": [
+      "vehicular"
+    ],
+    "has_backlight": false,
+    "price_includes_print": false,
+    "price_includes_mounting": false,
+    "graphic_design_help": false,
+    "price_negotiable": false,
+    "has_vat_invoice": true,
+    "owner_email": "info@biggroup.pl",
+    "phone": "784784244",
+    "contact_preference": "both",
+    "offer_type": "agency",
+    "status": "active",
+    "is_active": true,
+    "available_from": "2026-09-01",
+    "variant": "standard",
+    "road_class": "highway",
+    "description": "Cały nośnik wielkoformatowy przy autostradzie A2 — wszystkie strony (front, tył i bok) w jednym pakiecie (POZNAŃ - KONIN, Zimin k. Poznania, kierunek Poznań i Warszawa). Maksymalna ekspozycja w obu kierunkach ruchu o bardzo dużym natężeniu.\nŁączna powierzchnia ekspozycji (front + tył + bok): ok. 308 m².\nNajem (im dłuższa umowa, tym niższa stawka miesięczna):\n  • umowa 1 mc: 12 000 zł netto / mc\n  • umowa 3 mce: 9 000 zł netto / mc\n  • umowa 6+ mcy: 7 500 zł netto / mc\nKoszty dodatkowe: druk grafiki: 7 700 zł netto; montaż i demontaż: 5 000 zł netto.\nWszystkie ceny netto — należy doliczyć VAT 23%.\nDostępność: Dostępny od 1.09.2026.",
+    "image_url": "advertisements/biggroup/wf-poz-a2-03a.jpg",
+    "images": [
+      "advertisements/biggroup/wf-poz-a2-03a.jpg"
     ],
     "has_image": true
   },
@@ -351,6 +429,45 @@
     "has_image": true
   },
   {
+    "title": "Billboard przy A2 – cały nośnik (front + tył + bok) – Chłapowo 1",
+    "type": "billboard",
+    "location": "POZNAŃ - KONIN, Chłapowo 1 k. Poznania, kierunek Poznań i Warszawa",
+    "city": "Chłapowo 1",
+    "latitude": 52.309373,
+    "longitude": 17.312562,
+    "price": 12000.0,
+    "price_unit": "month",
+    "width": null,
+    "height": null,
+    "orientation": "landscape",
+    "traffic_intensity": "high",
+    "traffic_direction": [],
+    "traffic_type": [
+      "vehicular"
+    ],
+    "has_backlight": false,
+    "price_includes_print": false,
+    "price_includes_mounting": false,
+    "graphic_design_help": false,
+    "price_negotiable": false,
+    "has_vat_invoice": true,
+    "owner_email": "info@biggroup.pl",
+    "phone": "784784244",
+    "contact_preference": "both",
+    "offer_type": "agency",
+    "status": "active",
+    "is_active": true,
+    "available_from": "2026-09-01",
+    "variant": "standard",
+    "road_class": "highway",
+    "description": "Cały nośnik wielkoformatowy przy autostradzie A2 — wszystkie strony (front, tył i bok) w jednym pakiecie (POZNAŃ - KONIN, Chłapowo 1 k. Poznania, kierunek Poznań i Warszawa). Maksymalna ekspozycja w obu kierunkach ruchu o bardzo dużym natężeniu.\nŁączna powierzchnia ekspozycji (front + tył + bok): ok. 308 m².\nNajem (im dłuższa umowa, tym niższa stawka miesięczna):\n  • umowa 1 mc: 12 000 zł netto / mc\n  • umowa 3 mce: 9 000 zł netto / mc\n  • umowa 6+ mcy: 7 500 zł netto / mc\nKoszty dodatkowe: druk grafiki: 7 700 zł netto; montaż i demontaż: 5 000 zł netto.\nWszystkie ceny netto — należy doliczyć VAT 23%.\nDostępność: Dostępny od 1.09.2026.",
+    "image_url": "advertisements/biggroup/wf-poz-a2-04a.jpg",
+    "images": [
+      "advertisements/biggroup/wf-poz-a2-04a.jpg"
+    ],
+    "has_image": true
+  },
+  {
     "title": "Billboard przy A2 12,15×11,5 m – Chłapowo 2, kier. Warszawa, front",
     "type": "billboard",
     "location": "POZNAŃ - KONIN, Chłapowo 2 k. Poznania, kierunek Warszawa, front",
@@ -464,6 +581,45 @@
     "image_url": "advertisements/biggroup/wf-poz-a2-05c.jpg",
     "images": [
       "advertisements/biggroup/wf-poz-a2-05c.jpg"
+    ],
+    "has_image": true
+  },
+  {
+    "title": "Billboard przy A2 – cały nośnik (front + tył + bok) – Chłapowo 2",
+    "type": "billboard",
+    "location": "POZNAŃ - KONIN, Chłapowo 2 k. Poznania, kierunek Poznań i Warszawa",
+    "city": "Chłapowo 2",
+    "latitude": 52.309465,
+    "longitude": 17.321735,
+    "price": 12000.0,
+    "price_unit": "month",
+    "width": null,
+    "height": null,
+    "orientation": "landscape",
+    "traffic_intensity": "high",
+    "traffic_direction": [],
+    "traffic_type": [
+      "vehicular"
+    ],
+    "has_backlight": false,
+    "price_includes_print": false,
+    "price_includes_mounting": false,
+    "graphic_design_help": false,
+    "price_negotiable": false,
+    "has_vat_invoice": true,
+    "owner_email": "info@biggroup.pl",
+    "phone": "784784244",
+    "contact_preference": "both",
+    "offer_type": "agency",
+    "status": "active",
+    "is_active": true,
+    "available_from": "2026-09-01",
+    "variant": "standard",
+    "road_class": "highway",
+    "description": "Cały nośnik wielkoformatowy przy autostradzie A2 — wszystkie strony (front, tył i bok) w jednym pakiecie (POZNAŃ - KONIN, Chłapowo 2 k. Poznania, kierunek Poznań i Warszawa). Maksymalna ekspozycja w obu kierunkach ruchu o bardzo dużym natężeniu.\nŁączna powierzchnia ekspozycji (front + tył + bok): ok. 308 m².\nNajem (im dłuższa umowa, tym niższa stawka miesięczna):\n  • umowa 1 mc: 12 000 zł netto / mc\n  • umowa 3 mce: 9 000 zł netto / mc\n  • umowa 6+ mcy: 7 500 zł netto / mc\nKoszty dodatkowe: druk grafiki: 7 700 zł netto; montaż i demontaż: 5 000 zł netto.\nWszystkie ceny netto — należy doliczyć VAT 23%.\nDostępność: Dostępny od 1.09.2026.",
+    "image_url": "advertisements/biggroup/wf-poz-a2-05a.jpg",
+    "images": [
+      "advertisements/biggroup/wf-poz-a2-05a.jpg"
     ],
     "has_image": true
   },
@@ -585,6 +741,45 @@
     "has_image": true
   },
   {
+    "title": "Billboard przy A2 – cały nośnik (front + tył + bok) – Mała Górka",
+    "type": "billboard",
+    "location": "POZNAŃ - KONIN, Mała Górka k. Wrześni, kierunek Poznań i Warszawa",
+    "city": "Mała Górka",
+    "latitude": 52.319415,
+    "longitude": 17.454172,
+    "price": 12000.0,
+    "price_unit": "month",
+    "width": null,
+    "height": null,
+    "orientation": "landscape",
+    "traffic_intensity": "high",
+    "traffic_direction": [],
+    "traffic_type": [
+      "vehicular"
+    ],
+    "has_backlight": false,
+    "price_includes_print": false,
+    "price_includes_mounting": false,
+    "graphic_design_help": false,
+    "price_negotiable": false,
+    "has_vat_invoice": true,
+    "owner_email": "info@biggroup.pl",
+    "phone": "784784244",
+    "contact_preference": "both",
+    "offer_type": "agency",
+    "status": "active",
+    "is_active": true,
+    "available_from": "2026-09-01",
+    "variant": "standard",
+    "road_class": "highway",
+    "description": "Cały nośnik wielkoformatowy przy autostradzie A2 — wszystkie strony (front, tył i bok) w jednym pakiecie (POZNAŃ - KONIN, Mała Górka k. Wrześni, kierunek Poznań i Warszawa). Maksymalna ekspozycja w obu kierunkach ruchu o bardzo dużym natężeniu.\nŁączna powierzchnia ekspozycji (front + tył + bok): ok. 308 m².\nNajem (im dłuższa umowa, tym niższa stawka miesięczna):\n  • umowa 1 mc: 12 000 zł netto / mc\n  • umowa 3 mce: 9 000 zł netto / mc\n  • umowa 6+ mcy: 7 500 zł netto / mc\nKoszty dodatkowe: druk grafiki: 7 700 zł netto; montaż i demontaż: 5 000 zł netto.\nWszystkie ceny netto — należy doliczyć VAT 23%.\nDostępność: Dostępny od 1.09.2026.",
+    "image_url": "advertisements/biggroup/wf-poz-a2-06a.jpg",
+    "images": [
+      "advertisements/biggroup/wf-poz-a2-06a.jpg"
+    ],
+    "has_image": true
+  },
+  {
     "title": "Billboard przy A2 12,15×11,5 m – Powodów Trzeci, kier. Łódź/Warszawa, front",
     "type": "billboard",
     "location": "KONIN - ŁÓDŹ, Powodów Trzeci k. Łodzi, kierunek Łódź/Warszawa, front",
@@ -702,6 +897,45 @@
     "has_image": true
   },
   {
+    "title": "Billboard przy A2 – cały nośnik (front + tył + bok) – Powodów Trzeci",
+    "type": "billboard",
+    "location": "KONIN - ŁÓDŹ, Powodów Trzeci k. Łodzi, kierunek Łódź i Poznań",
+    "city": "Powodów Trzeci",
+    "latitude": 51.967455,
+    "longitude": 19.101497,
+    "price": 12000.0,
+    "price_unit": "month",
+    "width": null,
+    "height": null,
+    "orientation": "landscape",
+    "traffic_intensity": "high",
+    "traffic_direction": [],
+    "traffic_type": [
+      "vehicular"
+    ],
+    "has_backlight": false,
+    "price_includes_print": false,
+    "price_includes_mounting": false,
+    "graphic_design_help": false,
+    "price_negotiable": false,
+    "has_vat_invoice": true,
+    "owner_email": "info@biggroup.pl",
+    "phone": "784784244",
+    "contact_preference": "both",
+    "offer_type": "agency",
+    "status": "active",
+    "is_active": true,
+    "available_from": "2026-09-01",
+    "variant": "standard",
+    "road_class": "highway",
+    "description": "Cały nośnik wielkoformatowy przy autostradzie A2 — wszystkie strony (front, tył i bok) w jednym pakiecie (KONIN - ŁÓDŹ, Powodów Trzeci k. Łodzi, kierunek Łódź i Poznań). Maksymalna ekspozycja w obu kierunkach ruchu o bardzo dużym natężeniu.\nŁączna powierzchnia ekspozycji (front + tył + bok): ok. 308 m².\nNajem (im dłuższa umowa, tym niższa stawka miesięczna):\n  • umowa 1 mc: 12 000 zł netto / mc\n  • umowa 3 mce: 9 000 zł netto / mc\n  • umowa 6+ mcy: 7 500 zł netto / mc\nKoszty dodatkowe: druk grafiki: 7 700 zł netto; montaż i demontaż: 5 000 zł netto.\nWszystkie ceny netto — należy doliczyć VAT 23%.\nDostępność: Dostępny od 1.09.2026.",
+    "image_url": "advertisements/biggroup/wf-lod-a2-01a.jpg",
+    "images": [
+      "advertisements/biggroup/wf-lod-a2-01a.jpg"
+    ],
+    "has_image": true
+  },
+  {
     "title": "Billboard przy A2 12,15×11,5 m – Lubowidza, kier. Łódź, front",
     "type": "billboard",
     "location": "ŁÓDŹ - WARSZAWA, Lubowidza, kierunek Łódź, front",
@@ -815,6 +1049,45 @@
     "image_url": "advertisements/biggroup/wf-lod-a2-03c.jpg",
     "images": [
       "advertisements/biggroup/wf-lod-a2-03c.jpg"
+    ],
+    "has_image": true
+  },
+  {
+    "title": "Billboard przy A2 – cały nośnik (front + tył + bok) – Lubowidza",
+    "type": "billboard",
+    "location": "ŁÓDŹ - WARSZAWA, Lubowidza, kierunek Łódź i Warszawa",
+    "city": "Lubowidza",
+    "latitude": 51.909072,
+    "longitude": 19.739833,
+    "price": 12000.0,
+    "price_unit": "month",
+    "width": null,
+    "height": null,
+    "orientation": "landscape",
+    "traffic_intensity": "high",
+    "traffic_direction": [],
+    "traffic_type": [
+      "vehicular"
+    ],
+    "has_backlight": false,
+    "price_includes_print": false,
+    "price_includes_mounting": false,
+    "graphic_design_help": false,
+    "price_negotiable": false,
+    "has_vat_invoice": true,
+    "owner_email": "info@biggroup.pl",
+    "phone": "784784244",
+    "contact_preference": "both",
+    "offer_type": "agency",
+    "status": "active",
+    "is_active": true,
+    "available_from": null,
+    "variant": "standard",
+    "road_class": "highway",
+    "description": "Cały nośnik wielkoformatowy przy autostradzie A2 — wszystkie strony (front, tył i bok) w jednym pakiecie (ŁÓDŹ - WARSZAWA, Lubowidza, kierunek Łódź i Warszawa). Maksymalna ekspozycja w obu kierunkach ruchu o bardzo dużym natężeniu.\nŁączna powierzchnia ekspozycji (front + tył + bok): ok. 308 m².\nNajem (im dłuższa umowa, tym niższa stawka miesięczna):\n  • umowa 1 mc: 12 000 zł netto / mc\n  • umowa 3 mce: 9 000 zł netto / mc\n  • umowa 6+ mcy: 7 500 zł netto / mc\nKoszty dodatkowe: druk grafiki: 7 700 zł netto; montaż i demontaż: 5 000 zł netto.\nWszystkie ceny netto — należy doliczyć VAT 23%.\nDostępność: Dostępny.",
+    "image_url": "advertisements/biggroup/wf-lod-a2-03a.jpg",
+    "images": [
+      "advertisements/biggroup/wf-lod-a2-03a.jpg"
     ],
     "has_image": true
   },
@@ -1496,7 +1769,7 @@
     "traffic_intensity": "high",
     "traffic_direction": [],
     "traffic_type": [
-      "vehicular"
+      "pedestrian"
     ],
     "has_backlight": true,
     "price_includes_print": false,
@@ -1535,7 +1808,7 @@
     "traffic_intensity": "high",
     "traffic_direction": [],
     "traffic_type": [
-      "vehicular"
+      "pedestrian"
     ],
     "has_backlight": true,
     "price_includes_print": false,
@@ -1574,7 +1847,7 @@
     "traffic_intensity": "high",
     "traffic_direction": [],
     "traffic_type": [
-      "vehicular"
+      "pedestrian"
     ],
     "has_backlight": true,
     "price_includes_print": false,
@@ -1613,7 +1886,7 @@
     "traffic_intensity": "high",
     "traffic_direction": [],
     "traffic_type": [
-      "vehicular"
+      "pedestrian"
     ],
     "has_backlight": true,
     "price_includes_print": false,
@@ -1652,7 +1925,7 @@
     "traffic_intensity": "high",
     "traffic_direction": [],
     "traffic_type": [
-      "vehicular"
+      "pedestrian"
     ],
     "has_backlight": true,
     "price_includes_print": false,
@@ -1691,7 +1964,7 @@
     "traffic_intensity": "high",
     "traffic_direction": [],
     "traffic_type": [
-      "vehicular"
+      "pedestrian"
     ],
     "has_backlight": true,
     "price_includes_print": false,
