@@ -80,6 +80,14 @@ const handlePageChange = async (page: number) => {
   }
 }
 
+// Zmiana sortowania musi PRZEŁADOWAĆ dane z serwera — wyniki są paginowane po stronie
+// serwera, więc samo ustawienie sortBy zmienia tylko kolejność bieżącej strony, a nie
+// globalną (zostawała kolejność „Polecane"). applyFilters({}) resetuje stronę i refetchuje.
+const handleSortChange = (value: string) => {
+  sortBy.value = value
+  searchStore.applyFilters({})
+}
+
 const handleSearch = (searchFilters: FilterParams & { _priceDisplayUnit?: string }) => {
   // Wyczyść mapBounds przy nowym wyszukiwaniu, aby mapa mogła przybliżyć się do miasta/regionu
   const filtersWithoutMapBounds = { ...searchFilters, mapBounds: null }
@@ -575,7 +583,7 @@ const clearSearchFlag = () => {
       @toggle-favorite="handleToggleFavorite"
       @toggle-comparison="handleToggleComparison"
       @update:view-mode="viewMode = $event"
-      @update:sort-by="sortBy = $event"
+      @update:sort-by="handleSortChange"
       @update:hovered-ad-id="hoveredAdId = $event"
     >
       <template #empty-content>
