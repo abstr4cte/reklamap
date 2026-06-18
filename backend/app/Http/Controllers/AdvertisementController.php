@@ -474,7 +474,8 @@ class AdvertisementController extends Controller
 
     public function show(string $id)
     {
-        return Advertisement::where('is_active', 1)->findOrFail($id);
+        // Telefon odsłaniany na szczegółach (przycisk „Zadzwoń"); owner_email pozostaje ukryty.
+        return Advertisement::where('is_active', 1)->findOrFail($id)->makeVisible('phone');
     }
 
     public function update(Request $request, string $id)

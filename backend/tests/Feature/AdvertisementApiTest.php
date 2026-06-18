@@ -243,8 +243,6 @@ class AdvertisementApiTest extends TestCase
             'width',
             'height',
             'traffic_intensity',
-            'owner_email',
-            'phone',
             'contact_preference',
             'offer_type',
             'orientation',
@@ -253,6 +251,11 @@ class AdvertisementApiTest extends TestCase
             'created_at',
             'updated_at',
         ]);
+
+        // Anti-scraping: owner_email i phone NIE mogą wyciekać w publicznej odpowiedzi
+        // (ukryte w modelu, odsłaniane tylko na szczegółach/panelu właściciela).
+        $response->assertJsonMissingPath('owner_email');
+        $response->assertJsonMissingPath('phone');
 
         // Verify data types
         $response->assertJson([

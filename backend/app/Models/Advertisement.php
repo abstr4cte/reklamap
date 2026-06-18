@@ -109,6 +109,22 @@ class Advertisement extends Model
         'estimated_daily_views' => 'integer',
     ];
 
+    /**
+     * Pola ukryte w serializacji JSON — chronią przed scrapingiem danych kontaktowych
+     * z publicznych endpointów (lista/mapa zwracały owner_email + phone dla wszystkich
+     * ogłoszeń, a klucz API jest w JS frontu = praktycznie publiczny).
+     *
+     * Odsłaniane jawnie tam, gdzie są potrzebne:
+     *  - `phone`        → AdvertisementController::show() (przycisk „Zadzwoń" na szczegółach)
+     *  - owner_email+phone → ManagementController (panel właściciela, uwierzytelniony tokenem)
+     *
+     * `$hidden` dotyczy TYLKO serializacji — serwerowy dostęp `$ad->owner_email`
+     * (wysyłka maili, PDF) działa bez zmian.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = ['owner_email', 'phone'];
+
     protected $appends = ['display_status', 'full_url'];
 
     /**

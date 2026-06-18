@@ -65,7 +65,11 @@ class ManagementController extends Controller
         }
 
         // Get all advertisements associated with this email
-        $advertisements = Advertisement::where('owner_email', $managementToken->email)->get();
+        // Panel właściciela (uwierzytelniony tokenem) — odsłaniamy owner_email i phone,
+        // które model domyślnie ukrywa przed publicznymi endpointami (anti-scraping).
+        $advertisements = Advertisement::where('owner_email', $managementToken->email)
+            ->get()
+            ->makeVisible(['owner_email', 'phone']);
 
         // Append aggregated daily stats for the last 30 days
         foreach ($advertisements as $ad) {
