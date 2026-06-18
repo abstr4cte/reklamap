@@ -35,20 +35,37 @@ class Outdoor3miastoSeeder extends Seeder
         }
 
         DB::transaction(function () use ($records) {
-            $deleted = Advertisement::where('owner_email', self::OWNER_EMAIL)->delete();
-            if ($deleted) {
-                $this->command->info("Usunięto $deleted wcześniej zaimportowanych nośników Outdoor 3miasto.");
-            }
-
+            // updateOrCreate W MIEJSCU (klucz: owner_email + title) — NIE kasujemy i nie
+            // tworzymy od nowa, bo to przedatowuje created_at („Dodano dziś"), zmienia id
+            // (→ zmiana URL `slug-{id}`) i zeruje statystyki. Aktualizacja zachowuje id,
+            // created_at, statystyki i URL istniejących nośników.
+            $keepTitles = [];
             foreach ($records as $rec) {
                 unset($rec['ref']); // pole pomocnicze, nie kolumna
+                $keepTitles[] = $rec['title'];
 
-                $ad = Advertisement::create($rec);
-                $ad->slug = Str::slug($ad->title) . '-' . $ad->id;
-                $ad->save();
+                $ad = Advertisement::updateOrCreate(
+                    ['owner_email' => self::OWNER_EMAIL, 'title' => $rec['title']],
+                    $rec
+                );
+
+                // Slug ustawiamy tylko dla NOWYCH (istniejące zachowują swój → stały URL).
+                if (empty($ad->slug)) {
+                    $ad->slug = Str::slug($ad->title) . '-' . $ad->id;
+                    $ad->save();
+                }
             }
 
-            $this->command->info(sprintf('Zaimportowano %d nośników Outdoor 3miasto.', count($records)));
+            // Usuń tylko te nośniki operatora, których NIE ma już w źródle (reszta nietknięta).
+            $removed = Advertisement::where('owner_email', self::OWNER_EMAIL)
+                ->whereNotIn('title', $keepTitles)
+                ->delete();
+
+            $this->command->info(sprintf(
+                'Zsynchronizowano %d nośników Outdoor 3miasto (zaktualizowano w miejscu, usunięto %d nieobecnych).',
+                count($records),
+                $removed
+            ));
         });
     }
 }

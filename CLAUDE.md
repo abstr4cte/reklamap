@@ -196,6 +196,7 @@ Projekt posiada zespół wyspecjalizowanych agentów AI w `reklamap-os/agents/`.
 - **Brak `dd()` / `var_dump()`** w kodzie — debug tylko przez logi (`Log::debug()`).
 - **Indeksy na foreign keys**: każda migracja dodająca `foreignId` musi mieć `->index()` lub `->constrained()`.
 - **`$fillable` zamiast `$guarded = []`**: zawsze jawna lista pól do masowego przypisania.
+- **Aktualizacja istniejących danych = update W MIEJSCU, nigdy delete+create**: zmiana pola w już istniejących (zwłaszcza produkcyjnych) rekordach — np. dodanie telefonu, korekta ceny/kategorii — przez `updateOrCreate` z naturalnym kluczem (np. `owner_email` + `title`). `delete()` + `create()` przedatuje `created_at` (fałszywe „Dodano dziś"), zmienia `id` → zmienia URL (`slug-{id}`) i osierica statystyki (`advertisement_daily_stats`). Pełny delete+create tylko przy PIERWSZYM imporcie (brak rekordów).
 
 ### Vue 3 / TypeScript
 
