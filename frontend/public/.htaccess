@@ -13,6 +13,7 @@
   AddType image/png .png
   AddType image/jpeg .jpg .jpeg
   AddType image/gif .gif
+  AddType application/xml .xml
 </IfModule>
 
 # Enable gzip compression
@@ -58,9 +59,12 @@
   RewriteRule ^ogloszenia/?$ /powierzchnie-reklamowe [R=301,L]
   RewriteRule ^ogloszenie/([^/]+)/([^/]+)/([0-9]+)/?$ /powierzchnia-reklamowa/inne/$1/$2-$3 [R=301,L]
 
-  # Sitemapa jest generowana dynamicznie przez backend (api.reklamap.pl) z realnym
-  # lastmod. Bez tego 301 SPA-fallback poniżej łapie /sitemap.xml i oddaje botowi
-  # index.html (text/html) zamiast XML — Google traci kanał discovery/refresh.
+  # Sitemapa: scripts/prerender.mjs zapisuje statyczny dist/sitemap.xml przy każdym
+  # (udanym) buildzie, więc front serwuje ją sam z domeny kanonicznej — bez 301 na api,
+  # odporne na awarie backendu. Gdyby statycznego pliku zabrakło (np. build bez prerenderu),
+  # warunek !-f uruchamia fallback 301 na backend, by nie zgubić discovery ani nie oddać
+  # botowi index.html (text/html) z SPA-fallbacku poniżej.
+  RewriteCond %{REQUEST_FILENAME} !-f
   RewriteRule ^sitemap\.xml$ https://api.reklamap.pl/sitemap.xml [R=301,L]
 
   # OG-shim (2026-06-09): scrapery social NIE renderują JS, więc dostają z SPA pusty

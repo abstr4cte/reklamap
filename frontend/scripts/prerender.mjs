@@ -58,6 +58,17 @@ async function routesFromSitemap() {
         const xml = await (await fetch(u, { headers: { 'User-Agent': UA }, redirect: 'follow' })).text();
         let paths = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].replace(/https?:\/\/[^/]+/, '') || '/');
         if (paths.length > 0) {
+          // Zapisz sitemapę jako statyczny plik w dist/, żeby front serwował ją sam
+          // (reklamap.pl/sitemap.xml) zamiast 301 → api. Odcina discovery od awarii backendu.
+          // Tylko pełny build (przy testowym FILTER/LIMIT nie nadpisujemy realnej sitemapy).
+          if (!FILTER && !LIMIT) {
+            try {
+              await writeFile(join(DIST, 'sitemap.xml'), xml);
+              console.log(`  ✓ sitemap.xml zapisany do dist/ (${[...new Set(paths)].length} URL-i, źródło: ${u})`);
+            } catch (e) {
+              console.log(`  ⚠ nie zapisano sitemap.xml do dist: ${e.message}`);
+            }
+          }
           paths = [...new Set(paths)];
           if (FILTER) paths = paths.filter((p) => FILTER.test(p));
           if (LIMIT) paths = paths.slice(0, LIMIT);
