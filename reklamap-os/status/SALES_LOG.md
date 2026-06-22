@@ -72,6 +72,7 @@ Rejestr realnych partnerów podażowych, których oferta trafiła do bazy. Uzupe
 - **Import:** `scripts/import_optokom.py` / `OptokomSeeder`. Robocze artefakty (geocache, draft maila) usunięte w commicie `4c368b1`.
 - **Otwarty problem (SEO):** placeholder + thin/near-duplicate opisy → Google „crawled/discovered, not indexed" (skok niezaindeksowanych, audyt `SEO_TECH_AUDIT.md` 2026-06-15). **Najsilniejszy lewar: realne zdjęcia** (Optokom ma dosłać) — unikalny obraz = unikalna strona = odblokowana indeksacja. Wymusiło też B-6 (anty-flood sortu listy).
 - **Aktualizacja 2026-06-15:** realne zdjęcia **pobrane ze strony optokom.pl** (`scripts/fetch_optokom_images.py` — crawl /lokalizacje → galerie po kodzie `ref`, fallback `design/{ref}.webp`, konwersja jpg+webp). **168/192 nośników ma teraz unikalne foto** (24 bez galerii zostają na placeholderze). `optokom.json` zaktualizowany, przeseedowano. To wprost adresuje lewar #1 z audytu SEO (unikalny obraz = unikalna strona).
+- **Ceny:** **netto** — potwierdzone mailem od Marty Chochół (OPTOKOM Outdoor Media, tel. 731 047 307): każda pozycja wyceny „… zł netto/mc" + osobno netto montaż/demontaż/druk. VAT-owiec 23%.
 - **TODO:** dopytać Optokom o foto dla pozostałych 24; zróżnicować opisy per nośnik (thin-content).
 
 ### Outdoor 3miasto — 2026-06-15 · 12 nośników · ZAIMPORTOWANY (lokalnie, test)
@@ -82,6 +83,7 @@ Rejestr realnych partnerów podażowych, których oferta trafiła do bazy. Uzupe
 - **Import:** `scripts/import_outdoor3miasto.py` (Excel→`outdoor3miasto.json`, mapowanie PL→kanoniczne, kopiowanie+konwersja zdjęć) → `Outdoor3miastoSeeder`. Wszystkie `status=active`.
 - **Czeka na:** numer telefonu (podadzą później — kontakt na razie mailowy, NIE blokuje publikacji). Odpowiedź mailowa do Michała: panel = magic-link na `reklamap.pl/zarzadzaj` (per e-mail), oferta „więcej nośników w dowolnym formacie / ze strony pobierzemy sami".
 - **Wzorzec:** druga agencja, która odpisała Excelem/linkiem (po reklama.ai). Warto dodać do `MARKETING_ASSETS.md` szablon „odpowiedź na zgłoszenie agencji".
+- **⚠️ Ceny netto/brutto: NIEPOTWIERDZONE.** Wypełnili nasz Excel (etykieta tylko „Cena", bez netto/brutto), nigdzie tego nie zapisaliśmy. Jedyna agencja bez ustalonego VAT-u (Big Group / Optokom / reklama.ai / Pdesign = wszystkie netto). **TODO:** dopytać Michała wprost — zakładamy netto (agencja na fakturze VAT), ale to zgadywanka.
 
 ### reklama.ai — 2026-06-15 · 411 nośników · ZAIMPORTOWANY (lokalnie, test)
 
@@ -91,3 +93,20 @@ Rejestr realnych partnerów podażowych, których oferta trafiła do bazy. Uzupe
 - **Pozyskanie danych:** scrapowane ze strony (statyczny HTML, paginacja) — `scripts/import_reklama_ai.py` → `reklamap-os/status/reklama_ai_nosniki.csv`. **Mają własne zdjęcia** (placeholder z logo niepotrzebny). Zgoda na pobranie: udzielona telefonicznie/mailowo.
 - **Import do bazy:** `php artisan import:reklama-ai --purge` (lokalnie). 34 active (wolne) · 374 reserved (zajęte) · **3 draft/ukryte** (telebim1, telebim2, siatka 137 m² nr 461 — niepewna wycena /m²).
 - **Czeka na:** mail do Eweliny — potwierdzenie stawki dla LED i siatki 137 m² (wtedy 3 drafty → active/reserved). Do produkcji: pobrać zdjęcia do własnego storage (teraz hotlink), dograć dokładne współrzędne (teraz geokod na poziomie miasta + offset).
+
+---
+
+## 2026-06-19 — pierwszy kontakt: 4 agencje OOH z researchu (luki w pokryciu)
+
+Po analizie pokrycia (duże miasta z 0 nośników) deep-research wskazał właścicieli nośników w dziurach. Wysłane `mail:agency-reactivation` z szablonem **`email-pierwszy-kontakt-agencje.html`** (temat „Wasze nośniki na ReklaMap — wrzucamy za Was, za darmo", from kontakt@reklamap.pl, SMTP reklamap.pl):
+
+| Agencja | Miasto | Adres | Status |
+|---|---|---|---|
+| A&A Holding | Łódź | sekretariat@aia.pl | ✅ wysłano 2026-06-19 |
+| B.P. MEDIA | Szczecin | bpmedia@bpmedia.pl | ✅ wysłano 2026-06-19 |
+| VIS-MEDIA | Bydgoszcz | biuro@vismedia.com.pl | ✅ wysłano 2026-06-19 |
+| Cityboard Media | Lublin (krajowy) | office@cityboard.pl | ✅ wysłano 2026-06-19 |
+
+CITY Creations (Kraków+Białystok, agnieszka.martyka@city.com.pl) — był już w pierwszej fali (`agencje-maile.txt`), pominięty. Lista nowych: `reklamap-os/status/agencje-nowe.txt`. Test renderu: kwiatosteles@gmail.com.
+
+**Czeka na:** odpowiedzi → import oferty (concierge) na mapę (zapełnia Łódź / Szczecin / Bydgoszcz / Lublin).

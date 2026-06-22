@@ -1,0 +1,9 @@
+# Agencje OOH z researchu (czerwiec 2026) — JESZCZE NIEZACZEPIONE.
+# Nie były w pierwszej fali (agencje-maile.txt). Pierwszy kontakt — szablon:
+#   email-pierwszy-kontakt-agencje.html
+# Format: email,Nazwa Agencji. Linie # pomijane.
+
+sekretariat@aia.pl,A&A Holding
+bpmedia@bpmedia.pl,B.P. MEDIA
+biuro@vismedia.com.pl,VIS-MEDIA
+office@cityboard.pl,Cityboard Media

@@ -346,3 +346,42 @@ Nie wiąże to Państwa sztywno tą ceną.
 ```
 
 **NIE mów** „można dać cenę orientacyjną / od X zł" — to nieprawda, system tego nie obsługuje.
+
+---
+
+## Szablon: mail obsługowy po imporcie nośników agencji
+
+**Kiedy:** zaraz po wgraniu portfolio agencji na reklamap.pl. To obsługa techniczna zgłoszenia, NIE pitch — agencja już zna ReklaMap z rozmowy. Ton rzeczowy, ludzki.
+
+**Struktura (3 piłeczki do odbicia):**
+1. **Zdjęcia** — jeśli wgraliśmy placeholder, poproś o własne, OSOBNO (mail/WeTransfer), bo w Excelu tracą jakość.
+2. **Potwierdzenie założeń cenowych** — każde miejsce, gdzie zgadywaliśmy mapowanie (np. „BBS = klejony papierem"), wymaga jawnego potwierdzenia.
+3. **Brakujące stawki** — wypisz konkretnie nośniki/technologie bez ceny (lista z numerami i wymiarami).
+
+**Zasady:**
+- Podsumuj liczby: ile dodanych, ile widocznych, ile zarezerwowanych, ile czeka na wycenę.
+- Wyjaśnij status „zarezerwowany" + zaproś do zgłaszania zmian („wystarczy odpisać").
+- Zaproś do obejrzenia na mapie (wskaż miasto o największej gęstości).
+- Bez korporacyjnego lukru („Z przyjemnością informujemy…"), bez nagłówków od spójnika.
+- Powierzchnie bez ceny trzymamy jako szkice (niewidoczne) — NIE publikujemy z ceną 0 ani „od X".
+
+Pełny przykład (Optokom, 06.2026): patrz historia rozmowy / `scripts/import_optokom.py` generuje wstępny draft do `optokom_mail_draft.txt`.
+
+### ⚙️ Fakt systemowy: panel operatora = magic-link per EMAIL (nie per ogłoszenie)
+
+Zarządzanie nośnikami działa przez jeden link dla całego adresu e-mail:
+operator wchodzi na **reklamap.pl/zarzadzaj**, podaje swój e-mail → dostaje link
+do panelu, w którym widzi i edytuje **WSZYSTKIE swoje nośniki naraz** (token
+wiąże się z `owner_email`, nie z pojedynczym ogłoszeniem — `ManagementController::validateToken`).
+
+Konsekwencja dla agencji z dużym portfolio: **nie wysyłamy 192 linków** — wystarczy
+poinstruować, żeby weszli na /zarzadzaj i podali swój firmowy e-mail. Panel pokazuje
+też statystyki (30 dni). To realny self-service panel, bez konta — NIE czekamy na B-4.
+Zdjęcia operator może wrzucić sam w panelu; edycja masowa po naszej stronie (seeder/skrypt) jako backup.
+
+### Uzupełnienie: panel per-email + prośba o feedback (duże portfolio)
+
+- **Panel istnieje bez konta** — token zarządzania jest per `owner_email`, nie per ogłoszenie. Agencja wchodzi na `reklamap.pl/zarzadzaj`, podaje swój mail → jeden link → panel ze WSZYSTKIMI jej nośnikami (edycja opisów/cen/statusów, dodawanie zdjęć, statystyki 30 dni). To NIE jest B-4 — działa już teraz. Używaj tego zamiast obiecywać 192 osobne linki.
+- **Zdjęcia:** daj wybór „sami w panelu albo przyślijcie, wrzucimy hurtem" — nie narzucaj concierge.
+- **Prośba o feedback UX:** przy pierwszym dużym portfolio (kilkadziesiąt+ nośników) poproś o uwagi do panelu („jesteście jednymi z pierwszych z tak dużym portfolio"). To darmowy audyt użyteczności od power-usera + komplement budujący relację.
+- **Status „zarezerwowany":** operator odblokowuje sam w panelu, gdy nośnik się zwolni.

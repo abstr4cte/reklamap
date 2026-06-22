@@ -139,16 +139,16 @@ Route::get('/sitemap.xml', function () {
             $xml .= '</url>';
         }
 
-        // Leaf-ogłoszenia: tylko REALNIE WYNAJMOWALNE. Nośniki `reserved` (zajęte) i
-        // `draft` (niepubliczne) nie trafiają do sitemapy — strona takiego nośnika
-        // sygnalizuje OutOfStock (AdDetailPage), więc reklamowanie jej w Google to
-        // crawl waste + thin/near-duplicate (potwierdzone w GSC 2026-06-15 po imporcie
-        // Optokom: 192 nośniki, część reserved, skok „Wykryta–niezindeksowana" 80→289).
-        // Strony-agregaty miast/typ×miasto liczą próg na `is_active` (zgodnie z frontowym
-        // resultCount), więc zajęty nośnik nadal zasila gęstość kategorii — tylko nie
-        // dostaje własnego URL w sitemapie.
+        // Leaf-ogłoszenia: wszystkie PUBLICZNE nośniki. `reserved` = ktoś zarezerwował dany
+        // nośnik — to realne, pełnowartościowe ogłoszenie (pełna treść + badge
+        // „Zarezerwowane"), więc MA być w sitemapie i indeksowane. Zmiana decyzji 2026-06-22:
+        // wcześniej `reserved` było wykluczane jako rzekomy OutOfStock/thin, ale strona ma
+        // pełną treść (jedyny sygnał to availability=OutOfStock w schema.org, co nie obniża
+        // wartości strony). Wykluczamy tylko `draft` (niepubliczne) i `unavailable` (zdjęte).
+        // Uwaga: przy młodej domenie Google może indeksować te URL-e stopniowo (crawl budget)
+        // — to nie błąd, lecz naturalne tempo.
         $advertisements = \App\Models\Advertisement::where('is_active', true)
-            ->whereIn('status', ['active', 'soon_available'])
+            ->whereIn('status', ['active', 'soon_available', 'reserved'])
             ->orderBy('updated_at', 'desc')
             ->get();
 

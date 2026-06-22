@@ -4,6 +4,27 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 
 ---
 
+## 2026-06-19 — GSC „Żądanie indeksowania odrzucone" na `billboardy/dabrowa-gornicza` = FAŁSZYWY ALARM
+
+User dostał w GSC (URL Inspection → Poproś o zindeksowanie) komunikat: „Żądanie indeksowania zostało odrzucone. Podczas testowania bieżącej wersji wykryto błędy indeksowania tego adresu URL" dla `https://reklamap.pl/powierzchnie-reklamowe/billboardy/dabrowa-gornicza`.
+
+**Żywa diagnoza (curl jako Googlebot, prod):**
+
+| Sprawdzenie | Wynik |
+|---|---|
+| HTTP status | **200**, bez przekierowań, TTFB 0,1 s / total 0,18 s |
+| `<meta robots>` / `X-Robots-Tag` | `index, follow` / brak noindex w nagłówku |
+| Canonical | self-referencing, poprawny |
+| robots.txt | brak `Disallow` pasującego do ścieżki (Allow) |
+| Render dla bota | **PEŁNY** — `<h1>Billboardy – Dąbrowa Górnicza`, breadcrumbs, 57 realnych ogłoszeń z opisami/cenami, silosy „inne miasta"/„inne typy", 3× JSON-LD |
+| Sitemapa | URL **JEST** w `api.reklamap.pl/sitemap.xml` (obok 49 innych miast billboardowych) |
+
+**Werdykt:** strona jest w 100% indeksowalna. Komunikat to znana, **przejściowa usterka po stronie GSC** (on-demand live-test renderer bywa przeciążony / ma chwilowy hiccup) — pojawia się masowo dla zdrowych stron. NIE jest to błąd kodu ani regresja. Akcja: NIE spamować „Poproś o zindeksowanie", polegać na sitemapie + normalnym crawlu, ewentualnie ponowić za kilka dni; weryfikować przez raport Strony/`site:`, nie przez on-demand test.
+
+**Drobiazg (kosmetyka, opcjonalnie):** `robots.txt` deklaruje `Sitemap: https://reklamap.pl/sitemap.xml`, który robi **301 → `api.reklamap.pl/sitemap.xml`**. Google podąża za 301 na sitemapie bez problemu, ale best-practice to deklarować docelowy URL wprost. Niski priorytet, nie wiąże się z tym błędem.
+
+---
+
 ## 2026-06-15 — diagnoza nowego zrzutu GSC (skok niezaindeksowanych = import Optokom)
 
 Źródło: 3 zrzuty GSC od usera (15.06) + **żywe odpytanie prod API** (listingi 241/215/172, `total=296`), `optokom.json` (192 rekordy), `git show 4c368b1`, live `robots.txt` (reklamap.pl, api, www.api), live 301 www→non-www.

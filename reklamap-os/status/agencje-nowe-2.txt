@@ -1,0 +1,26 @@
+# NOWI operatorzy z researchu (2026-06-19) — JESZCZE NIEWYSŁANE (wysyłka po weekendzie).
+# Zweryfikowani właściciele nośników, jawny e-mail. Szablon: email-pierwszy-kontakt-agencje.html
+# Format: email,Nazwa. Linie # pomijane.
+
+# — partia A (regiony + Warszawa) —
+biuro@eurobord.pl,Eurobord
+biuro@greemi.pl,GreeMi
+biuro@agenda-reklama.pl,Agenda
+biuro@ssm.silesia.pl,Śląska Sieć Metropolitalna
+piotrowski@mediacentrum.net.pl,Grupa Media Centrum
+info@wielkiformat.pl,Billboard Sp. z o.o.
+
+# — partia B (pozostałe miasta) —
+biuro@admedia-consulting.pl,Ad.Media Consulting
+reklama@msm.torun.pl,Biuro Reklamy MSM Toruń
+manager@manager-art.pl,Manager-Art
+biuro@ledonardo.pl,LEDonardo
+rekman@rekman.zgora.pl,REKMAN
+info@xton.eu,Ledmi.pl
+redruk@redruk.pl,Redruk
+
+# Bez maila / do weryfikacji (NIE w wysyłce):
+# - Reklama JGA (Jelenia Góra) — tel/formularz 601 755 593
+# - Espero (Konin) agencjaespero@autograf.pl — posiadanie nośników niepotwierdzone
+# - Kagam (Nowy Sącz/Zakopianka) — tel 505 730 935, niezweryfikowany
+# - Mobile Plus (Słupsk) — tel 59 841 37 74, brak jawnego maila
