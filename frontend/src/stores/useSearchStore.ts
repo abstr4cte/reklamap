@@ -92,6 +92,11 @@ export const useSearchStore = defineStore('search', () => {
   const listings = ref<Advertisement[]>([])
   const mapPins = ref<MapPin[]>([])
   const isLoading = ref(false)
+  // true dopiero po pierwszym UDANYM fetchu ofert. Odróżnia stan „jeszcze nie pobrano /
+  // fetch padł" (listings=[], serverTotal=0) od „API realnie zwróciło 0–2 oferty". Krytyczne
+  // dla noindex thin-pages w ListingsPage: bez tej flagi stan początkowy (isLoading=false,
+  // listings=[]) dawał resultCount=0 → fałszywy noindex po hydratacji u Googlebota.
+  const hasLoaded = ref(false)
   const filters = ref<FilterParams>({ ...DEFAULT_FILTERS })
   // 'default' = tryb „Polecane": kolejność z serwera (dywersyfikacja per operator,
   // anti-flood). NIE re-sortujemy go po stronie klienta — patrz blok sortowania.
@@ -257,6 +262,7 @@ export const useSearchStore = defineStore('search', () => {
         serverTotal.value = response.length
         serverLastPage.value = 1
       }
+      hasLoaded.value = true
     } catch (error) {
       if (generation !== _fetchGeneration) return
       console.error('Failed to fetch listings:', error)
@@ -1026,7 +1032,7 @@ export const useSearchStore = defineStore('search', () => {
 
   return {
     listings, mapPins, isLoading, filters, sortBy, priceDisplay, viewMode, currentPage, itemsPerPage,
-    serverTotal, serverLastPage,
+    serverTotal, serverLastPage, hasLoaded,
     fetchListings, fetchMapPins, setListings, applyFilters, resetFilters, setViewMode, setCurrentPage, syncFromUrl, cancelMapBoundsTimer,
     sortedAndFilteredListings, paginatedListings, totalPages, activeFiltersCount, getPrice,
     computedPriceDisplayUnit,

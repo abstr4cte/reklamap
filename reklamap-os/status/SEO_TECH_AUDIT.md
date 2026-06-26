@@ -4,6 +4,45 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 
 ---
 
+## 2026-06-26 — noindex miast: w WIĘKSZOŚCI POPRAWNY (thin) + fix migotania dla zdrowych miast
+
+**Zgłoszenie:** GSC URL Inspection (live 18:18) `…/warszawa`: „Pobranie: Udało się", „Indeksowanie: Nie — noindex". User: „z prerender.io było OK".
+
+**⚠️ KOREKTA po weryfikacji puppeteerem na żywym prodzie (przechwycenie odpowiedzi API):** noindex Warszawy jest **POPRAWNY**. Realne liczby (`/api/listings?city=…&city_strict=1`): **Warszawa total=2, Kraków=0** → <3 (próg thin) → celowy noindex. To NIE bug. Zdrowe miasta SĄ index: **Poznań=18** (prerender ma `ItemList numberOfItems=18`, zawsze index), **`/powierzchnie-reklamowe`=821** (zawsze index). **Prawdziwy lewar = PODAŻ nośników w dużych miastach, nie kod.** Pierwsza diagnoza („krytyczny false-noindex zabijający strony miast") była przeszacowana — większość thin-miast jest słusznie wykluczona.
+
+**Żywa diagnoza (curl jako Googlebot + git):**
+
+| Sprawdzenie | Wynik |
+|---|---|
+| Statyczny prerender (curl, bez JS) | `<meta robots>` = **`index, follow`** dla wszystkich miast (warszawa/kraków/gdańsk/poznań/wrocław), pełna treść |
+| GSC live test (z JS) | **`noindex`** — sprzeczność z curl → różnica = **Google hydratuje JS** |
+| robots.txt | OK, `/` Allow (to NIE robots) |
+| `AdDetailPage.vue:629` `noindex:true` | tylko w `catch` 404 — leafy bezpieczne |
+
+**Root cause (mechanizm):** `ListingsPage.vue` liczył `noindex` z `resultCount`, a `useSearchStore` startuje `isLoading=false`, `listings=[]`, `serverTotal=0`. Przy hydratacji u Googlebota, ZANIM `onMounted` odpali fetch (albo gdy fetch padnie), `resultCount = !isLoading ? ... : null` dawało **0** (nie null) → `isThinPage=true` → `noindex` nadpisywał prerenderowy `index`. Google honoruje DOM po renderze = `noindex`. Komentarz w kodzie twierdził, że `!isLoading` chroni — chronił tylko *w trakcie* ładowania, nie w stanie **początkowym**/po błędzie.
+
+**Czemu prerender.io to maskował:** runtime prerender.io serwował botowi **finalny, ustabilizowany HTML** (po załadowaniu ofert → `index`); Google nie hydratował pustego store. Bug wszedł **12 maja** (`b19affa`, dodanie `isThinPage`), ale spał pod prerender.io do jego wygaśnięcia **18 maja**; **ujawnił się** po wdrożeniu prerenderu build-time **16 czerwca** (`a3d1f22`), bo build-time serwuje normalne SPA, które Google sam odpala.
+
+**Fix (kod):**
+
+| # | Zmiana | Plik | Status |
+|---|---|---|---|
+| 1 | Flaga `hasLoaded` (true tylko po UDANYM fetchu) | `stores/useSearchStore.ts` | ✅ kod |
+| 2 | `resultCount`/`noindex` wydzielone do czystych, testowalnych funkcji (`computeListingResultCount` bramkuje na `hasLoaded`; `shouldNoindexListing`) | `utils/listingsSeo.ts` (nowy) + `views/ListingsPage.vue` | ✅ kod |
+| 3 | Test regresyjny (12 case'ów: stan początkowy/po błędzie → `null` → `index`; realnie thin → `noindex`) | `tests/unit/listingsSeo.test.ts` (nowy) | ✅ 143/143 zielone |
+
+Efekt: dopóki nie ma **potwierdzonego** wyniku z API → `resultCount=null` → strona zostaje `index` (zgodnie z prerenderem). `noindex` wchodzi tylko gdy API realnie zwróci <3 oferty (zamierzony thin-content).
+
+**Wdrożone + zweryfikowane (puppeteer, live prod 2026-06-26):** Poznań i `/powierzchnie-reklamowe` = ZAWSZE index (zero migotania); Warszawa/Kraków = noindex (poprawnie, thin). 143 testy zielone, `vue-tsc` czysto, deploy OK. **NIE** prosić o indeksację Warszawy/Kraków (są słusznie thin) — request indexing tylko dla zdrowych miast (Poznań itp.) i strony głównej. Knob: `THIN_PAGE_THRESHOLD=3` w `utils/listingsSeo.ts` — obniżenie wpuści cieńsze strony do indeksu (niezalecane, thin-content).
+
+**Drobiazg (osobny, niski prio):** prerender thin-miast (warszawa/krakow) wypieka `index`+pusto zamiast `noindex` (łapie stan przed dokończeniem fetcha → resultCount=null → mój gate → index). Google renderuje JS i dostaje poprawny `noindex`, więc nieszkodliwe, ale statyczny plik niespójny z live. Docelowo: prerender powinien czekać na fetch listingów miasta (jak robi dla Poznania).
+
+**Wątki poboczne (ten sam zrzut GSC):**
+- **Strona główna „Zindeksowana, ale zablokowana robots":** stale cache robots w Google (live plik OK, `/` Allow, 10/10 strzałów 200, identyczny dla każdego UA). Łagodne, goi się po odświeżeniu cache. = powtórka pozycji z audytu 2026-06-15.
+- **Prośba o usunięcie `api.reklamap.pl` (GSC Usunięcia):** zbędna — `site:api.reklamap.pl` = 0 stron (api nie jest w indeksie), `Disallow:/` już blokuje. Zweryfikować prefiks; anulować jeśli dotyka `reklamap.pl` bez `api.`.
+
+---
+
 ## 2026-06-19 — GSC „Żądanie indeksowania odrzucone" na `billboardy/dabrowa-gornicza` = FAŁSZYWY ALARM
 
 User dostał w GSC (URL Inspection → Poproś o zindeksowanie) komunikat: „Żądanie indeksowania zostało odrzucone. Podczas testowania bieżącej wersji wykryto błędy indeksowania tego adresu URL" dla `https://reklamap.pl/powierzchnie-reklamowe/billboardy/dabrowa-gornicza`.

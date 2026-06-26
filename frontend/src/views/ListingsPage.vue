@@ -17,6 +17,7 @@ import { restoreScrollResilient } from '../utils/scrollRestore'
 import { useSeo } from '../composables/useSeo'
 import { appUrl } from '../utils/url'
 import { filtersToQueryParams } from '../utils/filterUtils'
+import { computeListingResultCount, shouldNoindexListing } from '../utils/listingsSeo'
 import polishLocations from '../data/polishLocations.json'
 import { categoryDescriptions, cityDescriptions, typeCityDescriptions, type CategoryDescription as CategoryDescriptionData } from '../data/categoryDescriptions'
 import type * as LType from 'leaflet'
@@ -45,6 +46,7 @@ const {
   viewMode,
   currentPage,
   isLoading,
+  hasLoaded,
   listings,
   mapPins,
   sortedAndFilteredListings: filteredListings,
@@ -112,10 +114,13 @@ const seoData = computed(() => {
 
   // Liczba ofert na tej stronie listy (po załadowaniu) — używana do:
   // 1) wzbogacenia generycznego opisu, gdy nie ma ręcznego wpisu w *Descriptions,
-  // 2) noindex dla cienkich stron (mało/zero ofert) — patrz isThinPage niżej.
-  const resultCount = !isLoading.value
-    ? (serverTotal.value > 0 ? serverTotal.value : listings.value.length)
-    : null
+  // 2) noindex dla cienkich stron (mało/zero ofert) — patrz shouldNoindexListing niżej.
+  const resultCount = computeListingResultCount({
+    isLoading: isLoading.value,
+    hasLoaded: hasLoaded.value,
+    serverTotal: serverTotal.value,
+    listingsLength: listings.value.length,
+  })
   // Prosta odmiana zgodna z konwencją z szablonu (count < 5 → forma "mnoga krótka").
   const offersWord = (n: number) => n === 1 ? 'oferta' : (n < 5 ? 'oferty' : 'ofert')
   // Generyczny opis z wpiętą liczbą ofert (gdy znamy ją i jest > 0).
@@ -163,13 +168,9 @@ const seoData = computed(() => {
   const filterQueryKeys = ['q', 'priceFrom', 'priceTo', 'priceUnit', 'rentalPeriod', 'orientation', 'widthFrom', 'widthTo', 'heightFrom', 'heightTo', 'trafficIntensity', 'offerType', 'status', 'hasBacklight', 'onlyWithImage', 'priceIncludesPrint', 'graphicDesignHelp', 'hasVatInvoice', 'hasLightingTypeBanner', 'hasLightingTypeBillboard', 'ambientLightControl', 'priceIncludesMounting', 'street', 'variant', 'roadClass', 'environment', 'trafficDirection', 'trafficType', 'transportScope', 'mobileExposureMode', 'operatingZone', 'lightingType', 'vehicleCountFrom', 'vehicleCountTo', 'dailyPassengersFrom', 'dailyPassengersTo', 'pixelPitchFrom', 'pixelPitchTo', 'brightnessFrom', 'brightnessTo', 'campaignDurationFrom', 'campaignDurationTo', 'locationTier']
   const hasExtraFilters = Object.keys(route.query).some(k => filterQueryKeys.includes(k))
 
-  // Cienka strona = strona typu/miasta/typu×miasta z liczbą ofert poniżej progu.
-  // Taka strona nie powinna trafiać do indeksu (doorway/thin content) — niezależnie
-  // od tego, czy ma ręcznie napisany opis. Warunek !isLoading chroni przed false-noindex
-  // w trakcie ładowania (resultCount jest wtedy null → isThinPage = false).
-  const THIN_PAGE_THRESHOLD = 3
+  // Thin-page noindex + bramka hasLoaded (chroni przed false-noindex po hydratacji u Googlebota)
+  // wydzielone do utils/listingsSeo — patrz JSDoc tam i tests/unit/listingsSeo.test.ts.
   const isFilteredListPage = !!(typeLabel || cityName)
-  const isThinPage = isFilteredListPage && resultCount !== null && resultCount < THIN_PAGE_THRESHOLD
 
   const pageNum = parseInt(route.query.page as string) || 1
   const canonicalUrl = pageNum > 1 ? `${appUrl}${window.location.pathname}` : canonical
@@ -204,7 +205,7 @@ const seoData = computed(() => {
     ogUrl: canonicalUrl,
     canonical: canonicalUrl,
     keywords: 'powierzchnie reklamowe, billboardy, reklama zewnętrzna, outdoor, OOH',
-    noindex: hasExtraFilters || isThinPage,
+    noindex: shouldNoindexListing({ resultCount, isFilteredListPage, hasExtraFilters }),
     prevPage: prevPageUrl,
     nextPage: nextPageUrl,
     ...(itemListSchema ? { structuredData: itemListSchema } : {})
