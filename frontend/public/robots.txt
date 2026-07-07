@@ -1,3 +1,4 @@
+# rev 2026-07-06 - wymuszenie ponownego pobrania robots po deindeksie (dyrektywy bez zmian, Allow: /)
 User-agent: facebookexternalhit
 Allow: /
 

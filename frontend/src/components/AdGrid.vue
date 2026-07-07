@@ -15,6 +15,7 @@ const props = defineProps<{
   listings: Advertisement[]
   totalCount?: number
   isLoading?: boolean
+  hasLoaded?: boolean
   viewMode?: 'grid' | 'list'
   sortBy?: string
   priceDisplay?: 'day' | 'week' | 'month' | 'year' | 'sqm' | 'campaign' | null
@@ -27,6 +28,16 @@ const isDesktopClamped = ref(false)
 const isMobileClamped = ref(false)
 
 const sortOptions = searchStore.sortOptions
+
+// SEO/UX: „Nie znaleziono ogłoszeń" pokazujemy TYLKO gdy API realnie potwierdziło 0 wyników
+// (hasLoaded=true). W oknie renderowania Googlebota runtime-fetch bywa ucinany — bez tej bramki
+// bot widział fałszywe „brak wyników" mimo pełnego prerenderu z 821 ofertami. Gdy hasLoaded nie
+// podano (inne użycia AdGrid), zachowujemy dotychczasowe zachowanie (traktujemy jak załadowane).
+// Dodatkowo: gdy mamy już listingi, NIE zasłaniamy ich spinnerem przy odświeżaniu — bot i user
+// nie tracą widocznej treści podczas re-fetcha.
+const resolvedHasLoaded = computed(() => props.hasLoaded ?? true)
+const showLoadingState = computed(() => props.listings.length === 0 && (props.isLoading || !resolvedHasLoaded.value))
+const showEmptyState = computed(() => props.listings.length === 0 && !props.isLoading && resolvedHasLoaded.value)
 
 const handleSortButtonClick = () => {
   showSortPanel.value = true
@@ -302,12 +313,12 @@ onDeactivated(() => {
 
     <div class="container">
 
-      <div v-if="isLoading" class="loading-state">
+      <div v-if="showLoadingState" class="loading-state">
         <div class="spinner"></div>
         <p>Ładowanie ogłoszeń...</p>
       </div>
 
-      <div v-else-if="listings.length === 0" class="empty-state">
+      <div v-else-if="showEmptyState" class="empty-state">
         <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="40" cy="40" r="40" fill="#F3F4F6"/>
           <path d="M40 50C45.5228 50 50 45.5228 50 40C50 34.4772 45.5228 30 40 30C34.4772 30 30 34.4772 30 40C30 45.5228 34.4772 50 40 50Z" stroke="#9CA3AF" stroke-width="2"/>

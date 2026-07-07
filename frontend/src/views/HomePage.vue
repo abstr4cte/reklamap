@@ -576,6 +576,7 @@ const clearSearchFlag = () => {
       :listings="paginatedListings"
       :total-count="searchStore.serverTotal > 0 ? searchStore.serverTotal : sortedAndFilteredListings.length"
       :is-loading="isLoading"
+      :has-loaded="searchStore.hasLoaded"
       :view-mode="viewMode"
       :sort-by="sortBy"
       :price-display="priceDisplay"

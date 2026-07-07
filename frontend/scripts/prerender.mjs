@@ -31,7 +31,13 @@ const MIN_TEXT = 150; // min. znaków treści, by uznać stronę za wyrenderowan
 
 const MIME = { '.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.ico':'image/x-icon','.woff2':'font/woff2','.woff':'font/woff','.ttf':'font/ttf','.map':'application/json','.txt':'text/plain','.xml':'application/xml' };
 
-function startServer() {
+async function startServer() {
+  // Pristine base dla SPA-fallback: kopia CZYSTEGO index.html (z vite, PRZED prerenderem),
+  // trzymana w pamięci. Bez tego — po sprerenderowaniu home, które nadpisuje dist/index.html
+  // inline seedem — fallback serwowałby zaseedowany plik jako bazę, a seed home wyciekłby na
+  // WSZYSTKIE trasy renderowane po home (szczegóły, blog…). Serwujemy z pamięci, więc nieważne,
+  // że dysk już zaseedowany.
+  const pristineIndex = await readFile(join(DIST, 'index.html'));
   return new Promise((resolve) => {
     const srv = createServer(async (req, res) => {
       try {
@@ -41,8 +47,8 @@ function startServer() {
           res.writeHead(200, { 'content-type': MIME[extname(fp)] || 'application/octet-stream' });
           return res.end(await readFile(fp));
         }
-        res.writeHead(200, { 'content-type': 'text/html' }); // SPA fallback
-        res.end(await readFile(join(DIST, 'index.html')));
+        res.writeHead(200, { 'content-type': 'text/html' }); // SPA fallback — pristine base
+        res.end(pristineIndex);
       } catch (e) { res.writeHead(500); res.end(String(e)); }
     });
     srv.listen(PORT, () => resolve(srv));
@@ -99,12 +105,41 @@ async function render(browser, p, stats) {
       (min) => { const a = document.querySelector('#app'); return a && a.innerText && a.innerText.trim().length > min; },
       { timeout: 20000 }, MIN_TEXT,
     ).catch(() => {});
-    const html = await page.content();
+    // Zaszyj stan Pinia (listingi) w prerenderze — bez tego przy hydratacji Vue kasuje
+    // prerenderowaną treść i re-fetchuje z api.reklamap.pl; w oknie renderowania Googlebota
+    // ten fetch bywa ucinany → pusta strona („Nie znaleziono ogłoszeń"). Seed z
+    // window.__INITIAL_STATE__ (czytany przez useSearchStore) to eliminuje.
+    // Serializuj stan WEWNĄTRZ strony (zwracamy string, nie obiekt) — puppeteer potrafi zgubić
+    // duże/reaktywne obiekty przy evaluate; string jest zawsze bezpieczny. Zaszywamy tylko gdy
+    // realnie są listingi (strony-listy: home/kategorie/miasta; szczegóły ogłoszenia pomijamy).
+    // Zaszywaj seed TYLKO na trasach renderujących siatkę listingów ze store'a `search`:
+    // home (/) + listy /powierzchnie-reklamowe* (kategorie/miasta). Strony szczegółów
+    // (/powierzchnia-reklamowa/* — l.poj.), blog i statyczne nie renderują tej siatki, więc
+    // seed byłby tam tylko balastem (~48 kB/stronę). Seed dla stron szczegółów = osobny temat.
+    const isListRoute = p === '/' || p === '/powierzchnie-reklamowe' || p.startsWith('/powierzchnie-reklamowe/');
+    const ssrJson = isListRoute ? await page.evaluate(() => {
+      try {
+        if (typeof window.__collectSSRState !== 'function') return null;
+        const s = window.__collectSSRState();
+        if (!s || !s.search || !Array.isArray(s.search.listings) || s.search.listings.length === 0) return null;
+        return JSON.stringify(s);
+      } catch { return null; }
+    }).catch(() => null) : null;
+    let html = await page.content();
+    // Belt-and-suspenders: usuń JAKIKOLWIEK odziedziczony seed z bazy, zanim (ewentualnie)
+    // wstrzykniemy własny — gwarantuje, że nie-listowe trasy są czyste, a listowe mają dokładnie
+    // jeden, poprawny seed. (JSON ma < zescapowane do <, więc regex nie utnie się za wcześnie.)
+    html = html.replace(/<script>window\.__INITIAL_STATE__=[\s\S]*?<\/script>/g, '');
+    let seedN = 0;
+    if (ssrJson) {
+      html = html.replace('</head>', `<script>window.__INITIAL_STATE__=${ssrJson.replace(/</g, '\\u003c')}</script></head>`);
+      try { seedN = (JSON.parse(ssrJson).search.listings || []).length; } catch { /* seedN=0 */ }
+    }
     const op = outPath(p);
     await mkdir(dirname(op), { recursive: true });
     await writeFile(op, html);
     const len = visibleLen(html);
-    if (len > MIN_TEXT) { stats.ok++; console.log(`  ✓ ${p}  (${len} zn.)`); }
+    if (len > MIN_TEXT) { stats.ok++; console.log(`  ✓ ${p}  (${len} zn.${seedN ? `, seed ${seedN}` : ''})`); }
     else { stats.thin++; console.log(`  ⚠ ${p}  (tylko ${len} zn. — sprawdź)`); }
   } catch (e) {
     stats.err++; console.log(`  ✗ ${p} — ${e.message}`);

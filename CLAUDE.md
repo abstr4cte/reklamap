@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **Zasada (meta):** istotne, trwałe ustalenia — reguły SEO, architektury, deployu, niezmienniki kodu, decyzje produktowe — zapisujemy TUTAJ, w instrukcjach (wersjonowane, współdzielone, ładowane do każdej sesji), a NIE tylko w auto-pamięci Claude (per-maszyna, ulotna, niewspółdzielona). Ważne = do repo, żeby nie było lipy.
+
 ## Project Overview
 
 **ReklaMap** is a Polish advertising surface marketplace ("OLX for advertising surfaces"). Users list and search for outdoor/mobile advertising space. The app is a decoupled SPA: a Laravel 12 backend API and a Vue 3 + TypeScript frontend.
@@ -90,6 +92,19 @@ Views, phone clicks, and email clicks are tracked in the `advertisement_daily_st
 
 ### Variants
 Only types with meaningful physical configurations have variants. `banner` and `wall` have no variants.
+
+---
+
+## SEO, Sitemap i Deploy (KRYTYCZNE)
+
+- **Prerender DZIAŁA (build-time).** Boty dostają pełny statyczny HTML, nie pusty SPA. `frontend/scripts/prerender.mjs` (puppeteer) renderuje trasy **z sitemapy** do `dist/<trasa>/index.html` podczas `frontend/deploy.sh` (`npm run build:seo`); `frontend/public/.htaccess` serwuje te pliki. Runtime'owy prerender.io wygasł 2026-05-18 i został zastąpiony. **Jeśli URL-a nie ma w sitemapie → nie zostaje sprerenderowany → `.htaccess` oddaje botowi generyczny szkielet strony głównej** (nie własną treść).
+- **Prerender ZASZYWA stan Pinia (`window.__INITIAL_STATE__`) — NIE usuwać (naprawa deindeksu 2026-07-06).** Sama treść w prerenderowanym DOM NIE wystarcza: Googlebot wykonuje JS, `main.ts` robi `createApp().mount('#app')` (fresh mount, BEZ hydratacji SSR) → Vue kasuje prerenderowany DOM i re-fetchuje listingi z cross-origin `api.reklamap.pl`; w oknie renderowania WRS ten fetch bywa ucinany → bot widzi pustą stronę („Nie znaleziono ogłoszeń") mimo pełnego prerenderu (potwierdzone Live Testem GSC: `curl -A Googlebot` = 821 ofert, ale render Google = 0). Dlatego `prerender.mjs` wstrzykuje stan store (kolektor `window.__collectSSRState` z `main.ts`) jako inline `<script>window.__INITIAL_STATE__=…</script>`, a `useSearchStore` seeduje z niego `listings/serverTotal/hasLoaded` przy inicjalizacji (`_ssr`); runtime-fetch tylko odświeża, a jego `catch` zachowuje seed. **NIE usuwaj i nie zmieniaj bez zrozumienia:** kolektora w `main.ts`, wstrzyknięcia w `prerender.mjs`, seedu `_ssr` w `useSearchStore`, ani bramki `hasLoaded` w `AdGrid`/`ListingsPage` (empty-state „brak wyników" pokazuj TYLKO gdy `hasLoaded===true`, inaczej bot fałszywie widzi „0 ofert"). Objaw regresji: `curl -A Googlebot reklamap.pl` pokazuje oferty, ale Live Test GSC = 0.
+- **`index.html` guard „stale deploy" NIE dotyczy botów.** Skrypt recovery po stale-deployu robi `location.replace('…?_v=…')`, a `?_v=` jest w `robots.txt` (`Disallow: /*?_v=`) — dla crawlerów to redirect na URL raportowany jako „zablokowany". Guard ma bramkę na UA bota (`/bot|crawl|spider|…/i` + puste UA) — **nie usuwaj jej**; boty i tak dostają treść z prerenderu, nie potrzebują recovery.
+- **`reserved` MUSI zostawać w sitemapie.** Status `reserved` = nośnik zarezerwowany przez kogoś, ale to **realne, pełne ogłoszenie z treścią** → ma być indeksowane (`unavailable` = zdjęte/404 to osobna sprawa). Generator: `backend/routes/web.php` (`/sitemap.xml`, cache 1h pod kluczem `sitemap_xml`), pętla leaf: `whereIn('status', ['active','soon_available','reserved'])`. Wykluczaj tylko `draft` i `unavailable`. **NIE przywracaj filtra wycinającego `reserved`** — odcina je też od prerenderu.
+- **Sitemap serwowany statycznie z frontu.** `reklamap.pl/sitemap.xml` to plik zapisywany do `dist/` przez `prerender.mjs` (nie 301 → api). `.htaccess` ma warunkowy fallback 301 na `api` tylko gdy pliku brak (`!-f`).
+- **Kolejność deployu przy zmianie sitemapy:** najpierw backend na prod (`git pull` na Hostido + `php artisan cache:clear` — sitemap cache'owany 1h), DOPIERO POTEM front `cd frontend && ./deploy.sh` (prerender czyta świeżą prod-sitemapę). Odwrotnie = front sprerenderuje starą listę.
+- **Baza lokalna ≠ produkcja.** Ta maszyna to dev/build; prod jest na Hostido. Liczby (np. liczba ogłoszeń) różnią się — diagnozy o realnym stanie rób przeciw prod (`curl` live `reklamap.pl`, prod API `api.reklamap.pl` z `X-App-Key`, SSH Hostido), nie lokalnym `php artisan tinker`.
+- **`api.reklamap.pl` jest load-bearing dla SEO.** Render ogłoszeń (i historycznie sitemap) zależą od `api`; jego awarie SSL psują obraz w Google. `api.reklamap.pl` musi być w certyfikacie auto-odnawianym (SAN).
 
 ---
 

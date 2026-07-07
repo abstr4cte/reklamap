@@ -1730,7 +1730,7 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           :class="{ 'mobile-hidden': showMapOnMobile }"
           @scroll="handleScroll"
         >
-        <div v-if="isLoading" class="listings-list" :class="viewMode">
+        <div v-if="filteredListings.length === 0 && (isLoading || !hasLoaded)" class="listings-list" :class="viewMode">
           <SkeletonCard v-for="i in itemsPerPage" :key="i" />
         </div>
 

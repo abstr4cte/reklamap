@@ -88,15 +88,25 @@ export const popularLocations: LocationSuggestion[] = [
 ]
 
 export const useSearchStore = defineStore('search', () => {
+  // SEO/hydratacja: build-time prerender (scripts/prerender.mjs) zaszywa stan w prerenderowanym
+  // HTML jako window.__INITIAL_STATE__. Seedujemy z niego listingi + hasLoaded, żeby pierwszy
+  // render (także WRS Googlebota) miał od razu treść i NIE kasował prerenderu do pustki, gdy
+  // runtime-fetch do api.reklamap.pl jest wolny/pada. Właściwy fetch odświeży dane po montażu,
+  // a jego catch zachowuje seed (nie zeruje listings). Patrz main.ts (__collectSSRState) + index.html.
+  const _ssr = (typeof window !== 'undefined'
+    ? (window as any).__INITIAL_STATE__?.search
+    : null) as { listings?: Advertisement[]; serverTotal?: number; serverLastPage?: number } | null | undefined
+  const _ssrListings = Array.isArray(_ssr?.listings) ? _ssr!.listings! : []
+
   // State
-  const listings = ref<Advertisement[]>([])
+  const listings = ref<Advertisement[]>(_ssrListings)
   const mapPins = ref<MapPin[]>([])
   const isLoading = ref(false)
   // true dopiero po pierwszym UDANYM fetchu ofert. Odróżnia stan „jeszcze nie pobrano /
   // fetch padł" (listings=[], serverTotal=0) od „API realnie zwróciło 0–2 oferty". Krytyczne
   // dla noindex thin-pages w ListingsPage: bez tej flagi stan początkowy (isLoading=false,
   // listings=[]) dawał resultCount=0 → fałszywy noindex po hydratacji u Googlebota.
-  const hasLoaded = ref(false)
+  const hasLoaded = ref(_ssrListings.length > 0)
   const filters = ref<FilterParams>({ ...DEFAULT_FILTERS })
   // 'default' = tryb „Polecane": kolejność z serwera (dywersyfikacja per operator,
   // anti-flood). NIE re-sortujemy go po stronie klienta — patrz blok sortowania.
@@ -106,8 +116,8 @@ export const useSearchStore = defineStore('search', () => {
   const currentPage = ref(1)
   const itemsPerPage = ref(24)
   // Server-side pagination state
-  const serverTotal = ref(0)
-  const serverLastPage = ref(1)
+  const serverTotal = ref(_ssr?.serverTotal ?? 0)
+  const serverLastPage = ref(_ssr?.serverLastPage ?? 1)
   // Track filters from path params (category/city from menu)
   const pathParamsFilters = ref<{ type?: string; city?: string }>({})
 

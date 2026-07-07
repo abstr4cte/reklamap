@@ -5,6 +5,7 @@ import './style.css'
 import './assets/custom-inputs.css'
 import App from './App.vue'
 import router from './router'
+import { useSearchStore } from './stores/useSearchStore'
 
 // Import axios configuration
 import './api/axios'
@@ -39,3 +40,18 @@ if (import.meta.env.VITE_SENTRY_DSN) {
 app.use(pinia)
 app.use(router)
 app.mount('#app')
+
+// Build-time prerender (scripts/prerender.mjs) czyta ten kolektor przez puppeteer i wstrzykuje
+// wynik jako <script>window.__INITIAL_STATE__=…</script> do prerenderowanego HTML — dzięki temu
+// hydratacja seeduje store i nie kasuje treści do pustki. Bez znaczenia dla użytkownika; dane
+// listingów są publiczne. Patrz useSearchStore (_ssr).
+if (typeof window !== 'undefined') {
+  ;(window as any).__collectSSRState = () => {
+    try {
+      const s = useSearchStore(pinia)
+      return { search: { listings: s.listings, serverTotal: s.serverTotal, serverLastPage: s.serverLastPage } }
+    } catch {
+      return null
+    }
+  }
+}

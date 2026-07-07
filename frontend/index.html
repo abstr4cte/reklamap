@@ -5,11 +5,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Prerender.io: blokuj snapshot dopóki SPA nie wstrzyknie meta/JSON-LD z danych
-       (useSeo flipuje to na true po updateMetaTags). Bez tego prerender.io leci na
-       pełny timeout na ciężkich stronach z mapą => 504/5xx u Googlebota. -->
-  <script>window.prerenderReady = false;</script>
-
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
@@ -30,6 +25,15 @@
   <script>
     (function () {
       var RELOAD_KEY = '__rm_reload_ts';
+      // Nie odsyłaj crawlerów na ?_v= — ta ścieżka jest zablokowana w robots.txt (Disallow: /*?_v=).
+      // JS-owy redirect wpychałby Googlebota na URL raportowany jako „zablokowany przez robots.txt".
+      // Boty i tak dostają pełną treść z prerenderu statycznego, więc guard (recovery po stale
+      // deployu) jest im zbędny, a dla indeksacji wyłącznie szkodliwy.
+      // Puste/nieznane UA traktuj jak bota. Jawnie dokładamy crawlery Google BEZ tokenu „bot"
+      // (Mediapartners-Google, Google-InspectionTool, GoogleOther, Google-Extended); generyczne
+      // bot|crawl|spider łapie resztę (Googlebot, Bingbot, AdsBot, Applebot, DuckDuckBot, Baiduspider…).
+      var ua = navigator.userAgent || '';
+      if (!ua || /bot|crawl|spider|slurp|mediapartners-google|google-inspectiontool|googleother|google-extended|facebookexternalhit/i.test(ua)) return;
       window.addEventListener('error', function (e) {
         var tag = e.target && e.target.tagName;
         if (tag !== 'SCRIPT' && tag !== 'LINK') return;
