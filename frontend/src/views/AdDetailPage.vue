@@ -245,6 +245,22 @@ watch([ad, similarAds], ([newAd, newSimilarAds]) => {
     const priceValidUntil = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
       .toISOString().split('T')[0]
 
+    // Schema availability: `reserved` to REALNE ogłoszenie chwilowo zajęte, NIE „wyprzedane".
+    // OutOfStock na ~58% bazy (reserved) to najsłabszy sygnał na młodej domenie i wygasza rich
+    // result. Mapujemy: active→InStock, reserved→LimitedAvailability, soon_available→PreOrder,
+    // a OutOfStock zostawiamy tylko dla realnie zdjętych (unavailable). Trzymamy się display_status
+    // (jak badge statusu), a soon_available z przeszłą datą traktujemy jak active.
+    let effectiveStatus = newAd.display_status || newAd.status
+    if (effectiveStatus === 'soon_available' && newAd.available_from && new Date(newAd.available_from) <= new Date()) {
+      effectiveStatus = 'active'
+    }
+    const availabilityMap: Record<string, string> = {
+      active: 'https://schema.org/InStock',
+      reserved: 'https://schema.org/LimitedAvailability',
+      soon_available: 'https://schema.org/PreOrder',
+    }
+    const availability = availabilityMap[effectiveStatus] || 'https://schema.org/OutOfStock'
+
     const structuredData = [
       {
         '@context': 'https://schema.org',
@@ -269,7 +285,7 @@ watch([ad, similarAds], ([newAd, newSimilarAds]) => {
           },
           'priceValidUntil': priceValidUntil,
           'itemCondition': 'https://schema.org/NewCondition',
-          'availability': newAd.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+          'availability': availability,
           'url': cleanUrl,
           'offeredBy': { '@id': `${appUrl}/#organization` }
         },

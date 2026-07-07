@@ -21,14 +21,15 @@
   AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
 </IfModule>
 
-# index.html must never be cached - it references hashed chunks that change on every deploy
-<Files "index.html">
+# index.html / spa-fallback.html must never be cached - odwołują się do hashowanych chunków
+# zmienianych przy każdym deployu (stary cache → 404 zasobu → biała strona).
+<FilesMatch "^(index|spa-fallback)\.html$">
   <IfModule mod_headers.c>
     Header set Cache-Control "no-cache, no-store, must-revalidate"
     Header set Pragma "no-cache"
     Header set Expires "0"
   </IfModule>
-</Files>
+</FilesMatch>
 
 # Cache control for static assets (safe because filenames include content hash)
 <IfModule mod_expires.c>
@@ -89,8 +90,19 @@
   # RewriteCond %{REQUEST_URI} !^/prerender-proxy\.php
   # RewriteRule ^(.*)$ /prerender-proxy.php?url=https://reklamap.pl/$1 [L,QSA]
 
-  # SPA fallback
-  RewriteRule ^index\.html$ - [L]
+  # SPA fallback — trasy BEZ prerenderu (nieznane/usunięte/funkcyjne jak /porownaj, /zarzadzaj)
+  # dostają NOINDEX-owy szkielet (spa-fallback.html), NIE zaseedowaną home. Eliminuje soft-404:
+  # śmieciowy/martwy URL nie jest już serwowany jako 200 + `index` z treścią home (duplikat home).
+  # Każda indeksowalna trasa ma własny prerenderowany <path>/index.html (obsłużony wyżej), więc tu
+  # trafia wyłącznie to, co ma NIE być indeksowane. HTTP zostaje 200 (SPA wymaga tego dla routingu
+  # po stronie klienta) — sygnałem dla Google jest `noindex` w szkielecie.
+  RewriteRule ^(index|spa-fallback)\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{DOCUMENT_ROOT}/spa-fallback.html -f
+  RewriteRule . /spa-fallback.html [L]
+  # Degradacja bezpieczeństwa: gdy spa-fallback.html nie istnieje (np. build bez prerenderu),
+  # serwuj index.html, żeby SPA dalej działała na deep-linkach (lepiej `index` niż biała strona).
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]

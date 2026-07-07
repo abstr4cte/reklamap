@@ -261,18 +261,27 @@ export const useSearchStore = defineStore('search', () => {
       // Discard if a newer fetch was started while this was in flight
       if (generation !== _fetchGeneration) return
 
+      // `hasLoaded` MUSI wstać tylko przy ROZPOZNANEJ odpowiedzi (paginacja albo tablica).
+      // Nierozpoznany kształt = błąd/rate-limit API zwrócony z 200 (np. `{message:"Too Many
+      // Attempts"}`) — wtedy listings zostaje [], a ustawienie hasLoaded=true dałoby
+      // resultCount=0 → FAŁSZYWY noindex thin-page (deindeks miast, np. Kłodzko w prerenderze,
+      // ORAZ przy hydratacji WRS Googlebota). Traktujemy to jak błąd: hasLoaded zostaje false
+      // → resultCount=null → strona zostaje `index`. Patrz utils/listingsSeo.ts.
+      let recognized = false
       if (response && 'data' in response && 'current_page' in response) {
         // Paginated response from Laravel paginate()
         listings.value = Array.isArray(response.data) ? response.data : []
         serverTotal.value = response.total ?? listings.value.length
         serverLastPage.value = response.last_page ?? 1
+        recognized = true
       } else if (Array.isArray(response)) {
         // Plain array (e.g. ids= query, legacy)
         listings.value = response
         serverTotal.value = response.length
         serverLastPage.value = 1
+        recognized = true
       }
-      hasLoaded.value = true
+      if (recognized) hasLoaded.value = true
     } catch (error) {
       if (generation !== _fetchGeneration) return
       console.error('Failed to fetch listings:', error)

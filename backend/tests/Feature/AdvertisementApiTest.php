@@ -326,4 +326,31 @@ class AdvertisementApiTest extends TestCase
             'Jawny "Najnowsze" = czysta data: starszy nośnik małego operatora nie powinien trafić w top 2.'
         );
     }
+
+    /**
+     * Regresja: city_strict musi łapać miasta z polskimi znakami, gdy slug w URL jest ASCII.
+     * slugify robi "Kłodzko"→"klodzko"; deslugify na froncie odtwarza diakrytyki tylko dla miast
+     * z cityMap, więc reszta (długi ogon) trafia do API jako "Klodzko" (bez ł). Wcześniej
+     * LOWER(city)=? nie łapało "Kłodzko" → 0 ofert (pusta strona miasta dla usera + fałszywy
+     * noindex w prerenderze). Fold polskich znaków po obu stronach to naprawia.
+     */
+    public function test_city_strict_filter_matches_polish_diacritics_from_ascii_slug(): void
+    {
+        Advertisement::factory()->create(['city' => 'Kłodzko', 'is_active' => true, 'status' => 'active']);
+        Advertisement::factory()->create(['city' => 'Kłodzko', 'is_active' => true, 'status' => 'active']);
+        Advertisement::factory()->create(['city' => 'Koszalin', 'is_active' => true, 'status' => 'active']);
+
+        // ASCII — dokładnie to, co SPA wysyła dla miasta spoza cityMap
+        $ascii = $this->getJson('/api/listings?city=Klodzko&city_strict=1', $this->appKeyHeaders());
+        $ascii->assertStatus(200);
+        $this->assertSame(2, $ascii->json('total'), 'ASCII "Klodzko" musi złapać "Kłodzko".');
+
+        // Wariant z diakrytykiem też działa
+        $diacritic = $this->getJson('/api/listings?' . http_build_query(['city' => 'Kłodzko', 'city_strict' => 1]), $this->appKeyHeaders());
+        $this->assertSame(2, $diacritic->json('total'), 'Diakrytyczne "Kłodzko" też musi działać.');
+
+        // Kontrola: inne miasto nie łapie fałszywie
+        $other = $this->getJson('/api/listings?city=Koszalin&city_strict=1', $this->appKeyHeaders());
+        $this->assertSame(1, $other->json('total'), 'Koszalin nie może łapać Kłodzka.');
+    }
 }

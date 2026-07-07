@@ -111,6 +111,36 @@ class AdvertisementController extends Controller
     }
 
     /**
+     * Mapowanie polskich znaków → ASCII do dopasowań odpornych na diakrytyki (miasta).
+     * Uwzględnia obie wielkości liter, bo SQLite LOWER() (testy) nie lowercase'uje polskich liter.
+     */
+    private const PL_FOLD = [
+        'ą' => 'a', 'Ą' => 'a', 'ć' => 'c', 'Ć' => 'c', 'ę' => 'e', 'Ę' => 'e',
+        'ł' => 'l', 'Ł' => 'l', 'ń' => 'n', 'Ń' => 'n', 'ó' => 'o', 'Ó' => 'o',
+        'ś' => 's', 'Ś' => 's', 'ź' => 'z', 'Ź' => 'z', 'ż' => 'z', 'Ż' => 'z',
+    ];
+
+    /** Zwija polskie znaki do ASCII i lowercase — do porównań miast odpornych na diakrytyki. */
+    private function foldPolish(string $s): string
+    {
+        return mb_strtolower(strtr($s, self::PL_FOLD));
+    }
+
+    /**
+     * Wyrażenie SQL zwijające kolumnę `city` do lowercase ASCII (zagnieżdżone REPLACE + LOWER).
+     * Działa na MySQL (prod) i SQLite (testy). Uwaga: wyłącza indeks na `city` — akceptowalne przy
+     * obecnej skali; przy wzroście rozważyć znormalizowaną kolumnę generowaną + indeks.
+     */
+    private function cityFoldedSql(): string
+    {
+        $expr = 'city';
+        foreach (self::PL_FOLD as $from => $to) {
+            $expr = "REPLACE($expr, '$from', '$to')";
+        }
+        return "LOWER($expr)";
+    }
+
+    /**
      * Build a filtered query from request parameters (shared by index and mapPins).
      */
     private function buildFilteredQuery(Request $request)
@@ -125,10 +155,16 @@ class AdvertisementController extends Controller
         // --- City filter ---
         if ($request->filled('city')) {
             $city = $request->input('city');
+            // Dopasowanie odporne na polskie znaki: slug w URL jest ASCII (slugify), a deslugify
+            // po stronie frontu odtwarza diakrytyki tylko dla miast z cityMap — reszta trafia tu
+            // jako ASCII ("Klodzko"), więc dokładne LOWER(city)=? nie łapało "Kłodzko" (138 ofert
+            // → 0: pusta strona miasta dla usera ORAZ fałszywy noindex w prerenderze). Foldujemy
+            // obie strony do ASCII i porównujemy.
+            $cityExpr = $this->cityFoldedSql();
             if ($request->boolean('city_strict')) {
-                $query->whereRaw('LOWER(city) = ?', [mb_strtolower($city)]);
+                $query->whereRaw("$cityExpr = ?", [$this->foldPolish($city)]);
             } else {
-                $query->whereRaw('LOWER(city) LIKE ?', ['%' . mb_strtolower($city) . '%']);
+                $query->whereRaw("$cityExpr LIKE ?", ['%' . $this->foldPolish($city) . '%']);
             }
         }
 
