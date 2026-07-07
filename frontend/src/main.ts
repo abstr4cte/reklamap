@@ -56,6 +56,9 @@ if (typeof window !== 'undefined') {
       // Dane pojedynczego ogłoszenia (ustawiane przez AdDetailPage po udanym loadAd) — dla stron szczegółów.
       const ad = (window as any).__ssrAd
       if (ad && ad.id) out.ad = ad
+      // Artykuł bloga (ustawiany przez BlogPostPage po udanym loadBlogPost) — chroni E-E-A-T przed cichym deindeksem.
+      const blogPost = (window as any).__ssrBlogPost
+      if (blogPost && (blogPost.id || blogPost.slug)) out.blogPost = blogPost
       return Object.keys(out).length ? out : null
     } catch {
       return null

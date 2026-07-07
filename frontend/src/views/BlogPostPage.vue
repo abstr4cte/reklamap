@@ -24,9 +24,14 @@ interface BlogPost {
   author: string
 }
 
-const post = ref<BlogPost | null>(null)
+// SEO/hydratacja: prerender zaszywa artykuł (window.__INITIAL_STATE__.blogPost), analogicznie do
+// __ssrAd w AdDetailPage. Bez tego WRS re-mount re-fetchuje z cross-origin api.reklamap.pl; ucięty
+// fetch → pusty artykuł na `index` (jedyna powierzchnia E-E-A-T → cichy deindeks). Seed to eliminuje;
+// loadBlogPost i tak odświeża po montażu, a jego catch NIE czyści seedu. Patrz main.ts (kolektor).
+const _ssrPost = (typeof window !== 'undefined' ? (window as any).__INITIAL_STATE__?.blogPost : null) as BlogPost | null
+const post = ref<BlogPost | null>(_ssrPost)
 const relatedPosts = ref<BlogPost[]>([])
-const isLoading = ref(true)
+const isLoading = ref(!_ssrPost)
 const notFound = ref(false)
 
 // Powiązane artykuły z tej samej kategorii (bez bieżącego), max 3 — wzmacnia silos.
@@ -44,13 +49,16 @@ const loadRelatedPosts = async (category: string, currentSlug: string) => {
 
 const loadBlogPost = async () => {
   try {
-    isLoading.value = true
+    if (!post.value) isLoading.value = true   // nie migaj skeletonem, gdy artykuł jest z seedu
     const slug = route.params.slug as string
     const response = await api.get(`/blog/${slug}`)
     post.value = response
+    // Udostępnij prerenderowi (puppeteer) dane do zaszycia jako window.__INITIAL_STATE__.blogPost.
+    if (typeof window !== 'undefined') (window as any).__ssrBlogPost = post.value
     loadRelatedPosts(response.category, response.slug)
   } catch (error) {
-    notFound.value = true
+    // Nie kasuj zaseedowanego artykułu, gdy re-fetch pada (WRS/CORS) — chroni prerender.
+    if (!post.value) notFound.value = true
   } finally {
     isLoading.value = false
   }

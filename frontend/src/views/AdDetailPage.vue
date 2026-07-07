@@ -231,7 +231,13 @@ watch([ad, similarAds], ([newAd, newSimilarAds]) => {
     // <title> i <meta description> budujemy z pól ogłoszenia, NIE z surowego tytułu wystawcy —
     // ten bywa bełkotem ("citylight olsztyn dywizjonu 303 ...") i zabija CTR w wynikach Google.
     // Surowy tytuł zostaje jako <h1> na stronie.
-    const title = `${typeLabelCap} ${newAd.city} – wynajem | ReklaMap`
+    // Wpleć lokalizację (ulicę) w title — bez tego 758/822 leafów dzieli identyczny „{Typ} {Miasto}
+    // – wynajem" (kanibalizacja + kolizja z title kategorii typ×miasto). Bierzemy pierwszy segment
+    // adresu, jeśli różny od miasta; krótki, by zmieścić się w limicie SERP.
+    const titleLoc = rawLoc && rawLoc.toLowerCase() !== newAd.city.toLowerCase()
+      ? `, ${truncateAtWord(rawLoc.split(',')[0].trim(), 40)}`
+      : ''
+    const title = `${typeLabelCap} ${newAd.city}${titleLoc} – wynajem | ReklaMap`
     const dimsSentence = dimsForSeo ? ` Wymiary: ${dimsForSeo}.` : ''
     const description = `${typeLabelCap} w ${newAd.city}${locForDesc}.${dimsSentence} Cena: ${formatPrice(newAd.price)} PLN. Sprawdź dokładną lokalizację na mapie i skontaktuj się bezpośrednio z wystawcą — bez prowizji i pośredników.`
     const keywords = `${typeLabel} ${newAd.city}, wynajem ${typeLabel.toLowerCase()} ${newAd.city}, reklama zewnętrzna ${newAd.city}`

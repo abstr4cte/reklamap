@@ -23,6 +23,17 @@ export function normalizePolishChars(text: string): string {
   return text.split('').map(char => polishChars[char] || char).join('')
 }
 
+/**
+ * Normalizacja nazwy MIASTA do porównań — symetryczna z backendem
+ * (AdvertisementController::PL_FOLD): fold polskich znaków ORAZ myślnik→spacja + lowercase.
+ * Bez folda myślnika strona kategorii miasta z myślnikiem (Szklary-Huta, Polanica-Zdrój)
+ * renderuje fałszywy empty-state na `index` mimo ofert (slug "szklary-huta" → deslugify daje
+ * "Szklary Huta" ze spacją, a w bazie bywa "Szklary-Huta" z myślnikiem).
+ */
+export function normalizeCityMatch(text: string): string {
+  return normalizePolishChars(text || '').toLowerCase().replace(/-/g, ' ')
+}
+
 export interface FilterParams {
   keyword?: string
   type?: string

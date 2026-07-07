@@ -126,7 +126,8 @@ async function collectState(page) {
       if (!s) return null;
       const hasList = s.search && Array.isArray(s.search.listings) && s.search.listings.length > 0;
       const hasAd = s.ad && s.ad.id;
-      if (!hasList && !hasAd) return null;
+      const hasBlog = s.blogPost && (s.blogPost.id || s.blogPost.slug);
+      if (!hasList && !hasAd && !hasBlog) return null;
       return JSON.stringify(s);
     } catch { return null; }
   }).catch(() => null);

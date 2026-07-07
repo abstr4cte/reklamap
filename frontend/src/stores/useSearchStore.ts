@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import { api } from '../services/api'
 import type { Advertisement, MapPin } from '../types'
 import { FilterParams, DEFAULT_FILTERS } from '../types/filters'
-import { normalizePolishChars, queryParamsToFilters } from '../utils/filterUtils'
+import { normalizePolishChars, normalizeCityMatch, queryParamsToFilters } from '../utils/filterUtils'
 import { deslugify } from '../utils/slugify'
 import { type LocationResult } from '../services/locationService'
 import polishLocations from '../data/polishLocations.json'
@@ -734,11 +734,14 @@ export const useSearchStore = defineStore('search', () => {
     if (!f.mapBounds) {
       if (f.region) filtered = filtered.filter(ad => ad.region === f.region)
       if (f.city) {
-        const cityQuery = normalizePolishChars(f.city.toLowerCase().trim())
+        // normalizeCityMatch = fold diakrytyków + myślnik→spacja, symetrycznie do backendu
+        // (city_strict). Bez folda myślnika miasta jak Szklary-Huta/Polanica-Zdrój dawały
+        // fałszywy empty-state na `index` mimo ofert w seedzie.
+        const cityQuery = normalizeCityMatch(f.city.trim())
         if (f.cityStrict) {
           // Ścisłe dopasowanie miasta (np. po wyborze z sugestii)
           filtered = filtered.filter(ad => {
-            const cityMatch = normalizePolishChars((ad.city || '').toLowerCase()) === cityQuery
+            const cityMatch = normalizeCityMatch(ad.city || '') === cityQuery
             
             // Jeśli mamy współrzędne wybranej lokalizacji, dodatkowo filtruj po odległości
             // aby wykluczyć inne miasta o tej samej nazwie (np. różne "Warszawy" w Polsce)
@@ -758,7 +761,7 @@ export const useSearchStore = defineStore('search', () => {
         } else {
           // Inteligentne szukanie luźne (obsługuje typowanie ręczne)
           filtered = filtered.filter(ad => {
-            const adCity = normalizePolishChars((ad.city || '').toLowerCase())
+            const adCity = normalizeCityMatch(ad.city || '')
             const adLocation = normalizePolishChars((ad.location || '').toLowerCase())
             
             // 1. Jeśli wpisana fraza jest częścią nazwy miasta obiektu -> OK

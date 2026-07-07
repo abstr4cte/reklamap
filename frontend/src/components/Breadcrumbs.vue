@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { appUrl } from '../utils/url'
 
 interface BreadcrumbItem {
   label: string
@@ -36,7 +37,9 @@ const jsonLd = computed(() => {
       '@type': 'ListItem',
       'position': index + 1,
       'name': item.label,
-      ...(item.path && { 'item': `${window.location.origin}${item.path}` })
+      // appUrl (kanoniczny), NIE window.location.origin — przy prerenderze origin=localhost:5199
+      // trafiał do BreadcrumbList na ~1000 URL i psuł rich-result. Patrz utils/url.ts.
+      ...(item.path && { 'item': `${appUrl}${item.path}` })
     }))
   }
 })
