@@ -111,13 +111,16 @@ class AdvertisementController extends Controller
     }
 
     /**
-     * Mapowanie polskich znaków → ASCII do dopasowań odpornych na diakrytyki (miasta).
-     * Uwzględnia obie wielkości liter, bo SQLite LOWER() (testy) nie lowercase'uje polskich liter.
+     * Mapowanie do foldu nazw miast na potrzeby dopasowań ze slugu (URL → API):
+     *  - polskie znaki → ASCII (obie wielkości liter, bo SQLite LOWER() nie rusza polskich liter),
+     *  - myślnik → spacja: slug "szklary-huta" deslugify robi na "Szklary Huta" (spacja), a w bazie
+     *    bywa "Szklary-Huta" (myślnik) → bez tego 0 ofert (pusta strona miasta + noindex).
      */
     private const PL_FOLD = [
         'ą' => 'a', 'Ą' => 'a', 'ć' => 'c', 'Ć' => 'c', 'ę' => 'e', 'Ę' => 'e',
         'ł' => 'l', 'Ł' => 'l', 'ń' => 'n', 'Ń' => 'n', 'ó' => 'o', 'Ó' => 'o',
         'ś' => 's', 'Ś' => 's', 'ź' => 'z', 'Ź' => 'z', 'ż' => 'z', 'Ż' => 'z',
+        '-' => ' ',
     ];
 
     /** Zwija polskie znaki do ASCII i lowercase — do porównań miast odpornych na diakrytyki. */

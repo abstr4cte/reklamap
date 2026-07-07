@@ -353,4 +353,18 @@ class AdvertisementApiTest extends TestCase
         $other = $this->getJson('/api/listings?city=Koszalin&city_strict=1', $this->appKeyHeaders());
         $this->assertSame(1, $other->json('total'), 'Koszalin nie może łapać Kłodzka.');
     }
+
+    /**
+     * Regresja: miasta z myślnikiem w nazwie ("Szklary-Huta") — deslugify slugu "szklary-huta"
+     * daje "Szklary Huta" (spacja), więc dopasowanie musi traktować myślnik i spację wymiennie.
+     */
+    public function test_city_strict_filter_matches_hyphenated_city_from_spaced_slug(): void
+    {
+        Advertisement::factory()->create(['city' => 'Szklary-Huta', 'is_active' => true, 'status' => 'active']);
+
+        // deslugify("szklary-huta") = "Szklary Huta" (spacja) — musi złapać "Szklary-Huta"
+        $spaced = $this->getJson('/api/listings?' . http_build_query(['city' => 'Szklary Huta', 'city_strict' => 1]), $this->appKeyHeaders());
+        $spaced->assertStatus(200);
+        $this->assertSame(1, $spaced->json('total'), 'Spacjowane "Szklary Huta" musi złapać "Szklary-Huta".');
+    }
 }

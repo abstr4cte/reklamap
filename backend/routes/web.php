@@ -71,14 +71,27 @@ Route::get('/sitemap.xml', function () {
             $xml .= '</url>';
         }
 
-        // Category pages
+        // Próg cienkiej strony — MUSI być zgodny z THIN_PAGE_THRESHOLD w
+        // frontend/src/utils/listingsSeo.ts. Strony (TYP / miasto / typ×miasto) z mniejszą
+        // liczbą aktywnych ogłoszeń front oznacza `noindex`, więc nie wolno ich
+        // reklamować w sitemapie (sprzeczny sygnał + marnowanie crawl budgetu na cienkie
+        // near-duplikaty — potwierdzone w GSC 2026-05-29: 149 URL-i „Wykryta – obecnie
+        // niezindeksowana"). Leaf-ogłoszenia zostają bez progu.
+        $thinPageThreshold = 3;
+
+        // Category pages (typy) — z progiem cienkiej strony. Wcześniej listowane WSZYSTKIE typy
+        // bezwarunkowo, więc totem/transport/inne z 1-2 ofertami trafiały do sitemapy mimo
+        // `noindex` we froncie (te same 3 URL-e „Submitted URL marked noindex" w GSC).
         $categoryTypeMap = [
             'billboardy' => 'billboard', 'citylighty' => 'citylight', 'banery' => 'banner',
             'sciany-reklamowe' => 'wall', 'totemy-reklamowe' => 'totem', 'reklama-w-transporcie' => 'transport',
             'reklama-mobilna' => 'mobile', 'ekrany-led' => 'led_screen', 'inne' => 'other',
         ];
         foreach ($categoryTypeMap as $slug => $dbType) {
-            $lastmod = \App\Models\Advertisement::where('type', $dbType)->where('is_active', true)->max('updated_at');
+            $stats = \App\Models\Advertisement::where('type', $dbType)->where('is_active', true)
+                ->selectRaw('COUNT(*) as cnt, MAX(updated_at) as lastmod')->first();
+            if (!$stats || (int) $stats->cnt < $thinPageThreshold) continue;
+            $lastmod = $stats->lastmod;
             $xml .= '<url>';
             $xml .= '<loc>' . htmlspecialchars($baseUrl . '/powierzchnie-reklamowe/' . $slug) . '</loc>';
             if ($lastmod) $xml .= '<lastmod>' . \Carbon\Carbon::parse($lastmod)->toAtomString() . '</lastmod>';
@@ -86,14 +99,6 @@ Route::get('/sitemap.xml', function () {
             $xml .= '<priority>0.8</priority>';
             $xml .= '</url>';
         }
-
-        // Próg cienkiej strony — MUSI być zgodny z THIN_PAGE_THRESHOLD w
-        // frontend/src/views/ListingsPage.vue. Strony miasta / typ×miasto z mniejszą
-        // liczbą aktywnych ogłoszeń front oznacza `noindex`, więc nie wolno ich
-        // reklamować w sitemapie (sprzeczny sygnał + marnowanie crawl budgetu na cienkie
-        // near-duplikaty — potwierdzone w GSC 2026-05-29: 149 URL-i „Wykryta – obecnie
-        // niezindeksowana"). Leaf-ogłoszenia zostają bez progu.
-        $thinPageThreshold = 3;
 
         // Strony miast — miasta z co najmniej $thinPageThreshold aktywnymi ogłoszeniami
         // (wcześniej wszystkie, co zalewało indeks cienkimi stronami wiosek z 1 ofertą).
