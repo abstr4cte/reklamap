@@ -48,8 +48,15 @@ app.mount('#app')
 if (typeof window !== 'undefined') {
   ;(window as any).__collectSSRState = () => {
     try {
+      const out: Record<string, unknown> = {}
       const s = useSearchStore(pinia)
-      return { search: { listings: s.listings, serverTotal: s.serverTotal, serverLastPage: s.serverLastPage } }
+      if (Array.isArray(s.listings) && s.listings.length > 0) {
+        out.search = { listings: s.listings, serverTotal: s.serverTotal, serverLastPage: s.serverLastPage }
+      }
+      // Dane pojedynczego ogłoszenia (ustawiane przez AdDetailPage po udanym loadAd) — dla stron szczegółów.
+      const ad = (window as any).__ssrAd
+      if (ad && ad.id) out.ad = ad
+      return Object.keys(out).length ? out : null
     } catch {
       return null
     }

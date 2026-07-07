@@ -55,9 +55,14 @@ const searchStore = useSearchStore()
 const streetViewStore = useStreetViewStore()
 const prefStore = usePreferencesStore()
 
-const ad = ref<Advertisement | null>(null)
+// SEO/hydratacja: prerender zaszywa dane ogłoszenia (window.__INITIAL_STATE__.ad). Seedujemy je,
+// żeby render Googlebota (WRS) miał treść od razu — bez tego loadAd() re-fetchuje z cross-origin
+// api.reklamap.pl, a gdy fetch pada na CORS, widok szczegółu zostaje pusty. loadAd i tak odświeża
+// dane po montażu; jego catch NIE czyści seedu. Patrz main.ts (__collectSSRState) + prerender.mjs.
+const _ssrAd = (typeof window !== 'undefined' ? (window as any).__INITIAL_STATE__?.ad : null) as Advertisement | null
+const ad = ref<Advertisement | null>(_ssrAd)
 const similarAds = ref<Advertisement[]>([])
-const isLoading = ref(true)
+const isLoading = ref(!_ssrAd)
 const notFound = ref(false)
 const showPhone = ref(false)
 
@@ -563,7 +568,8 @@ const handlePrint = async () => {
 // Load advertisement data
 const loadAd = async () => {
   const id = route.params.id as string
-  isLoading.value = true
+  // Nie zasłaniaj zaszytej treści skeletonem przy odświeżaniu — tylko gdy nie mamy jeszcze ogłoszenia.
+  if (!ad.value) isLoading.value = true
   notFound.value = false
   clearPrerenderStatus()
 
@@ -578,6 +584,8 @@ const loadAd = async () => {
     const adId = lastPart || id
     const response = await axios.get(`/api/listings/${adId}`)
     ad.value = response.data
+    // Udostępnij prerenderowi (puppeteer) dane do zaszycia jako window.__INITIAL_STATE__.ad
+    if (typeof window !== 'undefined') (window as any).__ssrAd = ad.value
 
     // GA4: obejrzenie ogłoszenia
     if (ad.value) {
@@ -621,7 +629,10 @@ const loadAd = async () => {
       initMap()
     }
   } catch (e: any) {
-    if (e.response?.status === 404) {
+    // Nie pokazuj 404 przy zaszytej treści (seed) — chroni prerenderowane szczegóły w renderze WRS,
+    // gdzie re-fetch pada na CORS (TypeError bez .response, więc i tak nie wchodzi tu). Realny 404
+    // z serwera (usunięte ogłoszenie) nadal działa, gdy seedu brak.
+    if (e.response?.status === 404 && !ad.value) {
       notFound.value = true
       seoOptions.value = {
         title: '404 – Powierzchnia niedostępna | ReklaMap',

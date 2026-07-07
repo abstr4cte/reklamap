@@ -112,34 +112,40 @@ async function render(browser, p, stats) {
     // Serializuj stan WEWNĄTRZ strony (zwracamy string, nie obiekt) — puppeteer potrafi zgubić
     // duże/reaktywne obiekty przy evaluate; string jest zawsze bezpieczny. Zaszywamy tylko gdy
     // realnie są listingi (strony-listy: home/kategorie/miasta; szczegóły ogłoszenia pomijamy).
-    // Zaszywaj seed TYLKO na trasach renderujących siatkę listingów ze store'a `search`:
-    // home (/) + listy /powierzchnie-reklamowe* (kategorie/miasta). Strony szczegółów
-    // (/powierzchnia-reklamowa/* — l.poj.), blog i statyczne nie renderują tej siatki, więc
-    // seed byłby tam tylko balastem (~48 kB/stronę). Seed dla stron szczegółów = osobny temat.
-    const isListRoute = p === '/' || p === '/powierzchnie-reklamowe' || p.startsWith('/powierzchnie-reklamowe/');
-    const ssrJson = isListRoute ? await page.evaluate(() => {
+    // Zaszywaj stan zwrócony przez kolektor: `search` (siatka na home/listach) lub `ad` (strony
+    // szczegółów). Kolektor sam zwraca null tam, gdzie nic sensownego nie ma (blog/statyczne),
+    // więc nie dopasowujemy tras po stringu. Serializacja WEWNĄTRZ strony (string, nie obiekt) —
+    // puppeteer gubi duże/reaktywne obiekty przy evaluate.
+    const ssrJson = await page.evaluate(() => {
       try {
         if (typeof window.__collectSSRState !== 'function') return null;
         const s = window.__collectSSRState();
-        if (!s || !s.search || !Array.isArray(s.search.listings) || s.search.listings.length === 0) return null;
+        if (!s) return null;
+        const hasList = s.search && Array.isArray(s.search.listings) && s.search.listings.length > 0;
+        const hasAd = s.ad && s.ad.id;
+        if (!hasList && !hasAd) return null;
         return JSON.stringify(s);
       } catch { return null; }
-    }).catch(() => null) : null;
+    }).catch(() => null);
     let html = await page.content();
     // Belt-and-suspenders: usuń JAKIKOLWIEK odziedziczony seed z bazy, zanim (ewentualnie)
     // wstrzykniemy własny — gwarantuje, że nie-listowe trasy są czyste, a listowe mają dokładnie
     // jeden, poprawny seed. (JSON ma < zescapowane do <, więc regex nie utnie się za wcześnie.)
     html = html.replace(/<script>window\.__INITIAL_STATE__=[\s\S]*?<\/script>/g, '');
-    let seedN = 0;
+    let seedInfo = '';
     if (ssrJson) {
       html = html.replace('</head>', `<script>window.__INITIAL_STATE__=${ssrJson.replace(/</g, '\\u003c')}</script></head>`);
-      try { seedN = (JSON.parse(ssrJson).search.listings || []).length; } catch { /* seedN=0 */ }
+      try {
+        const st = JSON.parse(ssrJson);
+        if (st.search && st.search.listings) seedInfo = `, seed ${st.search.listings.length} list.`;
+        else if (st.ad) seedInfo = `, seed ad#${st.ad.id}`;
+      } catch { /* noop */ }
     }
     const op = outPath(p);
     await mkdir(dirname(op), { recursive: true });
     await writeFile(op, html);
     const len = visibleLen(html);
-    if (len > MIN_TEXT) { stats.ok++; console.log(`  ✓ ${p}  (${len} zn.${seedN ? `, seed ${seedN}` : ''})`); }
+    if (len > MIN_TEXT) { stats.ok++; console.log(`  ✓ ${p}  (${len} zn.${seedInfo})`); }
     else { stats.thin++; console.log(`  ⚠ ${p}  (tylko ${len} zn. — sprawdź)`); }
   } catch (e) {
     stats.err++; console.log(`  ✗ ${p} — ${e.message}`);
