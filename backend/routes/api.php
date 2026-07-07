@@ -15,6 +15,7 @@ Route::get('/user', function (Request $request) {
 // ─── Publiczne endpointy (tylko X-App-Key) ────────────────────────────────────
 Route::get('listings', [AdvertisementController::class, 'index']);
 Route::get('listings/map-pins', [AdvertisementController::class, 'mapPins']);
+Route::get('listings/nav-hubs', [AdvertisementController::class, 'navHubs']); // PRZED {id} — inaczej łapie catch-all
 Route::get('listings/{id}', [AdvertisementController::class, 'show']);
 
 // Dodawanie ogłoszeń - reCAPTCHA

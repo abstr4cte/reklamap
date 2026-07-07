@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import logoTextImage from '../assets/logo-text.webp'
+import { useNavStore } from '../stores/useNavStore'
+
+// Huby nawigacyjne z REALNEJ podaży (backend) — zamiast sztywnych demand-miast (Warszawa/Kraków
+// z 0 ofert). Linkowanie wewn. kieruje crawl/link-equity Google do stron, które mają treść i są index.
+const navStore = useNavStore()
 
 const currentYear = new Date().getFullYear()
 
@@ -17,93 +22,6 @@ const toggleSection = (section: string) => {
     openSections.value[section] = !openSections.value[section]
   }
 }
-
-const popularCities = [
-  { name: 'Warszawa', slug: 'warszawa' },
-  { name: 'Kraków', slug: 'krakow' },
-  { name: 'Wrocław', slug: 'wroclaw' },
-  { name: 'Poznań', slug: 'poznan' },
-  { name: 'Gdańsk', slug: 'gdansk' },
-  { name: 'Łódź', slug: 'lodz' },
-  { name: 'Katowice', slug: 'katowice' },
-  { name: 'Szczecin', slug: 'szczecin' },
-  { name: 'Bydgoszcz', slug: 'bydgoszcz' },
-  { name: 'Lublin', slug: 'lublin' },
-  { name: 'Białystok', slug: 'bialystok' },
-  { name: 'Gdynia', slug: 'gdynia' }
-]
-
-const popularSearches = [
-  // Warszawa - wszystkie typy
-  { label: 'Billboardy Warszawa', type: 'billboardy', city: 'warszawa' },
-  { label: 'Citylighty Warszawa', type: 'citylighty', city: 'warszawa' },
-  { label: 'Ekrany LED Warszawa', type: 'ekrany-led', city: 'warszawa' },
-  { label: 'Banery Warszawa', type: 'banery', city: 'warszawa' },
-  { label: 'Ściany reklamowe Warszawa', type: 'sciany-reklamowe', city: 'warszawa' },
-  { label: 'Totemy reklamowe Warszawa', type: 'totemy-reklamowe', city: 'warszawa' },
-  { label: 'Reklama w transporcie Warszawa', type: 'reklama-w-transporcie', city: 'warszawa' },
-  { label: 'Reklama mobilna Warszawa', type: 'reklama-mobilna', city: 'warszawa' },
-  
-  // Kraków - wszystkie typy
-  { label: 'Billboardy Kraków', type: 'billboardy', city: 'krakow' },
-  { label: 'Citylighty Kraków', type: 'citylighty', city: 'krakow' },
-  { label: 'Ekrany LED Kraków', type: 'ekrany-led', city: 'krakow' },
-  { label: 'Banery Kraków', type: 'banery', city: 'krakow' },
-  { label: 'Ściany reklamowe Kraków', type: 'sciany-reklamowe', city: 'krakow' },
-  { label: 'Totemy reklamowe Kraków', type: 'totemy-reklamowe', city: 'krakow' },
-  { label: 'Reklama w transporcie Kraków', type: 'reklama-w-transporcie', city: 'krakow' },
-  { label: 'Reklama mobilna Kraków', type: 'reklama-mobilna', city: 'krakow' },
-  
-  // Wrocław - wszystkie typy
-  { label: 'Billboardy Wrocław', type: 'billboardy', city: 'wroclaw' },
-  { label: 'Citylighty Wrocław', type: 'citylighty', city: 'wroclaw' },
-  { label: 'Ekrany LED Wrocław', type: 'ekrany-led', city: 'wroclaw' },
-  { label: 'Banery Wrocław', type: 'banery', city: 'wroclaw' },
-  { label: 'Ściany reklamowe Wrocław', type: 'sciany-reklamowe', city: 'wroclaw' },
-  { label: 'Totemy reklamowe Wrocław', type: 'totemy-reklamowe', city: 'wroclaw' },
-  { label: 'Reklama w transporcie Wrocław', type: 'reklama-w-transporcie', city: 'wroclaw' },
-  { label: 'Reklama mobilna Wrocław', type: 'reklama-mobilna', city: 'wroclaw' },
-  
-  // Poznań - wszystkie typy
-  { label: 'Billboardy Poznań', type: 'billboardy', city: 'poznan' },
-  { label: 'Citylighty Poznań', type: 'citylighty', city: 'poznan' },
-  { label: 'Ekrany LED Poznań', type: 'ekrany-led', city: 'poznan' },
-  { label: 'Banery Poznań', type: 'banery', city: 'poznan' },
-  { label: 'Ściany reklamowe Poznań', type: 'sciany-reklamowe', city: 'poznan' },
-  { label: 'Totemy reklamowe Poznań', type: 'totemy-reklamowe', city: 'poznan' },
-  { label: 'Reklama w transporcie Poznań', type: 'reklama-w-transporcie', city: 'poznan' },
-  { label: 'Reklama mobilna Poznań', type: 'reklama-mobilna', city: 'poznan' },
-  
-  // Gdańsk - wszystkie typy
-  { label: 'Billboardy Gdańsk', type: 'billboardy', city: 'gdansk' },
-  { label: 'Citylighty Gdańsk', type: 'citylighty', city: 'gdansk' },
-  { label: 'Ekrany LED Gdańsk', type: 'ekrany-led', city: 'gdansk' },
-  { label: 'Banery Gdańsk', type: 'banery', city: 'gdansk' },
-  { label: 'Ściany reklamowe Gdańsk', type: 'sciany-reklamowe', city: 'gdansk' },
-  { label: 'Totemy reklamowe Gdańsk', type: 'totemy-reklamowe', city: 'gdansk' },
-  { label: 'Reklama w transporcie Gdańsk', type: 'reklama-w-transporcie', city: 'gdansk' },
-  { label: 'Reklama mobilna Gdańsk', type: 'reklama-mobilna', city: 'gdansk' },
-  
-  // Łódź - wszystkie typy
-  { label: 'Billboardy Łódź', type: 'billboardy', city: 'lodz' },
-  { label: 'Citylighty Łódź', type: 'citylighty', city: 'lodz' },
-  { label: 'Ekrany LED Łódź', type: 'ekrany-led', city: 'lodz' },
-  { label: 'Banery Łódź', type: 'banery', city: 'lodz' },
-  { label: 'Ściany reklamowe Łódź', type: 'sciany-reklamowe', city: 'lodz' },
-  { label: 'Totemy reklamowe Łódź', type: 'totemy-reklamowe', city: 'lodz' },
-  { label: 'Reklama w transporcie Łódź', type: 'reklama-w-transporcie', city: 'lodz' },
-  { label: 'Reklama mobilna Łódź', type: 'reklama-mobilna', city: 'lodz' },
-  
-  // Katowice - wszystkie typy
-  { label: 'Billboardy Katowice', type: 'billboardy', city: 'katowice' },
-  { label: 'Citylighty Katowice', type: 'citylighty', city: 'katowice' },
-  { label: 'Ekrany LED Katowice', type: 'ekrany-led', city: 'katowice' },
-  { label: 'Banery Katowice', type: 'banery', city: 'katowice' },
-  { label: 'Ściany reklamowe Katowice', type: 'sciany-reklamowe', city: 'katowice' },
-  { label: 'Totemy reklamowe Katowice', type: 'totemy-reklamowe', city: 'katowice' },
-  { label: 'Reklama w transporcie Katowice', type: 'reklama-w-transporcie', city: 'katowice' },
-  { label: 'Reklama mobilna Katowice', type: 'reklama-mobilna', city: 'katowice' }
-]
 
 // Wyczyść flagę user_initiated_search gdy użytkownik wchodzi z linku kategorii/miasta w stopce
 const clearSearchFlag = () => {
@@ -203,7 +121,7 @@ const handleHomeClick = () => {
             </svg>
           </h4>
           <ul class="footer-links">
-            <li v-for="city in popularCities" :key="city.slug">
+            <li v-for="city in navStore.cities" :key="city.slug">
               <router-link :to="`/powierzchnie-reklamowe/${city.slug}`" @click="clearSearchFlag">{{ city.name }}</router-link>
             </li>
           </ul>
@@ -220,9 +138,9 @@ const handleHomeClick = () => {
         </h4>
         <div class="popular-searches-grid">
           <router-link
-            v-for="search in popularSearches"
-            :key="`${search.type}-${search.city}`"
-            :to="`/powierzchnie-reklamowe/${search.type}/${search.city}`"
+            v-for="search in navStore.combos"
+            :key="`${search.typeSlug}-${search.citySlug}`"
+            :to="`/powierzchnie-reklamowe/${search.typeSlug}/${search.citySlug}`"
             class="search-tag"
             @click="clearSearchFlag"
           >

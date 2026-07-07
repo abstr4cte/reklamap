@@ -82,3 +82,17 @@ export interface Advertisement {
     // Lighting type dla banerów i ścian
     lighting_type_banner?: string
 }
+
+// Huby nawigacyjne (stopka/menu) — miasta i kombinacje typ×miasto z realną podażą.
+export interface NavCity {
+    name: string
+    slug: string
+    count: number
+}
+
+export interface NavCombo {
+    label: string
+    typeSlug: string
+    citySlug: string
+    count: number
+}

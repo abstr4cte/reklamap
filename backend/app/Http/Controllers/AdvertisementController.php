@@ -111,6 +111,73 @@ class AdvertisementController extends Controller
     }
 
     /**
+     * Huby nawigacyjne dla stopki/menu — miasta i kombinacje typ×miasto z REALNĄ podażą
+     * (>= progu thin, tylko publiczne statusy), posortowane malejąco po liczbie ofert. Zastępuje
+     * sztywne listy demand-miast (Warszawa/Kraków z 0 ofert) linkowaniem wewnętrznym do stron,
+     * które MAJĄ treść i są `index` — kieruje crawl/link-equity tam, gdzie coś realnie wisi.
+     * Dedup po slugu (dwa warianty zapisu miasta → jeden URL). Cache 1h (nav zmienia się rzadko).
+     */
+    public function navHubs(): \Illuminate\Http\JsonResponse
+    {
+        $data = \Illuminate\Support\Facades\Cache::remember('nav_hubs', 3600, function () {
+            $threshold = 3;
+            $typeToSlug = [
+                'billboard' => 'billboardy', 'citylight' => 'citylighty', 'banner' => 'banery',
+                'wall' => 'sciany-reklamowe', 'totem' => 'totemy-reklamowe', 'transport' => 'reklama-w-transporcie',
+                'mobile' => 'reklama-mobilna', 'led_screen' => 'ekrany-led', 'other' => 'inne',
+            ];
+            $typeToLabel = [
+                'billboard' => 'Billboardy', 'citylight' => 'Citylighty', 'banner' => 'Banery',
+                'wall' => 'Ściany reklamowe', 'totem' => 'Totemy reklamowe', 'transport' => 'Reklama w transporcie',
+                'mobile' => 'Reklama mobilna', 'led_screen' => 'Ekrany LED', 'other' => 'Inne',
+            ];
+
+            // Miasta — dedup po slugu (sumujemy warianty zapisu).
+            $cityRows = Advertisement::where('is_active', true)
+                ->whereIn('status', ['active', 'soon_available', 'reserved'])
+                ->select('city', \Illuminate\Support\Facades\DB::raw('COUNT(*) as cnt'))
+                ->groupBy('city')->havingRaw('COUNT(*) >= ?', [$threshold])
+                ->orderByDesc('cnt')->get();
+            $cities = [];
+            foreach ($cityRows as $row) {
+                $slug = \Illuminate\Support\Str::slug($row->city);
+                if ($slug === '') continue;
+                if (isset($cities[$slug])) { $cities[$slug]['count'] += (int) $row->cnt; continue; }
+                $cities[$slug] = ['name' => $row->city, 'slug' => $slug, 'count' => (int) $row->cnt];
+            }
+            $cities = array_values($cities);
+            usort($cities, fn ($a, $b) => $b['count'] <=> $a['count']);
+            $cities = array_slice($cities, 0, 14);
+
+            // Kombinacje typ×miasto — dedup po (typeSlug/citySlug).
+            $comboRows = Advertisement::where('is_active', true)
+                ->whereIn('status', ['active', 'soon_available', 'reserved'])
+                ->select('type', 'city', \Illuminate\Support\Facades\DB::raw('COUNT(*) as cnt'))
+                ->groupBy('type', 'city')->havingRaw('COUNT(*) >= ?', [$threshold])
+                ->orderByDesc('cnt')->get();
+            $combos = [];
+            foreach ($comboRows as $row) {
+                $typeSlug = $typeToSlug[$row->type] ?? 'inne';
+                $citySlug = \Illuminate\Support\Str::slug($row->city);
+                if ($citySlug === '') continue;
+                $key = $typeSlug . '/' . $citySlug;
+                if (isset($combos[$key])) { $combos[$key]['count'] += (int) $row->cnt; continue; }
+                $combos[$key] = [
+                    'label' => ($typeToLabel[$row->type] ?? 'Inne') . ' ' . $row->city,
+                    'typeSlug' => $typeSlug, 'citySlug' => $citySlug, 'count' => (int) $row->cnt,
+                ];
+            }
+            $combos = array_values($combos);
+            usort($combos, fn ($a, $b) => $b['count'] <=> $a['count']);
+            $combos = array_slice($combos, 0, 24);
+
+            return ['cities' => $cities, 'combos' => $combos];
+        });
+
+        return response()->json($data);
+    }
+
+    /**
      * Mapowanie do foldu nazw miast na potrzeby dopasowań ze slugu (URL → API):
      *  - polskie znaki → ASCII (obie wielkości liter, bo SQLite LOWER() nie rusza polskich liter),
      *  - myślnik → spacja: slug "szklary-huta" deslugify robi na "Szklary Huta" (spacja), a w bazie

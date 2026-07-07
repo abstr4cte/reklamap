@@ -1,4 +1,4 @@
-import type { Advertisement, MapPin } from '../types'
+import type { Advertisement, MapPin, NavCity, NavCombo } from '../types'
 import { API_URL, STORAGE_URL } from '../config'
 
 // Funkcja pomocnicza do konwersji względnych ścieżek na pełne URL-e
@@ -68,6 +68,12 @@ export const api = {
         }
         const response = await fetch(url, { headers: withKey() })
         if (!response.ok) throw new Error('Failed to fetch map pins')
+        return response.json()
+    },
+
+    async getNavHubs(): Promise<{ cities: NavCity[]; combos: NavCombo[] }> {
+        const response = await fetch(`${API_URL}/listings/nav-hubs`, { headers: withKey() })
+        if (!response.ok) throw new Error('Failed to fetch nav hubs')
         return response.json()
     },
 

@@ -16,6 +16,7 @@ import { useSeo } from '../composables/useSeo'
 import polishLocations from '../data/polishLocations.json'
 import { useSearchStore } from '../stores/useSearchStore'
 import { usePreferencesStore } from '../stores/usePreferencesStore'
+import { useNavStore } from '../stores/useNavStore'
 import { storeToRefs } from 'pinia'
 import type { FilterParams } from '../types/filters'
 import { appUrl } from '../utils/url'
@@ -357,20 +358,17 @@ const categories = [
   }
 ]
 
-const popularCities = [
-  { name: 'Warszawa', slug: 'warszawa', region: 'mazowieckie' },
-  { name: 'Kraków', slug: 'krakow', region: 'małopolskie' },
-  { name: 'Wrocław', slug: 'wroclaw', region: 'dolnośląskie' },
-  { name: 'Poznań', slug: 'poznan', region: 'wielkopolskie' },
-  { name: 'Gdańsk', slug: 'gdansk', region: 'pomorskie' },
-  { name: 'Łódź', slug: 'lodz', region: 'łódzkie' },
-  { name: 'Katowice', slug: 'katowice', region: 'śląskie' },
-  { name: 'Szczecin', slug: 'szczecin', region: 'zachodniopomorskie' },
-  { name: 'Bydgoszcz', slug: 'bydgoszcz', region: 'kujawsko-pomorskie' },
-  { name: 'Lublin', slug: 'lublin', region: 'lubelskie' },
-  { name: 'Białystok', slug: 'bialystok', region: 'podlaskie' },
-  { name: 'Gdynia', slug: 'gdynia', region: 'pomorskie' }
-]
+// „Popularne miasta" z REALNEJ podaży (backend/nav-hubs) — zamiast sztywnej listy demand-miast
+// (Warszawa/Kraków/Lublin z 0 ofert). Home to najsilniejsza strona linkująca; kierujemy jej
+// link-equity do miast, które MAJĄ nośniki. Podpis karty = liczba nośników (region bywa pusty/kod).
+const navStore = useNavStore()
+
+const citySupplyLabel = (count: number): string => {
+  if (!count || count < 1) return 'Zobacz powierzchnie'
+  const t = count % 10, h = count % 100
+  const noun = count === 1 ? 'nośnik' : (t >= 2 && t <= 4 && !(h >= 12 && h <= 14) ? 'nośniki' : 'nośników')
+  return `${count} ${noun}`
+}
 
 onMounted(() => {
   // Sprawdź flagę user_initiated_search - TYLKO jeśli jest, ładuj filtry z localStorage
@@ -535,7 +533,7 @@ const clearSearchFlag = () => {
         <h2 class="cities-title">Popularne miasta</h2>
         <p class="cities-subtitle">Znajdź powierzchnie reklamowe w największych miastach Polski</p>
         <div class="cities-grid">
-          <template v-for="city in isMobile && !showAllCities ? popularCities.slice(0, 6) : popularCities" :key="city.slug">
+          <template v-for="city in isMobile && !showAllCities ? navStore.cities.slice(0, 6) : navStore.cities" :key="city.slug">
             <router-link
               :to="`/powierzchnie-reklamowe/${city.slug}`"
               class="city-card"
@@ -543,19 +541,19 @@ const clearSearchFlag = () => {
               @click="clearSearchFlag"
             >
               <div class="city-name">{{ city.name }}</div>
-              <div class="city-region">{{ city.region }}</div>
+              <div class="city-region">{{ citySupplyLabel(city.count) }}</div>
               <div class="city-arrow">→</div>
             </router-link>
           </template>
           
           <!-- Przycisk Pokaż więcej/mniej dla miast -->
-          <button 
-            v-if="isMobile && popularCities.length > 6" 
-            @click="showAllCities = !showAllCities" 
+          <button
+            v-if="isMobile && navStore.cities.length > 6"
+            @click="showAllCities = !showAllCities"
             class="show-more-button show-more-cities"
             :aria-expanded="showAllCities"
           >
-            {{ showAllCities ? 'Pokaż mniej' : `Pokaż więcej (${popularCities.length - 6})` }}
+            {{ showAllCities ? 'Pokaż mniej' : `Pokaż więcej (${navStore.cities.length - 6})` }}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" :class="{ 'rotate-180': showAllCities }">
               <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>

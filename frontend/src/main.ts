@@ -6,6 +6,7 @@ import './assets/custom-inputs.css'
 import App from './App.vue'
 import router from './router'
 import { useSearchStore } from './stores/useSearchStore'
+import { useNavStore } from './stores/useNavStore'
 
 // Import axios configuration
 import './api/axios'
@@ -59,6 +60,10 @@ if (typeof window !== 'undefined') {
       // Artykuł bloga (ustawiany przez BlogPostPage po udanym loadBlogPost) — chroni E-E-A-T przed cichym deindeksem.
       const blogPost = (window as any).__ssrBlogPost
       if (blogPost && (blogPost.id || blogPost.slug)) out.blogPost = blogPost
+      // Huby nawigacyjne (stopka/menu) — linki wewn. do realnych hubów podaży w prerenderowanym HTML.
+      // Tylko gdy załadowane REALNE dane (nie fallback) — inaczej seed fallbacku zablokowałby refresh.
+      const nav = useNavStore(pinia)
+      if (nav.hasLoaded && (nav.cities.length > 0 || nav.combos.length > 0)) out.nav = { cities: nav.cities, combos: nav.combos }
       return Object.keys(out).length ? out : null
     } catch {
       return null

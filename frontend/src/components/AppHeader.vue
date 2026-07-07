@@ -3,8 +3,11 @@ import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import logoImage from '../assets/logo.webp'
 import logoTextImage from '../assets/logo-text.webp'
+import { useNavStore } from '../stores/useNavStore'
 
 const route = useRoute()
+// Popularne miasta z REALNEJ podaży (backend) — zamiast sztywnej listy demand-miast z 0 ofert.
+const navStore = useNavStore()
 
 
 const props = defineProps<{
@@ -35,21 +38,6 @@ const categories = [
   { name: 'Reklama w transporcie', slug: 'reklama-w-transporcie', icon: '🚌' },
   { name: 'Reklama mobilna', slug: 'reklama-mobilna', icon: '🚚' },
   { name: 'Inne', slug: 'inne', icon: '✨' }
-]
-
-const popularCities = [
-  { name: 'Warszawa', slug: 'warszawa' },
-  { name: 'Kraków', slug: 'krakow' },
-  { name: 'Wrocław', slug: 'wroclaw' },
-  { name: 'Poznań', slug: 'poznan' },
-  { name: 'Gdańsk', slug: 'gdansk' },
-  { name: 'Łódź', slug: 'lodz' },
-  { name: 'Katowice', slug: 'katowice' },
-  { name: 'Szczecin', slug: 'szczecin' },
-  { name: 'Bydgoszcz', slug: 'bydgoszcz' },
-  { name: 'Lublin', slug: 'lublin' },
-  { name: 'Białystok', slug: 'bialystok' },
-  { name: 'Gdynia', slug: 'gdynia' }
 ]
 
 const toggleMobileMenu = () => {
@@ -158,7 +146,7 @@ watch(isMobileMenuOpen, (isOpen) => {
                 <div class="dropdown-column">
                   <div class="dropdown-column-title">Popularne miasta</div>
                   <router-link
-                    v-for="city in popularCities"
+                    v-for="city in navStore.cities"
                     :key="city.slug"
                     :to="`/powierzchnie-reklamowe/${city.slug}`"
                     class="dropdown-item"

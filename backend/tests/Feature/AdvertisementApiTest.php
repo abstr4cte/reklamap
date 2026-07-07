@@ -367,4 +367,28 @@ class AdvertisementApiTest extends TestCase
         $spaced->assertStatus(200);
         $this->assertSame(1, $spaced->json('total'), 'Spacjowane "Szklary Huta" musi złapać "Szklary-Huta".');
     }
+
+    /**
+     * Huby nawigacyjne (stopka/menu): tylko miasta/kombinacje z realną podażą (>= progu thin),
+     * żeby linkowanie wewnętrzne kierowało crawl do stron z treścią, nie do pustych demand-miast.
+     */
+    public function test_nav_hubs_returns_only_cities_with_real_supply(): void
+    {
+        \Illuminate\Support\Facades\Cache::forget('nav_hubs');
+        Advertisement::factory()->count(3)->create(['city' => 'Kłodzko', 'type' => 'billboard', 'is_active' => true, 'status' => 'active']);
+        Advertisement::factory()->create(['city' => 'Warszawa', 'type' => 'billboard', 'is_active' => true, 'status' => 'active']); // <3
+
+        $res = $this->getJson('/api/listings/nav-hubs', $this->appKeyHeaders());
+        $res->assertStatus(200);
+
+        $citySlugs = collect($res->json('cities'))->pluck('slug');
+        $this->assertTrue($citySlugs->contains('klodzko'), 'Kłodzko (3) musi być w hubach.');
+        $this->assertFalse($citySlugs->contains('warszawa'), 'Warszawa (<3) NIE może być w hubach.');
+
+        $combos = collect($res->json('combos'));
+        $this->assertTrue(
+            $combos->contains(fn ($c) => $c['typeSlug'] === 'billboardy' && $c['citySlug'] === 'klodzko'),
+            'Kombinacja billboardy/klodzko musi być w hubach.'
+        );
+    }
 }

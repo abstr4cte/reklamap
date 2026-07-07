@@ -10,6 +10,7 @@ import FeedbackButton from './components/FeedbackButton.vue'
 import CookieConsent from './components/CookieConsent.vue'
 import ToastNotification from './components/ToastNotification.vue'
 import { usePreferencesStore } from './stores/usePreferencesStore'
+import { useNavStore } from './stores/useNavStore'
 import ScrollToTop from './components/ScrollToTop.vue'
 import { useToast } from './composables/useToast'
 
@@ -18,6 +19,8 @@ const isModalOpen = ref(false)
 const isFavoritesPanelOpen = ref(false)
 const isComparisonPanelOpen = ref(false)
 const prefStore = usePreferencesStore()
+// Huby nawigacyjne (stopka/menu) — jeden fetch dla całej aplikacji; prerender złapie linki w HTML.
+const navStore = useNavStore()
 const toast = ref<InstanceType<typeof ToastNotification> | null>(null)
 const { setToastInstance } = useToast()
 
@@ -63,6 +66,7 @@ onMounted(() => {
     // (jeden render-niezalezny sygnal encji z @id). Tu juz ich nie wstrzykujemy.
   }
   prefStore.syncStores()
+  navStore.fetchNavHubs()
   nextTick(() => {
     setToastInstance(toast.value)
 
