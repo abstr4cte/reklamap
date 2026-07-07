@@ -29,6 +29,16 @@ echo "$T" | grep -qi "Billboardy Koszalin" \
   && echo "✅ DEPLOY OK — prerender serwowany" \
   || { echo "⚠️ strona oddaje generyczny tytuł — sprawdź docroot/.htaccess"; exit 1; }
 
+# Tripwire deindeksu — mocniejszy check niż pojedynczy tytuł: próbkuje z sitemapy (home + combo +
+# kategoria + leaf + artykuł bloga) i sprawdza index + zaszyty seed + treść + brak fałszywego
+# empty-state. Miękko (nie przerywa — deploy już poszedł), ale głośno sygnalizuje regresję.
+echo "==> weryfikacja SEO: tripwire deindeksu"
+if ( cd ../backend && php artisan seo:tripwire ); then
+  echo "✅ tripwire OK"
+else
+  echo "⚠️ TRIPWIRE ZGŁOSIŁ PROBLEM — przejrzyj wynik powyżej; rozważ rollback (git) lub ponowny deploy"
+fi
+
 echo ""
 echo "==> PO WDROŻENIU (SEO): Google Search Console"
 echo "    Dla nowych/zmienionych stron: 'Sprawdź URL' → 'Poproś o zaindeksowanie'."
