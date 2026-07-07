@@ -4,6 +4,48 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 
 ---
 
+## 2026-07-07 — audyt ultracode (19 agentów, żywy prod) + pełna naprawa deindeksu kategorii miast
+
+**Kontekst:** start od pytania produktowego (generator kampanii), z audytu wyszła realna, systemowa przyczyna deindeksu **oraz user-facing bug**. Wieloagentowy audyt (19 agentów, adwersaryjna weryfikacja przeciw prod) potwierdził naprawy i znalazł resztę. 5 commitów wdrożonych i zweryfikowanych na prodzie: `8efcd19`, `4c4784b`, `a90ef71`, `5bb53c7`, `89dde13`.
+
+### 🔴 Przyczyna źródłowa (większa niż SEO): dopasowanie miasta ze slugu
+
+`city_strict` w `AdvertisementController` robił `LOWER(city)=?` **diakrytyko- i myślniko-WRAŻLIWIE**, a slug w URL jest ASCII (`slugify`: `Kłodzko`→`klodzko`, `Szklary-Huta`→`szklary-huta`), zaś `deslugify` (front) odtwarza nazwę tylko dla garstki miast z `cityMap`. Reszta długiego ogona trafiała do API jako ASCII → **0 ofert**. Skutek: strona kategorii miasta **pusta dla użytkownika** (Kłodzko 138, Polanica-Zdrój 14 — 0 wyświetlanych) **I** fałszywy `noindex` w prerenderze. Fix ASYMETRYCZNY był ryzykiem — backend naprawiony, ale front (filtr klienta) też foldował tylko diakrytyki; domknięte dopiero `normalizeCityMatch` (fold `-`↔spacja) po obu stronach.
+
+### Naprawy WDROŻONE (✅ prod, zweryfikowane live jako Googlebot)
+
+| # | Naprawa | Plik(i) | Commit | Status |
+|---|---|---|---|---|
+| 1 | `city_strict` fold polskich znaków **+ myślnik↔spacja** (backend) + 3 testy regresyjne | `AdvertisementController.php`, `AdvertisementApiTest.php` | 8efcd19, 4c4784b | ✅ live: `Klodzko`→138, `Polanica Zdroj`→14, `Szklary Huta`→3 |
+| 2 | `hasLoaded` wstaje tylko przy ROZPOZNANEJ odpowiedzi API — koniec fałszywego `resultCount=0→noindex` (też przy hydratacji WRS) | `useSearchStore.ts` | 8efcd19 | ✅ |
+| 3 | Front `normalizeCityMatch` (fold diakrytyki+myślnik) — domyka asymetrię; Szklary-Huta renderuje karty zamiast empty-state | `filterUtils.ts`, `useSearchStore.ts` | a90ef71 | ✅ live: „Brak ogłoszeń dla" = 0 |
+| 4 | **Seed bloga** — `BlogPostPage` seeduje artykuł z `__INITIAL_STATE__.blogPost` (jak `__ssrAd`); kolektor `main.ts` + `prerender.collectState` | `BlogPostPage.vue`, `main.ts`, `prerender.mjs` | a90ef71 | ✅ live: `blogPost` w seedzie na artykułach (28 stron E-E-A-T było na gołym runtime-fetch) |
+| 5 | Prerender: retry tras stanowych + bramka „nie zapisuj noindex-szkieletu" + `FAIL_RATE` przerywa dziurawy build + `spa-fallback.html` (noindex) dla tras bez prerenderu (soft-404) | `prerender.mjs`, `.htaccess` | 8efcd19 | ✅ live: nieznany URL→noindex, real routes→200 |
+| 6 | Schema `availability`: `reserved`→`LimitedAvailability`, `soon`→`PreOrder` (było `OutOfStock` na ~58% bazy) | `AdDetailPage.vue` | 8efcd19 | ✅ live: 0 OutOfStock w próbce |
+| 7 | Sitemap: próg thin dla **pętli typów** (>=3, spójnie z miastami) + **dedup `<loc>` po slugu** (2 warianty miasta → 1 URL) | `routes/web.php` | 4c4784b, 5bb53c7 | ✅ live: api-sitemap 0 duplikatów, thin-typy poza mapą |
+| 8 | Leaf `<title>` z lokalizacją (ulica) — było 758/822 z identycznym „{Typ} {Miasto} – wynajem" | `AdDetailPage.vue` | a90ef71 | ✅ live: „Billboardy Koszalin, ul. Gdańska – wynajem" |
+| 9 | Breadcrumb `item` z `appUrl` zamiast `window.location.origin` (przy prerenderze `localhost:5199` na ~1000 URL) | `Breadcrumbs.vue` | a90ef71 | ✅ live: localhost=0 |
+| 10 | **Tripwire deindeksu** `seo:tripwire` — próbkuje z sitemapy, sprawdza index+seed+treść+brak-empty; wpięty w `deploy.sh` (bez crona) | `SeoTripwire.php`, `console.php`, `deploy.sh` | 5bb53c7, 89dde13 | ✅ live na prod: 5/5 OK |
+
+**Efekt zweryfikowany na prodzie:** kategorie miast `noindex` **25→0** (z tego 3 były noindex słusznie — thin totem/transport/inne, teraz też poza sitemapą). Serwowanie botom zdrowe; problemy dotyczyły warstwy runtime-render (seed), nie serwowania. Niezmiennik matchingu miast + próg thin (spójny w `listingsSeo.ts`/sitemapie/prerenderze) zapisany w `CLAUDE.md`.
+
+### OTWARTE (świadomie nietknięte — do decyzji)
+
+| # | Znalezisko | Waga | Uwaga |
+|---|---|---|---|
+| 6 | **Odwrócony hub-and-spoke** — header/footer linkują 12 sztywnych demand-miast (7× 0 ofert), huby podaży (Kłodzko 138, Koszalin 70) bez linku wewn. (`AppFooter.vue:21-45`) | WYSOKIE | dynamiczne huby wg realnej podaży |
+| 11 | Normalizacja miasta przy ZAPISIE (kanonizacja) | ~kosmetyczne | fold (matching) + dedup (sitemap) już usunęły szkodę SEO; pełna kanonizacja wymaga słownika miast — nie robić ślepego przepisania danych na prodzie |
+| 7-9, 18-21 | **CWV** (reCAPTCHA render-blocking `index.html:148`, brak preconnect api/osm, lazy-LCP, brak srcset) | WYSOKIE (niezmierzone) | **najpierw 1 Lighthouse mobile** — audyt to inferencja z HTML, bez pomiaru nie ruszać |
+| 4,14,16,23 | near-duplikaty Big Group (identyczny title+desc), szablonowe meta-desc + zła deklinacja miejscownika, brak image-sitemap, geo-bucketing nośników | ŚREDNIE | — |
+| 15,31,32,33 | autor bloga „Admin", Offer bez płaskiego `price`, formularz `index`, blog 2×h1 | NISKIE | — |
+
+### Luki audytu / do sprawdzenia w GSC-GA4 (founder)
+- **CWV: zero pomiarów** — cały wymiar to inferencja strukturalna; zrobić Lighthouse mobile przed inwestycją.
+- **GSC Page Indexing:** ilu z 982 URL realnie w indeksie (near-dup-title 758 pewnie w „Duplicate/Crawled – not indexed" — jedyne twarde potwierdzenie impaktu #3/#4). **Live Test na artykule bloga** (potwierdzi seed #4). Manual Actions. CrUX (realne LCP/INP/CLS).
+- **GA4:** czy demand-spokes bloga (Warszawa/Kraków, 0 podaży) konwertują — waliduje #22.
+
+---
+
 ## 2026-06-26 — noindex miast: w WIĘKSZOŚCI POPRAWNY (thin) + fix migotania dla zdrowych miast
 
 **Zgłoszenie:** GSC URL Inspection (live 18:18) `…/warszawa`: „Pobranie: Udało się", „Indeksowanie: Nie — noindex". User: „z prerender.io było OK".
