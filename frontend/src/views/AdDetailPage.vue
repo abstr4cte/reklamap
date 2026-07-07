@@ -687,9 +687,11 @@ defineExpose({
     <div v-else-if="notFound" class="not-found-container">
       <div class="not-found-content">
         <div class="error-code">404</div>
-        <h1>Ogłoszenie nie zostało znalezione</h1>
+        <h1>To ogłoszenie jest już niedostępne</h1>
+        <p>Mogło zostać zdjęte lub wygasło. Przejrzyj inne dostępne powierzchnie reklamowe w całej Polsce.</p>
         <div class="actions">
-          <button @click="router.push('/')" class="btn btn-primary">Wróć na główną</button>
+          <button @click="router.push('/powierzchnie-reklamowe')" class="btn btn-primary">Przeglądaj ogłoszenia</button>
+          <button @click="router.push('/')" class="btn btn-secondary">Strona główna</button>
         </div>
       </div>
     </div>
@@ -2019,5 +2021,99 @@ defineExpose({
     bottom: calc(5rem + 85px) !important;
     transition: bottom 0.3s ease;
   }
+}
+
+/* 404 / ogłoszenie niedostępne — ostylowany widok (wcześniej markup był bez stylów).
+   Wszystko scope'owane pod .not-found-content, bo .actions/.btn-secondary są używane
+   także w innych miejscach tego komponentu. */
+.not-found-container {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+  padding: 2rem;
+}
+
+.not-found-content {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  background: #fff;
+  padding: 4rem 2rem;
+  border-radius: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.not-found-content .error-code {
+  font-size: 8rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1.5rem;
+}
+
+.not-found-content h1 {
+  font-size: 2rem;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  font-weight: 800;
+}
+
+.not-found-content p {
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.not-found-content .actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.not-found-content .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.not-found-content .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  box-shadow: 0 4px 6px -1px rgba(102, 126, 234, 0.4);
+}
+
+.not-found-content .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.5);
+}
+
+.not-found-content .btn-secondary {
+  background: #fff;
+  color: #4f46e5;
+  border: 1px solid #e5e7eb;
+}
+
+.not-found-content .btn-secondary:hover {
+  background: #f9fafb;
+}
+
+@media (max-width: 640px) {
+  .not-found-content .error-code { font-size: 6rem; }
+  .not-found-content h1 { font-size: 1.5rem; }
+  .not-found-content { padding: 3rem 1.5rem; }
 }
 </style>
