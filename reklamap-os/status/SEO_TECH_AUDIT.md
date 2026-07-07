@@ -33,7 +33,7 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 
 | # | Znalezisko | Waga | Uwaga |
 |---|---|---|---|
-| 6 | **Odwrócony hub-and-spoke** — header/footer linkują 12 sztywnych demand-miast (7× 0 ofert), huby podaży (Kłodzko 138, Koszalin 70) bez linku wewn. (`AppFooter.vue:21-45`) | WYSOKIE | dynamiczne huby wg realnej podaży |
+| 6 | ✅ **ZROBIONE 2026-07-08** (`132c1c6`) — endpoint `GET /api/listings/nav-hubs` (miasta+kombinacje wg realnej podaży, próg thin, dedup po slugu, cache 1h) + `useNavStore` (seed z `__INITIAL_STATE__.nav` + fetch + fallback realnych hubów); stopka/menu/`HomePage` city-cards czytają huby ze store zamiast 3 sztywnych list (~68 linków do demand-miast z 0 ofert). Home-card: podpis = liczba nośników. Zweryfikowane na prodzie: home/stopka linkują `/klodzko`,`/koszalin`; `/warszawa`,`/lublin` = 0; karty „138 nośników"; `nav` w seedzie; tripwire OK. + test regresyjny. | ~~WYSOKIE~~ | — |
 | 11 | Normalizacja miasta przy ZAPISIE (kanonizacja) | ~kosmetyczne | fold (matching) + dedup (sitemap) już usunęły szkodę SEO; pełna kanonizacja wymaga słownika miast — nie robić ślepego przepisania danych na prodzie |
 | 7-9, 18-21 | **CWV** (reCAPTCHA render-blocking `index.html:148`, brak preconnect api/osm, lazy-LCP, brak srcset) | WYSOKIE (niezmierzone) | **najpierw 1 Lighthouse mobile** — audyt to inferencja z HTML, bez pomiaru nie ruszać |
 | 4,14,16,23 | near-duplikaty Big Group (identyczny title+desc), szablonowe meta-desc + zła deklinacja miejscownika, brak image-sitemap, geo-bucketing nośników | ŚREDNIE | — |
