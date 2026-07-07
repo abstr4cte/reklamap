@@ -108,8 +108,16 @@ Route::get('/sitemap.xml', function () {
             ->havingRaw('COUNT(*) >= ?', [$thinPageThreshold])
             ->get();
 
+        // Dedup po WYLICZONYM slugu: dwa warianty zapisu miasta ("Polanica Zdrój" vs
+        // "Polanica-Zdrój") grupują się osobno w SQL, ale Str::slug daje ten sam URL → duplikat
+        // <loc> w sitemapie (ostrzeżenie GSC). Odczyt i tak łapie oba warianty (fold city_strict),
+        // więc jeden <loc> per slug wystarcza. Klasa problemu zamknięta systemowo (każde przyszłe
+        // miasto z dwoma wariantami).
+        $seenCitySlugs = [];
         foreach ($citiesAggregated as $row) {
             $citySlug = Str::slug($row->city);
+            if ($citySlug === '' || isset($seenCitySlugs[$citySlug])) continue;
+            $seenCitySlugs[$citySlug] = true;
             $xml .= '<url>';
             $xml .= '<loc>' . htmlspecialchars($baseUrl . '/powierzchnie-reklamowe/' . $citySlug) . '</loc>';
             $xml .= '<lastmod>' . \Carbon\Carbon::parse($row->lastmod)->toAtomString() . '</lastmod>';
@@ -133,9 +141,14 @@ Route::get('/sitemap.xml', function () {
             ->havingRaw('COUNT(*) >= ?', [$thinPageThreshold])
             ->get();
 
+        // Dedup jw. — kombinacja typ×miasto też duplikuje się przy dwóch wariantach zapisu miasta.
+        $seenComboSlugs = [];
         foreach ($typeCityCombos as $row) {
             $catSlug = $typeDbToSlug[$row->type] ?? 'inne';
             $citySlug = Str::slug($row->city);
+            $comboKey = $catSlug . '/' . $citySlug;
+            if ($citySlug === '' || isset($seenComboSlugs[$comboKey])) continue;
+            $seenComboSlugs[$comboKey] = true;
             $xml .= '<url>';
             $xml .= '<loc>' . htmlspecialchars($baseUrl . '/powierzchnie-reklamowe/' . $catSlug . '/' . $citySlug) . '</loc>';
             $xml .= '<lastmod>' . \Carbon\Carbon::parse($row->lastmod)->toAtomString() . '</lastmod>';
