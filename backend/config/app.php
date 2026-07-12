@@ -54,6 +54,10 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    // Bazowy URL magazynu zdjęć (image-sitemap, absolutne URL-e obrazków). Prod: api.reklamap.pl
+    // serwuje /storage (robots: Allow: /storage/, objęte Domain Property reklamap.pl).
+    'storage_url' => env('STORAGE_URL', 'https://api.reklamap.pl/storage'),
+
     /*
     |--------------------------------------------------------------------------
     | Frontend URL

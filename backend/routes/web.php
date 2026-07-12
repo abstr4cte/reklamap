@@ -16,7 +16,7 @@ Route::get('/sitemap.xml', function () {
         $baseUrl = config('app.frontend_url');
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
         // Realny lastmod z bazy — nie używamy now(), bo Google traci zaufanie do sitemapy
         // gdy lastmod zmienia się przy każdym pobraniu mimo że treść się nie zmieniła.
@@ -182,6 +182,9 @@ Route::get('/sitemap.xml', function () {
             'other' => 'inne'
         ];
 
+        // Baza URL-i zdjęć (image-sitemap) — obrazki są na api.reklamap.pl/storage (robots: Allow).
+        $imageBase = rtrim((string) config('app.storage_url'), '/');
+
         foreach ($advertisements as $ad) {
             $slug = \App\Models\Advertisement::slugifyTitle($ad->title);
             $typeSlug = $typeMapping[$ad->type] ?? 'inne';
@@ -194,6 +197,12 @@ Route::get('/sitemap.xml', function () {
             $xml .= '<lastmod>' . $ad->updated_at->toAtomString() . '</lastmod>';
             $xml .= '<changefreq>weekly</changefreq>';
             $xml .= '<priority>0.7</priority>';
+            // Image-sitemap: absolutny URL głównego zdjęcia (foto-heavy marketplace → discovery
+            // w Grafice Google, dziś 0 obrazków w sitemapie). Google używa tylko <image:loc>.
+            if (! empty($ad->image_url)) {
+                $imgPath = ltrim((string) $ad->image_url, '/');
+                $xml .= '<image:image><image:loc>' . htmlspecialchars($imageBase . '/' . $imgPath) . '</image:loc></image:image>';
+            }
             $xml .= '</url>';
         }
 
