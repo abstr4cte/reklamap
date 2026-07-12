@@ -5,6 +5,62 @@ Najnowszy wpis na górze. Nie nadpisuj — dopisuj.
 
 ---
 
+## 2026-07-12 — przegląd po recovery deindeksu (GSC 90 dni: 11.04–10.07)
+
+> **✅ WDROŻONE 2026-07-12 (kodowa część planu widoczności, live+zweryfikowane na prodzie):**
+> (1) **image-sitemap** — 825 `<image:image>` w sitemapie (Grafika Google jako nowy kanał discovery; commit `61705e3`); (2) **linkowanie wewnętrzne kategoria→blog** — komponent `CategoryGuides` na stronach kategorii (sekcja „Przewodniki"), zamyka silos i wzmacnia `billboard-reklama` linkiem z silnych stron kategorii (commit `69ea8c5`). **Odrzucone (ślepy zaułek):** meta-fix Lublin/Olsztyn — strony citylight/miasta bez podaży są noindex (jak Lublin) albo mają już dobre title; citylight per-miasto to zadanie TREŚCI (klaster A4/A5), nie meta. **Nadal DLA STRATEGA:** rozbudowa `billboard-reklama` → klaster LED → klaster citylight (brief niżej bez zmian).
+
+
+**Dane wejściowe:** GSC Zapytania (553), Strony (164), Kraje, Urządzenia, Wykres (90 dni); GSC Coverage (problemy + trend do 30.06); `stats.php` 30 dni (825 ogł., 347 aktywnych). **Czego zabrakło:** GA4 (pozyskiwanie/kanały/engagement) — sekcja kanałów niepełna; Coverage trend o ~10 dni starszy niż Performance.
+
+### Najważniejsze wnioski (TL;DR)
+1. **Recovery indeksu POTWIERDZONE liczbami.** Wyświetlenia: kwiecień ~14/dzień → dołek deindeksu czerwiec ~29 → lipiec **103/dzień**. Strony miast wchodzą do indeksu (Dąbrowa Górnicza 0→**72 wyśw**). Zaindeksowane **145**, ale **924 „wykryte – niezindeksowane"** = ogon importu (leafy/combo małych miast) czekający na crawl — spadnie sam, o ile jakość leaf się poprawi (zdjęcia/opisy).
+2. **Marka niesie 95% kliknięć.** `reklamap` = **107 z 112 klik**, poz 1,5, CTR 56%. Cała reszta (547 fraz non-brand, **5994 wyśw**) = **5 klik**. Powód: śr. pozycja non-brand ~30 (3.–4. strona Google). Jesteśmy widoczni, ale nie klikalni.
+3. **FUNDAMENTALNY ROZJAZD podaż↔popyt (najważniejsze).** Google pokazuje nas na DUŻE miasta i typy, gdzie mamy ~0 podaży: Warszawa 451 wyśw (poz 44), Poznań 390 (poz 50); popyt wg typu: **LED/ekran 860 wyśw, citylight 753** — a mamy 5 LED i 12 citylight. Nasze realne huby podaży (Kłodzko 138 nośn., Koszalin 70) w GSC ~niewidoczne (13/7 wyśw — mały search volume małych miast). **Mamy podaż tam, gdzie nikt nie szuka; szukają tam, gdzie nie mamy.** Billboard = jedyny typ, gdzie popyt (1543 wyśw) ≈ podaż (766 szt.).
+4. **Blog = jedyna warstwa rankująca BEZ podaży.** `billboard-reklama` poz 18, **396 wyśw** — najlepsza wisienka; treść informacyjna nie wymaga nośników, więc to najtańsza droga do klikalnego ruchu w fazie podaży.
+
+### Ruch organiczny — stan i trend
+- Polska: **174 klik / 6975 wyśw / poz. 31,1 / CTR 2,49%** (90 dni). Mobile: CTR 15,6% / poz. 17,5 (trafiony ruch). Desktop: CTR 0,86% / poz. 32 przy 6644 wyśw = masa dalekich impresji na strony miast/combo.
+- Segmentacja stron (wyśw / klik): kategoria-miasto/combo **4643 / 17**; kategoria-typ 1448 / 3; home 539 / **134** (brand); blog 543 / 2; leaf 391 / 7. **Poza brandem (home) nic realnie nie konwertuje na klik** — bo wszystko na poz. 30+.
+
+### Wisienki SEO (priorytet wzrostu — realistyczne)
+| Fraza | Wyśw/90dni | Pozycja | Stan treści | Akcja |
+|---|---|---|---|---|
+| billboard reklama | 396 | 18,2 | artykuł JEST (`billboard-reklama`) | rozbudowa + lepszy H1/title → 1. strona |
+| reklama na ekranach led poznań/kraków/warszawa | 66+54+40 | 16–19 | brak dedyk. (tylko `ekran-led-cena`) | artykuł „Ekrany LED [miasto] — ceny, lokalizacje" (typ LED = 860 wyśw popytu) |
+| reklama citylight olsztyn/kraków | 66+29 | 9–15 | częściowo | sekcja/artykuł citylight (753 wyśw popytu) |
+| reklama mobilna bydgoszcz | 115 | 16,3 | brak | niższy prio (mobilna 229 wyśw, 6 szt. w bazie) |
+
+### Treści: co działa / co kuleje
+- **Działa:** `billboard-reklama` (396 wyśw, poz 18) — wzorzec do powielenia na inne typy. Home (brand) klika się doskonale.
+- **Do odświeżenia:** `citylight-reklama` (72 wyśw, poz **50,8** — spadło daleko).
+
+### Białe plamy (popyt bez dedykowanej strony)
+- **Typ LED (860 wyśw) i citylight (753 wyśw)** — drugi i trzeci popyt po billboardzie, a blog ma tylko po jednym ogólnym artykule. Brak „ekrany LED [miasto]" / „citylight [miasto]".
+- **`reklama w transporcie/tranzyt` 261 wyśw** — combo transport/Gdańsk i /Poznań generują wyświetlenia (263+209), zero treści wspierającej.
+
+### Kanały promocji — BRAK DANYCH
+Bez GA4 (pozyskiwanie) nie ocenię kanałów/konwersji/referral. Cały mierzalny ruch to Organic (brand + generic). **Rekomendacja: następnym razem wrzuć GA4 → Pozyskiwanie ruchu + Strony**, inaczej „gdzie promować" = zgadywanie.
+
+### ➡️ DLA STRATEGA (brief — sort wg potencjał/wysiłek)
+1. **`billboard reklama` — ROZBUDOWA istniejącego** (`posts/…_billboard-reklama.md`). Poz 18, 396 wyśw/90dni, artykuł już rankuje. Dodać sekcje (ceny wg miasta, FAQ), przepisać H1/title pod CTR. Najniższy wysiłek, najwyższy zwrot. *(wisienka)*
+2. **Klaster „Ekrany LED [miasto]"** — nowy artykuł-hub + 2–3 miejskie (Poznań/Kraków/Warszawa). Popyt typu LED = 860 wyśw, frazy `reklama na ekranach led [miasto]` poz 16–19. *(biała plama, wysoki popyt)*
+3. **Klaster „Citylight [miasto]"** — Olsztyn (poz 9!), Kraków, Wrocław. Citylight = 753 wyśw popytu; `reklama citylight olsztyn` już poz 9 z 0 klik (cienko/meta). *(biała plama)*
+4. **Odświeżenie `citylight-reklama`** — spadło do poz 50,8; refresh treści + linkowanie z klastra #3.
+> Anti-kanibalizacja: klaster LED/citylight per-miasto to TREŚĆ informacyjna (blog), NIE strona kategorii — kategoria bez podaży = noindex/thin. W treści CTA podażowe („wystaw swój nośnik") zgodnie z fazą.
+
+### ➡️ DLA ARCHITEKTA SEO (meta/CTR)
+- `powierzchnie reklamowe lublin` (poz **7,7**, 104 wyśw, **0 klik**) i `reklama citylight olsztyn` (poz **9**, 66 wyśw, **0 klik**) — jedyne dwie frazy non-brand na 1. stronie, obie 0 klik → title/description nie zachęca LUB strona cienka (mało podaży). Przejrzeć meta tych landingów.
+
+### ➡️ DLA BIZNESOWEGO (sygnał produktowy)
+- **Rozjazd geo podaż↔popyt jest strukturalny.** Strategia hubów podaży w małych miastach (Kłodzko/Koszalin) buduje BAZĘ, ale NIE wygeneruje ruchu popytowego z SEO (za mały search volume). Ruch reklamodawców przyjdzie z dużych miast — a tam trzeba albo podaży, albo treści łapiącej popyt (blog). Wniosek: małe miasta = podaż (dla właścicieli), duże miasta = przyszły popyt (przez treść LED/citylight + docelowo podaż). Nie oczekiwać, że Kłodzko 138 nośników = ruch z Google.
+
+### ➡️ DLA UŻYTKOWNIKA (kanały — faza PODAŻY)
+- Zerowe zapytania przez formularz (0/30 dni) = **norma fazy podaży**, nie pożar (popyt gated). Nie raportuję jako problem.
+- **Następny przegląd: dostarcz GA4 (Pozyskiwanie + Strony)** — bez tego nie ocenię, czy jest ruch direct/referral/social i co konwertuje.
+
+---
+
 ## 2026-05-29 — pełny przegląd (pierwszy z danymi konwersji)
 
 **Dane wejściowe:**
