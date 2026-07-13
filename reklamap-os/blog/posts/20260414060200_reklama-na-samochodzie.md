@@ -81,7 +81,7 @@ Przykładowo przyczepka banerowa w Bydgoszczy kosztuje 200 zł za dobę, 600 zł
 
 Najwięcej ofert przyczepek i mobilnych ekranów jest w największych ośrodkach: [reklama mobilna w Bydgoszczy](/powierzchnie-reklamowe/reklama-mobilna/bydgoszcz), [Krakowie](/powierzchnie-reklamowe/reklama-mobilna/krakow) i [Warszawie](/powierzchnie-reklamowe/reklama-mobilna/warszawa).
 
-**Uwaga prawna — stojąca przyczepka to nie jeżdżące auto.** Oklejony samochód w codziennej trasie nie wymaga pozwoleń. Przyczepka reklamowa zaparkowana na dłużej w pasie drogowym to już inna sprawa: zajęcie pasa drogowego na cele reklamowe wymaga zezwolenia zarządcy drogi (art. 40 ustawy o drogach publicznych) i opłaty, a w centrach miast dochodzi uchwała krajobrazowa (np. Warszawa). Nie każde zaparkowanie przyczepy z reklamą jest automatycznie „reklamą w pasie drogowym" — liczą się okoliczności i cel ustawienia — ale gdy nośnik faktycznie służy ekspozycji, brak zgody grozi karą i wykroczeniem z art. 63a Kodeksu wykroczeń. Źródła: bilbordy.info, sm.wejherowo.pl, zds.org.pl.
+**Uwaga prawna — stojąca przyczepka to nie jeżdżące auto.** Oklejony samochód w codziennej trasie nie wymaga pozwoleń. Przyczepka reklamowa zaparkowana na dłużej w pasie drogowym to już inna sprawa: zajęcie pasa drogowego na cele reklamowe wymaga zezwolenia zarządcy drogi (art. 40 ustawy o drogach publicznych) i opłaty, a w centrach miast dochodzi uchwała krajobrazowa (np. Kraków, Gdańsk). Nie każde zaparkowanie przyczepy z reklamą jest automatycznie „reklamą w pasie drogowym" — liczą się okoliczności i cel ustawienia — ale gdy nośnik faktycznie służy ekspozycji, brak zgody grozi karą i wykroczeniem z art. 63a Kodeksu wykroczeń. Źródła: bilbordy.info, sm.wejherowo.pl, zds.org.pl.
 
 Zobacz dostępne pojazdy i przyczepki reklamowe w swoim mieście → [przeglądaj reklamę mobilną](/powierzchnie-reklamowe/reklama-mobilna)
 
@@ -103,7 +103,7 @@ Model pay-per-car działa w Polsce od kilku lat. Firma lub agencja reklamowa okl
 - Wiek pojazdu: do 5 lat
 - Aplikacja do śledzenia kilometrów i trasy
 
-**Insight ekspercki:** Zarobek z reklamy samochodowej jest wyższy w miastach z restrykcyjnymi uchwałami krajobrazowymi (Kraków, Warszawa) — firmy, które nie mogą postawić billboardu w centrum, chętniej płacą za mobilną ekspozycję. W Krakowie (uchwała krajobrazowa dzieli miasto na strefy I/II/III, w ścisłym centrum reklama wielkoformatowa i DOOH są praktycznie zakazane) samochód z oklejeniem to czasem jedyna legalna forma reklamy w centrum.
+**Insight ekspercki:** Zarobek z reklamy samochodowej jest wyższy w miastach z restrykcyjnymi uchwałami krajobrazowymi (Kraków, Gdańsk) — firmy, które nie mogą postawić billboardu w centrum, chętniej płacą za mobilną ekspozycję. W Krakowie (uchwała krajobrazowa dzieli miasto na strefy I/II/III, w ścisłym centrum reklama wielkoformatowa i DOOH są praktycznie zakazane) samochód z oklejeniem to czasem jedyna legalna forma reklamy w centrum.
 
 Chcesz wystawić swój pojazd jako nośnik reklamowy? → [Dodaj ogłoszenie za darmo](/dodaj-powierzchnie-reklamowa)
 

@@ -96,7 +96,7 @@ Gdańsk ma kilka stref o zupełnie różnym charakterze reklamowym:
 
 ## Przepisy — uchwała krajobrazowa Gdańska (obowiązuje i jest egzekwowana)
 
-Gdańsk należy do **najsurowszych miast dla reklamy zewnętrznej w Polsce** — i był jednym z pierwszych, które wprowadziły uchwałę krajobrazową. Uchwała nr **XLVIII/1465/18 z 22 lutego 2018 r.** (Dz. Urz. Woj. Pomorskiego 2018, poz. 1034) obowiązuje na terenie całego miasta, a 24-miesięczny okres dostosowania istniejących nośników upłynął w 2020 r. Od tego czasu miasto egzekwuje przepisy: kary i nakazy usunięcia trafiają do sądów administracyjnych — potwierdzają to wyroki WSA w Gdańsku (II SA/Gd 966/24 i II SA/Gd 1203/24) oraz NSA (II OSK 2490/23), w których uchwała stanowi podstawę kar za nielegalne nośniki.
+Gdańsk należy do **najsurowszych miast dla reklamy zewnętrznej w Polsce** — i był jednym z pierwszych, które wprowadziły uchwałę krajobrazową. Uchwała nr **XLVIII/1465/18 z 22 lutego 2018 r.** (Dz. Urz. Woj. Pomorskiego 2018, poz. 1034) obowiązuje na terenie całego miasta, a 24-miesięczny okres dostosowania istniejących nośników upłynął w 2020 r. Od tego czasu miasto egzekwuje przepisy: kary i nakazy usunięcia trafiają do sądów administracyjnych — potwierdzają to wyroki sądów administracyjnych, w których uchwała stanowi podstawę kar za nielegalne nośniki.
 
 Uchwała dzieli miasto na **8 obszarów** (oznaczonych symbolami SZ, S0, SR, S1, S2, SI, S3 i SP) o różnym reżimie — od stref „ciszy reklamowej" i ochrony ekspozycji krajobrazu po obszary o łagodniejszych zasadach. Wprowadza twarde limity gabarytów: od formatu **drobnego** (do 0,1 m²) i **małego** (do 1 m²) aż po **górny limit 18 m²** dla największych dopuszczalnych nośników wolnostojących.
 

@@ -1,11 +1,11 @@
 <!--
-ANGLE: Konkretny przewodnik prawny — kiedy tablica/billboard wymaga pozwolenia na budowę, a kiedy zgłoszenia: rozprawienie się z mitem „bezpiecznego progu" 2,5/12 m² (decyduje kwalifikacja jako obiekt budowlany), procedura, dokumenty, koszt 539 zł, termin 65 dni. Silos prawny #1. ANTI-KANIBALIZACJA: #2 zgłoszenie i #3 kary zostają na osobne artykuły.
+ANGLE: Konkretny przewodnik prawny — kiedy tablica/billboard wymaga pozwolenia na budowę, a kiedy zgłoszenia: rozprawienie się z mitem „bezpiecznego progu" 2,5/12 m² (decyduje kwalifikacja jako obiekt budowlany), procedura, dokumenty, koszty (uwaga: 539 zł to opłata za pozwolenie na budowę BUDYNKU działalności gospodarczej — wolnostojący billboard jako obiekt budowlany niebędący budynkiem podlega niższej stawce; kwotę zweryfikować w ustawie o opłacie skarbowej), termin 65 dni. Silos prawny #1. ANTI-KANIBALIZACJA: #2 zgłoszenie i #3 kary zostają na osobne artykuły.
 -->
 ---
 title: "Pozwolenie na tablicę reklamową 2026 — kiedy i koszt"
 slug: "pozwolenie-na-tablice-reklamowa"
 category: prawo-i-regulacje
-meta_description: "Czy postawienie billboardu wymaga pozwolenia na budowę? Próg, procedura, dokumenty, koszt 539 zł i termin 65 dni. Sprawdź na ReklaMap."
+meta_description: "Czy postawienie billboardu wymaga pozwolenia na budowę? Próg, procedura, dokumenty, opłata skarbowa i termin 65 dni. Sprawdź na ReklaMap."
 image_alt: "Konstrukcja billboardu wolnostojącego przy drodze z dokumentami pozwolenia na budowę — formalności reklamy zewnętrznej"
 image_prompt: "Realistic professional photography of a freestanding billboard steel structure being installed on a plot next to a Polish road, construction context, clear daytime light, sharp details, no text on the billboard surface."
 keywords:
@@ -23,7 +23,7 @@ status: draft
 
 # Pozwolenie na tablicę reklamową 2026 — kiedy i koszt
 
-Czy na billboard potrzebne jest pozwolenie na budowę? W większości przypadków tak. W sieci krąży mit, że granicą jest „2,5 m²" albo „12 m²" — ale dla wolnostojącego billboardu to nieprawda. O obowiązku pozwolenia nie decyduje sama powierzchnia tablicy, tylko to, czy nośnik jest **obiektem budowlanym** w rozumieniu Prawa budowlanego. Duży billboard wolnostojący niemal zawsze nim jest, więc kończy się na pozwoleniu na budowę — opłata skarbowa to **539 zł**, a urząd ma na decyzję 65 dni. Poniżej tłumaczymy, kiedy pozwolenie jest konieczne, jak je zdobyć i czego pilnować, żeby nie skończyć z nakazem rozbiórki.
+Czy na billboard potrzebne jest pozwolenie na budowę? W większości przypadków tak. W sieci krąży mit, że granicą jest „2,5 m²" albo „12 m²" — ale dla wolnostojącego billboardu to nieprawda. O obowiązku pozwolenia nie decyduje sama powierzchnia tablicy, tylko to, czy nośnik jest **obiektem budowlanym** w rozumieniu Prawa budowlanego. Duży billboard wolnostojący niemal zawsze nim jest, więc kończy się na pozwoleniu na budowę — z opłatą skarbową (jej wysokość zależy od rodzaju obiektu), a urząd ma na decyzję 65 dni. Poniżej tłumaczymy, kiedy pozwolenie jest konieczne, jak je zdobyć i czego pilnować, żeby nie skończyć z nakazem rozbiórki.
 
 ## Pozwolenie czy zgłoszenie — rozprawmy się z mitem progu
 
@@ -84,13 +84,13 @@ Można mieć ważne pozwolenie na budowę, a mimo to nośnik będzie niedopuszcz
 
 | Pozycja | Kwota |
 |---|---|
-| Opłata skarbowa za pozwolenie na budowę | **539 zł** (obiekt związany z działalnością gospodarczą) |
+| Opłata skarbowa za pozwolenie na budowę | wg ustawy o opłacie skarbowej (niższa dla obiektu niebędącego budynkiem; **539 zł** dotyczy budynku działalności gospodarczej) |
 | Pełnomocnictwo | 17 zł (gdy działa pełnomocnik) |
 | Projekt budowlany | zwykle kilka tysięcy złotych |
 | Mapa, geodeta, uzgodnienia | zmienne |
 | Zajęcie pasa drogowego | zmienne, według zarządcy drogi |
 
-Stawka 539 zł to standardowa opłata skarbowa za pozwolenie na budowę obiektu związanego z działalnością gospodarczą — urzędy stosują ją przy billboardach komercyjnych, o ile nie zachodzi zwolnienie ustawowe. Sam podatek od gotowego nośnika i opłaty gminne to osobny temat, który omawiamy w tekście o [opłacie reklamowej](/blog/prawo-i-regulacje/oplata-reklamowa).
+Uwaga na często powielany błąd: stawka 539 zł to opłata skarbowa za pozwolenie na budowę **budynku** związanego z działalnością gospodarczą (1 zł za każdy m² powierzchni użytkowej, maksymalnie 539 zł). Wolnostojący billboard czy tablica to zwykle obiekt budowlany **niebędący budynkiem** — podlega innej, zwykle niższej stawce opłaty skarbowej. Konkretną kwotę dla Twojego przypadku sprawdź w ustawie o opłacie skarbowej lub bezpośrednio w urzędzie. Sam podatek od gotowego nośnika i opłaty gminne to osobny temat, który omawiamy w tekście o [opłacie reklamowej](/blog/prawo-i-regulacje/oplata-reklamowa).
 
 ## Odległości od drogi
 
@@ -108,7 +108,7 @@ Wartości dotyczą dróg wskazanych w art. 43 ust. 1. Dla dróg wojewódzkich, p
 
 ## Co grozi za brak pozwolenia
 
-Postawienie tablicy bez wymaganego pozwolenia to samowola budowlana — nadzór budowlany może wszcząć postępowanie legalizacyjne albo wydać **nakaz rozbiórki**. Do tego dochodzą kary pieniężne za zajęcie pasa drogowego bez zezwolenia oraz administracyjne kary za reklamę niezgodną z uchwałą krajobrazową. W obszarze chronionym bez zgody konserwatora grozi wstrzymanie inwestycji. To temat na osobny artykuł — tu wystarczy zapamiętać, że koszt legalizacji albo rozbiórki bywa wielokrotnie wyższy niż 539 zł opłaty za pozwolenie.
+Postawienie tablicy bez wymaganego pozwolenia to samowola budowlana — nadzór budowlany może wszcząć postępowanie legalizacyjne albo wydać **nakaz rozbiórki**. Do tego dochodzą kary pieniężne za zajęcie pasa drogowego bez zezwolenia oraz administracyjne kary za reklamę niezgodną z uchwałą krajobrazową. W obszarze chronionym bez zgody konserwatora grozi wstrzymanie inwestycji. To temat na osobny artykuł — tu wystarczy zapamiętać, że koszt legalizacji albo rozbiórki bywa wielokrotnie wyższy niż sama opłata skarbowa za pozwolenie.
 
 ## FAQ
 
@@ -119,7 +119,7 @@ W większości przypadków tak. Duży billboard wolnostojący jest obiektem budo
 Nie ma uniwersalnego progu powierzchni. Mity o „2,5 m²" czy „12 m²" nie są bezpieczną granicą dla billboardu. Decyduje kwalifikacja nośnika jako obiektu budowlanego, a nie sama liczba metrów kwadratowych.
 
 **Ile kosztuje pozwolenie na tablicę reklamową?**
-Opłata skarbowa za pozwolenie na budowę to zwykle 539 zł, plus 17 zł za pełnomocnictwo, jeśli działasz przez pełnomocnika. Do tego dochodzi koszt projektu budowlanego — zazwyczaj kilka tysięcy złotych.
+Wysokość opłaty skarbowej za pozwolenie na budowę zależy od rodzaju obiektu. Popularna kwota 539 zł dotyczy budynku związanego z działalnością gospodarczą — wolnostojący billboard czy tablica to zwykle obiekt budowlany niebędący budynkiem i podlega niższej stawce (dokładną wartość sprawdź w ustawie o opłacie skarbowej). Do tego dochodzi 17 zł za pełnomocnictwo, jeśli działasz przez pełnomocnika, oraz koszt projektu budowlanego — zazwyczaj kilka tysięcy złotych.
 
 **Jak długo czeka się na pozwolenie na budowę?**
 Organ ma co do zasady 65 dni na wydanie decyzji (art. 35 ust. 6 Prawa budowlanego). Po decyzji trzeba jeszcze odczekać termin na uprawomocnienie.
