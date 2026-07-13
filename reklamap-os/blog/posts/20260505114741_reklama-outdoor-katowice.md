@@ -99,11 +99,11 @@ Co to znaczy w praktyce: **dziś można w Katowicach legalnie postawić nośnik,
 
 Co OBOWIĄZUJE mimo braku uchwały:
 
-1. **Prawo budowlane** — pozwolenia/zgłoszenia dla nośników >2,5 m².
+1. **Prawo budowlane** (Dz.U. 2025 poz. 418) — instalacja tablicy/urządzenia reklamowego wymaga zgłoszenia, a wolnostojące urządzenie trwale związane z gruntem — pozwolenia na budowę. Konkretne progi powierzchni bywają dodatkowo narzucone lokalnie (uchwała/MPZP).
 2. **MPZP** (miejscowe plany zagospodarowania) — lokalne ograniczenia.
 3. **Przepisy o drogach publicznych** — minimalne odległości od dróg krajowych, A1, A4, S86.
 4. **Strefy ochrony konserwatorskiej** — Śródmieście + Nikiszowiec.
-5. **[Opłata reklamowa](/blog/prawo-i-regulacje/oplata-reklamowa)** — gdyby Katowice ją uchwaliły, kosztowałaby do 3,70 zł/dzień części stałej + 0,33 zł/m²/dzień zmiennej.
+5. **[Opłata reklamowa](/blog/prawo-i-regulacje/oplata-reklamowa)** — gdyby Katowice ją uchwaliły, mogłaby sięgnąć górnego ustawowego maksimum na 2026: 3,89 zł/dzień części stałej + 0,36 zł/m²/dzień zmiennej.
 
 [Znajdź nośnik z uregulowanym statusem prawnym →](/dodaj-powierzchnie-reklamowa) — jeśli wystawiasz powierzchnię w Katowicach, sprawdź MPZP i pas drogowy.
 

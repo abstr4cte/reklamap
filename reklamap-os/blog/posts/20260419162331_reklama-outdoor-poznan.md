@@ -115,7 +115,7 @@ Wbrew rozpowszechnionej opinii, **Poznań ma obowiązującą uchwałę krajobraz
 
 **Insight ekspercki:** to odwraca dawną narrację o „Poznaniu bez ograniczeń". Miasto ma pełną uchwałę, a historia sądowa stworzyła — przejściowo — dwie klasy nośników: starsze legacy (dziś bez obowiązku dostosowania) i nowe (pod pełnym reżimem). Przy wyborze lokalizacji pytaj wprost, czy nośnik istniał przed 5.08.2023 — i licz się z tym, że status starszych nośników może się zmienić po nowelizacji ustawy.
 
-**Zastrzeżenie:** niezależnie od uchwały obowiązują przepisy ogólne — nośniki powyżej 2,5 m² wymagają zgłoszenia lub pozwolenia budowlanego (Prawo budowlane). Poznań **nie pobiera opłaty reklamowej** — nie podjął odrębnej uchwały wprowadzającej tę daninę, więc dochodzą tylko wymogi budowlane, a nie dodatkowa opłata od nośnika. Szczegóły regulacji w całej Polsce: [Uchwała krajobrazowa — co reguluje](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama).
+**Zastrzeżenie:** niezależnie od uchwały obowiązują przepisy ogólne — instalacja nośnika reklamowego wymaga zgłoszenia, a wolnostojąca konstrukcja trwale związana z gruntem — pozwolenia budowlanego (Prawo budowlane, Dz.U. 2025 poz. 418); konkretne progi powierzchni bywają narzucane lokalną uchwałą lub planem, nie samą ustawą. Poznań **nie pobiera opłaty reklamowej** — nie podjął odrębnej uchwały wprowadzającej tę daninę, więc dochodzą tylko wymogi budowlane, a nie dodatkowa opłata od nośnika. Szczegóły regulacji w całej Polsce: [Uchwała krajobrazowa — co reguluje](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama).
 
 Gotowy do porównania ofert? Przejrzyj nośniki dostępne w Poznaniu → [reklamap.pl/powierzchnie-reklamowe/poznan](/powierzchnie-reklamowe/poznan)
 

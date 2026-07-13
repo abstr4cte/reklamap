@@ -89,9 +89,9 @@ Szukasz gotowej powierzchni reklamowej w swojej okolicy? Przeglądaj dostępne n
 
 Regulacje dotyczące tablic reklamowych w Polsce nakłada ustawa krajobrazowa oraz Prawo budowlane.
 
-**Pozwolenie budowlane** jest wymagane dla tablic o powierzchni ekspozycyjnej **powyżej 2,5 m²** (Dz.U. 2023 poz. 1045). Tablica 2×2 m (4 m²) wymaga więc pozwolenia. Mniejsze formaty mogą być realizowane na podstawie zgłoszenia lub być zwolnione z obowiązku administracyjnego — zależy to od lokalnych przepisów i sposobu mocowania.
+**Prawo budowlane** (Dz.U. 2025 poz. 418) rozróżnia dwa tryby. Instalacja tablicy lub urządzenia reklamowego wymaga zwykle **zgłoszenia** (art. 29 ust. 2 pkt 6), natomiast wolnostojące urządzenie reklamowe trwale związane z gruntem wymaga **pozwolenia na budowę**. Ustawa nie ustanawia uniwersalnego progu powierzchni — konkretne limity (np. 2,5 m² czy 12 m²) mogą wynikać z lokalnej uchwały krajobrazowej lub miejscowego planu, nie z samej ustawy. Zawsze weryfikuj tryb w urzędzie gminy w zależności od sposobu mocowania i lokalnych przepisów.
 
-**Uchwały krajobrazowe** to lokalne przepisy gminy, które precyzują gdzie, jakiej wielkości i w jakim standardzie technicznym można stawiać tablice. Na koniec 2025 roku uchwały krajobrazowe przyjęło 82 gminy w Polsce. Poznań posiadał uchwałę częściowo uchyloną w 2025 roku, Warszawa nadal nie posiada pełnego aktu. Przed realizacją inwestycji zawsze sprawdź stan przepisów w urzędzie gminy lub z pomocą prawnika.
+**Uchwały krajobrazowe** to lokalne przepisy gminy (podstawa: art. 37a ustawy z 27.03.2003 o planowaniu i zagospodarowaniu przestrzennym), które precyzują gdzie, jakiej wielkości i w jakim standardzie technicznym można stawiać tablice. Na koniec 2025 roku uchwały krajobrazowe przyjęło 82 gminy w Polsce. Poznań posiada uchwałę obowiązującą od 5 sierpnia 2023 roku — sąd uchylił jedynie przepisy przejściowe, a NSA (18.03.2026) utrzymał samą uchwałę w mocy. Warszawa jest na etapie projektu (przystąpienie do sporządzenia uchwały w 2025 roku), więc nowe strefy nie są jeszcze prawem miejscowym. Przed realizacją inwestycji zawsze sprawdź stan przepisów w urzędzie gminy lub z pomocą prawnika.
 
 **Kluczowa różnica: szyld vs tablica.** Szyld informuje wyłącznie o działalności prowadzonej na tej nieruchomości i często korzysta z łagodniejszych wymogów formalnych. Tablica ogólna (reklamująca firmę z innej lokalizacji lub produkt) podlega pełnym przepisom uchwały krajobrazowej i prawa budowlanego.
 
@@ -103,7 +103,7 @@ Regulacje dotyczące tablic reklamowych w Polsce nakłada ustawa krajobrazowa or
 | Koszt zakupu | 1 600–6 300 zł | 18 000–32 000 zł/szt. | 50–100 zł/m² (druk) |
 | Trwałość | 5–25 lat | 10–25 lat | Do 90 dni (zewnętrzne) |
 | Czas kampanii | Stała ekspozycja | Stała ekspozycja | Krótkoterminowa |
-| Pozwolenie | Od >2,5 m² | Zawsze | Zwykle nie |
+| Pozwolenie | Zgłoszenie lub pozwolenie (zależnie od montażu) | Zwykle wymagane | Zwykle nie |
 | Podświetlenie | Opcjonalne (LED) | Opcjonalne | Nie |
 
 **Tablica zamiast billboardu** — gdy potrzebujesz mniejszego formatu i niższego budżetu. Billboard kosztuje od 18 000 zł za zakup nowego nośnika, tablica — trzy do dziesięciu razy mniej. Tablica sprawdza się przy lokalnej widoczności: przy wjeździe do firmy, na parkingu, wzdłuż drogi prowadzącej do obiektu.
@@ -129,7 +129,7 @@ Przy większych zamówieniach lub niestandardowych konstrukcjach warto zapytać 
 ## Najczęściej zadawane pytania
 
 **Czy tablica reklamowa wymaga pozwolenia na budowę?**
-Pozwolenie budowlane jest wymagane dla tablic powyżej 2,5 m² powierzchni ekspozycyjnej (Dz.U. 2023 poz. 1045). Tablica o wymiarach 2×2 m (4 m²) zawsze wymaga pozwolenia. Przy mniejszych formatach obowiązek zależy od sposobu montażu i lokalnych przepisów — sprawdź w urzędzie gminy lub z prawnikiem przed realizacją.
+To zależy od sposobu montażu. Zgodnie z Prawem budowlanym (Dz.U. 2025 poz. 418) instalacja tablicy lub urządzenia reklamowego wymaga zwykle zgłoszenia (art. 29 ust. 2 pkt 6), a wolnostojące urządzenie trwale związane z gruntem — pozwolenia na budowę. Ustawa nie ustala uniwersalnego progu powierzchni; konkretne limity (np. 2,5 m² czy 12 m²) mogą wynikać z lokalnej uchwały krajobrazowej lub planu miejscowego. Sprawdź tryb w urzędzie gminy lub z prawnikiem przed realizacją.
 
 **Czym różni się szyld od tablicy reklamowej?**
 Szyld to szczególny rodzaj tablicy reklamowej, który informuje wyłącznie o działalności prowadzonej na danej nieruchomości (np. "tu jest sklep X"). Tablica reklamowa może reklamować cokolwiek — również firmy spoza tej lokalizacji. Szyld często podlega łagodniejszym wymogom formalnym, ale szczegóły zależą od lokalnej uchwały krajobrazowej.

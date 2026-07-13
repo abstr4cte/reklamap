@@ -90,7 +90,7 @@ Uwaga przy retailu: ruch w galeriach w województwie spadł w 2024 r. o 3,5% r/r
 
 Dwie rzeczy, które trzeba sprawdzić przed kampanią lub ustawieniem nośnika w Lublinie:
 
-- **Opłata reklamowa.** Ustawa krajobrazowa pozwala gminie pobierać do **2,50 zł dziennie od nośnika plus 0,20 zł za m²** powierzchni. To górne ustawowe maksimum — czy i w jakiej wysokości Lublin ją realnie nalicza, potwierdź w aktualnej uchwale miejskiej. Mechanizm opłaty rozkładamy w artykule o [opłacie reklamowej](/blog/prawo-i-regulacje/oplata-reklamowa).
+- **Opłata reklamowa.** Ustawa krajobrazowa pozwala gminie pobierać do **3,89 zł dziennie od nośnika (część stała) plus 0,36 zł za m²** powierzchni dziennie (część zmienna — górne stawki na 2026 wg Ministerstwa Finansów). To górne ustawowe maksimum — czy i w jakiej wysokości Lublin ją realnie nalicza, potwierdź w aktualnej uchwale miejskiej. Mechanizm opłaty rozkładamy w artykule o [opłacie reklamowej](/blog/prawo-i-regulacje/oplata-reklamowa).
 - **Uchwała krajobrazowa.** Lublin pracował nad „kodeksem reklamowym", ale uchwała **wciąż nie została domknięta** (stan na 2025, w toku). W tle jest wyrok Trybunału Konstytucyjnego z 2023 r., który zakwestionował część przepisów ustawy krajobrazowej (brak rekompensaty za legalnie ustawione nośniki) — co spowalnia uchwały w całej Polsce. Co to oznacza i jak czytać te regulacje, tłumaczymy w tekście o [uchwale krajobrazowej](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama).
 
 Praktyczny insight: dopóki uchwała krajobrazowa nie obowiązuje, ustawianie i wynajem nośników w Lublinie podlega ogólnym przepisom budowlanym, a nie lokalnym limitom formatu czy gęstości. To formalne okno czasowe — ale stan przejściowy, który może się zmienić.
@@ -123,7 +123,7 @@ Lokalna tablica 6×3 m to ok. 500–600 zł netto miesięcznie za jedną stronę
 Tak. MPK Lublin oferuje oklejki całopojazdowe (1 300–1 500 zł netto/mies., min. 3 miesiące), reklamę na szybie tylnej (260–360 zł/mies.) oraz citylighty w gablotach przystankowych (od 150 zł). Trolejbusy to lokalny wyróżnik Lublina.
 
 **Czy Lublin ma uchwałę krajobrazową?**
-Na 2025 r. uchwała krajobrazowa Lublina wciąż nie została domknięta i pozostaje w toku. Obowiązuje za to ogólny mechanizm opłaty reklamowej (ustawowo do 2,50 zł/dzień od nośnika + 0,20 zł/m²) — wysokość potwierdź w aktualnej uchwale miasta.
+Na 2025 r. uchwała krajobrazowa Lublina wciąż nie została domknięta i pozostaje w toku. Obowiązuje za to ogólny mechanizm opłaty reklamowej (ustawowo do 3,89 zł/dzień od nośnika + 0,36 zł/m² dziennie — górne stawki na 2026) — wysokość potwierdź w aktualnej uchwale miasta.
 
 **Gdzie najlepiej reklamować się w Lublinie pod studentów?**
 W okolicach kampusów UMCS, KUL, Politechniki Lubelskiej, UM i UP oraz na trasach trolejbusowych łączących uczelnie z centrum. Przy ~60 tys. studentów to jedna z najgęstszych grup 18–30 w Polsce.

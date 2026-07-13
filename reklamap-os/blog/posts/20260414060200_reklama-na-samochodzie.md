@@ -103,7 +103,7 @@ Model pay-per-car działa w Polsce od kilku lat. Firma lub agencja reklamowa okl
 - Wiek pojazdu: do 5 lat
 - Aplikacja do śledzenia kilometrów i trasy
 
-**Insight ekspercki:** Zarobek z reklamy samochodowej jest wyższy w miastach z restrykcyjnymi uchwałami krajobrazowymi (Kraków, Warszawa) — firmy, które nie mogą postawić billboardu w centrum, chętniej płacą za mobilną ekspozycję. W Krakowie (strefa A — zakaz plakatów >2 m²) samochód z oklejeniem to czasem jedyna legalna forma reklamy w ścisłym centrum.
+**Insight ekspercki:** Zarobek z reklamy samochodowej jest wyższy w miastach z restrykcyjnymi uchwałami krajobrazowymi (Kraków, Warszawa) — firmy, które nie mogą postawić billboardu w centrum, chętniej płacą za mobilną ekspozycję. W Krakowie (uchwała krajobrazowa dzieli miasto na strefy I/II/III, w ścisłym centrum reklama wielkoformatowa i DOOH są praktycznie zakazane) samochód z oklejeniem to czasem jedyna legalna forma reklamy w centrum.
 
 Chcesz wystawić swój pojazd jako nośnik reklamowy? → [Dodaj ogłoszenie za darmo](/dodaj-powierzchnie-reklamowa)
 
@@ -121,7 +121,7 @@ Reklama na samochodzie to jedyna forma outdoor całkowicie wolna od pozwoleń ad
 Źródło: oklejamy-opole.pl.
 
 **Podatki dla firm:**
-Oklejenie samochodu firmowego to koszt reklamy — **pełne odliczenie VAT** na podstawie art. 86a ust. 1 pkt 3 ustawy o VAT (pojazd wykorzystywany wyłącznie do działalności). Koszty produkcji i montażu są kosztem uzyskania przychodu dla CIT/PIT. Źródło: 360ksiegowosc.pl.
+Oklejenie samochodu firmowego to koszt reklamy — **koszty produkcji i montażu są kosztem uzyskania przychodu dla CIT/PIT**. Odliczenie VAT reguluje art. 86a ustawy o VAT: samo oklejenie auta reklamą nie daje automatycznie 100% odliczenia — pełne odliczenie przysługuje tylko wtedy, gdy pojazd jest wykorzystywany wyłącznie do działalności i prowadzona jest ewidencja przebiegu; w pozostałych przypadkach odliczysz 50%. Źródło: 360ksiegowosc.pl.
 
 Więcej o formatach reklamy mobilnej: [Reklama w komunikacji miejskiej](/blog/poradniki/reklama-w-transporcie-publicznym)
 
@@ -137,7 +137,7 @@ Tak. Platformy pośredniczące płacą 400–700 zł/mc za pełne oklejenie, 300
 Nie. Oklejony, jeżdżący samochód nie podlega prawu budowlanemu ani uchwałom krajobrazowym. Jedyne ograniczenia wynikają z przepisów ruchu drogowego: nie zasłaniać szyby przedniej, lusterek i świateł. Inaczej jest z przyczepką reklamową stojącą na dłużej w pasie drogowym — ta może już wymagać zgody zarządcy drogi.
 
 **Czy oklejenie reklamowe można odliczyć od podatku?**
-Tak. Dla przedsiębiorców oklejenie samochodu firmowego to koszt reklamy — pełne odliczenie VAT (art. 86a ust. 1 pkt 3 ustawy o VAT) i koszt uzyskania przychodu dla CIT/PIT (wg 360ksiegowosc.pl).
+Tak. Dla przedsiębiorców oklejenie samochodu firmowego to koszt uzyskania przychodu dla CIT/PIT. Odliczenie VAT reguluje art. 86a ustawy o VAT: samo oklejenie reklamą nie daje automatycznie 100% odliczenia — pełne odliczenie wymaga używania pojazdu wyłącznie do działalności i ewidencji przebiegu, w innych przypadkach odliczasz 50% (wg 360ksiegowosc.pl).
 
 **Czym różni się przyczepka reklamowa od oklejenia samochodu?**
 Oklejenie zamienia w nośnik Twój własny pojazd, który jeździ po losowej trasie. Przyczepka reklamowa (mobilny billboard, często z ekranem LED) to osobny nośnik, który ustawiasz lub holujesz w konkretne, wybrane miejsce o dużym ruchu — i wynajmujesz na dni lub tygodnie zamiast oklejać na stałe.

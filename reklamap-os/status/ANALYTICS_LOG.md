@@ -5,6 +5,49 @@ Najnowszy wpis na górze. Nie nadpisuj — dopisuj.
 
 ---
 
+## 2026-07-13 — plan odbudowy widoczności po deindeksie (roadmap 30/60/90)
+
+> Źródło: workflow analityczny (3 perspektywy równolegle + synteza) na danych GSC do 12.07. Rozszerza brief z 2026-07-12 o konkretny plan czasowy, fix www/non-www i quick-winy priorytetyzowane wg **bliskości top-10**, nie wyświetleń. Kontekst wywołany pytaniem foundera „czy da się wrócić do widoczności sprzed deindeksu".
+
+### 1. Diagnoza (3 zdania)
+Runtime prerender.io wygasł 18.05.2026 → Googlebot dostawał pusty render → Google zdeindeksował strony i zresetował ranking (peak 8–16.05: 1672 wyśw/tydz, poz ~23, 25–46 klik/tydz → dno V–VI: 217–320 wyśw/tydz, 3–4 klik). Fix wdrożony (prerender build-time + seed Pinia `__INITIAL_STATE__` + tripwire); bot znów dostaje pełną treść, reindeksacja w toku. **Wyświetlenia wróciły (863/tydz), ale pozycje spadły do 38–59** — to normalna faza re-oceny (discovery odzyskane, ranking jeszcze nie), nie druga awaria.
+
+### 2. TERAZ (0–2 tyg) — max wpływ, zero/niskie ryzyko
+1. **Zweryfikuj `FRONTEND_URL=https://reklamap.pl` w prod `backend/.env`** (domyślka w `config/app.php:70` to localhost) → jeśli błędne, sitemap generuje www/localhost `<loc>` = jedyny aktywny wektor duplikatów; po korekcie `php artisan config:cache`.
+2. **Re-submit sitemap w GSC** (`https://reklamap.pl/sitemap.xml` — usuń stary wpis, dodaj, „Prześlij") — wymusza świeży discovery po naprawie prerendera.
+3. **Request indexing wg potencjału, nie wyświetleń** (10–12/dzień): `/powierzchnie-reklamowe/lublin` (poz 13.3 — najbliżej top-10) → `/` (16.6) → `/blog/poradniki/billboard-reklama` (18.2, jedyny bloga z klikami) → `/powierzchnie-reklamowe/billboardy` (19.2) → `/powierzchnie-reklamowe/reklama-mobilna` (19.2) → `/powierzchnie-reklamowe/citylighty/lodz` (17.4, ma 2 klik).
+4. **Inspect URL na wariantach www duplikatów** (`www.reklamap.pl/.../ekrany-led/poznan`, `.../reklama-w-transporcie/poznan`) — zmusza re-crawl → Google zobaczy 301 i skonsoliduje z non-www (301+canonical+sitemap+robots już non-www, kanonizacja jest OK — **nie odwracać kierunku**).
+5. **Sanity render** przed zgłoszeniami: `curl -A Googlebot https://reklamap.pl/...` = oferty ORAZ Live Test GSC > 0; przed pushem stron miast sprawdź `THIN_PAGE_THRESHOLD=3` (>3 oferty, inaczej noindex zabija optymalizację).
+
+### 3. 30–60 dni — content + linkowanie wg klastrów
+- **Klaster billboard (1542 wyśw, 0 klik — największa niewykorzystana pula):** hub-and-spoke z artykułu `blog/poradniki/billboard-reklama` (poz 18, w=396) → linki w dół do `billboardy/poznan` (przecięcie #1 typu × #1 miasta Poznań 1134 wyśw), `billboardy/lodz` (23.8), `billboardy/gdansk` (30), `billboardy/warszawa` (32); z każdego silosu link w górę do poradnika. Wzmocnij hub `/powierzchnie-reklamowe/billboardy` (19.2) treścią „wynajem/cennik/rozmiary".
+- **Ekran-LED × Poznań** (`ekrany-led/poznan` poz 23.6, tuż pod progiem, 946 wyśw typu): po konsolidacji www dopchnij linkowaniem + treścią lokalną („ekran LED / telebim Poznań").
+- **Citylight × Łódź** (poz 17.4, 2 klik — jedyny sprawdzony wzorzec typ×miasto): replikuj schemat na citylight×Poznań i citylight×Warszawa (niskie ryzyko — powielasz to, co działa); wzmocnij hub `citylighty` (poz 33, w=362).
+- **Gdańsk = miasto tranzytu** (753 wyśw, mniejsza konkurencja): skup mobilna/transport/totem — `reklama-w-transporcie/gdansk` (263 wyśw, poz 43), `totemy-reklamowe/gdansk` (poz 28, 2 klik), `reklama-mobilna/gdansk` (1 klik).
+- **3 nowe poradniki-kotwice** (luki nad klastrami): LED (946 wyśw), citylight (750), tranzyt/mobilna — każdy typ dostaje poradnik ZANIM linkujemy do jego silosów miejskich.
+- **Świeżość na stronach tuż-pod-progiem** (lublin, billboardy, reklama-mobilna): świeży blok tekstowy nad fałdą + `<lastmod>` w sitemapie. **NIE zmieniaj URL-i** (reset licznika re-oceny).
+
+### 4. 60–90 dni — budowa top-10 dla priorytetowych fraz
+- **Cel powrotu = poz ~23 (peak sprzed awarii), realistycznie w miesiącach.** Priorytet dociskania do top-10 wg ROI: `lublin` (13.3) i `citylighty/lodz` (17.4) najpierw — najbliżej progu; potem huby `billboardy` (19.2), `reklama-mobilna` (19.2); dopiero na końcu twardy rynek `warszawa` (poz 44) i `billboardy/warszawa` (32) — najwyższy popyt, ale najdroższy do wygrania, obsłuż „przy okazji" klastra billboard.
+- **HSTS** w `.htaccess` (`Strict-Transport-Security max-age=31536000; includeSubDomains; preload`) — po potwierdzeniu SSL na wszystkich subdomenach (api w SAN); domyka http:// i www jako osobne URL-e.
+- **Monitoruj trend pozycji** tygodniowo dla stron-celów — jeśli po 4–6 tyg pozycje NIE rosną mimo powrotu wyświetleń, szukaj głębszego problemu (częściowy noindex, WAF blokujący render-IP — pamięć `cors_render_ip_block`).
+
+### 5. Czego NIE robić / pułapki
+- **Nie ufaj „średniej pozycji" przy małych wyświetleniach** — `/powierzchnie-reklamowe/inne` poz 1.6 to niszowa fraza bez konkurencji, nie sukces skalowalny; średnia pozycji miesza silne i słabe zapytania.
+- **Nie myl odbicia wyświetleń z odbiciem ruchu** — 863 wyśw/tydz na poz 38–59 = CTR ≈ 0; wyświetlenia to sygnał reindeksacji, nie odzyskanego ruchu.
+- **Nie przepisuj treści w panice ani nie przebudowuj URL-i** w fazie re-oceny — zmiana URL resetuje licznik ponownie; potrzebna stabilność + cierpliwość + świeżość.
+- **Nie odwracaj kierunku redirectu** — non-www jest wszędzie kanoniczne (301+canonical+sitemap+robots); odwracanie = drugi reset equity.
+- **Nie zgłaszaj duplikatu www PRZED konsolidacją** (`ekrany-led/poznan`, `reklama-w-transporcie/poznan`) — utrwaliłoby rozdwojenie autorytetu; najpierw napraw/potwierdź 301, potem zgłoś.
+- **Nie pchaj on-page na stronach thin** (<3 oferty) — dostaną noindex (spójność `listingsSeo.ts` / `web.php` / `prerender.mjs`), optymalizacja pójdzie w próżnię.
+- **Nie usuwaj seedu `__INITIAL_STATE__` ani bramki `hasLoaded`** — regresja = pusty render mimo prerendera.
+
+### 6. Jak mierzyć (GSC — NIE średnia pozycja)
+1. **Kliknięcia niebrandowe / tydzień** — główny KPI odbudowy ruchu (odfiltruj brand „reklamap"); dziś ~0 poza brandem przy 554 zapytaniach — cel: pierwsze niebrandowe kliki z klastrów billboard/citylight/Poznań/Gdańsk.
+2. **Liczba fraz w top-10** (position ≤ 10, tydzień-do-tygodnia) — mierzy realny postęp rankingu, nie mydli jak średnia; start z bazy (`inne` 1.6, `lublin`/`citylighty/lodz` blisko).
+3. **Pozycja konkretnych stron-celów** trend WoW: `lublin` (13.3), `citylighty/lodz` (17.4), `billboardy` (19.2), `ekrany-led/poznan` (23.6 — sprawdzaj konsolidację www), `billboardy/poznan` — rośnie? Plus **coverage:** liczba URL-i w indeksie (Pages report) i status sitemapy vs `curl -A Googlebot` + Live Test > 0 (guard regresji renderu).
+
+---
+
 ## 2026-07-12 — przegląd po recovery deindeksu (GSC 90 dni: 11.04–10.07)
 
 > **✅ WDROŻONE 2026-07-12 (kodowa część planu widoczności, live+zweryfikowane na prodzie):**

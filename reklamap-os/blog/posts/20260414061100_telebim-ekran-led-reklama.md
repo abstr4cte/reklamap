@@ -15,11 +15,11 @@ published_at: "2026-04-12 08:00:00"
 status: draft
 ---
 
-<!-- Angle: Co to jest telebim, ile kosztuje reklama i dlaczego DOOH rośnie najszybciej w polskim OOH — segment wzrósł 32–36% r/r przy całym rynku OOH rosnącym ~4%. -->
+<!-- Angle: Co to jest telebim, ile kosztuje reklama i dlaczego DOOH rośnie najszybciej w polskim OOH — segment odpowiada już za ~32% rynku i jest jego głównym motorem wzrostu. -->
 
 # Telebim — co to jest i ile kosztuje reklama 2026
 
-**Telebim** to ekran wizyjny zbudowany z matrycy diod LED — pełnokolorowy wyświetlacz modułowy emitujący reklamę cyfrową. Reklama na pojedynczym telebimie kosztuje od **600 zł miesięcznie** (mały nośnik, emisja co 3 minuty) do **50 000 zł miesięcznie** za lokalizację premium w centrum Warszawy. Ekrany cyfrowe to dziś najszybciej rosnący segment reklamy outdoor w Polsce — wzrost 32–36% rocznie przy całym rynku OOH rosnącym o około 4%.
+**Telebim** to ekran wizyjny zbudowany z matrycy diod LED — pełnokolorowy wyświetlacz modułowy emitujący reklamę cyfrową. Reklama na pojedynczym telebimie kosztuje od **600 zł miesięcznie** (mały nośnik, emisja co 3 minuty) do **50 000 zł miesięcznie** za lokalizację premium w centrum Warszawy. Ekrany cyfrowe to dziś najszybciej rosnący segment reklamy outdoor w Polsce — DOOH odpowiada już za około 32% rynku OOH i pozostaje jego głównym motorem wzrostu.
 
 ## Telebim co to — definicja i rodzaje ekranów LED
 
@@ -61,16 +61,15 @@ Przeglądaj dostępne ekrany LED i telebimy → [reklamap.pl/powierzchnie-reklam
 
 DOOH to najszybciej rosnący segment polskiego rynku reklamy (źródło: sii.org.pl, oohmagazine.pl, raportstrategiczny.iab.org.pl):
 
-- Digital Network — lider rynku — obsługuje ponad **20 000** ekranów LED/LCD (98% przychodów z DOOH, 2025)
-- Udział DOOH w rynku OOH: **25–27%** (2023–2025), wzrost z 12–19% w poprzednich latach
-- Wartość DOOH w 2024 r.: **231–257 mln zł** z całkowitego rynku OOH wynoszącego 806 mln zł
-- Wzrost DOOH: **32–36% r/r**
+- Digital Network — jeden z liderów rynku — obsługuje szeroką sieć ekranów LED/LCD w całej Polsce
+- Udział DOOH w rynku OOH: **32%** (2025), wobec 61,6% dla klasycznego OOH i 6,4% dla city transport
+- Wartość całego rynku OOH: **806 mln zł** w 2024 r. (+9,7% r/r) i **870 mln zł** w 2025 r. (+7% r/r)
 - Zasięg DOOH: **84,61%** populacji 7–75 lat (ponad 27,6 mln osób, Gemius Mediapanel)
-- Prognoza rynku OOH 2026: **935 mln zł**
+- Prognoza rynku OOH na 2026 r.: jednocyfrowy wzrost, z DOOH jako głównym motorem
 
 Główni operatorzy w Polsce: Digital Network (ponad 30% udziału w DOOH), AMS (zasięg 22,87 mln osób), Ströer, Clear Channel, IMS, Screen Network. Źródło: wirtualnemedia.pl.
 
-DOOH rośnie 8–9× szybciej niż tradycyjny OOH (32–36% vs ~4% r/r). Przy prognozowanym rynku 935 mln zł w 2026 r. cyfrowe ekrany mogą przekroczyć 30% całego OOH — co oznacza, że za 2–3 lata co trzecia złotówka na reklamę zewnętrzną trafi na ekran LED. Dla reklamodawców to sygnał, żeby zacząć testować DOOH teraz, zanim ceny wzrosną wraz z popytem.
+DOOH rośnie znacznie szybciej niż tradycyjny OOH i odpowiada już za około 32% całego rynku. Przy prognozowanym na 2026 r. jednocyfrowym wzroście rynku, z DOOH jako głównym motorem, udział cyfrowych ekranów będzie dalej rósł — co oznacza, że coraz większa część budżetów na reklamę zewnętrzną trafi na ekran LED. Dla reklamodawców to sygnał, żeby zacząć testować DOOH teraz, zanim ceny wzrosną wraz z popytem.
 
 Jak wybrać odpowiedni nośnik dla swojej kampanii? → [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
@@ -78,7 +77,7 @@ Jak wybrać odpowiedni nośnik dla swojej kampanii? → [Jak wybrać powierzchni
 
 Ekran LED to nośnik stały i podlega tym samym przepisom co billboard (źródło: kancelaria-dzierwa.pl, ideanovum.pl):
 
-- **Pozwolenie budowlane** wymagane dla ekranów o powierzchni **>2,5 m²** (prawo budowlane, Dz.U.2023 poz.1045)
+- **Formalności budowlane:** instalacja tablicy lub urządzenia reklamowego wymaga **zgłoszenia** (art. 29 ust. 2 pkt 6 Prawa budowlanego, Dz.U. 2025 poz. 418), a wolnostojące urządzenie trwale związane z gruntem — **pozwolenia na budowę**; konkretne progi powierzchni (np. 2,5 czy 12 m²) mogą wynikać z lokalnych uchwał lub MPZP, nie z samej ustawy
 - **Uchwały krajobrazowe** obejmują ekrany LED — gminy regulują wymiary, lokalizację i strefy ochronne
 - **Ograniczenia emisji:** zakaz działania po **22:00** w strefach mieszkaniowych (przepisy lokalne), zakaz migających i pulsujących treści
 
@@ -98,7 +97,7 @@ Od ~35 zł za pojedynczą emisję i ~600 zł/mc za mały telebim do 50 000 zł/m
 Billboard to statyczny nośnik z wydrukowaną grafiką — jeden reklamodawca, wyłączność, brak możliwości zmiany treści bez druku. Telebim emituje animacje i filmy, obsługuje wielu reklamodawców w rotacji i pozwala zmieniać kreację zdalnie w ciągu minut.
 
 **Czy telebim wymaga pozwolenia?**
-Tak, jeśli ma powyżej 2,5 m² — wymagane jest pozwolenie budowlane (prawo budowlane, Dz.U.2023 poz.1045). Uchwały krajobrazowe dotyczą również ekranów LED. Dodatkowe ograniczenia: zakaz emisji po 22:00 w strefach mieszkaniowych i zakaz migających treści.
+Instalacja urządzenia reklamowego wymaga zgłoszenia (art. 29 ust. 2 pkt 6 Prawa budowlanego, Dz.U. 2025 poz. 418), a wolnostojący ekran trwale związany z gruntem — pozwolenia na budowę. Konkretne progi powierzchni bywają ustalane lokalnie w uchwałach lub MPZP, nie w samej ustawie. Uchwały krajobrazowe dotyczą również ekranów LED. Dodatkowe ograniczenia: zakaz emisji po 22:00 w strefach mieszkaniowych i zakaz migających treści.
 
 ---
 

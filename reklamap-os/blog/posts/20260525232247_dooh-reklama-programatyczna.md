@@ -1,11 +1,11 @@
 <!--
-ANGLE: DOOH (Digital Out-of-Home) w Polsce 2026 — co to, ile kosztuje, jak działa reklama programatyczna na ekranach. Pierwszy w Polsce przewodnik łączący stronę technologiczną (SSP/DSP, Hivestack/Vistar/Broadsign) z biznesową (cennik AMS CPM 58-237 zł, modele transakcyjne, próg wejścia od ~174 zł). DOOH = 32% rynku OOH PL, +16,4% r/r — najszybciej rosnący segment.
+ANGLE: DOOH (Digital Out-of-Home) w Polsce 2026 — co to, ile kosztuje, jak działa reklama programatyczna na ekranach. Pierwszy w Polsce przewodnik łączący stronę technologiczną (SSP/DSP, Hivestack/Vistar/Broadsign) z biznesową (cennik AMS CPM 58-237 zł, modele transakcyjne, próg wejścia od ~174 zł). DOOH = 32% rynku OOH PL — najszybciej rosnący segment.
 -->
 ---
 title: "DOOH — co to, ile kosztuje, reklama programatyczna 2026"
 slug: "dooh-reklama-programatyczna"
 category: trendy
-meta_description: "DOOH 2026: 32% rynku OOH PL, +16,4% r/r. Cennik AMS CPM 58-237 zł, próg od ~174 zł. Reklama programatyczna na ReklaMap →"
+meta_description: "DOOH 2026: 32% rynku OOH PL, najszybciej rosnący segment. Cennik AMS CPM 58-237 zł, próg od ~174 zł. Reklama programatyczna na ReklaMap →"
 image_alt: "DOOH reklama programatyczna — cyfrowy citylight z dynamiczną kreacją w centrum Warszawy"
 image_prompt: "Realistic professional photography of a digital DOOH citylight screen displaying a dynamic vibrant advertisement on a busy Warsaw street at blue hour, urban environment with modern architecture, pedestrians and cars in motion blur, natural and digital lighting mixed, sharp details, no readable text on the screen, shallow depth of field."
 keywords:
@@ -24,7 +24,7 @@ status: draft
 
 # DOOH — co to, ile kosztuje, reklama programatyczna 2026
 
-**DOOH (Digital Out-of-Home)** to reklama na cyfrowych ekranach w przestrzeni publicznej — billboardach digital, citylightach digital, ekranach w galeriach, transporcie i indoor. W Polsce segment ten wzrósł o 16,4% rok do roku i osiągnął 278,39 mln zł w 2025 (raport OOH Magazine 2025), przy całym rynku OOH wartym 870,23 mln zł i rosnącym tylko o 7%. **DOOH to dziś 32% rynku reklamy zewnętrznej w Polsce** — wzrost z mniej niż 25% w 2023. Próg wejścia do kampanii programmatic DOOH przez sieć AMS zaczyna się od ok. 174 zł (Digital Indoor, 3 CPM × 58 zł, cennik z 1 lipca 2024), a CPM dla najlepszych lokalizacji galeryjnych dochodzi do 237 zł. Ten przewodnik wyjaśnia, co to jest DOOH, jak działa reklama programatyczna na ekranach i ile to kosztuje w praktyce.
+**DOOH (Digital Out-of-Home)** to reklama na cyfrowych ekranach w przestrzeni publicznej — billboardach digital, citylightach digital, ekranach w galeriach, transporcie i indoor. W Polsce segment ten rośnie najszybciej ze wszystkich kategorii reklamy zewnętrznej, podczas gdy cały rynek OOH osiągnął w 2025 wartość 870,23 mln zł, rosnąc o 7% (dane IGRZ/OOHlife). **DOOH to dziś ok. 32% rynku reklamy zewnętrznej w Polsce** — z wyraźnym wzrostem udziału w ostatnich latach. Próg wejścia do kampanii programmatic DOOH przez sieć AMS zaczyna się od ok. 174 zł (Digital Indoor, 3 CPM × 58 zł, cennik z 1 lipca 2024), a CPM dla najlepszych lokalizacji galeryjnych dochodzi do 237 zł. Ten przewodnik wyjaśnia, co to jest DOOH, jak działa reklama programatyczna na ekranach i ile to kosztuje w praktyce.
 
 ## Czym jest DOOH i czym różni się od klasycznego OOH
 
@@ -64,16 +64,14 @@ W praktyce reklamodawca w Polsce kupuje DOOH przez **Adform** lub **DV 360** (Go
 
 ## Rynek DOOH w Polsce — twarde liczby 2025
 
-| Metryka | Wartość 2025 | Dynamika r/r |
+| Metryka | Wartość 2025 | Udział / dynamika |
 |---|---|---|
-| **Wartość rynku OOH PL** | 870,23 mln zł | +7% |
-| **Segment DOOH** | **278,39 mln zł** | **+16,4% (najszybciej rosnący)** |
-| Udział DOOH w OOH | **32%** | wzrost z <25% w 2023 |
-| Klasyczny OOH (static) | 536,23 mln zł (61,6%) | +2,8% |
-| City Transport | 55,61 mln zł (6,4%) | +6,0% |
-| **Zasięg DOOH (7–75 lat)** | **72,6% populacji** | analiza AMS/Gemius |
+| **Wartość rynku OOH PL** | 870,23 mln zł | +7% r/r |
+| **Segment DOOH** | najszybciej rosnący segment | **32% rynku OOH** |
+| Klasyczny OOH (static) | — | **61,6% rynku** |
+| City Transport | — | **6,4% rynku** |
 
-Źródło: OOH Magazine, Raport OOH w Polsce 2025. Prognoza na 2026 zakłada umiarkowany jednocyfrowy wzrost całego OOH przy dalszym wzroście udziału DOOH — głównie z digitalizacji istniejącej infrastruktury (klasyczne citylighty wymieniane na digital).
+Źródło: dane IGRZ/OOHlife, rynek OOH w Polsce 2025. Prognoza na 2026 zakłada umiarkowany jednocyfrowy wzrost całego OOH przy dalszym wzroście udziału DOOH — głównie z digitalizacji istniejącej infrastruktury (klasyczne citylighty wymieniane na digital).
 
 [Przeglądaj ekrany LED w swoim mieście →](/powierzchnie-reklamowe)
 
@@ -170,8 +168,8 @@ Insight z konferencji DataDrivenDOOH: marki coraz częściej traktują DOOH jako
 
 DOOH podlega tym samym przepisom co [reklama outdoor klasyczna](/blog/poradniki/reklama-zewnetrzna), ale ze specyficznymi limitami dla ekranów cyfrowych:
 
-- **[Uchwały krajobrazowe](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama)** — większość polskich miast wojewódzkich dzieli przestrzeń na 4 strefy (staromiejska, centrum/historyczne, zurbanizowana, pozostająca). DOOH najczęściej zakazane lub mocno ograniczone w strefach historycznych.
-- **Limit jasności i nasycenia** — [Łódź](/blog/lokalizacje/reklama-outdoor-lodz) (UKO od 2016) i [Kraków](/blog/lokalizacje/reklama-outdoor-krakow) (UKO od 2023) mają twarde limity jasności ekranów DOOH, zwłaszcza w godzinach nocnych.
+- **[Uchwały krajobrazowe](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama)** — miasta, które przyjęły uchwałę, zwykle dzielą przestrzeń na kilka stref o różnym reżimie (najczęściej od strefy staromiejskiej po obszary peryferyjne; liczba i oznaczenia stref różnią się między miastami). DOOH najczęściej jest zakazane lub mocno ograniczone w strefach historycznych. Podstawą prawną takich uchwał jest art. 37a ustawy z 27 marca 2003 r. o planowaniu i zagospodarowaniu przestrzennym.
+- **Limit jasności i nasycenia** — [Kraków](/blog/lokalizacje/reklama-outdoor-krakow) (uchwała krajobrazowa od 1 lipca 2020) mocno ogranicza ekrany DOOH, zwłaszcza w godzinach nocnych. W [Łodzi](/blog/lokalizacje/reklama-outdoor-lodz) uchwała z 2016 pozostaje zawieszona sądownie i nieegzekwowana, więc nie stanowi obowiązującego wzorca limitów.
 - **Zakaz w strefach historycznych** — strefy K (krajobraz kulturowy) zwykle wykluczają digital screens. To powód, dla którego DOOH w Polsce rozwija się głównie w nowoczesnych centrach handlowych i przy arteriach poza centrum.
 
 ## ESG i sustainability w DOOH
@@ -196,10 +194,10 @@ Według publicznego cennika AMS Programmatic DOOH (z 1 lipca 2024): Digital Indo
 Tradycyjny DOOH kupuje się direct — telefon lub mail do operatora, harmonogram emisji ustalany tygodnie naprzód. Programmatic DOOH (pDOOH) to zakup automatyczny przez platformy DSP/SSP w modelu aukcyjnym RTB. Można kupować pojedyncze impressions w sekundach, targetować po pogodzie, lokalizacji, porze dnia i danych audience. W Polsce dostępne od 2024–2025 przez Adform, DV 360, Hivestack, Vistar, Broadsign, VIOOH.
 
 **Dlaczego DOOH rośnie tak szybko w Polsce?**
-W 2025 segment DOOH wzrósł o 16,4% rok do roku do 278,39 mln zł, przy całym rynku OOH rosnącym tylko 7% (raport OOH Magazine 2025). Powody: digitalizacja istniejącej infrastruktury (klasyczne citylighty wymieniane na digital), zasięg 72,6% populacji 7–75 lat, dostępność platform programmatic od 2024, niski próg wejścia (156 zł) i mierzalność kampanii (realne impressions, audience-based buying).
+DOOH jest najszybciej rosnącym segmentem rynku OOH i odpowiada za ok. 32% jego wartości, podczas gdy cały rynek OOH w 2025 rósł o 7% (dane IGRZ/OOHlife). Powody: digitalizacja istniejącej infrastruktury (klasyczne citylighty wymieniane na digital), szeroki zasięg kampanii cyfrowych, dostępność platform programmatic od 2024, niski próg wejścia (od ok. 174 zł) i mierzalność kampanii (realne impressions, audience-based buying).
 
 **Czy DOOH wypiera klasyczny OOH?**
-Nie wypiera, uzupełnia. Klasyczny OOH w 2025 nadal rośnie o 2,8% r/r (do 536,23 mln zł) i pozostaje 61,6% rynku. DOOH przejmuje 32% i rośnie, ale głównie z budżetów digital/programmatic, nie z budżetów klasycznego OOH. W przyszłości najpewniej rynek będzie hybrydowy: drogie premium lokalizacje statyczne (długoterminowe brand building) + DOOH dla taktycznych kampanii contextual i programmatic.
+Nie wypiera, uzupełnia. Klasyczny OOH w 2025 nadal rośnie i pozostaje największą częścią rynku (61,6%). DOOH ma ok. 32% i rośnie, ale głównie z budżetów digital/programmatic, nie z budżetów klasycznego OOH. W przyszłości najpewniej rynek będzie hybrydowy: drogie premium lokalizacje statyczne (długoterminowe brand building) + DOOH dla taktycznych kampanii contextual i programmatic.
 
 **Gdzie w Polsce można kupić DOOH programmatic?**
 U największych operatorów: AMS Digital (publiczny cennik od 1 lipca 2024), Stroer Digital, JCDecaux Polska (przez własne SSP VIOOH), Cityboard, Walls Outdoor. Po stronie kupującej: przez DSP takie jak Adform, DV 360, Hivestack, Vistar Media, Broadsign Reach, Place Exchange, Adomni. Wszystkie te platformy mają polskie inventory dostępne od 2024–2025.

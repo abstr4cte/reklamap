@@ -19,7 +19,7 @@ status: draft
 
 # Citylight reklama — co to jest, cennik 2026, kiedy wybrać
 
-Citylight to podświetlana tablica reklamowa w formacie 1,2×1,8 m, osadzona w aluminiowej ramie z szybą i oświetlona backlightem — co oznacza pełną widoczność przez całą dobę. Wynajem standardowego nośnika kosztuje od 200 zł/mc netto w mniejszych miastach do 4 000 zł/mc netto w centrum Warszawy, do tego dochodzi druk plakatu 50–130 zł netto. Format ten generował w 2024 roku 145 mln zł przychodów klasycznego OOH i pozostaje numerem jeden wśród nośników naziemnych w Polsce. Poniżej znajdziesz pełny cennik (klasyczny i digital), zestawienie operatorów, listę najlepszych lokalizacji i odpowiedź na pytanie, kiedy citylight bije billboard na głowę.
+Citylight to podświetlana tablica reklamowa w formacie 1,2×1,8 m, osadzona w aluminiowej ramie z szybą i oświetlona backlightem — co oznacza pełną widoczność przez całą dobę. Wynajem standardowego nośnika kosztuje od 200 zł/mc netto w mniejszych miastach do 4 000 zł/mc netto w centrum Warszawy, do tego dochodzi druk plakatu 50–130 zł netto. Format ten pozostaje najczęściej wykorzystywanym nośnikiem naziemnym w klasycznym OOH w Polsce — wg danych IGRZ citylighty odpowiadały za ok. 42% sprzedaży w klasycznym OOH w Q1 2025. Poniżej znajdziesz pełny cennik (klasyczny i digital), zestawienie operatorów, listę najlepszych lokalizacji i odpowiedź na pytanie, kiedy citylight bije billboard na głowę.
 
 ---
 
@@ -88,7 +88,7 @@ Na rynku dominują czterej gracze, przy czym AMS kontroluje największy udział 
 
 Operatorzy oferują kampanie pakietowe — kupujesz czas na grupie nośników w danym mieście, co obniża cenę jednostkową. Przy 10–20 nośnikach w Warszawie kampania CL dotyka 14,5–26% populacji miasta, czyli od 254 do 460 tys. osób.
 
-Sektor rośnie w kierunku DOOH: w 2025 roku sprzedaż programatyczna w tym segmencie wzrosła o 312% rok do roku.
+Sektor wyraźnie rośnie w kierunku DOOH, który jest głównym motorem wzrostu rynku OOH — w 2025 roku klasyczne OOH odpowiadało za ok. 61,6% rynku, a DOOH już za ok. 32% (dane IGRZ/OOHlife).
 
 ---
 
@@ -138,7 +138,7 @@ Szukasz konkretnego nośnika? Przeglądaj dostępne [powierzchnie reklamowe w Po
 
 ## Formalności przy wynajmie citylightu
 
-Standardowy citylight ustawiony przez operatora (AMS, Ströer, Clear Channel) nie wymaga od reklamodawcy załatwiania pozwoleń — operator ma stosowne umowy z zarządcą terenu i jest zgodny z lokalnymi uchwałami krajobrazowymi (art. 6b ustawy o planowaniu przestrzennym).
+Standardowy citylight ustawiony przez operatora (AMS, Ströer, Clear Channel) nie wymaga od reklamodawcy załatwiania pozwoleń — operator ma stosowne umowy z zarządcą terenu i jest zgodny z lokalnymi uchwałami krajobrazowymi (art. 37a ustawy o planowaniu i zagospodarowaniu przestrzennym).
 
 Sytuacja jest bardziej złożona, jeśli planujesz postawić własny nośnik lub wynająć miejsce od prywatnego właściciela nieruchomości:
 

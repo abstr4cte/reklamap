@@ -23,7 +23,7 @@ status: draft
 
 # Reklama bez pozwolenia — kary i legalizacja 2026
 
-Za reklamę postawioną bez wymaganych formalności grożą **trzy niezależne rodzaje kar naraz** — i to jest najczęściej niedoceniane ryzyko. Jeden billboard bez pozwolenia może jednocześnie ściągnąć nakaz rozbiórki od nadzoru budowlanego, administracyjną karę krajobrazową liczoną za każdy dzień ekspozycji (w jednej z gmin to 192 zł dziennie, czyli 5 760 zł miesięcznie przy nośniku 8 m²) oraz karę za zajęcie pasa drogowego. Co gorsza, zalegalizowanie samej konstrukcji nie zdejmuje pozostałych sankcji. Poniżej tłumaczymy, co dokładnie grozi, ile to realnie kosztuje i jak zalegalizować istniejący nośnik.
+Za reklamę postawioną bez wymaganych formalności grożą **trzy niezależne rodzaje kar naraz** — i to jest najczęściej niedoceniane ryzyko. Jeden billboard bez pozwolenia może jednocześnie ściągnąć nakaz rozbiórki od nadzoru budowlanego, administracyjną karę krajobrazową liczoną za każdy dzień ekspozycji (przy przykładowej stawce to 80 zł dziennie, czyli 2 400 zł miesięcznie przy nośniku 8 m²) oraz karę za zajęcie pasa drogowego. Co gorsza, zalegalizowanie samej konstrukcji nie zdejmuje pozostałych sankcji. Poniżej tłumaczymy, co dokładnie grozi, ile to realnie kosztuje i jak zalegalizować istniejący nośnik.
 
 ## Trzy reżimy kar, które działają równolegle
 
@@ -53,9 +53,9 @@ Dla tablicy lub billboardu wysokość zależy od tego, jak organ zakwalifikuje n
 
 Kara z art. 37d ustawy o planowaniu i zagospodarowaniu przestrzennym ma charakter administracyjny i biegnie **za każdy dzień** ekspozycji nośnika niezgodnego z uchwałą krajobrazową. Model ustawowy wygląda tak:
 
-> kara dzienna = 40-krotność części stałej stawki opłaty reklamowej + pole powierzchni (m²) × 40-krotność części zmiennej tej stawki
+> kara dzienna = pole powierzchni (m²) × 40-krotność części zmiennej stawki opłaty reklamowej
 
-Konkretne stawki ustala gmina w granicach ustawy, więc kwoty różnią się między miastami. Dla przykładu w gminie Konstancin-Jeziorna przyjęto 112 zł dziennie plus 10 zł za każdy metr kwadratowy. Przy reklamie o powierzchni 8 m² daje to **192 zł dziennie — czyli 5 760 zł za 30 dni**. Podstawą tych stawek jest [opłata reklamowa](/blog/prawo-i-regulacje/oplata-reklamowa), a zasady, które nośnik może naruszać, znajdziesz w tekście o [uchwale krajobrazowej](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama).
+Konkretną stawkę zmienną ustala gmina w granicach ustawy, więc kwoty różnią się między miastami. Dla przykładu, gdy 40-krotność części zmiennej daje 10 zł za każdy metr kwadratowy dziennie, to przy reklamie o powierzchni 8 m² kara wynosi **80 zł dziennie — czyli 2 400 zł za 30 dni**. Podstawą tych stawek jest [opłata reklamowa](/blog/prawo-i-regulacje/oplata-reklamowa), a zasady, które nośnik może naruszać, znajdziesz w tekście o [uchwale krajobrazowej](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama).
 
 > **Stawiasz nośnik legalnie i chcesz go wynająć?** Zobacz, jak wygląda rynek powierzchni reklamowych → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe).
 
@@ -86,7 +86,7 @@ Przykład: jeśli stawka opłaty wynosi 2 zł za m² na dzień, to kara sięga 2
 Trzy niezależne sankcje: postępowanie nadzoru budowlanego (legalizacja albo nakaz rozbiórki), administracyjna kara krajobrazowa liczona za każdy dzień oraz kara za zajęcie pasa drogowego, jeśli nośnik stoi w pasie.
 
 **Ile wynosi kara za nielegalną reklamę?**
-Nie ma jednej kwoty. Kara krajobrazowa biegnie dziennie według stawek gminy — w przykładowej gminie 192 zł dziennie (5 760 zł miesięcznie przy 8 m²). Kara drogowa to 10-krotność opłaty za zajęcie pasa, a opłata legalizacyjna liczona jest osobnym wzorem i sięga od kilku do kilkudziesięciu tysięcy złotych.
+Nie ma jednej kwoty. Kara krajobrazowa biegnie dziennie i wynosi pole powierzchni × 40-krotność części zmiennej stawki opłaty reklamowej — przy przykładowej stawce 80 zł dziennie (2 400 zł miesięcznie przy 8 m²). Kara drogowa to 10-krotność opłaty za zajęcie pasa, a opłata legalizacyjna liczona jest osobnym wzorem i sięga od kilku do kilkudziesięciu tysięcy złotych.
 
 **Czy nielegalny billboard trzeba rozebrać?**
 Niekoniecznie. Jeśli obiekt kwalifikuje się do legalizacji i spełnisz jej warunki, można go zalegalizować. Rozbiórka grozi, gdy legalizacja jest niemożliwa lub inwestor nie dopełni jej warunków.

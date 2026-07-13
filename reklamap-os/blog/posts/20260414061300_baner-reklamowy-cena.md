@@ -66,7 +66,7 @@ Trzy standardowe formaty dominują na polskim rynku (źródło: billboard-x.pl, 
 - **18×6 m (108 m²)** — format autostradowy; maksymalny zasięg na trasach szybkiego ruchu
 - **200–400 m²** — wielkoformat na ścianie budynku; kampanie wizerunkowe w centrach miast
 
-**Insight ekspercki:** Format 5×2,4 m to jedyny nośnik outdoor, który można legalnie zawiesić przez 90 dni bez jakichkolwiek pozwoleń — i którego łączny koszt (druk + wynajem w małej miejscowości) może być niższy niż jeden miesiąc wynajmu billboardu 12×4 m w centrum. Dla lokalnych firm i kampanii sezonowych to najlepszy stosunek zasięgu do kosztu wejścia.
+**Insight ekspercki:** Format 5×2,4 m to jeden z najtańszych nośników outdoor w wejściu — jego łączny koszt (druk + wynajem w małej miejscowości) może być niższy niż jeden miesiąc wynajmu billboardu 12×4 m w centrum. Dla lokalnych firm i kampanii sezonowych to najlepszy stosunek zasięgu do kosztu wejścia. Pamiętaj tylko, że nawet baner tymczasowy podlega przepisom (zgłoszenie, ewentualna uchwała krajobrazowa) — o formalnościach piszemy niżej.
 
 Nie wiesz, który format pasuje do Twojej kampanii? → [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
@@ -84,13 +84,13 @@ Nie wiesz, który format pasuje do Twojej kampanii? → [Jak wybrać powierzchni
 
 ## Przepisy — kiedy potrzebujesz pozwolenia?
 
-Baner reklamowy to nośnik tymczasowy, ale przepisy i tak obowiązują (źródło: Prawo budowlane 2025, ustawa krajobrazowa 2015/2023):
+Baner reklamowy to nośnik tymczasowy, ale przepisy i tak obowiązują (źródło: Prawo budowlane, Dz.U. 2025 poz. 418; ustawa krajobrazowa 2015):
 
-- **Do 90 dni** — bez pozwolenia (art. 29 ust. 2 pkt 20 Prawa budowlanego). Dotyczy tymczasowych nośników reklamowych.
-- **Powyżej 90 dni lub >3 m² w pasie drogowym** — wymagane pozwolenie budowlane lub zgłoszenie do starostwa.
-- **Ustawa krajobrazowa** — gminy z uchwałą mogą zakazać wielkoformatowych banerów w określonych strefach. Kary za naruszenie: do 2 mln zł (art. 65–71).
+- **Instalacja tablicy/urządzenia reklamowego** — co do zasady wymaga zgłoszenia (art. 29 ust. 2 pkt 6 Prawa budowlanego). Obiekty tymczasowe podlegają odrębnemu reżimowi terminowemu.
+- **Wolnostojące urządzenie reklamowe trwale związane z gruntem** — wymaga pozwolenia na budowę. Konkretne progi powierzchni (np. 2,5 czy 3 m²) mogą wynikać z lokalnych uchwał lub MPZP, nie z ustawy. W pasie drogowym dodatkowo potrzebne jest zezwolenie zarządcy drogi (art. 40 ustawy o drogach publicznych).
+- **Ustawa krajobrazowa** — gminy z uchwałą mogą zakazać wielkoformatowych banerów w określonych strefach. Kara za nielegalny nośnik (art. 37d ustawy krajobrazowej): powierzchnia w m² × 40 × zmienna stawka opłaty reklamowej, za każdy dzień. Przykład dla banera 12 m²: 12 × 40 × 0,36 zł = 172,80 zł/dzień.
 
-Praktyczna wskazówka: kampania sezonowa (np. letnia, 2–3 miesiące) mieści się w limicie 90 dni — legalnie bez formalności. Kampania całoroczna wymaga zgłoszenia.
+Praktyczna wskazówka: obiekty tymczasowe podlegają odrębnemu reżimowi terminowemu, więc krótka kampania sezonowa ma zwykle prostsze wymogi niż ekspozycja całoroczna. Przed montażem sprawdź, czy w danej gminie obowiązuje uchwała krajobrazowa i jakie limity nakłada.
 
 Więcej o przepisach i formalnościach: [Tablica reklamowa — przepisy krok po kroku](/blog/poradniki/tablica-reklamowa)
 
@@ -102,8 +102,8 @@ Druk banera PCV to 30–80 zł/m² netto (kiwigifts.pl). Baner 5×2,4 m (12 m²)
 **Ile kosztuje baner reklamowy cena za m²?**
 Druk PCV standard: 30–80 zł/m² netto. Mesh (siatka): 10–20% drożej. Baner tekstylny: 20–30% taniej. Cena finalna zależy od gramatury folii, rodzaju druku (UV/ekosolwent) i wykończenia (oczka, liny).
 
-**Jak długo można wisieć baner bez pozwolenia?**
-Do 90 dni — na podstawie art. 29 ust. 2 pkt 20 Prawa budowlanego (nośniki tymczasowe). Po przekroczeniu tego okresu lub przy powierzchni >3 m² w pasie drogowym wymagane jest pozwolenie lub zgłoszenie.
+**Czy baner reklamowy wymaga pozwolenia?**
+Instalacja tablicy lub urządzenia reklamowego co do zasady wymaga zgłoszenia (art. 29 ust. 2 pkt 6 Prawa budowlanego, Dz.U. 2025 poz. 418), a wolnostojące urządzenie trwale związane z gruntem — pozwolenia na budowę. Obiekty tymczasowe podlegają odrębnemu reżimowi terminowemu. Konkretne progi powierzchni bywają określane lokalnie (uchwała krajobrazowa, MPZP), a w pasie drogowym potrzebne jest zezwolenie zarządcy drogi.
 
 **Kiedy wybrać mesh zamiast PCV?**
 Gdy baner będzie na wysokim budynku, w strefie wietrznej (miasto nadmorskie), na elewacji z oknami lub ma duży format (>50 m²). Mesh przepuszcza wiatr i światło — tam gdzie PCV mogłoby się zerwać lub zaciemnić wnętrze, mesh działa bez problemu.

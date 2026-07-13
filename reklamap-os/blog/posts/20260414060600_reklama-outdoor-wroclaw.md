@@ -106,7 +106,7 @@ Obszar Parku (~210 ha) obejmuje:
 - Zakaz nośników naruszających historyczny charakter zabudowy
 - Dozwolone: dyskretne tablice, banery zgodne z ochroną konserwatorską
 
-**Poza Parkiem** (Krzyki, Fabryczna, Psie Pole, trasy wylotowe) — standardowe przepisy budowlane, brak szczególnych ograniczeń dla nośników OOH. To istotna różnica wobec Krakowa czy Warszawy, gdzie uchwały obejmują znacznie szerszy obszar miasta.
+**Poza Parkiem** (Krzyki, Fabryczna, Psie Pole, trasy wylotowe) — standardowe przepisy budowlane, brak szczególnych ograniczeń dla nośników OOH. To istotna różnica wobec Krakowa, którego uchwała krajobrazowa obejmuje znacznie szerszy obszar miasta (Warszawa jest dopiero na etapie projektu nowej uchwały).
 
 Przed podpisaniem umowy sprawdź, czy nośnik leży w granicach Parku. Więcej o przepisach: [Tablica reklamowa — przepisy i pozwolenia](/blog/poradniki/tablica-reklamowa)
 

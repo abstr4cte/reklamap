@@ -73,7 +73,7 @@ Tu czeka najczęstsza pułapka. Wspólnoty zakładają, że skoro nie prowadzą 
 |---|---|---|
 | CIT | 19% (lub 9% dla małych podatników) | art. 17 ust. 1 pkt 44 ustawy o CIT — brak zwolnienia |
 | VAT | 23% (usługa reklamowa) | art. 19a ust. 1 ustawy o VAT |
-| Opłata reklamowa (gmina) | do 3,72 zł/dzień + do 0,34 zł/m²/dzień (2025) | uchwała gminy |
+| Opłata reklamowa (gmina) | do 3,89 zł/dzień + do 0,36 zł/m²/dzień (2026) | uchwała gminy |
 
 Opłata reklamowa pojawia się tylko w gminach, które ją wprowadziły — szerzej piszemy o niej w tekście o [opłacie reklamowej](/blog/prawo-i-regulacje/oplata-reklamowa). W praktyce warto rozliczenie skonsultować z księgowym wspólnoty, bo połączenie CIT i VAT bywa mylące.
 

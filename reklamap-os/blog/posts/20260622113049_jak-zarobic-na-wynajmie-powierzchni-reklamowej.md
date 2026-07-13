@@ -71,9 +71,9 @@ W części gmin obowiązuje dodatkowo opłata reklamowa wprowadzana uchwałą �
 
 ## Przepisy: odległości od drogi i pozwolenia
 
-Reklama przy drogach publicznych podlega ograniczeniom odległościowym. W terenie zabudowanym nośnik musi stać co najmniej 10 m od krawędzi jezdni przy drodze krajowej i 20 m przy ekspresowej. Poza terenem zabudowanym jest to 25 m przy krajowej i 40 m przy ekspresowej (archiwum.gddkia.gov.pl); nowsze opracowania branżowe mówią nawet o 50 m od autostrady i drogi ekspresowej poza zabudową (kujawy.info, 2026).
+Reklama przy drogach publicznych podlega ograniczeniom odległościowym z art. 43 ustawy o drogach publicznych, a wartości zależą od kategorii drogi oraz tego, czy nośnik stoi w terenie zabudowanym, czy poza nim. W terenie zabudowanym / niezabudowanym minimalna odległość od krawędzi jezdni wynosi: autostrada 30 / 50 m, droga ekspresowa 20 / 40 m, droga krajowa 10 / 25 m, droga wojewódzka i powiatowa 8 / 20 m, droga gminna 6 / 15 m. Jeśli nośnik ma stanąć w pasie drogowym, potrzebne jest zezwolenie zarządcy drogi (art. 40), a opłatę nalicza się według powierzchni i czasu zajęcia pasa.
 
-Tablica o powierzchni **powyżej 12 m²** zwykle wymaga pozwolenia na budowę lub procedur uzgodnieniowych. Dobra wiadomość dla właściciela: przy dużych nośnikach formalności po swojej stronie najczęściej załatwia operator (reklamowekonstrukcje.pl). Warto też sprawdzić, czy w Twojej gminie obowiązuje [uchwała krajobrazowa](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama), bo może ograniczać format i lokalizację nośnika.
+Zasada z Prawa budowlanego jest prostsza, niż się często pisze: montaż tablicy lub urządzenia reklamowego to co do zasady **zgłoszenie** (art. 29 ust. 2 pkt 6), a wolnostojące urządzenie reklamowe trwale związane z gruntem wymaga **pozwolenia na budowę**. Same ustawowe przepisy nie ustanawiają uniwersalnego progu powierzchni (np. 12 m²) — konkretne limity metrażowe bywają narzucane lokalnie, w uchwale krajobrazowej lub miejscowym planie. Dobra wiadomość dla właściciela: przy dużych nośnikach formalności po swojej stronie najczęściej załatwia operator (reklamowekonstrukcje.pl). Warto też sprawdzić, czy w Twojej gminie obowiązuje [uchwała krajobrazowa](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama), bo może ograniczać format i lokalizację nośnika.
 
 ## Co musi zawierać umowa dzierżawy
 
@@ -111,7 +111,7 @@ Od 500–900 zł miesięcznie w małej miejscowości, przez 900–2 500 zł przy
 Najem prywatny rozlicza się ryczałtem: 8,5% do 100 000 zł przychodu rocznie i 12,5% od nadwyżki. Trzeba też ustalić w umowie, kto pokrywa ewentualny podatek od budowli reklamowej.
 
 **Czy potrzebuję pozwolenia, żeby postawić billboard na działce?**
-Tablica powyżej 12 m² zwykle wymaga pozwolenia lub uzgodnień, a nośnik musi zachować wymaganą odległość od drogi. Przy dużych konstrukcjach formalności najczęściej przejmuje operator.
+Montaż tablicy reklamowej to zwykle zgłoszenie, a wolnostojący nośnik trwale związany z gruntem wymaga pozwolenia na budowę. Ustawa nie ustala jednego progu powierzchni — konkretne limity metrażowe mogą wynikać z lokalnej uchwały krajobrazowej lub planu miejscowego. Nośnik musi też zachować wymaganą odległość od drogi. Przy dużych konstrukcjach formalności najczęściej przejmuje operator.
 
 **Jak długo trwa umowa dzierżawy pod reklamę?**
 To kwestia negocjacji — umowy bywają roczne lub wieloletnie. Kluczowe, by zawierały zasady waloryzacji czynszu oraz jasne reguły demontażu i przywrócenia terenu po zakończeniu.

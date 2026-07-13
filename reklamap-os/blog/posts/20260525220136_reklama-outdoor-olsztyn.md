@@ -1,5 +1,5 @@
 <!--
-ANGLE: Reklama outdoor w Olsztynie 2026 — rynek ofertowy (a nie cennikowy), brama Mazur z sezonowym wahaniem stawek, jedyne miasto <200 tys. mieszkańców z tramwajem (MPK 48 mln pasażerów/rok) i uchwała krajobrazowa wciąż w procedowaniu — okno czasowe, którego nie ma już Łódź ani Gdańsk.
+ANGLE: Reklama outdoor w Olsztynie 2026 — rynek ofertowy (a nie cennikowy), brama Mazur z sezonowym wahaniem stawek, jedyne miasto <200 tys. mieszkańców z tramwajem (MPK 48 mln pasażerów/rok) i uchwała krajobrazowa wciąż w procedowaniu — okno czasowe, którego nie ma już Gdańsk (egzekwowana UKO od 2018).
 -->
 ---
 title: "Reklama outdoor Olsztyn 2026 — ceny, MPK, przepisy"
@@ -74,7 +74,7 @@ Tu Olsztyn ma przewagę, której nie ma żaden inny rynek tej skali. Po 50 latac
 
 Reklama w MPK Olsztyn (autobusy, tramwaje, wiaty przystankowe) ma jeszcze jedną cechę: **transport publiczny zwykle nie podlega uchwale krajobrazowej** — co w przypadku Olsztyna, gdzie taka uchwała jest właśnie procedowana, robi z MPK najbezpieczniejszą opcję na nadchodzące 2–3 lata. Jeśli planujesz kampanię regionalną, [znajdź nośnik z uregulowanym statusem prawnym →](/powierzchnie-reklamowe).
 
-## Uchwała krajobrazowa Olsztyn — okno czasowe, którego nie ma już Łódź
+## Uchwała krajobrazowa Olsztyn — okno czasowe, którego nie ma już Gdańsk
 
 Stan na 2026: **projekt uchwały krajobrazowej Olsztyna jest w procedowaniu** — miasto wyłożyło go ponownie do wglądu, ale finalna wersja jeszcze nie obowiązuje. Zakres projektu obejmuje cztery rzeczy:
 
@@ -83,9 +83,9 @@ Stan na 2026: **projekt uchwały krajobrazowej Olsztyna jest w procedowaniu** �
 3. **Urządzenia reklamowe** (totemy, pylony, ekrany).
 4. Ogrodzenia.
 
-Co to znaczy praktycznie dla rynku? **Dziś działa tu jeszcze "stara normalka"** — formaty wielkoformatowe są dopuszczalne, banery elewacyjne nie mają twardych limitów. Ale gdy uchwała wejdzie, można spodziewać się scenariusza znanego z [Łodzi i innych miast z UKO](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama): strefowanie, limity wymiarów (Łódź ma 18 m² dla wolnostojących), ograniczenia DOOH, możliwy zakaz murali w strefach historycznych. Najbardziej narażone na restrykcje są duże siatki elewacyjne, tablice powyżej 12 m² i nośniki w Starym Mieście.
+Co to znaczy praktycznie dla rynku? **Dziś działa tu jeszcze "stara normalka"** — formaty wielkoformatowe są dopuszczalne, banery elewacyjne nie mają twardych limitów. Ale gdy uchwała wejdzie, można spodziewać się scenariusza znanego z [innych miast z UKO](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama): strefowanie, limity wymiarów (np. Gdańsk egzekwuje max 18 m² dla wolnostojących), ograniczenia DOOH, możliwy zakaz murali w strefach historycznych. Uchwała Łodzi z 2016 r. pozostaje zawieszona sądownie i nieegzekwowana, więc nie jest wzorcem twardych limitów. Najbardziej narażone na restrykcje są duże siatki elewacyjne, tablice powyżej 12 m² i nośniki w Starym Mieście.
 
-Olsztyn nie potwierdził też publicznie wprowadzenia **opłaty reklamowej** (limit ustawowy 2025: część stała max 3,72 zł/dzień + część zmienna max 0,34 zł/dzień/m²). Jeśli ją wprowadzi razem z uchwałą, ekonomika niektórych nośników się posypie — szczegóły mechanizmu znajdziesz w naszym artykule o [opłacie reklamowej](/blog/prawo-i-regulacje/oplata-reklamowa). Dla nośników w pasach drogowych obowiązuje już uchwała XVIII/316/20 (stawki za zajęcie pasa drogowego).
+Olsztyn nie potwierdził też publicznie wprowadzenia **opłaty reklamowej** (górny limit ustawowy 2026: część stała max 3,89 zł/dzień + część zmienna max 0,36 zł/dzień/m²). Jeśli ją wprowadzi razem z uchwałą, ekonomika niektórych nośników się posypie — szczegóły mechanizmu znajdziesz w naszym artykule o [opłacie reklamowej](/blog/prawo-i-regulacje/oplata-reklamowa). Dla nośników w pasach drogowych obowiązuje już uchwała XVIII/316/20 (stawki za zajęcie pasa drogowego).
 
 **Insight ekspercki:** to ostatni moment na zalegalizowanie istniejących formatów wielkoformatowych w Olsztynie — bo gdy uchwała wejdzie, prawa nabyte zwykle są respektowane tylko częściowo i z krótkim okresem przejściowym. Dla operatorów nośników: kompletna dokumentacja zgód i pozwoleń zebrana TERAZ to ubezpieczenie na 2027.
 

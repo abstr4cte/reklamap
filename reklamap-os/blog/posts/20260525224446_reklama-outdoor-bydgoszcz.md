@@ -109,13 +109,13 @@ Dla reklamodawcy oznacza to konkret: pakiet "Bydgoszcz + Toruń" zwykle daje **l
 
 ## Przepisy — brak uchwały krajobrazowej (okno czasowe)
 
-Pod kątem regulacyjnym Bydgoszcz to **przeciwieństwo Łodzi i Krakowa**. Stan na 2026:
+Pod kątem regulacyjnym Bydgoszcz to **przeciwieństwo Krakowa**. Stan na 2026:
 
 - **Brak uchwały krajobrazowej** — miasto nie uchwaliło UKO. Stosuje regulacje miejscowe, warunki zabudowy i zasady ZDMiKP Bydgoszcz dla reklam w pasie drogowym. To **formalne okno czasowe** — formaty wielkoformatowe są dopuszczalne, banery elewacyjne nie mają twardych limitów wymiarowych.
 - **Brak osobnej opłaty reklamowej** — Bydgoszcz nie wprowadziła powszechnej gminnej opłaty od reklam jako podatku miejskiego. Obowiązują standardowe opłaty za korzystanie z mienia gminnego i opłaty za zajęcie pasa drogowego (uchwała ZDMiKP). Więcej o ustawowej konstrukcji opłaty znajdziesz w naszym artykule o [opłacie reklamowej](/blog/prawo-i-regulacje/oplata-reklamowa).
 - **Obszary chronione** — Stare Miasto, Wyspa Młyńska, Bydgoska Wenecja, Park Kazimierza Wielkiego. Wymagane pozwolenia konserwatorskie (Wydział Konserwatora Zabytków + ZDMiKP), zakaz wielkoformatowych nośników zakłócających widok zabytków. Realne ograniczenie, niezależne od braku UKO.
 
-Dla porównania, [uchwała krajobrazowa](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama) działa już w Łodzi (od 2016), Krakowie (od 2023) i innych miastach G8. Bydgoszcz przedłuża okno "starej normalki" — co dla operatorów oznacza, że dziś można jeszcze zalegalizować formaty, które w innych miastach wojewódzkich są już nie do uzyskania.
+Dla porównania, [uchwała krajobrazowa](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama) egzekwowana jest już w Krakowie (od 1.07.2020) i innych miastach G8 — a w Łodzi choć formalnie uchwalona (2016), pozostaje zawieszona sądownie i nieegzekwowana. Bydgoszcz przedłuża okno "starej normalki" — co dla operatorów oznacza, że dziś można jeszcze zalegalizować formaty, które w innych miastach wojewódzkich są już nie do uzyskania.
 
 ## Dla właściciela nośnika — jak ustawić cennik w Bydgoszczy
 
@@ -153,7 +153,7 @@ W zależności od strefy: Śródmieście / Mosty / Rynek — 2 000–6 000 zł n
 Trzy powody: duże obszary przemysłowo-handlowe i tranzyt A1/S5 (tradycyjne DOOH mniej rozwinięte poza centrum), intensywny ruch lokalny i eventy nad Brdą oraz brak uchwały krajobrazowej (mniej ograniczeń formalnych dla nietypowych nośników). Popyt jest udokumentowany w Google Search Console — frazy typu "reklama mobilna Bydgoszcz" mają realne wyszukiwania, co odróżnia ten rynek od miast o podobnej skali.
 
 **Czy w Bydgoszczy obowiązuje uchwała krajobrazowa?**
-Nie — Bydgoszcz nie uchwaliła kompleksowej uchwały krajobrazowej. Reklamy podlegają regulacjom miejscowym, warunkom zabudowy oraz zasadom ZDMiKP dla pasa drogowego. To formalne okno czasowe w porównaniu do Łodzi (UKO od 2016), Krakowa (2023) czy Olsztyna (w procedowaniu). W obszarach chronionych (Stare Miasto, Wyspa Młyńska) działają jednak ograniczenia konserwatorskie.
+Nie — Bydgoszcz nie uchwaliła kompleksowej uchwały krajobrazowej. Reklamy podlegają regulacjom miejscowym, warunkom zabudowy oraz zasadom ZDMiKP dla pasa drogowego. To formalne okno czasowe w porównaniu do Krakowa (UKO egzekwowana od 1.07.2020) czy Olsztyna (w procedowaniu); Łódź uchwaliła UKO w 2016, ale pozostaje ona zawieszona sądownie i nieegzekwowana. W obszarach chronionych (Stare Miasto, Wyspa Młyńska) działają jednak ograniczenia konserwatorskie.
 
 **Co to jest aglomeracja BTOF i czy warto kupować reklamę pakietowo?**
 BTOF — Bydgosko-Toruński Obszar Funkcjonalny — to aglomeracja Bydgoszcz + Toruń + okoliczne gminy, łącznie ok. 650–700 tys. mieszkańców. Operatorzy regionalni standardowo sprzedają kampanie pakietowe BTOF, co zwykle daje lepsze CPM niż kupowanie obu miast osobno. Ale formalności (pozwolenia, opłaty za pas drogowy) załatwia się osobno w każdej gminie — regulacje reklamowe nie są zharmonizowane.

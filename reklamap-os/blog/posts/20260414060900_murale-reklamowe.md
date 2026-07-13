@@ -19,7 +19,7 @@ status: draft
 
 # Murale reklamowe — cena, przepisy i dlaczego biją billboardy
 
-Murale reklamowe to wielkoformatowe malowidła lub aplikacje foliowe na elewacjach budynków — bez wolnostojącej konstrukcji. Wykonanie powierzchni 200–500 m² kosztuje **30–80 tys. zł** jednorazowo (200–400 zł/m² netto przy dużych formatach), wynajem ściany w centrum dużego miasta — **20 000–50 000 zł/mc**. Badania Kantar pokazują, że murale są zapamiętywane **8× lepiej niż standardowe banery**. Poniżej wszystko, czego potrzebujesz do oceny, czy ten format pasuje do Twojej kampanii.
+Murale reklamowe to wielkoformatowe malowidła lub aplikacje foliowe na elewacjach budynków — bez wolnostojącej konstrukcji. Wykonanie powierzchni 200–500 m² kosztuje **30–80 tys. zł** jednorazowo (200–400 zł/m² netto przy dużych formatach), wynajem ściany w centrum dużego miasta — **20 000–50 000 zł/mc**. Badania branżowe wskazują, że murale są zauważane i zapamiętywane wyraźnie lepiej niż standardowe banery. Poniżej wszystko, czego potrzebujesz do oceny, czy ten format pasuje do Twojej kampanii.
 
 ## Co to jest mural reklamowy?
 
@@ -70,11 +70,11 @@ Pełne porównanie kosztów wszystkich formatów OOH: [Ile kosztuje reklama outd
 
 ## Dlaczego murale działają skuteczniej niż billboardy?
 
-Liczby z badań są jednoznaczne (źródło: Kantar, sesmestudio.com, riseupagencja.pl):
+Badania branżowe konsekwentnie wskazują na przewagę tego formatu:
 
-- **7× lepiej odbierane** niż standardowe banery reklamowe
-- **8× lepiej zapamiętywane** niż banery
-- **61% badanych** deklaruje, że mural podnosi prestiż marki
+- **wyraźnie lepiej odbierane** niż standardowe banery reklamowe
+- **wielokrotnie lepiej zapamiętywane** niż banery
+- **większość badanych** deklaruje, że mural podnosi prestiż marki
 
 Mechanizm jest prosty: billboard to obiekt obcy w przestrzeni miejskiej. Mural jest częścią architektury — nie wywołuje odruchu ignorowania charakterystycznego dla nośników reklamowych. Pasażer zatrzymuje na nim wzrok naturalnie, tak samo jak na graffiti czy mozaice.
 
@@ -96,24 +96,25 @@ To najczęściej niedoszacowany element planowania kampanii muralu. Przepisy ró
 
 ### Pozwolenie budowlane
 
-Reklama na elewacji powyżej 2,5 m² wymaga co do zasady pozwolenia budowlanego lub zgłoszenia (Dz.U.2024 poz.725). Zgoda właściciela nieruchomości jest zawsze wymagana — niezależnie od pozostałych formalności.
+Instalacja tablicy lub urządzenia reklamowego na elewacji wymaga co do zasady zgłoszenia (art. 29 ust. 2 pkt 6 Prawa budowlanego, Dz.U. 2025 poz. 418), a wolnostojące urządzenie reklamowe trwale związane z gruntem — pozwolenia na budowę. Konkretne progi powierzchni (np. 2,5 m²) nie wynikają z ustawy, tylko bywają określane w lokalnych uchwałach krajobrazowych lub miejscowych planach zagospodarowania. Zgoda właściciela nieruchomości jest zawsze wymagana — niezależnie od pozostałych formalności.
 
 **Wyjątek:** mural artystyczny (bez logotypów, nazw marek, haseł reklamowych) w wielu gminach jest zwolniony z obowiązku uzyskania pozwolenia. Granica między muralem artystycznym a reklamowym jest jednak płynna — decyduje organ administracji.
 
-### Uchwały krajobrazowe (art. 6b, Dz.U.2024 poz.325)
+### Uchwały krajobrazowe (art. 37a ustawy o planowaniu i zagospodarowaniu przestrzennym)
 
 Gminy z uchwałą krajobrazową nakładają dodatkowe ograniczenia:
 
 | Miasto | Regulacja |
 |---|---|
-| Łódź, Gdańsk | Zakaz reklam wielkoformatowych w znacznej części obszaru |
-| Warszawa | Dopuszczone do 25% powierzchni elewacji, głównie ściany szczytowe, strefa II |
-| Wrocław | Park Kulturowy „Stare Miasto" (brak uchwały krajobrazowej) — murale na ścianach szczytowych do 300 m²; poza Parkiem brak szczególnych ograniczeń |
+| Gdańsk | Egzekwowana uchwała (XLVIII/1465/18 z 2018) — ograniczenia reklam wielkoformatowych w wydzielonych obszarach |
+| Łódź | Uchwała z 2016 (XXXVII/966/16) jest zawieszona sądownie i nieegzekwowana — nie należy planować w oparciu o jej limity |
+| Warszawa | Projekt nowej uchwały (przystąpienie do sporządzenia w 2025) — planowane strefy i limity powierzchni elewacji nie są jeszcze prawem miejscowym |
+| Wrocław | Brak uchwały krajobrazowej; centrum chroni Park Kulturowy „Stare Miasto" (2014). Poza obszarem Parku brak szczególnych ograniczeń tego typu |
 | Pozostałe gminy | Często brak uchwały — przepisy ogólne |
 
-Okresy dostosowania dla istniejących reklam: 3–5 lat od wejścia uchwały w życie. Kary za naruszenie uchwały mogą sięgnąć 2 mln zł (art. 65–71 ustawy krajobrazowej).
+Okresy dostosowania dla istniejących reklam: 3–5 lat od wejścia uchwały w życie. Kara za nielegalny nośnik naliczana jest zgodnie z art. 37d ustawy krajobrazowej — za każdy dzień w wysokości iloczynu pola powierzchni reklamy (w m²), liczby 40 i zmiennej stawki opłaty reklamowej (0,36 zł/m²/dzień w 2026). Dla przykładu nośnik 12 m² to 12 × 40 × 0,36 = 172,80 zł dziennie.
 
-Praktyczna wskazówka: przed podpisaniem umowy z właścicielem ściany sprawdź status uchwały krajobrazowej w danej gminie. W Warszawie i Wrocławiu dopuszczalne strefy i wymogi estetyczne są jasno określone — w nich ryzyko formalne jest niskie.
+Praktyczna wskazówka: przed podpisaniem umowy z właścicielem ściany sprawdź status uchwały krajobrazowej w danej gminie. Status ten jest różny i dynamiczny — jedne miasta mają egzekwowaną uchwałę (np. Gdańsk), inne dopiero pracują nad projektem (Warszawa), a jeszcze inne nie mają jej wcale (Wrocław, gdzie centrum chroni jednak Park Kulturowy). Weryfikacja aktualnego stanu prawnego minimalizuje ryzyko formalne.
 
 Zanim wybierzesz lokalizację, przeczytaj też: [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa)
 
@@ -147,13 +148,13 @@ Jeśli rozważasz format cyfrowy zamiast tradycyjnego — sprawdź: [Telebim i e
 Wykonanie muralu na powierzchni 200–500 m² to jednorazowo 30 000–80 000 zł netto (200–400 zł/m²). Do tego dochodzi wynajem ściany: od 100 zł/mc w małym mieście do 20 000–50 000 zł/mc za eksponowaną lokalizację w centrum dużego miasta. Folia wizyjna jako alternatywa kosztuje 20–60 zł/m² materiału.
 
 **Czy na mural reklamowy potrzebne jest pozwolenie?**
-Tak, w większości przypadków. Reklama na elewacji powyżej 2,5 m² wymaga pozwolenia budowlanego lub zgłoszenia (Dz.U.2023 poz.1045). W miastach z uchwałą krajobrazową (Warszawa, Łódź, Gdańsk) obowiązują dodatkowe ograniczenia strefowe; Wrocław chroni centrum przez Park Kulturowy. Mural artystyczny bez logotypów bywa zwolniony z obowiązku — decyduje lokalny organ administracji.
+Zwykle tak. Instalacja tablicy lub urządzenia reklamowego na elewacji wymaga co do zasady zgłoszenia, a wolnostojący nośnik trwale związany z gruntem — pozwolenia na budowę (Prawo budowlane, Dz.U. 2025 poz. 418). Konkretne progi powierzchni bywają narzucane lokalnie przez uchwałę krajobrazową lub plan miejscowy, a nie samą ustawę. W miastach z egzekwowaną uchwałą krajobrazową (np. Gdańsk) obowiązują dodatkowe ograniczenia strefowe; w Warszawie trwają prace nad projektem uchwały, a Wrocław chroni centrum przez Park Kulturowy. Mural artystyczny bez logotypów bywa zwolniony z obowiązku — decyduje lokalny organ administracji.
 
 **Jak długo trwa mural reklamowy?**
 Mural malowany farbą elewacyjną UV lub katalityczną zachowuje pełną jakość przez 5–10 lat przy standardowych warunkach atmosferycznych. Folia wizyjna i siatka mesh są rozwiązaniami tymczasowymi — przeznaczonymi na kampanie 3–24-miesięczne.
 
 **Kiedy mural jest lepszy od billboardu?**
-Gdy celem jest budowanie prestiżu marki, a nie natychmiastowa odpowiedź sprzedażowa. Mural działa długoterminowo — jeden format może pracować przez kilka lat. Badania Kantar wskazują 8× lepszą zapamiętywalność muralu vs baner. Dla kampanii, gdzie liczy się zasięg organiczny w social media i skojarzenie z przestrzenią miejską, mural nie ma odpowiednika w tradycyjnym OOH.
+Gdy celem jest budowanie prestiżu marki, a nie natychmiastowa odpowiedź sprzedażowa. Mural działa długoterminowo — jeden format może pracować przez kilka lat. Badania branżowe wskazują na wyraźnie lepszą zapamiętywalność muralu w porównaniu z banerem. Dla kampanii, gdzie liczy się zasięg organiczny w social media i skojarzenie z przestrzenią miejską, mural nie ma odpowiednika w tradycyjnym OOH.
 
 ---
 
