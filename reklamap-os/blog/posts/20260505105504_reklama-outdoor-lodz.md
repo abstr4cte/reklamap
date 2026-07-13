@@ -1,5 +1,5 @@
 <!--
-ANGLE: Reklama outdoor w Łodzi 2026 — ceny per dzielnica, jedna z najsurowszych uchwał krajobrazowych w Polsce (od 2016, zakaz murali) i jak mimo restrykcji wybrać legalny, skuteczny nośnik — z porównaniem do Warszawy i Krakowa.
+ANGLE: Reklama outdoor w Łodzi 2026 — najtańsze ceny per dzielnica wśród miast G8; Łódź jako PIERWSZE miasto w Polsce z uchwałą krajobrazową (2016), która jednak jest ZAWIESZONA i nieegzekwowana → dziś reklamę regulują przepisy ogólne, nie limity z 2016. KOREKTA 2026-07-12: usunięto fałsz „najsurowsza uchwała obowiązuje" (audyt uchwał).
 -->
 ---
 title: "Reklama outdoor Łódź 2026 — ceny, dzielnice, przepisy"
@@ -16,14 +16,14 @@ keywords:
   - uchwała krajobrazowa Łódź
   - citylight Łódź
   - reklama zewnętrzna Łódź
-word_count: ~1600
+word_count: ~1750
 published_at: "2026-05-05 10:55:04"
 status: draft
 ---
 
 # Reklama outdoor Łódź 2026 — ceny, dzielnice, przepisy
 
-Reklama outdoor Łódź zaczyna się od **950 zł netto miesięcznie** za billboard 6×3 m na peryferiach i sięga **2 400 zł** w Śródmieściu. To trzy do siedmiu razy taniej niż analogiczny nośnik w Warszawie (10 000–20 000 zł na Al. Jerozolimskich) — przy zachowaniu statusu G8, czyli ósemki miast o najwyższym zasięgu OOH w Polsce. Ceną się jednak nie zachłyśniesz, bo Łódź ma **jedną z najsurowszych uchwał krajobrazowych w kraju** — uchwaloną już 16 listopada 2016 roku, z zakazem murali i limitem 18 m² na nośniki wolnostojące. Ten artykuł pokazuje, jak grać tym budżetem i nie wpaść na karę.
+Reklama outdoor Łódź zaczyna się od **950 zł netto miesięcznie** za billboard 6×3 m na peryferiach i sięga **2 400 zł** w Śródmieściu. To trzy do siedmiu razy taniej niż analogiczny nośnik w Warszawie (10 000–20 000 zł na Al. Jerozolimskich) — przy zachowaniu statusu G8, czyli ósemki miast o najwyższym zasięgu OOH w Polsce. Łódź jako pierwsze miasto wojewódzkie w Polsce uchwaliła **uchwałę krajobrazową** (16 listopada 2016), ale sądy ją zawiesiły i miasto jej nie egzekwuje — dziś reklamę regulują przepisy ogólne, nie limity z uchwały. Ten artykuł pokazuje ceny per dzielnica i realny stan przepisów.
 
 ## Reklama outdoor Łódź — cennik per dzielnica
 
@@ -53,27 +53,28 @@ Najciekawsze w Łodzi jest to, **co dostajesz za pieniądze**. Porównanie billb
 
 Łódź wygrywa kosztowo nawet z [reklamą outdoor w Krakowie](/blog/lokalizacje/reklama-outdoor-krakow), a [w porównaniu do Warszawy](/blog/lokalizacje/reklama-outdoor-warszawa) różnica robi się drastyczna. Drugim ważnym wskaźnikiem jest demografia: Łódź to **639 890 mieszkańców** (GUS, stan na 31.12.2025) — czwarte miasto w Polsce. Prognoza GUS na 2050 spada do 484 845 osób, co dla reklamodawcy oznacza, że **długoterminowe lokalizacje warto wybierać przy ruchu tranzytowym**, nie tylko mieszkaniowym, bo populacja kurczy się szybciej niż w pozostałych miastach G8.
 
-## Uchwała krajobrazowa — co naprawdę można w Łodzi
+## Uchwała krajobrazowa Łódź — dlaczego dziś nie wiąże tak, jak się wydaje
 
-Łódzka uchwała krajobrazowa weszła **16 listopada 2016 roku**. To jedna z pierwszych w Polsce i równocześnie jedna z najsurowszych. Co konkretnie ogranicza:
+Łódź uchwaliła uchwałę krajobrazową **jako pierwsze miasto wojewódzkie w Polsce — 16 listopada 2016 roku** (nr XXXVII/966/16, Dz. Urz. Woj. Łódzkiego poz. 5588). Miała być jedną z najsurowszych — ze strefami, limitem gabarytów nośników wolnostojących, ograniczeniami reklamy cyfrowej i ochroną stref historycznych. Problem w tym, że **do dziś nie stała się egzekwowanym prawem.**
 
-- Trzy strefy o różnej intensywności restrykcji
-- Maksymalny format wolnostojąca: **18 m²** (czyli koniec billboardów 12×4 w strefie A)
-- Reklama cyfrowa (DOOH) mocno ograniczona — limity nasycenia i jasności
-- **Zakaz murali reklamowych** — bezwzględny w strefach historycznych
-- Okres dostosowania: 3–5 lat (prawa nabyte nieuwzględnione)
+Wyjaśnia to chronologia sądowa:
 
-Charakterystyczne, że uchwała jest najsurowsza w Polsce, ale słabo egzekwowana — co nie znaczy, że można ją lekceważyć, bo kontrole nasilają się falowo. Dla porównania: [uchwała krajobrazowa](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama) w Krakowie (Nr CXIX/3222/23) ma 4 strefy i podobne limity formatów, a Warszawa szykuje na 2025/2026 nowe regulacje, dające 1 rok na zlikwidowanie nielegalnych nośników. Murale są zakazane wyłącznie w Łodzi i Gdańsku — w Warszawie i Wrocławiu wciąż dozwolone do 25% powierzchni elewacji (zobacz nasz wpis o [muralach reklamowych](/blog/trendy/murale-reklamowe)).
+- **11 sierpnia 2017** — WSA w Łodzi stwierdził nieważność uchwały **w całości** (m.in. brak przepisów o dostosowaniu istniejących nośników oraz regulowanie spraw objętych ustawą o drogach publicznych).
+- **Październik 2019** — NSA uchylił ten wyrok i zwrócił sprawę do ponownego rozpoznania.
+- **Styczeń 2020** — WSA zawiesił postępowanie do czasu rozstrzygnięcia przez Trybunał Konstytucyjny konstytucyjności ustawy krajobrazowej.
+- **Stan na 2026** — postępowanie sądowe wokół uchwały wciąż nie jest prawomocnie zakończone; uchwała formalnie pozostaje w mocy, ale **miasto jej nie egzekwuje**, a prace nad nową od lat stoją.
 
-## Jak wybrać legalny nośnik mimo restrykcji
+**Co to znaczy dla reklamodawcy:** limity, strefy i zakaz murali z uchwały 2016 **nie są dziś egzekwowaną praktyką** — reklamę w Łodzi regulują przepisy ogólne: [Prawo budowlane, zgody zarządcy drogi i wymogi konserwatorskie](/blog/prawo-i-regulacje/pozwolenie-na-tablice-reklamowa) w strefach zabytkowych. To jednak stan przejściowy i sporny — nowa uchwała jest w toku, a wyrok TK w tle może odblokować sprawę. Przed dłuższą kampanią zweryfikuj aktualny status; tło regulacji w całej Polsce opisuje [uchwała krajobrazowa](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama).
 
-Praktyczna lista pięciu sposobów na ominięcie ograniczeń bez łamania prawa:
+## Jak wybrać legalny nośnik w Łodzi
 
-1. **Format zgodny ze strefą** — w strefie A trzymaj się <18 m² (alternatywą do billboardu jest [tablica reklamowa](/blog/poradniki/billboard-reklama) z mniejszą powierzchnią).
-2. **Reklama w MPK Łódź** — transport publiczny nie podlega uchwale krajobrazowej, więc autobusy i tramwaje są bezpieczną opcją niezależnie od strefy.
-3. **Citylighty na przystankach** — operatorzy (AMS, Ströer) mają osobne licencje miejskie i są poza zakresem uchwały.
-4. **Weryfikacja pozwoleń przed kampanią** — dla dróg krajowych GDDKiA, dla pozostałych UM Łódź; bez tego ryzykujesz, że nośnik znika w trakcie kampanii.
-5. **Reklama mobilna** — pojazdy poruszające się po mieście nie są nośnikiem stałym (zobacz [reklamę na samochodzie](/blog/poradniki/reklama-na-samochodzie)).
+Skoro uchwała krajobrazowa jest zawieszona, o legalności decydują dziś przepisy ogólne, nie jej strefy. Praktyczna lista:
+
+1. **Sprawdź pozwolenia i strefę ochronną** — dla dróg krajowych zgoda GDDKiA, dla pozostałych UM Łódź; w strefach zabytkowych wymogi konserwatorskie. To realne dziś ograniczenie, nie zapisy zawieszonej uchwały.
+2. **Reklama w MPK Łódź** — nośniki transportowe rozliczają się na zasadach przewoźnika; autobusy i tramwaje to opcja niezależna od statusu uchwały.
+3. **Citylighty na przystankach** — operatorzy (AMS, Ströer) działają na osobnych licencjach miejskich.
+4. **Dopasuj format do lokalizacji** — nawet bez czynnej uchwały duży nośnik w ścisłym centrum bywa objęty ochroną konserwatorską; mniejszy format (np. [tablica reklamowa](/blog/poradniki/billboard-reklama)) jest zwykle prostszy formalnie.
+5. **Reklama mobilna** — pojazdy w ruchu nie są nośnikiem stałym (zobacz [reklamę na samochodzie](/blog/poradniki/reklama-na-samochodzie)).
 
 Jeśli planujesz krótką kampanię, [znajdź nośnik z uregulowanym statusem prawnym →](/powierzchnie-reklamowe) — to oszczędza tygodni weryfikacji.
 
@@ -87,7 +88,7 @@ Od marca 2025 obowiązuje nowy cennik biura reklamy MPK Łódź. Konkretnie:
 - Stawki netto + 23% VAT
 - Kontakt bezpośrednio z biurem reklamy MPK
 
-To największa atrakcja dla reklamodawcy w Łodzi z dwóch powodów. Pierwszy: **MPK jest poza uchwałą krajobrazową**, więc agresywna kreacja, ekran cyfrowy lub oklejenie boku tramwaju są dopuszczalne. Drugi: stały zasięg pasażerski w mieście, gdzie sieć tramwajowa pokrywa wszystkie pięć dzielnic. Segment city transport w Polsce 2025 to 55,6 mln zł rocznie (6,4% rynku OOH), a Łódź jest jednym z głównych beneficjentów tego trendu.
+To największa atrakcja dla reklamodawcy w Łodzi z dwóch powodów. Pierwszy: **reklama w MPK rozlicza się na zasadach przewoźnika**, więc agresywna kreacja, ekran cyfrowy lub oklejenie boku tramwaju są dopuszczalne niezależnie od statusu uchwały. Drugi: stały zasięg pasażerski w mieście, gdzie sieć tramwajowa pokrywa wszystkie pięć dzielnic. Segment city transport w Polsce 2025 to 55,6 mln zł rocznie (6,4% rynku OOH), a Łódź jest jednym z głównych beneficjentów tego trendu.
 
 ## Trendy 2026 — DOOH, branża kreatywna, ROI
 
@@ -97,7 +98,7 @@ To największa atrakcja dla reklamodawcy w Łodzi z dwóch powodów. Pierwszy: *
 - Rynek DOOH: **278 mln zł** (+16,4% r/r)
 - Łódź w **G8** — top 8 miast wg zasięgu OOH
 
-DOOH rośnie nawet w Łodzi, mimo restrykcji uchwały — bo reklamodawcy przesuwają budżety do **transportu publicznego i przystanków**, gdzie ekrany są dozwolone (zobacz [telebimy i ekrany LED](/blog/trendy/telebim-ekran-led-reklama)). Insight ekspercki: **w Łodzi opłaca się grać "tańszą gęstością" — kupować 5 lokalizacji peryferyjnych zamiast 1 prestiżowej w Śródmieściu**. Przy 950–1 500 zł za billboard na Bałutach, pełna kampania w 5 punktach wychodzi taniej niż jedna lokalizacja na Al. Jerozolimskich w Warszawie, a sumaryczny zasięg przy 639 tys. mieszkańców i przelotowej A1 jest realnie konkurencyjny.
+DOOH rośnie także w Łodzi — a że uchwała krajobrazowa jest zawieszona, ograniczenia cyfrowych nośników z 2016 nie są dziś egzekwowane; reklamodawcy i tak chętnie stawiają na **transport publiczny i przystanki** (zobacz [telebimy i ekrany LED](/blog/trendy/telebim-ekran-led-reklama)). Insight ekspercki: **w Łodzi opłaca się grać "tańszą gęstością" — kupować 5 lokalizacji peryferyjnych zamiast 1 prestiżowej w Śródmieściu**. Przy 950–1 500 zł za billboard na Bałutach, pełna kampania w 5 punktach wychodzi taniej niż jedna lokalizacja na Al. Jerozolimskich w Warszawie, a sumaryczny zasięg przy 639 tys. mieszkańców i przelotowej A1 jest realnie konkurencyjny.
 
 ## Najczęściej zadawane pytania
 
@@ -105,7 +106,7 @@ DOOH rośnie nawet w Łodzi, mimo restrykcji uchwały — bo reklamodawcy przesu
 Billboard 6×3 m kosztuje od 950 zł netto miesięcznie na peryferiach (Bałuty, Widzew) do 2 400 zł netto w Śródmieściu. Citylight to ok. 200 zł netto za nośnik. Format 12×4 m w centrum mieści się w widełkach 3 500–6 500 zł netto miesięcznie.
 
 **Czy w Łodzi można robić murale reklamowe?**
-Nie — uchwała krajobrazowa z 16.11.2016 wprowadza zakaz murali reklamowych w strefach historycznych. To wyjątek na tle Polski, podobny zakaz obowiązuje tylko w Gdańsku. Warszawa i Wrocław dopuszczają murale do 25% powierzchni elewacji.
+Zakaz murali zapisano w uchwale krajobrazowej z 16.11.2016, ale ta uchwała nie jest dziś egzekwowana — WSA początkowo stwierdził jej nieważność, NSA uchylił ten wyrok, a sprawa pozostaje w zawieszeniu sądowym. W praktyce murale reklamowe w Łodzi podlegają obecnie przepisom ogólnym i wymogom konserwatorskim w strefach zabytkowych, nie zapisom zawieszonej uchwały. Status może się zmienić wraz z nową uchwałą — zweryfikuj przed realizacją.
 
 **Od kiedy obowiązuje aktualny cennik MPK Łódź?**
 Cennik biura reklamy MPK Łódź wszedł w życie w marcu 2025. Obejmuje 250 autobusów, 34 tramwaje PESA SWING i 60 tramwajów MODERUS. Stawki netto + 23% VAT, kontakt przez biuro reklamy MPK.

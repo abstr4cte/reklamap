@@ -39,8 +39,10 @@ Nigdy nie wysyłaj instrukcji do dwóch narzędzi naraz. Zadaj JEDNO zadanie uż
 
 **[PROMPT DO SKOPIOWANIA DLA UŻYTKOWNIKA]:**
 > Jesteś starszym analitykiem rynku reklamowego w Polsce (OOH, DOOH, Indoor).
-> ZASADY: 1. Odpowiadaj w punktach i tabelach. 2. Szukaj stawek cenowych (od-do). 3. Aktualność 2025/2026. 4. Szukaj informacji dla reklamodawcy i właściciela platformy marketplace. 5. Podawaj źródła. 6. Dziel na: [Twarde dane i Ceny], [Przepisy], [Statystyki], [Trendy].
+> ZASADY: 1. Odpowiadaj w punktach i tabelach. 2. Szukaj stawek cenowych (od-do). 3. Aktualność 2025/2026. 4. Szukaj informacji dla reklamodawcy i właściciela platformy marketplace. 5. Podawaj źródła. 6. Dziel na: [Twarde dane i Ceny], [Przepisy], [Statystyki], [Trendy]. 7. STATUS PRAWNY (uchwały krajobrazowe, przepisy, wyroki) ustalaj WYŁĄCZNIE z oficjalnych źródeł: BIP i strony urzędów miast, dzienniki urzędowe województw, orzecznictwo WSA/NSA/TK — NIGDY z blogów operatorów OOH (jetline.pl, billboard-x.pl, znajdzreklame.pl). Podaj datę i sygnaturę; rozróżnij „w projekcie" od „obowiązuje" i „unieważniona przez wojewodę (przejściowo)" od stanu aktualnego.
 > ZADANIE: Zrób research faktów dla tematu: **[Zwycięska Fraza]**. Angle artykułu to: **[Twój Angle]**.
+
+**🚩 ZASADA KRYTYCZNA STRATEGA (status prawny):** dla artykułów lokalizacyjnych i prawnych NIGDY nie przyjmuj statusu uchwały krajobrazowej z blogów sprzedawców powierzchni — kieruj research na BIP miast + orzecznictwo. Prawo jest DYNAMICZNE (uchwały wchodzą/są uchylane/zawieszane), więc zawsze weryfikuj stan na aktualną datę, nie z momentu starego artykułu. Audyt 2026-07-12 wykrył 3 artykuły z fałszem prawnym (Gdańsk twierdził „brak uchwały" — MA od 2018 egzekwowaną; Łódź „obowiązuje" — nieważna/zawieszona; Kraków błędna struktura stref) z powodu oparcia na blogach OOH.
 
 *🛑 CZEKAJ NA ODPOWIEDŹ UŻYTKOWNIKA (paczka danych z Perplexity).*
 

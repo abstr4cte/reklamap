@@ -10,12 +10,12 @@ keywords:
   - billboard Gdańsk
   - citylight Gdańsk
   - reklama zewnętrzna Gdańsk
-word_count: ~1500
+word_count: ~1900
 published_at: "2026-04-16 08:00:00"
 status: draft
 ---
 
-<!-- Angle: Gdańsk = rynek trójmiejski 760 tys. przy cenach niższych niż Warszawa — ceny per dzielnica + specyfika turystyczna i sezonowa -->
+<!-- Angle: Gdańsk 2026 — rynek trójmiejski 760 tys. przy cenach niższych niż Warszawa, ALE jedno z najsurowszych miast dla OOH: uchwała krajobrazowa obowiązuje i jest egzekwowana (8 stref, max 18 m²) → reklamodawca musi sprawdzić zgodność nośnika przed wyborem. KOREKTA 2026-07-12: usunięto fałsz „brak uchwały / mniej restrykcji" (audyt uchwał). -->
 
 # Reklama outdoor Gdańsk — ceny i lokalizacje 2026
 
@@ -39,15 +39,17 @@ Szukasz konkretnego nośnika w Gdańsku? Przeglądaj dostępne powierzchnie bezp
 
 Stawki netto za wynajem miesięczny (bez druku i montażu):
 
-| Strefa / lokalizacja | Billboard 18 m² netto/mc | Billboard 36 m² netto/mc |
-|---------------------|--------------------------|--------------------------|
-| Centrum / Śródmieście / Stare Miasto | 3 000–8 000 zł | 4 200–12 000 zł |
-| Wrzeszcz / Oliwa | 2 000–5 000 zł | — |
-| Przymorze | 1 500–4 000 zł | — |
-| Trasy wylotowe S6 / S7 | 1 200–3 000 zł | — |
-| Peryferie | 800–1 800 zł | — |
+| Strefa / lokalizacja | Billboard 18 m² netto/mc |
+|---------------------|--------------------------|
+| Centrum / Śródmieście / Stare Miasto | 3 000–8 000 zł |
+| Wrzeszcz / Oliwa | 2 000–5 000 zł |
+| Przymorze | 1 500–4 000 zł |
+| Trasy wylotowe S6 / S7 | 1 200–3 000 zł |
+| Peryferie | 800–1 800 zł |
 
 Źródło: be-media.com.pl, wedo.pl
+
+Uwaga: uchwała krajobrazowa Gdańska ustala górny limit powierzchni nośnika na **18 m²**, więc większe formaty (np. 36 m²) co do zasady nie są w mieście dopuszczalne dla nowych nośników.
 
 Ceny nie obejmują zazwyczaj druku materiałów (50–100 zł/m² dla folii frontlight) ani montażu (120–220 zł za format). Pełne zestawienie kosztów produkcji znajdziesz w artykule [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
@@ -92,17 +94,22 @@ Gdańsk ma kilka stref o zupełnie różnym charakterze reklamowym:
 
 ---
 
-## Przepisy — uchwała krajobrazowa Gdańska
+## Przepisy — uchwała krajobrazowa Gdańska (obowiązuje i jest egzekwowana)
 
-Gdańsk nie uchwalił jeszcze pełnej uchwały krajobrazowej (stan 2026). To **praktyczna zaleta** dla reklamodawców: mniej restrykcji niż w Krakowie (4 strefy od 2023) czy Warszawie (nowa uchwała od 07.2025).
+Gdańsk należy do **najsurowszych miast dla reklamy zewnętrznej w Polsce** — i był jednym z pierwszych, które wprowadziły uchwałę krajobrazową. Uchwała nr **XLVIII/1465/18 z 22 lutego 2018 r.** (Dz. Urz. Woj. Pomorskiego 2018, poz. 1034) obowiązuje na terenie całego miasta, a 24-miesięczny okres dostosowania istniejących nośników upłynął w 2020 r. Od tego czasu miasto egzekwuje przepisy: kary i nakazy usunięcia trafiają do sądów administracyjnych — potwierdzają to wyroki WSA w Gdańsku (II SA/Gd 966/24 i II SA/Gd 1203/24) oraz NSA (II OSK 2490/23), w których uchwała stanowi podstawę kar za nielegalne nośniki.
 
-Obowiązują regulacje ogólnokrajowe:
+Uchwała dzieli miasto na **8 obszarów** (oznaczonych symbolami SZ, S0, SR, S1, S2, SI, S3 i SP) o różnym reżimie — od stref „ciszy reklamowej" i ochrony ekspozycji krajobrazu po obszary o łagodniejszych zasadach. Wprowadza twarde limity gabarytów: od formatu **drobnego** (do 0,1 m²) i **małego** (do 1 m²) aż po **górny limit 18 m²** dla największych dopuszczalnych nośników wolnostojących.
 
-- **Strefy historyczne (A/B/C):** ograniczenie gabarytów nośników do 18 m² i wymóg zgody konserwatora zabytków
-- **Drogi krajowe:** zakaz nowych nośników bez zezwolenia zarządcy drogi (GDDKiA) i zgłoszenia budowlanego
-- **Opłata reklamowa:** gmina może wprowadzić stawkę stałą max 3,72 zł/dzień + zmienną 0,34 zł/m²/dzień — koszt ponosi właściciel nośnika, nie reklamodawca
+Poza gabarytami uchwała określa m.in.:
 
-Przed podpisaniem umowy zapytaj właściciela nośnika o status prawny lokalizacji. Ryzyko likwidacji z powodu braków formalnych obciąża kampanię.
+- **Zakazy lokalizacji** tablic i urządzeń reklamowych: zabytki, cmentarze, parki, tereny zieleni urządzonej, obiekty oświatowe, sakralne i administracji publicznej, a także pojazdy używane wyłącznie jako nośnik reklamy.
+- **Odległości** — uchwała ustala minimalne odstępy między nośnikami wolnostojącymi (zależnie od typu nośnika i obszaru).
+- **Śródmieście — najwęższy katalog:** dopuszczalne m.in. baner sprzedaży/najmu nieruchomości, ekran do formatu średniego, gabloty, reklama na rusztowaniu i siatce ochronnej, wyklejki w witrynie usługowej oraz citylight w wiacie przystankowej. Duży billboard czy baner na zabytkowej elewacji — zwykle wykluczone.
+- **Szyldy** — uchwała limituje liczbę i wielkość szyldów przypadających na podmiot, budynek i lokal.
+
+Do tego obowiązują przepisy ogólne: przy drogach krajowych zezwolenie zarządcy (GDDKiA) i zgłoszenie budowlane; jeśli gmina wprowadziła opłatę reklamową, obciąża ona właściciela nośnika — w granicach górnych stawek ustawowych, waloryzowanych corocznie obwieszczeniem Ministra Finansów.
+
+W Gdańsku o legalności decyduje **strefa i gabaryt** — nielegalny nośnik grozi karą pieniężną i demontażem. To nie „okno przejściowe" jak w miastach z uchwałą dopiero w toku, lecz utrwalone, egzekwowane od lat prawo. Sprawdź zgodność lokalizacji z uchwałą przed zamówieniem kampanii: [uchwała krajobrazowa](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama) i [pozwolenie na tablicę reklamową](/blog/prawo-i-regulacje/pozwolenie-na-tablice-reklamowa).
 
 ---
 
@@ -117,7 +124,7 @@ Kilka zasad specyficznych dla tego rynku:
 1. **Uwzględnij sezonowość** — latem natężenie ruchu w centrum i na Starym Mieście wzrasta o ~40%. Jeśli promujesz usługi dla turystów, rezerwuj nośniki przy Motławie z 4–6-tygodniowym wyprzedzeniem.
 2. **Myśl trójmiejsko** — arterie S6/S7 i linie tramwajowe łączą Gdańsk z Gdynią i Sopotem. Jeden billboard przy obwodnicy = zasięg na całą aglomerację.
 3. **Centrum to nie tylko billboardy** — w strefach historycznych citylight jest często jedyną dopuszczalną formą reklamy wolnostojącej. Sprawdź, zanim zamawiasz projekt pod duży format.
-4. **DOOH jako uzupełnienie** — ekrany LED dostępne od ok. 3 000 zł/pakiet spotów (wedo.pl, billboard-x.pl); możliwość daypartingu i zmiany kreacji bez druku.
+4. **DOOH pod rygorem uchwały** — ekrany LED w Gdańsku podlegają uchwale krajobrazowej (dopuszczone w ograniczonym katalogu, z limitami formatu i lokalizacji); orientacyjnie od ok. 3 000 zł/pakiet spotów, ale zgodność w danej strefie sprawdź przed zamówieniem.
 
 Systematyczne podejście do wyboru nośnika opisuje artykuł [Jak wybrać powierzchnię reklamową](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa).
 
@@ -131,7 +138,7 @@ Billboard 18 m² w centrum Gdańska kosztuje 3 000–8 000 zł netto miesięczni
 
 **Czy Gdańsk ma uchwałę krajobrazową?**
 
-Nie — Gdańsk nie uchwalił pełnej uchwały krajobrazowej (stan 2026). Obowiązują ogólnokrajowe regulacje ustawy krajobrazowej z 2015 r.: ograniczenia gabarytów w strefach historycznych i wymóg zezwoleń przy drogach krajowych. To mniej restrykcyjne środowisko niż Kraków czy Warszawa.
+Tak. Uchwała nr XLVIII/1465/18 obowiązuje od 22 lutego 2018 r. (Dz. Urz. Woj. Pomorskiego 2018 poz. 1034), a 24-miesięczny okres dostosowania istniejących nośników upłynął w 2020 r. Gdańsk jest jednym z najbardziej restrykcyjnych miast dla reklamy zewnętrznej w Polsce — dzieli miasto na 8 obszarów, ogranicza gabaryty nośników (max 18 m²) i egzekwuje przepisy, co potwierdzają wyroki WSA i NSA. Nielegalny nośnik grozi karą pieniężną i demontażem.
 
 **Jak dotrzeć do turystów odwiedzających Gdańsk?**
 
