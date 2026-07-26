@@ -107,8 +107,18 @@ interface BlogPost {
   author: string
 }
 
-const blogPosts = ref<BlogPost[]>([])
-const isLoading = ref(true)
+// SEO/hydratacja: prerender zaszywa listę postów (window.__INITIAL_STATE__.blogList), analogicznie
+// do __ssrAd/__ssrBlogPost. Bez tego WRS re-mount re-fetchuje z cross-origin api.reklamap.pl; ucięty
+// fetch → pusta lista → `noindex` na stronie kategorii (patrz bramka hasLoaded niżej).
+// Objaw regresji: GSC Live Test na /blog/{kategoria} = „wykryto błędy indeksowania" mimo poprawnego
+// prerenderu w `curl -A Googlebot`. Patrz main.ts (kolektor) i prerender.mjs (needsState).
+const _ssrBlogList = (typeof window !== 'undefined' ? (window as any).__INITIAL_STATE__?.blogList : null) as BlogPost[] | null
+
+const blogPosts = ref<BlogPost[]>(Array.isArray(_ssrBlogList) ? _ssrBlogList : [])
+const isLoading = ref(!blogPosts.value.length)
+// true dopiero po POTWIERDZONYCH danych (seed z prerendera albo udany fetch). Dopóki false —
+// nie wolno wnioskować „kategoria jest pusta", bo to stan nieustalony, nie brak treści.
+const hasLoaded = ref(blogPosts.value.length > 0)
 
 const categories = [
   { id: 'wszystkie', name: 'Wszystkie', path: '/blog' },
@@ -130,8 +140,12 @@ const loadBlogPosts = async () => {
     isLoading.value = true
     const response = await api.get('/blog')
     blogPosts.value = response
+    hasLoaded.value = true
+    // Udostępnij prerenderowi (puppeteer) dane do zaszycia jako window.__INITIAL_STATE__.blogList.
+    if (typeof window !== 'undefined') (window as any).__ssrBlogList = response
   } catch (error) {
-    blogPosts.value = []
+    // Nie kasuj zaseedowanej listy, gdy re-fetch pada (WRS/CORS) — chroni prerender.
+    if (!blogPosts.value.length) hasLoaded.value = false
   } finally {
     isLoading.value = false
   }
@@ -148,8 +162,12 @@ const filteredPosts = computed(() => {
   return blogPosts.value.filter(post => post.category === selectedCategory.value)
 })
 
-watch([filteredPosts, isLoading], () => {
-  noindexEmptyCategory.value = !isLoading.value && filteredPosts.value.length === 0 && selectedCategory.value !== 'wszystkie'
+// `noindex` TYLKO gdy mamy potwierdzoną odpowiedź API i kategoria realnie nie ma artykułów.
+// Bez bramki `hasLoaded` nieudany fetch (isLoading→false, pusta lista) dawał `noindex` na zdrowej
+// kategorii — ta sama klasa awarii, którą dla listingów zamknięto w useSearchStore (audyt 2026-06-26).
+watch([filteredPosts, isLoading, hasLoaded], () => {
+  noindexEmptyCategory.value =
+    hasLoaded.value && !isLoading.value && filteredPosts.value.length === 0 && selectedCategory.value !== 'wszystkie'
 })
 
 const handleNewsletterSubmit = async () => {

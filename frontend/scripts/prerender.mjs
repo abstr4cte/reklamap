@@ -110,11 +110,17 @@ async function routesFromSitemap() {
 
 const outPath = (p) => (p === '/' ? join(DIST, 'index.html') : join(DIST, p.replace(/^\//, ''), 'index.html'));
 
-// Trasy, które MUSZĄ mieć zaszyty stan (listingi/ogłoszenie). Pusty render tu = awaria/rate-limit
-// API (sitemap zawiera tylko niepuste kategorie/miasta), więc ponawiamy i NIGDY nie zapisujemy
-// szkieletu z noindex. Blog/statyczne stanu nie wymagają (kolektor zwraca null, są `index`).
+// Trasy, które MUSZĄ mieć zaszyty stan (listingi/ogłoszenie/lista postów). Pusty render tu =
+// awaria/rate-limit API (sitemap zawiera tylko niepuste kategorie/miasta), więc ponawiamy i NIGDY
+// nie zapisujemy szkieletu z noindex.
+// `/blog` i `/blog/{kategoria}` DOŁĄCZONE 2026-07-25: wcześniejsze założenie „blog stanu nie
+// wymaga" było błędne — te trasy renderują listę z API, a BlogPage przy nieudanym fetchu ustawiał
+// `noindex`. Efekt: 0 z 4 kategorii bloga w indeksie, GSC Live Test = „wykryto błędy indeksowania"
+// mimo poprawnego prerenderu. Artykuły (`/blog/{kat}/{slug}`) świadomie POZA — mają własny seed
+// przez `blogPost` i działają; wciąganie ich tutaj tylko podniosłoby ryzyko FAIL_RATE.
 const needsState = (p) =>
-  p === '/' || p.startsWith('/powierzchnie-reklamowe') || p.startsWith('/powierzchnia-reklamowa');
+  p === '/' || p.startsWith('/powierzchnie-reklamowe') || p.startsWith('/powierzchnia-reklamowa')
+  || /^\/blog(\/[^/]+)?$/.test(p);
 
 // Zbierz stan Pinia ze strony (string albo null). Puppeteer gubi duże/reaktywne obiekty przy
 // evaluate — serializujemy WEWNĄTRZ strony do stringa. null gdy brak realnych danych.
@@ -127,7 +133,8 @@ async function collectState(page) {
       const hasList = s.search && Array.isArray(s.search.listings) && s.search.listings.length > 0;
       const hasAd = s.ad && s.ad.id;
       const hasBlog = s.blogPost && (s.blogPost.id || s.blogPost.slug);
-      if (!hasList && !hasAd && !hasBlog) return null;
+      const hasBlogList = Array.isArray(s.blogList) && s.blogList.length > 0;
+      if (!hasList && !hasAd && !hasBlog && !hasBlogList) return null;
       return JSON.stringify(s);
     } catch { return null; }
   }).catch(() => null);
@@ -146,7 +153,9 @@ async function navigateAndCollect(page, p, needState) {
       try {
         if (typeof window.__collectSSRState !== 'function') return false;
         const s = window.__collectSSRState();
-        return !!(s && ((s.search && Array.isArray(s.search.listings) && s.search.listings.length > 0) || (s.ad && s.ad.id)));
+        return !!(s && ((s.search && Array.isArray(s.search.listings) && s.search.listings.length > 0)
+          || (s.ad && s.ad.id)
+          || (Array.isArray(s.blogList) && s.blogList.length > 0)));
       } catch { return false; }
     },
     { timeout: 20000 }, MIN_TEXT, needState,

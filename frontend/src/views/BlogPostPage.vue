@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { api } from '../services/api'
 import { useSeo } from '../composables/useSeo'
 import { appUrl } from '../utils/url'
+import { extractFaqSchema } from '../utils/faqSchema'
 
 const route = useRoute()
 const router = useRouter()
@@ -67,47 +68,6 @@ const loadBlogPost = async () => {
 onMounted(() => {
   loadBlogPost()
 })
-
-// Parsuje sekcję FAQ z HTML contentu i zwraca schema FAQPage lub null
-function extractFaqSchema(html: string): object | null {
-  if (typeof window === 'undefined') return null
-  const doc = new DOMParser().parseFromString(html, 'text/html')
-
-  let faqHeading: Element | null = null
-  doc.querySelectorAll('h2').forEach(h => {
-    if (h.textContent?.includes('Najczęściej zadawane pytania')) {
-      faqHeading = h
-    }
-  })
-  if (!faqHeading) return null
-
-  const entities: object[] = []
-  let sibling = (faqHeading as Element).nextElementSibling
-
-  while (sibling && sibling.tagName !== 'H2') {
-    if (sibling.tagName === 'P') {
-      const strong = sibling.querySelector('strong')
-      if (strong) {
-        const questionText = strong.textContent?.trim() ?? ''
-        const clone = sibling.cloneNode(true) as Element
-        clone.querySelector('strong')?.remove()
-        clone.querySelectorAll('br').forEach(br => br.replaceWith(' '))
-        const answerText = clone.textContent?.trim() ?? ''
-        if (questionText && answerText) {
-          entities.push({
-            '@type': 'Question',
-            'name': questionText,
-            'acceptedAnswer': { '@type': 'Answer', 'text': answerText }
-          })
-        }
-      }
-    }
-    sibling = sibling.nextElementSibling
-  }
-
-  if (entities.length === 0) return null
-  return { '@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': entities }
-}
 
 // Buduje schema BreadcrumbList dla posta
 function buildBreadcrumbSchema(p: BlogPost): object {
