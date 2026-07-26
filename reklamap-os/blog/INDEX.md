@@ -2,6 +2,11 @@
 
 Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagają weryfikacji danych (Perplexity) i nowej redakcji przez Agenta Pisarza oraz Korektora.
 
+> **⚠️ Stan na 2026-07-25 (audyt): 33 artykuły w repo, 30 na prodzie, a 12 z tych 30 jest NIEWIDOCZNYCH dla Google.**
+> **(a) Trzy oznaczone 🔴 NIEOPUBLIKOWANY** — gotowe i zrecenzowane, ale nie ma ich w bazie prod; wymagają publikacji w panelu **oraz deployu frontu** (bez deployu URL jest w sitemapie, ale serwowany jako `noindex` — patrz `SEO_TECH_AUDIT.md` 2026-07-25, poz. 2).
+> **(b) Dwanaście artykułów jest zamrożonych w werdykcie GSC „Błąd serwera (5xx)" z 2026-05-15** i ma **0 wyświetleń przez 3 miesiące**, mimo że na żywo zwracają 200: `reklama-w-transporcie-publicznym`, `telebim-ekran-led-reklama`, `totem-reklamowy`, `reklama-na-samochodzie`, `reklama-outdoor-warszawa`, `reklama-outdoor-wroclaw`, `baner-reklamowy-cena`, `tablica-reklamowa`, `reklama-zewnetrzna`, `jak-wybrac-powierzchnie-reklamowa` + kategorie `/blog/poradniki` i `/blog/prawo-i-regulacje`. Stoi nad nimi **40,7% całego popytu w GSC**.
+> **Zanim ktokolwiek uzna artykuł za „słaby" i zleci przepisanie — sprawdź, czy nie jest na tej liście.** Odmrożenie to akcja w UI GSC, nie praca redakcyjna. Szczegóły i kolejność działań: `status/STRATEGY_LOG.md` → sekcja „🚦 BLOKER PRZED CAŁĄ KOLEJKĄ".
+
 | Data utworzenia | Slug | Kategoria | Status | Plik |
 |:---|:---|:---|:---|:---|
 | **Kategoria: /blog/poradniki** | | | | |
@@ -10,13 +15,13 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 | 2026-06-09 18:16 | ekran-led-cena | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260609181608_ekran-led-cena.md) |
 | 2026-06-22 11:30 | jak-zarobic-na-wynajmie-powierzchni-reklamowej | poradniki (PODAŻ) | ✅ ZRECENZOWANY | [Link](posts/20260622113049_jak-zarobic-na-wynajmie-powierzchni-reklamowej.md) |
 | 2026-06-22 11:56 | czy-oplaca-sie-wynajmowac-powierzchnie-reklamowa | poradniki (PODAŻ) | ✅ ZRECENZOWANY | [Link](posts/20260622115615_czy-oplaca-sie-wynajmowac-powierzchnie-reklamowa.md) |
-| 2026-06-22 12:39 | reklama-na-ogrodzeniu | poradniki (PODAŻ) | ✅ ZRECENZOWANY | [Link](posts/20260622123930_reklama-na-ogrodzeniu.md) |
-| 2026-06-22 12:51 | reklama-na-elewacji-wspolnoty | poradniki (PODAŻ) | ✅ ZRECENZOWANY | [Link](posts/20260622125118_reklama-na-elewacji-wspolnoty.md) |
+| 2026-06-22 12:39 | reklama-na-ogrodzeniu | poradniki (PODAŻ) | ✅ ZRECENZOWANY — 🔴 **NIEOPUBLIKOWANY** (prod: 404-szkielet 7 929 B + `noindex`, sprawdzone 2026-07-25) | [Link](posts/20260622123930_reklama-na-ogrodzeniu.md) |
+| 2026-06-22 12:51 | reklama-na-elewacji-wspolnoty | poradniki (PODAŻ) | ✅ ZRECENZOWANY — 🔴 **NIEOPUBLIKOWANY** (prod: 404-szkielet 7 929 B + `noindex`, sprawdzone 2026-07-25) | [Link](posts/20260622125118_reklama-na-elewacji-wspolnoty.md) |
 | 2026-04-14 06:02 | reklama-na-samochodzie | poradniki | ✅ ZRECENZOWANY (rozbudowa: reklama mobilna/przyczepki) | [Link](posts/20260414060200_reklama-na-samochodzie.md) |
 | 2026-04-14 06:03 | reklama-w-transporcie-publicznym | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414060300_reklama-w-transporcie-publicznym.md) |
 | **Kategoria: /blog/lokalizacje** | | | | |
 | 2026-04-14 06:04 | reklama-outdoor-warszawa | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260414060400_reklama-outdoor-warszawa.md) |
-| 2026-04-14 06:05 | reklama-outdoor-krakow | lokalizacje | ✅ ZRECENZOWANY 2026-07-13 (korekta stref 4→3 I/II/III; daty XXXVI/908/20 26.02.2020 / publ. 9.03.2020 poz.1984 potwierdzone oficjalnie; złagodzone cross-city superlatywy; nota o limicie 18 m² — czeka na publikację) | [Link](posts/20260414060500_reklama-outdoor-krakow.md) |
+| 2026-04-14 06:05 | reklama-outdoor-krakow | lokalizacje | ✅ ZRECENZOWANY 2026-07-13 (korekta stref 4→3 I/II/III; daty XXXVI/908/20 26.02.2020 / publ. 9.03.2020 poz.1984 potwierdzone oficjalnie; złagodzone cross-city superlatywy; nota o limicie 18 m² — ✅ LIVE NA PROD, zweryfikowane curl-em 2026-07-25) | [Link](posts/20260414060500_reklama-outdoor-krakow.md) |
 | 2026-04-14 06:06 | reklama-outdoor-wroclaw | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260414060600_reklama-outdoor-wroclaw.md) |
 | **Kategoria: /blog/poradniki (cd.)** | | | | |
 | 2026-04-14 06:10 | tablica-reklamowa | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414061000_tablica-reklamowa.md) |
@@ -30,18 +35,18 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 | **Kategoria: /blog/poradniki (cd.)** | | | | |
 | 2026-04-14 06:13 | baner-reklamowy-cena | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414061300_baner-reklamowy-cena.md) |
 | **Kategoria: /blog/lokalizacje (cd.)** | | | | |
-| 2026-04-14 06:14 | reklama-outdoor-gdansk | lokalizacje | ✅ ZRECENZOWANY 2026-07-13 (fałsz „brak uchwały" → egzekwowana XLVIII/1465/18; 2026-07-13: struktura stref 8 obszarów SZ/S0/SR/S1/S2/SI/S3/SP zamiast zmyślonych 6 A-F, usunięto błędne progi/odległości i sprzeczny cennik 36 m² — czeka na publikację) | [Link](posts/20260414061400_reklama-outdoor-gdansk.md) |
-| 2026-04-19 16:23 | reklama-outdoor-poznan | lokalizacje | ✅ ZRECENZOWANY 2026-07-13 (rozbudowa LED/DOOH + fakty potwierdzone oficjalnie: uchwała LXXXVIII/1671/VIII/2023, WSA II SA/Po 547/23, TK P 20/19, skarżący Jeronimo Martins/Biedronka; dodano niuans tymczasowości zwolnienia, usunięto stawki opłaty — Poznań jej nie pobiera — czeka na publikację) | [Link](posts/20260419162331_reklama-outdoor-poznan.md) |
+| 2026-04-14 06:14 | reklama-outdoor-gdansk | lokalizacje | ✅ ZRECENZOWANY 2026-07-13 (fałsz „brak uchwały" → egzekwowana XLVIII/1465/18; 2026-07-13: struktura stref 8 obszarów SZ/S0/SR/S1/S2/SI/S3/SP zamiast zmyślonych 6 A-F, usunięto błędne progi/odległości i sprzeczny cennik 36 m² — ✅ LIVE NA PROD, zweryfikowane curl-em 2026-07-25) | [Link](posts/20260414061400_reklama-outdoor-gdansk.md) |
+| 2026-04-19 16:23 | reklama-outdoor-poznan | lokalizacje | ✅ ZRECENZOWANY 2026-07-13 (rozbudowa LED/DOOH + fakty potwierdzone oficjalnie: uchwała LXXXVIII/1671/VIII/2023, WSA II SA/Po 547/23, TK P 20/19, skarżący Jeronimo Martins/Biedronka; dodano niuans tymczasowości zwolnienia, usunięto stawki opłaty — Poznań jej nie pobiera — ✅ LIVE NA PROD, zweryfikowane curl-em 2026-07-25) | [Link](posts/20260419162331_reklama-outdoor-poznan.md) |
 | 2026-05-12 22:30 | billboard-reklama | poradniki | ✅ ZRECENZOWANY (refresh) | [Link](posts/20260419163813_billboard-reklama.md) |
-| 2026-05-05 10:55 | reklama-outdoor-lodz | lokalizacje | ✅ ZRECENZOWANY 2026-07-13 („najsurowsza obowiązuje" → nieegzekwowana/zawieszona; 2026-07-13: numer XXXVII/966/16 (poz.5588) potwierdzony, złagodzono niepotwierdzony zakres wyroku 2024 i usunięto sprzeczność „zawieszona vs wyrok" — czeka na publikację) | [Link](posts/20260505105504_reklama-outdoor-lodz.md) |
+| 2026-05-05 10:55 | reklama-outdoor-lodz | lokalizacje | ✅ ZRECENZOWANY 2026-07-13 („najsurowsza obowiązuje" → nieegzekwowana/zawieszona; 2026-07-13: numer XXXVII/966/16 (poz.5588) potwierdzony, złagodzono niepotwierdzony zakres wyroku 2024 i usunięto sprzeczność „zawieszona vs wyrok" — ✅ LIVE NA PROD, zweryfikowane curl-em 2026-07-25) | [Link](posts/20260505105504_reklama-outdoor-lodz.md) |
 | 2026-05-05 11:36 | oplata-reklamowa | prawo-i-regulacje | ✅ ZRECENZOWANY | [Link](posts/20260505113610_oplata-reklamowa.md) |
 | 2026-05-05 11:47 | reklama-outdoor-katowice | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260505114741_reklama-outdoor-katowice.md) |
 | 2026-05-25 22:01 | reklama-outdoor-olsztyn | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260525220136_reklama-outdoor-olsztyn.md) |
 | 2026-05-25 22:44 | reklama-outdoor-bydgoszcz | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260525224446_reklama-outdoor-bydgoszcz.md) |
 | 2026-06-22 11:11 | reklama-outdoor-lublin | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260622111121_reklama-outdoor-lublin.md) |
-| 2026-06-22 12:28 | reklama-outdoor-szczecin | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260622122850_reklama-outdoor-szczecin.md) |
+| 2026-06-22 12:28 | reklama-outdoor-szczecin | lokalizacje | ✅ ZRECENZOWANY — 🔴 **NIEOPUBLIKOWANY** (prod: 404-szkielet 7 929 B + `noindex`, sprawdzone 2026-07-25) | [Link](posts/20260622122850_reklama-outdoor-szczecin.md) |
 | 2026-05-25 23:22 | dooh-reklama-programatyczna | trendy | ✅ ZRECENZOWANY | [Link](posts/20260525232247_dooh-reklama-programatyczna.md) |
 | **Kategoria: /blog/prawo-i-regulacje** | | | | |
-| 2026-04-19 16:23 | uchwala-krajobrazowa-reklama | prawo-i-regulacje | ✅ ZRECENZOWANY 2026-07-13 (korekta huba: Łódź „aktywna"→zawieszona, Poznań fałsz „brak zakazów”→MA uchwałę, Gdańsk egzekwuje, usunięto niepotwierdzone 90%/3 mln + kalkulator Kraków — czeka na publikację) | [Link](posts/20260419162332_uchwala-krajobrazowa-reklama.md) |
+| 2026-04-19 16:23 | uchwala-krajobrazowa-reklama | prawo-i-regulacje | ✅ ZRECENZOWANY 2026-07-13 (korekta huba: Łódź „aktywna"→zawieszona, Poznań fałsz „brak zakazów”→MA uchwałę, Gdańsk egzekwuje, usunięto niepotwierdzone 90%/3 mln + kalkulator Kraków — ✅ LIVE NA PROD, zweryfikowane curl-em 2026-07-25) | [Link](posts/20260419162332_uchwala-krajobrazowa-reklama.md) |
 | 2026-06-22 12:07 | pozwolenie-na-tablice-reklamowa | prawo-i-regulacje | ✅ ZRECENZOWANY | [Link](posts/20260622120711_pozwolenie-na-tablice-reklamowa.md) |
 | 2026-06-22 12:20 | reklama-bez-pozwolenia-kary | prawo-i-regulacje | ✅ ZRECENZOWANY | [Link](posts/20260622122024_reklama-bez-pozwolenia-kary.md) |

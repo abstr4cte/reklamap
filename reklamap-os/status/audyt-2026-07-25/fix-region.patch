@@ -1,0 +1,401 @@
+diff --git a/backend/app/Console/Commands/CanonizeAdvertisementRegions.php b/backend/app/Console/Commands/CanonizeAdvertisementRegions.php
+new file mode 100644
+index 0000000..9e752be
+--- /dev/null
++++ b/backend/app/Console/Commands/CanonizeAdvertisementRegions.php
+@@ -0,0 +1,167 @@
++<?php
++
++namespace App\Console\Commands;
++
++use App\Models\Advertisement;
++use App\Support\RegionCanonicalizer;
++use Illuminate\Console\Command;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Http;
++use Illuminate\Support\Facades\Log;
++
++/**
++ * Kanonizacja kolumny `advertisements.region` do ASCII-id (`slaskie`, `dolnoslaskie`, …).
++ *
++ * Kontekst (prod 2026-07-25): 480/827 rekordów ma `region` puste, a pozostałe 347 są w dwóch
++ * formatach naraz („śląskie” 135 vs „województwo śląskie” 14). Filtr województwa we froncie
++ * wysyła ASCII-id, więc 13 z 16 województw zwracało 0 ofert.
++ *
++ * Zasady bezpieczeństwa:
++ *  - DRY-RUN domyślnie; zapis dopiero z `--apply`,
++ *  - UPDATE W MIEJSCU (query builder), NIGDY delete+create — id/slug/statystyki nietknięte,
++ *  - `updated_at` NIE jest ruszane (query builder go nie dotyka) — inaczej sitemapa
++ *    przestawiłaby `lastmod` na setkach URL-i naraz i wyglądałaby na masową podmianę treści,
++ *  - nierozpoznane wartości zostawiamy bez zmian (lepiej puste niż źle przypisane),
++ *  - faza geokodowania jest opt-in (`--geocode`), 1 zapytanie/s zgodnie z polityką Nominatim,
++ *    deduplikowana po siatce 0.1° (prod: 480 pustych → ~71 zapytań).
++ */
++class CanonizeAdvertisementRegions extends Command
++{
++    protected $signature = 'region:canonize
++                            {--apply : Zapisz zmiany (bez tej flagi tylko raport)}
++                            {--geocode : Uzupełnij puste `region` z lat/lng przez Nominatim}
++                            {--limit=0 : Ogranicz liczbę geokodowanych grup (0 = bez limitu)}';
++
++    protected $description = 'Kanonizuje advertisements.region do ASCII-id; opcjonalnie uzupełnia puste z lat/lng.';
++
++    private const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/reverse';
++    private const GRID = 1; // liczba miejsc po przecinku przy dedupie współrzędnych (~11 km)
++
++    public function handle(): int
++    {
++        $apply = (bool) $this->option('apply');
++        $this->info($apply ? 'TRYB ZAPISU (--apply)' : 'DRY-RUN — nic nie zostanie zapisane');
++
++        $changedA = $this->canonizeExisting($apply);
++        $changedB = $this->option('geocode') ? $this->fillEmptyFromCoords($apply) : 0;
++
++        $this->newLine();
++        $this->info(sprintf('Podsumowanie: kanonizacja %d, uzupełnienie z lat/lng %d.', $changedA, $changedB));
++
++        return self::SUCCESS;
++    }
++
++    /** Faza A — bez sieci: sprowadza istniejące wartości do ASCII-id. */
++    private function canonizeExisting(bool $apply): int
++    {
++        $rows = Advertisement::query()
++            ->whereNotNull('region')
++            ->where('region', '!=', '')
++            ->select('region', DB::raw('COUNT(*) as cnt'))
++            ->groupBy('region')
++            ->orderByDesc('cnt')
++            ->get();
++
++        $changed = 0;
++        $this->newLine();
++        $this->line('--- Faza A: kanonizacja istniejących wartości ---');
++
++        foreach ($rows as $row) {
++            $canon = RegionCanonicalizer::canonicalize($row->region);
++
++            if ($canon === null) {
++                $this->warn(sprintf('  ? "%s" (%d) — nierozpoznane, ZOSTAWIAM', $row->region, $row->cnt));
++                continue;
++            }
++            if ($canon === $row->region) {
++                continue;
++            }
++
++            $this->line(sprintf('  "%s" (%d) → "%s"', $row->region, $row->cnt, $canon));
++            $changed += (int) $row->cnt;
++
++            if ($apply) {
++                DB::transaction(function () use ($row, $canon): void {
++                    DB::table('advertisements')->where('region', $row->region)->update(['region' => $canon]);
++                });
++            }
++        }
++
++        return $changed;
++    }
++
++    /** Faza B — reverse geocoding lat/lng → województwo, dla rekordów z pustym `region`. */
++    private function fillEmptyFromCoords(bool $apply): int
++    {
++        $ads = Advertisement::query()
++            ->where(fn ($q) => $q->whereNull('region')->orWhere('region', ''))
++            ->whereNotNull('latitude')->whereNotNull('longitude')
++            ->where('latitude', '!=', 0)->where('longitude', '!=', 0)
++            ->get(['id', 'latitude', 'longitude', 'city']);
++
++        /** @var array<string, list<int>> $groups */
++        $groups = [];
++        foreach ($ads as $ad) {
++            $key = round((float) $ad->latitude, self::GRID) . ',' . round((float) $ad->longitude, self::GRID);
++            $groups[$key][] = (int) $ad->id;
++        }
++
++        $limit = (int) $this->option('limit');
++        if ($limit > 0) {
++            $groups = array_slice($groups, 0, $limit, true);
++        }
++
++        $this->newLine();
++        $this->line(sprintf('--- Faza B: %d rekordów bez regionu w %d grupach (zapytań do Nominatim) ---', $ads->count(), count($groups)));
++
++        $changed = 0;
++        $bar = $this->output->createProgressBar(count($groups));
++
++        foreach ($groups as $key => $ids) {
++            [$lat, $lng] = array_map('floatval', explode(',', $key));
++            $canon = $this->reverseVoivodeship($lat, $lng);
++            $bar->advance();
++
++            if ($canon === null) {
++                Log::warning('region:canonize — brak województwa dla ' . $key);
++                continue;
++            }
++
++            $changed += count($ids);
++            if ($apply) {
++                DB::transaction(function () use ($ids, $canon): void {
++                    DB::table('advertisements')->whereIn('id', $ids)->update(['region' => $canon]);
++                });
++            }
++        }
++
++        $bar->finish();
++
++        return $changed;
++    }
++
++    private function reverseVoivodeship(float $lat, float $lng): ?string
++    {
++        try {
++            $resp = Http::withHeaders(['User-Agent' => 'ReklaMapImport/1.0 (kontakt@reklamap.pl)'])
++                ->timeout(15)
++                ->get(self::NOMINATIM_URL, [
++                    'format' => 'jsonv2',
++                    'lat' => $lat,
++                    'lon' => $lng,
++                    'zoom' => 8,          // poziom województwa
++                    'accept-language' => 'pl',
++                ]);
++
++            $state = $resp->json('address.state');
++
++            return is_string($state) ? RegionCanonicalizer::canonicalize($state) : null;
++        } catch (\Throwable $e) {
++            Log::warning('region:canonize — Nominatim padł: ' . $e->getMessage());
++
++            return null;
++        } finally {
++            usleep(1_100_000); // Nominatim: maks. 1 zapytanie/s
++        }
++    }
++}
+diff --git a/backend/app/Http/Controllers/AdvertisementController.php b/backend/app/Http/Controllers/AdvertisementController.php
+index df1b6e3..e9b4ed2 100644
+--- a/backend/app/Http/Controllers/AdvertisementController.php
++++ b/backend/app/Http/Controllers/AdvertisementController.php
+@@ -197,19 +197,45 @@ private function foldPolish(string $s): string
+     }
+ 
+     /**
+-     * Wyrażenie SQL zwijające kolumnę `city` do lowercase ASCII (zagnieżdżone REPLACE + LOWER).
+-     * Działa na MySQL (prod) i SQLite (testy). Uwaga: wyłącza indeks na `city` — akceptowalne przy
+-     * obecnej skali; przy wzroście rozważyć znormalizowaną kolumnę generowaną + indeks.
++     * Urzędowy prefiks w kolumnie `region`. Nominatim (`address.state`) zwraca raz
++     * „województwo śląskie”, raz „śląskie” — oba formaty siedzą w bazie, a front wysyła
++     * ASCII-id ze słownika (`polishLocations.json`: „slaskie”). Fold porównuje obie formy.
+      */
+-    private function cityFoldedSql(): string
++    private const REGION_PREFIX = 'wojewodztwo ';
++
++    /**
++     * Wyrażenie SQL zwijające kolumnę tekstową do lowercase ASCII (zagnieżdżone REPLACE + LOWER).
++     * Działa na MySQL (prod) i SQLite (testy). Uwaga: wyłącza indeks na kolumnie — akceptowalne
++     * przy obecnej skali; przy wzroście rozważyć znormalizowaną kolumnę generowaną + indeks.
++     */
++    private function foldedSql(string $column): string
+     {
+-        $expr = 'city';
++        $expr = $column;
+         foreach (self::PL_FOLD as $from => $to) {
+             $expr = "REPLACE($expr, '$from', '$to')";
+         }
+         return "LOWER($expr)";
+     }
+ 
++    private function cityFoldedSql(): string
++    {
++        return $this->foldedSql('city');
++    }
++
++    /**
++     * Fold nazwy województwa: diakrytyki → ASCII, myślnik → spacja, lowercase, zdjęty prefiks
++     * „województwo ”. Dzięki temu „dolnoslaskie” (id z frontu), „Dolnośląskie” (label)
++     * i „województwo dolnośląskie” (zapis z Nominatim w bazie) dają tę samą wartość.
++     */
++    private function foldRegion(string $s): string
++    {
++        $folded = trim(preg_replace('/\s+/', ' ', $this->foldPolish($s)) ?? '');
++
++        return str_starts_with($folded, self::REGION_PREFIX)
++            ? trim(substr($folded, strlen(self::REGION_PREFIX)))
++            : $folded;
++    }
++
+     /**
+      * Build a filtered query from request parameters (shared by index and mapPins).
+      */
+@@ -253,8 +279,16 @@ private function buildFilteredQuery(Request $request)
+         }
+ 
+         // --- Region filter ---
++        // Ta sama klasa błędu co city_strict (naprawa 2026-07-07): front wysyła ASCII-id
++        // województwa z `polishLocations.json` („dolnoslaskie”), a w bazie leży to, co zwrócił
++        // Nominatim — raz „śląskie”, raz „województwo dolnośląskie”. Exact match `where('region', ?)`
++        // dawał 0 ofert dla 13 z 16 województw (prod 2026-07-25: dolnoslaskie/malopolskie/
++        // wielkopolskie/lodzkie/... → 0, mimo 10 rekordów „województwo dolnośląskie” w bazie).
++        // Foldujemy obie strony (diakrytyki + myślnik) i porównujemy z prefiksem i bez.
+         if ($request->filled('region')) {
+-            $query->where('region', $request->input('region'));
++            $regionExpr = $this->foldedSql('region');
++            $folded = $this->foldRegion((string) $request->input('region'));
++            $query->whereRaw("($regionExpr = ? OR $regionExpr = ?)", [$folded, self::REGION_PREFIX . $folded]);
+         }
+ 
+         // --- Status filter ---
+diff --git a/backend/app/Support/RegionCanonicalizer.php b/backend/app/Support/RegionCanonicalizer.php
+new file mode 100644
+index 0000000..5e42dfb
+--- /dev/null
++++ b/backend/app/Support/RegionCanonicalizer.php
+@@ -0,0 +1,48 @@
++<?php
++
++namespace App\Support;
++
++/**
++ * Kanonizacja nazwy województwa do ASCII-id używanego przez front
++ * (`frontend/src/data/polishLocations.json` → `voivodeships[].id`).
++ *
++ * Po co: kolumna `advertisements.region` jest wypełniana z `address.state` z Nominatim
++ * (`AddAdPage.vue:663,728`), które zwraca raz „śląskie”, raz „województwo dolnośląskie”,
++ * a front filtruje po ASCII-id („slaskie”). Bez wspólnego kanonu zapis i odczyt się rozjeżdżają.
++ *
++ * Klasa jest czysta (bez I/O), więc nadaje się i do kontrolera, i do komendy backfillu, i do testów.
++ */
++final class RegionCanonicalizer
++{
++    /** ASCII-id 16 województw — MUSZĄ być zgodne z `polishLocations.json`. */
++    public const IDS = [
++        'dolnoslaskie', 'kujawsko-pomorskie', 'lubelskie', 'lubuskie',
++        'lodzkie', 'malopolskie', 'mazowieckie', 'opolskie',
++        'podkarpackie', 'podlaskie', 'pomorskie', 'slaskie',
++        'swietokrzyskie', 'warminsko-mazurskie', 'wielkopolskie', 'zachodniopomorskie',
++    ];
++
++    private const PL_FOLD = [
++        'ą' => 'a', 'Ą' => 'a', 'ć' => 'c', 'Ć' => 'c', 'ę' => 'e', 'Ę' => 'e',
++        'ł' => 'l', 'Ł' => 'l', 'ń' => 'n', 'Ń' => 'n', 'ó' => 'o', 'Ó' => 'o',
++        'ś' => 's', 'Ś' => 's', 'ź' => 'z', 'Ź' => 'z', 'ż' => 'z', 'Ż' => 'z',
++    ];
++
++    /**
++     * Zwraca ASCII-id województwa albo null, gdy wejścia nie da się rozpoznać
++     * (null = ZOSTAW jak jest, nigdy nie zgaduj — lepiej puste niż błędnie przypisane).
++     */
++    public static function canonicalize(?string $raw): ?string
++    {
++        if ($raw === null || trim($raw) === '') {
++            return null;
++        }
++
++        $s = mb_strtolower(strtr(trim($raw), self::PL_FOLD));
++        $s = trim(preg_replace('/\s+/', ' ', $s) ?? '');
++        $s = preg_replace('/^(wojewodztwo|woj\.?)\s+/', '', $s) ?? $s;
++        $s = str_replace(' ', '-', $s);
++
++        return in_array($s, self::IDS, true) ? $s : null;
++    }
++}
+diff --git a/backend/tests/Feature/AdvertisementApiTest.php b/backend/tests/Feature/AdvertisementApiTest.php
+index 4946618..640e5dc 100644
+--- a/backend/tests/Feature/AdvertisementApiTest.php
++++ b/backend/tests/Feature/AdvertisementApiTest.php
+@@ -368,6 +368,46 @@ public function test_city_strict_filter_matches_hyphenated_city_from_spaced_slug
+         $this->assertSame(1, $spaced->json('total'), 'Spacjowane "Szklary Huta" musi złapać "Szklary-Huta".');
+     }
+ 
++    /**
++     * Regresja: filtr województwa. Front (HeroBanner/ListingsPage) wysyła ASCII-id ze słownika
++     * `polishLocations.json` („dolnoslaskie”, „slaskie”), a w bazie leży `address.state` z
++     * Nominatim w dwóch formatach („śląskie” ORAZ „województwo dolnośląskie”). Exact match
++     * `where('region', ?)` zwracał 0 dla 13 z 16 województw (prod 2026-07-25).
++     */
++    public function test_region_filter_matches_ascii_id_diacritics_and_wojewodztwo_prefix(): void
++    {
++        Advertisement::factory()->create(['region' => 'województwo dolnośląskie', 'is_active' => true, 'status' => 'active']);
++        Advertisement::factory()->create(['region' => 'dolnośląskie', 'is_active' => true, 'status' => 'active']);
++        Advertisement::factory()->create(['region' => 'śląskie', 'is_active' => true, 'status' => 'active']);
++
++        // ASCII-id z frontu musi złapać OBA zapisy dolnośląskiego, ale nie śląskie
++        $ascii = $this->getJson('/api/listings?region=dolnoslaskie', $this->appKeyHeaders());
++        $ascii->assertStatus(200);
++        $this->assertSame(2, $ascii->json('total'), 'ASCII "dolnoslaskie" musi złapać "dolnośląskie" i "województwo dolnośląskie".');
++
++        // Label z diakrytykami (to, co user widzi w podpowiedzi) — ten sam wynik
++        $label = $this->getJson('/api/listings?' . http_build_query(['region' => 'Dolnośląskie']), $this->appKeyHeaders());
++        $this->assertSame(2, $label->json('total'), 'Label "Dolnośląskie" musi dać ten sam wynik co ASCII-id.');
++
++        // Pełna forma urzędowa też
++        $full = $this->getJson('/api/listings?' . http_build_query(['region' => 'województwo dolnośląskie']), $this->appKeyHeaders());
++        $this->assertSame(2, $full->json('total'), 'Pełna forma "województwo dolnośląskie" musi dać ten sam wynik.');
++
++        // Kontrola: śląskie nie może łapać dolnośląskiego (prefiks/substring)
++        $other = $this->getJson('/api/listings?region=slaskie', $this->appKeyHeaders());
++        $this->assertSame(1, $other->json('total'), 'Śląskie nie może łapać dolnośląskiego.');
++    }
++
++    /** Regresja: województwa dwuczłonowe — id z myślnikiem vs zapis z bazy. */
++    public function test_region_filter_matches_hyphenated_voivodeship(): void
++    {
++        Advertisement::factory()->create(['region' => 'województwo warmińsko-mazurskie', 'is_active' => true, 'status' => 'active']);
++
++        $res = $this->getJson('/api/listings?region=warminsko-mazurskie', $this->appKeyHeaders());
++        $res->assertStatus(200);
++        $this->assertSame(1, $res->json('total'), 'ASCII "warminsko-mazurskie" musi złapać "województwo warmińsko-mazurskie".');
++    }
++
+     /**
+      * Huby nawigacyjne (stopka/menu): tylko miasta/kombinacje z realną podażą (>= progu thin),
+      * żeby linkowanie wewnętrzne kierowało crawl do stron z treścią, nie do pustych demand-miast.
+diff --git a/frontend/src/stores/useSearchStore.ts b/frontend/src/stores/useSearchStore.ts
+index 298db71..bce1063 100644
+--- a/frontend/src/stores/useSearchStore.ts
++++ b/frontend/src/stores/useSearchStore.ts
+@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
+ import { api } from '../services/api'
+ import type { Advertisement, MapPin } from '../types'
+ import { FilterParams, DEFAULT_FILTERS } from '../types/filters'
+-import { normalizePolishChars, normalizeCityMatch, queryParamsToFilters } from '../utils/filterUtils'
++import { normalizePolishChars, normalizeCityMatch, normalizeRegionMatch, queryParamsToFilters } from '../utils/filterUtils'
+ import { deslugify } from '../utils/slugify'
+ import { type LocationResult } from '../services/locationService'
+ import polishLocations from '../data/polishLocations.json'
+@@ -732,7 +732,13 @@ export const useSearchStore = defineStore('search', () => {
+     // Skip location text filters if mapBounds is active (user is interactively panning/zooming the map)
+     // This allows users to zoom out of a city and discover ads in neighboring areas
+     if (!f.mapBounds) {
+-      if (f.region) filtered = filtered.filter(ad => ad.region === f.region)
++      if (f.region) {
++        // normalizeRegionMatch = fold diakrytyków + zdjęty prefiks „województwo”, symetrycznie
++        // do backendu (foldRegion). Bez tego `ad.region === f.region` wycinało wszystko: filtry
++        // trzymają ASCII-id („dolnoslaskie”), a w bazie jest „województwo dolnośląskie”.
++        const regionQuery = normalizeRegionMatch(f.region)
++        filtered = filtered.filter(ad => normalizeRegionMatch(ad.region || '') === regionQuery)
++      }
+       if (f.city) {
+         // normalizeCityMatch = fold diakrytyków + myślnik→spacja, symetrycznie do backendu
+         // (city_strict). Bez folda myślnika miasta jak Szklary-Huta/Polanica-Zdrój dawały
+diff --git a/frontend/src/utils/filterUtils.ts b/frontend/src/utils/filterUtils.ts
+index 0a13b74..676cae6 100644
+--- a/frontend/src/utils/filterUtils.ts
++++ b/frontend/src/utils/filterUtils.ts
+@@ -34,6 +34,17 @@ export function normalizeCityMatch(text: string): string {
+   return normalizePolishChars(text || '').toLowerCase().replace(/-/g, ' ')
+ }
+ 
++/**
++ * Normalizacja nazwy WOJEWÓDZTWA do porównań — symetryczna z backendem
++ * (AdvertisementController::foldRegion). Front trzyma w filtrach ASCII-id ze słownika
++ * (`polishLocations.json`: „dolnoslaskie”), a w `ad.region` siedzi to, co zwrócił Nominatim
++ * przy dodawaniu ogłoszenia — raz „śląskie”, raz „województwo dolnośląskie”. Bez folda
++ * i zdjęcia prefiksu filtr klienta wycinał WSZYSTKO (prod 2026-07-25: 13/16 województw → 0).
++ */
++export function normalizeRegionMatch(text: string): string {
++  return normalizeCityMatch(text).replace(/^(wojewodztwo|woj\.?)\s+/, '').trim()
++}
++
+ export interface FilterParams {
+   keyword?: string
+   type?: string

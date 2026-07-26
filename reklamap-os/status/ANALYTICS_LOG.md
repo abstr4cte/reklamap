@@ -5,6 +5,91 @@ Najnowszy wpis na górze. Nie nadpisuj — dopisuj.
 
 ---
 
+## 2026-07-25 — AUDYT 7-WYMIAROWY (GSC + GA4 + Bing, wszystko przez API)
+
+> **📁 Pełny raport: `reklamap-os/status/audyt-2026-07-25/RAPORT.md`** (466 linii) · brief: `BRIEF-STRATEG-BIZNES.md` · 7 raportów cząstkowych · gotowy patch `fix-region.patch`.
+> Wykonanie: workflow 15 agentów + adwersaryjna weryfikacja 6 krytycznych znalezisk (3 obalone). Dane: GSC API 91 dni, **183 inspekcje URL Inspection API**, GA4 `runReport`/`runFunnelReport` z filtrem `hostName`, Bing API (13 metod), **12 przebiegów Lighthouse na żywym prodzie**, 218 pobrań jako Googlebot, prod API 827 ogłoszeń.
+> **Od tej pory GSC/GA4/Bing czytamy programowo** — konto usługi + klucze opisane w `CLAUDE.md` → „Narzędzia SEO i analityki". Nie prosić użytkownika o eksporty CSV.
+
+**Dane wejściowe:** GSC 26.04–25.07 (167 klik / 10 233 wyśw. / poz. 31,3) · GA4 property 526431028 · Bing (150 wyśw. / 3 kliki) · `stats-2026-07-25.md` (827 ogł., 349 aktywnych).
+**Czego zabrakło:** CrUX/INP (PSI 429, CrUX 403 bez klucza) · rozbicie lejka po `step_number` (**0 custom dimensions** w property — dane od 14.05 bezpowrotnie stracone) · lista 24 URL-i 5xx z UI GSC (brak API) · Bing AI Performance (brak w API).
+
+### Najważniejsze wnioski (TL;DR)
+1. **Recovery to sukces, ale mierzony złą metryką.** Kliki poza home: **12 → 23 w 28 dni (+92%)**, tygodniowo 1 → 2 → 3 → **17**. Nagłówkowy spadek 38 → 30 to w całości zapaść klików BRANDOWYCH na home (26 → 7) — miara wolumenu cold-callingu, nie SEO. Koreluje 1:1 z GA4 (sesje 12,7 → 3,7/dzień).
+2. **Trwały jest tylko przyrost w paśmie 10–20** (18 → 146 wyśw./tydz., +711%). Pasmo 1–10 stoi (25 → 31). Poprawa średniej 59,5 → 26,4 to w ~85% zanik ogona 50+ = **artefakt mieszanki**.
+3. **Wąskim gardłem jest PODAŻ, nie treść.** 88 URL-i z **5 273 wyświetleniami (45,3%)** ma <3 oferty → `noindex`. **70% wisienek 5–20 (864 z 1 238 wyśw.) stoi nad stronami, których żadna praca Stratega nie odblokuje.** Popyt: LED+citylight+transport+totem = **39% popytu przy 2,2% podaży**; 768 billboardów (92,9% podaży) obsługuje 24–33%.
+4. **24 nośniki w 10 slotach odblokowują 2 484 wyśw. = 29,3% ruchu serwisu.** Te same 24 w Kłodzku → **1,4 wyświetlenia**. Huby kłodzkie: 253 nośniki (30,6% bazy) → 39 wyśw. / 0 klików w kwartale (0,15 wyśw./nośnik vs 34,9 w Poznaniu — **przewaga 227×**).
+5. **Dwa żywe błędy publikacyjne, koszt naprawy XS:** 12 URL-i bloga zamrożonych w werdykcie 5xx z **15.05** ma **0 wyświetleń** (6 zdrowych zebrało 1 532); 4 URL-e z sitemapy serwują `noindex` od 12 dni, bo `BlogPost::saved` czyści cache sitemapy, ale prerender powstaje tylko w `deploy.sh` → **czas do indeksacji nowej treści = czas do następnego deployu**.
+6. **Marketplace w 91 dni:** 115 userów na kartach → **10 kontaktów (8,7%)**, **zero kliknięć w telefon od 1.07**. Lejek podaży pęka PRZED formularzem (home → `/dodaj` −80,5%), nie w nim (kto ukończy krok 1, publikuje w 93,3%).
+7. **CWV zmierzone po raz pierwszy: CLS 0,809–0,963** na 10/12 przebiegów — `mount()` bez `router.isReady()` + leniwe trasy → prerenderowana treść **znika na 0,55–13,7 s**. Home ma CLS 0,000 (statyczny import) = kontrola potwierdza mechanizm. **Ale to NIE jest przyczyna słabego CTR** (CTR jest monotoniczną funkcją pozycji; 89,2% wyświetleń z desktopu).
+8. **Zero domen linkujących** — potwierdzone dwoma źródłami (Bing `GetLinkCounts` puste, GA4: 100% referrali to webmail/podglądy linków). Przy poz. 31,3 to jedyna dźwignia ruszająca POZYCJE, a nie tylko wyświetlenia.
+
+### Dwa zapytania ofertowe (13.07, 21.07) — sygnał diagnostyczny, nie leady
+Ramka: ReklaMap to platforma, nie broker — founder nie odpisuje i to jego decyzja. Oba mają domknięty łańcuch przyczynowy:
+- **Warszawa Śródmieście:** 2 nośniki w mieście, 5 w promieniu 15 km → strona poniżej progu thin → `noindex`. **Brak podaży, nie brak UI.** Ta strona zebrała mimo to 452 wyśw. i jest #1 na liście najtańszych odblokowań (brakuje **1 nośnika**).
+- **TVL dolnośląskie:** filtr województwa zwraca 0 przy ~407 realnych nośnikach. **13 z 16 województw zwraca 0**; filtr sięga dziś 261/827 ogłoszeń (31,6%).
+- **Wspólny mianownik:** **683 z 827 wystawców (82,6%) deklaruje e-mail jako preferowany kanał**, a w serwisie nie ma **ani jednego `mailto:` do wystawcy** — 4 istniejące prowadzą na `kontakt@reklamap.pl`, stopka jest na każdej podstronie. Ścieżka `/kontakt` jest w dodatku **niemierzona** (`analytics.mainContactFormSubmit` — 0 wywołań).
+
+### ➡️ DLA STRATEGA (skrót — pełny brief w `audyt-2026-07-25/BRIEF-STRATEG-BIZNES.md`)
+1. **Rozbudowa `blog/lokalizacje/reklama-outdoor-krakow`** — `nośniki reklamowe kraków outdoor` 25 wyśw./poz. **8,1** (najbliżej top-5 w serwisie) + klaster transportu miejskiego (~84 wyśw. bez własnej strony). *(S)*
+2. **To samo dla Gdańska** — `reklama outdoorowa gdansk` 20/15,9. *(S)*
+3. **Drugi filar poradnikowy: LED albo citylight** — po ~1,2 tys. wyśw. popytu; dziś `billboard-reklama` niesie **47,8% bloga i 23,5% wyświetleń serwisu** (koncentracja ryzyka). *(M)*
+4. **Dosypać do `prawo-i-regulacje`** — najlepsza średnia pozycja (18,9) przy 2 artykułach z ruchem. *(S)*
+5. **Klaster podażowy — research od zera** (`ile można zarobić na billboardzie`, `billboard na działce`): **0 fraz podażowych w 705 zapytaniach**, a projekt jest w fazie budowy podaży. Tani start: **3 gotowe, zrecenzowane, nieopublikowane** artykuły. *(M)*
+6. **NIE pisać w silosie `trendy`** w obecnej formule (4 szt., 0 wyśw./3 mies.) — ale najpierw sprawdzić, czy to nie efekt zamrożonego 5xx (2 z 4 są w tej puli).
+> Warunek wstępny dla 4 z 6 tematów: **12 URL-i bloga zamrożonych w 5xx pokrywa 243 frazy / 3 449 wyśw. = 40,7% całego popytu GSC.** To problem techniczny, nie redakcyjny.
+
+### ➡️ DLA ARCHITEKTA SEO
+Patrz `SEO_TECH_AUDIT.md`, wpis 2026-07-25.
+
+### ➡️ DLA BIZNESOWEGO
+- **Kierunek akwizycji: zasięg zamiast gęstości.** 3 nośniki na kombinację typ×miasto wg listy 10 slotów (§5c raportu) > 60 kolejnych w Kłodzku. Nie da się wykreować wolumenu wyszukiwań dla Szalejowa Górnego.
+- **Katowice: dźwignia bez rozmowy sprzedażowej** — 140 nośników ≤30 km vs 8 pokazywanych, mechanizm `lat/lng/radius` już istnieje. NIE zadziała dla Białegostoku (0 w promieniu 50 km) ani Szczecina (103 km).
+- **Unikalność treści jako warunek kolejnych importów** — 516/827 (62,4%) dzieli tytuł, 345 (41,7%) parę tytuł+opis, 3 URL-e byte-identyczne. Koreluje z 56% leafów „wykryta, niezindeksowana". **Import kolejnych 400 billboardów tym samym szablonem pogłębi problem.**
+- **Ścieżka e-mailowa do wystawcy** (alias relay `ad-{id}@`, NIE odsłaniać `owner_email`; strict DMARC → wyłącznie SMTP Hostido).
+
+### ➡️ DLA UŻYTKOWNIKA
+- **Deploy frontu** (kolejność z CLAUDE.md: backend `git pull` + `cache:clear`, potem `./deploy.sh`) — 4 URL-e wychodzą z `noindex`.
+- **GSC → „Błąd serwera (5xx)" → Validate Fix** + „Poproś o zindeksowanie" dla 5 artykułów. Potencjał rzędu 1 000+ wyświetleń.
+- ~~**GA4 Admin ×3**~~ — ✅ **WYKONANE 2026-07-25 przez Admin API** (konto usługi podniesione do roli „Edytujący"; scope `analytics.edit`):
+  - **Kluczowe zdarzenia (3):** `contact_phone_click`, `contact_form_submit`, `contact_email_click` — wszystkie `ONCE_PER_SESSION` (39 kliknięć od 7 userów: liczymy sesje z kontaktem, nie kliknięcia). Wcześniej jedynym key eventem był `add_listing_success`, więc kolumna „konwersje" mierzyła **wyłącznie podaż**. Stan po zmianie: `add_listing_success, contact_email_click, contact_form_submit, contact_phone_click, purchase, search_alert_create`.
+  - **Wymiary niestandardowe (3, scope EVENT):** `step_number` (rozbicie lejka podaży po krokach), `ad_type`, `ad_city`. Wcześniej property miała **0 custom dimensions** — stąd „brak danych" o tym, na którym kroku formularza ludzie odpadają. **Rejestracja nie odzyskuje historii** — dane sprzed 2026-07-25 są bezpowrotnie stracone, zbieranie startuje od teraz.
+  - **Ruch deweloperski:** zasób `dataFilters` **nie istnieje w Admin API** (v1alpha → 404), więc filtru „Internal traffic" nie da się ustawić programowo. Rozwiązane **lepiej, u źródła**: bramka w `frontend/index.html` — tag GA4 ładuje się wyłącznie na `reklamap.pl`/`www.reklamap.pl`, więc localhost, 127.0.0.1 i prerender (puppeteer :5199) w ogóle nie wysyłają zdarzeń. `trackEvent` ma guard na `window.gtag`, więc brak taga na dev jest bezpieczny. ⏳ wymaga deployu frontu.
+- **Outreach mailowy → landing `/dodaj-powierzchnie-reklamowa`** z `utm_content`, nie na `/`. Dziś 51,1% sesji z maila ląduje na home, a `/dodaj` dostaje z maila 0 sesji przy 196,8 s/odsłonę i engagementRate 0,92.
+- **ZMIANA KPI:** przestać raportować średnią pozycję. Mierzyć: wyświetlenia w paśmie 1–10, w paśmie 10–20, **kliki na stronach innych niż `/`** (proxy non-brand odporne na anonimizację), osobno kliki brandowe jako miarę akwizycji offline.
+- **Spadek klików brandowych 27 → 5 czytać jako spadek wolumenu cold-callingu, nie problem SEO.**
+
+### 🛑 Pytania do foundera (blokują decyzje)
+1. ~~**Status `reserved` (463/827, 56%)**~~ — **ROZSTRZYGNIĘTE 2026-07-25 przez foundera: to REALNE rezerwacje.** Właściciel sam odblokuje nośnik, gdy się zwolni; świadomie nie ustawia `unavailable`, żeby nie wygaszać ogłoszenia. Czyli: `reserved` **zostaje w sitemapie i w progu thin** (niezmiennik CLAUDE.md potwierdzony), stan jest prawidłowy, nie jest artefaktem importu.
+   **Doprecyzowanie zamysłu produktowego (founder):** `reserved` = ktoś nośnik zarezerwował, ale **nie doszło do wynajmu** — stan „czyśćca", rezerwacja niepotwierdzona transakcją.
+   **🔴 Ten zamysł NIE opisuje danych, które siedzą w bazie.** Weryfikacja na prod API (2026-07-25): wszystkie 463 rekordy to `offer_type=agency` + `type=billboard` + `variant=standard` + `is_verified=0` + `available_from=NULL`, **384/463 nigdy nie edytowane** (`created_at == updated_at`), utworzone w **dwóch batchach: 374 szt. 15.06 i 88 szt. 10.06**, tytuły w jednolitym szablonie „Billboard {Miasto} — {lokalizacja}".
+   **Argument rozstrzygający:** platforma odnotowała **10 kontaktów w 91 dni** (7 telefon + 3 formularz). Nie mogło z tego powstać 463 rezerwacji — to arytmetycznie niemożliwe. **Te rekordy to zaimportowany snapshot cennika agencji** („u nas zajęte na dzień eksportu"), a nie czyściec po niedoszłych transakcjach na ReklaMap. Po 6 tygodniach snapshot jest przeterminowany (typowa kampania OOH: 2–4 tyg.).
+   **ALE ujawnia to osobny problem — rezerwacja bez terminu i bez mechanizmu powrotu:** w schemacie nie ma `reserved_until`, a **od 2026-06-18 (5+ tygodni) ani jeden rekord nie zmienił statusu**. Skoro odblokowanie zależy wyłącznie od ręcznej akcji właściciela, a właściciele nie wracają do panelu, to efektywna podaż zamarza: **349 pozycji „Wolne" (42,2%) zamiast 827**, a 5 miast (Ząbkowice Śląskie 31/31, Bielawa 12/12, Braszowice 9/9, Łagiewniki 9/9, Szczytna 8/8) pokazuje reklamodawcy **wyłącznie kafelki „Zarezerwowane"**.
+   **To pogłębia, a nie osłabia, główny wniosek raportu o rozjeździe podaż↔popyt** — realnie dostępnej podaży jest o 44% mniej, niż liczy `stats.php`.
+   **🛑 Decyzja foundera 2026-07-25: NIE kontaktujemy się z dostawcą cennika w sprawie aktualizacji.** „Skoro dali, że zarezerwowane, to ich problem." Odpada więc każda rekomendacja wymagająca rozmowy z agencją — zostają wyłącznie rozwiązania systemowe po naszej stronie.
+   **Rekomendacje (do backlogu, żadna nie wymaga kontaktu z dostawcą):**
+   (a) **Sortowanie „Wolne" przed „Zarezerwowane"** na stronach kategorii — XS, czysto frontowe, natychmiast naprawia doświadczenie reklamodawcy wchodzącego z Google (dziś Kłodzko: 119 reserved / 18 active — trzeba przewinąć ścianę rezerwacji).
+   (b) **`reserved_until` + auto-powrót do `active`** — realizuje zamysł „czyśćca" (stan przejściowy z definicji wygasa). Zastosowany także wstecz, z terminem liczonym od `updated_at`, odblokowuje 461 czerwcowych rekordów **bez pytania kogokolwiek o zgodę** — to polityka platformy (oferta wygasa, trzeba odnowić), standard w marketplace'ach. Wymaga zakomunikowania w regulaminie.
+   (c) **Nie** wykluczać `reserved` z progu thin — to realne ogłoszenia z treścią (niezmiennik CLAUDE.md).
+   (d) Ewentualne przypomnienie mailowe do wystawców jest **opcjonalne i drugorzędne** wobec (b); gdyby wchodziło — listę i komendę przygotowuje agent, wysyłkę wykonuje founder, wyłącznie SMTP Hostido (strict DMARC).
+2. ~~**32 usunięte ogłoszenia (ID 1–47)**~~ — **ROZSTRZYGNIĘTE 2026-07-25 przez foundera: to były ogłoszenia testowe/rozruchowe, usunięte świadomie.** NIE przywracać przez `updateOrCreate`. Pozycje 2,7–8,0 i 7 z 12 klików leafowych dotyczyły treści, która nie miała zostać na stałe — to strata pozorna, nie regresja. Pozostaje wyłącznie higiena indeksu: dać **410 Gone** zamiast dzisiejszego HTTP 200 + szkielet (`noindex` już jest, więc wypadną same, ale wolniej i kosztem crawl budżetu). Priorytet obniżony z WYSOKIEGO na ŚREDNI.
+3. **Kierunek akwizycji: gęstość czy zasięg?** Dane mówią jednoznacznie za zasięgiem, ale to decyzja o modelu sprzedaży.
+
+### ⚠️ Co w poprzednich przeglądach było PRZESZACOWANE (weryfikacja adwersaryjna)
+| Teza | Stan faktyczny | Skala |
+|---|---|---|
+| „695 fraz non-brand → **6 klików**" | Wymiar zapytań GSC anonimizuje rzadkie frazy — łapie 112 ze 167 klików. Realnie **~60 klików non-brand** | **10× zaniżone** |
+| Bing „`BlockedByRobotsTxt` = 5 255" | `GetCrawlStats` miesza semantykę: `Code2xx`/`BlockedByRobotsTxt`/`InIndex` to **migawki stanu**, nie zdarzenia. Realnie **101** | **~52× zawyżone** |
+| „`www` nie jest skonsolidowane" | 301 działa, `googleCanonical` = non-www, udział www 33,3% → 6,9% → **2,6%** | **temat zamknięty** |
+| „Duble miast dzielą podaż" | Tylko 23/827 (2,8%). `Ząbkowice` vs `Ząbkowice Śląskie` to **różne miasta, 176 km** | w większości nieprawdziwe |
+| „5xx = WAF na `api.reklamap.pl`" | GSC: api.reklamap.pl „**Google nieznany**" — nigdy go nie odwiedził. Wszystkie 12 znalezionych 5xx to **blog**, crawl z 15.05 | **obalone** |
+| „Odsłon 30 dni = 591" (`stats.php`) | GA4 na tym zakresie: **43 odsłony / 18 userów**. Licznik liczy prerender (983 trasy/deploy) i crawlery | **13,7× zawyżone** |
+| „Lejek podaży 55%" | Prod-only (bez ruchu dev): **60,8%** | +5,8 pp |
+
+> **Wniosek metodologiczny:** przy 167 klikach/kwartał wymiar ZAPYTAŃ w GSC jest bezużyteczny do liczenia klików (anonimizacja zjada 33%, dokładnie długi ogon). **Wszystkie analizy klików robić na wymiarze STRON.** W Bingu `Code2xx`/`BlockedByRobotsTxt`/`InIndex` brać z ostatniego wiersza, sumować tylko `CrawledPages`/`Code4xx`/`Code5xx`/`CrawlErrors`.
+
+---
+
 ## 2026-07-13 — plan odbudowy widoczności po deindeksie (roadmap 30/60/90)
 
 > Źródło: workflow analityczny (3 perspektywy równolegle + synteza) na danych GSC do 12.07. Rozszerza brief z 2026-07-12 o konkretny plan czasowy, fix www/non-www i quick-winy priorytetyzowane wg **bliskości top-10**, nie wyświetleń. Kontekst wywołany pytaniem foundera „czy da się wrócić do widoczności sprzed deindeksu".

@@ -111,6 +111,49 @@ Only types with meaningful physical configurations have variants. `banner` and `
 
 ---
 
+## Narzędzia SEO i analityki — stan (ost. przegląd 2026-07-25)
+
+> Ta sekcja jest źródłem prawdy o tym, **co jest podpięte, co świadomie odpuściliśmy i dlaczego**. Zanim zaproponujesz „warto dodać narzędzie X" — sprawdź tutaj, czy nie zostało już odrzucone z powodem.
+
+### Podpięte i działające
+
+| Narzędzie | Stan | Uwagi |
+|---|---|---|
+| **Google Search Console** | ✅ + **dostęp API** | Właściwość typu **Domena** → `siteUrl = "sc-domain:reklamap.pl"` (www i non-www w jednej właściwości) |
+| **Google Analytics 4** | ✅ + **dostęp API** | `properties/526431028` |
+| **Bing Webmaster Tools** | ✅ + **dostęp API** | Weryfikacja NIE plikiem (`BingSiteAuth.xml` nie istnieje). Klucz: `/home/dev/.config/reklamap/bing-api-key.txt` |
+| **Microsoft Clarity** | ✅ kod (2026-07-25) | `VITE_CLARITY_ID`; bez ID i dla botów **nie ładuje się** (`frontend/src/utils/clarity.ts`) |
+| **Sentry** | ✅ | `VITE_SENTRY_DSN`, konfiguracja w `main.ts` |
+| **Schema.org** | ✅ | `Product`/`Offer` (leaf), `BreadcrumbList`, `BlogPosting`, `ItemList` (kategorie), **`FAQPage`** (blog) |
+| **Prerender build-time + seed** | ✅ | Patrz sekcja „SEO, Sitemap i Deploy" — niezmienniki krytyczne |
+| **Tripwire deindeksu** | ✅ | `php artisan seo:tripwire`, wpięty w `deploy.sh` |
+| **Image-sitemap** | ✅ | 825 `<image:image>` (commit `61705e3`) |
+
+**Konto usługi Google** (czyta GSC + GA4): `claude-reader@gen-lang-client-0352328852.iam.gserviceaccount.com`, klucz JSON w `/home/dev/.config/reklamap/gsc-service-account.json` — **poza repo**, nigdy nie commituj. Wymaga włączonych: Search Console API, Analytics Data API, Analytics Admin API. Uwierzytelnianie ręcznie budowanym JWT (`PyJWT` + `cryptography` są w systemie, `google-auth` **nie jest potrzebne**).
+
+> **Nie proś użytkownika o eksporty CSV ani zrzuty ekranu z GSC/GA4/Bing.** Wszystkie trzy źródła czytamy programowo. Ręczne klikanie po panelach było wyraźnym źródłem frustracji.
+
+### Dodane 2026-07-25
+
+- **Microsoft Clarity** — heatmapy i nagrania sesji (darmowe, bez limitu). Powód: GA4 mówi, **ile** osób odpadło (72 otwarcia ogłoszenia → 7 kliknięć w telefon), ale nie mówi **dlaczego**. Dwie firmy napisały zapytania na `kontakt@` zamiast użyć platformy — Clarity ma pokazać, gdzie szukały kontaktu. Bramka na UA bota jest celowa: prerender (puppeteer) nie ma zaśmiecać nagrań ani obciążać renderu dla botów.
+- **Fix `FAQPage`** — schemat powstawał tylko przy nagłówku dokładnie „Najczęściej zadawane pytania"; artykuły z `## FAQ` traciły rich snippet (3 z 28: `citylight-reklama`, `czy-oplaca-sie-wynajmowac-powierzchnie-reklamowa`, `jak-zarobic-na-wynajmie-powierzchni-reklamowej`). Logika wydzielona z `BlogPostPage.vue` do **`frontend/src/utils/faqSchema.ts`** (testowalna, wzorzec `listingsSeo.ts`) + 15 testów regresyjnych. **Wymaga deployu frontu, żeby zadziałało na prodzie.**
+
+### Świadomie ODPUSZCZONE (nie proponuj ponownie bez nowego argumentu)
+
+- **Cloudflare — NIE teraz.** Trzy powody: (1) mamy nierozwiązane **24 strony z 5xx wyłącznie dla Googlebota** (Bing: `Code5xx=0` na 14 656 pobrań) — dokładanie warstwy przed diagnozą zaciemni obraz; (2) **Rocket Loader** i **HTML minification** w CF mogą uszkodzić inline `<script>window.__INITIAL_STATE__=…</script>`, czyli niezmiennik chroniący przed deindeksem; (3) tryb **„Under attack"** serwuje JS-owy challenge **wszystkim**, w tym Googlebotowi → natychmiastowy deindeks.
+  **Uwaga o panelu Hostido:** zakładka „AntyDDoS → token CloudFlare" **nie jest integracją** i nie podpina Cloudflare. Zakłada, że CF już masz, i daje Hostido możliwość automatycznego przełączenia domeny w tryb „Under attack" — czyli dokładnie to, co dla SEO jest najgroźniejsze. Realne podpięcie CF wymaga przestawienia **nameserverów domeny** na Cloudflare (zmiana DNS, robiona w oknie serwisowym, z planem wycofania).
+  Warunek powrotu do tematu: naprawione 5xx + potwierdzone, że `Rocket Loader`/`Auto Minify (HTML)`/`Bot Fight Mode` będą **wyłączone**.
+- **Rank trackery (Semrush, Senuto, Ahrefs płatny)** — przy 179 kliknięciach na kwartał GSC + Bing API dają wszystko, czego potrzeba. Kilkaset zł/mies. za dane, które już mamy.
+- **Google Business Profile** — ReklaMap to platforma ogólnopolska, nie lokalny biznes z adresem obsługującym klientów.
+
+### Do rozważenia (nieodrzucone, niewdrożone)
+
+- **IndexNow** — brak implementacji (`indexnow.txt` zwraca SPA-fallback). Bing stawia to jako rekomendację nr 1. Sens: 900 URL-i „wykryte, niezindeksowane" w GSC; IndexNow zgłasza URL w sekundy do Binga/Yandexa/Seznama, a więc pośrednio do ChatGPT Search i Copilota. Naturalne miejsca wpięcia: `deploy.sh` po rsyncu (jak tripwire) + hook przy publikacji ogłoszenia.
+- **Ahrefs Webmaster Tools — ODROCZONE, nie zakładać teraz (ustalenie 2026-07-25).** Darmowe dla zweryfikowanego właściciela, ale **dziś nie ma czego mierzyć**: profil linków to **zero domen**, potwierdzone trzema metodami Bing API (`GetLinkCounts`, `GetConnectedPages`, `GetUrlLinks` — wszystkie puste) i niezależnie przez GA4 (100% referrali to webmaile, Facebook i podglądy linków w Teams). AWT zmierzyłby to samo zero. **Warunek powrotu:** kiedy ruszy budowa linków (Tier 3 poz. 23 raportu) i pojawi się co monitorować.
+  **Priorytetem nie jest narzędzie do mierzenia linków, tylko same linki.** Najniższy opór: agencje, których nośniki importujemy (Big Group, Outdoor 3miasto, reklama.ai, Optokom — link jest dla nich darmową ekspozycją), katalogi branżowe OOH i izby gospodarcze, portale marketingowe (OOH Magazine, Nowy Marketing, Wirtualne Media) — mamy 827 realnych ofert z cenami, czyli dane branżowe, których nikt inny nie opublikuje. Przy śr. pozycji 31,3 treść dowozi wyświetlenia, **linki dowożą pozycje**.
+
+---
+
 ## Adding a New Field to Advertisements
 
 1. `php artisan make:migration add_<field>_to_advertisements` → update `backend/database/migrations/`
