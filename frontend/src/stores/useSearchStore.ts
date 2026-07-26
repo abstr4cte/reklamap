@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import { api } from '../services/api'
 import type { Advertisement, MapPin } from '../types'
 import { FilterParams, DEFAULT_FILTERS } from '../types/filters'
-import { normalizePolishChars, normalizeCityMatch, queryParamsToFilters } from '../utils/filterUtils'
+import { normalizePolishChars, normalizeCityMatch, normalizeRegionMatch, queryParamsToFilters } from '../utils/filterUtils'
 import { deslugify } from '../utils/slugify'
 import { type LocationResult } from '../services/locationService'
 import polishLocations from '../data/polishLocations.json'
@@ -732,7 +732,13 @@ export const useSearchStore = defineStore('search', () => {
     // Skip location text filters if mapBounds is active (user is interactively panning/zooming the map)
     // This allows users to zoom out of a city and discover ads in neighboring areas
     if (!f.mapBounds) {
-      if (f.region) filtered = filtered.filter(ad => ad.region === f.region)
+      if (f.region) {
+        // normalizeRegionMatch = fold diakrytyków + zdjęty prefiks „województwo”, symetrycznie
+        // do backendu (foldRegion). Bez tego `ad.region === f.region` wycinało wszystko: filtry
+        // trzymają ASCII-id („dolnoslaskie”), a w bazie jest „województwo dolnośląskie”.
+        const regionQuery = normalizeRegionMatch(f.region)
+        filtered = filtered.filter(ad => normalizeRegionMatch(ad.region || '') === regionQuery)
+      }
       if (f.city) {
         // normalizeCityMatch = fold diakrytyków + myślnik→spacja, symetrycznie do backendu
         // (city_strict). Bez folda myślnika miasta jak Szklary-Huta/Polanica-Zdrój dawały

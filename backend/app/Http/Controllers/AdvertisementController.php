@@ -197,17 +197,43 @@ class AdvertisementController extends Controller
     }
 
     /**
-     * Wyrażenie SQL zwijające kolumnę `city` do lowercase ASCII (zagnieżdżone REPLACE + LOWER).
-     * Działa na MySQL (prod) i SQLite (testy). Uwaga: wyłącza indeks na `city` — akceptowalne przy
-     * obecnej skali; przy wzroście rozważyć znormalizowaną kolumnę generowaną + indeks.
+     * Urzędowy prefiks w kolumnie `region`. Nominatim (`address.state`) zwraca raz
+     * „województwo śląskie”, raz „śląskie” — oba formaty siedzą w bazie, a front wysyła
+     * ASCII-id ze słownika (`polishLocations.json`: „slaskie”). Fold porównuje obie formy.
      */
-    private function cityFoldedSql(): string
+    private const REGION_PREFIX = 'wojewodztwo ';
+
+    /**
+     * Wyrażenie SQL zwijające kolumnę tekstową do lowercase ASCII (zagnieżdżone REPLACE + LOWER).
+     * Działa na MySQL (prod) i SQLite (testy). Uwaga: wyłącza indeks na kolumnie — akceptowalne
+     * przy obecnej skali; przy wzroście rozważyć znormalizowaną kolumnę generowaną + indeks.
+     */
+    private function foldedSql(string $column): string
     {
-        $expr = 'city';
+        $expr = $column;
         foreach (self::PL_FOLD as $from => $to) {
             $expr = "REPLACE($expr, '$from', '$to')";
         }
         return "LOWER($expr)";
+    }
+
+    private function cityFoldedSql(): string
+    {
+        return $this->foldedSql('city');
+    }
+
+    /**
+     * Fold nazwy województwa: diakrytyki → ASCII, myślnik → spacja, lowercase, zdjęty prefiks
+     * „województwo ”. Dzięki temu „dolnoslaskie” (id z frontu), „Dolnośląskie” (label)
+     * i „województwo dolnośląskie” (zapis z Nominatim w bazie) dają tę samą wartość.
+     */
+    private function foldRegion(string $s): string
+    {
+        $folded = trim(preg_replace('/\s+/', ' ', $this->foldPolish($s)) ?? '');
+
+        return str_starts_with($folded, self::REGION_PREFIX)
+            ? trim(substr($folded, strlen(self::REGION_PREFIX)))
+            : $folded;
     }
 
     /**
@@ -253,8 +279,16 @@ class AdvertisementController extends Controller
         }
 
         // --- Region filter ---
+        // Ta sama klasa błędu co city_strict (naprawa 2026-07-07): front wysyła ASCII-id
+        // województwa z `polishLocations.json` („dolnoslaskie”), a w bazie leży to, co zwrócił
+        // Nominatim — raz „śląskie”, raz „województwo dolnośląskie”. Exact match `where('region', ?)`
+        // dawał 0 ofert dla 13 z 16 województw (prod 2026-07-25: dolnoslaskie/malopolskie/
+        // wielkopolskie/lodzkie/... → 0, mimo 10 rekordów „województwo dolnośląskie” w bazie).
+        // Foldujemy obie strony (diakrytyki + myślnik) i porównujemy z prefiksem i bez.
         if ($request->filled('region')) {
-            $query->where('region', $request->input('region'));
+            $regionExpr = $this->foldedSql('region');
+            $folded = $this->foldRegion((string) $request->input('region'));
+            $query->whereRaw("($regionExpr = ? OR $regionExpr = ?)", [$folded, self::REGION_PREFIX . $folded]);
         }
 
         // --- Status filter ---

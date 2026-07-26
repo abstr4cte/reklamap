@@ -34,6 +34,17 @@ export function normalizeCityMatch(text: string): string {
   return normalizePolishChars(text || '').toLowerCase().replace(/-/g, ' ')
 }
 
+/**
+ * Normalizacja nazwy WOJEWÓDZTWA do porównań — symetryczna z backendem
+ * (AdvertisementController::foldRegion). Front trzyma w filtrach ASCII-id ze słownika
+ * (`polishLocations.json`: „dolnoslaskie”), a w `ad.region` siedzi to, co zwrócił Nominatim
+ * przy dodawaniu ogłoszenia — raz „śląskie”, raz „województwo dolnośląskie”. Bez folda
+ * i zdjęcia prefiksu filtr klienta wycinał WSZYSTKO (prod 2026-07-25: 13/16 województw → 0).
+ */
+export function normalizeRegionMatch(text: string): string {
+  return normalizeCityMatch(text).replace(/^(wojewodztwo|woj\.?)\s+/, '').trim()
+}
+
 export interface FilterParams {
   keyword?: string
   type?: string

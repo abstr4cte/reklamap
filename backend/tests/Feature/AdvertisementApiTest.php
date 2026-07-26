@@ -369,6 +369,46 @@ class AdvertisementApiTest extends TestCase
     }
 
     /**
+     * Regresja: filtr województwa. Front (HeroBanner/ListingsPage) wysyła ASCII-id ze słownika
+     * `polishLocations.json` („dolnoslaskie”, „slaskie”), a w bazie leży `address.state` z
+     * Nominatim w dwóch formatach („śląskie” ORAZ „województwo dolnośląskie”). Exact match
+     * `where('region', ?)` zwracał 0 dla 13 z 16 województw (prod 2026-07-25).
+     */
+    public function test_region_filter_matches_ascii_id_diacritics_and_wojewodztwo_prefix(): void
+    {
+        Advertisement::factory()->create(['region' => 'województwo dolnośląskie', 'is_active' => true, 'status' => 'active']);
+        Advertisement::factory()->create(['region' => 'dolnośląskie', 'is_active' => true, 'status' => 'active']);
+        Advertisement::factory()->create(['region' => 'śląskie', 'is_active' => true, 'status' => 'active']);
+
+        // ASCII-id z frontu musi złapać OBA zapisy dolnośląskiego, ale nie śląskie
+        $ascii = $this->getJson('/api/listings?region=dolnoslaskie', $this->appKeyHeaders());
+        $ascii->assertStatus(200);
+        $this->assertSame(2, $ascii->json('total'), 'ASCII "dolnoslaskie" musi złapać "dolnośląskie" i "województwo dolnośląskie".');
+
+        // Label z diakrytykami (to, co user widzi w podpowiedzi) — ten sam wynik
+        $label = $this->getJson('/api/listings?' . http_build_query(['region' => 'Dolnośląskie']), $this->appKeyHeaders());
+        $this->assertSame(2, $label->json('total'), 'Label "Dolnośląskie" musi dać ten sam wynik co ASCII-id.');
+
+        // Pełna forma urzędowa też
+        $full = $this->getJson('/api/listings?' . http_build_query(['region' => 'województwo dolnośląskie']), $this->appKeyHeaders());
+        $this->assertSame(2, $full->json('total'), 'Pełna forma "województwo dolnośląskie" musi dać ten sam wynik.');
+
+        // Kontrola: śląskie nie może łapać dolnośląskiego (prefiks/substring)
+        $other = $this->getJson('/api/listings?region=slaskie', $this->appKeyHeaders());
+        $this->assertSame(1, $other->json('total'), 'Śląskie nie może łapać dolnośląskiego.');
+    }
+
+    /** Regresja: województwa dwuczłonowe — id z myślnikiem vs zapis z bazy. */
+    public function test_region_filter_matches_hyphenated_voivodeship(): void
+    {
+        Advertisement::factory()->create(['region' => 'województwo warmińsko-mazurskie', 'is_active' => true, 'status' => 'active']);
+
+        $res = $this->getJson('/api/listings?region=warminsko-mazurskie', $this->appKeyHeaders());
+        $res->assertStatus(200);
+        $this->assertSame(1, $res->json('total'), 'ASCII "warminsko-mazurskie" musi złapać "województwo warmińsko-mazurskie".');
+    }
+
+    /**
      * Huby nawigacyjne (stopka/menu): tylko miasta/kombinacje z realną podażą (>= progu thin),
      * żeby linkowanie wewnętrzne kierowało crawl do stron z treścią, nie do pustych demand-miast.
      */
