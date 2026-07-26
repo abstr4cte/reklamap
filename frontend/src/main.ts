@@ -7,6 +7,7 @@ import App from './App.vue'
 import router from './router'
 import { useSearchStore } from './stores/useSearchStore'
 import { useNavStore } from './stores/useNavStore'
+import { initClarity } from './utils/clarity'
 
 // Import axios configuration
 import './api/axios'
@@ -42,6 +43,10 @@ app.use(pinia)
 app.use(router)
 app.mount('#app')
 
+// Heatmapy/nagrania sesji — po mount, żeby nie konkurować o wątek z pierwszym renderem.
+// Sam się wyłącza bez VITE_CLARITY_ID oraz dla botów (patrz utils/clarity.ts).
+initClarity()
+
 // Build-time prerender (scripts/prerender.mjs) czyta ten kolektor przez puppeteer i wstrzykuje
 // wynik jako <script>window.__INITIAL_STATE__=…</script> do prerenderowanego HTML — dzięki temu
 // hydratacja seeduje store i nie kasuje treści do pustki. Bez znaczenia dla użytkownika; dane
@@ -60,6 +65,11 @@ if (typeof window !== 'undefined') {
       // Artykuł bloga (ustawiany przez BlogPostPage po udanym loadBlogPost) — chroni E-E-A-T przed cichym deindeksem.
       const blogPost = (window as any).__ssrBlogPost
       if (blogPost && (blogPost.id || blogPost.slug)) out.blogPost = blogPost
+      // Lista postów (ustawiana przez BlogPage po udanym loadBlogPosts) — bez niej `/blog` i
+      // `/blog/{kategoria}` re-fetchują listę po hydratacji, a ucięty fetch WRS dawał `noindex`
+      // na zdrowej kategorii. Skutek przed fixem: 0 z 4 kategorii bloga w indeksie Google.
+      const blogList = (window as any).__ssrBlogList
+      if (Array.isArray(blogList) && blogList.length > 0) out.blogList = blogList
       // Huby nawigacyjne (stopka/menu) — linki wewn. do realnych hubów podaży w prerenderowanym HTML.
       // Tylko gdy załadowane REALNE dane (nie fallback) — inaczej seed fallbacku zablokowałby refresh.
       const nav = useNavStore(pinia)

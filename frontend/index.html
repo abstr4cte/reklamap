@@ -134,14 +134,27 @@
   }
   </script>
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0ZL0NS8F9W"></script>
+  <!-- Google tag (gtag.js) — ładowany WYŁĄCZNIE na domenie produkcyjnej.
+       Bez tej bramki dev (localhost / 127.0.0.1) i prerender (puppeteer na :5199) wysyłały
+       zdarzenia do produkcyjnej property: 489 z 2 584 odsłon = 18,9% ruchu w GA4 było
+       deweloperskie (audyt 2026-07-25), co przesuwało KAŻDĄ analizę kanałów i lejków.
+       Rozwiązane u źródła zamiast filtrem „Internal traffic" w GA4 — dane w ogóle nie wychodzą,
+       a Admin API i tak nie udostępnia zasobu dataFilters (404).
+       `trackEvent` w utils/analytics.ts ma guard na `window.gtag`, więc brak taga jest bezpieczny. -->
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-0ZL0NS8F9W');
+    (function () {
+      var h = location.hostname;
+      if (h !== 'reklamap.pl' && h !== 'www.reklamap.pl') return;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-0ZL0NS8F9W';
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-0ZL0NS8F9W');
+    })();
   </script>
 
   <!-- Google reCAPTCHA v3 -->
