@@ -92,14 +92,15 @@
 
   # Ogłoszenia (leaf) bez prerenderu: stary format sluga wymiarów sprzed 2026-06-15
   # (np. „billboard-504238-m-miasto-213” zamiast aktualnego „billboard-5-04-x-2-38-m-miasto-213")
-  # lub ogłoszenie jeszcze nieujęte w ostatnim buildzie sitemapy. AdDetailPage.vue resolwuje
-  # ogłoszenie po KOŃCOWYM {id} niezależnie od treści sluga (patrz loadAd(): id.split('-').pop())
-  # i sama nadaje poprawny <link rel="canonical"> na aktualny slug oraz noindex tylko przy
-  # realnym 404. Bez tej reguły takie URL-e trafiały do noindex-owego spa-fallback.html poniżej,
-  # więc GSC raportował aktywne, sprzedażowe ogłoszenia jako „wykluczone przez tag noindex"
-  # (naprawa 2026-07-28, zob. CLAUDE.md → SEO, Sitemap i Deploy).
+  # lub ogłoszenie jeszcze nieujęte w ostatnim buildzie sitemapy. NIE kierować do SPA (index.html)
+  # ani do noindex-owego spa-fallback.html poniżej — legacy-ad-redirect.php robi PRAWDZIWY 301
+  # server-to-server (curl do api.reklamap.pl, nie fetch z przeglądarki bota) na aktualny
+  # kanoniczny URL po {id}. Bez tego GSC raportował aktywne, sprzedażowe ogłoszenia jako
+  # „wykluczone przez tag noindex", bo JS-owy fetch po stronie klienta bywa ucinany przez CORS
+  # dla render-IP Google (pamięć projektu: cors-render-ip-block) — canonical zostawał domyślny
+  # ze strony głównej zamiast aktualizować się na właściwe ogłoszenie (naprawa 2026-07-28).
   RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteRule ^powierzchnia-reklamowa/[^/]+/[^/]+/[^/]+-[0-9]+/?$ /index.html [L]
+  RewriteRule ^(powierzchnia-reklamowa/[^/]+/[^/]+/[^/]+-[0-9]+)/?$ /legacy-ad-redirect.php?path=$1 [L,QSA]
 
   # SPA fallback — trasy BEZ prerenderu (nieznane/usunięte/funkcyjne jak /porownaj, /zarzadzaj)
   # dostają NOINDEX-owy szkielet (spa-fallback.html), NIE zaseedowaną home. Eliminuje soft-404:
