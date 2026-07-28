@@ -7,7 +7,7 @@ import { appUrl } from '../utils/url'
 
 useSeo({
   title: 'Kontakt | ReklaMap',
-  description: 'Skontaktuj się z zespołem ReklaMap. Masz pytania dotyczące platformy, ogłoszeń lub współpracy? Napisz do nas — odpowiemy najszybciej jak to możliwe.',
+  description: 'Skontaktuj się z zespołem ReklaMap — darmowej platformy ogłoszeniowej dla powierzchni reklamowych. Szukasz nośnika? Przejrzyj ogłoszenia i napisz bezpośrednio do właściciela.',
   ogType: 'website',
   canonical: `${appUrl}/kontakt`,
   keywords: 'kontakt ReklaMap, pomoc, wsparcie'
@@ -120,6 +120,10 @@ const handleSubmit = async () => {
       <div class="container">
         <h1>Skontaktuj się z nami</h1>
         <p class="hero-subtitle">Masz pytania? Chętnie pomożemy! Skorzystaj z formularza lub wybierz inną formę kontaktu.</p>
+        <p class="hero-note">
+          <strong>ReklaMap to darmowa platforma ogłoszeniowa</strong> — nie jesteśmy agencją reklamową i nie przygotowujemy ofert najmu.
+          Szukasz konkretnej powierzchni reklamowej? <router-link to="/powierzchnie-reklamowe">Przejrzyj ogłoszenia</router-link> i napisz bezpośrednio do właściciela nośnika — jego dane kontaktowe są na stronie każdego ogłoszenia.
+        </p>
       </div>
     </div>
 
@@ -292,6 +296,19 @@ const handleSubmit = async () => {
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.hero-note {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin: 1.25rem auto 0;
+  max-width: 700px;
+  line-height: 1.5;
+}
+
+.hero-note a {
+  color: inherit;
+  text-decoration: underline;
 }
 
 .content-section {

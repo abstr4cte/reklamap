@@ -90,6 +90,17 @@
   # RewriteCond %{REQUEST_URI} !^/prerender-proxy\.php
   # RewriteRule ^(.*)$ /prerender-proxy.php?url=https://reklamap.pl/$1 [L,QSA]
 
+  # Ogłoszenia (leaf) bez prerenderu: stary format sluga wymiarów sprzed 2026-06-15
+  # (np. „billboard-504238-m-miasto-213” zamiast aktualnego „billboard-5-04-x-2-38-m-miasto-213")
+  # lub ogłoszenie jeszcze nieujęte w ostatnim buildzie sitemapy. AdDetailPage.vue resolwuje
+  # ogłoszenie po KOŃCOWYM {id} niezależnie od treści sluga (patrz loadAd(): id.split('-').pop())
+  # i sama nadaje poprawny <link rel="canonical"> na aktualny slug oraz noindex tylko przy
+  # realnym 404. Bez tej reguły takie URL-e trafiały do noindex-owego spa-fallback.html poniżej,
+  # więc GSC raportował aktywne, sprzedażowe ogłoszenia jako „wykluczone przez tag noindex"
+  # (naprawa 2026-07-28, zob. CLAUDE.md → SEO, Sitemap i Deploy).
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^powierzchnia-reklamowa/[^/]+/[^/]+/[^/]+-[0-9]+/?$ /index.html [L]
+
   # SPA fallback — trasy BEZ prerenderu (nieznane/usunięte/funkcyjne jak /porownaj, /zarzadzaj)
   # dostają NOINDEX-owy szkielet (spa-fallback.html), NIE zaseedowaną home. Eliminuje soft-404:
   # śmieciowy/martwy URL nie jest już serwowany jako 200 + `index` z treścią home (duplikat home).
