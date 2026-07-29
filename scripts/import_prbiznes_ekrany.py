@@ -32,6 +32,11 @@ REL_PREFIX = "advertisements/prbiznes"
 OWNER_EMAIL = "biuro@prbiznes.pl"
 PHONE = "502941504"
 
+# Dla lokalizacji bez zdjęcia w przyzwoitej rozdzielczości (sprawdzone: to maksimum, jakie
+# PR Biznes ma opublikowane — data-srcset nie ma nic większego) — logo zamiast rozmytego zdjęcia,
+# do czasu aż agencja doszle własne foto (uwaga użytkownika 2026-07-29).
+PLACEHOLDER_LOGO_URL = "https://prbiz.pl/wp-content/uploads/2022/06/PR-BIZNES-logo_PR-biale.png"
+
 
 def geocode(query: str):
     q = urllib.parse.quote(query)
@@ -51,7 +56,17 @@ def fetch_and_save(url: str, base: str, crop=None) -> str:
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urllib.request.urlopen(req, timeout=20) as r:
         data = r.read()
-    img = Image.open(_io.BytesIO(data)).convert("RGB")
+    raw = Image.open(_io.BytesIO(data))
+    # RGB/JPEG nie ma kanału alfa — PNG z przezroczystością (np. logo) trzeba najpierw złożyć
+    # na białym tle, inaczej .convert("RGB") na trybie paletowym z przezroczystością potrafi
+    # wypełnić przezroczyste piksele przypadkowym kolorem z palety (wyszło zielone tło).
+    if raw.mode in ("RGBA", "LA") or (raw.mode == "P" and "transparency" in raw.info):
+        rgba = raw.convert("RGBA")
+        bg = Image.new("RGB", rgba.size, (255, 255, 255))
+        bg.paste(rgba, mask=rgba.split()[3])
+        img = bg
+    else:
+        img = raw.convert("RGB")
     if crop:
         img = img.crop(crop)
     os.makedirs(STORE_DIR, exist_ok=True)
@@ -152,10 +167,10 @@ RECORDS_SPEC = [
             "Cena bazowa za spot 10-sekundowy przy najniższej częstotliwości emisji — szczegóły niżej. "
             "Rozmiar ekranu do potwierdzenia z agencją.\n\n" + CENNIK_TELEBIM
         ),
-        # Cała grafika (montaż 2 zdjęć ekranu + widok z lotu ptaka), bez przycinania — uwaga
-        # użytkownika 2026-07-29: poprzedni mocno przycięty fragment (330x200 z pliku 671x404)
-        # wychodził rozpikselowany.
-        "photo_url": "https://prbiz.pl/wp-content/uploads/2020/12/tuwima2.png",
+        # Jedyne dostępne zdjęcie (tuwima2.png) to kolaż 3 zdjęć w jednym pliku, max. dostępna
+        # rozdzielczość 671x404 — panel z ekranu po wycięciu ma tylko 335x202 (rozmyty przy
+        # wyświetleniu). Logo jako placeholder do czasu realnego zdjęcia od agencji.
+        "photo_url": PLACEHOLDER_LOGO_URL,
         "estimated_daily_views": None,
     },
     {
@@ -171,7 +186,10 @@ RECORDS_SPEC = [
             "Cena bazowa za spot 10-sekundowy przy najniższej częstotliwości emisji — szczegóły niżej. "
             "Rozmiar ekranu do potwierdzenia z agencją.\n\n" + CENNIK_TELEBIM
         ),
-        "photo_url": "https://prbiz.pl/wp-content/uploads/2020/12/pstrowskiego.png",
+        # Jedyne dostępne zdjęcie (pstrowskiego.png) ma max. 476x183 — widocznie rozmyte przy
+        # typowej szerokości wyświetlania na stronie ogłoszenia. Logo jako placeholder do czasu
+        # realnego zdjęcia od agencji.
+        "photo_url": PLACEHOLDER_LOGO_URL,
         "estimated_daily_views": None,
     },
 ]
