@@ -167,10 +167,9 @@ RECORDS_SPEC = [
             "Cena bazowa za spot 10-sekundowy przy najniższej częstotliwości emisji — szczegóły niżej. "
             "Rozmiar ekranu do potwierdzenia z agencją.\n\n" + CENNIK_TELEBIM
         ),
-        # Jedyne dostępne zdjęcie (tuwima2.png) to kolaż 3 zdjęć w jednym pliku, max. dostępna
-        # rozdzielczość 671x404 — panel z ekranu po wycięciu ma tylko 335x202 (rozmyty przy
-        # wyświetleniu). Logo jako placeholder do czasu realnego zdjęcia od agencji.
-        "photo_url": PLACEHOLDER_LOGO_URL,
+        # Cała grafika (671x404, kolaż 2 zdjęć ekranu + widok z lotu ptaka) — bez przycinania,
+        # user woli pełne realne zdjęcie od logo, mimo niższej rozdzielczości (2026-07-29).
+        "photo_url": "https://prbiz.pl/wp-content/uploads/2020/12/tuwima2.png",
         "estimated_daily_views": None,
     },
     {
@@ -186,10 +185,9 @@ RECORDS_SPEC = [
             "Cena bazowa za spot 10-sekundowy przy najniższej częstotliwości emisji — szczegóły niżej. "
             "Rozmiar ekranu do potwierdzenia z agencją.\n\n" + CENNIK_TELEBIM
         ),
-        # Jedyne dostępne zdjęcie (pstrowskiego.png) ma max. 476x183 — widocznie rozmyte przy
-        # typowej szerokości wyświetlania na stronie ogłoszenia. Logo jako placeholder do czasu
-        # realnego zdjęcia od agencji.
-        "photo_url": PLACEHOLDER_LOGO_URL,
+        # Pełne zdjęcie (476x183, jedyna dostępna rozdzielczość na prbiz.pl) — bez przycinania,
+        # user woli pełne realne zdjęcie od logo, mimo niższej rozdzielczości (2026-07-29).
+        "photo_url": "https://prbiz.pl/wp-content/uploads/2020/12/pstrowskiego.png",
         "estimated_daily_views": None,
     },
 ]
