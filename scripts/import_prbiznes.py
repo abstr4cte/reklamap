@@ -83,7 +83,9 @@ MANUAL_EXTRA = [
         "montaz": 990.0,  # w mailu: "druk i montaż: 990 zł netto" — jedna łączna pozycja
         "demontaz": 190.0,
         "photo_png": "Dywity wjazd do Olsztyna OLS 006.png",
-        "photo_crop": (0, 55, 600, 415),  # region ze zdjęciem na karcie lokalizacji (bez tekstu/mapy)
+        # Cała karta lokalizacji (zdjęcie + opis + mapka), bez przycinania — jak reszta zdjęć
+        # po uwadze użytkownika 2026-07-29.
+        "photo_crop": None,
         "extra_note": "Lokalizacja przy rondzie, w pobliżu stacji MOYA, ALDI, Lidl i cmentarza komunalnego.",
     },
 ]
@@ -102,7 +104,9 @@ def geocode(query: str):
 
 
 def save_manual_crop(src_path: str, box, base: str) -> str:
-    img = Image.open(src_path).convert("RGB").crop(box)
+    img = Image.open(src_path).convert("RGB")
+    if box:
+        img = img.crop(box)
     os.makedirs(STORE_DIR, exist_ok=True)
     img.save(os.path.join(STORE_DIR, f"{base}.jpg"), "JPEG", quality=85)
     img.save(os.path.join(STORE_DIR, f"{base}.webp"), "WEBP", quality=85)
@@ -176,7 +180,11 @@ def save_pdf_crop(pdf_path: str, base: str) -> str:
             if not candidates:
                 raise FileNotFoundError(f"pdftoppm nie wygenerował pliku dla {pdf_path}")
             rendered = os.path.join(tmp, candidates[0])
-        img = Image.open(rendered).convert("RGB").crop(PDF_CROP)
+        # Cała strona karty (zdjęcie + mapka + dane), bez przycinania — uwaga użytkownika
+        # 2026-07-29: przycięty region wychodził jako "wycinek", woli pełną grafikę.
+        img = Image.open(rendered).convert("RGB")
+        if img.width > 1600:
+            img = img.resize((1600, round(img.height * 1600 / img.width)))
         os.makedirs(STORE_DIR, exist_ok=True)
         img.save(os.path.join(STORE_DIR, f"{base}.jpg"), "JPEG", quality=85)
         img.save(os.path.join(STORE_DIR, f"{base}.webp"), "WEBP", quality=85)
