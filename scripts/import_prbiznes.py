@@ -7,8 +7,11 @@ ale zdjęcia są w dwóch formach: część jako gotowe PNG, część tylko jako
 ("Karta lokalizacji nośnika" — zdjęcie + mapka na jednej stronie). Dla tych drugich
 wycinamy region ze zdjęciem z wyrenderowanej strony PDF (layout kart jest spójny).
 
-3 lokalizacje (OLS 006, OLS 007, OLS 306a) mają zdjęcie/kartę, ale BRAK wiersza w arkuszu
-(brak ceny) — świadomie pominięte, czekają na dopytanie agencji.
+3 lokalizacje (OLS 006, OLS 007, OLS 306a) miały zdjęcie/kartę, ale BRAK wiersza w arkuszu
+(brak ceny). Dopytane mailem 2026-07-29: OLS 007 i OLS 306a sprzedane w umowie długoterminowej
+(pomijamy na stałe), OLS 006 potwierdzone z ceną — dopisane ręcznie do MANUAL_EXTRA niżej
+(dane z karty lokalizacji: 2.00x5.00 m, adres/opis z PNG, GPS geokodowany przez Nominatim,
+bo w karcie nie ma współrzędnych wprost jak w arkuszu).
 
 Po uruchomieniu: php artisan db:seed --class=PrBiznesSeeder
 """
@@ -18,6 +21,9 @@ import json
 import os
 import re
 import sys
+import time
+import urllib.parse
+import urllib.request
 
 from odf.opendocument import load
 from odf.table import Table, TableRow, TableCell
@@ -59,8 +65,48 @@ PHOTO_SOURCE = {
     "OLS WF 202": ("pdf", "BB BIG 1 Maja 13 - Centrum.pdf"),
 }
 
-# Wiersze bez ceny w arkuszu — pomijamy świadomie (dopytać agencję).
-SKIP_NO_PRICE = {"OLS 006", "OLS 007", "OLS 306a"}
+# Wiersze bez ceny w arkuszu — OLS 007/306a sprzedane długoterminowo (pomijamy na stałe),
+# OLS 006 przeniesione do MANUAL_EXTRA po potwierdzeniu ceny mailem.
+SKIP_NO_PRICE = {"OLS 007", "OLS 306a"}
+
+# Lokalizacje potwierdzone mailem, spoza arkusza ODS — dane z karty lokalizacji (PNG),
+# nie z wiersza arkusza, więc GPS trzeba geokodować (karta nie ma współrzędnych wprost).
+MANUAL_EXTRA = [
+    {
+        "symbol": "OLS 006",
+        "adres": "Rondo Olsztyńska / Wadąska, Dywity (wjazd od Dywit do Olsztyna)",
+        "geocode_query": "Olsztyńska, Dywity, Polska",
+        "width_m": 5.00,
+        "height_m": 2.00,
+        "material": "baner",
+        "cena_mc": 1090.0,
+        "montaz": 990.0,  # w mailu: "druk i montaż: 990 zł netto" — jedna łączna pozycja
+        "demontaz": 190.0,
+        "photo_png": "Dywity wjazd do Olsztyna OLS 006.png",
+        "photo_crop": (0, 55, 600, 415),  # region ze zdjęciem na karcie lokalizacji (bez tekstu/mapy)
+        "extra_note": "Lokalizacja przy rondzie, w pobliżu stacji MOYA, ALDI, Lidl i cmentarza komunalnego.",
+    },
+]
+
+
+def geocode(query: str):
+    q = urllib.parse.quote(query)
+    url = f"https://nominatim.openstreetmap.org/search?format=json&limit=1&q={q}"
+    req = urllib.request.Request(url, headers={"User-Agent": "reklamap-import/1.0 (kontakt@reklamap.pl)"})
+    with urllib.request.urlopen(req, timeout=15) as r:
+        j = json.load(r)
+    time.sleep(1.1)
+    if j:
+        return float(j[0]["lat"]), float(j[0]["lon"])
+    return None, None
+
+
+def save_manual_crop(src_path: str, box, base: str) -> str:
+    img = Image.open(src_path).convert("RGB").crop(box)
+    os.makedirs(STORE_DIR, exist_ok=True)
+    img.save(os.path.join(STORE_DIR, f"{base}.jpg"), "JPEG", quality=85)
+    img.save(os.path.join(STORE_DIR, f"{base}.webp"), "WEBP", quality=85)
+    return f"{REL_PREFIX}/{base}.jpg"
 
 
 def read_ods_rows(path):
@@ -253,6 +299,69 @@ def main() -> int:
         }
         records.append(rec)
         print(f"  {symbol}: {adres_clean} — {price:.0f} zł/mc — {'foto OK' if img_rel else 'BRAK FOTO'}")
+
+    for m in MANUAL_EXTRA:
+        lat, lng = geocode(m["geocode_query"])
+        if lat is None:
+            print(f"  [!] {m['symbol']}: geokodowanie nie powiodło się, pomijam")
+            continue
+
+        width, height = m["width_m"], m["height_m"]
+        title = f"Billboard {width:.2f}x{height:.2f} m – {m['adres']}"
+        material_label = MATERIAL_LABEL.get(m["material"], m["material"])
+        desc_parts = [
+            f"Billboard reklamowy w Olsztynie/Dywitach, lokalizacja: {m['adres']}.",
+            f"Powierzchnia ekspozycyjna: {width:.2f}x{height:.2f} m.",
+            f"Nośnik typu: {material_label}. Kod nośnika: {m['symbol']}.",
+            f"Cena najmu: {m['cena_mc']:.0f} zł/miesiąc netto + 23% VAT.",
+            f"Jednorazowo dodatkowo: druk i montaż {m['montaz']:.0f} zł, demontaż {m['demontaz']:.0f} zł (netto + VAT).",
+            m.get("extra_note", ""),
+        ]
+        description = " ".join(p for p in desc_parts if p)
+
+        base = f"prbiznes-{len(records) + 1:02d}"
+        img_rel = save_manual_crop(os.path.join(SRC_DIR, m["photo_png"]), m["photo_crop"], base)
+
+        rec = {
+            "ref": m["symbol"],
+            "title": title,
+            "type": "billboard",
+            "location": m["adres"],
+            "city": "Olsztyn",
+            "latitude": lat,
+            "longitude": lng,
+            "description": description,
+            "price": m["cena_mc"],
+            "price_unit": "month",
+            "width": width,
+            "height": height,
+            "orientation": "horizontal" if width >= height else "vertical",
+            "variant": "standard",
+            "road_class": "urban",
+            "traffic_intensity": "medium",
+            "traffic_direction": [],
+            "traffic_type": ["vehicular"],
+            "has_backlight": False,
+            "price_includes_print": False,
+            "price_includes_mounting": False,
+            "graphic_design_help": False,
+            "estimated_daily_views": None,
+            "price_negotiable": False,
+            "has_vat_invoice": True,
+            "campaign_duration": None,
+            "owner_email": OWNER_EMAIL,
+            "phone": PHONE,
+            "contact_preference": "both",
+            "offer_type": "agency",
+            "image_url": img_rel,
+            "images": [img_rel] if img_rel else [],
+            "has_image": bool(img_rel),
+            "status": "active",
+            "is_active": True,
+            "available_from": None,
+        }
+        records.append(rec)
+        print(f"  {m['symbol']}: {m['adres']} — {m['cena_mc']:.0f} zł/mc — geo {lat},{lng}")
 
     os.makedirs(os.path.dirname(OUT_JSON), exist_ok=True)
     json.dump(records, open(OUT_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)

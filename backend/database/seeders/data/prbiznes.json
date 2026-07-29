@@ -796,5 +796,47 @@
     "status": "active",
     "is_active": true,
     "available_from": null
+  },
+  {
+    "ref": "OLS 006",
+    "title": "Billboard 5.00x2.00 m – Rondo Olsztyńska / Wadąska, Dywity (wjazd od Dywit do Olsztyna)",
+    "type": "billboard",
+    "location": "Rondo Olsztyńska / Wadąska, Dywity (wjazd od Dywit do Olsztyna)",
+    "city": "Olsztyn",
+    "latitude": 53.8215669,
+    "longitude": 20.47694,
+    "description": "Billboard reklamowy w Olsztynie/Dywitach, lokalizacja: Rondo Olsztyńska / Wadąska, Dywity (wjazd od Dywit do Olsztyna). Powierzchnia ekspozycyjna: 5.00x2.00 m. Nośnik typu: baner. Kod nośnika: OLS 006. Cena najmu: 1090 zł/miesiąc netto + 23% VAT. Jednorazowo dodatkowo: druk i montaż 990 zł, demontaż 190 zł (netto + VAT). Lokalizacja przy rondzie, w pobliżu stacji MOYA, ALDI, Lidl i cmentarza komunalnego.",
+    "price": 1090.0,
+    "price_unit": "month",
+    "width": 5.0,
+    "height": 2.0,
+    "orientation": "horizontal",
+    "variant": "standard",
+    "road_class": "urban",
+    "traffic_intensity": "medium",
+    "traffic_direction": [],
+    "traffic_type": [
+      "vehicular"
+    ],
+    "has_backlight": false,
+    "price_includes_print": false,
+    "price_includes_mounting": false,
+    "graphic_design_help": false,
+    "estimated_daily_views": null,
+    "price_negotiable": false,
+    "has_vat_invoice": true,
+    "campaign_duration": null,
+    "owner_email": "biuro@prbiznes.pl",
+    "phone": "502941504",
+    "contact_preference": "both",
+    "offer_type": "agency",
+    "image_url": "advertisements/prbiznes/prbiznes-20.jpg",
+    "images": [
+      "advertisements/prbiznes/prbiznes-20.jpg"
+    ],
+    "has_image": true,
+    "status": "active",
+    "is_active": true,
+    "available_from": null
   }
 ]
