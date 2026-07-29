@@ -94,7 +94,9 @@ RECORDS_SPEC = [
             "Ok. 3 240 wyświetleń dziennie / 90 000 miesięcznie (dane właściciela). "
             "Aktywacja 24-48h od potwierdzenia płatności.\n\n" + CENNIK_GW
         ),
-        "photo_url": "https://prbiz.pl/wp-content/uploads/2019/03/KP2_9772.jpg",
+        # Wcześniejszy KP2_9772.jpg pokazywał ekran ledwo widoczny w tłumie — zamieniony na
+        # ostre zbliżenie na sam ekran (uwaga użytkownika 2026-07-29: "powycinane gówno").
+        "photo_url": "https://prbiz.pl/wp-content/uploads/2019/03/KP2_9822.jpg",
         "estimated_daily_views": 3240,
     },
     {
@@ -111,7 +113,9 @@ RECORDS_SPEC = [
             "Emisja rotacyjna co 5-10 minut, materiały wideo lub statyczne. "
             "Aktywacja 24-48h od potwierdzenia płatności.\n\n" + CENNIK_AURA
         ),
-        "photo_url": "https://prbiz.pl/wp-content/uploads/2020/06/Ekrany-reklamowe-w-Aura-Centrum-Olsztyna-Strefa-Food-Court-RTV-Euro-AGD.jpg",
+        # Poprzednie zdjęcie (Food Court RTV Euro AGD) pokazywało ekran ledwo widocznym w tle —
+        # zamienione na kadr z wyraźnie widocznym ekranem przy schodach ruchomych/kinie Helios.
+        "photo_url": "https://prbiz.pl/wp-content/uploads/2020/06/Ekrany-reklamowe-w-Aura-Centrum-Olsztyna-Kino-Helios.jpg",
         "estimated_daily_views": None,
     },
     {
@@ -129,7 +133,10 @@ RECORDS_SPEC = [
             "Cena bazowa za spot 10-sekundowy przy najniższej częstotliwości emisji — szczegóły niżej.\n\n"
             + CENNIK_TELEBIM
         ),
-        "photo_url": "https://prbiz.pl/wp-content/uploads/2020/04/IMG_20200226_111002.jpg",
+        # Poprzednie zdjęcie (IMG_20200226_111002) pokazywało ekran malutki, ledwo widoczny w
+        # ruchu ulicznym — zamienione na zdjęcie z drona z wyraźnie widocznym telebimem (reklama
+        # "KAISER") na dachu przy tej samej ulicy.
+        "photo_url": "https://prbiz.pl/wp-content/uploads/2020/04/DJI_0476.jpg",
         "estimated_daily_views": 150000,
     },
     {
@@ -145,8 +152,10 @@ RECORDS_SPEC = [
             "Cena bazowa za spot 10-sekundowy przy najniższej częstotliwości emisji — szczegóły niżej. "
             "Rozmiar ekranu do potwierdzenia z agencją.\n\n" + CENNIK_TELEBIM
         ),
+        # Cała grafika (montaż 2 zdjęć ekranu + widok z lotu ptaka), bez przycinania — uwaga
+        # użytkownika 2026-07-29: poprzedni mocno przycięty fragment (330x200 z pliku 671x404)
+        # wychodził rozpikselowany.
         "photo_url": "https://prbiz.pl/wp-content/uploads/2020/12/tuwima2.png",
-        "photo_crop": (0, 0, 330, 200),
         "estimated_daily_views": None,
     },
     {
@@ -170,14 +179,14 @@ RECORDS_SPEC = [
 
 def main() -> int:
     existing = json.load(open(OUT_JSON, encoding="utf-8")) if os.path.isfile(OUT_JSON) else []
-    used_refs = {r.get("ref") for r in existing}
+    ekr_refs = {f"EKR{i:02d}" for i in range(1, len(RECORDS_SPEC) + 1)}
+    # EKR* rekordy zawsze przeliczane od nowa z RECORDS_SPEC (np. wymiana zdjęcia) — usuń stare
+    # wersje przed dopisaniem świeżych, reszta pliku (billboardy z arkusza) zostaje nietknięta.
+    existing = [r for r in existing if r.get("ref") not in ekr_refs]
 
     new_records = []
     for i, spec in enumerate(RECORDS_SPEC, start=1):
         ref = f"EKR{i:02d}"
-        if ref in used_refs:
-            print(f"  {ref}: już w danych, pomijam ponowne dodanie")
-            continue
 
         lat, lng = geocode(spec["geocode_query"])
         if lat is None:
