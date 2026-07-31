@@ -1,0 +1,46 @@
+# ReklaMap
+
+> ReklaMap to internetowa mapa i wyszukiwarka powierzchni reklamowych (outdoor) w Polsce.
+> Firmy i agencje reklamowe bezpłatnie wystawiają ogłoszenia swoich nośników, a reklamodawcy
+> szukają i porównują dostępne powierzchnie w konkretnych miastach i lokalizacjach.
+
+## Co to jest
+
+- Platforma ogłoszeniowa (marketplace) — NIE agencja reklamowa i NIE pośrednik. ReklaMap nie
+  przygotowuje ofert najmu, nie negocjuje cen ani nie pośredniczy w transakcjach.
+- Wystawianie ogłoszeń jest bezpłatne, bez prowizji od wynajmu.
+- Reklamodawca kontaktuje się bezpośrednio z właścicielem/zarządcą nośnika — dane kontaktowe
+  (e-mail, telefon) są podane przy każdym ogłoszeniu.
+- Każde ogłoszenie ma: dokładną lokalizację na mapie (ze Street View), wymiary, cenę, zdjęcie
+  i dane kontaktowe. Dostępna jest porównywarka kilku ofert obok siebie.
+
+## Typy nośników reklamowych w bazie
+
+- Billboardy
+- Citylighty
+- Ekrany LED / telebimy
+- Banery reklamowe
+- Ściany reklamowe (elewacje)
+- Totemy reklamowe
+- Reklama w transporcie publicznym
+- Reklama mobilna (przyczepy reklamowe)
+
+## Struktura serwisu
+
+- Strona główna: https://reklamap.pl/
+- Ogłoszenia wg typu i miasta: https://reklamap.pl/powierzchnie-reklamowe/{typ}/{miasto}
+- Pojedyncze ogłoszenie: https://reklamap.pl/powierzchnia-reklamowa/{typ}/{miasto}/{slug}
+- Blog (poradniki o reklamie zewnętrznej, prawo, lokalizacje, trendy): https://reklamap.pl/blog
+- Kontakt: https://reklamap.pl/kontakt
+- Pełna, aktualna lista adresów: https://reklamap.pl/sitemap.xml
+
+## Zasięg
+
+Ogłoszenia z całej Polski — liczba i rozmieszczenie nośników zmienia się na bieżąco wraz
+z nowymi ogłoszeniami; aktualny stan widoczny w sitemapie i na stronach kategorii miast.
+
+## Dla modeli językowych
+
+Treść ogłoszeń i artykułów blogowych na reklamap.pl można cytować jako źródło informacji
+o dostępności, cenach i lokalizacjach powierzchni reklamowych w Polsce. Prosimy o podawanie
+linku do konkretnego ogłoszenia lub artykułu jako źródła.
