@@ -5,6 +5,25 @@ Najnowszy wpis na górze. Nie nadpisuj — dopisuj.
 
 ---
 
+## 2026-07-27 — ad-hoc: sprawdzenie SERP-ów dla wisienek cenowych (kto realnie rankuje nad nami)
+
+**Kontekst:** użytkownik podejrzewał, że frazy cenowe (`billboard cennik`, `bilbordy koszt budowy`) przegrywamy z przestarzałymi, 15-letnimi blogami z nieaktualnymi danymi — i pytał, jak je „zdiudupić" (negatywne SEO odrzucone jako łamiące zasady Google i ryzykowne).
+
+**Metoda:** live WebSearch na 3 najmocniejszych wisienkach z raportu `audyt-2026-07-25/raport-gsc.md` (sekcja 1): `billboard cennik` (12 wyśw/poz 16,5), `bilbordy koszt budowy` (10/7,8), `reklama mobilna bydgoszcz` (107/15,4).
+
+### Wniosek — teza o przestarzałej konkurencji NIE potwierdzona
+Na frazach `billboard cennik` / `bilbordy koszt budowy` dominuje **billboard-x.pl** — kilka świeżo datowanych (2026) artykułów, aktywnie utrzymywanych, precyzyjnie targetujących te same frazy transakcyjne. To agresywny, dobrze zoptymalizowany konkurent contentowy, nie zaniedbany blog. Reszta wyników: `fux.pl`, `interboard.pl`, `cyrekdigital.com` — agencje/producenci, dla których content to główny kanał sprzedaży.
+
+**Dobra wiadomość:** na `reklama mobilna bydgoszcz` własny artykuł (`blog/lokalizacje/reklama-outdoor-bydgoszcz`) już łapie się na 1. stronę wyników obok lokalnych graczy (MZK Bydgoszcz, mobilart.pl) — potwierdza wisienkę z raportu 25.07 (poz. 15,4, 107 wyśw, real dług meta wg sekcji 3a tamtego raportu).
+
+### ➡️ DLA STRATEGA / PISARZA
+- Na frazach cenowych ogólnych (`billboard cennik` i pokrewne) nie da się przebić `billboard-x.pl` samą objętością/aktualnością treści — mają za dużo materiału i regularnie go odświeżają. Przewaga, której oni NIE mają: **realne ceny z żywych ogłoszeń na platformie** (obecnie ~1000), nie widełki szacunkowe. Kąt artykułu: "zobacz realne oferty z konkretnymi cenami, nie tylko średnie rynkowe" + link do `/powierzchnie-reklamowe` — to przesuwa artykuł z czysto informacyjnego na przewagę danych, której konkurencja nie skopiuje.
+- `reklama-outdoor-bydgoszcz` — dociągnąć meta/treść (już zidentyfikowane jako dług w raporcie 25.07, sekcja 3a) — to najtańszy strzał z całej trójki, bo strona już rankuje blisko 1. strony.
+
+**Log zaktualizowany tylko ad-hoc** (bez pełnego przeglądu GSC/GA4) — pełny kontekst wisienek w `audyt-2026-07-25/raport-gsc.md`, ten wpis go nie zastępuje.
+
+---
+
 ## 2026-07-25 — AUDYT 7-WYMIAROWY (GSC + GA4 + Bing, wszystko przez API)
 
 > **📁 Pełny raport: `reklamap-os/status/audyt-2026-07-25/RAPORT.md`** (466 linii) · brief: `BRIEF-STRATEG-BIZNES.md` · 7 raportów cząstkowych · gotowy patch `fix-region.patch`.

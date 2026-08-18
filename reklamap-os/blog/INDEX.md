@@ -12,6 +12,7 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 | **Kategoria: /blog/poradniki** | | | | |
 | 2026-04-14 06:00 | jak-wybrac-powierzchnie-reklamowa | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414060000_jak-wybrac-powierzchnie-reklamowa.md) |
 | 2026-04-14 06:01 | ile-kosztuje-reklama-outdoor | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414060100_ile-kosztuje-reklama-outdoor.md) |
+| 2026-08-18 10:42 | dzierzawa-gruntu-pod-reklame | poradniki (PODAŻ) | ✅ ZRECENZOWANY (zero wolumenu Google, treść pod cold calling + AI-search, patrz brudnopis) | [Link](posts/20260818104212_dzierzawa-gruntu-pod-reklame.md) |
 | 2026-06-09 18:16 | ekran-led-cena | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260609181608_ekran-led-cena.md) |
 | 2026-06-22 11:30 | jak-zarobic-na-wynajmie-powierzchni-reklamowej | poradniki (PODAŻ) | ✅ ZRECENZOWANY | [Link](posts/20260622113049_jak-zarobic-na-wynajmie-powierzchni-reklamowej.md) |
 | 2026-06-22 11:56 | czy-oplaca-sie-wynajmowac-powierzchnie-reklamowa | poradniki (PODAŻ) | ✅ ZRECENZOWANY | [Link](posts/20260622115615_czy-oplaca-sie-wynajmowac-powierzchnie-reklamowa.md) |
@@ -39,7 +40,9 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 | 2026-04-19 16:23 | reklama-outdoor-poznan | lokalizacje | ✅ ZRECENZOWANY 2026-07-13 (rozbudowa LED/DOOH + fakty potwierdzone oficjalnie: uchwała LXXXVIII/1671/VIII/2023, WSA II SA/Po 547/23, TK P 20/19, skarżący Jeronimo Martins/Biedronka; dodano niuans tymczasowości zwolnienia, usunięto stawki opłaty — Poznań jej nie pobiera — ✅ LIVE NA PROD, zweryfikowane curl-em 2026-07-25) | [Link](posts/20260419162331_reklama-outdoor-poznan.md) |
 | 2026-05-12 22:30 | billboard-reklama | poradniki | ✅ ZRECENZOWANY (refresh) | [Link](posts/20260419163813_billboard-reklama.md) |
 | 2026-05-05 10:55 | reklama-outdoor-lodz | lokalizacje | ✅ ZRECENZOWANY 2026-07-13 („najsurowsza obowiązuje" → nieegzekwowana/zawieszona; 2026-07-13: numer XXXVII/966/16 (poz.5588) potwierdzony, złagodzono niepotwierdzony zakres wyroku 2024 i usunięto sprzeczność „zawieszona vs wyrok" — ✅ LIVE NA PROD, zweryfikowane curl-em 2026-07-25) | [Link](posts/20260505105504_reklama-outdoor-lodz.md) |
-| 2026-05-05 11:36 | oplata-reklamowa | prawo-i-regulacje | ✅ ZRECENZOWANY | [Link](posts/20260505113610_oplata-reklamowa.md) |
+| 2026-05-05 11:36 | oplata-reklamowa | prawo-i-regulacje | ✅ ZRECENZOWANY — 🔧 **POPRAWKA 2026-08-18** (błędne stawki maks. 3,89/0,36 → poprawne 2,50/0,20, przeliczone wszystkie przykłady; sprawdzić re-seed na prod jeśli już live) | [Link](posts/20260505113610_oplata-reklamowa.md) |
+| 2026-08-18 11:01 | podatek-od-wynajmu-powierzchni-reklamowej | prawo-i-regulacje (PODAŻ) | ✅ ZRECENZOWANY (YMYL, zero wolumenu Google, patrz brudnopis) | [Link](posts/20260818110152_podatek-od-wynajmu-powierzchni-reklamowej.md) |
+| 2026-08-18 11:15 | budowa-wlasnego-billboardu-koszt | poradniki (PODAŻ) | ✅ ZRECENZOWANY (zero wolumenu Google, 3 konflikty prawne z researchu poprawnie ominięte) | [Link](posts/20260818111500_budowa-wlasnego-billboardu-koszt.md) |
 | 2026-05-05 11:47 | reklama-outdoor-katowice | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260505114741_reklama-outdoor-katowice.md) |
 | 2026-05-25 22:01 | reklama-outdoor-olsztyn | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260525220136_reklama-outdoor-olsztyn.md) |
 | 2026-05-25 22:44 | reklama-outdoor-bydgoszcz | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260525224446_reklama-outdoor-bydgoszcz.md) |
