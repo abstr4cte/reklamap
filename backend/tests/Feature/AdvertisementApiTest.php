@@ -369,6 +369,48 @@ class AdvertisementApiTest extends TestCase
     }
 
     /**
+     * Pilot "promień aglomeracji" (Katowice): `include_nearby=1` zwraca ogłoszenia z sąsiednich
+     * miast w osobnym polu `nearby_listings`, NIE dotykając głównego `data`/`total` — to musi
+     * pozostać wyłącznie liczbą własnych ogłoszeń miasta (podstawa THIN_PAGE_THRESHOLD/noindex
+     * we froncie). Sosnowiec (~9 km od Katowic) łapie się w promieniu 30 km, Warszawa nie.
+     */
+    public function test_include_nearby_returns_separate_field_without_affecting_main_count(): void
+    {
+        Advertisement::factory()->count(3)->create([
+            'city' => 'Katowice', 'latitude' => 50.2649, 'longitude' => 19.0238,
+            'is_active' => true, 'status' => 'active',
+        ]);
+        Advertisement::factory()->count(2)->create([
+            'city' => 'Sosnowiec', 'latitude' => 50.2863, 'longitude' => 19.1042,
+            'is_active' => true, 'status' => 'active',
+        ]);
+        Advertisement::factory()->create([
+            'city' => 'Warszawa', 'latitude' => 52.2297, 'longitude' => 21.0122,
+            'is_active' => true, 'status' => 'active',
+        ]);
+
+        $withNearby = $this->getJson(
+            '/api/listings?' . http_build_query(['city' => 'Katowice', 'city_strict' => 1, 'include_nearby' => 1]),
+            $this->appKeyHeaders()
+        );
+        $withNearby->assertStatus(200);
+        $this->assertSame(3, $withNearby->json('total'), 'Główny licznik miasta musi zostać wyłącznie własnymi ogłoszeniami.');
+        $nearby = $withNearby->json('nearby_listings');
+        $this->assertCount(2, $nearby, 'Sosnowiec (~9 km) musi się złapać w promieniu 30 km, Warszawa nie.');
+        foreach ($nearby as $ad) {
+            $this->assertSame('Sosnowiec', $ad['city']);
+        }
+
+        // Bez include_nearby pole w ogóle nie występuje (surowy paginator, jak dziś).
+        $withoutNearby = $this->getJson(
+            '/api/listings?' . http_build_query(['city' => 'Katowice', 'city_strict' => 1]),
+            $this->appKeyHeaders()
+        );
+        $withoutNearby->assertStatus(200);
+        $this->assertArrayNotHasKey('nearby_listings', $withoutNearby->json());
+    }
+
+    /**
      * Regresja: filtr województwa. Front (HeroBanner/ListingsPage) wysyła ASCII-id ze słownika
      * `polishLocations.json` („dolnoslaskie”, „slaskie”), a w bazie leży `address.state` z
      * Nominatim w dwóch formatach („śląskie” ORAZ „województwo dolnośląskie”). Exact match

@@ -118,6 +118,10 @@ export const useSearchStore = defineStore('search', () => {
   // Server-side pagination state
   const serverTotal = ref(_ssr?.serverTotal ?? 0)
   const serverLastPage = ref(_ssr?.serverLastPage ?? 1)
+  // Ogłoszenia z sąsiednich miast (promień 30 km) na już-indeksowanych stronach city-only —
+  // pilot Katowice. CELOWO osobny stan od `listings`/`serverTotal`: nie wpływa na
+  // THIN_PAGE_THRESHOLD/noindex (patrz utils/listingsSeo.ts), to czysto prezentacyjny dodatek.
+  const nearbyListings = ref<Advertisement[]>([])
   // Track filters from path params (category/city from menu)
   const pathParamsFilters = ref<{ type?: string; city?: string }>({})
 
@@ -149,6 +153,12 @@ export const useSearchStore = defineStore('search', () => {
       params.lat = f.selectedLocationCoords.lat
       params.lng = f.selectedLocationCoords.lng
       params.radius = 30
+    }
+
+    // Sekcja "w okolicy" (pilot Katowice) — tylko strony city-only (bez typu, bez map bounds).
+    // Nie zależy od selectedLocationCoords — backend liczy centroid sam z własnych ogłoszeń miasta.
+    if (f.city && f.cityStrict && !f.type && !f.mapBounds) {
+      params.include_nearby = 1
     }
 
     // Map bounds (overrides city/region when user pans the map)
@@ -282,6 +292,11 @@ export const useSearchStore = defineStore('search', () => {
         recognized = true
       }
       if (recognized) hasLoaded.value = true
+      // Sekcja "w okolicy" — obecna tylko gdy wysłaliśmy include_nearby=1 (city-only, cityStrict).
+      // Świadomie NIE wpływa na `recognized`/`hasLoaded` powyżej.
+      nearbyListings.value = Array.isArray((response as any)?.nearby_listings)
+        ? (response as any).nearby_listings
+        : []
     } catch (error) {
       if (generation !== _fetchGeneration) return
       console.error('Failed to fetch listings:', error)
@@ -1060,7 +1075,7 @@ export const useSearchStore = defineStore('search', () => {
 
   return {
     listings, mapPins, isLoading, filters, sortBy, priceDisplay, viewMode, currentPage, itemsPerPage,
-    serverTotal, serverLastPage, hasLoaded,
+    serverTotal, serverLastPage, hasLoaded, nearbyListings,
     fetchListings, fetchMapPins, setListings, applyFilters, resetFilters, setViewMode, setCurrentPage, syncFromUrl, cancelMapBoundsTimer,
     sortedAndFilteredListings, paginatedListings, totalPages, activeFiltersCount, getPrice,
     computedPriceDisplayUnit,

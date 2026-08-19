@@ -56,7 +56,8 @@ const {
   serverTotal,
   activeFiltersCount,
   itemsPerPage,
-  pathParamsFilters
+  pathParamsFilters,
+  nearbyListings
 } = storeToRefs(searchStore)
 
 const totalFiltersCount = computed(() => {
@@ -92,6 +93,13 @@ const cityDisplayName = computed<string | null>(() => {
   const citySlug = route.params.city as string | undefined
   return citySlug ? resolveCityName(citySlug) : null
 })
+
+// Sekcja "w okolicy" (pilot Katowice, promień 30 km) — tylko strony city-only (bez typu).
+// `nearbyListings` NIE wpływa na SEO/noindex/próg cienkiej strony poniżej (patrz seoData) —
+// to czysto prezentacyjny dodatek do już-indeksowanej strony.
+const showNearbySection = computed(() =>
+  !!route.params.city && !route.params.type && nearbyListings.value.length > 0
+)
 
 const seoData = computed(() => {
   const typeSlug = route.params.type as string | undefined
@@ -1808,6 +1816,25 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             @click="showSearchAlertModal = true"
           />
         </template>
+
+        <!-- Sekcja "w okolicy" (pilot Katowice) — NIE wpływa na SEO/próg cienkiej strony,
+             patrz komentarz przy showNearbySection i CLAUDE.md „Geo-bucketing”. -->
+        <section v-if="showNearbySection" class="nearby-section">
+          <h2 class="nearby-section__title">Więcej ofert w okolicy (promień 30 km)</h2>
+          <div class="listings-list" :class="viewMode">
+            <AdCard
+              v-for="ad in nearbyListings"
+              :key="'nearby-' + ad.id"
+              :ad="ad"
+              :view-mode="viewMode"
+              :price-display="searchStore.computedPriceDisplayUnit"
+              @toggle-favorite="handleToggleFavorite"
+              @toggle-comparison="handleToggleComparison"
+              @hover-start="handleAdHover"
+              @hover-end="handleAdLeave"
+            />
+          </div>
+        </section>
 
         <!-- List Scroll to Top Button -->
         <Transition name="fade">
@@ -4894,5 +4921,29 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 .pagination-bottom .pagination-container {
   padding-top: 0;
   padding-bottom: 0;
+}
+
+.nearby-section {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--border-color, #e5e7eb);
+}
+
+.nearby-section__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main, #374151);
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .nearby-section {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+  }
+
+  .nearby-section__title {
+    font-size: 1.1rem;
+  }
 }
 </style>

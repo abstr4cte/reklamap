@@ -88,7 +88,62 @@ class AdvertisementController extends Controller
         }
 
         $perPage = min(max((int) $request->input('per_page', 24), 1), 200);
-        return $query->paginate($perPage);
+        $paginated = $query->paginate($perPage);
+
+        // Sekcja "w okolicy" na stronach miast (pilot Katowice) — celowo NIE wpływa na
+        // `data`/`total` powyżej (te nadal liczą wyłącznie własne ogłoszenia miasta i są
+        // podstawą THIN_PAGE_THRESHOLD/noindex we froncie, patrz listingsSeo.ts). Zwracana
+        // tylko na jawne żądanie (`include_nearby=1`) i tylko dla ścisłego dopasowania miasta.
+        if ($request->filled('city') && $request->boolean('city_strict') && $request->boolean('include_nearby')) {
+            $response = $paginated->toArray();
+            $response['nearby_listings'] = $this->nearbyListingsForCity((string) $request->input('city'));
+            return response()->json($response);
+        }
+
+        return $paginated;
+    }
+
+    /**
+     * Ogłoszenia z sąsiednich miast (promień 30 km od centroidu własnych ogłoszeń miasta),
+     * z wykluczeniem miasta docelowego. Centroid liczony z istniejących ogłoszeń — nie
+     * wymaga osobnego słownika współrzędnych miast (którego dziś nie ma, patrz
+     * `frontend/src/data/polishLocations.json` — tylko województwa).
+     */
+    private function nearbyListingsForCity(string $city, int $limit = 12, float $radiusKm = 30.0): array
+    {
+        $cityExpr = $this->cityFoldedSql();
+        $foldedCity = $this->foldPolish($city);
+
+        $centroid = Advertisement::where('is_active', 1)
+            ->whereRaw("$cityExpr = ?", [$foldedCity])
+            ->selectRaw('AVG(latitude) as lat, AVG(longitude) as lng')
+            ->first();
+
+        if (!$centroid || $centroid->lat === null || $centroid->lng === null) {
+            return [];
+        }
+
+        $lat = (float) $centroid->lat;
+        $lng = (float) $centroid->lng;
+
+        $haversine = "
+            (6371 * 2 * ASIN(SQRT(
+                POWER(SIN((RADIANS(?) - RADIANS(latitude)) / 2), 2) +
+                COS(RADIANS(?)) * COS(RADIANS(latitude)) *
+                POWER(SIN((RADIANS(?) - RADIANS(longitude)) / 2), 2)
+            )))
+        ";
+
+        // CAST(? AS REAL) na progu: patrz komentarz w buildFilteredQuery — bez tego PHP float
+        // bindowany przez PDO_SQLite trafia jako TEXT, a SQLite porównuje TEXT > REAL zawsze,
+        // więc "<=" byłoby wiecznie prawdziwe na SQLite (testy). Na MySQL (prod) CAST no-op.
+        return Advertisement::where('is_active', 1)
+            ->whereRaw("$cityExpr != ?", [$foldedCity])
+            ->whereRaw("$haversine <= CAST(? AS REAL)", [$lat, $lat, $lng, $radiusKm])
+            ->orderByRaw("$haversine ASC", [$lat, $lat, $lng])
+            ->limit($limit)
+            ->get()
+            ->toArray();
     }
 
     /**
@@ -269,12 +324,15 @@ class AdvertisementController extends Controller
             $lat = (float) $request->input('lat');
             $lng = (float) $request->input('lng');
             $radius = (float) $request->input('radius', 30);
+            // CAST(? AS REAL) na progu: PHP float bindowany przez PDO_SQLite trafia jako TEXT,
+            // a w regułach porównań SQLite TEXT > REAL zawsze — bez CAST-a warunek "<=" byłby
+            // wiecznie prawdziwy (dopasowuje wszystko) na SQLite. Na MySQL (prod) CAST no-op.
             $query->whereRaw("
                 (6371 * 2 * ASIN(SQRT(
                     POWER(SIN((RADIANS(?) - RADIANS(latitude)) / 2), 2) +
                     COS(RADIANS(?)) * COS(RADIANS(latitude)) *
                     POWER(SIN((RADIANS(?) - RADIANS(longitude)) / 2), 2)
-                ))) <= ?
+                ))) <= CAST(? AS REAL)
             ", [$lat, $lat, $lng, $radius]);
         }
 
