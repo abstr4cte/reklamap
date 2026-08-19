@@ -134,12 +134,13 @@ class AdvertisementController extends Controller
             )))
         ";
 
-        // CAST(? AS REAL) na progu: patrz komentarz w buildFilteredQuery — bez tego PHP float
-        // bindowany przez PDO_SQLite trafia jako TEXT, a SQLite porównuje TEXT > REAL zawsze,
-        // więc "<=" byłoby wiecznie prawdziwe na SQLite (testy). Na MySQL (prod) CAST no-op.
+        // Próg jako liczbowy literał w SQL (nie bindowany placeholder) — patrz komentarz w
+        // buildFilteredQuery: `CAST(? AS REAL)` naprawiał SQLite, ale REAL nie jest poprawnym
+        // typem CAST w MySQL (prod) — składniowy błąd. $radiusKm to parametr metody (float), bezpieczny.
+        $radiusLiteral = sprintf('%.6f', $radiusKm);
         return Advertisement::where('is_active', 1)
             ->whereRaw("$cityExpr != ?", [$foldedCity])
-            ->whereRaw("$haversine <= CAST(? AS REAL)", [$lat, $lat, $lng, $radiusKm])
+            ->whereRaw("$haversine <= $radiusLiteral", [$lat, $lat, $lng])
             ->orderByRaw("$haversine ASC", [$lat, $lat, $lng])
             ->limit($limit)
             ->get()
@@ -324,16 +325,19 @@ class AdvertisementController extends Controller
             $lat = (float) $request->input('lat');
             $lng = (float) $request->input('lng');
             $radius = (float) $request->input('radius', 30);
-            // CAST(? AS REAL) na progu: PHP float bindowany przez PDO_SQLite trafia jako TEXT,
-            // a w regułach porównań SQLite TEXT > REAL zawsze — bez CAST-a warunek "<=" byłby
-            // wiecznie prawdziwy (dopasowuje wszystko) na SQLite. Na MySQL (prod) CAST no-op.
+            // Próg wpisany jako liczbowy literał w SQL, NIE jako bindowany placeholder: PHP float
+            // bindowany przez PDO_SQLite trafia jako TEXT, a SQLite porównuje TEXT > REAL zawsze
+            // (warunek "<=" byłby wiecznie prawdziwy na SQLite). `CAST(? AS REAL)` to naprawiało na
+            // SQLite, ale REAL nie jest poprawnym typem CAST w MySQL (prod) — składniowy błąd.
+            // Literał jest bezpieczny: $radius jest już zrzutowany do (float) w PHP powyżej.
+            $radiusLiteral = sprintf('%.6f', $radius);
             $query->whereRaw("
                 (6371 * 2 * ASIN(SQRT(
                     POWER(SIN((RADIANS(?) - RADIANS(latitude)) / 2), 2) +
                     COS(RADIANS(?)) * COS(RADIANS(latitude)) *
                     POWER(SIN((RADIANS(?) - RADIANS(longitude)) / 2), 2)
-                ))) <= CAST(? AS REAL)
-            ", [$lat, $lat, $lng, $radius]);
+                ))) <= $radiusLiteral
+            ", [$lat, $lat, $lng]);
         }
 
         // --- Region filter ---
