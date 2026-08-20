@@ -615,6 +615,30 @@ const clearSearchFlag = () => {
       />
     </div>
 
+    <!-- Pasmo podażowe: strona główna mówiła dotąd wyłącznie do reklamodawcy („znajdź
+         powierzchnię"). Adresat główny to WŁAŚCICIEL PRYWATNY (ściana, płot, działka) —
+         agencje mają najwięcej nośników, ale są sposobem na zapełnienie bazy, nie grupą
+         docelową, więc idą jako ścieżka drugorzędna. -->
+    <section class="supply-band">
+      <h2 class="supply-band__title">Masz ścianę, płot albo działkę przy drodze?</h2>
+      <p class="supply-band__lead">
+        Możesz na tym zarabiać. Wystawienie jest bezpłatne, bez prowizji od wynajmu —
+        reklamodawca kontaktuje się z Tobą bezpośrednio.
+      </p>
+      <div class="supply-band__actions">
+        <router-link to="/dodaj-powierzchnie-reklamowa" class="supply-band__primary">
+          Wystaw swoją powierzchnię
+        </router-link>
+        <router-link to="/blog/poradniki/jak-zarobic-na-wynajmie-powierzchni-reklamowej" class="supply-band__secondary">
+          Zobacz, ile można zarobić
+        </router-link>
+      </div>
+      <p class="supply-band__note">
+        Prowadzisz agencję i masz całe portfolio nośników?
+        <router-link to="/dla-agencji">Wprowadzimy je za Ciebie</router-link>.
+      </p>
+    </section>
+
     <!-- Search Alert Global Modal -->
     <Teleport to="body">
       <SearchAlertModal 
@@ -948,6 +972,94 @@ const clearSearchFlag = () => {
   margin: 0;
   position: relative;
   overflow: hidden;
+}
+
+.supply-band {
+  max-width: 46rem;
+  margin: 3rem auto 1rem;
+  padding: 2.25rem 1.5rem;
+  text-align: center;
+  background: var(--card-bg, #fff);
+  border: 2px solid var(--border-color, #e5e7eb);
+  border-radius: 16px;
+}
+
+.supply-band__title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-bottom: 0.75rem;
+  color: var(--text-main, #374151);
+}
+
+.supply-band__lead {
+  max-width: 34rem;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+  color: var(--text-muted, #6b7280);
+}
+
+.supply-band__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.supply-band__primary,
+.supply-band__secondary {
+  display: inline-block;
+  padding: 0.8rem 1.6rem;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.supply-band__primary {
+  background: #667eea;
+  color: #fff;
+}
+
+.supply-band__primary:hover {
+  background: #5568d3;
+}
+
+.supply-band__secondary {
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #c7cffb;
+}
+
+.supply-band__secondary:hover {
+  background: #eef1fe;
+}
+
+.supply-band__note {
+  margin-top: 1.35rem;
+  font-size: 0.9rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.supply-band__note a {
+  color: #667eea;
+  font-weight: 600;
+}
+
+@media (max-width: 560px) {
+  .supply-band {
+    margin: 2rem 1rem 1rem;
+    padding: 1.75rem 1.15rem;
+  }
+
+  .supply-band__title {
+    font-size: 1.3rem;
+  }
+
+  .supply-band__primary,
+  .supply-band__secondary {
+    width: 100%;
+  }
 }
 
 .cities-section::before {
