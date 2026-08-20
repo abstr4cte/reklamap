@@ -4,6 +4,61 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 
 ---
 
+## 2026-08-20 — audyt: odkrywalność dużych miast bez podaży (nowa strategia bez cold callingu)
+
+**Kontekst produktowy:** founder zrezygnował z cold callingu ([[project-traffic-source-direct-coldcalls]] zaktualizowane 2026-08-18). Nowy model pozyskania podaży: właściciele nośników mają **sami znajdować** ReklaMap w sieci i dodawać ogłoszenia samoobsługowo. Audyt sprawdza, co w architekturze temu dziś stoi na przeszkodzie.
+
+**Metoda:** pomiar podaży per miasto na prod DB (`city_strict` = ten sam fold co strona kategorii) dla top-20 miast PL wg populacji · przegląd `ListingsPage.vue` (empty state), `AddAdPage.vue` (prewypełnianie), `navHubs()` (menu/stopka), `HomePage.vue` (karty miast) · weryfikacja liczb z audytu 2026-07-25 wobec stanu po imporcie BrokersMedia (+217).
+
+### 🔴 Znalezisko #1 — 14 z 20 największych miast PL jest poniżej progu indeksacji (STRUKTURALNE)
+
+| Ofert | Miasta |
+|---|---|
+| **0** | Kraków, Łódź, Gdańsk, Szczecin, Bydgoszcz, Białystok, Gliwice |
+| 1–2 | Warszawa (2), Lublin (1), Toruń (1), Kielce (1), Rzeszów (1), Zabrze (1), Częstochowa (2) |
+| ≥3 ✅ | Wrocław 11, Poznań 18, Katowice 8, Radom 12, Sosnowiec 21 |
+
+Baza urosła 827 → **1069** (import BrokersMedia +217: Oświęcim 64, Zator 35, Andrychów 16, Brzeszcze 13, Libiąż 13, Kęty 8 — **wszystkie 6 od razu powyżej progu**, własne indeksowalne strony). Liczby dla samych rdzeni 11 dużych miast **nie zmieniły się ani o 1** wobec 2026-07-25.
+
+**Ryzyko:** błędne koło — brak podaży → `noindex` → brak odkrywalności → brak nowej podaży. Nowa strategia (samoobsługowe znajdowanie) uderza dokładnie w ten mur. **Nie da się tego naprawić kodem** — tylko realnym wzrostem podaży albo treścią, która nie podlega progowi (blog).
+
+### 🟠 Znalezisko #2 — pusta strona miasta była ślepym zaułkiem → ✅ CZĘŚCIOWO NAPRAWIONE 2026-08-20
+
+**Analiza:** `ListingsPage.vue:1756-1771` — empty state to sam nagłówek „Brak ogłoszeń" + `SearchAlertBox` (i to tylko gdy `totalFiltersCount > 0`, czyli po ręcznym ustawieniu filtrów). **Zero CTA do dodania własnego ogłoszenia.** `AddAdPage.vue` **nie importuje `useRoute`** — nie da się zrobić linku `?city=Warszawa` prewypełniającego miasto. `navHubs()` (`AdvertisementController.php:176-234`, `HAVING COUNT(*) >= 3`) i karty na `HomePage.vue:536-546` **świadomie pomijają** miasta bez podaży (komentarz `HomePage.vue:361-363` — słuszna decyzja o link-equity, nie zmieniać).
+
+**✅ Wdrożone 2026-08-20** (commit `a0100a0`): sekcja „w okolicy" działa teraz także dla miast z **zerową** podażą — fallback na słownik współrzędnych 31 miast PL (statyczny; ścieżkę serwuje się botom przy prerenderze, więc bez geokodowania w locie) + eskalacja promienia 30→50 km poniżej progu cienkiej strony + `nearby_radius_km` w API i uczciwy komunikat („brak w tym mieście, ale N w promieniu X km").
+
+Pomiar na prodzie po wdrożeniu: **Kraków 0→5 ofert w okolicy** (Zielonki, Mogilany, Biskupice), **Gdańsk 0→4**, **Łódź 0→4**, Warszawa 2 własne + 12. Szczecin/Białystok nadal 0 — poprawnie, tam **nie ma nic w promieniu 50 km** (zgodne z audytem 07-25), sekcja się nie pokazuje zamiast udawać.
+
+**⏳ POZOSTAJE:** CTA „wystaw pierwszy nośnik w {mieście}" + odczyt `?city=` w `AddAdPage.vue`. To domknęłoby konwersję ruchu spoza wyszukiwarki (blog/social/direct) na realne zgłoszenia podaży. **Koszt XS, zero ryzyka SEO.**
+
+### 🟡 Znalezisko #3 — Kraków: 112 nośników w 50 km przy 0 własnych (ŚREDNIE-WYSOKIE)
+
+Import BrokersMedia (małopolska) dał Krakowowi **112 nośników w promieniu 50 km** (30 km: 5). Wszystkie 6 nowych miast leży 37,9–57,7 km od Krakowa — **żadne w ścisłych 30 km**, więc pilot „promienia aglomeracji" ich nie połączy.
+
+**Ryzyko:** strona `/powierzchnie-reklamowe/krakow` zostaje `noindex` (0 własnych < próg 3) niezależnie od sekcji „w okolicy" — i **tak ma zostać**. Rozszerzenie progu o oferty z promienia = duplikacja treści między stronami miast, świadomie odrzucone przy pilocie Katowic.
+
+**Rekomendacja:** osobna strona/artykuł pod intencję **wystawcy** („Wystaw nośnik w Krakowie i okolicy") — unikalna treść, nie podlega progowi cienkiej strony, może użyć „112 ofert w promieniu 50 km" jako social proof. Wzorzec: dzisiejszy klaster podażowy (dzierżawa gruntu, budowa billboardu). Ścieżka: Strateg → Pisarz → Korektor.
+
+### 🟡 Znalezisko #4 — IndexNow: brak implementacji (ŚREDNIE, waga wzrosła)
+
+Stan bez zmian od 2026-07-25 (`indexnow.txt` → SPA-fallback). **Waga rośnie przy nowej strategii:** czas między „ktoś dodał ogłoszenie" a „widoczne w Google" bezpośrednio determinuje tempo domykania pętli samoobsługowej. Dziś zależy wyłącznie od naturalnego crawlu (dni/tygodnie) przy zerowym profilu linków. Wpięcie: `deploy.sh` po rsyncu (jak tripwire) + hook przy przekroczeniu progu 3 przez nowe miasto.
+
+### Zmierzone przy okazji (geo-bucketing, aktualizacja poz. 23 z 07-25)
+
+| Hub | ≤30 km 07-25 | ≤30 km dziś | ≤50 km dziś |
+|---|---:|---:|---:|
+| Katowice | 140 | **222** | 344 |
+| Kraków | — | 5 | **112** |
+| Koszalin | 77 | 77 | 90 |
+| Wrocław | 38 | 38 | 57 |
+| Poznań | 34 | 34 | 47 |
+| Warszawa | 13 | 13 | 20 |
+
+Miast poniżej progu: **88** (119 ofert łącznie) vs 71 miast powyżej progu (950 ofert).
+
+---
+
 ## 2026-07-25 — audyt ultracode (15 agentów) — indeksacja, CWV zmierzone, filtr województwa
 
 **📁 Pełny materiał:** `reklamap-os/status/audyt-2026-07-25/` — `RAPORT.md`, `raport-{indeks,cwv,kod,bing}.md`, **gotowy `fix-region.patch`**. Kontekst analityczny: `ANALYTICS_LOG.md`, wpis 2026-07-25.
