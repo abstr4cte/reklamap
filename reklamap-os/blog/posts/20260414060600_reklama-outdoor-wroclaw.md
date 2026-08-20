@@ -53,13 +53,13 @@ Szczegółowy cennik wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/
 
 ## Krzyki, Fabryczna i Psie Pole — lokalizacje dzielnicowe
 
-**Krzyki** to największa dzielnica Wrocławia — rozległy obszar mieszkaniowy z centrami handlowymi (Borek, Bielany). Ceny billboardów 12×4 m od 1 500 zł/mc przy zasięgu wśród jednej z największych populacji w mieście.
+**Krzyki** to największa dzielnica Wrocławia — rozległy obszar mieszkaniowy z centrami handlowymi (Borek; tuż za granicą miasta — Bielany Wrocławskie w gminie Kobierzyce). Ceny billboardów 12×4 m od 1 500 zł/mc przy zasięgu wśród jednej z największych populacji w mieście.
 
 **Fabryczna** to dzielnica przemysłowo-biurowa z rosnącym sektorem logistycznym i technologicznym. Nośniki przy głównych arteriach docierają do pracowników strefy biznesowej i dojeżdżających z zachodnich obrzeży. Stawki 1 500–5 000 zł/mc za billboard 12×4 m.
 
 **Psie Pole** — północna dzielnica mieszkaniowa. Stawki 4 000–5 000 zł/mc za billboard 12×4 m. Dobra dla kampanii lokalnych i usług adresowanych do mieszkańców prawobrzeżnego Wrocławia.
 
-**Insight ekspercki:** Fabryczna i okolice ul. Legnickiej (Wrocławski Park Technologiczny) to jedyne miejsce w Polsce poza Warszawą, gdzie reklama outdoor w dzielnicy przemysłowej dociera do tysięcy specjalistów IT dziennie — przy cenach nawet trzykrotnie niższych niż centrum. Format niedoceniany przez marki z sektora tech i rekrutację.
+**Insight ekspercki:** Fabryczna łączy funkcję przemysłową z biurową — Wrocławski Park Technologiczny (ul. Muchoborska, Muchobór Mały) i biurowce przy Legnickiej sprawiają, że reklama outdoor w tej „przemysłowej" dzielnicy dociera do tysięcy specjalistów IT dziennie — przy cenach nawet trzykrotnie niższych niż centrum. Format niedoceniany przez marki z sektora tech i rekrutację.
 
 Przeglądaj dostępne nośniki we Wrocławiu → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)
 
@@ -81,14 +81,16 @@ Wrocław ma jedną z największych sieci tramwajowych w Polsce — tramwaje kurs
 | Tramwaj 105 NWr — lewa strona | 1 200 zł | 4 900 zł |
 | Tramwaj 105 NWr — całopojazdowy | 1 500 zł | 4 900 zł |
 | Tramwaj 204 WrAs — całopojazdowy | 1 800 zł | 4 900 zł |
-| Tramwaj Skoda 19T — całopojazdowy | **4 000 zł** | 7 000 zł |
+| Tramwaj Škoda 19T — całopojazdowy | **4 000 zł** | 7 000 zł |
+| Tramwaj Moderus Beta MF 19 AC — całopojazdowy | **4 500 zł** | 7 000 zł |
+| Tramwaj Pesa TWIST 2010NW — całopojazdowy | **4 500 zł** | 7 000 zł |
 | Autobus solo — całopojazdowy | 1 500 zł | — |
 | Autobus przegubowy — całopojazdowy | 2 200 zł | — |
 | Fullback tył autobusu | ~1 200 zł | — |
 
-Koszt produkcji (druk, montaż, przywrócenie barw MPK) — wycena indywidualna w Dziale Sprzedaży. Przy kontrakcie 12-miesięcznym rabat ~17% (tramwaj 105 NWr: 12 000 zł/12mc zamiast 14 400 zł).
+Koszt produkcji (druk, montaż, przywrócenie barw MPK) — wycena indywidualna w Dziale Sprzedaży. Cennik przewiduje osobną stawkę za 12 miesięcy z góry, korzystniejszą o ok. 17% od dwunastu opłat miesięcznych — np. Škoda 19T to 40 000 zł za rok zamiast 48 000 zł, a autobus solo 15 000 zł zamiast 18 000 zł. Minimalny czas ekspozycji przy rozliczeniu miesięcznym to 3 miesiące.
 
-Tramwaj Skoda 19T to najnowszy tabor MPK — kursuje na kluczowych liniach przez centrum. Najwyższa cena w ofercie, ale też najwyższy efekt wizualny i prestiż kampanii.
+Škoda 19T (dostawy 2006–2007) kursuje na kluczowych liniach przez centrum. Najdroższe w cenniku są jednak nowsze Moderus Beta MF 19 AC i Pesa TWIST 2010NW — po 4 500 zł/mies. za całopojazdową ekspozycję.
 
 Więcej o reklamie w transporcie: [Reklama w komunikacji miejskiej — co warto wiedzieć](/blog/poradniki/reklama-w-transporcie-publicznym)
 
@@ -97,16 +99,17 @@ Więcej o reklamie w transporcie: [Reklama w komunikacji miejskiej — co warto 
 Wrocław **nie ma uchwały krajobrazowej** w rozumieniu ustawy z 2015 r. Centrum chroni inne narzędzie prawne: **Park Kulturowy „Stare Miasto"**, ustanowiony 10 kwietnia 2014 r. ze zmianami w 2021 r. (źródło: bip.um.wroc.pl).
 
 Obszar Parku (~210 ha) obejmuje:
-- Stare Miasto w granicach fosy miejskiej
-- Wyspy Odrzańskie i Ostrów Tumski
-- Ogród Botaniczny i park Słowackiego
+- Stare Miasto w granicach wyznaczonych m.in. ulicami Nowy Świat, Grodzką i Podwale oraz południowym nabrzeżem Odry
+- Wyspy Odrzańskie: Ostrów Tumski, Wyspa Piasek, Młyńska, Słodowa, Bielarska i Tamka
 
 **W granicach Parku obowiązuje:**
-- Zakaz wolnostojących billboardów
-- Zakaz nośników naruszających historyczny charakter zabudowy
-- Dozwolone: dyskretne tablice, banery zgodne z ochroną konserwatorską
+- Zakaz działań reklamowych na elewacjach i witrynach budynków
+- Zakaz rozwieszania banerów i rozdawania ulotek
+- Zakaz reklam na nawierzchni i na pojazdach
+- Zakaz ekranów wyświetlających napisy i obrazy (wyjątek: transmisje sportowe w ogródkach)
+- Szyld wymaga opinii Zespołu ds. Analiz i Estetyki; dopuszczalny pojedynczy szyld na budynku oraz menu lokali gastronomicznych
 
-**Poza Parkiem** (Krzyki, Fabryczna, Psie Pole, trasy wylotowe) — standardowe przepisy budowlane, brak szczególnych ograniczeń dla nośników OOH. To istotna różnica wobec Krakowa, którego uchwała krajobrazowa obejmuje znacznie szerszy obszar miasta (Warszawa jest dopiero na etapie projektu nowej uchwały).
+**Poza Parkiem** (Krzyki, Fabryczna, Psie Pole, trasy wylotowe) — brak dodatkowego reżimu krajobrazowego, ale nadal obowiązują miejscowe plany zagospodarowania, przepisy o zajęciu pasa drogowego, ochrona konserwatorska poza granicami Parku i Prawo budowlane. To istotna różnica wobec Krakowa, którego uchwała krajobrazowa obejmuje znacznie szerszy obszar miasta (Warszawa jest dopiero na etapie projektu nowej uchwały).
 
 Przed podpisaniem umowy sprawdź, czy nośnik leży w granicach Parku. Więcej o przepisach: [Tablica reklamowa — przepisy i pozwolenia](/blog/poradniki/tablica-reklamowa)
 
@@ -116,7 +119,7 @@ Przed podpisaniem umowy sprawdź, czy nośnik leży w granicach Parku. Więcej o
 Billboard 12×4 m kosztuje od 1 500 zł/mc (Krzyki, Fabryczna) do 16 000 zł/mc (Śródmieście) netto, bez druku i montażu (wg wedo.pl, billboard-x.pl). Citylight w centrum to od 790 zł/mc (wg znajdzreklame.pl).
 
 **Czy Wrocław ma uchwałę krajobrazową?**
-Nie. Wrocław nie uchwalił uchwały krajobrazowej z ustawy 2015 r. Centrum chroni Park Kulturowy „Stare Miasto" (od 2014 r., ~210 ha), który zakazuje wolnostojących billboardów i nośników naruszających historyczny charakter. Poza Parkiem brak szczególnych ograniczeń.
+Nie, choć miasto wznowiło prace nad taką uchwałą (deklarowany horyzont to co najmniej dwa lata). Centrum chroni dziś Park Kulturowy „Stare Miasto" (uchwała LVI/1465/14 z 10.04.2014, ze zmianami w 2016 i 2021 r.), który zakazuje m.in. reklamy na elewacjach i witrynach, banerów, ulotek, reklamy na nawierzchni i pojazdach oraz ekranów z napisami i obrazami. Poza Parkiem nie ma dodatkowego reżimu krajobrazowego, ale obowiązują miejscowe plany, przepisy o zajęciu pasa drogowego, ochrona konserwatorska i Prawo budowlane.
 
 **Ile kosztuje reklama na tramwaju we Wrocławiu?**
 Od 1 200 zł/mc (tramwaj 105 NWr, lewa strona) do 4 000 zł/mc (Skoda 19T, całopojazdowy). Przy kontrakcie 12-miesięcznym rabat ~17%. Koszt produkcji — wycena indywidualna w MPK Wrocław (mpk.wroc.pl).

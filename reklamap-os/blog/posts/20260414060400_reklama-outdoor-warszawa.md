@@ -87,27 +87,28 @@ Warszawa oferuje unikalne nośniki niedostępne w żadnym innym polskim mieście
 
 Ceny pakietów podstawowych wg znajdzreklame.pl; duże pakiety — wycena indywidualna. Metro dociera do 193 mln pasażerów rocznie (transinfo.pl, 2025).
 
-**MZA (autobusy i tramwaje):**
+**MZA (autobusy)** — cennik 2026, ceny netto/mies. bez kosztu produkcji:
 
 | Format | Cena netto/mc |
 |--------|--------------|
-| Cały pojazd — autobus | 3 000–6 000 zł |
-| Autobus elektryczny EkoHalfback | 630 zł |
-| Ramka podsufitowa w autobusie | 60 zł (za ramkę) |
-| Tramwaj | 4 000–8 000 zł |
+| EkoFullback (EFB) | 2 250 zł |
+| Fullback (FB) | 1 950 zł |
+| EkoHalfback (EHB) | 1 260 zł |
+| Halfback (HB) | 1 140 zł |
 
-Aktualny cennik MZA 2026 dostępny na mza.waw.pl. Tabor ZTM to ponad 1 400 autobusów i 451 tramwajów — jeden z największych systemów komunikacji miejskiej w Europie Środkowej.
+Formaty dotyczą powierzchni na tyle autobusu; możliwe są też kampanie krótsze, np. dwutygodniowe. Aktualny cennik: mza.waw.pl.
+
+**Uwaga na częsty błąd:** MZA to Miejskie Zakłady Autobusowe i obsługuje wyłącznie autobusy. Reklamę na tramwajach prowadzą Tramwaje Warszawskie — to osobny operator z własnym cennikiem. Tabor tramwajowy w Warszawie to ponad 600 pojazdów.
 
 ## Uchwała krajobrazowa Warszawa 2025 — co musisz wiedzieć
 
-Warszawa **10 lipca 2025 r.** przystąpiła do sporządzenia nowej uchwały krajobrazowej (wnioski do projektu można było składać do 14 września 2025 r.). To dopiero etap projektu — poprzednia uchwała krajobrazowa została uchylona w 2020 r., a nowe strefy nie są jeszcze prawem miejscowym. Projekt (wg zapowiedzi miasta) zakłada m.in.:
+**Warszawa nie ma dziś obowiązującej uchwały krajobrazowej.** Uchwałę z 16 stycznia 2020 r. unieważnił wojewoda mazowiecki rozstrzygnięciem nadzorczym, a skargi miasta oddaliły kolejno WSA i NSA. Formalnie więc nie została „uchylona" — stwierdzono jej nieważność, co jest istotną różnicą prawną.
 
-- **Strefa A/B** (centrum: Śródmieście, Wola, Żoliborz, Praga) — projekt zakłada wyłącznie słupy miejskie i małe nośniki, z zakazem dużych billboardów.
-- **Strefa C** (peryferie) — planowane dopuszczenie dużych billboardów (>18 m²) wyłącznie przy głównych ciągach komunikacyjnych.
-- **Zakazy ogólne (planowane):** banery na dachach, migające reklamy (poza stacjami paliw), siatki 12 m w centrum i przy zabytkach.
-- Nośniki niezgodne z przepisami mają podlegać likwidacji w wyznaczonym okresie przejściowym po wejściu uchwały w życie.
+**10 lipca 2025 r.** Rada Miasta przystąpiła do sporządzenia nowej uchwały; wnioski do projektu można było składać do 14 września 2025 r. Wiceprezydent Warszawy zapowiadała przedstawienie projektu w pierwszym kwartale 2026 r., po czym mają nastąpić kolejne konsultacje i głosowanie Rady.
 
-Uwaga: powyższe parametry to założenia projektu, a nie obowiązujące prawo — ostateczne strefy i limity mogą się zmienić w toku procedury.
+**Treść projektu nie została opublikowana.** Miasto nie ogłosiło ani podziału na strefy, ani limitów powierzchni nośników — krążące w sieci konkretne oznaczenia stref i progi gabarytowe nie mają pokrycia w dokumentach urzędowych. Do czasu publikacji projektu jedyne wiążące ograniczenia w Warszawie wynikają z miejscowych planów zagospodarowania, przepisów o zajęciu pasa drogowego, ochrony konserwatorskiej i Prawa budowlanego.
+
+Praktyczny wniosek: planując nośnik w Warszawie, licz się z tym, że reżim może się zmienić w trakcie trwania umowy najmu — i sprawdzaj stan prac bezpośrednio na stronach miasta, a nie w opracowaniach branżowych.
 
 Praktyczna wskazówka: przed podpisaniem umowy najmu sprawdź, czy nośnik ma uregulowany status formalnoprawny. Właściciel ponosi odpowiedzialność za zgodność z przepisami — ale ryzyko przedwczesnej likwidacji kampanii poniesiesz Ty.
 
@@ -119,7 +120,7 @@ Więcej o przepisach i formalnościach: [Tablica reklamowa — przepisy i pozwol
 Od 1 500 zł/mc (billboard 6×3 m, Ursynów) do 25 000 zł/mc (megaboard w Śródmieściu). W centrum (Śródmieście, Mokotów, Wola) realistyczny budżet dla formatu 6×3 m to 4 000–8 000 zł/mc netto.
 
 **Czy w Warszawie można postawić każdy billboard?**
-Nie. Warszawa przygotowuje jedne z najbardziej restrykcyjnych przepisów w Polsce. Poprzednia uchwała krajobrazowa została uchylona w 2020 r., a nowa jest dopiero na etapie projektu (przystąpienie do sporządzenia z 10 lipca 2025 r.). Projekt zakłada, że w strefach A/B (centrum) duże billboardy będą zakazane — dozwolone mają być tylko małe nośniki i słupy miejskie, a przy głównych arteriach w strefie C duże formaty pozostaną możliwe. To jednak planowane strefy, jeszcze nieobowiązujące jako prawo miejscowe. Niezależnie od uchwały postawienie nośnika wymaga dopełnienia formalności (m.in. zgłoszenia lub pozwolenia w zależności od konstrukcji).
+Nie, ale nie z powodu uchwały krajobrazowej — Warszawa jej dziś nie ma. Uchwałę z 2020 r. unieważnił wojewoda, a nowa jest dopiero na etapie sporządzania (przystąpienie 10 lipca 2025 r.) i jej treści nie opublikowano. Ograniczenia wynikają obecnie z miejscowych planów zagospodarowania, przepisów o zajęciu pasa drogowego, ochrony konserwatorskiej i Prawa budowlanego — a przy nośniku wolnostojącym trwale związanym z gruntem potrzebne jest pozwolenie na budowę.
 
 **Ile kosztuje reklama w metrze warszawskim?**
 Pakiety podstawowe od 3 990 zł/mc. Ekspozycja na pojedynczej stacji to 10 000–30 000 zł/mc. Duże kampanie wielostacyjne to wycena indywidualna (wg znajdzreklame.pl). Metro dociera do 193 mln pasażerów rocznie.
