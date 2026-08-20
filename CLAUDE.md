@@ -217,11 +217,19 @@ Projekt posiada zespół wyspecjalizowanych agentów AI w `reklamap-os/agents/`.
 
 ### Workflow bloga (Content Pipeline)
 
-1. **Wywołaj Agenta Stratega** — research (AnswerThePublic → Ahrefs → Perplexity), zapisuje dane do `reklamap-os/status/BRUDNOPIS_SEO.md`
+1. **Wywołaj Agenta Stratega** — research (AnswerThePublic → Ahrefs → Perplexity), **potem OBOWIĄZKOWA weryfikacja WebSearchem** (Etap 3.5), zapisuje dane do `reklamap-os/status/BRUDNOPIS_SEO.md`
 2. **Wywołaj Agenta Pisarza** — pisze artykuł z brudnopisu, zapisuje w `reklamap-os/blog/posts/`, aktualizuje `reklamap-os/blog/INDEX.md` i `backend/database/seeders/BlogPostsSeeder.php`
-3. **Wywołaj Agenta Korektora** — audyt i korekta, oznacza artykuł jako `✅ ZRECENZOWANY` w INDEX.md
+3. **Wywołaj Agenta Korektora** — audyt i korekta + **weryfikacja WebSearchem** (Etap 0b), oznacza artykuł jako `✅ ZRECENZOWANY` w INDEX.md
 4. Uruchom `php artisan db:seed --class=BlogPostsSeeder` — synchronizuje z bazą danych (status: `draft`)
 5. Publikuj ręcznie przez panel admina
+
+> **🔴 WERYFIKACJA WEBSEARCHEM JEST OBOWIĄZKOWA (ustalenie 2026-08-20).** Perplexity to źródło wtórne i konfabuluje. Do 12.07.2026 pipeline nie miał żadnego kroku sprawdzającego przeciwko źródłu pierwotnemu — Korektor porównywał artykuł z brudnopisem, a brudnopisu nie porównywał nikt z niczym. Skutek: **6 na 6 zbadanych artykułów lokalizacyjnych zawierało konfabulacje** (Kraków, Gdańsk, Łódź, Poznań — audyt 07.12; Warszawa, Wrocław — audyt 08.20): nieistniejące oznaczenia stref, zmyślone progi i sygnatury, cenniki operatorów zaniżone dokładnie o połowę. Weryfikować wyłącznie w źródłach pierwotnych (BIP, `edziennik.*.uw.gov.pl`, `eli.gov.pl`, `orzeczenia.nsa.gov.pl`, oficjalne cenniki przewoźników).
+>
+> **Pułapka samopotwierdzenia — WYKLUCZAJ `reklamap.pl` z wyników weryfikacji.** Nasze kwietniowe konfabulacje są już w indeksie Google: przy sprawdzaniu zmyślonych „stref A/B/C" warszawskiej uchwały wyszukiwarka zwraca **nasz własny artykuł** jako źródło. Potwierdzenie wyłącznie z naszej domeny = brak potwierdzenia.
+>
+> **Heurystyka:** im bardziej liczba wygląda na precyzyjną, tym bardziej jest podejrzana bez URL-a do dokumentu źródłowego. Konfabulacje wyglądają jak „630 zł", „451 tramwajów", „Strefa A/B", „66 200 specjalistów" — nie jak okrągłe szacunki.
+>
+> **Dług do spłacenia:** z 36 artykułów **28 powstało przed regułami anty-konfabulacyjnymi, a tylko 5 kiedykolwiek zweryfikowano faktograficznie** — 23 są na produkcji ze statusem „nieznany". Przy trafieniu 6/6 nie zakładać, że reszta jest czysta. **Nie zgłaszać artykułu z tej puli do indeksacji w GSC przed audytem faktograficznym.**
 
 ### Pliki stanu systemu
 

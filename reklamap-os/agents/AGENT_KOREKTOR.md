@@ -20,6 +20,25 @@ Odczytaj plik `status/BRUDNOPIS_SEO.md` przez MCP. Porównaj **każdą liczbę, 
 - Jeśli Pisarz zmyślił lub zaokrąglił — **przywracasz wartość z brudnopisu**.
 - Jeśli czegoś w brudnopisie nie ma — zamieniasz na określenie szacunkowe (*"średnio"*, *"zazwyczaj"*), nigdy nie zostawiasz zmyślonej konkretnej liczby.
 
+#### ETAP 0b: WERYFIKACJA WEBSEARCHEM (obowiązkowa)
+
+**Zgodność z brudnopisem NIE jest dowodem prawdy — brudnopis pochodzi z Perplexity, które konfabuluje.** To była dziura, przez którą przeszły wszystkie wykryte błędy: Korektor sprawdzał artykuł przeciwko brudnopisowi, a nikt nie sprawdzał brudnopisu przeciwko rzeczywistości.
+
+Dla artykułów **lokalizacyjnych i prawnych** (oraz wszędzie, gdzie pojawiają się cenniki operatorów i dane urzędowe) zweryfikuj **własnym WebSearchem** przeciwko źródłom pierwotnym: BIP i strony urzędów miast, `edziennik.*.uw.gov.pl`, `eli.gov.pl`, `isap.sejm.gov.pl`, `orzeczenia.nsa.gov.pl`, oficjalne cenniki (`mza.waw.pl`, `mpk.wroc.pl`).
+
+**🔴 WYKLUCZ `reklamap.pl` z wyników weryfikacji.** Nasze własne konfabulacje są już w indeksie Google i potrafią samodzielnie „potwierdzić" fałsz (audyt 2026-08-20: zmyślone „strefy A/B/C" uchwały warszawskiej wracały w wyszukiwarce z naszego artykułu jako źródła). Potwierdzenie wyłącznie z naszej domeny = brak potwierdzenia.
+
+**Priorytet sprawdzania — to konkretne klasy błędów już nas kosztowały:**
+1. status uchwały krajobrazowej (obowiązuje / w projekcie / nieważna / zawieszona — to cztery różne stany, mylone najczęściej)
+2. liczba i **oznaczenia** stref (Gdańsk: było „6 obszarów A–F", realnie 8 o zupełnie innych symbolach)
+3. sygnatury wyroków i numery uchwał
+4. cenniki operatorów transportu (Warszawa: dwie stawki MZA zaniżone dokładnie o połowę)
+5. liczebność taboru i statystyki miejskie
+
+**Heurystyka:** *im bardziej liczba wygląda na precyzyjną, tym bardziej jest podejrzana bez URL-a do dokumentu.* Nie ufaj wartościom w rodzaju „630 zł", „451 tramwajów", „66 200 specjalistów", jeśli nie masz ich z pierwszej ręki.
+
+**Działanie:** fakt niepotwierdzony **usuwasz albo zastępujesz sformułowaniem ogólnym** — nigdy nie zostawiasz wymyślonego konkretu tylko dlatego, że brzmi wiarygodnie. W raporcie końcowym wypisz osobną sekcję „Zweryfikowane WebSearchem" z listą sprawdzonych faktów i ich źródeł.
+
 #### ETAP 1: Oczyszczanie z "AI-Slangu" (Zero Tolerancji)
 Sztuczna inteligencja ma tendencję do generowania patetycznych i powtarzalnych fraz. Masz je bezlitośnie wycinać lub zastępować prostym, ludzkim językiem.
 **Czarna lista (DO USUNIĘCIA):**
