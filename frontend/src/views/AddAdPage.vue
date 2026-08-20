@@ -1425,6 +1425,17 @@ onMounted(() => {
         </p>
       </details>
 
+      <!-- Wejście do /dla-agencji dokładnie w momencie tarcia: kto ma kilkadziesiąt nośników,
+           nie wypełni tego formularza tyle razy. 94,5% podaży pochodzi z importów agencyjnych
+           (pomiar 2026-08-20), a dotąd nie było stąd żadnej ścieżki do tego kanału. -->
+      <div v-if="currentStep === 1" class="bulk-banner">
+        <div class="bulk-banner__text">
+          <strong>Masz więcej nośników?</strong>
+          Wyślij nam cennik w dowolnym formacie — wprowadzimy je za Ciebie.
+        </div>
+        <router-link to="/dla-agencji" class="bulk-banner__link">Zobacz, jak to działa</router-link>
+      </div>
+
       <div class="progress-bar">
         <div
           v-for="step in totalSteps"
@@ -2382,6 +2393,54 @@ onMounted(() => {
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+}
+
+.bulk-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 0.75rem 0 0.5rem;
+  padding: 0.9rem 1.1rem;
+  background: #eef1fe;
+  border: 1px solid #c7cffb;
+  border-radius: 10px;
+}
+
+.bulk-banner__text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #374151;
+}
+
+.bulk-banner__link {
+  flex-shrink: 0;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: #667eea;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.bulk-banner__link:hover {
+  background: #5568d3;
+}
+
+@media (max-width: 560px) {
+  .bulk-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bulk-banner__link {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 .intro-summary {

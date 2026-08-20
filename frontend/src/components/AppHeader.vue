@@ -160,6 +160,7 @@ watch(isMobileMenuOpen, (isOpen) => {
           </Transition>
         </div>
         
+        <router-link to="/dla-agencji" class="nav-link">Dla agencji</router-link>
         <router-link to="/blog" class="nav-link">Blog</router-link>
         <router-link to="/faq" class="nav-link">FAQ</router-link>
         <router-link to="/kontakt" class="nav-link">Kontakt</router-link>
@@ -285,6 +286,13 @@ watch(isMobileMenuOpen, (isOpen) => {
             </div>
           </Transition>
           
+          <router-link to="/dla-agencji" class="mobile-nav-link" @click="closeMobileMenu()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M3 21h18M5 21V7l7-4 7 4v14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9 21v-6h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Dla agencji
+          </router-link>
           <router-link to="/blog" class="mobile-nav-link" @click="closeMobileMenu()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
