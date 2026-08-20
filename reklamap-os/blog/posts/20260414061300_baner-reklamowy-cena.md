@@ -88,7 +88,7 @@ Baner reklamowy to nośnik tymczasowy, ale przepisy i tak obowiązują (źródł
 
 - **Instalacja tablicy/urządzenia reklamowego** — co do zasady wymaga zgłoszenia (art. 29 ust. 2 pkt 6 Prawa budowlanego). Obiekty tymczasowe podlegają odrębnemu reżimowi terminowemu.
 - **Wolnostojące urządzenie reklamowe trwale związane z gruntem** — wymaga pozwolenia na budowę. Konkretne progi powierzchni (np. 2,5 czy 3 m²) mogą wynikać z lokalnych uchwał lub MPZP, nie z ustawy. W pasie drogowym dodatkowo potrzebne jest zezwolenie zarządcy drogi (art. 40 ustawy o drogach publicznych).
-- **Ustawa krajobrazowa** — gminy z uchwałą mogą zakazać wielkoformatowych banerów w określonych strefach. Kara za nielegalny nośnik (art. 37d ustawy krajobrazowej): powierzchnia w m² × 40 × zmienna stawka opłaty reklamowej, za każdy dzień. Przykład dla banera 12 m²: 12 × 40 × 0,36 zł = 172,80 zł/dzień.
+- **Ustawa krajobrazowa** — gminy z uchwałą mogą zakazać wielkoformatowych banerów w określonych strefach. Kara za nielegalny nośnik (art. 37d ustawy krajobrazowej): powierzchnia w m² × 40 × zmienna stawka opłaty reklamowej, za każdy dzień. Przykład dla banera 12 m²: 12 × 40 × 0,20 zł = 96 zł/dzień.
 
 Praktyczna wskazówka: obiekty tymczasowe podlegają odrębnemu reżimowi terminowemu, więc krótka kampania sezonowa ma zwykle prostsze wymogi niż ekspozycja całoroczna. Przed montażem sprawdź, czy w danej gminie obowiązuje uchwała krajobrazowa i jakie limity nakłada.
 

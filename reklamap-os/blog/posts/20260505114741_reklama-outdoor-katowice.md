@@ -103,7 +103,7 @@ Co OBOWIĄZUJE mimo braku uchwały:
 2. **MPZP** (miejscowe plany zagospodarowania) — lokalne ograniczenia.
 3. **Przepisy o drogach publicznych** — minimalne odległości od dróg krajowych, A1, A4, S86.
 4. **Strefy ochrony konserwatorskiej** — Śródmieście + Nikiszowiec.
-5. **[Opłata reklamowa](/blog/prawo-i-regulacje/oplata-reklamowa)** — gdyby Katowice ją uchwaliły, mogłaby sięgnąć górnego ustawowego maksimum na 2026: 3,89 zł/dzień części stałej + 0,36 zł/m²/dzień zmiennej.
+5. **[Opłata reklamowa](/blog/prawo-i-regulacje/oplata-reklamowa)** — gdyby Katowice ją uchwaliły, mogłaby sięgnąć górnego ustawowego maksimum na 2026: 2,50 zł/dzień części stałej + 0,20 zł/m²/dzień zmiennej.
 
 [Znajdź nośnik z uregulowanym statusem prawnym →](/dodaj-powierzchnie-reklamowa) — jeśli wystawiasz powierzchnię w Katowicach, sprawdź MPZP i pas drogowy.
 

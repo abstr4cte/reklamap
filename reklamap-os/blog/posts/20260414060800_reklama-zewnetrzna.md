@@ -108,10 +108,10 @@ Małe firmy z ograniczonym budżetem mogą zacząć od jednego dobrze zlokalizow
 Kupując nośnik, reklamodawca bierze na siebie ryzyko jego statusu prawnego. Oto co reguluje posadowienie.
 
 **Ustawa krajobrazowa** nakłada na właściciela nośnika opłatę reklamową, którą gmina może wprowadzić uchwałą:
-- Część stała: **3,89 zł/dzień**
-- Część zmienna: **0,36 zł/m²/dzień**
+- Część stała: **2,50 zł/dzień**
+- Część zmienna: **0,20 zł/m²/dzień**
 
-Dla billboardu 48 m² maksymalna opłata wynosi ok. 21,17 zł/dzień (3,89 zł + 0,36 zł × 48 m²). Właściciel wkalkulowuje ten koszt w cenę wynajmu — jako reklamodawca nie płacisz go bezpośrednio, ale pośrednio wpływa on na stawkę ofertową.
+Dla billboardu 48 m² maksymalna opłata wynosi ok. 12,10 zł/dzień (2,50 zł + 0,20 zł × 48 m²). Właściciel wkalkulowuje ten koszt w cenę wynajmu — jako reklamodawca nie płacisz go bezpośrednio, ale pośrednio wpływa on na stawkę ofertową.
 
 Nośnik musi mieć wymagane dokumenty: zezwolenie zarządcy drogi (gdy jest zlokalizowany w pasie drogowym), decyzję o warunkach zabudowy lub zgłoszenie budowlane. Przed podpisaniem umowy najmu zapytaj właściciela o status prawny nośnika. Ryzyko likwidacji z powodu braków formalnych obciąży kampanię, nie właściciela.
 

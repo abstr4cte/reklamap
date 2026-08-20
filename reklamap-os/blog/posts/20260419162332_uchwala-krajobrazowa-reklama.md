@@ -58,7 +58,7 @@ Szukasz nośnika z uregulowanym statusem prawnym? Sprawdź oferty bezpośrednio 
 
 ## Jakie kary grożą za niezgodną reklamę?
 
-Kara za nośnik naruszający uchwałę krajobrazową to **iloczyn powierzchni ekspozycji (m²) i 40-krotności stawki zmiennej opłaty reklamowej** obowiązującej w danej gminie, naliczany za **każdy dzień** trwania naruszenia (art. 37d ustawy krajobrazowej; źródło: bip.poznan.pl). Stawka zmienna to maksymalnie do 0,36 zł/m²/dzień (górna stawka MF 2026; gmina może uchwalić mniej) — przy billboardzie 18 m² i górnej stawce kara wynosi 18 × 40 × 0,36 = **259,20 zł/dzień**, liczone od dnia stwierdzenia naruszenia.
+Kara za nośnik naruszający uchwałę krajobrazową to **iloczyn powierzchni ekspozycji (m²) i 40-krotności stawki zmiennej opłaty reklamowej** obowiązującej w danej gminie, naliczany za **każdy dzień** trwania naruszenia (art. 37d ustawy krajobrazowej; źródło: bip.poznan.pl). Stawka zmienna to maksymalnie do 0,20 zł/m²/dzień (górna stawka ustawowa 2026; gmina może uchwalić mniej) — przy billboardzie 18 m² i górnej stawce kara wynosi 18 × 40 × 0,20 = **144 zł/dzień**, liczone od dnia stwierdzenia naruszenia.
 
 Do kary finansowej dochodzi **nakaz demontażu** na koszt właściciela nośnika. Gmina może naliczyć karę wstecznie — za każdy miesiąc od daty wejścia uchwały w życie, nie tylko od daty kontroli.
 
@@ -110,7 +110,7 @@ Uchwała krajobrazowa to akt prawa miejscowego uchwalany na podstawie art. 37a u
 Wejdź na BIP urzędu gminy i wyszukaj „uchwała krajobrazowa" — dokument zawiera mapę stref i tabelę dopuszczalnych formatów. Możesz też zapytać bezpośrednio wydział urbanistyki lub skonsultować się z domem mediowym; wiążący status i tak potwierdź w BIP gminy.
 
 **Jakie kary grożą za niezgodną reklamę?**
-Kara to iloczyn powierzchni nośnika (m²) i 40-krotności stawki zmiennej opłaty reklamowej w danej gminie, naliczany za każdy dzień naruszenia (art. 37d ustawy krajobrazowej). Przykładowo przy górnej stawce do 0,36 zł/m²/dzień (górna stawka MF 2026; gmina może uchwalić mniej) i formacie 18 m² daje to 18 × 40 × 0,36 = 259,20 zł dziennie. Do kary dochodzi nakaz demontażu na koszt właściciela. Po wyroku TK z 2023 (P 20/19) część gmin wstrzymała naliczanie kar, ale w Krakowie i Gdańsku uchwały nadal są egzekwowane (źródło: bip.poznan.pl).
+Kara to iloczyn powierzchni nośnika (m²) i 40-krotności stawki zmiennej opłaty reklamowej w danej gminie, naliczany za każdy dzień naruszenia (art. 37d ustawy krajobrazowej). Przykładowo przy górnej stawce do 0,20 zł/m²/dzień (górna stawka ustawowa 2026; gmina może uchwalić mniej) i formacie 18 m² daje to 18 × 40 × 0,20 = 144 zł dziennie. Do kary dochodzi nakaz demontażu na koszt właściciela. Po wyroku TK z 2023 (P 20/19) część gmin wstrzymała naliczanie kar, ale w Krakowie i Gdańsku uchwały nadal są egzekwowane (źródło: bip.poznan.pl).
 
 **Które duże polskie miasta nie mają aktywnej uchwały krajobrazowej?**
 Stan na 2025/2026: Warszawa (uchylona 2020, nowa w konsultacjach), Wrocław (gotowy projekt zarzucony po wyroku TK P 20/19 z 12.12.2023), Szczecin (projekt nieuchwalony) i Katowice (wieloletnie opóźnienia proceduralne). W tych miastach obowiązują wyłącznie przepisy ogólne — Prawo budowlane i ewentualne regulacje parków kulturowych. Uwaga: Poznań MA obowiązującą uchwałę (utrzymaną przez NSA w 2026), a stwierdzenie nieważności części przepisów przejściowych dotyczy tylko dostosowania starszych nośników — nowe podlegają pełnym ograniczeniom. Łódź natomiast ma uchwałę z 2016 zawieszoną sądownie i nieegzekwowaną.

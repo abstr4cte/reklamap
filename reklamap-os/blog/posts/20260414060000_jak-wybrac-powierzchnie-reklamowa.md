@@ -89,10 +89,10 @@ Po odpowiedzi na te pytania wybór formatu staje się oczywisty.
 ## Formalności — co musisz wiedzieć przed zakupem
 
 **Ustawa krajobrazowa** (obowiązuje od 2015, aktualizacje 2025/2026) nakłada na właściciela nośnika opłatę reklamową:
-- Stała: maksymalnie **3,89 zł/dzień**
-- Zmienna: maksymalnie **0,36 zł/m²/dzień**
+- Stała: maksymalnie **2,50 zł/dzień**
+- Zmienna: maksymalnie **0,20 zł/m²/dzień**
 
-Dla billboardu o powierzchni 12 m² maksymalna opłata wynosi ok. 8,21 zł/dzień (3,89 zł stałe + 0,36 zł × 12 m²). Przy większych formatach rośnie proporcjonalnie. To górne stawki ustawowe — gmina może uchwalić niższe. Koszt ten właściciel zwykle wkalkulowuje w cenę wynajmu — jako reklamodawca nie płacisz go bezpośrednio, ale wpływa on na stawkę.
+Dla billboardu o powierzchni 12 m² maksymalna opłata wynosi ok. 4,90 zł/dzień (2,50 zł stałe + 0,20 zł × 12 m²). Przy większych formatach rośnie proporcjonalnie. To górne stawki ustawowe — gmina może uchwalić niższe. Koszt ten właściciel zwykle wkalkulowuje w cenę wynajmu — jako reklamodawca nie płacisz go bezpośrednio, ale wpływa on na stawkę.
 
 Poszczególne gminy uchwalają własne regulacje. Poznań (uchwała krajobrazowa od 5 sierpnia 2023) ogranicza wolnostojące nośniki i wprowadza strefy z różnymi zasadami. Kraków ma egzekwowaną uchwałę od 1 lipca 2020, a Warszawa jest dopiero na etapie projektu nowej uchwały (poprzednia została uchylona w 2020). Przed podpisaniem umowy sprawdź, czy nośnik ma uregulowany status prawny — to obowiązek właściciela, ale ryzyko przedwczesnej likwidacji poniesiesz Ty.
 

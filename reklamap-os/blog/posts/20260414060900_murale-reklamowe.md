@@ -112,7 +112,7 @@ Gminy z uchwałą krajobrazową nakładają dodatkowe ograniczenia:
 | Wrocław | Brak uchwały krajobrazowej; centrum chroni Park Kulturowy „Stare Miasto" (2014). Poza obszarem Parku brak szczególnych ograniczeń tego typu |
 | Pozostałe gminy | Często brak uchwały — przepisy ogólne |
 
-Okresy dostosowania dla istniejących reklam: 3–5 lat od wejścia uchwały w życie. Kara za nielegalny nośnik naliczana jest zgodnie z art. 37d ustawy krajobrazowej — za każdy dzień w wysokości iloczynu pola powierzchni reklamy (w m²), liczby 40 i zmiennej stawki opłaty reklamowej (0,36 zł/m²/dzień w 2026). Dla przykładu nośnik 12 m² to 12 × 40 × 0,36 = 172,80 zł dziennie.
+Okresy dostosowania dla istniejących reklam: 3–5 lat od wejścia uchwały w życie. Kara za nielegalny nośnik naliczana jest zgodnie z art. 37d ustawy krajobrazowej — za każdy dzień w wysokości iloczynu pola powierzchni reklamy (w m²), liczby 40 i zmiennej stawki opłaty reklamowej (0,20 zł/m²/dzień w 2026). Dla przykładu nośnik 12 m² to 12 × 40 × 0,20 = 96 zł dziennie.
 
 Praktyczna wskazówka: przed podpisaniem umowy z właścicielem ściany sprawdź status uchwały krajobrazowej w danej gminie. Status ten jest różny i dynamiczny — jedne miasta mają egzekwowaną uchwałę (np. Gdańsk), inne dopiero pracują nad projektem (Warszawa), a jeszcze inne nie mają jej wcale (Wrocław, gdzie centrum chroni jednak Park Kulturowy). Weryfikacja aktualnego stanu prawnego minimalizuje ryzyko formalne.
 
