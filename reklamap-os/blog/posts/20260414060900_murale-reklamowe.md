@@ -2,7 +2,7 @@
 title: "Murale reklamowe — cena, przepisy i dlaczego biją billboardy"
 slug: "murale-reklamowe"
 category: trendy
-meta_description: "Mural reklamowy cena 2026: wykonanie od 200 zł/m², wynajem ściany 20–50 tys. zł/mc w centrum. Przepisy, techniki, skuteczność. Sprawdź →"
+meta_description: "Mural reklamowy cena 2026: wykonanie 200–400 zł/m², wynajem ściany, przepisy, techniki i skuteczność formatu. Sprawdź na ReklaMap →"
 image_alt: "Wielkoformatowy mural reklamowy na ścianie szczytowej kamienicy w centrum polskiego miasta"
 image_prompt: "Large scale advertising mural painted on the gable wall of an urban building in Poland, vibrant brand colors, city street environment, realistic professional photography, natural daylight, no text on image"
 keywords:
@@ -19,7 +19,7 @@ status: draft
 
 # Murale reklamowe — cena, przepisy i dlaczego biją billboardy
 
-Murale reklamowe to wielkoformatowe malowidła lub aplikacje foliowe na elewacjach budynków — bez wolnostojącej konstrukcji. Wykonanie powierzchni 200–500 m² kosztuje **30–80 tys. zł** jednorazowo (200–400 zł/m² netto przy dużych formatach), wynajem ściany w centrum dużego miasta — **20 000–50 000 zł/mc**. Badania branżowe wskazują, że murale są zauważane i zapamiętywane wyraźnie lepiej niż standardowe banery. Poniżej wszystko, czego potrzebujesz do oceny, czy ten format pasuje do Twojej kampanii.
+Murale reklamowe to wielkoformatowe malowidła lub aplikacje foliowe na elewacjach budynków — bez wolnostojącej konstrukcji. Wykonanie kosztuje **200–400 zł/m² netto** przy dużych formatach — dla 200 m² to ok. 40–80 tys. zł, dla 500 m² nawet 100–200 tys. zł. Wynajem ściany rozlicza się osobno i zależy od lokalizacji; dostępne dane branżowe mówią o rzędzie **10–50 tys. zł rocznie**, a nie miesięcznie — przy dużych ścianach w ścisłych centrach stawki bywają wyższe, ale konkretną kwotę trzeba potwierdzić u właściciela nieruchomości. Murale bywają zauważane i zapamiętywane lepiej niż standardowe banery. Poniżej wszystko, czego potrzebujesz do oceny, czy ten format pasuje do Twojej kampanii.
 
 ## Co to jest mural reklamowy?
 
@@ -62,9 +62,9 @@ Koszt muralu składa się z dwóch niezależnych elementów: wykonania grafiki n
 |---|---|
 | Małe miasto, obrzeża | 100–300 zł |
 | Średnie miasto, dobra ulica | 1 000–5 000 zł |
-| Duże miasto (200–500 m², centrum) | 20 000–50 000 zł |
+| Duże miasto, centrum, duża ściana | stawki negocjowane indywidualnie — dostępne dane branżowe mówią o rzędzie 10–50 tys. zł rocznie |
 
-Źródło: murale-in.pl, wolfsmarketing.pl. Ceny wynajmu ściany w centrum Warszawy lub Krakowa mogą przekroczyć 50 000 zł/mc przy wyjątkowo eksponowanych lokalizacjach. Kontrakty podpisywane są zazwyczaj na 1–3 lata.
+Uwaga: powyższe widełki dla mniejszych lokalizacji pochodzą z ofert rynkowych i mają charakter orientacyjny — publicznych cenników wynajmu ścian pod murale w Polsce praktycznie nie ma, a stawka zależy od ekspozycji, powierzchni i długości umowy. Kontrakty podpisywane są zazwyczaj na 1–3 lata.
 
 Pełne porównanie kosztów wszystkich formatów OOH: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
@@ -145,7 +145,7 @@ Jeśli rozważasz format cyfrowy zamiast tradycyjnego — sprawdź: [Telebim i e
 ## Najczęściej zadawane pytania
 
 **Ile kosztuje mural reklamowy?**
-Wykonanie muralu na powierzchni 200–500 m² to jednorazowo 30 000–80 000 zł netto (200–400 zł/m²). Do tego dochodzi wynajem ściany: od 100 zł/mc w małym mieście do 20 000–50 000 zł/mc za eksponowaną lokalizację w centrum dużego miasta. Folia wizyjna jako alternatywa kosztuje 20–60 zł/m² materiału.
+Wykonanie muralu kosztuje 200–400 zł netto za m² — przy 200 m² daje to ok. 40–80 tys. zł, a przy 500 m² od 100 do 200 tys. zł. Do tego dochodzi wynajem ściany, negocjowany indywidualnie: od ok. 100 zł/mc w małym mieście po stawki w ścisłych centrach ustalane w rozmowie z właścicielem nieruchomości — publicznych cenników w tym segmencie praktycznie nie ma.
 
 **Czy na mural reklamowy potrzebne jest pozwolenie?**
 Zwykle tak. Instalacja tablicy lub urządzenia reklamowego na elewacji wymaga co do zasady zgłoszenia, a wolnostojący nośnik trwale związany z gruntem — pozwolenia na budowę (Prawo budowlane, Dz.U. 2025 poz. 418). Konkretne progi powierzchni bywają narzucane lokalnie przez uchwałę krajobrazową lub plan miejscowy, a nie samą ustawę. W miastach z egzekwowaną uchwałą krajobrazową (np. Gdańsk) obowiązują dodatkowe ograniczenia strefowe; w Warszawie trwają prace nad projektem uchwały, a Wrocław chroni centrum przez Park Kulturowy. Mural artystyczny bez logotypów bywa zwolniony z obowiązku — decyduje lokalny organ administracji.

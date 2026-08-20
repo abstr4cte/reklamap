@@ -1,11 +1,11 @@
 <!--
-ANGLE: DOOH (Digital Out-of-Home) w Polsce 2026 — co to, ile kosztuje, jak działa reklama programatyczna na ekranach. Pierwszy w Polsce przewodnik łączący stronę technologiczną (SSP/DSP, Hivestack/Vistar/Broadsign) z biznesową (cennik AMS CPM 58-237 zł, modele transakcyjne, próg wejścia od ~174 zł). DOOH = 32% rynku OOH PL — najszybciej rosnący segment.
+ANGLE: DOOH (Digital Out-of-Home) w Polsce 2026 — co to, ile kosztuje, jak działa reklama programatyczna na ekranach. Przewodnik łączący stronę technologiczną (SSP/DSP, Hivestack/Vistar/Broadsign) z biznesową (model CPM, modele transakcyjne, próg wejścia od ~174 zł). DOOH = 32% rynku OOH PL — najszybciej rosnący segment.
 -->
 ---
 title: "DOOH — co to, ile kosztuje, reklama programatyczna 2026"
 slug: "dooh-reklama-programatyczna"
 category: trendy
-meta_description: "DOOH 2026: 32% rynku OOH PL, najszybciej rosnący segment. Cennik AMS CPM 58-237 zł, próg od ~174 zł. Reklama programatyczna na ReklaMap →"
+meta_description: "DOOH 2026: 32% rynku OOH w Polsce, najszybciej rosnący segment. Jak działa zakup programatyczny, SSP/DSP, model CPM. Sprawdź na ReklaMap →"
 image_alt: "DOOH reklama programatyczna — cyfrowy citylight z dynamiczną kreacją w centrum Warszawy"
 image_prompt: "Realistic professional photography of a digital DOOH citylight screen displaying a dynamic vibrant advertisement on a busy Warsaw street at blue hour, urban environment with modern architecture, pedestrians and cars in motion blur, natural and digital lighting mixed, sharp details, no readable text on the screen, shallow depth of field."
 keywords:
@@ -24,7 +24,7 @@ status: draft
 
 # DOOH — co to, ile kosztuje, reklama programatyczna 2026
 
-**DOOH (Digital Out-of-Home)** to reklama na cyfrowych ekranach w przestrzeni publicznej — billboardach digital, citylightach digital, ekranach w galeriach, transporcie i indoor. W Polsce segment ten rośnie najszybciej ze wszystkich kategorii reklamy zewnętrznej, podczas gdy cały rynek OOH osiągnął w 2025 wartość 870,23 mln zł, rosnąc o 7% (dane IGRZ/OOHlife). **DOOH to dziś ok. 32% rynku reklamy zewnętrznej w Polsce** — z wyraźnym wzrostem udziału w ostatnich latach. Próg wejścia do kampanii programmatic DOOH przez sieć AMS zaczyna się od ok. 174 zł (Digital Indoor, 3 CPM × 58 zł, cennik z 1 lipca 2024), a CPM dla najlepszych lokalizacji galeryjnych dochodzi do 237 zł. Ten przewodnik wyjaśnia, co to jest DOOH, jak działa reklama programatyczna na ekranach i ile to kosztuje w praktyce.
+**DOOH (Digital Out-of-Home)** to reklama na cyfrowych ekranach w przestrzeni publicznej — billboardach digital, citylightach digital, ekranach w galeriach, transporcie i indoor. W Polsce segment ten rośnie najszybciej ze wszystkich kategorii reklamy zewnętrznej, podczas gdy cały rynek OOH osiągnął w 2025 wartość 870,23 mln zł, rosnąc o 7% (dane OOHlife Izby Gospodarczej). **DOOH to dziś ok. 32% rynku reklamy zewnętrznej w Polsce** — z wyraźnym wzrostem udziału w ostatnich latach. Próg wejścia do kampanii programmatic DOOH przez sieć AMS zaczyna się od ok. 174 zł (Digital Indoor, 3 CPM × 58 zł, cennik z 1 lipca 2024), a CPM dla najlepszych lokalizacji galeryjnych dochodzi do 237 zł. Ten przewodnik wyjaśnia, co to jest DOOH, jak działa reklama programatyczna na ekranach i ile to kosztuje w praktyce.
 
 ## Czym jest DOOH i czym różni się od klasycznego OOH
 
@@ -54,7 +54,7 @@ Ekosystem programmatic DOOH:
 **Platformy globalne dostępne w Polsce od 2024–2025** (po integracjach z polskimi operatorami):
 
 - **Hivestack** (właściciel: Perion)
-- **Vistar Media** (Microsoft)
+- **Vistar Media** (T-Mobile — przejęcie sfinalizowane w marcu 2025)
 - **Broadsign Reach**
 - **VIOOH** (JCDecaux)
 - **Place Exchange**
@@ -71,30 +71,24 @@ W praktyce reklamodawca w Polsce kupuje DOOH przez **Adform** lub **DV 360** (Go
 | Klasyczny OOH (static) | — | **61,6% rynku** |
 | City Transport | — | **6,4% rynku** |
 
-Źródło: dane IGRZ/OOHlife, rynek OOH w Polsce 2025. Prognoza na 2026 zakłada umiarkowany jednocyfrowy wzrost całego OOH przy dalszym wzroście udziału DOOH — głównie z digitalizacji istniejącej infrastruktury (klasyczne citylighty wymieniane na digital).
+Źródło: raport OOHlife Izby Gospodarczej, rynek OOH w Polsce 2025. Prognoza na 2026 zakłada umiarkowany jednocyfrowy wzrost całego OOH przy dalszym wzroście udziału DOOH — głównie z digitalizacji istniejącej infrastruktury (klasyczne citylighty wymieniane na digital).
 
 [Przeglądaj ekrany LED w swoim mieście →](/powierzchnie-reklamowe)
 
-## Ile kosztuje DOOH — cennik AMS Programmatic (od 1 lipca 2024)
+## Ile kosztuje DOOH — model rozliczeniowy
 
-Najwięksi polscy operatorzy DOOH (AMS, Ströer, JCDecaux/VIOOH) sprzedają inventory w modelu **CPM** — koszt za 1 000 wyświetleń reklamy 10-sekundowej. AMS od 1 lipca 2024 publikuje oficjalny cennik Programmatic DOOH. To rzadkość w skali rynku — większość operatorów wycenia indywidualnie.
+Najwięksi polscy operatorzy DOOH (AMS, Ströer, JCDecaux/VIOOH) sprzedają inventory w modelu **CPM** — koszcie za 1 000 kontaktów z reklamą. To przeniesienie logiki znanej z reklamy online na nośniki fizyczne: płacisz za faktyczne kontakty, a nie za sam czas wykupionej ekspozycji.
 
-| Typ nośnika | Platforma | Cała sieć | Aglomeracja | Galeria | Nośnik |
-|---|---|---:|---:|---:|---:|
-| **Digital Indoor** | Adform | 58 zł | 63 zł | 75 zł | 98 zł |
-| **Digital Indoor** | DV 360 | 63 zł | 70 zł | 82 zł | 108 zł |
-| **Digital Cityscreen** | Adform | 127 zł | 139 zł | — | 215 zł |
-| **Digital Cityscreen** | DV 360 | 139 zł | 153 zł | — | 237 zł |
-| **Digital Citylight** | Adform | 81 zł | 89 zł | — | 137 zł |
-| **Digital Citylight** | DV 360 | 89 zł | 97 zł | — | 151 zł |
+Kalendarium zmiany u AMS:
+- **2021** — pierwsze wprowadzenie rozliczenia CPM w reklamie zewnętrznej.
+- **1 lipca 2023** — rozszerzenie CPM DOOH na cyfrowe citylighty (wcześniej model obejmował Digital Cityscreen i Digital Indoor) oraz wprowadzenie triggerów zmiany layoutów.
+- **1 lipca 2024** — aktualizacja cennika DOOH i przejście na model zakupu oparty o kontakty.
 
-Minimalne zamówienie: Digital Indoor 3 CPM, Digital Citylight 5 CPM, Digital Cityscreen 9 CPM. Stawki dla spotu 10 s (baza); dłuższy spot to mnożnik — 15 s ×1,5, 20 s ×2, 30 s ×3 (45 i 60 s niedostępne). Zamówienia do 50 CPM lub spoty dłuższe niż 15 s realizowane są w modelu Best Effort, czyli bez gwarancji realizacji celu CPM.
+**Konkretnych stawek operatorzy nie publikują.** AMS, Ströer i JCDecaux nie udostępniają publicznie tabel CPM — krążące w sieci zestawienia liczbowe nie mają pokrycia w dokumentach tych firm. Realną wycenę dostaniesz wyłącznie od operatora albo od domu mediowego, i będzie ona zależeć od typu nośnika (indoor, citylight, cityscreen), zasięgu pakietu (cała sieć, aglomeracja, pojedyncza lokalizacja), długości spotu i wolumenu zamówienia.
 
-Źródło: cennik AMS Programmatic DOOH (publiczny PDF, obowiązuje od 1 lipca 2024).
+Do porównań warto znać rząd wielkości globalnych benchmarków eCPM dla programmatic DOOH: publikowane zestawienia z lat 2024–2025 podają najczęściej przedział **2–15 USD**, ze średnią dla programmatic OOH ok. 7,6 USD i wyższymi półkami dla lokalizacji premium (transport, retail). To punkt odniesienia, nie cennik polskiego rynku.
 
-Dla porównania, **globalny benchmark eCPM DOOH** to 5–15 USD (czyli ok. 20–60 zł) — polskie stawki Digital Indoor są więc rynkowo konkurencyjne, a Digital Citylight w premium lokalizacjach należy do droższej półki światowej. Standardowe banery online (display) kosztują 0,30–1,50 USD CPM, więc DOOH jest droższe od display, ale dostarcza brand experience nieosiągalny w przeglądarce.
-
-**Insight ekspercki:** publiczny cennik AMS to ważne wydarzenie dla rynku. W Polsce większość operatorów [reklamy zewnętrznej](/blog/poradniki/reklama-zewnetrzna) wycenia ofertę indywidualnie, co utrudnia planowanie budżetu. AMS wyznacza standard transparentności i daje reklamodawcom realny punkt odniesienia. Próg wejścia rzędu 174 zł (3 CPM Digital Indoor) oznacza, że pDOOH stało się dostępne dla małych marek lokalnych, a nie tylko dla agencji obsługujących kampanie ogólnopolskie.
+**Insight ekspercki:** brak publicznych cenników to strukturalna cecha polskiego rynku DOOH — i zarazem główna bariera wejścia dla mniejszych reklamodawców, którzy nie mają jak porównać ofert bez przechodzenia przez proces sprzedażowy u każdego operatora osobno.
 
 ## Modele transakcyjne pDOOH
 
@@ -126,19 +120,18 @@ Największa przewaga pDOOH nad tradycyjnym DOOH to możliwość kupowania impres
 
 ## Operatorzy DOOH w Polsce
 
-Polski rynek DOOH jest zdominowany przez sześciu graczy plus niezależne sieci galerii i transportu. Stan na 2025–2026:
+Polski rynek DOOH ma kilku dużych graczy plus niezależne sieci galerii i transportu. Stan na 2026:
 
 | Operator | Sieć / inventory | Uwagi |
 |---|---|---|
-| **AMS Digital** | Warszawa: ~2 000 ekranów LCD (autobusy/tramwaje) + 210 cyfrowych outdoor | Spółka outdoorowa Agory. Publiczny cennik od 1 lipca 2024, sprzedaż CPM od 2023. |
-| **Stroer Digital** | Citylighty + billboardy digital, sieć ogólnopolska | Jeden z największych graczy PL. |
-| **Clear Channel Digital** | Billboardy + citylighty | **Przejęty przez Grupę Bauer Media w 2025 — konsolidacja rynku.** |
-| **JCDecaux Polska** | Citylighty, meble miejskie | Właściciel **VIOOH SSP** — własna platforma programmatic. |
-| **Cityboard** | Citylighty digital, ekrany w galeriach | Operator sieci OOH. |
-| **Walls Outdoor** | Ekrany w galeriach, indoor | Sieć indoor / retail. |
-| **Recevent** | Transport, indoor | Operator OOH. |
+| **AMS Digital** | Ponad 2 000 ekranów LCD w tramwajach oraz cyfrowe citylighty na przystankach (77 nośników po rozbudowie w 2023 r.) | Spółka outdoorowa Agory. Od 1 lipca 2024 rozliczenie oparte o kontakty (CPM). |
+| **Digital Network / Screen Network** | Sieć ekranów w całej Polsce; w 2025 r. przejęcie Braughman Group Media Outdoor (ok. 131 mln zł) | Największa transakcja w historii polskiego rynku reklamy zewnętrznej. |
+| **Ströer Digital** | Citylighty i billboardy digital, sieć ogólnopolska | Jeden z największych graczy w Polsce. |
+| **Bauer Media Outdoor Poland** | Billboardy i citylighty | Do kwietnia 2025 działał jako Clear Channel Poland — nazwa zmieniona po przejęciu przez Grupę Bauer Media. |
+| **JCDecaux Polska** | Citylighty, meble miejskie | Właściciel **VIOOH SSP** — własnej platformy programmatic. |
+| **Cityboard Media** | Billboardy klasyczne (18, 48 i 162 m², Supercityboard 12×4 m) w kilkudziesięciu miastach | Operator OOH; nie jest siecią citylightów digital. |
 
-**Sieci ekranów w galeriach handlowych:** NoviSign, ScreenNetwork (po przejęciu Braughman Group przez Digital Network w 2025), własne sieci galerii — Echo Retail Media, Atrium.
+**Sieci ekranów w galeriach handlowych:** operatorzy zewnętrzni oraz własne sieci galerii (np. Echo Retail Media). Uwaga terminologiczna: dostawcy oprogramowania digital signage nie są operatorami nośników — to osobna warstwa rynku.
 
 **Transport publiczny:** Warszawa Metro, MPK Kraków, ekrany w transporcie miejskim większych miast. Najmocniej rozwinięta sieć [reklamy w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym) jest w Warszawie i Trójmieście.
 
@@ -188,19 +181,19 @@ Dla właścicieli ekranów to sygnał: **kompletna dokumentacja zużycia energii
 DOOH to skrót od Digital Out-of-Home — reklama na cyfrowych ekranach w przestrzeni publicznej (billboardy digital, citylighty digital, ekrany w galeriach, transporcie miejskim, indoor). Różni się od klasycznego OOH tym, że treści są dynamiczne (wideo, animacja), można je zmieniać w czasie rzeczywistym i kupować programmatic — w modelu aukcyjnym, jak reklamę display online.
 
 **Ile kosztuje reklama DOOH w Polsce?**
-Według publicznego cennika AMS Programmatic DOOH (z 1 lipca 2024): Digital Indoor 58–108 zł CPM, Digital Citylight 81–151 zł CPM, Digital Cityscreen 127–237 zł CPM. Minimalne zamówienie to 3 CPM dla Indoor (≈ od 174 zł), 5 CPM dla Citylight i 9 CPM dla Cityscreen. Globalny benchmark eCPM DOOH to 5–15 USD (ok. 20–60 zł).
+Polscy operatorzy DOOH nie publikują tabel CPM — wycenę dostaniesz od operatora albo domu mediowego. AMS rozlicza kampanie w modelu opartym o kontakty (CPM) od 1 lipca 2024, wcześniej wprowadzając go stopniowo od 2021 r. Dla rzędu wielkości: globalne benchmarki eCPM programmatic DOOH z lat 2024–2025 mieszczą się najczęściej w przedziale 2–15 USD, ze średnią ok. 7,6 USD — to jednak punkt odniesienia, nie polski cennik.
 
 **Czym różni się programmatic DOOH od zwykłego DOOH?**
 Tradycyjny DOOH kupuje się direct — telefon lub mail do operatora, harmonogram emisji ustalany tygodnie naprzód. Programmatic DOOH (pDOOH) to zakup automatyczny przez platformy DSP/SSP w modelu aukcyjnym RTB. Można kupować pojedyncze impressions w sekundach, targetować po pogodzie, lokalizacji, porze dnia i danych audience. W Polsce dostępne od 2024–2025 przez Adform, DV 360, Hivestack, Vistar, Broadsign, VIOOH.
 
 **Dlaczego DOOH rośnie tak szybko w Polsce?**
-DOOH jest najszybciej rosnącym segmentem rynku OOH i odpowiada za ok. 32% jego wartości, podczas gdy cały rynek OOH w 2025 rósł o 7% (dane IGRZ/OOHlife). Powody: digitalizacja istniejącej infrastruktury (klasyczne citylighty wymieniane na digital), szeroki zasięg kampanii cyfrowych, dostępność platform programmatic od 2024, niski próg wejścia (od ok. 174 zł) i mierzalność kampanii (realne impressions, audience-based buying).
+DOOH jest najszybciej rosnącym segmentem rynku OOH i odpowiada za ok. 32% jego wartości, podczas gdy cały rynek OOH w 2025 rósł o 7% (dane OOHlife Izby Gospodarczej). Powody: digitalizacja istniejącej infrastruktury (klasyczne citylighty wymieniane na digital), szeroki zasięg kampanii cyfrowych, dostępność platform programmatic od 2024, niski próg wejścia (od ok. 174 zł) i mierzalność kampanii (realne impressions, audience-based buying).
 
 **Czy DOOH wypiera klasyczny OOH?**
 Nie wypiera, uzupełnia. Klasyczny OOH w 2025 nadal rośnie i pozostaje największą częścią rynku (61,6%). DOOH ma ok. 32% i rośnie, ale głównie z budżetów digital/programmatic, nie z budżetów klasycznego OOH. W przyszłości najpewniej rynek będzie hybrydowy: drogie premium lokalizacje statyczne (długoterminowe brand building) + DOOH dla taktycznych kampanii contextual i programmatic.
 
 **Gdzie w Polsce można kupić DOOH programmatic?**
-U największych operatorów: AMS Digital (publiczny cennik od 1 lipca 2024), Stroer Digital, JCDecaux Polska (przez własne SSP VIOOH), Cityboard, Walls Outdoor. Po stronie kupującej: przez DSP takie jak Adform, DV 360, Hivestack, Vistar Media, Broadsign Reach, Place Exchange, Adomni. Wszystkie te platformy mają polskie inventory dostępne od 2024–2025.
+U największych operatorów: AMS Digital (rozliczenie CPM od 1 lipca 2024), Ströer Digital, JCDecaux Polska (przez własne SSP VIOOH), Digital Network / Screen Network, Bauer Media Outdoor Poland. Po stronie kupującej: przez DSP takie jak Adform, DV 360, Hivestack, Vistar Media, Broadsign Reach, Place Exchange, Adomni. Wszystkie te platformy mają polskie inventory dostępne od 2024–2025.
 
 ---
 
