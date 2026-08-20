@@ -18,7 +18,7 @@ published_at: "2026-03-22 08:00:00"
 status: draft
 ---
 
-<!-- Angle: Kompletny przewodnik — ceny oklejenia reklamowego (reklamodawcy) + model zarabiania na reklamie w swoim aucie (właściciele). Kluczowy wyróżnik: jedyna forma outdoor bez pozwoleń, działa wszędzie — także w Krakowie na Starym Mieście, gdzie billboard jest zakazany. -->
+<!-- Angle: Kompletny przewodnik — ceny oklejenia reklamowego (reklamodawcy) + model zarabiania na reklamie w swoim aucie (właściciele). Kluczowy wyróżnik: najlżejszy reżim administracyjny w outdoorze — bez pozwoleń, działa wszędzie — także w Krakowie na Starym Mieście, gdzie billboard jest zakazany. -->
 
 # Reklama na samochodzie — ceny i jak zarobić 2026
 
@@ -73,9 +73,9 @@ Cena zależy przede wszystkim od technologii — rynek dzieli się tu na dwie kl
 | Nośnik | Stawka (netto) | Co obejmuje |
 |--------|----------------|-------------|
 | Przyczepka plakatowa/banerowa | 25–200 zł/doba; ok. 600–1 200 zł/tydzień–miesiąc | dwustronny baner (np. 2× 5×2 m), zwykle kaucja ok. 500 zł |
-| Mobilny billboard LED na lawecie | 4 000–5 900 zł/dzień | ekran ok. 12 m² (pixel pitch 3.9 mm), spoty wideo, transport i obsługa |
+| Mobilny billboard LED na lawecie | 4 000–5 900 zł/dzień | ekran 500×400 cm, czyli 20 m² (pixel pitch 3.9 mm), spoty wideo, transport i obsługa |
 
-Przykładowo przyczepka banerowa w Bydgoszczy kosztuje 200 zł za dobę, 600 zł za tydzień i 1 200 zł za miesiąc (reklamamobilna.bydgoszcz.pl), a oferta stacjonarna spod Janowa Lubelskiego — 99 zł/doba, 399 zł/tydzień, 999 zł/miesiąc (eurocarjanowlubelski.pl). Mobilny ekran LED to inna półka: **4 000–5 900 zł netto za dzień kampanii** (led-star.pl, led.reklamatv24.pl) — drożej o zasilanie, transport, montaż i konfigurację.
+Przykładowo przyczepka banerowa w Bydgoszczy kosztuje 200 zł za dobę, 600 zł za tydzień i 1 200 zł za miesiąc (reklamamobilna.bydgoszcz.pl), a oferta stacjonarna spod Janowa Lubelskiego — 99 zł/doba, 399 zł/tydzień, 1 499 zł/miesiąc (eurocarjanowlubelski.pl). Mobilny ekran LED to inna półka: **4 000–5 900 zł netto za dzień kampanii** (led-star.pl, led.reklamatv24.pl) — drożej o zasilanie, transport, montaż i konfigurację.
 
 **Insight ekspercki:** przyczepka plakatowa to tani nośnik „parkingowy" — stawka dobowa jak za kilka kaw. Mobilny LED na lawecie należy już do premium DOOH: wejście liczone w tysiącach złotych za dzień, nie w setkach. To dwie różne kampanie, nie dwa warianty tej samej.
 
@@ -109,7 +109,7 @@ Chcesz wystawić swój pojazd jako nośnik reklamowy? → [Dodaj ogłoszenie za 
 
 ## Formalności — brak pozwolenia, ale są zasady
 
-Reklama na samochodzie to jedyna forma outdoor całkowicie wolna od pozwoleń administracyjnych. Nie dotyczy jej prawo budowlane, nie podlega uchwałom krajobrazowym ani przepisom o nośnikach stałych — bo pojazd jest przenośny.
+Reklama na jeżdżącym, własnym samochodzie ma najlżejszy reżim administracyjny spośród form outdoor. Nie dotyczy jej prawo budowlane, nie podlega uchwałom krajobrazowym ani przepisom o nośnikach stałych — bo pojazd jest przenośny.
 
 **Co wolno, a czego nie (przepisy ruchu drogowego):**
 - ✅ Oklejenie całej karoserii (z wyjątkiem szyby przedniej)

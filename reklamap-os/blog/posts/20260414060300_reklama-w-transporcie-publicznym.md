@@ -19,7 +19,7 @@ status: draft
 
 # Reklama w transporcie publicznym — ceny i formaty 2026
 
-Reklama modułowa na boku autobusu zaczyna się od **1 350 zł miesięcznie** — cena zawiera druk i montaż. Full cover całego autobusu kosztuje od 13 900 do 36 000 zł. To jeden z niewielu formatów outdoor, gdzie cena od razu obejmuje produkcję materiałów. Poniżej kompletny cennik i praktyczny przewodnik jak wybrać format, który działa na Twój cel.
+Reklama modułowa na boku autobusu zaczyna się u operatorów miejskich od **ok. 1 000 zł miesięcznie** (MPK Poznań), a całopojazdowa ekspozycja na autobusie solo to 1 250–1 500 zł/mies. (MPK Wrocław). Pakiety agencyjne obejmujące flotę i produkcję kosztują wielokrotnie więcej. To jeden z niewielu formatów outdoor, gdzie cena od razu obejmuje produkcję materiałów. Poniżej kompletny cennik i praktyczny przewodnik jak wybrać format, który działa na Twój cel.
 
 ## Jakie formaty reklamy oferuje transport publiczny?
 
@@ -40,18 +40,22 @@ Kluczowa przewaga formatu wewnętrznego: pasażer jest "uwięziony" w pojeździe
 
 ## Ile kosztuje reklama w komunikacji miejskiej? Cennik 2026
 
-Ceny poniżej obejmują druk i montaż — inaczej niż przy billboardach, gdzie to osobny koszt (źródła: znajdzreklame.pl, MPK Poznań, MPK Wrocław):
+Uwaga na dwie różne logiki cenowe: **operatorzy miejscy podają samą ekspozycję** (MPK Poznań i MPK Wrocław wprost zastrzegają w regulaminach, że projekt, druk, montaż, demontaż i przywrócenie barw pojazdu to osobny koszt zamawiającego), a **pośrednicy sprzedają pakiety** obejmujące produkcję i wiele pojazdów naraz. Poniższe pozycje pochodzą z obu źródeł — sprawdzaj, co dokładnie zawiera oferta:
 
 | Format | Cena netto/mc |
 |--------|--------------|
-| Reklama modułowa boczna (autobus / tramwaj) | 1 350–2 500 zł (typ. 1 500 zł) |
-| Ramki wewnętrzne (autobus / tramwaj) | 1 990–11 900 zł (typ. 4 500 zł) |
-| Full cover autobus | 13 900–36 000 zł (typ. 25 900 zł) |
+| Reklama modułowa boczna — autobus (MPK Poznań) | 1 000 zł/mies. |
+| Reklama modułowa boczna — tramwaj Moderus Beta (MPK Poznań) | 3 000 zł/mies. |
+| Bus back (tył autobusu, pakiet pośrednika) | 1 350–2 500 zł (typ. 1 500 zł) |
+| Ramki wewnętrzne u operatora (MPK Poznań) | 18–23 zł/szt./tydzień |
+| Ramki wewnętrzne — pakiet kampanijny na flocie (pośrednik) | 1 990–11 900 zł |
+| Całopojazdowa — autobus solo (MPK Wrocław) | 1 250–1 500 zł/mies. |
+| Full cover — pakiet kampanijny z produkcją (pośrednik) | 13 900–36 000 zł |
 | Reklama na burcie tramwaju Moderus Beta (Poznań) | 7 800 zł |
 | Całopojazdowa — tramwaj (Poznań) | 10 300–12 500 zł |
-| Autobus solo, min. 12 mc (Wrocław) | 833–1 000 zł/mc |
+| Busboard — bok autobusu (MPK Wrocław) | 833–1 000 zł/mies. |
 
-**Ważna różnica vs billboard:** Przy reklamie w transporcie cena zazwyczaj obejmuje druk i montaż materiałów. Przy billboardzie to osobny koszt — wyklejenie billboardu to dodatkowe 120–220 zł, a druk baneru 50–100 zł/m². Porównując budżety, zawsze sprawdź co wliczone w stawkę.
+**Częsty błąd w budżetowaniu:** przy ofertach operatorów miejskich cena NIE obejmuje produkcji — MPK Poznań i MPK Wrocław wprost przenoszą koszt projektu, druku, montażu i demontażu na zamawiającego. Obejmują ją dopiero pakiety pośredników, i stąd bierze się kilkukrotna różnica w cennikach. Dla porównania, wyklejenie billboardu to dodatkowe 120–220 zł, a druk baneru 50–100 zł/m². Porównując budżety, zawsze sprawdź co wliczone w stawkę.
 
 Szczegółowe porównanie kosztów: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
@@ -74,7 +78,7 @@ Reklama wewnętrzna dociera przede wszystkim do pasażerów. Reklama zewnętrzna
 
 **Połącz zewnętrzne z wewnętrznym.** Reklama zewnętrzna buduje świadomość marki u przechodniów i kierowców. Reklama wewnętrzna skłania pasażera do działania — ma czas przeczytać szczegóły i zeskanować QR kod. Oba formaty na jednej linii działają synergicznie.
 
-**Uwzględnij minimalny czas kampanii.** Operatorzy często wymagają minimalnego okresu wynajmu. MPK Wrocław wymaga minimum 12 miesięcy dla autobusu solo. Sprawdź warunki przed podpisaniem umowy — krótsze okresy bywają droższe proporcjonalnie.
+**Uwzględnij minimalny czas kampanii.** Operatorzy często wymagają minimalnego okresu wynajmu. MPK Wrocław wymaga minimum 3 miesięcy przy rozliczeniu miesięcznym, a korzystniejszą stawkę daje opłata z góry za 12 miesięcy. Sprawdź warunki przed podpisaniem umowy — krótsze okresy bywają droższe proporcjonalnie.
 
 **Korzystaj z publicznych cenników.** MPK Poznań i MPK Wrocław mają publicznie dostępne cenniki na swoich stronach. To dobry punkt startowy do weryfikacji ofert operatorów komercyjnych.
 

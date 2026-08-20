@@ -61,7 +61,7 @@ Jeśli w gminie nie ma uchwały krajobrazowej, nadal obowiązują przepisy ogól
 
 ## Ogrodzenie przy drodze — uwaga na pas drogowy
 
-Jeśli płot stoi tuż przy jezdni, dochodzi kolejna warstwa. Artykuł 43 ustawy o drogach publicznych reguluje odległości obiektów od pasa drogowego, a przy ogrodzeniu w granicy działki kluczowe jest, czy reklama nie wchodzi w strefę oddziaływania drogi. Sam fakt, że płot stoi na Twojej granicy, nie daje automatycznie prawa do ekspozycji reklamy, jeśli narusza ona pas drogowy, widoczność albo bezpieczeństwo ruchu.
+Jeśli płot stoi tuż przy jezdni, dochodzi kolejna warstwa. Artykuł 43 ustawy o drogach publicznych reguluje minimalne odległości obiektów budowlanych od **zewnętrznej krawędzi jezdni** (dla reklam niebędących obiektami budowlanymi stosuje się go tylko poza obszarem zabudowanym), a w mieście istotniejsze bywają zakazy w pasie drogowym z art. 39 tej ustawy. Przy ogrodzeniu w granicy działki kluczowe jest, czy reklama nie wchodzi w strefę oddziaływania drogi. Sam fakt, że płot stoi na Twojej granicy, nie daje automatycznie prawa do ekspozycji reklamy, jeśli narusza ona pas drogowy, widoczność albo bezpieczeństwo ruchu.
 
 Przy lokalizacji bezpośrednio przy drodze najbezpieczniej sprawdzić jednocześnie cztery rzeczy: uchwałę krajobrazową, zarządcę drogi, plan miejscowy i ewentualne zgłoszenie budowlane.
 
@@ -76,7 +76,7 @@ Stawka zależy przede wszystkim od ruchu i widoczności.
 | Słabsza lokalizacja lokalna | od 100 zł/mies. |
 | Dobra widoczność miejska | zwykle kilkaset zł/mies. lub więcej |
 | Nośnik wielkopowierzchniowy | kilka tysięcy zł/mies. |
-| Stawka samorządowa (ogrodzenie jako powierzchnia reklamowa) | 1–1,50 zł/m²/dzień |
+| Stawka samorządowa (ogrodzenie jako powierzchnia reklamowa) | ustalana uchwałą konkretnej gminy — sprawdź lokalny cennik |
 
 Próg wejścia jest niski również po stronie kosztów. Prosty baner to wydatek od kilkudziesięciu do kilkuset złotych, a montaż zaczyna się od około 50 zł za metr kwadratowy (w dużych miastach 70–100 zł/m²). Dla porównania — postawienie wolnostojącego billboardu to koszt rzędu kilkudziesięciu tysięcy złotych. Po szczegółowe ceny samego wydruku zajrzyj do tekstu o [cenie banera reklamowego](/blog/poradniki/baner-reklamowy-cena).
 

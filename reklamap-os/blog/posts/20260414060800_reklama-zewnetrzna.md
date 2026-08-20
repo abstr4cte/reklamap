@@ -50,8 +50,8 @@ Ceny zależą od dwóch zmiennych: formatu i lokalizacji. Poniższa tabela zesta
 | Billboard centrum | Centrum Warszawy, Krakowa | 4 000–10 000 zł |
 | Billboard 108 m² | Autostrada, droga ekspresowa | 3 000–6 000 zł |
 | Citylight 1,2×1,8 m | Lokalizacje poza centrum | ok. 840 zł |
-| Citylight 1,2×1,8 m | Centrum dużego miasta | do 4 000 zł |
-| Telebim/DOOH (spot 8 s, za emisję) | Centrum miasta | 300–1 536 zł/emisję |
+| Citylight 1,2×1,8 m | Centrum dużego miasta | ok. 2 000 zł, lokalizacje premium do 2 500 zł |
+| Telebim/DOOH (pakiet spotów) | Centrum miasta | od ok. 400 zł/mies. (spot 5 s co 3 min) do kilku tys. zł/mies. |
 | Transport — cały pojazd | Z drukiem, ok. miesiąc | 13 900–36 000 zł |
 | Transport — ramka wewnętrzna | Autobus/tramwaj | 1 990–11 900 zł |
 | Mural (wynajem ściany) | Od 100 m² | od 20 000 zł |
@@ -135,7 +135,7 @@ Minimum 2 tygodnie. Badania efektywności kampanii OOH wskazują na optymalny cz
 
 **Jaki zasięg osiąga reklama zewnętrzna?**
 
-Według Gemius Mediapanel (styczeń 2025) OOH łącznie dociera do **89,37% Polaków w grupie 7–75 lat** (29,2 mln Real Users). Tradycyjne nośniki drukowane osiągają 70–74%, nośniki cyfrowe DOOH — 85–87% tej grupy.
+Według Gemius Mediapanel (styczeń 2025) OOH łącznie dociera do **89,37% Polaków w grupie 7–75 lat** (29,2 mln Real Users). W pomiarze Gemius Mediapanel ze stycznia 2025 nośniki tradycyjne osiągnęły 70,02%, a cyfrowe DOOH — 87,27% tej grupy.
 
 **Jak mierzyć efekty kampanii reklamy zewnętrznej?**
 

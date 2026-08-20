@@ -40,7 +40,7 @@ Ceny wynajmu zależą od dwóch zmiennych: formatu i lokalizacji. Poniższa tabe
 
 | Format | Lokalizacja | Cena wynajmu netto/mc |
 |--------|-------------|----------------------|
-| Billboard 12×4 m | Mała miejscowość / droga lokalna | 500–900 zł |
+| Billboard 12 m² (5,04×2,38 m) | Mała miejscowość / droga lokalna | 500–900 zł |
 | Billboard 12×4 m | Średnie miasto / droga krajowa | 900–2 500 zł |
 | Billboard 12×4 m | Centrum Warszawa / Kraków | 4 000–10 000 zł |
 | Billboard 18×6 m | Autostrada / droga ekspresowa | 3 000–6 000 zł |
@@ -88,7 +88,7 @@ Po odpowiedzi na te pytania wybór formatu staje się oczywisty.
 
 ## Formalności — co musisz wiedzieć przed zakupem
 
-**Ustawa krajobrazowa** (obowiązuje od 2015, aktualizacje 2025/2026) nakłada na właściciela nośnika opłatę reklamową:
+**Ustawa krajobrazowa** (obowiązuje od 11 września 2015; po wyroku TK z 12.12.2023, sygn. P 20/19, trwają prace nad trybem odszkodowawczym) pozwala gminie nałożyć na właściciela nośnika opłatę reklamową:
 - Stała: maksymalnie **2,50 zł/dzień**
 - Zmienna: maksymalnie **0,20 zł/m²/dzień**
 
@@ -103,7 +103,7 @@ Szukasz nośnika z uregulowanym statusem prawnym? [Przeglądaj oferty na reklama
 ## Najczęściej zadawane pytania
 
 **Ile kosztuje m² powierzchni reklamowej?**
-Zależy od formatu i lokalizacji. Billboard 12×4 m (48 m²) w centrum Warszawy to 4 000–10 000 zł/mc, czyli ok. 83–208 zł/m²/mc. W małym mieście ten sam format kosztuje 500–900 zł/mc (ok. 10–19 zł/m²/mc). Mniejsze formaty (citylight) są proporcjonalnie droższe za m².
+Zależy od formatu i lokalizacji. Billboard 12×4 m (48 m²) w centrum Warszawy to 4 000–10 000 zł/mc, czyli ok. 83–208 zł/m²/mc. Mniejszy format 12 m² w małym mieście kosztuje 500–900 zł/mc (ok. 42–75 zł/m²/mc). Mniejsze formaty (citylight) są proporcjonalnie droższe za m².
 
 **Jakie są rodzaje reklamy outdoor i która jest najskuteczniejsza?**
 Główne formaty to: billboard, citylight, ekran LED (DOOH), baner, totem i reklama w transporcie. Nie ma jednej "najskuteczniejszej" formy — zależy od celu. Do zasięgu masowego: billboard przy drodze ekspresowej. Do pieszych w centrum: citylight. Do elastycznych kampanii z targetowaniem: DOOH.

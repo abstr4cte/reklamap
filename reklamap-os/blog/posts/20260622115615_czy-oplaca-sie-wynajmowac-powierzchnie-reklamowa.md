@@ -34,7 +34,7 @@ Czynsz dla właściciela zależy od lokalizacji: 100–300 zł miesięcznie za �
 - **Zero nakładów i ryzyka** — w standardowej umowie operator stawia konstrukcję, serwisuje ją, opłaca media i demontuje na koniec.
 - **Monetyzacja „martwego" zasobu** — pusta ściana, fragment działki czy ogrodzenie zaczynają zarabiać.
 - **Stabilność** — umowy bywają wieloletnie, z waloryzacją czynszu.
-- **Popyt realnie istnieje** — rynek reklamy zewnętrznej urósł z 806 mln zł w 2024 do 870,2 mln zł w 2025 (+7% rok do roku), a najszybciej rosnący segment cyfrowy DOOH (278,4 mln zł, 32% rynku) zwiększa presję na nowe lokalizacje. Operatorzy wprost ogłaszają, że szukają ścian, elewacji i gruntów — także od osób prywatnych.
+- **Popyt realnie istnieje** — rynek reklamy zewnętrznej urósł do 870,2 mln zł w 2025 (+7% rok do roku wobec bazy porównywalnej; w 2024 raportowano 806 mln zł), a najszybciej rosnący segment cyfrowy DOOH (278,4 mln zł, 32% rynku) zwiększa presję na nowe lokalizacje. Operatorzy wprost ogłaszają, że szukają ścian, elewacji i gruntów — także od osób prywatnych.
 
 ## Wady i ryzyka — szczerze
 
@@ -43,11 +43,11 @@ To sekcja, którą warto przeczytać przed podpisaniem czegokolwiek.
 - **Dostajesz czynsz, nie cenę reklamy.** Stawki billboardów rzędu kilku–kilkunastu tysięcy złotych to cena sprzedaży gotowej powierzchni reklamodawcy; różnicę zabiera operator za konstrukcję, serwis i marżę. Skąd się bierze ta różnica, tłumaczymy w tekście [ile kosztuje reklama outdoor](/blog/poradniki/ile-kosztuje-reklama-outdoor).
 - **Długie zobowiązanie.** Umowa wieloletnia ogranicza swobodę dysponowania terenem — to problem, jeśli planujesz sprzedać działkę albo coś na niej zbudować.
 - **Podatek od budowli.** Jeśli konstrukcja należy do Ciebie, podatek może obciążyć właśnie Ciebie — trzeba to jasno rozstrzygnąć w umowie.
-- **Ryzyko regulacyjne jest realne.** Uchwała krajobrazowa gminy potrafi ograniczyć lub zakazać nośnika. Skala demontaży bywa duża: w Krakowie usunięto ponad 1 500 reklam, w Gdańsku ponad 500, w Gdyni wysłano ponad 500 wezwań, a w Poznaniu zdjęto ponad 200 nośników w 2024 i kolejne 150+ w 2025 roku.
+- **Ryzyko regulacyjne jest realne.** Uchwała krajobrazowa gminy potrafi ograniczyć lub zakazać nośnika. Skala demontaży bywa duża: w samym Krakowie po wejściu uchwały krajobrazowej usunięto ponad 1 500 reklam, a kolejne miasta — m.in. Gdańsk, Gdynia i Poznań — prowadzą własne akcje porządkowe.
 - **Opłata reklamowa.** W części gmin dochodzi dodatkowy koszt nakładany uchwałą — szczegóły w tekście o [opłacie reklamowej](/blog/prawo-i-regulacje/oplata-reklamowa).
 - **Estetyka i sąsiedztwo.** Nośnik bywa źle odbierany, a w strefach konserwatorskich obowiązują ograniczenia.
 
-Jest jednak ważny niuans, który działa na Twoją korzyść. Masowe demontaże dotyczyły przede wszystkim nielegalnych nośników. Trybunał Konstytucyjny w wyroku z 12 grudnia 2023 roku uznał za niezgodny z konstytucją nakaz usuwania *legalnych* nośników bez odszkodowania. Innymi słowy: jeśli wynajmiesz miejsce **legalnie, przez operatora**, ryzyko jest znacznie niższe, a przy zmianie prawa należy Ci się rekompensata. Zasady, jakie nakłada [uchwała krajobrazowa](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama), warto sprawdzić w swojej gminie jeszcze przed podpisaniem umowy.
+Jest jednak ważny niuans, który działa na Twoją korzyść. Masowe demontaże dotyczyły przede wszystkim nielegalnych nośników. Trybunał Konstytucyjny w wyroku z 12 grudnia 2023 roku (sygn. P 20/19) zakwestionował **brak ustawowej podstawy i trybu dochodzenia odszkodowania** za usunięcie nośników wzniesionych legalnie. Uwaga na dwa zastrzeżenia: odszkodowanie nie przysługuje automatycznie — trzeba o nie wystąpić — a roszczenie ma właściciel nośnika, czyli zwykle operator, nie właściciel gruntu. Innymi słowy: jeśli wynajmiesz miejsce **legalnie, przez operatora**, ryzyko jest znacznie niższe, a przy zmianie prawa należy Ci się rekompensata. Zasady, jakie nakłada [uchwała krajobrazowa](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama), warto sprawdzić w swojej gminie jeszcze przed podpisaniem umowy.
 
 > **Zastanawiasz się, czy Twoje miejsce ma potencjał?** Zobacz, jakie nośniki i w jakich lokalizacjach są już wystawione → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe).
 
@@ -61,7 +61,7 @@ Jest jednak ważny niuans, który działa na Twoją korzyść. Masowe demontaże
 | Ogrodzenie lub płot przy ruchliwej ulicy | Niski–średni, ale najprostszy do uruchomienia |
 | Teren na uboczu, słaby ruch, mała widoczność | Niski — często nieopłacalny |
 
-Jeśli reprezentujesz **wspólnotę lub spółdzielnię mieszkaniową**, pamiętaj o pułapce podatkowej: dochód z reklamy na elewacji co do zasady **nie jest zwolniony z CIT i podlega stawce 19%**, bo wykracza poza tzw. gospodarkę zasobami mieszkaniowymi (art. 17 ust. 1 pkt 44 ustawy o CIT). Reklama na elewacji wymaga też zgody wspólnoty, bo to część wspólna nieruchomości.
+Jeśli reprezentujesz **wspólnotę lub spółdzielnię mieszkaniową**, pamiętaj o pułapce podatkowej: dochód z reklamy na elewacji według fiskusa **nie jest zwolniony z CIT i podlega stawce 19%** — choć sądy administracyjne bywają łaskawsze, gdy dochód idzie na utrzymanie zasobu mieszkaniowego, bo wykracza poza tzw. gospodarkę zasobami mieszkaniowymi (art. 17 ust. 1 pkt 44 ustawy o CIT). Reklama na elewacji wymaga też zgody wspólnoty, bo to część wspólna nieruchomości.
 
 ## Kiedy lepiej odpuścić
 
@@ -90,7 +90,7 @@ Od 100–300 zł miesięcznie za ścianę lub ogrodzenie, przez 500–900 zł za
 Niższy zysk niż cena sprzedaży reklamy, wieloletnie zobowiązanie, możliwy podatek od budowli oraz ryzyko regulacyjne — uchwała krajobrazowa może wymusić zmiany lub demontaż nośnika.
 
 **Czy dochód wspólnoty z reklamy na elewacji jest zwolniony z podatku?**
-Nie. Co do zasady podlega CIT w stawce 19%, bo wynajem elewacji pod reklamę nie mieści się w zwolnieniu dla gospodarki zasobami mieszkaniowymi.
+Fiskus twierdzi, że nie — według Dyrektora KIS wynajem elewacji pod reklamę nie mieści się w zwolnieniu dla gospodarki zasobami mieszkaniowymi i podlega CIT w stawce 19%. Sądy administracyjne orzekały jednak inaczej, uznając, że pożytki z elementów konstrukcyjnych budynku przeznaczone na utrzymanie zasobu ze zwolnienia korzystają. Planuj budżet z CIT, ale wiedz, że w razie sporu jest o co walczyć przed sądem.
 
 ## Sprawdź, ile warte jest Twoje miejsce
 

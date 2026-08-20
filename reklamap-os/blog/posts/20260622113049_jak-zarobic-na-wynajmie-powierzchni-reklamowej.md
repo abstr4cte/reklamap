@@ -44,7 +44,7 @@ Dla ścian i ogrodzeń stawki są niższe niż pod klasyczny billboard, ale taki
 
 Tu kryje się najczęstsze nieporozumienie. W internecie znajdziesz stawki billboardu rzędu 3 000–10 000 zł, a w Warszawie nawet 8 000–25 000 zł miesięcznie (cyrekdigital.com, wirtualnygarwolin.pl) — ale to **cena sprzedaży gotowej powierzchni reklamodawcy**, a nie czynsz, który trafia do właściciela gruntu.
 
-Różnicę zjada operator: musi postawić konstrukcję, zamontować nośnik, serwisować go, opłacić media i doliczyć marżę. Dlatego za samo miejsce dostaniesz mniej niż wynosi rynkowa cena reklamy na tym nośniku — ale **bez żadnych nakładów, pracy i ryzyka**. To dochód w dużej mierze pasywny: podpisujesz umowę i co miesiąc wpływa czynsz.
+Różnicę zjada operator: musi postawić konstrukcję, zamontować nośnik, serwisować go, opłacić media i doliczyć marżę. Dlatego za samo miejsce dostaniesz mniej niż wynosi rynkowa cena reklamy na tym nośniku — ale **bez nakładów inwestycyjnych i bieżącej pracy**. To dochód w dużej mierze pasywny: podpisujesz umowę i co miesiąc wpływa czynsz.
 
 Chcesz zarobić więcej? Możesz postawić własny nośnik i sam sprzedawać powierzchnię — zwrot jest wyższy, ale budowa billboardu to wydatek rzędu 18–75 tys. zł plus formalności po Twojej stronie. Więcej o samym formacie i kosztach budowy znajdziesz w poradniku [o billboardach](/blog/poradniki/billboard-reklama), a ceny sprzedaży powierzchni rozbijamy w tekście [ile kosztuje reklama outdoor](/blog/poradniki/ile-kosztuje-reklama-outdoor).
 
@@ -65,7 +65,7 @@ Jeśli rozważasz baner na ścianie, warto najpierw sprawdzić [jak wyceniany je
 
 Najem prywatny powierzchni reklamowej rozlicza się **ryczałtem**: 8,5% do 100 000 zł przychodu rocznie i 12,5% od nadwyżki ponad ten limit (podatekdochodowy.pl, poradnikprzedsiebiorcy.pl). Dla większości właścicieli z jednym czy dwoma nośnikami w grę wchodzi więc stawka 8,5%.
 
-Sam czynsz nie rodzi po Twojej stronie nowego podatku od nieruchomości — ten obciąża właściciela gruntu niezależnie od tego, czy stoi na nim reklama (gtakademia.pl). Uwaga jednak na **podatek od budowli**: jeśli konstrukcja reklamowa należy do Ciebie, koszt może spaść właśnie na Ciebie. Dlatego w umowie trzeba jasno zapisać, kto ten podatek ponosi (rankomat.pl).
+Obowiązek w podatku od nieruchomości zostaje przy Tobie jako właścicielu, ale **stawka może wzrosnąć** — grunt wydzierżawiony przedsiębiorcy, który prowadzi na nim działalność, bywa opodatkowany według najwyższej stawki dla gruntów związanych z prowadzeniem działalności gospodarczej (art. 5 ust. 1 pkt 1 lit. a ustawy o podatkach i opłatach lokalnych). To realny koszt, który trzeba wliczyć w kalkulację i uregulować w umowie. Uwaga jednak na **podatek od budowli**: jeśli konstrukcja reklamowa należy do Ciebie, koszt może spaść właśnie na Ciebie. Dlatego w umowie trzeba jasno zapisać, kto ten podatek ponosi (rankomat.pl).
 
 W części gmin obowiązuje dodatkowo opłata reklamowa wprowadzana uchwałą — szczegóły opisaliśmy w osobnym tekście [o opłacie reklamowej](/blog/prawo-i-regulacje/oplata-reklamowa). Na koniec ustal, czy rozliczasz najem prywatnie, czy w ramach działalności — to zmienia sposób rozliczenia i dokumenty.
 
