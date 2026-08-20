@@ -7,6 +7,70 @@ Faza projektu: **budowanie podaży** (właściciele nośników) — patrz `rekla
 
 ---
 
+## 🎯 PLAN 2026-08-20 — PIVOT NA POPYT
+
+> **Diagnoza, która zmienia priorytety.** Pomiar 90 dni: **1 380 odsłon ogłoszeń, 95 kliknięć w telefon, 2 w e-mail** przy 1 069 nośnikach. To statystycznie **jedno zapytanie na nośnik raz na trzy lata**.
+>
+> Ludzie nie wystawiają u nas nie dlatego, że nas nie znajdują — **tylko dlatego, że wystawienie nie przynosi jeszcze klienta**. Samoobsługa dała 59 ogłoszeń w 4 miesiące (5,5%), reszta to 8 importów agencyjnych. To problem wartości, nie odkrywalności.
+>
+> **Wniosek: podaż jest zbudowana, maszyneria działa, brakuje KUPUJĄCYCH.** Energia włożona w popyt zwróci się podażą — nie odwrotnie. Faza projektu zmienia się z „budowanie podaży" na **„uruchomienie popytu"**.
+
+### FAZA 1 — Odblokować kontakt (priorytet bezwzględny, XS–S)
+
+Najostrzejszy sygnał w danych: **95 telefonów kontra 2 maile**, przy czym **82,6% wystawców deklaruje e-mail jako preferowany kanał** (audyt 07-25), a w serwisie **nie ma ani jednego `mailto:` do wystawcy** — 4 istniejące prowadzą na `kontakt@reklamap.pl`. Reklamodawca może tylko zadzwonić; kto nie chce dzwonić do obcego, zamyka kartę i zapytanie nie powstaje.
+
+| # | Zadanie | Kto | Effort |
+|---|---|---|---|
+| P-1 | **Alias e-mailowy do wystawcy** (`ad-{id}@reklamap.pl`, relay — NIE odsłaniać `owner_email`; strict DMARC → wyłącznie SMTP Hostido) | dev | XS |
+| P-2 | **Powiadomienie wystawcy o zapytaniu** — „ktoś pytał o Twój nośnik". Bez tego właściciel nie wie, że platforma działa | dev | S |
+| P-3 | **Miesięczne podsumowanie statystyk** dla wystawcy (odsłony, kontakty). Uwaga: licznik odsłon jest zawyżony ~13,7× (liczy prerender i boty) — **najpierw naprawić, potem pokazywać** | dev | S |
+
+**Dlaczego to pierwsze:** wystawca, który widzi ruch, wystawia więcej nośników i mówi o nas innym. To **jedyny organiczny silnik podaży, który się sam napędza** — i jest wielokrotnie tańszy niż SEO.
+
+### FAZA 2 — Ściągnąć reklamodawców (S–M)
+
+Kolejka A1–A3 to frazy **reklamodawców**, nie właścicieli. Dotąd traktowane jako drugorzędne, bo priorytetem była podaż. Przy tej diagnozie odwracają się na priorytet.
+
+| # | Zadanie | Popyt (GSC/kwartał) | Kto |
+|---|---|---:|---|
+| P-4 | **Odmrożenie 12 URL-i bloga w GSC** („Poproś o zindeksowanie") | **40,7% całego popytu**, dziś 0 wyświetleń | founder, ~15 min |
+| P-5 | A3 — LED / telebim | 1 260 wyśw. | Strateg → Pisarz → Korektor |
+| P-6 | A2 — citylight miejski | 1 041 wyśw. (najszybciej rosnący klaster) | j.w. |
+| P-7 | A1 — transport miejski | 994 wyśw. | j.w. |
+
+### FAZA 3 — Linki (ciągłe, równolegle)
+
+**Zero domen linkujących** przy średniej pozycji 31. Treść dowozi wyświetlenia, **pozycje dowożą linki**. Najtańsze leżą u ośmiu agencji, których nośniki hostujemy za darmo — dla nich link to darmowa ekspozycja. Dalej: katalogi branżowe OOH, izby gospodarcze, portale marketingowe (OOH Magazine, Nowy Marketing, Wirtualne Media). Mamy 1 069 realnych ofert z cenami — dane branżowe, których nikt inny nie publikuje.
+
+### FAZA 4 — Podaż tam, gdzie JEST popyt
+
+| # | Zadanie | Uzasadnienie |
+|---|---|---|
+| P-8 | **24 nośniki w 10 konkretnych slotach** (lista w `audyt-2026-07-25/raport-podaz.md` §6) | odblokowują strony z **2 484 wyświetleniami = 29,3% ruchu serwisu**. Te same 24 w Kłodzku dodają 1,4 wyświetlenia |
+| P-9 | Treść dla miast, gdzie **mamy** podaż: Oświęcim (64 nośniki), Zator (35), Sosnowiec (21) | dziś silos `lokalizacje` obsługuje wyłącznie duże miasta, w których nic nie mamy — odwrotnie, niż powinien |
+
+### Czego świadomie NIE robimy
+
+- **Nie walczymy o wyłączność.** Właściciel wystawi i u nas, i na OLX — tak działa każdy marketplace na wczesnym etapie. Cel: być pierwszym wyborem, nie jedynym.
+- **Nie konkurujemy z OLX na jego polu.** Nasza fosa to **ustrukturyzowane dane OOH** (wymiary, natężenie ruchu, podświetlenie, status prawny, porównywarka, filtr promienia). Reklamodawca szukający citylightu w Poznaniu na OLX utonie — u nas ma filtry. Pogłębiać fosę, nie rozmieniać się na bycie kolejną tablicą ogłoszeń.
+- **Nie wracamy do cold callingu** (decyzja foundera 2026-08-18) — ale **kanał agencyjny to nie to samo**: BrokersMedia (217 nośników, 20% bazy) to była wymiana maili i arkusz, zero telefonów.
+- **Nie rozszerzamy progu cienkiej strony** o oferty z promienia — duplikacja treści między stronami miast, ryzyko nieproporcjonalne do zysku.
+
+### Jak mierzyć
+
+| Metryka | Stan wyjściowy (2026-08-20) |
+|---|---|
+| Kliknięcia w e-mail / 90 dni | **2** |
+| Kliknięcia w telefon / 90 dni | 95 |
+| Ogłoszenia samoobsługowe (`offer_type=owner`) | **59** (5,5% bazy) |
+| Domeny linkujące | **0** |
+| Kliki niebrandowe / tydzień w GSC | ~0 |
+| Miasta powyżej progu indeksacji | 71 |
+
+**Główny KPI tej fazy: liczba zapytań na nośnik.** Nie liczba nośników — tę mamy.
+
+---
+
 ## TABELA PRIORYTETÓW
 
 | # | Pomysł | Reach | Impact | Conf. | Effort | RICE | Status |
