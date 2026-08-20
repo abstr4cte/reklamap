@@ -102,7 +102,7 @@ Szacunkowe koszty budowy własnego nośnika (netto, jednorazowo, źródło: bill
 
 Przykład: dwustronny billboard 12 m² z oświetleniem to całkowita inwestycja rzędu **31 000–46 000 zł**. Przy wynajmie za 900 zł/mc (droga lokalna/krajowa) zwrot następuje po 3–4 latach; w lokalizacji miejskiej za 2 000 zł/mc — już po **16–24 miesiącach**. Dalej nośnik generuje czysty przychód przez kilkanaście lat (żywotność konstrukcji), minus drobne koszty eksploatacji i ewentualnego oświetlenia.
 
-Na realny zwrot wpływają cztery rzeczy: natężenie ruchu w punkcie (sprawdź dane NKR/GPR dla danego odcinka), widoczność z jezdni, jedno- czy dwustronność konstrukcji oraz to, czy nośnik jest oświetlony. ROI billboardów dobrze ulokowanych bywa wysoki — ale w słabej lokalizacji nośnik może stać pusty miesiącami, więc przed budową warto wycenić popyt.
+Na realny zwrot wpływają cztery rzeczy: natężenie ruchu w punkcie (sprawdź dane GPR dla danego odcinka), widoczność z jezdni, jedno- czy dwustronność konstrukcji oraz to, czy nośnik jest oświetlony. ROI billboardów dobrze ulokowanych bywa wysoki — ale w słabej lokalizacji nośnik może stać pusty miesiącami, więc przed budową warto wycenić popyt.
 
 Masz grunt przy drodze, ale nie chcesz sam inwestować w budowę? Możesz wystawić samą lokalizację — operatorzy OOH często stawiają konstrukcję na swój koszt w zamian za dzierżawę. Wystaw nośnik lub działkę bezpłatnie → [reklamap.pl/dodaj-powierzchnie-reklamowa](/dodaj-powierzchnie-reklamowa)
 
@@ -114,7 +114,7 @@ Zanim zarezerwujesz nośnik lub zaczniesz budowę, sprawdź trzy warstwy regulac
 
 Prawo budowlane (Dz.U. 2025 poz. 418) rozróżnia dwa tryby:
 
-- **Instalacja tablicy lub urządzenia reklamowego** — co do zasady wymaga zgłoszenia (art. 29 ust. 2 pkt 6 Prawa budowlanego); czas oczekiwania na milczącą zgodę zwykle ok. 30 dni.
+- **Instalacja tablicy lub urządzenia reklamowego** — co do zasady wymaga zgłoszenia (art. 29 ust. 3 pkt 3 lit. c Prawa budowlanego); organ ma **21 dni** na wniesienie sprzeciwu (art. 30 ust. 5), po tym terminie można przystąpić do robót.
 - **Wolnostojące urządzenie reklamowe trwale związane z gruntem** — wymaga pozwolenia na budowę; czas: 30–65 dni + 14 dni uprawomocnienia.
 
 Uwaga: konkretne progi powierzchni (np. 2,5 m² czy 12 m²) nie wynikają z ustawy — mogą być narzucone przez **lokalną uchwałę krajobrazową lub MPZP**, dlatego zawsze sprawdź przepisy własnej gminy.
@@ -139,7 +139,7 @@ Gminy z aktywną uchwałą krajobrazową mogą ograniczać gabaryty, materiały 
 
 ### Formalności krok po kroku — od decyzji do montażu
 
-1. **Wybór lokalizacji** — sprawdź NKR (natężenie ruchu), MPZP i status uchwały krajobrazowej
+1. **Wybór lokalizacji** — sprawdź GPR — Generalny Pomiar Ruchu GDDKiA (natężenie ruchu), MPZP i status uchwały krajobrazowej
 2. **Formalności** — złóż zgłoszenie (instalacja tablicy/urządzenia) lub wniosek o pozwolenie na budowę (wolnostojąca konstrukcja trwale związana z gruntem); sprawdź, czy lokalna uchwała lub MPZP nie narzuca własnych progów
 3. **Projekt techniczny** — koszt: 2 000–5 000 zł netto
 4. **Budowa i montaż** — czas realizacji: 7–14 dni roboczych
@@ -152,7 +152,7 @@ Całkowity czas od decyzji do uruchomienia nośnika: **6–10 tygodni**.
 Wynajem: od **500 zł/mc** (12 m², mała miejscowość) do **15 000 zł/mc** (12×3 m, centrum Warszawy). Billboard 48 m² przy drodze krajowej to 900–2 500 zł/mc; w centrum dużego miasta (Kraków, Warszawa) — 4 000–10 000 zł/mc. Ceny nie obejmują druku i montażu materiałów. Budowa własnego nośnika 12 m² z fundamentem to 18 000–25 000 zł netto (źródło: billboard-x.pl, wirtualnygarwolin.pl).
 
 **Czy na billboard potrzebne jest pozwolenie?**
-Zależy od charakteru nośnika. Instalacja tablicy lub urządzenia reklamowego wymaga zwykle zgłoszenia (art. 29 ust. 2 pkt 6 Prawa budowlanego, ok. 30 dni). Wolnostojąca konstrukcja trwale związana z gruntem wymaga pozwolenia na budowę (30–65 dni + 14 dni uprawomocnienia). Konkretne progi powierzchni mogą wynikać z lokalnej uchwały krajobrazowej lub MPZP — dlatego dodatkowo sprawdź przepisy gminy i miejscowy plan zagospodarowania przestrzennego.
+Zależy od charakteru nośnika. Instalacja tablicy lub urządzenia reklamowego wymaga zwykle zgłoszenia (art. 29 ust. 3 pkt 3 lit. c Prawa budowlanego; 21 dni na sprzeciw organu). Wolnostojąca konstrukcja trwale związana z gruntem wymaga pozwolenia na budowę (30–65 dni + 14 dni uprawomocnienia). Konkretne progi powierzchni mogą wynikać z lokalnej uchwały krajobrazowej lub MPZP — dlatego dodatkowo sprawdź przepisy gminy i miejscowy plan zagospodarowania przestrzennego.
 
 **Jakie są standardowe wymiary billboardu?**
 Najpopularniejsze formaty w Polsce to: **12 m²** (5,04×2,38 m — tzw. format podstawowy / „dwunastka"), **48 m²** (12×4 m — najczęstszy przy drogach krajowych) oraz **108 m²** i większe (megaboardy przy autostradach i ekspresówkach). Spotyka się też format 12×3 m, popularny w aglomeracjach. Wybór formatu wpływa zarówno na cenę wynajmu, jak i na wymogi formalne — te mogą zależeć od progów powierzchni ustalonych w lokalnej uchwale krajobrazowej lub MPZP.

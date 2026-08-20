@@ -96,7 +96,7 @@ To najczęściej niedoszacowany element planowania kampanii muralu. Przepisy ró
 
 ### Pozwolenie budowlane
 
-Instalacja tablicy lub urządzenia reklamowego na elewacji wymaga co do zasady zgłoszenia (art. 29 ust. 2 pkt 6 Prawa budowlanego, Dz.U. 2025 poz. 418), a wolnostojące urządzenie reklamowe trwale związane z gruntem — pozwolenia na budowę. Konkretne progi powierzchni (np. 2,5 m²) nie wynikają z ustawy, tylko bywają określane w lokalnych uchwałach krajobrazowych lub miejscowych planach zagospodarowania. Zgoda właściciela nieruchomości jest zawsze wymagana — niezależnie od pozostałych formalności.
+Instalacja tablicy lub urządzenia reklamowego na elewacji wymaga co do zasady zgłoszenia (art. 29 ust. 3 pkt 3 lit. c Prawa budowlanego, Dz.U. 2025 poz. 418), a wolnostojące urządzenie reklamowe trwale związane z gruntem — pozwolenia na budowę. Konkretne progi powierzchni (np. 2,5 m²) nie wynikają z ustawy, tylko bywają określane w lokalnych uchwałach krajobrazowych lub miejscowych planach zagospodarowania. Zgoda właściciela nieruchomości jest zawsze wymagana — niezależnie od pozostałych formalności.
 
 **Wyjątek:** mural artystyczny (bez logotypów, nazw marek, haseł reklamowych) w wielu gminach jest zwolniony z obowiązku uzyskania pozwolenia. Granica między muralem artystycznym a reklamowym jest jednak płynna — decyduje organ administracji.
 
@@ -112,7 +112,7 @@ Gminy z uchwałą krajobrazową nakładają dodatkowe ograniczenia:
 | Wrocław | Brak uchwały krajobrazowej; centrum chroni Park Kulturowy „Stare Miasto" (2014). Poza obszarem Parku brak szczególnych ograniczeń tego typu |
 | Pozostałe gminy | Często brak uchwały — przepisy ogólne |
 
-Okresy dostosowania dla istniejących reklam: 3–5 lat od wejścia uchwały w życie. Kara za nielegalny nośnik naliczana jest zgodnie z art. 37d ustawy krajobrazowej — za każdy dzień w wysokości iloczynu pola powierzchni reklamy (w m²), liczby 40 i zmiennej stawki opłaty reklamowej (0,20 zł/m²/dzień w 2026). Dla przykładu nośnik 12 m² to 12 × 40 × 0,20 = 96 zł dziennie.
+Okresy dostosowania dla istniejących reklam: 3–5 lat od wejścia uchwały w życie. Kara za nielegalny nośnik naliczana jest zgodnie z art. 37d ustawy krajobrazowej — za każdy dzień w wysokości iloczynu pola powierzchni reklamy (w m²), liczby 40 i zmiennej stawki opłaty reklamowej, powiększonego o 40-krotność stawki części stałej (górne stawki ustawowe 2026: 0,20 zł/m²/dzień i 2,50 zł/dzień). Dla przykładu nośnik 12 m² to 12 × 40 × 0,20 + 40 × 2,50 = 196 zł dziennie.
 
 Praktyczna wskazówka: przed podpisaniem umowy z właścicielem ściany sprawdź status uchwały krajobrazowej w danej gminie. Status ten jest różny i dynamiczny — jedne miasta mają egzekwowaną uchwałę (np. Gdańsk), inne dopiero pracują nad projektem (Warszawa), a jeszcze inne nie mają jej wcale (Wrocław, gdzie centrum chroni jednak Park Kulturowy). Weryfikacja aktualnego stanu prawnego minimalizuje ryzyko formalne.
 

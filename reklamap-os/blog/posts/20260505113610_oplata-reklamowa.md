@@ -62,15 +62,15 @@ Dla marketplace takiej jak ReklaMap to oznacza praktyczną zasadę: strony umowy
 
 Jeśli nośnik jest **niezgodny z uchwałą krajobrazową** lub stoi nielegalnie, gmina nakłada karę administracyjną na podstawie **art. 37d ustawy krajobrazowej**, liczoną według wzoru:
 
-> **pole powierzchni reklamy (m²) × 40 × stawka zmienna opłaty reklamowej** za każdy dzień niezgodności.
+> **pole powierzchni reklamy (m²) × 40 × stawka zmienna, powiększone o 40 × stawka stała** — za każdy dzień niezgodności (art. 37d ust. 8).
 
 Dla billboardu 12 m² przy stawkach maksymalnych 2026 wychodzi:
 
-- Dzienna kara: `12 × 40 × 0,20` = **96 zł/dzień**
-- Miesięcznie: **2 880 zł**
-- Rocznie: **35 040 zł**
+- Dzienna kara: `12 × 40 × 0,20 + 40 × 2,50` = **196 zł/dzień**
+- Miesięcznie: **5 880 zł**
+- Rocznie: **71 540 zł**
 
-Porównanie: legalna opłata roczna dla tego samego nośnika to ok. 1 788,50 zł. **Kara jest niemal 20× droższa od opłaty legalnej.** Praktyczny wniosek dla właściciela powierzchni: koszt sprawdzenia statusu prawnego nośnika u prawnika (kilkaset złotych) jest mniejszy niż jeden dzień nielegalnej ekspozycji.
+Porównanie: legalna opłata roczna dla tego samego nośnika to ok. 1 788,50 zł. **Kara jest około 40× droższa od opłaty legalnej.** Praktyczny wniosek dla właściciela powierzchni: koszt sprawdzenia statusu prawnego nośnika u prawnika (kilkaset złotych) jest mniejszy niż jeden dzień nielegalnej ekspozycji.
 
 [Znajdź nośnik z uregulowanym statusem prawnym →](/dodaj-powierzchnie-reklamowa) — jeśli wystawiasz powierzchnię, weryfikacja statusu jest pierwszym krokiem.
 
@@ -90,7 +90,7 @@ Sama uchwała krajobrazowa nie wystarcza — bez uchwały opłatowej fiskus nie 
 | **Kraków** | stawka lokalna niższa od ustawowego maksimum | uchwała gminna, nie pułap MF |
 | **Tarnów** | uchwała z 2023, stawki publikowane corocznie | — |
 
-Kraków jest dobrym punktem odniesienia — miasto uchwaliło stawki niższe niż ustawowe maksimum (są to stawki lokalne, a nie górny limit MF), więc roczna opłata dla billboardu 12 m² wychodzi tam wyraźnie mniej niż ok. 2 997 zł przy stawce maksymalnej. Patrz nasz artykuł o [reklamie outdoor w Krakowie](/blog/lokalizacje/reklama-outdoor-krakow), gdzie pokazujemy pełen kontekst rynkowy.
+Kraków jest dobrym punktem odniesienia — miasto uchwaliło stawki niższe niż ustawowe maksimum (są to stawki lokalne, a nie górny limit MF), więc roczna opłata dla billboardu 12 m² wychodzi tam wyraźnie mniej niż ok. 1 788,50 zł przy stawce maksymalnej. Patrz nasz artykuł o [reklamie outdoor w Krakowie](/blog/lokalizacje/reklama-outdoor-krakow), gdzie pokazujemy pełen kontekst rynkowy.
 
 ## Zwolnienia — kiedy nie zapłacisz
 

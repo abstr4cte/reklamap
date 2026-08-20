@@ -23,7 +23,7 @@ status: draft
 
 # Reklama bez pozwolenia — kary i legalizacja 2026
 
-Za reklamę postawioną bez wymaganych formalności grożą **trzy niezależne rodzaje kar naraz** — i to jest najczęściej niedoceniane ryzyko. Jeden billboard bez pozwolenia może jednocześnie ściągnąć nakaz rozbiórki od nadzoru budowlanego, administracyjną karę krajobrazową liczoną za każdy dzień ekspozycji (przy przykładowej stawce to 80 zł dziennie, czyli 2 400 zł miesięcznie przy nośniku 8 m²) oraz karę za zajęcie pasa drogowego. Co gorsza, zalegalizowanie samej konstrukcji nie zdejmuje pozostałych sankcji. Poniżej tłumaczymy, co dokładnie grozi, ile to realnie kosztuje i jak zalegalizować istniejący nośnik.
+Za reklamę postawioną bez wymaganych formalności grożą **trzy niezależne rodzaje kar naraz** — i to jest najczęściej niedoceniane ryzyko. Jeden billboard bez pozwolenia może jednocześnie ściągnąć nakaz rozbiórki od nadzoru budowlanego, administracyjną karę krajobrazową liczoną za każdy dzień ekspozycji (przy górnych stawkach ustawowych to 164 zł dziennie, czyli ok. 4 900 zł miesięcznie przy nośniku 8 m²) oraz karę za zajęcie pasa drogowego. Co gorsza, zalegalizowanie samej konstrukcji nie zdejmuje pozostałych sankcji. Poniżej tłumaczymy, co dokładnie grozi, ile to realnie kosztuje i jak zalegalizować istniejący nośnik.
 
 ## Trzy reżimy kar, które działają równolegle
 
@@ -47,15 +47,15 @@ Tu nie ma jednej kwoty. Prawo budowlane przewiduje wzór oparty na mnożniku:
 
 > **50 × stawka opłaty × współczynnik kategorii obiektu × współczynnik wielkości**
 
-Dla tablicy lub billboardu wysokość zależy od tego, jak organ zakwalifikuje nośnik. W realnych sprawach opłata legalizacyjna sięga **od wielu tysięcy do kilkudziesięciu tysięcy złotych** — bez ustalenia kategorii obiektu nie da się podać jednej uniwersalnej liczby. To zwykle znacznie więcej niż koszt pozwolenia uzyskanego od razu, legalnie.
+Dla tablicy lub billboardu wysokość zależy od tego, jak organ zakwalifikuje nośnik. Dla wolnostojącego billboardu (budowla, kategoria VIII „inne budowle") wzór z art. 49d ust. 1 pkt 1 w zw. z art. 59f daje **125 000 zł** (50 × 500 zł × k 5,0 × w 1,0). Przy innej kwalifikacji obiektu kwota będzie inna — kategoria przesądza o wyniku. To zwykle znacznie więcej niż koszt pozwolenia uzyskanego od razu, legalnie.
 
 ## Kara krajobrazowa — naliczana za każdy dzień
 
 Kara z art. 37d ustawy o planowaniu i zagospodarowaniu przestrzennym ma charakter administracyjny i biegnie **za każdy dzień** ekspozycji nośnika niezgodnego z uchwałą krajobrazową. Model ustawowy wygląda tak:
 
-> kara dzienna = pole powierzchni (m²) × 40-krotność części zmiennej stawki opłaty reklamowej
+> kara dzienna = pole powierzchni (m²) × 40-krotność części zmiennej stawki opłaty reklamowej, powiększona o 40-krotność stawki części stałej (art. 37d ust. 8)
 
-Konkretną stawkę zmienną ustala gmina w granicach ustawy, więc kwoty różnią się między miastami. Dla przykładu, gdy 40-krotność części zmiennej daje 10 zł za każdy metr kwadratowy dziennie, to przy reklamie o powierzchni 8 m² kara wynosi **80 zł dziennie — czyli 2 400 zł za 30 dni**. Podstawą tych stawek jest [opłata reklamowa](/blog/prawo-i-regulacje/oplata-reklamowa), a zasady, które nośnik może naruszać, znajdziesz w tekście o [uchwale krajobrazowej](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama).
+Konkretną stawkę zmienną ustala gmina w granicach ustawy, więc kwoty różnią się między miastami. Górne stawki ustawowe na 2026 to 0,20 zł/m²/dzień (część zmienna) i 2,50 zł/dzień (część stała), czyli 40-krotności wynoszą odpowiednio 8 zł/m² i 100 zł. Przy reklamie o powierzchni 8 m² daje to **164 zł dziennie — czyli ok. 4 920 zł za 30 dni**. Podstawą tych stawek jest [opłata reklamowa](/blog/prawo-i-regulacje/oplata-reklamowa), a zasady, które nośnik może naruszać, znajdziesz w tekście o [uchwale krajobrazowej](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama).
 
 > **Stawiasz nośnik legalnie i chcesz go wynająć?** Zobacz, jak wygląda rynek powierzchni reklamowych → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe).
 
@@ -70,7 +70,7 @@ Przykład: jeśli stawka opłaty wynosi 2 zł za m² na dzień, to kara sięga 2
 1. **Ustal status nośnika** — czy to obiekt budowlany, roboty budowlane, reklama w pasie drogowym, czy nośnik objęty uchwałą krajobrazową. To determinuje właściwy organ.
 2. **Sprawdź, czy była zgoda budowlana** — pozwolenie albo skuteczne zgłoszenie. Jeśli nie, spodziewaj się postępowania nadzoru budowlanego.
 3. **Zbierz dokumenty legalizacyjne** — tytuł do terenu, projekt lub inwentaryzację, opinie, uzgodnienia i dowody zgodności z przepisami.
-4. **Złóż wniosek lub odpowiedz na postanowienie organu** — w praktyce często jest na to 30 dni od wezwania nadzoru.
+4. **Złóż wniosek lub odpowiedz na postanowienie organu** — na sam wniosek o legalizację jest 30 dni (art. 48a ust. 1), a na dostarczenie dokumentów legalizacyjnych organ wyznacza termin **nie krótszy niż 60 dni** (art. 48b ust. 1).
 5. **Uiść opłatę legalizacyjną** — bez zapłaty legalizacja nie dochodzi do skutku.
 6. **Ureguluj pozostałe warstwy** — jeśli nośnik łamie uchwałę krajobrazową lub zajmuje pas drogowy, osobno usuń naruszenie albo uzyskaj wymagane zezwolenia.
 
@@ -86,7 +86,7 @@ Przykład: jeśli stawka opłaty wynosi 2 zł za m² na dzień, to kara sięga 2
 Trzy niezależne sankcje: postępowanie nadzoru budowlanego (legalizacja albo nakaz rozbiórki), administracyjna kara krajobrazowa liczona za każdy dzień oraz kara za zajęcie pasa drogowego, jeśli nośnik stoi w pasie.
 
 **Ile wynosi kara za nielegalną reklamę?**
-Nie ma jednej kwoty. Kara krajobrazowa biegnie dziennie i wynosi pole powierzchni × 40-krotność części zmiennej stawki opłaty reklamowej — przy przykładowej stawce 80 zł dziennie (2 400 zł miesięcznie przy 8 m²). Kara drogowa to 10-krotność opłaty za zajęcie pasa, a opłata legalizacyjna liczona jest osobnym wzorem i sięga od kilku do kilkudziesięciu tysięcy złotych.
+Nie ma jednej kwoty. Kara krajobrazowa biegnie dziennie i wynosi pole powierzchni × 40-krotność części zmiennej stawki opłaty reklamowej, powiększone o 40-krotność części stałej — przy górnych stawkach ustawowych to 164 zł dziennie (ok. 4 920 zł miesięcznie przy 8 m²). Kara drogowa to 10-krotność opłaty za zajęcie pasa, a opłata legalizacyjna liczona jest osobnym wzorem i dla wolnostojącego billboardu sięga 125 000 zł.
 
 **Czy nielegalny billboard trzeba rozebrać?**
 Niekoniecznie. Jeśli obiekt kwalifikuje się do legalizacji i spełnisz jej warunki, można go zalegalizować. Rozbiórka grozi, gdy legalizacja jest niemożliwa lub inwestor nie dopełni jej warunków.

@@ -24,7 +24,7 @@ status: draft
 
 # Reklama outdoor Bydgoszcz 2026 — cennik MZK, mobilna
 
-Reklama outdoor Bydgoszcz ma jedną cechę, której nie ma większość polskich rynków OOH — **publiczny cennik MZK**. Fullback całego autobusu to 1 000 zł netto miesięcznie, jedna burta autobusu krótkiego — 700 zł, długiego — 1 000 zł, a powierzchnia na obiektach MZK — 70 zł netto za 1 m²/mies. (cennik MZK Bydgoszcz 2025). Drugi wyróżnik widać dopiero w danych wyszukiwarek: **reklama mobilna w Bydgoszczy jest realną kategorią z udokumentowanym popytem online**, w odróżnieniu od większości miast tej skali. Bydgoszcz to 8. miasto Polski (~347 tys. mieszkańców) i część aglomeracji BTOF (Bydgoszcz + Toruń + okoliczne gminy = ok. 650–700 tys.), więc operatorzy regionalni sprzedają kampanie pakietowe na cały obszar. Ten przewodnik pokazuje, jak grać tym rynkiem z obu stron — jako reklamodawca i jako właściciel nośnika.
+Reklama outdoor Bydgoszcz ma jedną cechę, której nie ma większość polskich rynków OOH — **publiczny cennik MZK**. Fullback (tył autobusu: szyba i powierzchnia lakierowana) to 1 000 zł netto miesięcznie, a powierzchnia na obiektach MZK — 70 zł za m², a powierzchnia na obiektach MZK — 70 zł netto za 1 m²/mies. (cennik MZK Bydgoszcz 2025). Drugi wyróżnik widać dopiero w danych wyszukiwarek: **reklama mobilna w Bydgoszczy jest realną kategorią z udokumentowanym popytem online**, w odróżnieniu od większości miast tej skali. Bydgoszcz to 8. miasto Polski (~347 tys. mieszkańców) i część aglomeracji BTOF (Bydgoszcz + Toruń + okoliczne gminy = ok. 650–700 tys.), więc operatorzy regionalni sprzedają kampanie pakietowe na cały obszar. Ten przewodnik pokazuje, jak grać tym rynkiem z obu stron — jako reklamodawca i jako właściciel nośnika.
 
 ## Rynek w liczbach — Bydgoszcz i aglomeracja BTOF
 
@@ -32,26 +32,27 @@ Bydgoszcz jest na pograniczu G8 i G10 — w zależności od kryteriów rankingu.
 
 | Wskaźnik | Wartość |
 |---|---|
-| Ludność Bydgoszczy (szac. 2025) | ok. 347 000 osób |
+| Osoby przebywające w Bydgoszczy (GUS, dane eksperymentalne „Ślady życia", koniec 2025) | ok. 347 900 |
+| Ludność wg oficjalnego bilansu GUS (31.12.2024) | 324 984 |
 | Aglomeracja BTOF (Bydgoszcz + Toruń + gminy) | ok. 650–700 tys. |
 | Pozycja w PL | Top 10 (G8–G10 zależnie od kryteriów) |
-| Lotnisko Bydgoszcz (BYD) — pasażerowie 2024 | ok. 300–400 tys. pax/rok |
+| Lotnisko Bydgoszcz (BZG) — pasażerowie 2024 | ok. 300–400 tys. pax/rok |
 | Bydgoszcz Główna (kolej) | Duży węzeł regionalny + Intercity |
 | AADT Trasa W-Z / Rondo Toruńskie | szac. kilkadziesiąt tys. pojazdów/dobę |
 | AADT A1 (węzeł Bydgoszcz) | szac. 20–60 tys. pojazdów/dobę |
 
-Bydgoszcz funkcjonuje **w dwóch logikach jednocześnie**: jako lokalny rynek konsumencki ~347 tys. i jako 8. rynek pracy oraz tranzytu w PL. Najwięksi operatorzy regionalni zwykle wystawiają oferty łączone "Bydgoszcz + Toruń" — to standard rynkowy, choć formalności (pozwolenia, uchwały) załatwia się osobno w każdej gminie. Sprawdź [aktualne ogłoszenia powierzchni reklamowych →](/powierzchnie-reklamowe) w Bydgoszczy, jeśli chcesz porównać konkretne lokalizacje.
+Bydgoszcz funkcjonuje **w dwóch logikach jednocześnie**: jako lokalny rynek konsumencki ~325–348 tys. (zależnie od metodologii GUS) i jako 8. rynek pracy oraz tranzytu w PL. Najwięksi operatorzy regionalni zwykle wystawiają oferty łączone "Bydgoszcz + Toruń" — to standard rynkowy, choć formalności (pozwolenia, uchwały) załatwia się osobno w każdej gminie. Sprawdź [aktualne ogłoszenia powierzchni reklamowych →](/powierzchnie-reklamowe) w Bydgoszczy, jeśli chcesz porównać konkretne lokalizacje.
 
-## MZK Bydgoszcz — jedyny w PL z publicznym, prostym cennikiem reklamy
+## MZK Bydgoszcz — publiczny, prosty cennik reklamy
 
-Tu Bydgoszcz wyłamuje się ze schematu. MZK Bydgoszcz publikuje cennik reklamy na taborze bez "zapytaj o ofertę". Cztery stawki, żeby skalkulować kampanię w 30 sekund:
+MZK Bydgoszcz publikuje cennik reklamy na taborze bez „zapytaj o ofertę" — podobnie jak ZTM GZM czy MPK Lublin, co wciąż nie jest regułą na polskim rynku. Stawki pozwalają skalkulować kampanię od ręki:
 
 | Format MZK Bydgoszcz | Stawka netto/mies. (2025) |
 |---|---|
-| **Fullback (cały autobus)** | **1 000 zł** |
-| Jedna burta autobusu krótkiego | 700 zł |
-| Jedna burta autobusu długiego | 1 000 zł |
+| **Fullback** (tył autobusu: szyba i powierzchnia lakierowana) | **1 000 zł** |
 | Powierzchnia na obiektach MZK | 70 zł / 1 m² |
+| Ekran LCD w tramwaju Swing 122 NaB (15 s, 7 dni) | 2 000 zł |
+| Ramka A3 w tramwaju (min. 12 szt.) | 25 zł / szt. |
 
 Plus rabaty przy dłuższych umowach — szczegóły dogadywane bezpośrednio z biurem reklamy MZK. To kontrast z [Olsztynem](/blog/lokalizacje/reklama-outdoor-olsztyn), gdzie MPK nie publikuje cennika, i jakościowo wygodniejsza sytuacja niż w [Łodzi](/blog/lokalizacje/reklama-outdoor-lodz), gdzie cennik MPK trzeba uzyskać przez kontakt z biurem reklamy. **Insight ekspercki:** w mieście, gdzie cały rynek billboardów wycenia indywidualnie, twardo opublikowany cennik MZK staje się punktem odniesienia — reklamodawca, który zna stawki MZK, ma zakotwiczenie negocjacyjne dla całej kampanii regionalnej.
 
@@ -65,7 +66,7 @@ W odróżnieniu od MZK, lokalni operatorzy billboardów (Billboard-X, Wedo, siec
 | Główne arterie (Trasa W-Z, Rondo Toruńskie) | 1 500–3 500 zł netto/mies. |
 | Osiedla dużego zasięgu (Fordon, Bartodzieje, Wyżyny) | 800–2 000 zł netto/mies. |
 
-Citylighty klasyczne (1,2×1,8 m) to ok. 300–1 200 zł netto/mies. (centrum vs osiedle), a [citylighty digital / DOOH](/blog/poradniki/citylight-reklama) w punktach premium (galerie, węzły) — 700–6 000 zł netto/mies. Banery elewacyjne w Śródmieściu i Starym Mieście to dla krótkich kampanii (1–3 mies.) 1 500–8 000 zł netto/mies., z najwyższymi stawkami za fasady przy Rynku. Reklama na lotnisku Bydgoszcz (BYD) — citylight w terminalu ok. 1 000–4 000 zł netto/mies., ekran digital za kampanię tygodniową 2 000–10 000 zł netto. Lotnisko nie ma publicznego cennika — negocjacje indywidualne.
+Citylighty klasyczne (1,2×1,8 m) to ok. 300–1 200 zł netto/mies. (centrum vs osiedle), a [citylighty digital / DOOH](/blog/poradniki/citylight-reklama) w punktach premium (galerie, węzły) — 700–6 000 zł netto/mies. Banery elewacyjne w Śródmieściu i Starym Mieście to dla krótkich kampanii (1–3 mies.) 1 500–8 000 zł netto/mies., z najwyższymi stawkami za fasady przy Rynku. Reklama na lotnisku Bydgoszcz (BZG) — citylight w terminalu ok. 1 000–4 000 zł netto/mies., ekran digital za kampanię tygodniową 2 000–10 000 zł netto. Lotnisko nie ma publicznego cennika — negocjacje indywidualne.
 
 Pełną metodologię kalkulacji znajdziesz w naszym pillarze [ile kosztuje reklama outdoor](/blog/poradniki/ile-kosztuje-reklama-outdoor).
 
@@ -144,7 +145,7 @@ Dla reklamy stadionowej / sportowej warto sprawdzić ofertę **klubu żużlowego
 ## Najczęściej zadawane pytania
 
 **Ile kosztuje reklama na autobusie MZK Bydgoszcz?**
-MZK Bydgoszcz ma publiczny cennik (2025): fullback całego autobusu to 1 000 zł netto/mies., jedna burta autobusu krótkiego — 700 zł, długiego — 1 000 zł, a powierzchnia na obiektach MZK — 70 zł netto za 1 m²/mies. Rabaty przy dłuższych umowach negocjuje się bezpośrednio z biurem reklamy MZK. To jeden z najprostszych cenników reklamy MPK w skali Polski.
+MZK Bydgoszcz ma publiczny cennik: fullback (tył autobusu — szyba i powierzchnia lakierowana) to 1 000 zł netto/mies., ekran LCD w tramwaju Swing 122 NaB od 1 500 zł netto za 7 dni, a powierzchnia na obiektach MZK — 70 zł netto za 1 m²/mies. Rabaty przy dłuższych umowach negocjuje się bezpośrednio z biurem reklamy MZK. To jeden z najprostszych cenników reklamy MPK w skali Polski.
 
 **Ile kosztuje billboard w Bydgoszczy?**
 W zależności od strefy: Śródmieście / Mosty / Rynek — 2 000–6 000 zł netto/mies. za 18 m² (6×3 m); główne arterie (Trasa W-Z, Rondo Toruńskie) — 1 500–3 500 zł; osiedla (Fordon, Bartodzieje, Wyżyny) — 800–2 000 zł. Widełki to szacunki z ofert lokalnych operatorów 2025–2026 — brak jednolitego cennika publicznego, każda kampania wyceniana indywidualnie.
@@ -158,7 +159,7 @@ Nie — Bydgoszcz nie uchwaliła kompleksowej uchwały krajobrazowej. Reklamy po
 **Co to jest aglomeracja BTOF i czy warto kupować reklamę pakietowo?**
 BTOF — Bydgosko-Toruński Obszar Funkcjonalny — to aglomeracja Bydgoszcz + Toruń + okoliczne gminy, łącznie ok. 650–700 tys. mieszkańców. Operatorzy regionalni standardowo sprzedają kampanie pakietowe BTOF, co zwykle daje lepsze CPM niż kupowanie obu miast osobno. Ale formalności (pozwolenia, opłaty za pas drogowy) załatwia się osobno w każdej gminie — regulacje reklamowe nie są zharmonizowane.
 
-**Jakie są ceny reklamy na lotnisku Bydgoszcz (BYD)?**
+**Jakie są ceny reklamy na lotnisku Bydgoszcz (BZG)?**
 Lotnisko Bydgoszcz im. Paderewskiego obsłużyło w 2024 ok. 300–400 tys. pasażerów rocznie. Citylight w terminalu kosztuje orientacyjnie 1 000–4 000 zł netto/mies., ekran digital za kampanię tygodniową — 2 000–10 000 zł netto. Lotnisko nie ma jednolitego publicznego cennika, negocjacje prowadzi się indywidualnie z administracją lub operatorem powierzchni reklamowych.
 
 ---

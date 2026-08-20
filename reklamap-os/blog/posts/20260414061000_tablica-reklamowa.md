@@ -89,7 +89,7 @@ Szukasz gotowej powierzchni reklamowej w swojej okolicy? Przeglądaj dostępne n
 
 Regulacje dotyczące tablic reklamowych w Polsce nakłada ustawa krajobrazowa oraz Prawo budowlane.
 
-**Prawo budowlane** (Dz.U. 2025 poz. 418) rozróżnia dwa tryby. Instalacja tablicy lub urządzenia reklamowego wymaga zwykle **zgłoszenia** (art. 29 ust. 2 pkt 6), natomiast wolnostojące urządzenie reklamowe trwale związane z gruntem wymaga **pozwolenia na budowę**. Ustawa nie ustanawia uniwersalnego progu powierzchni — konkretne limity (np. 2,5 m² czy 12 m²) mogą wynikać z lokalnej uchwały krajobrazowej lub miejscowego planu, nie z samej ustawy. Zawsze weryfikuj tryb w urzędzie gminy w zależności od sposobu mocowania i lokalnych przepisów.
+**Prawo budowlane** (Dz.U. 2025 poz. 418) rozróżnia dwa tryby. Instalacja tablicy lub urządzenia reklamowego wymaga zwykle **zgłoszenia** (art. 29 ust. 3 pkt 3 lit. c), natomiast wolnostojące urządzenie reklamowe trwale związane z gruntem wymaga **pozwolenia na budowę**. Ustawa nie ustanawia uniwersalnego progu powierzchni — konkretne limity (np. 2,5 m² czy 12 m²) mogą wynikać z lokalnej uchwały krajobrazowej lub miejscowego planu, nie z samej ustawy. Zawsze weryfikuj tryb w urzędzie gminy w zależności od sposobu mocowania i lokalnych przepisów.
 
 **Uchwały krajobrazowe** to lokalne przepisy gminy (podstawa: art. 37a ustawy z 27.03.2003 o planowaniu i zagospodarowaniu przestrzennym), które precyzują gdzie, jakiej wielkości i w jakim standardzie technicznym można stawiać tablice. Na koniec 2025 roku uchwały krajobrazowe przyjęło 82 gminy w Polsce. Poznań posiada uchwałę obowiązującą od 5 sierpnia 2023 roku — sąd uchylił jedynie przepisy przejściowe, a NSA (18.03.2026) utrzymał samą uchwałę w mocy. Warszawa jest na etapie projektu (przystąpienie do sporządzenia uchwały w 2025 roku), więc nowe strefy nie są jeszcze prawem miejscowym. Przed realizacją inwestycji zawsze sprawdź stan przepisów w urzędzie gminy lub z pomocą prawnika.
 
@@ -129,7 +129,7 @@ Przy większych zamówieniach lub niestandardowych konstrukcjach warto zapytać 
 ## Najczęściej zadawane pytania
 
 **Czy tablica reklamowa wymaga pozwolenia na budowę?**
-To zależy od sposobu montażu. Zgodnie z Prawem budowlanym (Dz.U. 2025 poz. 418) instalacja tablicy lub urządzenia reklamowego wymaga zwykle zgłoszenia (art. 29 ust. 2 pkt 6), a wolnostojące urządzenie trwale związane z gruntem — pozwolenia na budowę. Ustawa nie ustala uniwersalnego progu powierzchni; konkretne limity (np. 2,5 m² czy 12 m²) mogą wynikać z lokalnej uchwały krajobrazowej lub planu miejscowego. Sprawdź tryb w urzędzie gminy lub z prawnikiem przed realizacją.
+To zależy od sposobu montażu. Zgodnie z Prawem budowlanym (Dz.U. 2025 poz. 418) instalacja tablicy lub urządzenia reklamowego wymaga zwykle zgłoszenia (art. 29 ust. 3 pkt 3 lit. c), a wolnostojące urządzenie trwale związane z gruntem — pozwolenia na budowę. Ustawa nie ustala uniwersalnego progu powierzchni; konkretne limity (np. 2,5 m² czy 12 m²) mogą wynikać z lokalnej uchwały krajobrazowej lub planu miejscowego. Sprawdź tryb w urzędzie gminy lub z prawnikiem przed realizacją.
 
 **Czym różni się szyld od tablicy reklamowej?**
 Szyld to szczególny rodzaj tablicy reklamowej, który informuje wyłącznie o działalności prowadzonej na danej nieruchomości (np. "tu jest sklep X"). Tablica reklamowa może reklamować cokolwiek — również firmy spoza tej lokalizacji. Szyld często podlega łagodniejszym wymogom formalnym, ale szczegóły zależą od lokalnej uchwały krajobrazowej.

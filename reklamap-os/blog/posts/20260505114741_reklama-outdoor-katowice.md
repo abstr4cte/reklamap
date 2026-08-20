@@ -54,11 +54,11 @@ Najciekawsze dla reklamodawcy jest to, **co dostajesz za pieniądze** w porówna
 | [Wrocław](/blog/lokalizacje/reklama-outdoor-wroclaw) | 2 000–4 000 zł | ~1,3× |
 | [Kraków](/blog/lokalizacje/reklama-outdoor-krakow) | 2 500–5 000 zł | ~1,7× |
 
-Katowice są **"tanim dużym miastem"** — niższy próg wejścia niż Kraków i Wrocław, ale skala odbiorców porównywalna (a w segmencie B2B nawet większa, bo GZM zlepia 14 miast w jeden rynek pracy i konsumpcji). To przekłada się na konkretną przewagę: budżet na kampanię testową w Katowicach starcza często na 1,5–2× więcej nośników niż ten sam budżet w Krakowie.
+Katowice są **"tanim dużym miastem"** — niższy próg wejścia niż Kraków i Wrocław, ale skala odbiorców porównywalna (a w segmencie B2B nawet większa, bo GZM zlepia 41 gmin — w tym 13 miast na prawach powiatu — w jeden rynek pracy i konsumpcji). To przekłada się na konkretną przewagę: budżet na kampanię testową w Katowicach starcza często na 1,5–2× więcej nośników niż ten sam budżet w Krakowie.
 
 ## ZTM GZM — najtańszy próg wejścia w transport aglomeracji
 
-Tu Katowice mają unikatową przewagę: **oficjalny, publiczny cennik ZTM GZM** dla reklamy w autobusach całej aglomeracji. Większość polskich miast (poza MPK Łódź i MPK Kraków) takiego taryfikatora nie publikuje — w GZM po prostu wiesz, ile zapłacisz:
+Tu Katowice mają unikatową przewagę: **oficjalny, publiczny cennik ZTM GZM** dla reklamy w autobusach całej aglomeracji. Publiczny taryfikator ma też m.in. MPK Lublin i MZK Bydgoszcz, ale wciąż nie jest to reguła — większość miast takiego cennika nie publikuje — w GZM po prostu wiesz, ile zapłacisz:
 
 | Format reklamy | Tabor A/B/C | Tabor M |
 |---|---|---|

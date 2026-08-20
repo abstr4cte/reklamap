@@ -77,7 +77,7 @@ Jak wybrać odpowiedni nośnik dla swojej kampanii? → [Jak wybrać powierzchni
 
 Ekran LED to nośnik stały i podlega tym samym przepisom co billboard (źródło: kancelaria-dzierwa.pl, ideanovum.pl):
 
-- **Formalności budowlane:** instalacja tablicy lub urządzenia reklamowego wymaga **zgłoszenia** (art. 29 ust. 2 pkt 6 Prawa budowlanego, Dz.U. 2025 poz. 418), a wolnostojące urządzenie trwale związane z gruntem — **pozwolenia na budowę**; konkretne progi powierzchni (np. 2,5 czy 12 m²) mogą wynikać z lokalnych uchwał lub MPZP, nie z samej ustawy
+- **Formalności budowlane:** instalacja tablicy lub urządzenia reklamowego wymaga **zgłoszenia** (art. 29 ust. 3 pkt 3 lit. c Prawa budowlanego, Dz.U. 2025 poz. 418), a wolnostojące urządzenie trwale związane z gruntem — **pozwolenia na budowę**; konkretne progi powierzchni (np. 2,5 czy 12 m²) mogą wynikać z lokalnych uchwał lub MPZP, nie z samej ustawy
 - **Uchwały krajobrazowe** obejmują ekrany LED — gminy regulują wymiary, lokalizację i strefy ochronne
 - **Ograniczenia emisji:** zakaz działania po **22:00** w strefach mieszkaniowych (przepisy lokalne), zakaz migających i pulsujących treści
 
@@ -97,7 +97,7 @@ Od ~35 zł za pojedynczą emisję i ~600 zł/mc za mały telebim do 50 000 zł/m
 Billboard to statyczny nośnik z wydrukowaną grafiką — jeden reklamodawca, wyłączność, brak możliwości zmiany treści bez druku. Telebim emituje animacje i filmy, obsługuje wielu reklamodawców w rotacji i pozwala zmieniać kreację zdalnie w ciągu minut.
 
 **Czy telebim wymaga pozwolenia?**
-Instalacja urządzenia reklamowego wymaga zgłoszenia (art. 29 ust. 2 pkt 6 Prawa budowlanego, Dz.U. 2025 poz. 418), a wolnostojący ekran trwale związany z gruntem — pozwolenia na budowę. Konkretne progi powierzchni bywają ustalane lokalnie w uchwałach lub MPZP, nie w samej ustawie. Uchwały krajobrazowe dotyczą również ekranów LED. Dodatkowe ograniczenia: zakaz emisji po 22:00 w strefach mieszkaniowych i zakaz migających treści.
+Instalacja urządzenia reklamowego wymaga zgłoszenia (art. 29 ust. 3 pkt 3 lit. c Prawa budowlanego, Dz.U. 2025 poz. 418), a wolnostojący ekran trwale związany z gruntem — pozwolenia na budowę. Konkretne progi powierzchni bywają ustalane lokalnie w uchwałach lub MPZP, nie w samej ustawie. Uchwały krajobrazowe dotyczą również ekranów LED. Dodatkowe ograniczenia: zakaz emisji po 22:00 w strefach mieszkaniowych i zakaz migających treści.
 
 ---
 

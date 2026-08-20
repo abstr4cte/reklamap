@@ -86,9 +86,9 @@ Nie wiesz, który format pasuje do Twojej kampanii? → [Jak wybrać powierzchni
 
 Baner reklamowy to nośnik tymczasowy, ale przepisy i tak obowiązują (źródło: Prawo budowlane, Dz.U. 2025 poz. 418; ustawa krajobrazowa 2015):
 
-- **Instalacja tablicy/urządzenia reklamowego** — co do zasady wymaga zgłoszenia (art. 29 ust. 2 pkt 6 Prawa budowlanego). Obiekty tymczasowe podlegają odrębnemu reżimowi terminowemu.
+- **Instalacja tablicy/urządzenia reklamowego** — co do zasady wymaga zgłoszenia (art. 29 ust. 3 pkt 3 lit. c Prawa budowlanego). Obiekty tymczasowe podlegają odrębnemu reżimowi terminowemu.
 - **Wolnostojące urządzenie reklamowe trwale związane z gruntem** — wymaga pozwolenia na budowę. Konkretne progi powierzchni (np. 2,5 czy 3 m²) mogą wynikać z lokalnych uchwał lub MPZP, nie z ustawy. W pasie drogowym dodatkowo potrzebne jest zezwolenie zarządcy drogi (art. 40 ustawy o drogach publicznych).
-- **Ustawa krajobrazowa** — gminy z uchwałą mogą zakazać wielkoformatowych banerów w określonych strefach. Kara za nielegalny nośnik (art. 37d ustawy krajobrazowej): powierzchnia w m² × 40 × zmienna stawka opłaty reklamowej, za każdy dzień. Przykład dla banera 12 m²: 12 × 40 × 0,20 zł = 96 zł/dzień.
+- **Ustawa krajobrazowa** — gminy z uchwałą mogą zakazać wielkoformatowych banerów w określonych strefach. Kara za nielegalny nośnik (art. 37d ustawy krajobrazowej): powierzchnia w m² × 40 × zmienna stawka opłaty reklamowej, powiększone o 40 × stawka stała, za każdy dzień. Przykład dla banera 12 m² przy górnych stawkach ustawowych: 12 × 40 × 0,20 + 40 × 2,50 = 196 zł/dzień.
 
 Praktyczna wskazówka: obiekty tymczasowe podlegają odrębnemu reżimowi terminowemu, więc krótka kampania sezonowa ma zwykle prostsze wymogi niż ekspozycja całoroczna. Przed montażem sprawdź, czy w danej gminie obowiązuje uchwała krajobrazowa i jakie limity nakłada.
 
@@ -103,7 +103,7 @@ Druk banera PCV to 30–80 zł/m² netto (kiwigifts.pl). Baner 5×2,4 m (12 m²)
 Druk PCV standard: 30–80 zł/m² netto. Mesh (siatka): 10–20% drożej. Baner tekstylny: 20–30% taniej. Cena finalna zależy od gramatury folii, rodzaju druku (UV/ekosolwent) i wykończenia (oczka, liny).
 
 **Czy baner reklamowy wymaga pozwolenia?**
-Instalacja tablicy lub urządzenia reklamowego co do zasady wymaga zgłoszenia (art. 29 ust. 2 pkt 6 Prawa budowlanego, Dz.U. 2025 poz. 418), a wolnostojące urządzenie trwale związane z gruntem — pozwolenia na budowę. Obiekty tymczasowe podlegają odrębnemu reżimowi terminowemu. Konkretne progi powierzchni bywają określane lokalnie (uchwała krajobrazowa, MPZP), a w pasie drogowym potrzebne jest zezwolenie zarządcy drogi.
+Instalacja tablicy lub urządzenia reklamowego co do zasady wymaga zgłoszenia (art. 29 ust. 3 pkt 3 lit. c Prawa budowlanego, Dz.U. 2025 poz. 418), a wolnostojące urządzenie trwale związane z gruntem — pozwolenia na budowę. Obiekty tymczasowe podlegają odrębnemu reżimowi terminowemu. Konkretne progi powierzchni bywają określane lokalnie (uchwała krajobrazowa, MPZP), a w pasie drogowym potrzebne jest zezwolenie zarządcy drogi.
 
 **Kiedy wybrać mesh zamiast PCV?**
 Gdy baner będzie na wysokim budynku, w strefie wietrznej (miasto nadmorskie), na elewacji z oknami lub ma duży format (>50 m²). Mesh przepuszcza wiatr i światło — tam gdzie PCV mogłoby się zerwać lub zaciemnić wnętrze, mesh działa bez problemu.

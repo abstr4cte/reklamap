@@ -1,5 +1,5 @@
 <!--
-ANGLE: Reklama outdoor w Olsztynie 2026 — rynek ofertowy (a nie cennikowy), brama Mazur z sezonowym wahaniem stawek, jedyne miasto <200 tys. mieszkańców z tramwajem (MPK 48 mln pasażerów/rok) i uchwała krajobrazowa wciąż w procedowaniu — okno czasowe, którego nie ma już Gdańsk (egzekwowana UKO od 2018).
+ANGLE: Reklama outdoor w Olsztynie 2026 — rynek ofertowy (a nie cennikowy), brama Mazur z sezonowym wahaniem stawek, jedno z niewielu miast poniżej 200 tys. mieszkańców z tramwajem (ponad 47 mln pasażerów/rok) i uchwała krajobrazowa wciąż w procedowaniu — okno czasowe, którego nie ma już Gdańsk (egzekwowana UKO od 2018).
 -->
 ---
 title: "Reklama outdoor Olsztyn 2026 — ceny, MPK, przepisy"
@@ -23,7 +23,7 @@ status: draft
 
 # Reklama outdoor Olsztyn 2026 — ceny, MPK, przepisy
 
-Reklama outdoor Olsztyn działa na innej zasadzie niż Warszawa czy Łódź — to **rynek ofertowy, nie cennikowy**. Lokalni operatorzy nie publikują widełek za billboard 6×3 m per dzielnica, więc każdą kampanię wycenia się indywidualnie. Miasto ma 165 855 mieszkańców (GUS, 1. połowa 2025 — spadek z 166 392) i jest najmniejszą stolicą województwa w Polsce. Ale liczy się tu coś innego: **48 mln pasażerów komunikacji miejskiej w 2024 roku**, 15,1% udział w noclegach regionu Warmii i Mazur oraz unikalna konfiguracja — tramwaje od 2015, projekt uchwały krajobrazowej wciąż w procedowaniu i sezon Mazur, który wynosi stawki w lipcu i sierpniu. Ten przewodnik pokazuje, jak grać tym rynkiem z obu stron — jako reklamodawca i jako właściciel nośnika.
+Reklama outdoor Olsztyn działa na innej zasadzie niż Warszawa czy Łódź — to **rynek ofertowy, nie cennikowy**. Lokalni operatorzy nie publikują widełek za billboard 6×3 m per dzielnica, więc każdą kampanię wycenia się indywidualnie. Miasto ma 165 855 mieszkańców (GUS, 1. połowa 2025 — spadek z 166 392) i należy do mniejszych stolic województw w Polsce. Ale liczy się tu coś innego: **48 mln pasażerów komunikacji miejskiej w 2024 roku**, 15,1% udział w noclegach regionu Warmii i Mazur oraz unikalna konfiguracja — tramwaje od 2015, projekt uchwały krajobrazowej wciąż w procedowaniu i sezon Mazur, który wynosi stawki w lipcu i sierpniu. Ten przewodnik pokazuje, jak grać tym rynkiem z obu stron — jako reklamodawca i jako właściciel nośnika.
 
 ## Olsztyn w liczbach — dlaczego mały rynek nie znaczy słaby
 
@@ -32,9 +32,9 @@ Pozycja Olsztyna w polskim OOH jest niedoceniana, bo ranking liczy się główni
 | Wskaźnik | Wartość | Co z tego wynika |
 |---|---|---|
 | Ludność (GUS 1H 2025) | 165 855 osób | Najmniejsza stolica województwa — mały rynek konsumencki |
-| Pasażerowie komunikacji miejskiej (2024) | ~48 mln | Mocny argument za transit advertising |
+| Pasażerowie komunikacji miejskiej (2024) | ponad 47 mln | Mocny argument za transit advertising |
 | Udział w noclegach regionu (2024) | 15,1% | Baza turystyczna Warmii i Mazur |
-| Praca przewozowa MPK 2024 | 7,6 mln km autobusy + 1,4 mln km tramwaje | Pełna skala nośników transit |
+| Praca przewozowa MPK 2024 (wykonanie) | 5,4 mln wozokm autobusy + 1,5 mln pockm tramwaje | Pełna skala nośników transit |
 | Przychód MPK ze sprzedaży biletów 2024 | 37,13 mln zł | Sygnał stabilnego ruchu pasażerskiego |
 
 Olsztyn rządzi się logiką **tranzytu i sezonu**, a nie liczbą mieszkańców. Reklamodawca, który planuje zasięg jak w Warszawie, przepłaca. Operator nośnika, który ustawia cennik liniowo (taka sama stawka cały rok), zostawia pieniądze na stole. Sprawdź [aktualne ogłoszenia powierzchni reklamowych →](/powierzchnie-reklamowe) w Olsztynie, jeśli chcesz porównać konkretne lokalizacje.
@@ -63,12 +63,12 @@ Olsztyn dzieli się na strefy o bardzo różnej wartości reklamowej. Cztery kat
 
 W praktyce **najważniejsza decyzja w Olsztynie to wybór między ekspozycją wizerunkową w centrum a zasięgiem tranzytowym przy DK16** — bo budżet, który w Warszawie kupi jedną lokalizację, w Olsztynie kupi pakiet 5–7 punktów na arteriach wjazdowych.
 
-## MPK Olsztyn — jedyne miasto poniżej 200 tys. z tramwajem
+## MPK Olsztyn — tramwaj w mieście poniżej 200 tys. mieszkańców
 
-Tu Olsztyn ma przewagę, której nie ma żaden inny rynek tej skali. Po 50 latach przerwy tramwaje wróciły do miasta w 2015 roku, a tabor opiera się na nowoczesnych Solaris Tramino. Razem z autobusami daje to skalę:
+Po 50 latach przerwy tramwaje wróciły do miasta w 2015 roku — Olsztyn dołączył do wąskiej grupy mniejszych miast z siecią tramwajową (obok Grudziądza i Torunia). Tabor to 15 wozów Solaris Tramino i 12 Durmazlar Panorama. Razem z autobusami daje to skalę:
 
-- ~48 mln pasażerów rocznie (2024) — porównywalne z miastami 2–3× większymi.
-- 7,6 mln km autobusowej pracy przewozowej + 1,4 mln km tramwajowej.
+- Ponad 47 mln pasażerów rocznie (2024, wzrost o ok. 21% r/r) — porównywalne z miastami 2–3× większymi.
+- 5,4 mln wozokilometrów autobusowej pracy przewozowej + 1,5 mln pockilometrów tramwajowej (wykonanie 2024; pierwotne założenie umowy było wyższe i zostało zredukowane).
 - Sieć przebiegająca przez wszystkie kluczowe węzły: Dworzec Główny, Centrum, Jaroty, Kortowo (kampus UWM).
 - W 2025 zaplanowano cięcie pracy o 80,8 tys. km — to ostrzeżenie, że nie wszystkie linie są jednakowo trwałe.
 
@@ -134,7 +134,7 @@ Nie — na 2026 projekt uchwały krajobrazowej Olsztyna jest dopiero w procedowa
 Zależy od celu kampanii. Pod wizerunek — Śródmieście i ul. Piłsudskiego (ale uwaga na nadchodzącą UKO). Pod retail — okolice Galerii Warmińskiej i Aury Centrum. Pod zasięg regionalny i ruch turystyczny na Mazury — arterie tranzytowe DK16, DK51, al. Sikorskiego. Pod kampanie sąsiedztwa — Jaroty, Pieczewo, Nagórki, Kortowo.
 
 **Czy reklama w MPK Olsztyn ma sens przy 165 tys. mieszkańców?**
-Tak. MPK Olsztyn obsłużyło w 2024 około 48 mln pasażerów rocznie — to skala porównywalna z miastami 2–3× większymi. Olsztyn jest jedynym miastem w Polsce poniżej 200 tys. mieszkańców z aktywnym systemem tramwajowym (od 2015, tabor Solaris Tramino). Transport publiczny zwykle nie podlega uchwale krajobrazowej, co dodatkowo czyni z MPK najbezpieczniejszą opcję na 2026–2027.
+Tak. Komunikacja miejska w Olsztynie obsłużyła w 2024 ponad 47 mln pasażerów — to skala porównywalna z miastami 2–3× większymi. Olsztyn należy do wąskiej grupy miast w Polsce poniżej 200 tys. mieszkańców z aktywnym systemem tramwajowym (od 2015, tabor Solaris Tramino). Transport publiczny zwykle nie podlega uchwale krajobrazowej, co dodatkowo czyni z MPK najbezpieczniejszą opcję na 2026–2027.
 
 **Czy stawki za reklamę outdoor w Olsztynie rosną w sezonie letnim?**
 W praktyce powinny rosnąć — Olsztyn jest bazą turystyczną Mazur (15,1% udział w noclegach regionu w 2024), a lato to ~150 imprez miejskich i Dni Olsztyna w lipcu (Jarmark Jakubowy). Dla nośników przy arteriach tranzytowych dopłata sezonowa jest rynkowym standardem w miastach turystycznych. Jeśli operator oferuje tę samą stawkę cały rok, masz przestrzeń negocjacyjną.

@@ -24,7 +24,7 @@ status: draft
 
 # Reklama outdoor Lublin 2026 — ceny, trolejbusy, uczelnie
 
-Reklama outdoor w Lublinie zaczyna się już od **150 zł** — tyle kosztuje citylight w gablocie przystankowej MPK do 14 dni za jedną stronę. Standardowy billboard 6×3 m na obiektach miejskich (MOSiR) to 1 900–4 700 zł netto miesięcznie, a pełna oklejka trolejbusu czy autobusu MPK — 1 500 zł netto/mies. (cenniki MPK Lublin i MOSiR Lublin 2025/2026). Lublin ma dwa wyróżniki, których nie kupisz w Warszawie ani Krakowie: trolejbusy jako codzienny nośnik w osiowych ciągach miasta oraz **blisko 60 tys. studentów** skupionych wokół pięciu uczelni. Ten przewodnik pokazuje, gdzie reklamować, za ile i na czym — z obu stron rynku: reklamodawcy i właściciela nośnika.
+Reklama outdoor w Lublinie zaczyna się już od **150 zł** — tyle kosztuje citylight w gablocie przystankowej MPK do 14 dni za jedną stronę. Pakiet billboardów na obiektach miejskich (MOSiR) to 1 900–4 700 zł netto miesięcznie za 5–10 tablic, czyli ok. 380–480 zł za tablicę, a pełna oklejka autobusu MPK — 1 300–1 500 zł netto/mies. (cenniki MPK Lublin i MOSiR Lublin 2025/2026). Lublin ma dwa wyróżniki, których nie kupisz w Warszawie ani Krakowie: trolejbusy jako codzienny nośnik w osiowych ciągach miasta oraz **blisko 60 tys. studentów** skupionych wokół pięciu uczelni. Ten przewodnik pokazuje, gdzie reklamować, za ile i na czym — z obu stron rynku: reklamodawcy i właściciela nośnika.
 
 ## Lublin w liczbach — rynek i profil akademicki
 
@@ -37,7 +37,7 @@ Lublin to największe miasto Polski Wschodniej i naturalna stolica reklamowa reg
 | Studenci łącznie („Lublin akademicki") | ~60 000 |
 | UMCS / KUL | ~18 000 / ~9 000 |
 | Politechnika Lubelska / Uniw. Medyczny / Uniw. Przyrodniczy | ~7 300 / ~6 900 / ~6 400 |
-| Ruch w galeriach woj. lubelskiego (2024) | −3,5% r/r |
+| Ruch w galeriach woj. lubelskiego (2024) | −8,9% r/r (Polska: −3,5%) |
 
 Prosty wniosek dla planowania: studenci stanowią równowartość blisko **co piątego mieszkańca** miasta. Mało który polski rynek ma tak wyraźną, sezonowo aktywną grupę 18–30, którą da się dosięgnąć geograficznie — przy kampusach, akademikach i na dojazdach do uczelni.
 
@@ -51,7 +51,7 @@ Poniższe widełki pochodzą z publicznych cenników operatorów miejskich (MPK,
 | Reklama na szybie tylnej autobusu/trolejbusu MPK | 260–360 zł/mies. | najtańsze wejście „na pojazd" |
 | Oklejka całopojazdowa MPK (bez szyb / z szybami) | 1 300 / 1 500 zł/mies. | min. 3 miesiące |
 | Billboard 6×3 m — lokalna tablica | 500–600 zł/mies. | za 1 stronę, taniej przy dłuższym najmie |
-| Billboard 6×3 m na obiektach miejskich (MOSiR) | 1 900–4 700 zł/mies. | wg liczby tablic i długości najmu |
+| Pakiet billboardów MOSiR (5–10 tablic, gł. 504×238 cm) | 1 900–4 700 zł/mies. za pakiet (ok. 380–480 zł/tablica) | wg liczby tablic i długości najmu |
 | Siatka / wielkoformat na obiektach MOSiR | 700–8 000 zł/mies. | rocznie 5 600–80 000 zł, wg lokalizacji |
 
 Dla porównania rynkowego: billboard w centrum dużego polskiego miasta kosztuje zwykle 2 500–6 000 zł/mies., a w mieście poniżej 50 tys. mieszkańców 800–2 000 zł/mies. Lublin mieści się pomiędzy — z tańszym progiem wejścia przez nośniki transportowe. Pełny rozkład kosztów (zakup powierzchni + druk + montaż) rozbieramy w przewodniku [ile kosztuje reklama outdoor](/blog/poradniki/ile-kosztuje-reklama-outdoor).
@@ -62,7 +62,7 @@ Dla porównania rynkowego: billboard w centrum dużego polskiego miasta kosztuje
 
 Lublin należy do garstki polskich miast z siecią **trolejbusów** — i to jest jego znak rozpoznawczy także w reklamie. MPK Lublin sprzedaje trzy produkty: oklejki pojazdów (autobusy i trolejbusy), reklamę na szybie tylnej oraz gabloty citylight na przystankach. Trolejbus jeżdżący stałą, osiową trasą przez centrum to nośnik o wysokiej, powtarzalnej widoczności — pasażerowie i piesi widzą go wielokrotnie dziennie.
 
-Najniższy próg to **szyba tylna (260–360 zł/mies.)** i **gablota przystankowa (od 150 zł)**; górę cennika zajmuje pełna oklejka (1 300–1 500 zł/mies., min. 3 miesiące). Mechanikę reklamy w komunikacji miejskiej — formaty, czas ekspozycji, ograniczenia — opisaliśmy w artykule o [reklamie w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym).
+Najniższy próg to **szyba tylna (260–360 zł/mies.)** i **gablota przystankowa (od 150 zł)**; górę cennika zajmuje pełna oklejka autobusu (1 300–1 500 zł/mies., min. 3 miesiące) — na trolejbusach MPK oferuje wyłącznie szybę tylną. Mechanikę reklamy w komunikacji miejskiej — formaty, czas ekspozycji, ograniczenia — opisaliśmy w artykule o [reklamie w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym).
 
 > Porównujesz nośniki transportowe z billboardami? Przejrzyj dostępne powierzchnie w swojej okolicy → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)
 
@@ -117,10 +117,10 @@ Ofert nie trzeba szukać po stronach poszczególnych operatorów — na ReklaMap
 ## Najczęściej zadawane pytania
 
 **Ile kosztuje billboard w Lublinie?**
-Lokalna tablica 6×3 m to ok. 500–600 zł netto miesięcznie za jedną stronę, a billboard na obiektach miejskich MOSiR — 1 900–4 700 zł netto/mies., zależnie od liczby tablic i długości najmu. Druk i montaż grafiki budżetuje się osobno.
+Lokalna tablica 6×3 m to ok. 500–600 zł netto miesięcznie za jedną stronę, a pakiet billboardów na obiektach miejskich MOSiR — 1 900–4 700 zł netto/mies. za 5–10 tablic (ok. 380–480 zł za tablicę), zależnie od liczby tablic i długości najmu. Druk i montaż grafiki budżetuje się osobno.
 
 **Czy w Lublinie można reklamować się na trolejbusach?**
-Tak. MPK Lublin oferuje oklejki całopojazdowe (1 300–1 500 zł netto/mies., min. 3 miesiące), reklamę na szybie tylnej (260–360 zł/mies.) oraz citylighty w gablotach przystankowych (od 150 zł). Trolejbusy to lokalny wyróżnik Lublina.
+Tak, ale w węższym zakresie niż na autobusach. Na trolejbusach MPK Lublin oferuje reklamę na szybie tylnej (260–360 zł/mies.); pełne oklejki całopojazdowe (1 300–1 500 zł netto/mies., min. 3 miesiące) dotyczą autobusów. Citylighty w gablotach przystankowych zaczynają się od 150 zł. Trolejbusy pozostają lokalnym wyróżnikiem Lublina.
 
 **Czy Lublin ma uchwałę krajobrazową?**
 Na 2025 r. uchwała krajobrazowa Lublina wciąż nie została domknięta i pozostaje w toku. Obowiązuje za to ogólny mechanizm opłaty reklamowej (ustawowo do 2,50 zł/dzień od nośnika + 0,20 zł/m² dziennie — górne stawki ustawowe na 2026) — wysokość potwierdź w aktualnej uchwale miasta.
