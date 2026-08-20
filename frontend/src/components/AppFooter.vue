@@ -74,6 +74,7 @@ const handleHomeClick = () => {
             <li><router-link to="/" @click="handleHomeClick">Strona główna</router-link></li>
             <li><router-link to="/powierzchnie-reklamowe">Wszystkie ogłoszenia</router-link></li>
             <li><router-link to="/dodaj-powierzchnie-reklamowa">Dodaj ogłoszenie</router-link></li>
+            <li><router-link to="/dla-agencji">Dla agencji</router-link></li>
             <li><router-link to="/blog">Blog</router-link></li>
             <li><router-link to="/faq">FAQ</router-link></li>
           </ul>

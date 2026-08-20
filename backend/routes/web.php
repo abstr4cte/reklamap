@@ -36,6 +36,9 @@ Route::get('/sitemap.xml', function () {
             '/' => ['priority' => '1.0', 'changefreq' => 'daily', 'lastmod' => $homeLastmod],
             '/powierzchnie-reklamowe' => ['priority' => '0.9', 'changefreq' => 'daily', 'lastmod' => $latestAdIso],
             '/dodaj-powierzchnie-reklamowa' => ['priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => $legalLastmod],
+            // Landing dla agencji/operatorów OOH — kanał, z którego pochodzi 94,5% podaży
+            // (1019 z 1078 ogłoszeń to importy agencyjne, pomiar 2026-08-20).
+            '/dla-agencji' => ['priority' => '0.8', 'changefreq' => 'monthly', 'lastmod' => $legalLastmod],
             '/blog' => ['priority' => '0.7', 'changefreq' => 'weekly', 'lastmod' => $latestBlogIso],
             '/faq' => ['priority' => '0.6', 'changefreq' => 'monthly', 'lastmod' => $legalLastmod],
             '/kontakt' => ['priority' => '0.6', 'changefreq' => 'monthly', 'lastmod' => $legalLastmod],

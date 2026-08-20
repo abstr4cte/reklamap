@@ -93,6 +93,11 @@ const router = createRouter({
       component: () => import('./views/FaqPage.vue')
     },
     {
+      path: '/dla-agencji',
+      name: 'for-agencies',
+      component: () => import('./views/ForAgenciesPage.vue')
+    },
+    {
       path: '/blog',
       name: 'blog',
       component: () => import('./views/BlogPage.vue')
