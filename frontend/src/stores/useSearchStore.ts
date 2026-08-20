@@ -122,6 +122,9 @@ export const useSearchStore = defineStore('search', () => {
   // pilot Katowice. CELOWO osobny stan od `listings`/`serverTotal`: nie wpływa na
   // THIN_PAGE_THRESHOLD/noindex (patrz utils/listingsSeo.ts), to czysto prezentacyjny dodatek.
   const nearbyListings = ref<Advertisement[]>([])
+  // Realnie użyty promień (km) — backend schodzi do 50 km dla miast bez własnej podaży,
+  // więc nagłówek sekcji musi pokazać tę liczbę, a nie zaszyte na sztywno „30 km".
+  const nearbyRadiusKm = ref(30)
   // Track filters from path params (category/city from menu)
   const pathParamsFilters = ref<{ type?: string; city?: string }>({})
 
@@ -297,6 +300,7 @@ export const useSearchStore = defineStore('search', () => {
       nearbyListings.value = Array.isArray((response as any)?.nearby_listings)
         ? (response as any).nearby_listings
         : []
+      nearbyRadiusKm.value = Number((response as any)?.nearby_radius_km) || 30
     } catch (error) {
       if (generation !== _fetchGeneration) return
       console.error('Failed to fetch listings:', error)
@@ -1075,7 +1079,7 @@ export const useSearchStore = defineStore('search', () => {
 
   return {
     listings, mapPins, isLoading, filters, sortBy, priceDisplay, viewMode, currentPage, itemsPerPage,
-    serverTotal, serverLastPage, hasLoaded, nearbyListings,
+    serverTotal, serverLastPage, hasLoaded, nearbyListings, nearbyRadiusKm,
     fetchListings, fetchMapPins, setListings, applyFilters, resetFilters, setViewMode, setCurrentPage, syncFromUrl, cancelMapBoundsTimer,
     sortedAndFilteredListings, paginatedListings, totalPages, activeFiltersCount, getPrice,
     computedPriceDisplayUnit,

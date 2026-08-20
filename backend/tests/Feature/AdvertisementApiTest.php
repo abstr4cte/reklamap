@@ -411,6 +411,99 @@ class AdvertisementApiTest extends TestCase
     }
 
     /**
+     * Duże miasto BEZ własnej podaży (prod 2026-08-20: Kraków, Gdańsk, Łódź, Szczecin,
+     * Bydgoszcz, Białystok, Gliwice = 0 ofert) też musi pokazać oferty z okolicy — centroidu
+     * nie ma z czego policzyć, więc backend schodzi do słownika współrzędnych dużych miast.
+     * Strona zostaje `noindex` (0 własnych < próg 3) — to świadome; sekcja służy ruchowi
+     * spoza wyszukiwarki (blog, social, direct), nie obchodzeniu progu cienkiej strony.
+     */
+    public function test_include_nearby_falls_back_to_city_dictionary_when_city_has_no_supply(): void
+    {
+        // Wieliczka ~13 km od centrum Krakowa; Gdańsk ~500 km — kontrola negatywna.
+        Advertisement::factory()->count(2)->create([
+            'city' => 'Wieliczka', 'latitude' => 49.9871, 'longitude' => 20.0649,
+            'is_active' => true, 'status' => 'active',
+        ]);
+        Advertisement::factory()->create([
+            'city' => 'Gdańsk', 'latitude' => 54.3520, 'longitude' => 18.6466,
+            'is_active' => true, 'status' => 'active',
+        ]);
+
+        $response = $this->getJson(
+            '/api/listings?' . http_build_query(['city' => 'Kraków', 'city_strict' => 1, 'include_nearby' => 1]),
+            $this->appKeyHeaders()
+        );
+
+        $response->assertStatus(200);
+        $this->assertSame(0, $response->json('total'), 'Kraków nie ma własnych ofert — główny licznik musi zostać zerem (strona pozostaje noindex).');
+
+        $nearby = $response->json('nearby_listings');
+        $this->assertCount(2, $nearby, 'Mimo zera własnych ofert sekcja "w okolicy" musi znaleźć Wieliczkę przez słownik współrzędnych.');
+        foreach ($nearby as $ad) {
+            $this->assertSame('Wieliczka', $ad['city'], 'Gdańsk (~500 km) nie może się załapać.');
+        }
+    }
+
+    /**
+     * Miasto poniżej progu cienkiej strony (prod: Warszawa 2, Lublin 1, Częstochowa 2) —
+     * strona jest praktycznie pusta tak samo jak przy zerze, więc gdy w 30 km nic nie ma,
+     * schodzimy do 50 km. Miasta z realną podażą (Katowice 8) zostają przy 30 km.
+     */
+    public function test_include_nearby_widens_radius_for_thin_city_but_not_for_supplied_one(): void
+    {
+        // Warszawa: 1 własna oferta (poniżej progu 3) + nic w 30 km, ale coś w ~44 km.
+        Advertisement::factory()->create([
+            'city' => 'Warszawa', 'latitude' => 52.2297, 'longitude' => 21.0122,
+            'is_active' => true, 'status' => 'active',
+        ]);
+        Advertisement::factory()->create([
+            'city' => 'Żyrardów', 'latitude' => 52.0489, 'longitude' => 20.4462,
+            'is_active' => true, 'status' => 'active',
+        ]);
+
+        $thin = $this->getJson(
+            '/api/listings?' . http_build_query(['city' => 'Warszawa', 'city_strict' => 1, 'include_nearby' => 1]),
+            $this->appKeyHeaders()
+        );
+        $thin->assertStatus(200);
+        $this->assertEquals(50, $thin->json('nearby_radius_km'), 'Cienkie miasto musi rozszerzyć promień do 50 km.');
+        $this->assertCount(1, $thin->json('nearby_listings'));
+
+        // Katowice: podaż powyżej progu → bez eskalacji, mimo pustki w promieniu.
+        Advertisement::factory()->count(3)->create([
+            'city' => 'Katowice', 'latitude' => 50.2649, 'longitude' => 19.0238,
+            'is_active' => true, 'status' => 'active',
+        ]);
+
+        $supplied = $this->getJson(
+            '/api/listings?' . http_build_query(['city' => 'Katowice', 'city_strict' => 1, 'include_nearby' => 1]),
+            $this->appKeyHeaders()
+        );
+        $supplied->assertStatus(200);
+        $this->assertEquals(30, $supplied->json('nearby_radius_km'), 'Miasto z podażą zostaje przy 30 km.');
+    }
+
+    /**
+     * Miasto spoza słownika i bez własnej podaży nie może wysypać zapytania ani zwrócić
+     * losowych ofert z drugiego końca Polski — po prostu brak sekcji.
+     */
+    public function test_include_nearby_returns_empty_for_unknown_city_without_supply(): void
+    {
+        Advertisement::factory()->create([
+            'city' => 'Gdańsk', 'latitude' => 54.3520, 'longitude' => 18.6466,
+            'is_active' => true, 'status' => 'active',
+        ]);
+
+        $response = $this->getJson(
+            '/api/listings?' . http_build_query(['city' => 'Pcim Dolny', 'city_strict' => 1, 'include_nearby' => 1]),
+            $this->appKeyHeaders()
+        );
+
+        $response->assertStatus(200);
+        $this->assertSame([], $response->json('nearby_listings'));
+    }
+
+    /**
      * Regresja: filtr województwa. Front (HeroBanner/ListingsPage) wysyła ASCII-id ze słownika
      * `polishLocations.json` („dolnoslaskie”, „slaskie”), a w bazie leży `address.state` z
      * Nominatim w dwóch formatach („śląskie” ORAZ „województwo dolnośląskie”). Exact match

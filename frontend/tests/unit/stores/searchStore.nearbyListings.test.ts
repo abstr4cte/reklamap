@@ -64,3 +64,27 @@ describe('nearby listings (promień 30 km) logic', () => {
     expect(parseNearbyListings([{ id: 1 }])).toEqual([])
   })
 })
+
+/**
+ * Promień jest dynamiczny: backend schodzi do 50 km dla miast bez własnej podaży
+ * (Kraków/Gdańsk/Łódź = 0 ofert na prodzie 2026-08-20), więc nagłówek sekcji nie może
+ * mieć zaszytego „30 km". Replika parsowania z fetchListings().
+ */
+function parseNearbyRadius(response: unknown): number {
+  return Number((response as any)?.nearby_radius_km) || 30
+}
+
+describe('nearby radius parsing', () => {
+  it('czyta promień z odpowiedzi API', () => {
+    expect(parseNearbyRadius({ nearby_radius_km: 50 })).toBe(50)
+  })
+
+  it('domyśla się 30 km, gdy pole nie przyszło (starsza odpowiedź API)', () => {
+    expect(parseNearbyRadius({ data: [], total: 0 })).toBe(30)
+  })
+
+  it('domyśla się 30 km przy wartości bezsensownej', () => {
+    expect(parseNearbyRadius({ nearby_radius_km: null })).toBe(30)
+    expect(parseNearbyRadius({ nearby_radius_km: 'abc' })).toBe(30)
+  })
+})

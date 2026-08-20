@@ -95,8 +95,10 @@ class AdvertisementController extends Controller
         // podstawą THIN_PAGE_THRESHOLD/noindex we froncie, patrz listingsSeo.ts). Zwracana
         // tylko na jawne żądanie (`include_nearby=1`) i tylko dla ścisłego dopasowania miasta.
         if ($request->filled('city') && $request->boolean('city_strict') && $request->boolean('include_nearby')) {
+            [$nearby, $usedRadiusKm] = $this->nearbyListingsWithRadius((string) $request->input('city'));
             $response = $paginated->toArray();
-            $response['nearby_listings'] = $this->nearbyListingsForCity((string) $request->input('city'));
+            $response['nearby_listings'] = $nearby;
+            $response['nearby_radius_km'] = $usedRadiusKm;
             return response()->json($response);
         }
 
@@ -111,20 +113,120 @@ class AdvertisementController extends Controller
      */
     private function nearbyListingsForCity(string $city, int $limit = 12, float $radiusKm = 30.0): array
     {
+        [$listings] = $this->nearbyListingsWithRadius($city, $limit, $radiusKm);
+
+        return $listings;
+    }
+
+    /**
+     * Jak wyżej, ale zwraca też realnie użyty promień — strona miasta musi go uczciwie
+     * pokazać w nagłówku sekcji („promień 30 km" vs „50 km"), bo dla miast bez własnej
+     * podaży schodzimy do szerszego pasa (patrz eskalacja niżej).
+     *
+     * @return array{0: array<int, mixed>, 1: float}
+     */
+    private function nearbyListingsWithRadius(string $city, int $limit = 12, float $radiusKm = 30.0): array
+    {
         $cityExpr = $this->cityFoldedSql();
         $foldedCity = $this->foldPolish($city);
 
         $centroid = Advertisement::where('is_active', 1)
             ->whereRaw("$cityExpr = ?", [$foldedCity])
-            ->selectRaw('AVG(latitude) as lat, AVG(longitude) as lng')
+            ->selectRaw('COUNT(*) as cnt, AVG(latitude) as lat, AVG(longitude) as lng')
             ->first();
 
-        if (!$centroid || $centroid->lat === null || $centroid->lng === null) {
-            return [];
+        $ownCount = (int) ($centroid->cnt ?? 0);
+        $hasOwnSupply = $ownCount > 0 && $centroid->lat !== null && $centroid->lng !== null;
+
+        if ($hasOwnSupply) {
+            $lat = (float) $centroid->lat;
+            $lng = (float) $centroid->lng;
+        } else {
+            // Miasto BEZ własnych ogłoszeń (np. Kraków, Gdańsk, Łódź = 0 ofert) — nie ma z czego
+            // policzyć centroidu, a to właśnie te strony najbardziej potrzebują pokazać, że oferty
+            // są obok. Fallback: słownik współrzędnych dużych miast.
+            $coords = $this->majorCityCoords($foldedCity);
+            if ($coords === null) {
+                return [[], $radiusKm];
+            }
+            [$lat, $lng] = $coords;
         }
 
-        $lat = (float) $centroid->lat;
-        $lng = (float) $centroid->lng;
+        $listings = $this->listingsWithinRadius($cityExpr, $foldedCity, $lat, $lng, $radiusKm, $limit);
+
+        // Eskalacja promienia dla miast PONIŻEJ progu cienkiej strony (ten sam próg 3 co
+        // THIN_PAGE_THRESHOLD): Kraków ma w 30 km tylko 5 nośników, ale w 50 km ponad 100
+        // (import małopolski). Dotyczy też miast z 1–2 ofertami (prod: Warszawa 2, Lublin 1,
+        // Częstochowa 2) — tam strona jest praktycznie pusta tak samo jak przy zerze.
+        // Miasta z realną podażą (Katowice 8) zostają przy 30 km — sekcja jest tam dodatkiem.
+        if ($ownCount < 3 && count($listings) < 3) {
+            $wider = 50.0;
+            $widerListings = $this->listingsWithinRadius($cityExpr, $foldedCity, $lat, $lng, $wider, $limit);
+            if (count($widerListings) > count($listings)) {
+                return [$widerListings, $wider];
+            }
+        }
+
+        return [$listings, $radiusKm];
+    }
+
+    /**
+     * Współrzędne największych miast PL — fallback dla stron miast bez własnej podaży.
+     * Statyczne (centra administracyjne), świadomie bez geokodowania w locie: to ścieżka
+     * serwowana botom przy prerenderze, nie może zależeć od zewnętrznego API.
+     *
+     * @return array{0: float, 1: float}|null
+     */
+    private function majorCityCoords(string $foldedCity): ?array
+    {
+        $coords = [
+            'warszawa' => [52.2297, 21.0122],
+            'krakow' => [50.0647, 19.9450],
+            'lodz' => [51.7592, 19.4560],
+            'wroclaw' => [51.1079, 17.0385],
+            'poznan' => [52.4064, 16.9252],
+            'gdansk' => [54.3520, 18.6466],
+            'szczecin' => [53.4285, 14.5528],
+            'bydgoszcz' => [53.1235, 18.0084],
+            'lublin' => [51.2465, 22.5684],
+            'bialystok' => [53.1325, 23.1688],
+            'katowice' => [50.2649, 19.0238],
+            'gdynia' => [54.5189, 18.5305],
+            'czestochowa' => [50.8118, 19.1203],
+            'radom' => [51.4027, 21.1471],
+            'sosnowiec' => [50.2863, 19.1042],
+            'torun' => [53.0138, 18.5981],
+            'kielce' => [50.8661, 20.6286],
+            'rzeszow' => [50.0413, 21.9990],
+            'gliwice' => [50.2945, 18.6714],
+            'zabrze' => [50.3249, 18.7857],
+            'olsztyn' => [53.7784, 20.4801],
+            'bielsko biala' => [49.8224, 19.0584],
+            'rybnik' => [50.0971, 18.5416],
+            'ruda slaska' => [50.2584, 18.8562],
+            'opole' => [50.6751, 17.9213],
+            'tychy' => [50.1374, 18.9662],
+            'gorzow wielkopolski' => [52.7368, 15.2288],
+            'plock' => [52.5468, 19.7064],
+            'elblag' => [54.1522, 19.4088],
+            'walbrzych' => [50.7710, 16.2845],
+            'zielona gora' => [51.9356, 15.5062],
+        ];
+
+        return $coords[$foldedCity] ?? null;
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    private function listingsWithinRadius(
+        string $cityExpr,
+        string $foldedCity,
+        float $lat,
+        float $lng,
+        float $radiusKm,
+        int $limit
+    ): array {
 
         $haversine = "
             (6371 * 2 * ASIN(SQRT(

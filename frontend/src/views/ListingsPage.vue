@@ -57,7 +57,8 @@ const {
   activeFiltersCount,
   itemsPerPage,
   pathParamsFilters,
-  nearbyListings
+  nearbyListings,
+  nearbyRadiusKm
 } = storeToRefs(searchStore)
 
 const totalFiltersCount = computed(() => {
@@ -94,11 +95,20 @@ const cityDisplayName = computed<string | null>(() => {
   return citySlug ? resolveCityName(citySlug) : null
 })
 
-// Sekcja "w okolicy" (pilot Katowice, promień 30 km) — tylko strony city-only (bez typu).
-// `nearbyListings` NIE wpływa na SEO/noindex/próg cienkiej strony poniżej (patrz seoData) —
-// to czysto prezentacyjny dodatek do już-indeksowanej strony.
+// Sekcja "w okolicy" — tylko strony city-only (bez typu). `nearbyListings` NIE wpływa na
+// SEO/noindex/próg cienkiej strony poniżej (patrz seoData) — to czysto prezentacyjny dodatek.
+// Dwa zastosowania: (1) miasto Z podażą (Katowice) dostaje uzupełnienie o aglomerację,
+// (2) duże miasto BEZ podaży (Kraków, Gdańsk, Łódź = 0 ofert) zamiast samego „Brak ogłoszeń"
+// pokazuje, że oferty są obok — backend schodzi tam do 50 km (patrz nearbyRadiusKm).
 const showNearbySection = computed(() =>
   !!route.params.city && !route.params.type && nearbyListings.value.length > 0
+)
+
+// Strona miasta, które nie ma ANI JEDNEJ własnej oferty, ale okolica coś ma — wtedy sekcja
+// „w okolicy" jest jedyną treścią i komunikat pustego stanu musi to zapowiedzieć, zamiast
+// zostawiać użytkownika z samym „nie znaleziono".
+const hasOnlyNearby = computed(() =>
+  showNearbySection.value && filteredListings.value.length === 0
 )
 
 const seoData = computed(() => {
@@ -1750,8 +1760,13 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
             <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/>
           </svg>
           <h3>Brak ogłoszeń<template v-if="noResultsContext"> dla: <span class="empty-state-context">{{ noResultsContext }}</span></template></h3>
-          <p>Nie znaleziono ogłoszeń pasujących do wyszukiwania</p>
-          
+          <p v-if="hasOnlyNearby">
+            W tym mieście nie ma jeszcze wystawionych nośników, ale
+            {{ nearbyListings.length === 1 ? 'jeden jest' : `${nearbyListings.length} jest` }}
+            w promieniu {{ nearbyRadiusKm }} km — zobacz je poniżej.
+          </p>
+          <p v-else>Nie znaleziono ogłoszeń pasujących do wyszukiwania</p>
+
           <SearchAlertBox 
             v-if="totalFiltersCount > 0"
             :location-label="filters?.city || cityDisplayName || ''"
@@ -1820,7 +1835,10 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
         <!-- Sekcja "w okolicy" (pilot Katowice) — NIE wpływa na SEO/próg cienkiej strony,
              patrz komentarz przy showNearbySection i CLAUDE.md „Geo-bucketing”. -->
         <section v-if="showNearbySection" class="nearby-section">
-          <h2 class="nearby-section__title">Więcej ofert w okolicy (promień 30 km)</h2>
+          <h2 class="nearby-section__title">
+            {{ hasOnlyNearby ? 'Dostępne w okolicy' : 'Więcej ofert w okolicy' }}
+            (promień {{ nearbyRadiusKm }} km)
+          </h2>
           <div class="listings-list" :class="viewMode">
             <AdCard
               v-for="ad in nearbyListings"
