@@ -2,6 +2,16 @@
 
 Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagają weryfikacji danych (Perplexity) i nowej redakcji przez Agenta Pisarza oraz Korektora.
 
+> ## ✅ AUDYT FAKTOGRAFICZNY ZAKOŃCZONY — 2026-08-20
+>
+> **Wszystkie 36 artykułów przeszło weryfikację faktów.** 28 tekstów powstało przed wprowadzeniem reguł anty-konfabulacyjnych (12.07.2026) i tylko 5 z nich było kiedykolwiek sprawdzonych — 20.08 przeaudytowano pozostałe 23, WebSearchem przeciwko źródłom pierwotnym (BIP, ISAP/ELI, orzecznictwo, oficjalne cenniki operatorów).
+>
+> **Trafienie: konfabulacje w KAŻDYM sprawdzonym artykule.** Najczęstsze klasy błędów: nieaktualne lub wprost błędne jednostki redakcyjne ustaw (w jednym przypadku przywołany przepis stanowił *dosłowne zaprzeczenie* tezy), cenniki operatorów zaniżone o połowę lub przypisane do złego formatu, ceny pakietów podane jako ceny jednostkowe, fałszywe superlatywy („jedyne miasto w Polsce…"), zmyśleni operatorzy i akronimy, atrybucja do źródeł nie zawierających cytowanych liczb.
+>
+> **Wszystkie poprawki są na produkcji** (`php artisan blog:update-content <slug>` — aktualizacja w miejscu, bez ruszania statusu i daty publikacji). Zasada przyjęta przy naprawach: poprawiamy tylko to, co potwierdzone URL-em do dokumentu źródłowego; wartości niepotwierdzonej się nie zgaduje — usuwa się konkret albo pisze ogólnie.
+>
+> ⚠️ **Pułapka samopotwierdzenia:** nasze konfabulacje są już w indeksie Google i przy weryfikacji potrafią wrócić jako „źródło" (potwierdzone dla zmyślonych stref warszawskiej uchwały i dla cennika AMS). Przy każdej weryfikacji wykluczaj `reklamap.pl`.
+
 > **⚠️ Stan na 2026-07-25 (audyt): 33 artykuły w repo, 30 na prodzie, a 12 z tych 30 jest NIEWIDOCZNYCH dla Google.**
 > **(a) Trzy oznaczone 🔴 NIEOPUBLIKOWANY** — gotowe i zrecenzowane, ale nie ma ich w bazie prod; wymagają publikacji w panelu **oraz deployu frontu** (bez deployu URL jest w sitemapie, ale serwowany jako `noindex` — patrz `SEO_TECH_AUDIT.md` 2026-07-25, poz. 2).
 > **(b) Dwanaście artykułów jest zamrożonych w werdykcie GSC „Błąd serwera (5xx)" z 2026-05-15** i ma **0 wyświetleń przez 3 miesiące**, mimo że na żywo zwracają 200: `reklama-w-transporcie-publicznym`, `telebim-ekran-led-reklama`, `totem-reklamowy`, `reklama-na-samochodzie`, `reklama-outdoor-warszawa`, `reklama-outdoor-wroclaw`, `baner-reklamowy-cena`, `tablica-reklamowa`, `reklama-zewnetrzna`, `jak-wybrac-powierzchnie-reklamowa` + kategorie `/blog/poradniki` i `/blog/prawo-i-regulacje`. Stoi nad nimi **40,7% całego popytu w GSC**.
@@ -16,8 +26,8 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 | 2026-06-09 18:16 | ekran-led-cena | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260609181608_ekran-led-cena.md) |
 | 2026-06-22 11:30 | jak-zarobic-na-wynajmie-powierzchni-reklamowej | poradniki (PODAŻ) | ✅ ZRECENZOWANY | [Link](posts/20260622113049_jak-zarobic-na-wynajmie-powierzchni-reklamowej.md) |
 | 2026-06-22 11:56 | czy-oplaca-sie-wynajmowac-powierzchnie-reklamowa | poradniki (PODAŻ) | ✅ ZRECENZOWANY | [Link](posts/20260622115615_czy-oplaca-sie-wynajmowac-powierzchnie-reklamowa.md) |
-| 2026-06-22 12:39 | reklama-na-ogrodzeniu | poradniki (PODAŻ) | ✅ ZRECENZOWANY — 🔴 **NIEOPUBLIKOWANY** (prod: 404-szkielet 7 929 B + `noindex`, sprawdzone 2026-07-25) | [Link](posts/20260622123930_reklama-na-ogrodzeniu.md) |
-| 2026-06-22 12:51 | reklama-na-elewacji-wspolnoty | poradniki (PODAŻ) | ✅ ZRECENZOWANY — 🔴 **NIEOPUBLIKOWANY** (prod: 404-szkielet 7 929 B + `noindex`, sprawdzone 2026-07-25) | [Link](posts/20260622125118_reklama-na-elewacji-wspolnoty.md) |
+| 2026-06-22 12:39 | reklama-na-ogrodzeniu | poradniki (PODAŻ) | ✅ ZRECENZOWANY + zweryfikowany faktograficznie 2026-08-20 · opublikowany | [Link](posts/20260622123930_reklama-na-ogrodzeniu.md) |
+| 2026-06-22 12:51 | reklama-na-elewacji-wspolnoty | poradniki (PODAŻ) | ✅ ZRECENZOWANY + zweryfikowany faktograficznie 2026-08-20 · opublikowany | [Link](posts/20260622125118_reklama-na-elewacji-wspolnoty.md) |
 | 2026-04-14 06:02 | reklama-na-samochodzie | poradniki | ✅ ZRECENZOWANY (rozbudowa: reklama mobilna/przyczepki) | [Link](posts/20260414060200_reklama-na-samochodzie.md) |
 | 2026-04-14 06:03 | reklama-w-transporcie-publicznym | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414060300_reklama-w-transporcie-publicznym.md) |
 | **Kategoria: /blog/lokalizacje** | | | | |
@@ -47,7 +57,7 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 | 2026-05-25 22:01 | reklama-outdoor-olsztyn | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260525220136_reklama-outdoor-olsztyn.md) |
 | 2026-05-25 22:44 | reklama-outdoor-bydgoszcz | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260525224446_reklama-outdoor-bydgoszcz.md) |
 | 2026-06-22 11:11 | reklama-outdoor-lublin | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260622111121_reklama-outdoor-lublin.md) |
-| 2026-06-22 12:28 | reklama-outdoor-szczecin | lokalizacje | ✅ ZRECENZOWANY — 🔴 **NIEOPUBLIKOWANY** (prod: 404-szkielet 7 929 B + `noindex`, sprawdzone 2026-07-25) | [Link](posts/20260622122850_reklama-outdoor-szczecin.md) |
+| 2026-06-22 12:28 | reklama-outdoor-szczecin | lokalizacje | ✅ ZRECENZOWANY + zweryfikowany faktograficznie 2026-08-20 · opublikowany | [Link](posts/20260622122850_reklama-outdoor-szczecin.md) |
 | 2026-05-25 23:22 | dooh-reklama-programatyczna | trendy | ✅ ZRECENZOWANY | [Link](posts/20260525232247_dooh-reklama-programatyczna.md) |
 | **Kategoria: /blog/prawo-i-regulacje** | | | | |
 | 2026-04-19 16:23 | uchwala-krajobrazowa-reklama | prawo-i-regulacje | ✅ ZRECENZOWANY 2026-07-13 (korekta huba: Łódź „aktywna"→zawieszona, Poznań fałsz „brak zakazów”→MA uchwałę, Gdańsk egzekwuje, usunięto niepotwierdzone 90%/3 mln + kalkulator Kraków — ✅ LIVE NA PROD, zweryfikowane curl-em 2026-07-25) | [Link](posts/20260419162332_uchwala-krajobrazowa-reklama.md) |

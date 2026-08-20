@@ -229,7 +229,7 @@ Projekt posiada zespół wyspecjalizowanych agentów AI w `reklamap-os/agents/`.
 >
 > **Heurystyka:** im bardziej liczba wygląda na precyzyjną, tym bardziej jest podejrzana bez URL-a do dokumentu źródłowego. Konfabulacje wyglądają jak „630 zł", „451 tramwajów", „Strefa A/B", „66 200 specjalistów" — nie jak okrągłe szacunki.
 >
-> **Dług do spłacenia:** z 36 artykułów **28 powstało przed regułami anty-konfabulacyjnymi, a tylko 5 kiedykolwiek zweryfikowano faktograficznie** — 23 są na produkcji ze statusem „nieznany". Przy trafieniu 6/6 nie zakładać, że reszta jest czysta. **Nie zgłaszać artykułu z tej puli do indeksacji w GSC przed audytem faktograficznym.**
+> **✅ Dług spłacony 2026-08-20 — wszystkie 36 artykułów zweryfikowanych faktograficznie.** Konfabulacje znaleziono w KAŻDYM z 23 dotąd niesprawdzonych tekstów; poprawki są na produkcji (`php artisan blog:update-content <slug>` — update w miejscu, bez ruszania statusu i `published_at`). Najczęstsze klasy błędów, których warto szukać przy każdym nowym tekście: nieaktualne jednostki redakcyjne ustaw (jeden przywołany przepis stanowił *dosłowne zaprzeczenie* tezy), cenniki operatorów zaniżone o połowę lub przypisane do złego formatu, cena pakietu podana jako cena jednostkowa, fałszywe superlatywy, zmyśleni operatorzy i akronimy, atrybucja do źródeł nie zawierających cytowanych liczb. **Zasada napraw: poprawiaj tylko to, co potwierdzone URL-em do dokumentu — wartości niepotwierdzonej nie zgaduj, usuń konkret albo napisz ogólnie.**
 
 ### Pliki stanu systemu
 
