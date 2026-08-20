@@ -111,6 +111,16 @@ const hasOnlyNearby = computed(() =>
   showNearbySection.value && filteredListings.value.length === 0
 )
 
+// CTA podażowe na stronie miasta bez ani jednej własnej oferty. Powód (audyt 2026-08-20):
+// 14 z 20 największych miast PL ma <3 ofert, a taka strona była ślepym zaułkiem — sam
+// komunikat „Brak ogłoszeń", zero drogi do wystawienia własnego nośnika. Po rezygnacji
+// z cold callingu to jedyna ścieżka pozyskania podaży w tych miastach.
+// Pokazujemy TYLKO na stronie city-only (nie na kombinacji typ×miasto, gdzie „pierwszy
+// nośnik w mieście" byłoby nieprawdą — miasto może mieć oferty innego typu).
+const showSupplyCta = computed(() =>
+  !!route.params.city && !route.params.type && filteredListings.value.length === 0
+)
+
 const seoData = computed(() => {
   const typeSlug = route.params.type as string | undefined
   const citySlug = route.params.city as string | undefined
@@ -1767,7 +1777,21 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
           </p>
           <p v-else>Nie znaleziono ogłoszeń pasujących do wyszukiwania</p>
 
-          <SearchAlertBox 
+          <div v-if="showSupplyCta" class="supply-cta">
+            <p class="supply-cta__lead">
+              Masz billboard, ścianę, ogrodzenie albo grunt
+              <template v-if="cityDisplayName"> w {{ cityDisplayName }}</template>?
+              Wystawienie jest bezpłatne, bez prowizji od wynajmu.
+            </p>
+            <router-link
+              class="supply-cta__button"
+              :to="{ path: '/dodaj-powierzchnie-reklamowa', query: cityDisplayName ? { city: cityDisplayName } : {} }"
+            >
+              Wystaw pierwszy nośnik<template v-if="cityDisplayName"> w {{ cityDisplayName }}</template>
+            </router-link>
+          </div>
+
+          <SearchAlertBox
             v-if="totalFiltersCount > 0"
             :location-label="filters?.city || cityDisplayName || ''"
             :ad-type-label="filters?.type ? getTypeLabel(filters.type) : 'ogłoszenie'"
@@ -4939,6 +4963,33 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
 .pagination-bottom .pagination-container {
   padding-top: 0;
   padding-bottom: 0;
+}
+
+.supply-cta {
+  margin-top: 1.5rem;
+  max-width: 30rem;
+  text-align: center;
+}
+
+.supply-cta__lead {
+  margin-bottom: 1rem;
+  color: var(--text-muted, #6b7280);
+  line-height: 1.5;
+}
+
+.supply-cta__button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  background: #667eea;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.supply-cta__button:hover {
+  background: #5568d3;
 }
 
 .nearby-section {

@@ -88,3 +88,31 @@ describe('nearby radius parsing', () => {
     expect(parseNearbyRadius({ nearby_radius_km: 'abc' })).toBe(30)
   })
 })
+
+/**
+ * CTA podażowe na pustej stronie miasta (audyt 2026-08-20): 14 z 20 największych miast PL
+ * ma <3 ofert, a taka strona była ślepym zaułkiem. Replika `showSupplyCta` z ListingsPage.vue.
+ * Kluczowe: NIE pokazujemy na kombinacji typ×miasto — „pierwszy nośnik w mieście" byłoby
+ * nieprawdą, gdy miasto ma oferty innego typu.
+ */
+function shouldShowSupplyCta(opts: { city?: string; type?: string; visibleListings: number }): boolean {
+  return !!opts.city && !opts.type && opts.visibleListings === 0
+}
+
+describe('supply CTA on empty city page', () => {
+  it('pokazuje się na pustej stronie miasta', () => {
+    expect(shouldShowSupplyCta({ city: 'krakow', visibleListings: 0 })).toBe(true)
+  })
+
+  it('NIE pokazuje się, gdy miasto ma choć jedną ofertę', () => {
+    expect(shouldShowSupplyCta({ city: 'katowice', visibleListings: 8 })).toBe(false)
+  })
+
+  it('NIE pokazuje się na kombinacji typ×miasto (miasto może mieć oferty innego typu)', () => {
+    expect(shouldShowSupplyCta({ city: 'krakow', type: 'billboard', visibleListings: 0 })).toBe(false)
+  })
+
+  it('NIE pokazuje się na stronie typu bez miasta', () => {
+    expect(shouldShowSupplyCta({ type: 'billboard', visibleListings: 0 })).toBe(false)
+  })
+})

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { api } from '../services/api'
 import { useSeo } from '../composables/useSeo'
 import { appUrl } from '../utils/url'
@@ -79,6 +79,7 @@ const getProfanityFilter = async () => {
 }
 
 const router = useRouter()
+const route = useRoute()
 const searchStore = useSearchStore()
 
 const currentStep = ref(1)
@@ -284,6 +285,16 @@ const resolveAddressFromInput = async (query: string) => {
 }
 
 onMounted(() => {
+  // Wejście z CTA na stronie pustego miasta („Wystaw pierwszy nośnik w Krakowie") —
+  // podpowiadamy miasto, żeby użytkownik nie zaczynał od zera. To TYLKO podpowiedź:
+  // `location` jest wymagane w kroku 3, a wybór punktu na mapie nadpisuje `city`
+  // reverse-geocodingiem (handleMapConfirm), więc nie da się tak zapisać ogłoszenia
+  // z miastem niezgodnym ze współrzędnymi.
+  const cityFromQuery = typeof route.query.city === 'string' ? route.query.city.trim() : ''
+  if (cityFromQuery && cityFromQuery.length <= 60) {
+    formData.value.city = cityFromQuery
+  }
+
   // Track start of adding an advertisement
   analytics.startAddAd()
   analytics.addAdStepView(currentStep.value, formData.value.type)
