@@ -1,5 +1,5 @@
 <!--
-ANGLE: DOOH (Digital Out-of-Home) w Polsce 2026 — co to, ile kosztuje, jak działa reklama programatyczna na ekranach. Przewodnik łączący stronę technologiczną (SSP/DSP, Hivestack/Vistar/Broadsign) z biznesową (model CPM, modele transakcyjne, próg wejścia od ~174 zł). DOOH = 32% rynku OOH PL — najszybciej rosnący segment.
+ANGLE: DOOH (Digital Out-of-Home) w Polsce 2026 — co to, ile kosztuje, jak działa reklama programatyczna na ekranach. Przewodnik łączący stronę technologiczną (SSP/DSP, Hivestack/Vistar/Broadsign) z biznesową (model CPM, modele transakcyjne, warstwa operatorów). DOOH = 32% rynku OOH PL — najszybciej rosnący segment.
 -->
 ---
 title: "DOOH — co to, ile kosztuje, reklama programatyczna 2026"
@@ -24,7 +24,7 @@ status: draft
 
 # DOOH — co to, ile kosztuje, reklama programatyczna 2026
 
-**DOOH (Digital Out-of-Home)** to reklama na cyfrowych ekranach w przestrzeni publicznej — billboardach digital, citylightach digital, ekranach w galeriach, transporcie i indoor. W Polsce segment ten rośnie najszybciej ze wszystkich kategorii reklamy zewnętrznej, podczas gdy cały rynek OOH osiągnął w 2025 wartość 870,23 mln zł, rosnąc o 7% (dane OOHlife Izby Gospodarczej). **DOOH to dziś ok. 32% rynku reklamy zewnętrznej w Polsce** — z wyraźnym wzrostem udziału w ostatnich latach. Próg wejścia do kampanii programmatic DOOH przez sieć AMS zaczyna się od ok. 174 zł (Digital Indoor, 3 CPM × 58 zł, cennik z 1 lipca 2024), a CPM dla najlepszych lokalizacji galeryjnych dochodzi do 237 zł. Ten przewodnik wyjaśnia, co to jest DOOH, jak działa reklama programatyczna na ekranach i ile to kosztuje w praktyce.
+**DOOH (Digital Out-of-Home)** to reklama na cyfrowych ekranach w przestrzeni publicznej — billboardach digital, citylightach digital, ekranach w galeriach, transporcie i indoor. W Polsce segment ten rośnie najszybciej ze wszystkich kategorii reklamy zewnętrznej, podczas gdy cały rynek OOH osiągnął w 2025 wartość 870,23 mln zł, rosnąc o 7% (dane OOHlife Izby Gospodarczej). **DOOH to dziś ok. 32% rynku reklamy zewnętrznej w Polsce** — z wyraźnym wzrostem udziału w ostatnich latach. Polscy operatorzy rozliczają kampanie w modelu CPM — koszcie za 1 000 kontaktów — ale konkretnych stawek nie publikują, więc realną wycenę dostaniesz od operatora albo domu mediowego. Ten przewodnik wyjaśnia, co to jest DOOH, jak działa reklama programatyczna na ekranach i ile to kosztuje w praktyce.
 
 ## Czym jest DOOH i czym różni się od klasycznego OOH
 
@@ -187,7 +187,7 @@ Polscy operatorzy DOOH nie publikują tabel CPM — wycenę dostaniesz od operat
 Tradycyjny DOOH kupuje się direct — telefon lub mail do operatora, harmonogram emisji ustalany tygodnie naprzód. Programmatic DOOH (pDOOH) to zakup automatyczny przez platformy DSP/SSP w modelu aukcyjnym RTB. Można kupować pojedyncze impressions w sekundach, targetować po pogodzie, lokalizacji, porze dnia i danych audience. W Polsce dostępne od 2024–2025 przez Adform, DV 360, Hivestack, Vistar, Broadsign, VIOOH.
 
 **Dlaczego DOOH rośnie tak szybko w Polsce?**
-DOOH jest najszybciej rosnącym segmentem rynku OOH i odpowiada za ok. 32% jego wartości, podczas gdy cały rynek OOH w 2025 rósł o 7% (dane OOHlife Izby Gospodarczej). Powody: digitalizacja istniejącej infrastruktury (klasyczne citylighty wymieniane na digital), szeroki zasięg kampanii cyfrowych, dostępność platform programmatic od 2024, niski próg wejścia (od ok. 174 zł) i mierzalność kampanii (realne impressions, audience-based buying).
+DOOH jest najszybciej rosnącym segmentem rynku OOH i odpowiada za ok. 32% jego wartości, podczas gdy cały rynek OOH w 2025 rósł o 7% (dane OOHlife Izby Gospodarczej). Powody: digitalizacja istniejącej infrastruktury (klasyczne citylighty wymieniane na digital), szeroki zasięg kampanii cyfrowych, dostępność platform programmatic od 2024, elastyczne progi wejścia przy zakupie programatycznym i mierzalność kampanii (realne impressions, audience-based buying).
 
 **Czy DOOH wypiera klasyczny OOH?**
 Nie wypiera, uzupełnia. Klasyczny OOH w 2025 nadal rośnie i pozostaje największą częścią rynku (61,6%). DOOH ma ok. 32% i rośnie, ale głównie z budżetów digital/programmatic, nie z budżetów klasycznego OOH. W przyszłości najpewniej rynek będzie hybrydowy: drogie premium lokalizacje statyczne (długoterminowe brand building) + DOOH dla taktycznych kampanii contextual i programmatic.
