@@ -47,13 +47,13 @@ To najważniejsza rzecz, którą trzeba wiedzieć przed wejściem na szczecińsk
 
 Projekt zakłada między innymi:
 
-- reklamę wolnostojącą do 48 m²,
-- reklamę na elewacji do 10% jej powierzchni,
+- dopuszczenie kilku znormalizowanych rozmiarów tablic i słupów wolnostojących (konkretne limity powierzchni poznamy z opublikowanego projektu),
+- reklamę na elewacji budynków mieszkalnych i usługowych do **10% powierzchni elewacji parteru**,
 - szyld do 0,3 m² na jedną działalność,
 - reklamy na przystankach maksymalnie na 30% powierzchni wiaty,
 - zakaz reklam na ogrodzeniach, terenach zielonych, urządzeniach bezpieczeństwa ruchu i wodach,
 - dopuszczenie reklamy cyfrowej (z wyłączeniem niskiej rozdzielczości),
-- 2 lata na dostosowanie istniejących nośników.
+- okres przejściowy na dostosowanie istniejących nośników (długości nie podano w publicznie dostępnych materiałach).
 
 Skala zmiany będzie duża, bo według inwentaryzacji poprzedzającej uchwałę legalnie ustawionych było tylko około **19% nośników** — czyli mniej więcej cztery na pięć reklam stało niezgodnie z przepisami. To pokazuje, w którą stronę zmierza rynek. Zasady działania takich uchwał w innych miastach opisujemy szerzej w tekście o [uchwale krajobrazowej](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama).
 
@@ -88,7 +88,7 @@ Pełnej, publicznej listy lokalnych operatorów z cennikami w Szczecinie nie ma,
 Szczecin nie ma publicznego cennika miejskiego. Orientacyjnie billboard 12 m² to ok. 500–5 000 zł netto miesięcznie, a citylight ok. 1 750–2 060 zł według benchmarku krajowego — konkretne stawki zależą od lokalizacji i ustala się je w ofercie operatora.
 
 **Czy w Szczecinie obowiązuje uchwała krajobrazowa?**
-Jeszcze nie. Miasto jest na etapie sporządzania projektu uchwały krajobrazowej. Projekt zakłada m.in. reklamę wolnostojącą do 48 m², limit 10% powierzchni elewacji i 2 lata na dostosowanie istniejących nośników.
+Jeszcze nie. Miasto jest na etapie sporządzania projektu uchwały krajobrazowej. Projekt zakłada m.in. normalizację rozmiarów nośników wolnostojących, limit 10% powierzchni elewacji parteru i okres przejściowy na dostosowanie istniejących nośników.
 
 **Gdzie najlepiej reklamować w Szczecinie?**
 Pod kampanie zasięgowe i przygraniczne — arterie wjazdowe i tranzytowe. Pod marki konsumenckie — centrum i główne place. Pod usługi lokalne — osiedla i ciągi handlowe. Pod B2B — okolice portu i stref logistycznych.
