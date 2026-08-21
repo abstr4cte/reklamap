@@ -2,7 +2,7 @@
 title: "Citylight reklama — co to jest, cennik 2026, kiedy wybrać"
 slug: "citylight-reklama"
 category: poradniki
-meta_description: "Citylight reklama — cennik 2026 z oficjalnych cenników AMS i Bauer Media Outdoor: od 250 do 4 655 zł/mc. Operatorzy, miasta, formalności. Sprawdź →"
+meta_description: "Citylight reklama — cennik 2026 z oficjalnych cenników AMS i Bauer Media Outdoor: od 250 do 4 655 zł/mc. Formaty, operatorzy, DOOH. Sprawdź →"
 image_alt: "Podświetlany citylight na przystanku autobusowym w centrum miasta nocą"
 image_prompt: "A backlit citylight advertising panel at a city bus stop at night, aluminium frame with glass front, glowing advertisement visible in urban street scene, no text on the display"
 keywords:
@@ -10,15 +10,11 @@ keywords:
   - citylight cena
   - citylight co to
   - reklama citylight
-  - citylight warszawa
-  - citylight kraków
-  - citylight gdańsk
-  - citylight łódź
-  - citylight olsztyn
-  - citylight lublin
   - cennik ams citylight
+  - cennik citylight 2026
   - operatorzy citylightów
-word_count: ~3600
+  - citylight premium
+word_count: ~2600
 published_at: "2026-05-12 23:00:00"
 status: draft
 ---
@@ -187,91 +183,15 @@ Szukasz konkretnego nośnika? Przeglądaj dostępne [powierzchnie reklamowe w Po
 
 ---
 
-## Citylight w polskich miastach — kto stawia wiaty i ile płaci miastu
+## Citylight w polskich miastach — skrót
 
-Citylight prawie zawsze stoi na gruncie miejskim, najczęściej w wiacie przystankowej. Oprócz umowy z operatorem w grę wchodzi więc trzeci uczestnik: gmina, która pobiera opłatę za zajęcie pasa drogowego. I właśnie w uchwałach rad miast kryje się mechanizm tłumaczący, dlaczego rynek citylightów jest tak skoncentrowany.
+Citylight prawie zawsze stoi w wiacie przystankowej na gruncie miejskim, więc oprócz operatora w grę wchodzi gmina pobierająca opłatę za zajęcie pasa drogowego. Trzy rzeczy warto wiedzieć, zanim zaczniesz szukać nośnika w konkretnym mieście:
 
-### Miasta płacą wiatami, nie pieniędzmi
+- **Nie kupisz ekspozycji od miasta.** W większości dużych miast wiaty postawił prywatny operator w zamian za prawo do reklamy i to z nim zawierasz umowę. Wyjątki to Lublin (MPK) i Olsztyn (ZDZiT), gdzie gabloty prowadzi sam samorząd.
+- **Gminy pobierają za gablotę w wiacie stawkę symboliczną** — od 0,01 zł za m² na dobę w Warszawie po 1,90 zł w Lublinie, wobec kilku złotych za zwykłą reklamę. Wielkość tej zniżki zależy od tego, kto sfinansował wiaty.
+- **Uchwały krajobrazowe realnie obowiązują tylko w części miast.** Warszawska została prawomocnie unieważniona, Poznań i Łódź mają uchwały bez wiążącego terminu dostosowania, a Wrocław, Katowice, Lublin i Olsztyn nie mają ich wcale.
 
-Uchwały o stawkach za zajęcie pasa drogowego wyróżniają osobną, drastycznie niższą stawkę dla reklamy w gablocie zintegrowanej z wiatą przystankową — pod warunkiem, że podmiot **sam tę wiatę wybudował i ją utrzymuje**. Zestawienie ze stawką za zwykłą reklamę w tym samym mieście (zł za 1 m² za dzień):
-
-| Miasto | Gablota w wiacie zbudowanej przez operatora | Zwykła reklama | Różnica |
-|---|---:|---:|---:|
-| **Warszawa** | 0,01 zł | 3,25–6,75 zł | **ok. 325–675×** |
-| **Gdynia** | 0,05 zł | 2,50–4,00 zł | ok. 50–80× |
-| **Katowice** | 0,08–0,04 zł | 4,00–2,00 zł | ok. 50× |
-| **Gdańsk** | 0,06–0,03 zł | 3,10–2,80 zł (podświetlana) | ok. 50–90× |
-| **Kraków** | 0,13–0,10 zł | 4,00–3,90 zł | ok. 30–39× |
-| **Łódź** | 0,15 zł | 5,00–3,00 zł | ok. 20–33× |
-| **Poznań** | 0,40 zł | 5,00–1,50 zł | ok. 4–12× |
-| **Wrocław** | 0,70 zł | 7,00–5,00 zł | ok. 7–10× |
-| **Lublin** | 1,90 zł | 5,10–3,80 zł | ok. 2–2,7× |
-| **Olsztyn** | *brak osobnej stawki* | 3,50–2,50 zł | — |
-
-Uszereguj te miasta według wielkości zniżki, a wyjdzie ci lista uporządkowana według czegoś zupełnie innego — **według tego, kto postawił wiaty**:
-
-- **Prywatny koncesjonariusz zbudował infrastrukturę** (Warszawa, Gdańsk, Gdynia, Katowice, Kraków, Łódź) → zniżka od 20-krotnej do ponad 600-krotnej. Skrajny przypadek to Warszawa: stawka 0,01 zł za metr na dobę jest już czysto symboliczna, a umowa z operatorem przewiduje wynagrodzenie **wyłącznie** z powierzchni reklamowych — miasto nie płaci za 1 640 wiat ani złotówki.
-- **Model mieszany** (Wrocław, Poznań) → zniżka 4–12-krotna.
-- **Gabloty prowadzi spółka komunalna** (Lublin — MPK Lublin) → zniżka zaledwie 2–2,7-krotna.
-- **Miasto prowadzi wiaty samo** (Olsztyn — ZDZiT) → osobnej stawki nie ma w ogóle.
-
-To nie jest hojność, tylko świadomy model: miasto nie płaci za budowę i utrzymanie wiat, a w zamian oddaje operatorowi prawo do zarabiania na reklamie po stawce niemal symbolicznej. Im więcej ryzyka inwestycyjnego bierze na siebie firma zewnętrzna, tym głębszy rabat dostaje. Tam, gdzie miasto finansuje wiaty z własnej kieszeni, nie ma czego rekompensować — i stawka wraca do normalnej. W Gdańsku zapisano to wprost — umowy dzierżawy z 2023 r. obejmują wymianę 215 wiat, a koszt inwestycji i utrzymania leży po stronie operatorów. W Warszawie umowa z października 2025 r. na 1 640 wiat przewiduje wynagrodzenie wykonawcy **wyłącznie** z prawa do eksploatacji powierzchni reklamowych.
-
-Praktyczny wniosek: **preferencyjna stawka jest dostępna tylko dla firmy, która postawiła wiatę.** Citylightu nie da się „podnająć" od miasta — jedyną drogą jest umowa z operatorem, który wygrał przetarg. Stąd 87% rynku w rękach trzech firm.
-
-Podstawy prawne: Warszawa — uchwała XXXI/666/2004 w brzmieniu nadanym uchwałą LXXIV/2468/2022 z 15.12.2022 (Dz. Urz. Woj. Mazowieckiego 2022, poz. 13948), zał. nr 3 poz. 34; Gdynia — uchwała XIII/429/19 z 23.10.2019 (Dz. Urz. Woj. Pomorskiego 2019, poz. 5074), § 4 ust. 2, wg tekstu jednolitego z obwieszczenia XII/O/24; Katowice — uchwała XX/476/20 z 28.05.2020, § 4 ust. 2 (uchyliła uchwałę XLVIII/896/17 z 2017 r., zachowując te same stawki); Gdańsk — LV/1389/22 z 27.10.2022 (Dz. Urz. Woj. Pomorskiego 2022, poz. 4346), § 4; Kraków — XXX/789/19 z 5.12.2019 (Dz. Urz. Woj. Małopolskiego 2019, poz. 9305), § 5 ust. 1; Łódź — LX/1804/22 z 1.06.2022 (Dz. Urz. Woj. Łódzkiego 2022, poz. 3671); Poznań — XCI/1749/VIII/2023 z 24.10.2023, § 6; Wrocław — LIX/1549/22 z 20.10.2022 ze zm., zał. nr 3; Lublin — wykaz stawek ZDiTM „Opłaty jednolite 2025", poz. 5 i 6b tabeli dziennych stawek za zajęcie 1 m² pasa drogowego; Olsztyn — VII/99/24 z 27.11.2024 (Dz. Urz. Woj. Warmińsko-Mazurskiego 2024, poz. 5624), § 4 ust. 2, wg tekstu pierwotnego.
-
-### Olsztyn — wyjątek, który tłumaczy regułę
-
-Olsztyn jako jedyne z badanych miast **nie ma w uchwale osobnej stawki dla wiat przystankowych**. Powód jest prosty i zgodny z regułą powyżej: nie ma tam koncesjonariusza, któremu trzeba by tę zniżkę dać. Wiatami zarządza samo miasto przez Zarząd Dróg, Zieleni i Transportu, który udostępnia gabloty o wymiarach **1,15 × 1,78 m** bezpośrednio reklamodawcom. Nie ma więc operatora, któremu trzeba by dawać preferencyjną stawkę w zamian za inwestycję — a reklama w gablocie wpada do kategorii „pozostałe", czyli 3,50 zł przy drogach krajowych i wojewódzkich oraz 2,50 zł przy powiatowych i gminnych.
-
-Druga konsekwencja braku koncesjonariusza: Olsztyn leży **poza obszarem badania Outdoor Track**, więc w cenniku AMS wycenia się go według kolumny „poza obszarem badania" — 860 zł za citylight i 1 755 zł za Premium Citylight miesięcznie.
-
-Uwaga na sprzeczny sygnał. ZDZiT informuje, że **od 1 stycznia 2025 r. wiaty autobusowe nie są udostępniane w celach reklamowych** — a jednocześnie miasto kupuje nowe wiaty wyposażone w gabloty reklamowe (przetarg z lipca 2025 r. na 35 wiat z gablotą reklamową i rozkładową, kolejny na wiaty typu „city" z ofertami do lipca 2026 r.). Zanim zaplanujesz kampanię w Olsztynie, zadzwoń do ZDZiT i potwierdź aktualny stan — z dokumentów tego nie da się rozstrzygnąć.
-
-Olsztyn **nie ma uchwały krajobrazowej.** Miasto pracuje na zasadach z projektu z kwietnia 2022 r., a stan na czerwiec 2026 r. to nadal etap po konsultacjach i rozstrzygnięciu uwag. Nie ma więc ani stref, ani okresu dostosowawczego, ani zakazów wynikających z uchwały.
-
-### Uchwały krajobrazowe — gdzie realnie obowiązują
-
-To pytanie decyduje o tym, czy w danym mieście można w ogóle postawić nowy nośnik. Stan jest bardziej skomplikowany, niż sugeruje większość poradników:
-
-| Miasto | Status uchwały krajobrazowej |
-|---|---|
-| **Gdańsk** | Obowiązuje (XLVIII/1465/18), dostosowanie minęło 3.04.2020 |
-| **Gdynia** | Obowiązuje (LV/1678/23), **strefy A i B**, dostosowanie 12 miesięcy |
-| **Kraków** | Obowiązuje (XXXVI/908/20) od 1.07.2020, dostosowanie minęło 1.07.2022 |
-| **Łódź** | Obowiązuje (XXXVII/966/16), ale przepisy dostosowawcze prawomocnie unieważnione |
-| **Poznań** | Obowiązuje (LXXXVIII/1671/VIII/2023), ale przepisy dostosowawcze unieważnione |
-| **Warszawa** | **Nie obowiązuje** — unieważniona w całości, wyrok NSA II OSK 1005/21 |
-| **Wrocław** | Nie uchwalona; prace wznowione w czerwcu 2026 |
-| **Katowice** | Nie uchwalona |
-| **Lublin** | Nie uchwalona |
-| **Olsztyn** | Nie uchwalona |
-
-Trzy rzeczy, na które warto uważać, bo są źródłem najczęstszych błędów w tekstach o reklamie zewnętrznej:
-
-**Warszawa nie ma stref reklamowych.** Uchwała krajobrazowa z 16 stycznia 2020 r. została unieważniona w całości rozstrzygnięciem nadzorczym wojewody, a skargę miasta oddalił WSA (IV SA/Wa 899/20), co NSA podtrzymał wyrokiem z 21 września 2021 r. Wszelkie „strefy A/B/C warszawskiej uchwały krajobrazowej" to byt prawnie nieistniejący. Strefy A i B ma za to **Gdynia** — i tam są realne.
-
-**Poznań i Łódź mają uchwały bez terminu dostosowania.** W Poznaniu WSA wyrokiem z 25 stycznia 2024 r. stwierdził nieważność § 10 ust. 1–3 i ust. 6 uchwały, a NSA oddalił skargę kasacyjną 18 marca 2026 r. W Łodzi WSA prawomocnym wyrokiem z 9 października 2024 r. unieważnił § 4 ust. 2 i § 10 załącznika nr 1 — powodem był brak mechanizmu kompensacyjnego dla podmiotów zmuszonych usunąć legalnie postawione nośniki. W obu miastach uchwała jako taka obowiązuje, ale istniejące nośniki nie mają wiążącego terminu dostosowania.
-
-**Nad Krakowem wisi pytanie do TSUE.** 2 czerwca 2026 r. NSA postanowieniem II OSK 1153/25 skierował do Trybunału Sprawiedliwości UE dwa pytania prejudycjalne i zawiesił postępowanie. Dotyczą dokładnie tej asymetrii, którą opisaliśmy wyżej: czy dyrektywa usługowa pozwala gminie generalnie ograniczać reklamę podmiotom prywatnym, jednocześnie dopuszczając tę samą reklamę na infrastrukturze komunalnej. W uzasadnieniu przywołano ekran LED o wymiarach 54 × 9,9 m na obiekcie komunalnym przy równoczesnym zakazie nośników powyżej 18 m² dla podmiotów prywatnych. Rozstrzygnięcie może dotknąć wszystkich polskich uchwał krajobrazowych.
-
-### Kto obsługuje wiaty w największych miastach
-
-| Miasto | Operator gablot przystankowych |
-|---|---|
-| **Warszawa** | AMS SERWIS — umowa z 3.10.2025 na 1 640 wiat |
-| **Poznań** | Ströer (ok. 400 powierzchni) i AMS (1 086 citylightów na 323 wiatach); wiatami zarządza Grupa MTP |
-| **Gdańsk** | Ströer (2 pakiety) i AMS (1 pakiet), umowy 12-letnie z 2023 r., 215 wiat |
-| **Wrocław** | AMS i Bauer Media Outdoor — 430 gablot citylight w pasie drogowym (wpis BIP ZDiUM bez daty, wciąż pod starą nazwą Clear Channel) |
-| **Kraków** | AMS i Business Consulting |
-| **Lublin** | MPK Lublin — gabloty 1,2 × 1,8 m w ścianach wiat |
-| **Olsztyn** | ZDZiT (miasto), gabloty 1,15 × 1,78 m |
-| **Gdynia** | Przetarg nierozstrzygnięty — oferty złożyły AMS i Bauer Media Outdoor Poland |
-
-Gdynia jest w trakcie największego z tych postępowań: koncesja na budowę i utrzymanie **260 wiat** na **15 lat**, z wynagrodzeniem wyłącznie z działalności reklamowej. Gdyńska uchwała krajobrazowa reguluje przy tym citylighty wprost — definiuje „gablotę ekspozycyjną" o powierzchni do 3 m², wymaga jednego wzoru wiat w kolorze RAL 7016, a w ścisłym centrum (strefa A) dopuszcza reklamę właśnie w postaci ujednoliconych gablot.
-
-Łódź wyróżnia się rozproszoną własnością wiat — wg danych Urzędu Miasta z 2019 r. ZDiT miał ich 572, urząd miasta 187, MPK 184, AMS 141, a Clear Channel 135. To układ nietypowy na tle Gdańska czy Warszawy, gdzie infrastruktura jest skupiona w rękach jednego–dwóch operatorów.
+Pełne zestawienie — operatorzy wiat w dziesięciu miastach, stawki za zajęcie pasa drogowego z dziewięciu dzienników urzędowych i status każdej uchwały krajobrazowej — znajdziesz w osobnym artykule: **[Reklama na przystankach — kto ją sprzedaje i ile kosztuje](/blog/poradniki/reklama-na-przystankach)**.
 
 ---
 
