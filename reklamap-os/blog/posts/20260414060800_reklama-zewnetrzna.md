@@ -41,7 +41,7 @@ Na polskim rynku działa kilka głównych formatów:
 
 ## Cennik reklamy zewnętrznej 2026 — wszystkie formaty
 
-Ceny zależą od dwóch zmiennych: formatu i lokalizacji. Poniższa tabela zestawia aktualne stawki rynkowe netto (źródła: billboard-x.pl, znajdzreklame.pl):
+Ceny zależą od dwóch zmiennych: formatu i lokalizacji. Poniższa tabela łączy dwa rodzaje danych: **oficjalne cenniki operatorów** (AMS, Bauer Media Outdoor, MPK Wrocław i Poznań — te są dokładne) oraz **szacunkowe widełki rynkowe** dla billboardów, których w Polsce nikt nie publikuje centralnie. Widełki traktuj jako punkt wyjścia do negocjacji, nie jako cennik katalogowy:
 
 | Format | Lokalizacja / specyfikacja | Cena netto/mc |
 |--------|---------------------------|---------------|
@@ -49,15 +49,16 @@ Ceny zależą od dwóch zmiennych: formatu i lokalizacji. Poniższa tabela zesta
 | Billboard 48 m² | Miasto, droga krajowa | 900–2 500 zł |
 | Billboard centrum | Centrum Warszawy, Krakowa | 4 000–10 000 zł |
 | Billboard 108 m² | Autostrada, droga ekspresowa | 3 000–6 000 zł |
-| Citylight 1,2×1,8 m | Lokalizacje poza centrum | ok. 840 zł |
-| Citylight 1,2×1,8 m | Centrum dużego miasta | ok. 2 000 zł, lokalizacje premium do 2 500 zł |
+| Citylight 1,2×1,8 m | Poza aglomeracjami objętymi badaniem | 860 zł (cennik AMS od 1.07.2026) |
+| Citylight 1,2×1,8 m | Wg natężenia kontaktów przy nośniku | 735–4 655 zł (AMS) · 2 010–4 110 zł (Bauer Media Outdoor od 19.08.2026) |
 | Telebim/DOOH (pakiet spotów) | Centrum miasta | od ok. 400 zł/mies. (spot 5 s co 3 min) do kilku tys. zł/mies. |
-| Transport — cały pojazd | Z drukiem, ok. miesiąc | 13 900–36 000 zł |
-| Transport — ramka wewnętrzna | Autobus/tramwaj | 1 990–11 900 zł |
+| Transport — całopojazdowa, autobus | Sama dzierżawa powierzchni | 1 500 zł (solo) – 2 200 zł (przegubowy), MPK Wrocław |
+| Transport — całopojazdowa, tramwaj | Sama dzierżawa powierzchni | 4 000–4 500 zł (Wrocław) · 10 300–12 500 zł (Poznań) |
+| Transport — ramka wewnętrzna | Za sztukę, nie za pojazd | 2–3 zł/szt./dzień (Wrocław) · 18–23 zł/szt./tydzień, min. 30 szt. (Poznań) |
 | Mural (wynajem ściany) | Od 100 m² | od 20 000 zł |
 | Baner (druk własny) | Za m² materiału | 39–190 zł/m² |
 
-Ceny nie obejmują zazwyczaj druku i montażu — te koszty mogą zwiększyć wydatek o 15–30%. Zawsze pytaj właściciela nośnika, co dokładnie jest wliczone w stawkę. Pełne omówienie kosztów znajdziesz w artykule [Ile kosztuje reklama outdoor? Cennik 2026](/blog/poradniki/ile-kosztuje-reklama-outdoor).
+Ceny nie obejmują zazwyczaj druku i montażu. Przy komunikacji miejskiej to nie jest drobna dopłata, tylko osobna pozycja budżetu: cenniki MPK obejmują **wyłącznie dzierżawę powierzchni**, a projekt, druk, oklejenie pojazdu i przywrócenie go do barw firmowych płacisz osobno — sam demontaż reklamy z tramwaju kosztuje we Wrocławiu 4 900–7 000 zł netto. Zawsze pytaj właściciela nośnika, co dokładnie jest wliczone w stawkę. Pełne omówienie kosztów znajdziesz w artykule [Ile kosztuje reklama outdoor? Cennik 2026](/blog/poradniki/ile-kosztuje-reklama-outdoor).
 
 ---
 

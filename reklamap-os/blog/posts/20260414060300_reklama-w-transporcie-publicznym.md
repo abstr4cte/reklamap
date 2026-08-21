@@ -46,16 +46,17 @@ Uwaga na dwie różne logiki cenowe: **operatorzy miejscy podają samą ekspozyc
 |--------|--------------|
 | Reklama modułowa boczna — autobus (MPK Poznań) | 1 000 zł/mies. |
 | Reklama modułowa boczna — tramwaj Moderus Beta (MPK Poznań) | 3 000 zł/mies. |
-| Bus back (tył autobusu, pakiet pośrednika) | 1 350–2 500 zł (typ. 1 500 zł) |
 | Ramki wewnętrzne u operatora (MPK Poznań) | 18–23 zł/szt./tydzień |
-| Ramki wewnętrzne — pakiet kampanijny na flocie (pośrednik) | 1 990–11 900 zł |
 | Całopojazdowa — autobus solo (MPK Wrocław) | 1 250–1 500 zł/mies. |
-| Full cover — pakiet kampanijny z produkcją (pośrednik) | 13 900–36 000 zł |
 | Reklama na burcie tramwaju Moderus Beta (Poznań) | 7 800 zł |
 | Całopojazdowa — tramwaj (Poznań) | 10 300–12 500 zł |
 | Busboard — bok autobusu (MPK Wrocław) | 833–1 000 zł/mies. |
+| Fullback — tył autobusu (MPK Łódź) | 1 600 zł/mies. |
+| Cały wagon tramwaju bez szyb (MPK Łódź) | 8 500 zł/mies. |
 
-**Częsty błąd w budżetowaniu:** przy ofertach operatorów miejskich cena NIE obejmuje produkcji — MPK Poznań i MPK Wrocław wprost przenoszą koszt projektu, druku, montażu i demontażu na zamawiającego. Obejmują ją dopiero pakiety pośredników, i stąd bierze się kilkukrotna różnica w cennikach. Dla porównania, wyklejenie billboardu to dodatkowe 120–220 zł, a druk baneru 50–100 zł/m². Porównując budżety, zawsze sprawdź co wliczone w stawkę.
+**Częsty błąd w budżetowaniu:** przy ofertach operatorów miejskich cena NIE obejmuje produkcji — MPK Poznań i MPK Wrocław wprost przenoszą koszt projektu, druku, montażu i demontażu na zamawiającego. Skalę tej różnicy najlepiej widać w Krakowie, bo MPK rozlicza obie pozycje osobno i obie publikuje: ekspozycja na tramwaju E1 to **4 244 zł miesięcznie**, a produkcja — druk, nałożenie i późniejsze usunięcie z przywróceniem barw firmowych — **13 200 zł**. Miesięczna kampania kosztuje więc realnie **17 444 zł, z czego 76% to produkcja, a nie ekspozycja**. Przy umowie rocznej proporcja się odwraca, bo produkcję płacisz raz.
+
+Dlatego pierwsze pytanie do sprzedawcy nie brzmi „ile kosztuje", tylko **„czy ta cena obejmuje produkcję"**. Bez odpowiedzi na nie porównywanie ofert między miastami i między pośrednikami nie ma sensu.
 
 Szczegółowe porównanie kosztów: [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor)
 
@@ -188,8 +189,8 @@ Jak wybrać odpowiedni format do celu kampanii: [Jak wybrać powierzchnię rekla
 
 ## Najczęściej zadawane pytania
 
-**Ile kosztuje full cover autobusu?**
-Od 13 900 do 36 000 zł miesięcznie (typowo ok. 25 900 zł) — cena obejmuje druk i montaż materiałów (wg znajdzreklame.pl). To budżet porównywalny z megaboardem w centrum Warszawy, ale z zupełnie innym zasięgiem — pojazd jeździ przez całe miasto, a nie stoi w jednym miejscu.
+**Ile kosztuje reklama całopojazdowa na autobusie?**
+Sama dzierżawa powierzchni to ok. 1 500 zł miesięcznie za autobus solo i 2 200 zł za przegubowy (MPK Wrocław), przy umowie rocznej odpowiednio 15 000 i 22 000 zł za cały rok. **Do tego dochodzi produkcja**, której cenniki operatorów nie obejmują: projekt, druk, oklejenie i późniejszy demontaż z przywróceniem barw firmowych. W Krakowie, gdzie MPK wycenia ją osobno, produkcja na tramwaju kosztuje 13 200–23 100 zł, a sam demontaż reklamy z tramwaju we Wrocławiu to 4 900–7 000 zł. Realny budżet kampanii jest więc zwykle kilkukrotnie wyższy od stawki z nagłówka cennika.
 
 **Jak długo trwa realizacja kampanii w transporcie?**
 Od złożenia zamówienia do pojawienia się reklamy na pojeździe zazwyczaj 2–3 tygodnie — czas na projekt graficzny, druk i oklejenie. Planuj z wyprzedzeniem, szczególnie przy kampaniach sezonowych.
