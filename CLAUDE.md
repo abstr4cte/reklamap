@@ -148,6 +148,8 @@ Przez cztery miesiące pisaliśmy o cenach citylightów „szacunkowymi widełka
 - **Ströer** — cen nie publikuje (pakiet / tailor-made), ale mediakit `stroer.pl` podaje **listę miast per produkt**.
 - **Operatorzy komunalni bywają kilkukrotnie tańsi** — MPK Lublin: gablota CL 1,2×1,8 m za 150 zł (14 dni) / 250 zł (miesiąc), montaż w cenie. Przy tej ścieżce płaci się dwa razy: spółce miejskiej i zarządowi dróg za pas drogowy.
 
+**Nowa klasa błędu (2026-08-21): uchwała nieuchylona ≠ uchwała aktualna.** Przy każdej stawce z uchwały sprawdź, czy jej **załącznik nie został zastąpiony** — Kraków (XXX/789/19 uchylona przez XXXVI/730/25 z 17.09.2025) i Łódź (załącznik LX/1804/22 zastąpiony przez LXVIII/2022/22 od 1.01.2023) wywróciły się dokładnie na tym, a błąd wygląda na porządnie udokumentowany. Wojewódzkie dzienniki mają niedokumentowane API: `GET /api/legalact?year=&journal=&position=` zwraca metryczkę z listą aktów zmieniających. **NIE opieraj się na tekstach ujednoliconych z podstron urzędów** — warszawski z `ochota.um.warszawa.pl` kończy się na zmianie z 2019 r. i trzykrotnie wygenerował fałszywy alarm o konfabulacji.
+
 **Zasada: zanim napiszesz widełki cenowe dla dowolnego formatu OOH, sprawdź stronę operatora.** To samo dotyczy stawek za zajęcie pasa drogowego — są w uchwałach rad miast w dziennikach urzędowych województw i zawsze można je zacytować z numerem uchwały. Uwaga: streszczenia uchwał (blogi, portale) potrafią podać kwoty całkowicie zmyślone — przy uchwale olsztyńskiej VII/99/24 dwa niezależne streszczenia podały dwie różne, obie fałszywe stawki. **Czytaj tabelę w PDF-ie dziennika urzędowego, nie streszczenie.**
 
 ### Świadomie ODPUSZCZONE (nie proponuj ponownie bez nowego argumentu)
