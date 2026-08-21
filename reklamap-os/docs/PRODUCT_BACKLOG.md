@@ -21,11 +21,11 @@ Najostrzejszy sygnał w danych: **95 telefonów kontra 2 maile**, przy czym **82
 
 | # | Zadanie | Kto | Effort |
 |---|---|---|---|
-| P-1 | **Alias e-mailowy do wystawcy** (`ad-{id}@reklamap.pl`, relay — NIE odsłaniać `owner_email`; strict DMARC → wyłącznie SMTP Hostido) | dev | XS |
-| P-2 | **Powiadomienie wystawcy o zapytaniu** — „ktoś pytał o Twój nośnik". Bez tego właściciel nie wie, że platforma działa | dev | S |
-| P-3 | **Miesięczne podsumowanie statystyk** dla wystawcy (odsłony, kontakty). Uwaga: licznik odsłon jest zawyżony ~13,7× (liczy prerender i boty) — **najpierw naprawić, potem pokazywać** | dev | S |
+| ~~P-1~~ | ~~Alias e-mailowy do wystawcy~~ — **USUNIĘTE 2026-08-21.** Weryfikacja w kodzie: `AdvertisementController::contactOwner` już wysyła zapytanie na `owner_email` z `replyTo` na pytającego, a `owner_email` nigdy nie jest odsłaniany w UI. Zadanie opisywało problem już rozwiązany. | — | — |
+| **P-1a** | **Tracking faktycznego kliknięcia w telefon.** Dziś liczymy TYLKO odsłonięcie numeru. Drugie kliknięcie (`AdDetailPage.vue:75`, `window.location.href = tel:`) i goły link `tel:` (`AdSidebar.vue:84`) nie są mierzone wcale. Telefon to główny kanał kontaktu → jesteśmy ślepi na jedyną realną konwersję. Dodać też deduplikację per sesja. | dev | XS |
+| ~~P-2+P-3~~ | ~~Powiadomienie o zapytaniu~~ + ~~miesięczny digest statystyk~~ — **ODROCZONE 2026-08-21, nie z powodów technicznych.** Powiadomienie o zapytaniu już istnieje (patrz P-1). Digest nie ma czego raportować: **591 odsłon przez 30 dni na 827 ogłoszeń**, najlepszy nośnik miał 5 wyświetleń miesięcznie (snapshot 2026-07-25). Mail o zerowej liczbie odsłon jest gorszy niż brak maila. **Warunek powrotu: realny ruch na stronach ogłoszeń** — czyli najpierw P-4 i treść. Teza o zawyżeniu licznika ~13,7x przez prerender jest NIEPOTWIERDZONA i prawdopodobnie fałszywa: jeden pełny deploy dałby 827 odsłon, a przez cały miesiąc jest ich 591 — prerender najpewniej zamyka stronę przed 2-sekundowym timerem. Filtr botów świadomie odrzucony (decyzja foundera 2026-08-21). | — | — |
 
-**Dlaczego to pierwsze:** wystawca, który widzi ruch, wystawia więcej nośników i mówi o nas innym. To **jedyny organiczny silnik podaży, który się sam napędza** — i jest wielokrotnie tańszy niż SEO.
+**Rewizja 2026-08-21 — ta faza straciła priorytet.** Założenie brzmiało: wystawca, który widzi ruch, wystawia więcej nośników i mówi o nas innym. Nadal jest słuszne, ale ma warunek, którego nie spełniamy: **musi być jakiś ruch do pokazania.** Snapshot z 2026-07-25 mówi jasno — 591 odsłon przez 30 dni na 827 ogłoszeń, najlepszy nośnik 5 wyświetleń miesięcznie, 1 zapytanie przez formularz. Sprzężenie zwrotne do wystawcy nie jest wąskim gardłem; wąskim gardłem jest to, że **nikt tych ogłoszeń nie ogląda**. Dlatego FAZA 2 (popyt) wchodzi przed resztą FAZY 1. Zostaje tu tylko P-1a, bo tracking telefonu jest warunkiem tego, żeby cokolwiek później zmierzyć.
 
 ### FAZA 2 — Ściągnąć reklamodawców (S–M)
 
