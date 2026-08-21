@@ -157,6 +157,6 @@ Do kampanii zasięgowych: trasy wylotowe (A2, S5) i węzeł Roosevelta — ruch 
 
 ---
 
-**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Ekran LED — cena i wynajem](/blog/poradniki/ekran-led-cena) · [Reklama w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym) · [Uchwała krajobrazowa](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama)
+**Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Ekran LED — cena i wynajem](/blog/poradniki/ekran-led-cena) · [Reklama w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym) · [Uchwała krajobrazowa](/blog/prawo-i-regulacje/uchwala-krajobrazowa-reklama) · [Telebim — co to jest, formaty i gdzie stoją ekrany LED](/blog/trendy/telebim-ekran-led-reklama)
 
 Masz billboard, ekran LED lub nośnik w Poznaniu? Wystaw go bezpłatnie i dotrzyj do tysięcy reklamodawców → [reklamap.pl/dodaj-powierzchnie-reklamowa](/dodaj-powierzchnie-reklamowa)
