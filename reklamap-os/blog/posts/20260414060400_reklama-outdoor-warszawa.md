@@ -85,7 +85,7 @@ Warszawa oferuje unikalne nośniki niedostępne w żadnym innym polskim mieście
 | Pojedyncza stacja | 10 000–30 000 zł |
 | Duże pakiety wielostacyjne | 30 000–500 000 zł |
 
-Ceny pakietów podstawowych wg znajdzreklame.pl; duże pakiety — wycena indywidualna. Metro dociera do 193 mln pasażerów rocznie (transinfo.pl, 2025).
+**Uwaga na to, z kim rozmawiasz.** Metro Warszawskie zastrzega na swojej stronie, że „reklamą w wagonach, na stacjach i w obiektach Metra Warszawskiego **na prawach wyłączności** zajmuje się Ströer Polska sp. z o.o.". Ströer nie publikuje cennika — sprzedaje w pakietach albo w wycenie indywidualnej. Powyższe kwoty pochodzą więc z ofert pośredników, a nie z cennika operatora, i mogą się od niego istotnie różnić. Po realną wycenę idź do Ströera albo poproś pośrednika o wskazanie, co dokładnie obejmuje pakiet. Metro dociera do 193 mln pasażerów rocznie (transinfo.pl, 2025).
 
 **MZA (autobusy)** — cennik 2026, ceny netto/mies. bez kosztu produkcji:
 
@@ -123,7 +123,7 @@ Od 1 500 zł/mc (billboard 6×3 m, Ursynów) do 25 000 zł/mc (megaboard w Śró
 Nie, ale nie z powodu uchwały krajobrazowej — Warszawa jej dziś nie ma. Uchwałę z 2020 r. unieważnił wojewoda, a nowa jest dopiero na etapie sporządzania (przystąpienie 10 lipca 2025 r.) i jej treści nie opublikowano. Ograniczenia wynikają obecnie z miejscowych planów zagospodarowania, przepisów o zajęciu pasa drogowego, ochrony konserwatorskiej i Prawa budowlanego — a przy nośniku wolnostojącym trwale związanym z gruntem potrzebne jest pozwolenie na budowę.
 
 **Ile kosztuje reklama w metrze warszawskim?**
-Pakiety podstawowe od 3 990 zł/mc. Ekspozycja na pojedynczej stacji to 10 000–30 000 zł/mc. Duże kampanie wielostacyjne to wycena indywidualna (wg znajdzreklame.pl). Metro dociera do 193 mln pasażerów rocznie.
+Oferty pośredników zaczynają się od ok. 3 990 zł/mc za pakiet podstawowy, a ekspozycja na pojedynczej stacji to rząd 10 000–30 000 zł/mc. To jednak nie są stawki operatora: reklamę w metrze obsługuje **na prawach wyłączności Ströer Polska**, który cennika nie publikuje. Metro dociera do 193 mln pasażerów rocznie.
 
 ---
 

@@ -23,7 +23,7 @@ Billboard 12×4 m w centrum Wrocławia kosztuje **7 000–16 000 zł miesięczni
 
 ## Reklama outdoor Wrocław — cennik według dzielnic 2026
 
-Stawki netto za miesiąc, bez kosztów druku i montażu (źródło: wedo.pl, billboard-x.pl, znajdzreklame.pl):
+Stawki netto za miesiąc, bez kosztów druku i montażu. Widełki billboardowe to szacunki rynkowe — operatorzy ich nie publikują; ceny citylightów pochodzą z oficjalnych cenników AMS i Bauer Media Outdoor:
 
 | Dzielnica / Lokalizacja | Billboard 12×4 m (48 m²) | Billboard 6×3 m (18 m²) |
 |-------------------------|--------------------------|--------------------------|
@@ -33,7 +33,7 @@ Stawki netto za miesiąc, bez kosztów druku i montażu (źródło: wedo.pl, bil
 | Psie Pole | 4 000–5 000 zł | 1 000–4 000 zł |
 | Trasy wylotowe | 4 200–12 000 zł | 1 000–4 000 zł |
 
-Citylight w centrum (Śródmieście/Stare Miasto): od 790 zł/mc (wg znajdzreklame.pl).
+Citylight: wg cennika AMS obowiązującego od 1.07.2026 stawka zależy od dobowej liczby kontaktów przy nośniku i wynosi od 735 do 4 655 zł/mc, przy czym **dla Wrocławia obowiązuje indeks aglomeracyjny 1,35**. Bauer Media Outdoor liczy 2 010–4 110 zł/mc wg zasięgu nośnika.
 
 Dwa czynniki automatycznie podnoszą stawkę:
 - **Podświetlenie** — nośnik z oświetleniem to +30–50% do ceny bazowej
@@ -116,7 +116,7 @@ Przed podpisaniem umowy sprawdź, czy nośnik leży w granicach Parku. Więcej o
 ## Najczęściej zadawane pytania
 
 **Ile kosztuje billboard we Wrocławiu?**
-Billboard 12×4 m kosztuje od 1 500 zł/mc (Krzyki, Fabryczna) do 16 000 zł/mc (Śródmieście) netto, bez druku i montażu (wg wedo.pl, billboard-x.pl). Citylight w centrum to od 790 zł/mc (wg znajdzreklame.pl).
+Billboard 12×4 m kosztuje od 1 500 zł/mc (Krzyki, Fabryczna) do 16 000 zł/mc (Śródmieście) netto, bez druku i montażu (wg wedo.pl, billboard-x.pl). Citylight to wg cennika AMS 735–4 655 zł/mc zależnie od natężenia kontaktów przy nośniku, z indeksem aglomeracyjnym 1,35 dla Wrocławia; u Bauer Media Outdoor 2 010–4 110 zł/mc.
 
 **Czy Wrocław ma uchwałę krajobrazową?**
 Nie, choć miasto wznowiło prace nad taką uchwałą (deklarowany horyzont to co najmniej dwa lata). Centrum chroni dziś Park Kulturowy „Stare Miasto" (uchwała LVI/1465/14 z 10.04.2014, ze zmianami w 2016 i 2021 r.), który zakazuje m.in. reklamy na elewacjach i witrynach, banerów, ulotek, reklamy na nawierzchni i pojazdach oraz ekranów z napisami i obrazami. Poza Parkiem nie ma dodatkowego reżimu krajobrazowego, ale obowiązują miejscowe plany, przepisy o zajęciu pasa drogowego, ochrona konserwatorska i Prawo budowlane.
