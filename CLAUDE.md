@@ -246,7 +246,7 @@ Projekt posiada zespół wyspecjalizowanych agentów AI w `reklamap-os/agents/`.
 ### Pliki stanu systemu
 
 - `reklamap-os/status/BRUDNOPIS_SEO.md` — dane z researchu dla bieżącego artykułu
-- `reklamap-os/status/STRATEGY_LOG.md` — historia researchu SEO
+- `reklamap-os/status/STRATEGY_LOG.md` — historia researchu SEO + **sekcja "✍️ DO NAPISANIA"** z aktualną kolejką tematów (stan i popyt GSC per temat)
 - `reklamap-os/status/SALES_LOG.md` — wyniki rozmów sprzedażowych
 - `reklamap-os/status/ANALYTICS_LOG.md` — historia przeglądów danych i briefów Analityka
 - `reklamap-os/status/SEO_TECH_AUDIT.md` — log audytów technicznych SEO Architekta (statusy wdrożeń)
