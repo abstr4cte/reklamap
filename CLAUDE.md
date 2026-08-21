@@ -140,6 +140,16 @@ Only types with meaningful physical configurations have variants. `banner` and `
 - **Microsoft Clarity** — heatmapy i nagrania sesji (darmowe, bez limitu). Powód: GA4 mówi, **ile** osób odpadło (72 otwarcia ogłoszenia → 7 kliknięć w telefon), ale nie mówi **dlaczego**. Dwie firmy napisały zapytania na `kontakt@` zamiast użyć platformy — Clarity ma pokazać, gdzie szukały kontaktu. Bramka na UA bota jest celowa: prerender (puppeteer) nie ma zaśmiecać nagrań ani obciążać renderu dla botów.
 - **Fix `FAQPage`** — schemat powstawał tylko przy nagłówku dokładnie „Najczęściej zadawane pytania"; artykuły z `## FAQ` traciły rich snippet (3 z 28: `citylight-reklama`, `czy-oplaca-sie-wynajmowac-powierzchnie-reklamowa`, `jak-zarobic-na-wynajmie-powierzchni-reklamowej`). Logika wydzielona z `BlogPostPage.vue` do **`frontend/src/utils/faqSchema.ts`** (testowalna, wzorzec `listingsSeo.ts`) + 15 testów regresyjnych. **Wymaga deployu frontu, żeby zadziałało na prodzie.**
 
+### Ustalenie 2026-08-21: cenniki operatorów OOH SĄ publiczne — nie zgaduj widełek
+
+Przez cztery miesiące pisaliśmy o cenach citylightów „szacunkowymi widełkami", zakładając, że operatorzy cenników nie publikują. **To założenie było fałszywe.** Dwaj z trzech największych publikują oficjalne, datowane PDF-y:
+- **AMS** — `ams.com.pl/oferta/cennik`, cennik Klasyczne OOH obowiązujący od 1.07.2026. Wycena wg **przedziału dobowej liczby kontaktów P1–P10**, nie wg miasta: citylight 735–4 655 zł netto/mc, Premium CL 1 110–6 725 zł, poza obszarem badania Outdoor Track odpowiednio 860 i 1 755 zł. Indeks aglomeracyjny: Warszawa/Trójmiasto/Wrocław ×1,35, Kraków/Poznań ×1,2. Kampania 2-tygodniowa = ×0,7. Cena CL obejmuje rotację.
+- **Bauer Media Outdoor Poland** (dawny Clear Channel) — `bauermediaoutdoor.pl/warunki-wspolpracy/cennik`, cennik od 19.08.2026, wycena wg kategorii zasięgu VAC A–E: citylight 2 010–4 110 zł netto/mc.
+- **Ströer** — cen nie publikuje (pakiet / tailor-made), ale mediakit `stroer.pl` podaje **listę miast per produkt**.
+- **Operatorzy komunalni bywają kilkukrotnie tańsi** — MPK Lublin: gablota CL 1,2×1,8 m za 150 zł (14 dni) / 250 zł (miesiąc), montaż w cenie. Przy tej ścieżce płaci się dwa razy: spółce miejskiej i zarządowi dróg za pas drogowy.
+
+**Zasada: zanim napiszesz widełki cenowe dla dowolnego formatu OOH, sprawdź stronę operatora.** To samo dotyczy stawek za zajęcie pasa drogowego — są w uchwałach rad miast w dziennikach urzędowych województw i zawsze można je zacytować z numerem uchwały. Uwaga: streszczenia uchwał (blogi, portale) potrafią podać kwoty całkowicie zmyślone — przy uchwale olsztyńskiej VII/99/24 dwa niezależne streszczenia podały dwie różne, obie fałszywe stawki. **Czytaj tabelę w PDF-ie dziennika urzędowego, nie streszczenie.**
+
 ### Świadomie ODPUSZCZONE (nie proponuj ponownie bez nowego argumentu)
 
 - **Cloudflare — NIE teraz.** Trzy powody: (1) mamy nierozwiązane **24 strony z 5xx wyłącznie dla Googlebota** (Bing: `Code5xx=0` na 14 656 pobrań) — dokładanie warstwy przed diagnozą zaciemni obraz; (2) **Rocket Loader** i **HTML minification** w CF mogą uszkodzić inline `<script>window.__INITIAL_STATE__=…</script>`, czyli niezmiennik chroniący przed deindeksem; (3) tryb **„Under attack"** serwuje JS-owy challenge **wszystkim**, w tym Googlebotowi → natychmiastowy deindeks.

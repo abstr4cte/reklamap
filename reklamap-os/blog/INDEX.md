@@ -4,6 +4,8 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 
 > ## ✅ AUDYT FAKTOGRAFICZNY ZAKOŃCZONY — 2026-08-20
 >
+> ⚠️ **Sprostowanie 2026-08-21:** deklaracja „36/36" z 20.08 była przedwczesna. Trzy artykuły miały status ZRECENZOWANY **bez naniesionych poprawek** — `citylight-reklama` (fałszywa tabela operatorów), `ile-kosztuje-reklama-outdoor` (10 błędów, w tym zawyżenie ceny reklamy całopojazdowej ~10×) i `pozwolenie-na-tablice-reklamowa`. Poprawione 21.08. Wniosek na przyszłość: **status w INDEX-ie nadawaj dopiero po commicie z poprawkami**, nie po samym przeczytaniu raportu.
+>
 > **Wszystkie 36 artykułów przeszło weryfikację faktów.** 28 tekstów powstało przed wprowadzeniem reguł anty-konfabulacyjnych (12.07.2026) i tylko 5 z nich było kiedykolwiek sprawdzonych — 20.08 przeaudytowano pozostałe 23, WebSearchem przeciwko źródłom pierwotnym (BIP, ISAP/ELI, orzecznictwo, oficjalne cenniki operatorów).
 >
 > **Trafienie: konfabulacje w KAŻDYM sprawdzonym artykule.** Najczęstsze klasy błędów: nieaktualne lub wprost błędne jednostki redakcyjne ustaw (w jednym przypadku przywołany przepis stanowił *dosłowne zaprzeczenie* tezy), cenniki operatorów zaniżone o połowę lub przypisane do złego formatu, ceny pakietów podane jako ceny jednostkowe, fałszywe superlatywy („jedyne miasto w Polsce…"), zmyśleni operatorzy i akronimy, atrybucja do źródeł nie zawierających cytowanych liczb.
@@ -21,7 +23,7 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 |:---|:---|:---|:---|:---|
 | **Kategoria: /blog/poradniki** | | | | |
 | 2026-04-14 06:00 | jak-wybrac-powierzchnie-reklamowa | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414060000_jak-wybrac-powierzchnie-reklamowa.md) |
-| 2026-04-14 06:01 | ile-kosztuje-reklama-outdoor | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414060100_ile-kosztuje-reklama-outdoor.md) |
+| 2026-04-14 06:01 | ile-kosztuje-reklama-outdoor | poradniki | ✅ ZRECENZOWANY 2026-08-21 (10 błędów: „ceny obejmują druk i montaż" wbrew obu cytowanym cennikom MPK; full cover autobus 13 900–36 000 → realnie 1 500–2 200 zł/mc; 8 000–40 000 zł/mc przypisane billboard-x.pl, które tej liczby nie zawiera; usunięto niepotwierdzoną tabelę warszawską i „jedyny format z CPM") | [Link](posts/20260414060100_ile-kosztuje-reklama-outdoor.md) |
 | 2026-08-18 10:42 | dzierzawa-gruntu-pod-reklame | poradniki (PODAŻ) | ✅ ZRECENZOWANY (zero wolumenu Google, treść pod cold calling + AI-search, patrz brudnopis) | [Link](posts/20260818104212_dzierzawa-gruntu-pod-reklame.md) |
 | 2026-06-09 18:16 | ekran-led-cena | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260609181608_ekran-led-cena.md) |
 | 2026-06-22 11:30 | jak-zarobic-na-wynajmie-powierzchni-reklamowej | poradniki (PODAŻ) | ✅ ZRECENZOWANY | [Link](posts/20260622113049_jak-zarobic-na-wynajmie-powierzchni-reklamowej.md) |
@@ -37,7 +39,7 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 | **Kategoria: /blog/poradniki (cd.)** | | | | |
 | 2026-04-14 06:10 | tablica-reklamowa | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414061000_tablica-reklamowa.md) |
 | **Kategoria: /blog/poradniki (cd.)** | | | | |
-| 2026-05-12 23:00 | citylight-reklama | poradniki | ✅ ZRECENZOWANY (refresh) | [Link](posts/20260414060700_citylight-reklama.md) |
+| 2026-05-12 23:00 | citylight-reklama | poradniki | ✅ ZRECENZOWANY 2026-08-21 (tabela operatorów wg raportu OOHlife 31.12.2024: AMS 12 634 CL, Ströer 4 586, Bauer/Clear Channel 4 018, Warexpo 1 512; usunięto Mini Media — ma ZERO citylightów; „77 digital CL" opatrzone datą VIII 2023; usunięto niepotwierdzony zasięg 14,5–26%) + ROZBUDOWA 2026-08-21: nowa sekcja „Citylight w polskich miastach" (Gdańsk/Kraków/Łódź — operatorzy wiat, uchwały krajobrazowe, stawki za pas drogowy z 3 dzienników urzędowych; pytanie prejudycjalne NSA II OSK 1153/25 do TSUE z 2.06.2026). cenniki zastąpione OFICJALNYMI cennikami AMS (od 1.07.2026) i Bauer Media Outdoor (od 19.08.2026) + MPK Lublin; komplet 10 miast z Olsztynem. 14 577 → 27 035 zn. | [Link](posts/20260414060700_citylight-reklama.md) |
 | 2026-04-14 06:08 | reklama-zewnetrzna | poradniki | ✅ ZRECENZOWANY | [Link](posts/20260414060800_reklama-zewnetrzna.md) |
 | **Kategoria: /blog/trendy** | | | | |
 | 2026-04-14 06:09 | murale-reklamowe | trendy | ✅ ZRECENZOWANY | [Link](posts/20260414060900_murale-reklamowe.md) |
@@ -61,5 +63,5 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 | 2026-05-25 23:22 | dooh-reklama-programatyczna | trendy | ✅ ZRECENZOWANY | [Link](posts/20260525232247_dooh-reklama-programatyczna.md) |
 | **Kategoria: /blog/prawo-i-regulacje** | | | | |
 | 2026-04-19 16:23 | uchwala-krajobrazowa-reklama | prawo-i-regulacje | ✅ ZRECENZOWANY 2026-07-13 (korekta huba: Łódź „aktywna"→zawieszona, Poznań fałsz „brak zakazów”→MA uchwałę, Gdańsk egzekwuje, usunięto niepotwierdzone 90%/3 mln + kalkulator Kraków — ✅ LIVE NA PROD, zweryfikowane curl-em 2026-07-25) | [Link](posts/20260419162332_uchwala-krajobrazowa-reklama.md) |
-| 2026-06-22 12:07 | pozwolenie-na-tablice-reklamowa | prawo-i-regulacje | ✅ ZRECENZOWANY | [Link](posts/20260622120711_pozwolenie-na-tablice-reklamowa.md) |
+| 2026-06-22 12:07 | pozwolenie-na-tablice-reklamowa | prawo-i-regulacje | ✅ ZRECENZOWANY 2026-08-21 (art. 30 → art. 29 jako katalog robót zgłoszeniowych; dopisano kontrprzepis art. 29 ust. 3 pkt 3 lit. c + orzecznictwo NSA; opłata skarbowa doprecyzowana do 155 zł; uzupełniono drogi wojewódzkie/gminne) | [Link](posts/20260622120711_pozwolenie-na-tablice-reklamowa.md) |
 | 2026-06-22 12:20 | reklama-bez-pozwolenia-kary | prawo-i-regulacje | ✅ ZRECENZOWANY | [Link](posts/20260622122024_reklama-bez-pozwolenia-kary.md) |

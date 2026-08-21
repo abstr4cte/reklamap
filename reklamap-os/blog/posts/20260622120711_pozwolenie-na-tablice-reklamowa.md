@@ -29,9 +29,11 @@ Czy na billboard potrzebne jest pozwolenie na budowę? W większości przypadkó
 
 Najczęstszy błąd to traktowanie „2,5 m²" lub „12 m²" jako bezpiecznej granicy. W rzeczywistości:
 
-- **2,5 m²** pojawia się przy *niektórych* kategoriach zgłoszeniowych — nie jest uniwersalnym progiem dla każdej reklamy.
-- **12 m²** to próg z innych kontekstów (m.in. opłat i uchwał), a nie z Prawa budowlanego dla pozwolenia.
-- Dla **wolnostojącego billboardu** liczy się jedno: czy to **obiekt budowlany**. Jeśli tak — wchodzi zasada z art. 28 ust. 1 Prawa budowlanego: roboty budowlane można rozpocząć dopiero po uzyskaniu pozwolenia, chyba że ustawa wprost zwalnia (art. 29) lub pozwala na samo zgłoszenie (art. 30).
+- Ani **2,5 m²**, ani **12 m²** nie występują w Prawie budowlanym jako próg powierzchni dla tablic reklamowych — w aktualnym art. 29 (Dz.U. 2026 poz. 524 t.j.) nie ma żadnego takiego progu. To liczby zapożyczone z innych kontekstów: 12 m² to po prostu powierzchnia standardowego eurobillboardu (5,04 × 2,38 m), a nie granica prawna.
+- Progi powierzchni mogą natomiast wynikać z **uchwały krajobrazowej Twojej gminy** — i tam trzeba ich szukać, nie w Prawie budowlanym.
+- Dla **wolnostojącego billboardu** liczy się jedno: czy to **obiekt budowlany**. Jeśli tak — wchodzi zasada z art. 28 ust. 1 Prawa budowlanego: roboty budowlane można rozpocząć jedynie na podstawie decyzji o pozwoleniu na budowę, z zastrzeżeniem art. 29–31 — czyli chyba że ustawa wprost zwalnia albo pozwala na samo zgłoszenie (oba katalogi znajdziesz w art. 29).
+
+Warto znać przepis, który bywa cytowany przeciwnie. Art. 29 ust. 3 pkt 3 lit. c Prawa budowlanego mówi, że **instalowanie** tablic i urządzeń reklamowych wymaga tylko zgłoszenia — z wyjątkiem reklam świetlnych i podświetlanych usytuowanych poza obszarem zabudowanym, które wymagają pozwolenia. Sądy administracyjne konsekwentnie odróżniają jednak *instalowanie* reklamy na istniejącym obiekcie od *budowy* wolnostojącej konstrukcji trwale związanej z gruntem: ta druga jest budowlą w rozumieniu art. 3 pkt 3 i wymaga pozwolenia na budowę (m.in. wyroki NSA II OSK 1150/17, II OSK 25/10, II OSK 1461/08). O kwalifikacji decydują gabaryty, konstrukcja i trwałość związania z gruntem — nie sama obecność fundamentu.
 
 W praktyce duży billboard na własnej konstrukcji prawie zawsze wymaga **pozwolenia na budowę**. Inaczej wygląda tablica montowana na istniejącym obiekcie — na przykład na elewacji. Tam trzeba ocenić, czy to zwykłe zamocowanie, czy roboty budowlane ingerujące w obiekt. Czym dokładnie jest tablica i urządzenie reklamowe w sensie prawnym, opisujemy w tekście [o tablicy reklamowej](/blog/poradniki/tablica-reklamowa).
 
@@ -51,8 +53,8 @@ Można mieć ważne pozwolenie na budowę, a mimo to nośnik będzie niedopuszcz
 |---|---|
 | Prawo budowlane, art. 3 | definicje: obiekt budowlany, budowla, roboty budowlane, tablica i urządzenie reklamowe |
 | Prawo budowlane, art. 28 ust. 1 | zasada: roboty budowlane po uzyskaniu pozwolenia |
-| Prawo budowlane, art. 29 | obiekty i roboty zwolnione z pozwolenia |
-| Prawo budowlane, art. 30 | roboty wymagające zgłoszenia |
+| Prawo budowlane, art. 29 | katalog: co jest zwolnione z pozwolenia, a co wymaga tylko zgłoszenia (w tym ust. 3 pkt 3 lit. c — tablice i urządzenia reklamowe) |
+| Prawo budowlane, art. 30 | procedura zgłoszenia: co dołączyć, terminy, sprzeciw organu |
 | Prawo budowlane, art. 35 | badanie wniosku i termin 65 dni na decyzję (ust. 6) |
 | Ustawa o drogach publicznych, art. 43 ust. 1 | odległości obiektów od krawędzi jezdni |
 | Ustawa o opłacie skarbowej | opłata za pozwolenie na budowę |
@@ -84,13 +86,13 @@ Można mieć ważne pozwolenie na budowę, a mimo to nośnik będzie niedopuszcz
 
 | Pozycja | Kwota |
 |---|---|
-| Opłata skarbowa za pozwolenie na budowę | wg ustawy o opłacie skarbowej (niższa dla obiektu niebędącego budynkiem; **539 zł** dotyczy budynku działalności gospodarczej) |
+| Opłata skarbowa za pozwolenie na budowę wolnostojącej tablicy lub billboardu | **155 zł** — stawka za „inne budowle" (zał. do ustawy o opłacie skarbowej, cz. III ust. 9 pkt 1 lit. h) |
 | Pełnomocnictwo | 17 zł (gdy działa pełnomocnik) |
 | Projekt budowlany | zwykle kilka tysięcy złotych |
 | Mapa, geodeta, uzgodnienia | zmienne |
 | Zajęcie pasa drogowego | zmienne, według zarządcy drogi |
 
-Uwaga na często powielany błąd: stawka 539 zł to opłata skarbowa za pozwolenie na budowę **budynku** związanego z działalnością gospodarczą (1 zł za każdy m² powierzchni użytkowej, maksymalnie 539 zł). Wolnostojący billboard czy tablica to zwykle obiekt budowlany **niebędący budynkiem** — podlega innej, zwykle niższej stawce opłaty skarbowej. Konkretną kwotę dla Twojego przypadku sprawdź w ustawie o opłacie skarbowej lub bezpośrednio w urzędzie. Sam podatek od gotowego nośnika i opłaty gminne to osobny temat, który omawiamy w tekście o [opłacie reklamowej](/blog/prawo-i-regulacje/oplata-reklamowa).
+Uwaga na często powielany błąd: stawka 539 zł to opłata skarbowa za pozwolenie na budowę **budynku** związanego z działalnością gospodarczą (1 zł za każdy m² powierzchni użytkowej, maksymalnie 539 zł). Wolnostojący billboard czy tablica to obiekt budowlany **niebędący budynkiem**, więc obowiązuje go stawka za „inne budowle" — **155 zł**. Jeśli organ zakwalifikuje nośnik jako urządzenie budowlane związane z istniejącym obiektem, stawka wynosi 91 zł. Przy przebudowie lub remoncie płaci się 50% tych kwot. Sam podatek od gotowego nośnika i opłaty gminne to osobny temat, który omawiamy w tekście o [opłacie reklamowej](/blog/prawo-i-regulacje/oplata-reklamowa).
 
 ## Odległości od drogi
 
@@ -101,8 +103,10 @@ Jeśli stawiasz nośnik przy drodze publicznej, jeden z najważniejszych filtró
 | Autostrada | 30 m | 50 m |
 | Droga ekspresowa | 20 m | 40 m |
 | Droga krajowa ogólnodostępna | 10 m | 25 m |
+| Droga wojewódzka, powiatowa | 8 m | 20 m |
+| Droga gminna | 6 m | 15 m |
 
-Wartości dotyczą dróg wskazanych w art. 43 ust. 1. Dla dróg wojewódzkich, powiatowych i gminnych trzeba sprawdzić wytyczne zarządcy drogi. Jeśli nośnik wchodzi w pas drogowy, potrzebne jest dodatkowo odrębne **zezwolenie zarządcy drogi** wraz z opłatą za zajęcie pasa.
+Wszystkie wartości pochodzą z art. 43 ust. 1 ustawy o drogach publicznych. Jeśli nośnik wchodzi w pas drogowy, potrzebne jest dodatkowo odrębne **zezwolenie zarządcy drogi** wraz z opłatą za zajęcie pasa.
 
 > **Planujesz postawić nośnik?** Zobacz, jak wygląda rynek powierzchni reklamowych i jakie tablice są już wystawione → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe).
 
@@ -119,10 +123,10 @@ W większości przypadków tak. Duży billboard wolnostojący jest obiektem budo
 Nie ma uniwersalnego progu powierzchni. Mity o „2,5 m²" czy „12 m²" nie są bezpieczną granicą dla billboardu. Decyduje kwalifikacja nośnika jako obiektu budowlanego, a nie sama liczba metrów kwadratowych.
 
 **Ile kosztuje pozwolenie na tablicę reklamową?**
-Wysokość opłaty skarbowej za pozwolenie na budowę zależy od rodzaju obiektu. Popularna kwota 539 zł dotyczy budynku związanego z działalnością gospodarczą — wolnostojący billboard czy tablica to zwykle obiekt budowlany niebędący budynkiem i podlega niższej stawce (dokładną wartość sprawdź w ustawie o opłacie skarbowej). Do tego dochodzi 17 zł za pełnomocnictwo, jeśli działasz przez pełnomocnika, oraz koszt projektu budowlanego — zazwyczaj kilka tysięcy złotych.
+Wysokość opłaty skarbowej za pozwolenie na budowę zależy od rodzaju obiektu. Popularna kwota 539 zł dotyczy budynku związanego z działalnością gospodarczą — wolnostojący billboard czy tablica to obiekt budowlany niebędący budynkiem i podlega stawce 155 zł za „inne budowle" (91 zł, jeśli organ uzna nośnik za urządzenie budowlane). Do tego dochodzi 17 zł za pełnomocnictwo, jeśli działasz przez pełnomocnika, oraz koszt projektu budowlanego — zazwyczaj kilka tysięcy złotych.
 
 **Jak długo czeka się na pozwolenie na budowę?**
-Organ ma co do zasady 65 dni na wydanie decyzji (art. 35 ust. 6 Prawa budowlanego). Po decyzji trzeba jeszcze odczekać termin na uprawomocnienie.
+Organ ma co do zasady 65 dni na wydanie decyzji (art. 35 ust. 6 Prawa budowlanego); za przekroczenie tego terminu organowi wymierza się karę 500 zł za każdy dzień zwłoki. Do biegu terminu nie wlicza się jednak okresów zawieszenia postępowania ani opóźnień powstałych z winy strony — w praktyce oczekiwanie bywa dłuższe. Po decyzji trzeba jeszcze odczekać termin na uprawomocnienie.
 
 ## Masz już legalny nośnik? Znajdź reklamodawcę
 
