@@ -2401,11 +2401,12 @@ onMounted(() => {
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
+  /* Ten sam język co .intro-banner wyżej: białe tło, radius 10px, ten sam cień. */
   margin: 0.75rem 0 0.5rem;
-  padding: 0.9rem 1.1rem;
-  background: #eef1fe;
-  border: 1px solid #c7cffb;
+  padding: 1rem 1.25rem;
+  background: #ffffff;
   border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .bulk-banner__text {
@@ -2416,9 +2417,9 @@ onMounted(() => {
 
 .bulk-banner__link {
   flex-shrink: 0;
-  padding: 0.5rem 1rem;
+  padding: 0.55rem 1.1rem;
   border-radius: 8px;
-  background: #667eea;
+  background: var(--primary-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
   color: #fff;
   font-weight: 600;
   font-size: 0.9rem;
@@ -2428,7 +2429,8 @@ onMounted(() => {
 }
 
 .bulk-banner__link:hover {
-  background: #5568d3;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
 }
 
 @media (max-width: 560px) {

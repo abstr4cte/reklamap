@@ -70,290 +70,370 @@ useSeo({
 
 <template>
   <div class="agencies-page">
-    <header class="agencies-hero">
-      <h1>Wystawimy Wasze nośniki za Was</h1>
-      <p class="agencies-hero__lead">
-        Prowadzicie agencję reklamy zewnętrznej albo macie własne nośniki?
-        Wyślijcie cennik w takiej formie, w jakiej go macie — resztą zajmiemy się my.
-        Bezpłatnie, bez prowizji od wynajmu.
-      </p>
-      <a :href="mailtoHref" class="agencies-cta">Wyślij nam swój cennik</a>
-      <p class="agencies-hero__note">
-        Albo napiszcie na <a :href="`mailto:${CONTACT_EMAIL}`">{{ CONTACT_EMAIL }}</a>
-      </p>
-    </header>
+    <div class="hero-section">
+      <div class="container">
+        <h1>Wystawimy Wasze nośniki za Was</h1>
+        <p class="hero-subtitle">
+          Wyślijcie cennik w takiej formie, w jakiej go macie — resztą zajmiemy się my.
+          Bezpłatnie, bez prowizji od wynajmu.
+        </p>
+        <a :href="mailtoHref" class="hero-cta">Wyślij nam swój cennik</a>
+      </div>
+    </div>
 
-    <section class="agencies-section">
-      <h2>Jak to działa</h2>
-      <ol class="agencies-steps">
-        <li>
-          <strong>Wysyłacie, co macie.</strong>
-          Arkusz, PDF z cennikiem, link do strony — bez przygotowywania czegokolwiek pod nas.
-        </li>
-        <li>
-          <strong>Wrzucamy nośniki na platformę.</strong>
-          Opisy, lokalizacje na mapie, zdjęcia i przypisanie do miast robimy my.
-          Przed publikacją odsyłamy podsumowanie do akceptacji.
-        </li>
-        <li>
-          <strong>Dostajecie panel i zapytania.</strong>
-          Zajęty nośnik ukrywacie w kilka sekund, cenę zmieniacie sami.
-          Reklamodawca pisze i dzwoni bezpośrednio do Was.
-        </li>
-      </ol>
-    </section>
+    <div class="content-section">
+      <div class="container">
+        <section class="block">
+          <h2>Jak to działa</h2>
+          <ol class="steps">
+            <li>
+              <strong>Wysyłacie, co macie.</strong>
+              Arkusz, PDF z cennikiem, link do strony — bez przygotowywania czegokolwiek pod nas.
+            </li>
+            <li>
+              <strong>Wrzucamy nośniki na platformę.</strong>
+              Opisy, lokalizacje na mapie, zdjęcia i przypisanie do miast robimy my.
+              Przed publikacją odsyłamy podsumowanie do akceptacji.
+            </li>
+            <li>
+              <strong>Dostajecie panel i zapytania.</strong>
+              Zajęty nośnik ukrywacie w kilka sekund, cenę zmieniacie sami.
+              Reklamodawca pisze i dzwoni bezpośrednio do Was.
+            </li>
+          </ol>
+        </section>
 
-    <section class="agencies-section">
-      <h2>Format nie ma znaczenia</h2>
-      <p class="agencies-lead">
-        Najczęstszy powód, dla którego firmy odkładają wystawienie nośników, to przekonanie,
-        że trzeba wcześniej uporządkować dane. Nie trzeba. Przyjmujemy:
-      </p>
-      <ul class="agencies-formats">
-        <li>Excel lub arkusz Google</li>
-        <li>PDF z cennikiem</li>
-        <li>Dokument Word</li>
-        <li>Link do Waszej strony z nośnikami</li>
-        <li>Zdjęcie albo skan tabeli</li>
-        <li>Zwykłą listę w treści maila</li>
-      </ul>
-      <p class="agencies-lead">
-        Brakujące dane — współrzędne, przypisanie do miasta, opisy — uzupełniamy sami.
-        Jeśli czegoś nie da się ustalić, dopytujemy jednym mailem zbiorczo, nie przy każdym nośniku.
-      </p>
-    </section>
+        <section class="block">
+          <h2>Format nie ma znaczenia</h2>
+          <p class="lead">
+            Najczęstszy powód, dla którego firmy odkładają wystawienie nośników, to przekonanie,
+            że trzeba wcześniej uporządkować dane. Nie trzeba. Przyjmujemy:
+          </p>
+          <ul class="formats">
+            <li>Excel lub arkusz Google</li>
+            <li>PDF z cennikiem</li>
+            <li>Dokument Word</li>
+            <li>Link do Waszej strony z nośnikami</li>
+            <li>Zdjęcie albo skan tabeli</li>
+            <li>Zwykłą listę w treści maila</li>
+          </ul>
+          <p class="lead">
+            Brakujące dane — współrzędne, przypisanie do miasta, opisy — uzupełniamy sami.
+            Jeśli czegoś nie da się ustalić, dopytujemy jednym mailem zbiorczo, nie przy każdym nośniku.
+          </p>
+        </section>
 
-    <section class="agencies-section">
-      <h2>Co z tego macie</h2>
-      <div class="agencies-benefits">
-        <div class="agencies-benefit">
-          <h3>Ekspozycja bez kosztu</h3>
-          <p>Wasze nośniki widzi każdy, kto szuka powierzchni reklamowej w danym mieście. Nie płacicie za wystawienie ani prowizji od wynajmu.</p>
-        </div>
-        <div class="agencies-benefit">
-          <h3>Kontakt bezpośredni</h3>
-          <p>Zapytania idą prosto do Was — na Wasz e-mail i telefon. Nie pośredniczymy w rozmowie z klientem.</p>
-        </div>
-        <div class="agencies-benefit">
-          <h3>Panel bez haseł</h3>
-          <p>Ukrycie zajętego nośnika, przywrócenie go i zmiana ceny zajmują kilka sekund. Dostęp otwiera link wysyłany na Wasz adres.</p>
-        </div>
-        <div class="agencies-benefit">
-          <h3>Statystyki nośników</h3>
-          <p>Widzicie, ile razy każdy nośnik wyświetlono i ile osób kliknęło w kontakt.</p>
+        <section class="block">
+          <h2>Co z tego macie</h2>
+          <div class="benefits">
+            <div class="benefit">
+              <h3>Ekspozycja bez kosztu</h3>
+              <p>Wasze nośniki widzi każdy, kto szuka powierzchni reklamowej w danym mieście. Nie płacicie za wystawienie ani prowizji od wynajmu.</p>
+            </div>
+            <div class="benefit">
+              <h3>Kontakt bezpośredni</h3>
+              <p>Zapytania idą prosto do Was — na Wasz e-mail i telefon. Nie pośredniczymy w rozmowie z klientem.</p>
+            </div>
+            <div class="benefit">
+              <h3>Panel bez haseł</h3>
+              <p>Ukrycie zajętego nośnika, przywrócenie go i zmiana ceny zajmują kilka sekund. Dostęp otwiera link wysyłany na Wasz adres.</p>
+            </div>
+            <div class="benefit">
+              <h3>Statystyki nośników</h3>
+              <p>Widzicie, ile razy każdy nośnik wyświetlono i ile osób kliknęło w kontakt.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="block">
+          <h2>Najczęściej zadawane pytania</h2>
+          <div class="faq">
+            <details v-for="item in faq" :key="item.q" class="faq-item">
+              <summary>{{ item.q }}</summary>
+              <p>{{ item.a }}</p>
+            </details>
+          </div>
+        </section>
+
+        <div class="cta-box">
+          <h2>Wyślijcie cennik, resztę zrobimy my</h2>
+          <p>Jeden e-mail wystarczy, żeby Wasze nośniki trafiły na platformę.</p>
+          <a :href="mailtoHref" class="cta-box__btn">Wyślij nam swój cennik</a>
+          <p class="cta-box__note">
+            Albo napiszcie na <a :href="`mailto:${CONTACT_EMAIL}`">{{ CONTACT_EMAIL }}</a>
+          </p>
         </div>
       </div>
-    </section>
-
-    <section class="agencies-section">
-      <h2>Najczęściej zadawane pytania</h2>
-      <div class="agencies-faq">
-        <details v-for="item in faq" :key="item.q" class="agencies-faq__item">
-          <summary>{{ item.q }}</summary>
-          <p>{{ item.a }}</p>
-        </details>
-      </div>
-    </section>
-
-    <section class="agencies-final">
-      <h2>Wyślijcie cennik, resztę zrobimy my</h2>
-      <p>Jeden e-mail wystarczy, żeby Wasze nośniki trafiły na platformę.</p>
-      <a :href="mailtoHref" class="agencies-cta">Wyślij nam swój cennik</a>
-    </section>
+    </div>
   </div>
 </template>
 
 <style scoped>
+/* Wzorzec wizualny wspólny dla podstron informacyjnych (FAQ, Kontakt, Regulamin,
+   Polityka prywatności, Blog): tło #f9fafb, hero z gradientem na banerze, kontener 900 px. */
 .agencies-page {
-  max-width: 62rem;
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 4rem;
-  color: var(--text-main, #374151);
+  min-height: 100vh;
+  background: #f9fafb;
 }
 
-.agencies-hero {
+.hero-section {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%), url('../assets/banner-section.webp');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding: 4rem 0;
+  color: white;
   text-align: center;
-  padding-bottom: 2.5rem;
-  border-bottom: 2px solid var(--border-color, #e5e7eb);
 }
 
-.agencies-hero h1 {
-  font-size: 2.25rem;
+.hero-section h1 {
+  font-size: 3rem;
   font-weight: 800;
-  margin-bottom: 1rem;
-  line-height: 1.2;
+  margin: 0 0 1rem 0;
 }
 
-.agencies-hero__lead {
+.hero-subtitle {
+  font-size: 1.25rem;
+  opacity: 0.95;
+  margin: 0 auto 2rem;
   max-width: 42rem;
-  margin: 0 auto 1.75rem;
-  font-size: 1.1rem;
   line-height: 1.6;
-  color: var(--text-muted, #6b7280);
 }
 
-.agencies-hero__note {
-  margin-top: 1rem;
-  font-size: 0.95rem;
-  color: var(--text-muted, #6b7280);
-}
-
-.agencies-cta {
+.hero-cta {
   display: inline-block;
-  padding: 0.9rem 2rem;
-  border-radius: 12px;
-  background: #667eea;
-  color: #fff;
-  font-weight: 700;
-  font-size: 1.05rem;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  background: white;
+  color: #667eea;
+  font-weight: 600;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
-.agencies-cta:hover {
-  background: #5568d3;
+.hero-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-.agencies-section {
-  padding-top: 2.5rem;
+.content-section {
+  padding: 4rem 0;
 }
 
-.agencies-section h2 {
-  font-size: 1.5rem;
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.block {
+  margin-bottom: 3rem;
+}
+
+.block h2 {
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: 1.25rem;
+  color: var(--text-main);
+  margin: 0 0 1.5rem 0;
 }
 
-.agencies-lead {
-  line-height: 1.65;
+.lead {
+  line-height: 1.7;
+  color: var(--text-muted);
   margin-bottom: 1rem;
-  color: var(--text-muted, #6b7280);
 }
 
-.agencies-steps {
+.steps {
   counter-reset: step;
   list-style: none;
   padding: 0;
+  margin: 0;
   display: grid;
   gap: 1rem;
 }
 
-.agencies-steps li {
+.steps li {
   counter-increment: step;
   position: relative;
-  padding: 1.1rem 1.25rem 1.1rem 3.5rem;
-  background: var(--card-bg, #fff);
-  border: 2px solid var(--border-color, #e5e7eb);
+  padding: 1.5rem 1.5rem 1.5rem 4rem;
+  background: white;
   border-radius: 12px;
-  line-height: 1.6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  line-height: 1.7;
+  color: var(--text-muted);
 }
 
-.agencies-steps li::before {
+.steps li strong {
+  color: var(--text-main);
+}
+
+.steps li::before {
   content: counter(step);
   position: absolute;
-  left: 1.1rem;
-  top: 1.1rem;
+  left: 1.5rem;
+  top: 1.5rem;
   width: 1.75rem;
   height: 1.75rem;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #667eea;
-  color: #fff;
+  background: var(--primary-gradient);
+  color: white;
   font-weight: 700;
   font-size: 0.9rem;
 }
 
-.agencies-formats {
+.formats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   gap: 0.6rem;
   padding-left: 1.25rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  color: var(--text-muted);
 }
 
-.agencies-formats li {
-  line-height: 1.5;
+.formats li {
+  line-height: 1.6;
 }
 
-.agencies-benefits {
+.benefits {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  /* Dokładnie 2 kolumny — kafli jest 4, więc auto-fit dawał 3 + sierotę w drugim rzędzie. */
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
 }
 
-.agencies-benefit {
-  padding: 1.25rem;
-  background: var(--card-bg, #fff);
-  border: 2px solid var(--border-color, #e5e7eb);
+.benefit {
+  padding: 1.5rem;
+  background: white;
   border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.agencies-benefit h3 {
+.benefit h3 {
   font-size: 1.05rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  color: var(--text-main);
+  margin: 0 0 0.5rem 0;
 }
 
-.agencies-benefit p {
-  line-height: 1.55;
-  color: var(--text-muted, #6b7280);
+.benefit p {
+  line-height: 1.6;
+  color: var(--text-muted);
   font-size: 0.95rem;
+  margin: 0;
 }
 
-.agencies-faq__item {
-  border-bottom: 1px solid var(--border-color, #e5e7eb);
-  padding: 0.9rem 0;
+.faq {
+  display: grid;
+  gap: 0.75rem;
 }
 
-.agencies-faq__item summary {
+.faq-item {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 1.25rem 1.5rem;
+  transition: all 0.3s;
+}
+
+.faq-item summary {
   cursor: pointer;
   font-weight: 600;
+  color: var(--text-main);
   line-height: 1.5;
 }
 
-.agencies-faq__item p {
-  margin-top: 0.7rem;
-  line-height: 1.6;
-  color: var(--text-muted, #6b7280);
+.faq-item p {
+  margin: 0.85rem 0 0 0;
+  line-height: 1.7;
+  color: var(--text-muted);
 }
 
-.agencies-final {
-  margin-top: 3rem;
-  padding: 2.5rem 1.25rem;
+.cta-box {
+  background: linear-gradient(135deg, #f0f3ff 0%, #e8eaff 100%);
+  border-radius: 12px;
+  padding: 3rem;
   text-align: center;
-  background: var(--card-bg, #fff);
-  border: 2px solid var(--border-color, #e5e7eb);
-  border-radius: 16px;
+  margin-top: 4rem;
 }
 
-.agencies-final h2 {
-  font-size: 1.5rem;
+.cta-box h2 {
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: 0.6rem;
+  color: var(--text-main);
+  margin: 0 0 0.75rem 0;
 }
 
-.agencies-final p {
-  margin-bottom: 1.5rem;
-  color: var(--text-muted, #6b7280);
+.cta-box p {
+  color: var(--text-muted);
+  margin: 0 0 1.75rem 0;
+}
+
+.cta-box__btn {
+  display: inline-block;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  background: var(--primary-gradient);
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.cta-box__btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.cta-box__note {
+  margin: 1.25rem 0 0 0;
+  font-size: 0.95rem;
+}
+
+.cta-box__note a {
+  color: #667eea;
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {
-  .agencies-page {
-    padding: 1.5rem 1rem 3rem;
+  .hero-section {
+    padding: 3rem 0;
+    background-attachment: scroll;
   }
 
-  .agencies-hero h1 {
-    font-size: 1.7rem;
+  .hero-section h1 {
+    font-size: 2rem;
   }
 
-  .agencies-hero__lead {
-    font-size: 1rem;
+  .hero-subtitle {
+    font-size: 1.05rem;
   }
 
-  .agencies-section h2,
-  .agencies-final h2 {
-    font-size: 1.3rem;
+  .content-section {
+    padding: 3rem 0;
+  }
+
+  .container {
+    padding: 0 1.25rem;
+  }
+
+  .block h2,
+  .cta-box h2 {
+    font-size: 1.4rem;
+  }
+
+  .benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-box {
+    padding: 2rem 1.25rem;
+  }
+
+  .hero-cta,
+  .cta-box__btn {
+    display: block;
   }
 }
 </style>
