@@ -203,17 +203,25 @@ Uchwały o stawkach za zajęcie pasa drogowego wyróżniają osobną, drastyczni
 | **Łódź** | 0,15 zł | 5,00–3,00 zł | ok. 20–33× |
 | **Poznań** | 0,40 zł | 5,00–1,50 zł | ok. 4–12× |
 | **Wrocław** | 0,70 zł | 7,00–5,00 zł | ok. 7–10× |
+| **Lublin** | 1,90 zł | 5,10–3,80 zł | ok. 2–2,7× |
 | **Olsztyn** | *brak osobnej stawki* | 3,50–2,50 zł | — |
 
-To nie jest hojność, tylko świadomy model: miasto nie płaci za budowę i utrzymanie wiat, a w zamian oddaje operatorowi prawo do zarabiania na reklamie po stawce niemal symbolicznej. W Gdańsku zapisano to wprost — umowy dzierżawy z 2023 r. obejmują wymianę 215 wiat, a koszt inwestycji i utrzymania leży po stronie operatorów. W Warszawie umowa z października 2025 r. na 1 640 wiat przewiduje wynagrodzenie wykonawcy **wyłącznie** z prawa do eksploatacji powierzchni reklamowych.
+Uszereguj te miasta według wielkości zniżki, a wyjdzie ci lista uporządkowana według czegoś zupełnie innego — **według tego, kto postawił wiaty**:
+
+- **Prywatny koncesjonariusz zbudował infrastrukturę** (Gdańsk, Katowice, Kraków, Łódź) → zniżka 20–90-krotna.
+- **Model mieszany** (Wrocław, Poznań) → zniżka 4–12-krotna.
+- **Gabloty prowadzi spółka komunalna** (Lublin — MPK Lublin) → zniżka zaledwie 2–2,7-krotna.
+- **Miasto prowadzi wiaty samo** (Olsztyn — ZDZiT) → osobnej stawki nie ma w ogóle.
+
+To nie jest hojność, tylko świadomy model: miasto nie płaci za budowę i utrzymanie wiat, a w zamian oddaje operatorowi prawo do zarabiania na reklamie po stawce niemal symbolicznej. Im więcej ryzyka inwestycyjnego bierze na siebie firma zewnętrzna, tym głębszy rabat dostaje. Tam, gdzie miasto finansuje wiaty z własnej kieszeni, nie ma czego rekompensować — i stawka wraca do normalnej. W Gdańsku zapisano to wprost — umowy dzierżawy z 2023 r. obejmują wymianę 215 wiat, a koszt inwestycji i utrzymania leży po stronie operatorów. W Warszawie umowa z października 2025 r. na 1 640 wiat przewiduje wynagrodzenie wykonawcy **wyłącznie** z prawa do eksploatacji powierzchni reklamowych.
 
 Praktyczny wniosek: **preferencyjna stawka jest dostępna tylko dla firmy, która postawiła wiatę.** Citylightu nie da się „podnająć" od miasta — jedyną drogą jest umowa z operatorem, który wygrał przetarg. Stąd 87% rynku w rękach trzech firm.
 
-Podstawy prawne: Katowice — uchwała XLVIII/896/17 z 26.10.2017 (Dz. Urz. Woj. Śląskiego 2017, poz. 5917), § 4 ust. 2, stan na 2021 r.; Gdańsk — LV/1389/22 z 27.10.2022 (Dz. Urz. Woj. Pomorskiego 2022, poz. 4346), § 4; Kraków — XXX/789/19 z 5.12.2019 (Dz. Urz. Woj. Małopolskiego 2019, poz. 9305), § 5 ust. 1; Łódź — LX/1804/22 z 1.06.2022 (Dz. Urz. Woj. Łódzkiego 2022, poz. 3671); Poznań — XCI/1749/VIII/2023 z 24.10.2023, § 6; Wrocław — LIX/1549/22 z 20.10.2022 ze zm., zał. nr 3; Olsztyn — VII/99/24 z 27.11.2024 (Dz. Urz. Woj. Warmińsko-Mazurskiego 2024, poz. 5624), § 4 ust. 2, wg tekstu pierwotnego.
+Podstawy prawne: Katowice — uchwała XLVIII/896/17 z 26.10.2017 (Dz. Urz. Woj. Śląskiego 2017, poz. 5917), § 4 ust. 2, stan na 2021 r.; Gdańsk — LV/1389/22 z 27.10.2022 (Dz. Urz. Woj. Pomorskiego 2022, poz. 4346), § 4; Kraków — XXX/789/19 z 5.12.2019 (Dz. Urz. Woj. Małopolskiego 2019, poz. 9305), § 5 ust. 1; Łódź — LX/1804/22 z 1.06.2022 (Dz. Urz. Woj. Łódzkiego 2022, poz. 3671); Poznań — XCI/1749/VIII/2023 z 24.10.2023, § 6; Wrocław — LIX/1549/22 z 20.10.2022 ze zm., zał. nr 3; Lublin — wykaz stawek ZDiTM „Opłaty jednolite 2025", poz. 5 i 6b tabeli dziennych stawek za zajęcie 1 m² pasa drogowego; Olsztyn — VII/99/24 z 27.11.2024 (Dz. Urz. Woj. Warmińsko-Mazurskiego 2024, poz. 5624), § 4 ust. 2, wg tekstu pierwotnego.
 
 ### Olsztyn — wyjątek, który tłumaczy regułę
 
-Olsztyn jako jedyne z badanych miast **nie ma w uchwale osobnej stawki dla wiat przystankowych**. Powód jest prosty: nie ma tam koncesjonariusza. Wiatami zarządza samo miasto przez Zarząd Dróg, Zieleni i Transportu, który udostępnia gabloty o wymiarach **1,15 × 1,78 m** bezpośrednio reklamodawcom. Nie ma więc operatora, któremu trzeba by dawać preferencyjną stawkę w zamian za inwestycję — a reklama w gablocie wpada do kategorii „pozostałe", czyli 3,50 zł przy drogach krajowych i wojewódzkich oraz 2,50 zł przy powiatowych i gminnych.
+Olsztyn jako jedyne z badanych miast **nie ma w uchwale osobnej stawki dla wiat przystankowych**. Powód jest prosty i zgodny z regułą powyżej: nie ma tam koncesjonariusza, któremu trzeba by tę zniżkę dać. Wiatami zarządza samo miasto przez Zarząd Dróg, Zieleni i Transportu, który udostępnia gabloty o wymiarach **1,15 × 1,78 m** bezpośrednio reklamodawcom. Nie ma więc operatora, któremu trzeba by dawać preferencyjną stawkę w zamian za inwestycję — a reklama w gablocie wpada do kategorii „pozostałe", czyli 3,50 zł przy drogach krajowych i wojewódzkich oraz 2,50 zł przy powiatowych i gminnych.
 
 Druga konsekwencja braku koncesjonariusza: Olsztyn leży **poza obszarem badania Outdoor Track**, więc w cenniku AMS wycenia się go według kolumny „poza obszarem badania" — 860 zł za citylight i 1 755 zł za Premium Citylight miesięcznie.
 
