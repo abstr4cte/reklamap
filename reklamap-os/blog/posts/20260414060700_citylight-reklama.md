@@ -71,7 +71,7 @@ Trzy zapisy z cennika, o których łatwo zapomnieć:
 
 ### Bauer Media Outdoor Poland — cennik od 19 sierpnia 2026
 
-Bauer (dawny Clear Channel, ok. 4 tys. citylightów w 10 aglomeracjach) dzieli nośniki według **potencjału kontaktowego VAC** mierzonego przez Gemius. Ceny netto za miesiąc ekspozycji (kampania 28 dni):
+Bauer — do 1 kwietnia 2025 r. Clear Channel Poland, przemianowany po przejęciu europejskich aktywów Clear Channel przez Grupę Bauer Media — ma ok. 4 tys. citylightów w 10 aglomeracjach i dzieli nośniki według **potencjału kontaktowego VAC** mierzonego przez Gemius. Ceny netto za miesiąc ekspozycji (kampania 28 dni):
 
 | Kategoria | Zasięg VAC / mies. | Citylight | Citylight Select |
 |---|---|---:|---:|
@@ -128,14 +128,14 @@ Rynek jest silnie skoncentrowany: **na 24 368 citylightów w Polsce ponad połow
 |---|---:|---:|---:|
 | **AMS** | 12 634 | 16 838 | 51,8% |
 | **Ströer** | 4 586 | 10 165 | 18,8% |
-| **Clear Channel** (dziś na rynku pod nazwą Bauer Media Outdoor Poland) | 4 018 | 4 886 | 16,5% |
+| **Clear Channel** (od kwietnia 2025 Bauer Media Outdoor Poland) | 4 018 | 4 886 | 16,5% |
 | **Warexpo** | 1 512 | 1 757 | 6,2% |
 | **City Marketing** | 859 | 979 | 3,5% |
 | **BC** | 649 | 649 | 2,7% |
 
 Trzej najwięksi kontrolują **87% wszystkich citylightów w kraju** — to znacznie większa koncentracja niż w billboardach. Praktyczny wniosek: przy kampanii ogólnopolskiej rozmawiasz w praktyce z jedną, najwyżej dwiema firmami.
 
-Uwaga na częsty błąd w zestawieniach krążących w sieci: **Mini Media, mimo 4 288 nośników, nie ma w portfolio ani jednego citylightu** — działa w innych formatach. Podobnie Cityboard i Jet Line, które bywają wymieniane jako operatorzy CL.
+Uwaga: raport pochodzi sprzed zmiany nazwy, dlatego w tabeli figuruje jeszcze Clear Channel. Drugi, częstszy błąd w zestawieniach krążących w sieci: **Mini Media, mimo 4 288 nośników, nie ma w portfolio ani jednego citylightu** — działa w innych formatach. Podobnie Cityboard i Jet Line, które bywają wymieniane jako operatorzy CL.
 
 Operatorzy oferują kampanie pakietowe — kupujesz czas na grupie nośników w danym mieście, co obniża cenę jednostkową. Zasięg takiego pakietu operatorzy wyliczają indywidualnie, na podstawie badania Gemius Mediapanel i konkretnych lokalizacji; poproś o taką symulację przed podpisaniem umowy, bo to jedyna liczba pozwalająca porównać oferty między sobą.
 
@@ -197,6 +197,8 @@ Uchwały o stawkach za zajęcie pasa drogowego wyróżniają osobną, drastyczni
 
 | Miasto | Gablota w wiacie zbudowanej przez operatora | Zwykła reklama | Różnica |
 |---|---:|---:|---:|
+| **Warszawa** | 0,01 zł | 3,25–6,75 zł | **ok. 325–675×** |
+| **Gdynia** | 0,05 zł | 2,50–4,00 zł | ok. 50–80× |
 | **Katowice** | 0,08–0,04 zł | 4,00–2,00 zł | ok. 50× |
 | **Gdańsk** | 0,06–0,03 zł | 3,10–2,80 zł (podświetlana) | ok. 50–90× |
 | **Kraków** | 0,13–0,10 zł | 4,00–3,90 zł | ok. 30–39× |
@@ -208,7 +210,7 @@ Uchwały o stawkach za zajęcie pasa drogowego wyróżniają osobną, drastyczni
 
 Uszereguj te miasta według wielkości zniżki, a wyjdzie ci lista uporządkowana według czegoś zupełnie innego — **według tego, kto postawił wiaty**:
 
-- **Prywatny koncesjonariusz zbudował infrastrukturę** (Gdańsk, Katowice, Kraków, Łódź) → zniżka 20–90-krotna.
+- **Prywatny koncesjonariusz zbudował infrastrukturę** (Warszawa, Gdańsk, Gdynia, Katowice, Kraków, Łódź) → zniżka od 20-krotnej do ponad 600-krotnej. Skrajny przypadek to Warszawa: stawka 0,01 zł za metr na dobę jest już czysto symboliczna, a umowa z operatorem przewiduje wynagrodzenie **wyłącznie** z powierzchni reklamowych — miasto nie płaci za 1 640 wiat ani złotówki.
 - **Model mieszany** (Wrocław, Poznań) → zniżka 4–12-krotna.
 - **Gabloty prowadzi spółka komunalna** (Lublin — MPK Lublin) → zniżka zaledwie 2–2,7-krotna.
 - **Miasto prowadzi wiaty samo** (Olsztyn — ZDZiT) → osobnej stawki nie ma w ogóle.
@@ -217,7 +219,7 @@ To nie jest hojność, tylko świadomy model: miasto nie płaci za budowę i utr
 
 Praktyczny wniosek: **preferencyjna stawka jest dostępna tylko dla firmy, która postawiła wiatę.** Citylightu nie da się „podnająć" od miasta — jedyną drogą jest umowa z operatorem, który wygrał przetarg. Stąd 87% rynku w rękach trzech firm.
 
-Podstawy prawne: Katowice — uchwała XLVIII/896/17 z 26.10.2017 (Dz. Urz. Woj. Śląskiego 2017, poz. 5917), § 4 ust. 2, stan na 2021 r.; Gdańsk — LV/1389/22 z 27.10.2022 (Dz. Urz. Woj. Pomorskiego 2022, poz. 4346), § 4; Kraków — XXX/789/19 z 5.12.2019 (Dz. Urz. Woj. Małopolskiego 2019, poz. 9305), § 5 ust. 1; Łódź — LX/1804/22 z 1.06.2022 (Dz. Urz. Woj. Łódzkiego 2022, poz. 3671); Poznań — XCI/1749/VIII/2023 z 24.10.2023, § 6; Wrocław — LIX/1549/22 z 20.10.2022 ze zm., zał. nr 3; Lublin — wykaz stawek ZDiTM „Opłaty jednolite 2025", poz. 5 i 6b tabeli dziennych stawek za zajęcie 1 m² pasa drogowego; Olsztyn — VII/99/24 z 27.11.2024 (Dz. Urz. Woj. Warmińsko-Mazurskiego 2024, poz. 5624), § 4 ust. 2, wg tekstu pierwotnego.
+Podstawy prawne: Warszawa — uchwała XXXI/666/2004 w brzmieniu nadanym uchwałą LXXIV/2468/2022 z 15.12.2022 (Dz. Urz. Woj. Mazowieckiego 2022, poz. 13948), zał. nr 3 poz. 34; Gdynia — uchwała XIII/429/19 z 23.10.2019 (Dz. Urz. Woj. Pomorskiego 2019, poz. 5074), § 4 ust. 2, wg tekstu jednolitego z obwieszczenia XII/O/24; Katowice — uchwała XLVIII/896/17 z 26.10.2017 (Dz. Urz. Woj. Śląskiego 2017, poz. 5917), § 4 ust. 2; Gdańsk — LV/1389/22 z 27.10.2022 (Dz. Urz. Woj. Pomorskiego 2022, poz. 4346), § 4; Kraków — XXX/789/19 z 5.12.2019 (Dz. Urz. Woj. Małopolskiego 2019, poz. 9305), § 5 ust. 1; Łódź — LX/1804/22 z 1.06.2022 (Dz. Urz. Woj. Łódzkiego 2022, poz. 3671); Poznań — XCI/1749/VIII/2023 z 24.10.2023, § 6; Wrocław — LIX/1549/22 z 20.10.2022 ze zm., zał. nr 3; Lublin — wykaz stawek ZDiTM „Opłaty jednolite 2025", poz. 5 i 6b tabeli dziennych stawek za zajęcie 1 m² pasa drogowego; Olsztyn — VII/99/24 z 27.11.2024 (Dz. Urz. Woj. Warmińsko-Mazurskiego 2024, poz. 5624), § 4 ust. 2, wg tekstu pierwotnego.
 
 ### Olsztyn — wyjątek, który tłumaczy regułę
 
@@ -261,7 +263,7 @@ Trzy rzeczy, na które warto uważać, bo są źródłem najczęstszych błędó
 | **Warszawa** | AMS SERWIS — umowa z 3.10.2025 na 1 640 wiat |
 | **Poznań** | Ströer (ok. 400 powierzchni) i AMS (1 086 citylightów na 323 wiatach); wiatami zarządza Grupa MTP |
 | **Gdańsk** | Ströer (2 pakiety) i AMS (1 pakiet), umowy 12-letnie z 2023 r., 215 wiat |
-| **Wrocław** | AMS i Clear Channel — 430 gablot citylight w pasie drogowym |
+| **Wrocław** | AMS i Bauer Media Outdoor — 430 gablot citylight w pasie drogowym (wpis BIP ZDiUM bez daty, wciąż pod starą nazwą Clear Channel) |
 | **Kraków** | AMS i Business Consulting |
 | **Lublin** | MPK Lublin — gabloty 1,2 × 1,8 m w ścianach wiat |
 | **Olsztyn** | ZDZiT (miasto), gabloty 1,15 × 1,78 m |
@@ -275,7 +277,7 @@ Gdynia jest w trakcie największego z tych postępowań: koncesja na budowę i u
 
 ## Formalności przy wynajmie citylightu
 
-Standardowy citylight ustawiony przez operatora (AMS, Ströer, Clear Channel) nie wymaga od reklamodawcy załatwiania pozwoleń — operator ma stosowne umowy z zarządcą terenu i jest zgodny z lokalnymi uchwałami krajobrazowymi (art. 37a ustawy o planowaniu i zagospodarowaniu przestrzennym).
+Standardowy citylight ustawiony przez operatora (AMS, Ströer, Bauer Media Outdoor) nie wymaga od reklamodawcy załatwiania pozwoleń — operator ma stosowne umowy z zarządcą terenu i jest zgodny z lokalnymi uchwałami krajobrazowymi (art. 37a ustawy o planowaniu i zagospodarowaniu przestrzennym).
 
 Sytuacja jest bardziej złożona, jeśli planujesz postawić własny nośnik lub wynająć miejsce od prywatnego właściciela nieruchomości:
 
