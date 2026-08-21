@@ -137,10 +137,10 @@ Jeśli ekran ma stanąć w pasie drogowym, dochodzi opłata za jego zajęcie —
 | **Kraków** | **10,00 zł** — osobna pozycja dla wyświetlaczy elektronicznych, ekranów LED i telebimów |
 | **Warszawa** | **10,00 zł** — osobna pozycja dla monitorów i wyświetlaczy |
 | **Wrocław** | 7,00–5,00 zł — **brak osobnej pozycji**, ekran liczony jak zwykła reklama |
-| **Łódź** | 5,00–3,00 zł — brak osobnej pozycji |
+| **Łódź** | 6,00–4,00 zł — brak osobnej pozycji |
 | **Katowice** | 4,00–2,00 zł — brak osobnej pozycji |
 
-Rozpiętość jest ponaddwukrotna, a logika odwrotna do intuicji: **miasta z najostrzejszymi zakazami mają też najwyższe stawki**, więc ekran w Krakowie kosztuje wobec miasta dwa i pół raza więcej niż w Katowicach — o ile w ogóle będzie legalny. Podstawy: Kraków — uchwała XXXVI/730/25 z 17.09.2025, poz. 5 (uchyliła XXX/789/19); Warszawa — XXXI/666/2004 w brzmieniu z 2022 r., poz. 22c i 23; Wrocław — LIX/1549/22 ze zm.; Łódź — LX/1804/22; Katowice — XX/476/20.
+Rozpiętość jest ponaddwukrotna między skrajnymi miastami, a logika odwrotna do intuicji: **miasta z najostrzejszymi zakazami mają też najwyższe stawki**, więc ekran w Krakowie kosztuje wobec miasta dwa i pół raza więcej niż w Katowicach — o ile w ogóle będzie legalny. Podstawy: Kraków — uchwała XXXVI/730/25 z 17.09.2025, poz. 5 (uchyliła XXX/789/19); Warszawa — XXXI/666/2004 w brzmieniu z 2022 r., poz. 22c i 23; Wrocław — LIX/1549/22 ze zm.; Łódź — LX/1804/22 w brzmieniu LXVIII/2022/22 (Dz. Urz. Woj. Łódzkiego 2022, poz. 7025); Katowice — XX/476/20.
 
 ---
 
