@@ -620,23 +620,25 @@ const clearSearchFlag = () => {
          agencje mają najwięcej nośników, ale są sposobem na zapełnienie bazy, nie grupą
          docelową, więc idą jako ścieżka drugorzędna. -->
     <section class="supply-band">
-      <h2 class="supply-band__title">Masz ścianę, płot albo działkę przy drodze?</h2>
-      <p class="supply-band__lead">
-        Możesz na tym zarabiać. Wystawienie jest bezpłatne, bez prowizji od wynajmu —
-        reklamodawca kontaktuje się z Tobą bezpośrednio.
-      </p>
-      <div class="supply-band__actions">
-        <router-link to="/dodaj-powierzchnie-reklamowa" class="supply-band__primary">
-          Wystaw swoją powierzchnię
-        </router-link>
-        <router-link to="/blog/poradniki/jak-zarobic-na-wynajmie-powierzchni-reklamowej" class="supply-band__secondary">
-          Zobacz, ile można zarobić
-        </router-link>
+      <div class="supply-band__container">
+        <h2 class="supply-band__title">Masz ścianę, płot albo działkę przy drodze?</h2>
+        <p class="supply-band__subtitle">
+          Możesz na tym zarabiać. Wystawienie jest bezpłatne, bez prowizji od wynajmu —
+          reklamodawca kontaktuje się z Tobą bezpośrednio.
+        </p>
+        <div class="supply-band__actions">
+          <router-link to="/dodaj-powierzchnie-reklamowa" class="supply-band__primary">
+            Wystaw swoją powierzchnię
+          </router-link>
+          <router-link to="/blog/poradniki/jak-zarobic-na-wynajmie-powierzchni-reklamowej" class="supply-band__secondary">
+            Zobacz, ile można zarobić
+          </router-link>
+        </div>
+        <p class="supply-band__note">
+          Prowadzisz agencję i masz całe portfolio nośników?
+          <router-link to="/dla-agencji">Wprowadzimy je za Ciebie</router-link>.
+        </p>
       </div>
-      <p class="supply-band__note">
-        Prowadzisz agencję i masz całe portfolio nośników?
-        <router-link to="/dla-agencji">Wprowadzimy je za Ciebie</router-link>.
-      </p>
     </section>
 
     <!-- Search Alert Global Modal -->
@@ -975,33 +977,55 @@ const clearSearchFlag = () => {
 }
 
 .supply-band {
-  max-width: 46rem;
-  margin: 3rem auto 1rem;
-  padding: 2.25rem 1.5rem;
+  background: linear-gradient(to bottom, #e8ecf1 0%, #f5f7fa 55%, #ffffff 100%);
+  padding: 5rem 0;
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.supply-band::before {
+  content: '';
+  position: absolute;
+  width: 460px;
+  height: 460px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+  top: -230px;
+  left: -180px;
+  animation: float 18s ease-in-out infinite;
+}
+
+.supply-band__container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 1;
   text-align: center;
-  background: var(--card-bg, #fff);
-  border: 2px solid var(--border-color, #e5e7eb);
-  border-radius: 16px;
 }
 
 .supply-band__title {
-  font-size: 1.55rem;
+  font-size: 2.5rem;
   font-weight: 800;
-  line-height: 1.25;
+  line-height: 1.2;
+  color: #2d3748;
   margin-bottom: 0.75rem;
-  color: var(--text-main, #374151);
+  animation: fadeInDown 0.6s ease-out;
 }
 
-.supply-band__lead {
-  max-width: 34rem;
-  margin: 0 auto 1.5rem;
+.supply-band__subtitle {
+  max-width: 46rem;
+  margin: 0 auto 2.5rem;
+  font-size: 1.15rem;
   line-height: 1.6;
-  color: var(--text-muted, #6b7280);
+  color: #6b7280;
+  animation: fadeInDown 0.6s ease-out 0.1s backwards;
 }
 
 .supply-band__actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -1009,36 +1033,41 @@ const clearSearchFlag = () => {
 .supply-band__primary,
 .supply-band__secondary {
   display: inline-block;
-  padding: 0.8rem 1.6rem;
-  border-radius: 10px;
+  padding: 0.95rem 2rem;
+  border-radius: 12px;
+  font-size: 1.02rem;
   font-weight: 700;
   text-decoration: none;
-  transition: all 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .supply-band__primary {
-  background: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
+  box-shadow: 0 4px 14px rgba(102, 126, 234, 0.3);
 }
 
 .supply-band__primary:hover {
-  background: #5568d3;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(102, 126, 234, 0.4);
 }
 
 .supply-band__secondary {
-  background: transparent;
+  background: #fff;
   color: #667eea;
-  border: 2px solid #c7cffb;
+  border: 2px solid #d7ddfb;
 }
 
 .supply-band__secondary:hover {
-  background: #eef1fe;
+  transform: translateY(-2px);
+  border-color: #667eea;
+  box-shadow: 0 8px 22px rgba(102, 126, 234, 0.15);
 }
 
 .supply-band__note {
-  margin-top: 1.35rem;
-  font-size: 0.9rem;
-  color: var(--text-muted, #6b7280);
+  margin-top: 2rem;
+  font-size: 0.95rem;
+  color: #6b7280;
 }
 
 .supply-band__note a {
@@ -1046,19 +1075,24 @@ const clearSearchFlag = () => {
   font-weight: 600;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 768px) {
   .supply-band {
-    margin: 2rem 1rem 1rem;
-    padding: 1.75rem 1.15rem;
+    padding: 3.5rem 0;
   }
 
   .supply-band__title {
-    font-size: 1.3rem;
+    font-size: 1.75rem;
+  }
+
+  .supply-band__subtitle {
+    font-size: 1rem;
+    margin-bottom: 2rem;
   }
 
   .supply-band__primary,
   .supply-band__secondary {
     width: 100%;
+    max-width: 22rem;
   }
 }
 
