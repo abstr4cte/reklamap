@@ -4,6 +4,26 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 
 ---
 
+## 2026-09-08 — inspekcja 1271 URL-i sitemapy przez URL Inspection API + luka „między deployami"
+
+**Metoda:** wszystkie adresy z żywej sitemapy (`api.reklamap.pl/sitemap.xml`, 1271) przepuszczone przez GSC URL Inspection API (skrypt `gsc_inspect.py`, ~2,5 h, 1 zapytanie/URL). Surowe werdykty: `reklamap-os/status/gsc-inspekcja-2026-09-08.csv`. Punkt wyjścia: raporty „Strona zawiera przekierowanie" (71), „Alternatywna strona z tagiem kanonicznym" (11), `noindex` (195, weryfikacja nieudana), „Duplikat, Google wybrał inny kanoniczny" (9).
+
+**Werdykty Google dla sitemapy:** zindeksowane 941 · nieznane Google 139 · wykryte-niezindeksowane 124 · zeskanowane-niezindeksowane 46 · duplikat z innym kanonicznym 9 · alternatywna z kanonicznym 7 · `noindex` 2 · 5xx 2. Per typ strony: ogłoszenia 774/1071, typ-lub-miasto 69/76, typ×miasto 56/75, artykuły bloga 29/36, reszta 100 %.
+
+| # | Ustalenie | Przyczyna | Status |
+|---|---|---|---|
+| 1 | **Luka „między deployami"**: ogłoszenia i artykuły opublikowane po ostatnim deployu frontu (22.08) nie mają prerenderu. Ogłoszenie trafia do `legacy-ad-redirect.php`, który dla poprawnego slugu oddaje surowy `index.html` → bot widzi **tytuł i canonical strony głównej**. Artykuł wpada w `spa-fallback.html` → **`noindex`**. Dotknięte 08.09: ogłoszenia 1244 (Ustroń), 1245 (Iłża), 2 artykuły bloga. | Prerender jest build-time; między deployami nowa treść nie istnieje statycznie | ✅ objawy usunięte deployem 08.09 (tripwire OK). **Systemowo nierozwiązane** — patrz rekomendacja poniżej |
+| 2 | **Klaster kanoniczny Olsztyn**: 6 ogłoszeń z Olsztyna (1007, 1010, 1014, 1015, 1016, 1022) + Ustroń 1244 mają u Google kanoniczny = telebim Olsztyn 1025. Wszystkie dodane 29.07, pobrane przez Google 30.07 — przed deployem — jako identyczny szkielet `index.html`, więc Google złożył je w jeden klaster i wybrał losowego reprezentanta. Skutek #1. | jw. | ⏳ serwer oddaje dziś poprawne strony; werdykt GSC zamrożony → „Sprawdź poprawkę" + „Poproś o zaindeksowanie" dla 1244 |
+| 3 | `noindex` na `reklama-na-elewacji-wspolnoty` i `reklama-na-ogrodzeniu` (pobrane 17–18.07) — ten sam mechanizm (#1) dla bloga. Dziś oba `index, follow`. Raport „195 noindex" to w przeważającej mierze celowe cienkie strony spoza sitemapy; w sitemapie tylko te 2, oba już naprawione. | jw. | ⏳ czeka na recrawl |
+| 4 | 2× 5xx (ogłoszenia 45, 48) — werdykt z 15.05, incydent zamknięty; dziś 200. | historyczne | ⏳ czeka na recrawl |
+| 5 | **Realne duplikaty**: Biała Podlaska 298/299/303 → 302 i 301 → 300 (ten sam tytuł „Billboard 5,04 × 2,38 m, Biała Podlaska"), Andrychów 1044→1043, 1042→1041, Tychy 1184→1190. Tytuł z importu nie zawiera ulicy/numeru nośnika → strony nierozróżnialne. | dane importu | 🟡 TODO: dopisać ulicę / oznaczenie nośnika do tytułu (update w miejscu) — BrokersMedia, Big Group |
+| 6 | 139 URL-i „nieznanych Google" mimo obecności w sitemapie (Google pobrał sitemapę 06.09): Kłodzko 34, Koszalin 11, Dąbrowa Górnicza 10, Ząbkowice 7… + 10 stron kategorii (m.in. `billboardy/olsztyn`, `billboardy/poznan`, `billboardy/wroclaw`). Google zna sitemapę, ale nie odwiedza tych adresów. | budżet crawlu / brak linków zewnętrznych | 🟡 dotychczasowa diagnoza: linki (Tier 3 raportu 07.25); IndexNow dla Binga |
+| 7 | Przekierowania (71) i `www` — wszystkie poprawne 301 do kanonicznego slugu (`legacy-ad-redirect.php`) lub hosta; `www.api.reklamap.pl` istnieje w DNS (alias Hostido) bez certu — kosmetyczne sprzątanie DNS w oknie serwisowym. | — | ✅ nic do naprawy |
+
+**Rekomendacja (do decyzji):** zamknąć lukę #1 po stronie serwera, niezależnie od deployu: `legacy-ad-redirect.php` dla poprawnego slugu aktywnego ogłoszenia powinien wstrzykiwać do `index.html` `<title>`, `<meta description>` i `<link rel="canonical">` ogłoszenia z API zamiast nagłówka strony głównej; analogiczny fallback dla nowych artykułów bloga (dziś `spa-fallback.html` = `noindex`). Kilkanaście linii PHP, bez zmian w pipeline prerenderu. Alternatywa: deploy frontu po każdym imporcie/publikacji (dyscyplina, nie mechanizm).
+
+---
+
 ## 2026-08-20 — audyt: odkrywalność dużych miast bez podaży (nowa strategia bez cold callingu)
 
 **Kontekst produktowy:** founder zrezygnował z cold callingu ([[project-traffic-source-direct-coldcalls]] zaktualizowane 2026-08-18). Nowy model pozyskania podaży: właściciele nośników mają **sami znajdować** ReklaMap w sieci i dodawać ogłoszenia samoobsługowo. Audyt sprawdza, co w architekturze temu dziś stoi na przeszkodzie.
