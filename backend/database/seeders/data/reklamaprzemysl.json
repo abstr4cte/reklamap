@@ -32,9 +32,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-001-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-001-1.jpg",
+      "advertisements/reklamaprzemysl/prs-001-2.jpg",
+      "advertisements/reklamaprzemysl/prs-001-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -72,9 +76,14 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-002-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-002-1.jpg",
+      "advertisements/reklamaprzemysl/prs-002-2.jpg",
+      "advertisements/reklamaprzemysl/prs-002-3.jpg",
+      "advertisements/reklamaprzemysl/prs-002-4.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -112,9 +121,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-003-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-003-1.jpg",
+      "advertisements/reklamaprzemysl/prs-003-2.jpg",
+      "advertisements/reklamaprzemysl/prs-003-3.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -152,9 +165,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-004-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-004-1.jpg",
+      "advertisements/reklamaprzemysl/prs-004-2.jpg",
+      "advertisements/reklamaprzemysl/prs-004-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -192,9 +209,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-005-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-005-1.jpg",
+      "advertisements/reklamaprzemysl/prs-005-2.jpg",
+      "advertisements/reklamaprzemysl/prs-005-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -232,9 +253,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-006-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-006-1.jpg",
+      "advertisements/reklamaprzemysl/prs-006-2.jpg",
+      "advertisements/reklamaprzemysl/prs-006-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -272,9 +297,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-007-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-007-1.jpg",
+      "advertisements/reklamaprzemysl/prs-007-2.jpg",
+      "advertisements/reklamaprzemysl/prs-007-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -312,9 +341,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-008-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-008-1.jpg",
+      "advertisements/reklamaprzemysl/prs-008-2.jpg",
+      "advertisements/reklamaprzemysl/prs-008-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -352,9 +385,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-009-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-009-1.jpg",
+      "advertisements/reklamaprzemysl/prs-009-2.jpg",
+      "advertisements/reklamaprzemysl/prs-009-3.jpg",
+      "advertisements/reklamaprzemysl/prs-009-4.jpg",
+      "advertisements/reklamaprzemysl/prs-009-5.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -392,9 +431,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-010-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-010-1.jpg",
+      "advertisements/reklamaprzemysl/prs-010-2.jpg",
+      "advertisements/reklamaprzemysl/prs-010-3.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -432,9 +475,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-011-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-011-1.jpg",
+      "advertisements/reklamaprzemysl/prs-011-2.jpg",
+      "advertisements/reklamaprzemysl/prs-011-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -472,9 +519,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-012-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-012-1.jpg",
+      "advertisements/reklamaprzemysl/prs-012-2.jpg",
+      "advertisements/reklamaprzemysl/prs-012-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -512,9 +563,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-013-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-013-1.jpg",
+      "advertisements/reklamaprzemysl/prs-013-2.jpg",
+      "advertisements/reklamaprzemysl/prs-013-3.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -552,9 +607,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-014-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-014-1.jpg",
+      "advertisements/reklamaprzemysl/prs-014-2.jpg",
+      "advertisements/reklamaprzemysl/prs-014-3.jpg",
+      "advertisements/reklamaprzemysl/prs-014-4.jpg",
+      "advertisements/reklamaprzemysl/prs-014-5.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -592,9 +653,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-015-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-015-1.jpg",
+      "advertisements/reklamaprzemysl/prs-015-2.jpg",
+      "advertisements/reklamaprzemysl/prs-015-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -632,9 +697,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-016-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-016-1.jpg",
+      "advertisements/reklamaprzemysl/prs-016-2.jpg",
+      "advertisements/reklamaprzemysl/prs-016-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -672,9 +741,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-017-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-017-1.jpg",
+      "advertisements/reklamaprzemysl/prs-017-2.jpg",
+      "advertisements/reklamaprzemysl/prs-017-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -712,9 +785,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-018-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-018-1.jpg",
+      "advertisements/reklamaprzemysl/prs-018-2.jpg",
+      "advertisements/reklamaprzemysl/prs-018-3.jpg",
+      "advertisements/reklamaprzemysl/prs-018-4.jpg",
+      "advertisements/reklamaprzemysl/prs-018-5.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -752,9 +831,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-019-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-019-1.jpg",
+      "advertisements/reklamaprzemysl/prs-019-2.jpg",
+      "advertisements/reklamaprzemysl/prs-019-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -792,9 +875,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-020-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-020-1.jpg",
+      "advertisements/reklamaprzemysl/prs-020-2.jpg",
+      "advertisements/reklamaprzemysl/prs-020-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -832,9 +919,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-021-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-021-1.jpg",
+      "advertisements/reklamaprzemysl/prs-021-2.jpg",
+      "advertisements/reklamaprzemysl/prs-021-3.jpg",
+      "advertisements/reklamaprzemysl/prs-021-4.jpg",
+      "advertisements/reklamaprzemysl/prs-021-5.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -872,9 +965,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-022-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-022-1.jpg",
+      "advertisements/reklamaprzemysl/prs-022-2.jpg",
+      "advertisements/reklamaprzemysl/prs-022-3.jpg",
+      "advertisements/reklamaprzemysl/prs-022-4.jpg",
+      "advertisements/reklamaprzemysl/prs-022-5.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -912,9 +1011,14 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-023-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-023-1.jpg",
+      "advertisements/reklamaprzemysl/prs-023-2.jpg",
+      "advertisements/reklamaprzemysl/prs-023-3.jpg",
+      "advertisements/reklamaprzemysl/prs-023-4.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -952,9 +1056,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-024-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-024-1.jpg",
+      "advertisements/reklamaprzemysl/prs-024-2.jpg",
+      "advertisements/reklamaprzemysl/prs-024-3.jpg",
+      "advertisements/reklamaprzemysl/prs-024-4.jpg",
+      "advertisements/reklamaprzemysl/prs-024-5.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -992,9 +1102,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-025-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-025-1.jpg",
+      "advertisements/reklamaprzemysl/prs-025-2.jpg",
+      "advertisements/reklamaprzemysl/prs-025-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1032,9 +1146,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-026-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-026-1.jpg",
+      "advertisements/reklamaprzemysl/prs-026-2.jpg",
+      "advertisements/reklamaprzemysl/prs-026-3.jpg",
+      "advertisements/reklamaprzemysl/prs-026-4.jpg",
+      "advertisements/reklamaprzemysl/prs-026-5.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -1072,9 +1192,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-027-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-027-1.jpg",
+      "advertisements/reklamaprzemysl/prs-027-2.jpg",
+      "advertisements/reklamaprzemysl/prs-027-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1112,9 +1236,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-028-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-028-1.jpg",
+      "advertisements/reklamaprzemysl/prs-028-2.jpg",
+      "advertisements/reklamaprzemysl/prs-028-3.jpg",
+      "advertisements/reklamaprzemysl/prs-028-4.jpg",
+      "advertisements/reklamaprzemysl/prs-028-5.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1152,9 +1282,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-029-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-029-1.jpg",
+      "advertisements/reklamaprzemysl/prs-029-2.jpg",
+      "advertisements/reklamaprzemysl/prs-029-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1192,9 +1326,12 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-030-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-030-1.jpg",
+      "advertisements/reklamaprzemysl/prs-030-2.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1232,9 +1369,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-032-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-032-1.jpg",
+      "advertisements/reklamaprzemysl/prs-032-2.jpg",
+      "advertisements/reklamaprzemysl/prs-032-3.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -1272,9 +1413,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-033-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-033-1.jpg",
+      "advertisements/reklamaprzemysl/prs-033-2.jpg",
+      "advertisements/reklamaprzemysl/prs-033-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1312,9 +1457,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-034-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-034-1.jpg",
+      "advertisements/reklamaprzemysl/prs-034-2.jpg",
+      "advertisements/reklamaprzemysl/prs-034-3.jpg",
+      "advertisements/reklamaprzemysl/prs-034-4.jpg",
+      "advertisements/reklamaprzemysl/prs-034-5.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1352,9 +1503,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-035-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-035-1.jpg",
+      "advertisements/reklamaprzemysl/prs-035-2.jpg",
+      "advertisements/reklamaprzemysl/prs-035-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1392,9 +1547,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-036-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-036-1.jpg",
+      "advertisements/reklamaprzemysl/prs-036-2.jpg",
+      "advertisements/reklamaprzemysl/prs-036-3.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -1432,9 +1591,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-037-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-037-1.jpg",
+      "advertisements/reklamaprzemysl/prs-037-2.jpg",
+      "advertisements/reklamaprzemysl/prs-037-3.jpg",
+      "advertisements/reklamaprzemysl/prs-037-4.jpg",
+      "advertisements/reklamaprzemysl/prs-037-5.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1512,9 +1677,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-039-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-039-1.jpg",
+      "advertisements/reklamaprzemysl/prs-039-2.jpg",
+      "advertisements/reklamaprzemysl/prs-039-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1552,9 +1721,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-040-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-040-1.jpg",
+      "advertisements/reklamaprzemysl/prs-040-2.jpg",
+      "advertisements/reklamaprzemysl/prs-040-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1592,9 +1765,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-041-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-041-1.jpg",
+      "advertisements/reklamaprzemysl/prs-041-2.jpg",
+      "advertisements/reklamaprzemysl/prs-041-3.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -1632,9 +1809,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-042-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-042-1.jpg",
+      "advertisements/reklamaprzemysl/prs-042-2.jpg",
+      "advertisements/reklamaprzemysl/prs-042-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1672,9 +1853,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-043-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-043-1.jpg",
+      "advertisements/reklamaprzemysl/prs-043-2.jpg",
+      "advertisements/reklamaprzemysl/prs-043-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1712,9 +1897,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-044-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-044-1.jpg",
+      "advertisements/reklamaprzemysl/prs-044-2.jpg",
+      "advertisements/reklamaprzemysl/prs-044-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1752,9 +1941,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-045-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-045-1.jpg",
+      "advertisements/reklamaprzemysl/prs-045-2.jpg",
+      "advertisements/reklamaprzemysl/prs-045-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1792,9 +1985,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-046-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-046-1.jpg",
+      "advertisements/reklamaprzemysl/prs-046-2.jpg",
+      "advertisements/reklamaprzemysl/prs-046-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1832,9 +2029,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-047-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-047-1.jpg",
+      "advertisements/reklamaprzemysl/prs-047-2.jpg",
+      "advertisements/reklamaprzemysl/prs-047-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1872,9 +2073,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-048-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-048-1.jpg",
+      "advertisements/reklamaprzemysl/prs-048-2.jpg",
+      "advertisements/reklamaprzemysl/prs-048-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1912,9 +2117,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-049-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-049-1.jpg",
+      "advertisements/reklamaprzemysl/prs-049-2.jpg",
+      "advertisements/reklamaprzemysl/prs-049-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -1952,9 +2161,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-050-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-050-1.jpg",
+      "advertisements/reklamaprzemysl/prs-050-2.jpg",
+      "advertisements/reklamaprzemysl/prs-050-3.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -1992,9 +2205,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-051-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-051-1.jpg",
+      "advertisements/reklamaprzemysl/prs-051-2.jpg",
+      "advertisements/reklamaprzemysl/prs-051-3.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -2032,9 +2249,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-052-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-052-1.jpg",
+      "advertisements/reklamaprzemysl/prs-052-2.jpg",
+      "advertisements/reklamaprzemysl/prs-052-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -2072,9 +2293,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-055-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-055-1.jpg",
+      "advertisements/reklamaprzemysl/prs-055-2.jpg",
+      "advertisements/reklamaprzemysl/prs-055-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -2112,9 +2337,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-057-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-057-1.jpg",
+      "advertisements/reklamaprzemysl/prs-057-2.jpg",
+      "advertisements/reklamaprzemysl/prs-057-3.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -2152,9 +2381,12 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-058-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-058-1.jpg",
+      "advertisements/reklamaprzemysl/prs-058-2.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -2192,9 +2424,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-059-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-059-1.jpg",
+      "advertisements/reklamaprzemysl/prs-059-2.jpg",
+      "advertisements/reklamaprzemysl/prs-059-3.jpg",
+      "advertisements/reklamaprzemysl/prs-059-4.jpg",
+      "advertisements/reklamaprzemysl/prs-059-5.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -2232,9 +2470,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-061-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-061-1.jpg",
+      "advertisements/reklamaprzemysl/prs-061-2.jpg",
+      "advertisements/reklamaprzemysl/prs-061-3.jpg",
+      "advertisements/reklamaprzemysl/prs-061-4.jpg",
+      "advertisements/reklamaprzemysl/prs-061-5.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -2272,9 +2516,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-062-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-062-1.jpg",
+      "advertisements/reklamaprzemysl/prs-062-2.jpg",
+      "advertisements/reklamaprzemysl/prs-062-3.jpg",
+      "advertisements/reklamaprzemysl/prs-062-4.jpg",
+      "advertisements/reklamaprzemysl/prs-062-5.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -2312,9 +2562,14 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-065-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-065-1.jpg",
+      "advertisements/reklamaprzemysl/prs-065-2.jpg",
+      "advertisements/reklamaprzemysl/prs-065-3.jpg",
+      "advertisements/reklamaprzemysl/prs-065-4.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -2352,9 +2607,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-066-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-066-1.jpg",
+      "advertisements/reklamaprzemysl/prs-066-2.jpg",
+      "advertisements/reklamaprzemysl/prs-066-3.jpg",
+      "advertisements/reklamaprzemysl/prs-066-4.jpg",
+      "advertisements/reklamaprzemysl/prs-066-5.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
@@ -2392,9 +2653,14 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-067-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-067-1.jpg",
+      "advertisements/reklamaprzemysl/prs-067-2.jpg",
+      "advertisements/reklamaprzemysl/prs-067-3.jpg",
+      "advertisements/reklamaprzemysl/prs-067-4.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -2432,9 +2698,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-068-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-068-1.jpg",
+      "advertisements/reklamaprzemysl/prs-068-2.jpg",
+      "advertisements/reklamaprzemysl/prs-068-3.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -2472,9 +2742,13 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-070-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-070-1.jpg",
+      "advertisements/reklamaprzemysl/prs-070-2.jpg",
+      "advertisements/reklamaprzemysl/prs-070-3.jpg"
+    ],
+    "has_image": true,
     "status": "active",
     "is_active": true,
     "available_from": null
@@ -2512,9 +2786,15 @@
     "phone": "608464887",
     "contact_preference": "both",
     "offer_type": "agency",
-    "image_url": null,
-    "images": [],
-    "has_image": false,
+    "image_url": "advertisements/reklamaprzemysl/prs-100-1.jpg",
+    "images": [
+      "advertisements/reklamaprzemysl/prs-100-1.jpg",
+      "advertisements/reklamaprzemysl/prs-100-2.jpg",
+      "advertisements/reklamaprzemysl/prs-100-3.jpg",
+      "advertisements/reklamaprzemysl/prs-100-4.jpg",
+      "advertisements/reklamaprzemysl/prs-100-5.jpg"
+    ],
+    "has_image": true,
     "status": "reserved",
     "is_active": true,
     "available_from": null
