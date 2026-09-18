@@ -57,8 +57,8 @@ Jest jednak ważny niuans, który działa na Twoją korzyść. Masowe demontaże
 |---|---|
 | Działka przy drodze krajowej lub ekspresowej, dobra widoczność | Wysoki (1 500–4 000 zł/mies.) |
 | Budynek ze ścianą widoczną z ruchliwej ulicy w mieście | Średni–wysoki (zależnie od m² i ekspozycji) |
-| Wspólnota lub spółdzielnia z dużą elewacją | Mnożnik — jedna decyzja, wiele m² (uwaga na podatek, niżej) |
-| Ogrodzenie lub płot przy ruchliwej ulicy | Niski–średni, ale najprostszy do uruchomienia |
+| Wspólnota lub spółdzielnia z dużą elewacją | Mnożnik — jedna decyzja, wiele m² (uwaga na podatek, niżej; szczegóły w [reklamie na elewacji wspólnoty](/blog/poradniki/reklama-na-elewacji-wspolnoty)) |
+| Ogrodzenie lub płot przy ruchliwej ulicy | Niski–średni, ale najprostszy do uruchomienia (szczegóły w [reklamie na ogrodzeniu](/blog/poradniki/reklama-na-ogrodzeniu)) |
 | Teren na uboczu, słaby ruch, mała widoczność | Niski — często nieopłacalny |
 
 Jeśli reprezentujesz **wspólnotę lub spółdzielnię mieszkaniową**, pamiętaj o pułapce podatkowej: dochód z reklamy na elewacji według fiskusa **nie jest zwolniony z CIT i podlega stawce 19%** — choć sądy administracyjne bywają łaskawsze, gdy dochód idzie na utrzymanie zasobu mieszkaniowego, bo wykracza poza tzw. gospodarkę zasobami mieszkaniowymi (art. 17 ust. 1 pkt 44 ustawy o CIT). Reklama na elewacji wymaga też zgody wspólnoty, bo to część wspólna nieruchomości.

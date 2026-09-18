@@ -150,3 +150,7 @@ Reklama modułowa boczna to 1 000–3 000 zł/mc zależnie od pojazdu i miasta. 
 **Powiązane artykuły:** [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Reklama w transporcie publicznym](/blog/poradniki/reklama-w-transporcie-publicznym) · [Tablica reklamowa — przepisy i formalności](/blog/poradniki/tablica-reklamowa)
 
 Szukasz nośnika w swoim budżecie? Przeglądaj setki ofert z cenami bezpośrednio od właścicieli — bez prowizji agencji → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)
+
+---
+
+Masz billboard, ścianę, ekran LED albo inny nośnik reklamowy? **Wystaw go na ReklaMap za darmo, bez prowizji od wynajmu** → [reklamap.pl/dodaj-powierzchnie-reklamowa](/dodaj-powierzchnie-reklamowa)

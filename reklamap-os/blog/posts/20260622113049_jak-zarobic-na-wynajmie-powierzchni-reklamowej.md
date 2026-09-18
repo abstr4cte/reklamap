@@ -55,11 +55,11 @@ Chcesz zarobić więcej? Możesz postawić własny nośnik i sam sprzedawać pow
 Nie chodzi tylko o działkę przy drodze. Operatorzy i reklamodawcy coraz częściej szukają również ścian i elewacji, bo te lokalizacje są prostsze do uruchomienia niż nowy nośnik w pasie drogowym.
 
 - **Grunt przy drodze** — pod billboard, tablicę lub pylon. Najwyższe stawki, ale i najwięcej formalności (odległości od jezdni, ewentualne pozwolenie).
-- **Ściana budynku lub elewacja** — pod baner, siatkę wielkoformatową lub tablicę. Dobra widoczność z ulicy = realny popyt w miastach.
-- **Ogrodzenie lub płot** — najniższy próg wejścia, popularne przy posesjach wzdłuż ruchliwych ulic.
+- **Ściana budynku lub elewacja** — pod baner, siatkę wielkoformatową lub tablicę. Dobra widoczność z ulicy = realny popyt w miastach. Jeśli reprezentujesz wspólnotę lub spółdzielnię, zobacz osobny poradnik: [reklama na elewacji wspólnoty](/blog/poradniki/reklama-na-elewacji-wspolnoty) — inna procedura decyzyjna i inne podatki niż przy prywatnej ścianie.
+- **Ogrodzenie lub płot** — najniższy próg wejścia, popularne przy posesjach wzdłuż ruchliwych ulic. Szczegóły i konkretne stawki: [reklama na ogrodzeniu](/blog/poradniki/reklama-na-ogrodzeniu).
 - **Dach** — pod konstrukcję reklamową lub nośnik widoczny z większej odległości.
 
-Jeśli rozważasz baner na ścianie, warto najpierw sprawdzić [jak wyceniany jest baner reklamowy](/blog/poradniki/baner-reklamowy-cena), a przy większych konstrukcjach — [zasady dla tablic reklamowych](/blog/poradniki/tablica-reklamowa).
+Jeśli rozważasz baner na ścianie, warto najpierw sprawdzić [jak wyceniany jest baner reklamowy](/blog/poradniki/baner-reklamowy-cena), a przy większych konstrukcjach — [zasady dla tablic reklamowych](/blog/poradniki/tablica-reklamowa). Zastanawiasz się, czy w ogóle warto się w to angażować? Przeczytaj uczciwe podsumowanie wad i zalet: [czy opłaca się wynajmować powierzchnię reklamową](/blog/poradniki/czy-oplaca-sie-wynajmowac-powierzchnie-reklamowa).
 
 ## Jaki podatek zapłacisz od wynajmu
 

@@ -113,3 +113,7 @@ Gdy baner będzie na wysokim budynku, w strefie wietrznej (miasto nadmorskie), n
 **Powiązane artykuły:** [Ile kosztuje reklama outdoor?](/blog/poradniki/ile-kosztuje-reklama-outdoor) · [Jak wybrać powierzchnię reklamową?](/blog/poradniki/jak-wybrac-powierzchnie-reklamowa) · [Tablica reklamowa — przepisy i formalności](/blog/poradniki/tablica-reklamowa)
 
 Szukasz miejsca pod baner reklamowy w swojej okolicy? Przeglądaj ogłoszenia bezpośrednio od właścicieli — bez pośredników → [reklamap.pl/powierzchnie-reklamowe](/powierzchnie-reklamowe)
+
+---
+
+Masz ścianę, ogrodzenie albo działkę, na których można powiesić baner? **Wystaw je na ReklaMap za darmo, bez prowizji od wynajmu** → [reklamap.pl/dodaj-powierzchnie-reklamowa](/dodaj-powierzchnie-reklamowa)

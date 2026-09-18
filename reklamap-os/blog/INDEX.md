@@ -60,6 +60,8 @@ Lista wszystkich postów w systemie. Artykuły o statusie 🛠️ SZKIC wymagaj�
 | 2026-05-25 22:44 | reklama-outdoor-bydgoszcz | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260525224446_reklama-outdoor-bydgoszcz.md) |
 | 2026-06-22 11:11 | reklama-outdoor-lublin | lokalizacje | ✅ ZRECENZOWANY | [Link](posts/20260622111121_reklama-outdoor-lublin.md) |
 | 2026-06-22 12:28 | reklama-outdoor-szczecin | lokalizacje | ✅ ZRECENZOWANY + zweryfikowany faktograficznie 2026-08-20 · opublikowany | [Link](posts/20260622122850_reklama-outdoor-szczecin.md) |
+| 2026-09-18 16:42 | reklama-outdoor-gdynia | lokalizacje | ✅ ZRECENZOWANY (podaż 0 nośników, przetarg PPP na wiaty nierozstrzygnięty, wyrok WSA nieprawomocny — fakty zweryfikowane WebSearchem 2026-09-18) | [Link](posts/20260918164228_reklama-outdoor-gdynia.md) |
+| 2026-09-18 16:56 | reklama-outdoor-bialystok | lokalizacje | ✅ ZRECENZOWANY (podaż 0 nośników, brak uchwały krajobrazowej, stawki pasa drogowego z uchwały XXI/341/20 potwierdzone z API metryczki dziennika urzędowego 2026-09-18) | [Link](posts/20260918165646_reklama-outdoor-bialystok.md) |
 | 2026-05-25 23:22 | dooh-reklama-programatyczna | trendy | ✅ ZRECENZOWANY | [Link](posts/20260525232247_dooh-reklama-programatyczna.md) |
 | **Kategoria: /blog/prawo-i-regulacje** | | | | |
 | 2026-04-19 16:23 | uchwala-krajobrazowa-reklama | prawo-i-regulacje | ✅ ZRECENZOWANY 2026-07-13 (korekta huba: Łódź „aktywna"→zawieszona, Poznań fałsz „brak zakazów”→MA uchwałę, Gdańsk egzekwuje, usunięto niepotwierdzone 90%/3 mln + kalkulator Kraków — ✅ LIVE NA PROD, zweryfikowane curl-em 2026-07-25) | [Link](posts/20260419162332_uchwala-krajobrazowa-reklama.md) |
