@@ -4,6 +4,96 @@ Prowadzony przez Agenta Architekta SEO. Najnowszy audyt na górze. Statusy aktua
 
 ---
 
+## 2026-09-18 — audyt SEO: lejek pozyskania podaży (osoby dodające ogłoszenia)
+
+### Wynik ustalenia „keyword-reality"
+
+**Realny popyt wyszukiwania na intencję „chcę wystawić mój nośnik reklamowy" w Polsce jest bliski zeru.** GSC (90 dni): najlepsze zapytania podażowe to „platforma zakupowa dla agencji reklamowych" (5 wyśw./poz. 44,8) i „systemy wystawiennicze poznań" (5 wyśw./poz. 83,4) — żadne nie jest realną intencją podażową. Strona `/dodaj-powierzchnie-reklamowa` ma pozycję 1,8 (praktycznie top wyniku) i tylko 20 wyświetleń/90 dni — to nie problem rankingu, to brak wolumenu samej frazy. Sygnał z OLX („wynajmę powierzchnię/miejsce pod reklamę") pokazuje, że słownictwo rynkowe jest inne niż „dodaj ogłoszenie", ale nie zmienia to konkluzji o skali: to długi ogon, nie kategoria z wolumenem.
+
+**Wniosek dla czytania reszty raportu:** rekomendacje niżej to „zrób to dobrze i tanio, skoro strona i tak istnieje" — higiena techniczna i cross-linking z ruchu, który *już* trafia do serwisu (leaf/kategorie/blog demand-side) — a NIE uzasadnienie do budowy nowego programu treści pod frazy podażowe. To spójne z decyzją foundera z 2026-08-20 (pivot na popyt, `PRODUCT_BACKLOG.md` „PLAN 2026-08-20 — PIVOT NA POPYT"): tamta decyzja mówiła, że podaż nie ma problemu z odkrywalnością tylko z wartością (nikt nie ogląda ogłoszeń), ten audyt dodaje twardszy dowód SEO (zerowy wolumen frazy) na to samo. Nie ma tu sprzeczności — jest potwierdzenie z innego źródła danych.
+
+### Ustalenia potwierdzone
+
+| # | Ustalenie | Dowód | Rekomendacja | Wysiłek | Priorytet |
+|---|---|---|---|---|---|
+| 1 | `AdDetailPage.vue` (29,3% ruchu serwisu wg P-8) nie ma żadnego CTA podażowego | grep 0 trafień na `dodaj-powierzchnie\|dla-agencji\|OwnerCallout\|Wystaw` w 2152-liniowym pliku | Dodać dyskretny blok „Masz podobny nośnik w {city}? Wystaw go za darmo" → `/dodaj-powierzchnie-reklamowa?city=...`, reużyć wzorzec z `ListingsPage.vue:1788` | S | **Wysoki** — tanie, wpina się w istniejący ruch |
+| 2 | CTA podażowe na `ListingsPage.vue` renderuje się WYŁĄCZNIE w empty-state, nigdy na stronach z realnymi listingami (czyli tam, gdzie jest ruch) | `ListingsPage.vue:1780` `v-if="showSupplyCta"` zagnieżdżone w `v-else-if="filteredListings.length === 0"` (linia 1766) | Osobny, dyskretny wariant widoczny też przy niepustych wynikach (karta w siatce po N-tej pozycji) | M | **Wysoki** — trafia w ruch kategorii miast, który już istnieje |
+| 3 | `OwnerCallout.vue` (główny komponent CTA podażowego) użyty tylko w `HomePage.vue`/`HeroBanner.vue` — zero na stronach z ruchem organicznym spoza brandu | `grep -rln 'OwnerCallout' frontend/src` → tylko te 2 pliki | Osadzić lżejszy wariant na `AdDetailPage.vue`/`ListingsPage.vue` (to samo co #1/#2 od strony komponentu) | S | **Wysoki** |
+| 4 | CTA podażowe brak na ścieżce blogowej — artykuły klastra PODAŻ mają linki tekstowe, ale nie ma komponentu CTA w `BlogPostPage.vue` | grep: `OwnerCallout` nieużyty w blogu | Wariant `OwnerCallout` (sticky/końcowy) dla artykułów klastra PODAŻ | S | Średni — ruch na te artykuły jest niski, ale koszt też niski |
+| 5 | 3 z 4 najbardziej ruchowych artykułów demand-side („ile kosztuje") nie linkują do lejka podażowego, mimo dużego klastra (1260 wyśw./72 frazy) | grep 0 trafień w `ile-kosztuje-reklama-outdoor.md`, `baner-reklamowy-cena.md`, `ekran-led-cena.md`; wzorzec cross-sell istnieje w `budowa-wlasnego-billboardu-koszt.md:85` | Dopisać akapit cross-sell wzorowany na istniejącym wzorcu, update w miejscu (`blog:update-content`) | XS | **Wysoki** — najtańsze, trafia w realny, potwierdzony ruch |
+| 6 | Kotwica klastra `jak-zarobic` nie linkuje do 3 satelitów podażowych, mimo że one linkują do niej (jednokierunkowa gwiazda) | brak linków w `jak-zarobic-...md`; potwierdzone odwrotne linki w `czy-oplaca-sie:155`, `ogrodzenie:323`, `elewacja:413` | Dodać sekcję/linki kontekstowe z kotwicy do satelitów | XS | Średni |
+| 7 | `czy-oplaca-sie` wspomina elewację wspólnoty i ogrodzenie bez linków do dedykowanych artykułów | zweryfikowane linie 60/61/64/92-93 (nie zgadzają się numery podane pierwotnie, ale treść tak) | Podlinkować frazy do `reklama-na-elewacji-wspolnoty` i `reklama-na-ogrodzeniu` | XS | Średni |
+| 8 | Brak linkowania poziomego ogrodzenie↔elewacja↔czy-oplaca-sie (gwiazda tylko spoke→hub) | grep potwierdza brak wzajemnych linków w 3 plikach | Dodać wzajemne odnośniki tam, gdzie tematycznie pasują | XS | Średni |
+| 9 | Bug: `http://www.reklamap.pl` robi podwójny 301 (www→https://www→apex) zamiast jednego skoku | `curl -sIL -A Googlebot` pokazuje 2 hopy; `.htaccess` sam ma jedną regułę — wymuszenie HTTPS dzieje się wcześniej na poziomie LiteSpeed | Skrócić do jednego skoku bezpośrednio na `https://reklamap.pl` | XS | Niski — finalny URL/canonical i tak poprawne, tylko koszt crawl-budgetu |
+| 10 | `/dodaj-powierzchnie-reklamowa` nie ma Schema.org (FAQPage), `/dla-agencji` ma | `AddAdPage.vue:24` `useSeo()` bez `structuredData`; `ForAgenciesPage.vue:59-61` ma FAQPage | Dodać FAQPage do `/dodaj-powierzchnie-reklamowa` analogicznie | S | Niski — nie generuje nowego ruchu (brak wolumenu frazy), tylko porządek |
+| 11 | `/dla-agencji` nie pokazuje social proof (skala ogłoszeń/firm) mimo że 94,5% podaży pochodzi z importów agencyjnych | `AddAdPage.vue:1428-1436` komentarz o 94,5%; `ForAgenciesPage.vue` brak liczb | Dodać jedno zdanie z liczbą w hero, np. „Ponad 1100 ogłoszeń od dziesiątek firm" | XS | Niski/Średni — dotyczy B2B ścieżki agencyjnej, nie SEO wprost, ale tanie |
+| 12 | Lejek podażowy jest technicznie zdrowy — indeksowalność NIE jest wąskim gardłem | curl Googlebot na obu stronach: poprawny title/canonical/robots=index,follow, obie w sitemapie, prerender z sitemapy automatycznie | Brak akcji — nie inwestować w naprawę indeksowalności | XS | n/a (potwierdzenie) |
+| 13 | Głębokość kliknięć z homepage do lejka podażowego jest już minimalna (0-1 klik: hero, supply-band, stopka) | `HomePage.vue:630`, `HeroBanner.vue:661`, `AppFooter.vue:76-77` | Brak akcji | XS | n/a (potwierdzenie) |
+| 14 | Klaster PODAŻ (4 artykuły) ma faktycznie wdrożone hard CTA = dodaj-nośnik | grep potwierdza linki we wszystkich 4 plikach | Brak akcji — baseline dla przyszłych audytów | XS | n/a (potwierdzenie) |
+| 15 | Brak ugruntowanego terminu branżowego innego niż „dodaj ogłoszenie" na polskim rynku B2B OOH; zagraniczny wzorzec (Fliphound) akcentuje korzyść finansową, nie czynność | WebSearch: brak nazwanej funkcji u polskich agencji; Fliphound „ENROLL YOUR BOARDS FREE" | Rozważyć przesunięcie akcentu H1 `OwnerCallout` z „wystaw bezpłatnie" na korzyść („dotrzyj do nowych klientów") — czysto CRO, nie SEO | XS | Niski — hipoteza CRO, zero wpływu na ruch z Google |
+| 16 | Sygnał OLX („wynajmę powierzchnię/miejsce pod reklamę") sugeruje inne słownictwo niż „dodaj/wystaw powierzchnię" | WebSearch: aktywne kategorie OLX pod tą frazą | Rozważyć dopisanie synonimu w treści (nie w H1) strony `/dodaj-powierzchnie-reklamowa` przy najbliższym odświeżeniu treści | XS | Niski — niepewne, długi ogon |
+| 17 | areklama.pl ma dedykowaną stronę pod segment mikro-właścicieli, ale brak dowodu że przynosi im ruch | WebSearch dopasował frazę dokładnie; brak danych o ruchu konkurenta | Nie kopiować bez twardego dowodu | XS | n/a (do zignorowania) |
+
+### Odrzucone w weryfikacji
+
+- **Zerowy popyt na frazy podażowe jako „nowe" odkrycie** — to duplikat już podjętej i lepiej udokumentowanej decyzji `PLAN 2026-08-20 — PIVOT NA POPYT` w `PRODUCT_BACKLOG.md`.
+- **AddAdPage.vue jako monolit 3526 linii (CWV)** — duplikat istniejącego punktu backlogu o formularzu jako murze onboardingowym.
+- **Niezależna weryfikacja „zerowy popyt" z inną liczbą GSC** — wzmocnienie dowodowe istniejącej decyzji, nie nowe ustalenie.
+- **„SEO nie jest kanałem, formularz jest OK"** — kierunek słuszny, ale brak sprawdzalnego źródła liczby (poz. 1,8 / 20 wyśw.) w tym konkretnym sformułowaniu.
+- **Eventy GA4 lejka formularza jako wskaźnik SEO** — to B-1 w backlogu, już opisane i z warunkiem startu analizy (B-2).
+- **Konwersja lejka ~26% z diagnozą miejsca odpadu** — duplikat B-1/B-2.
+- **Zdjęcie „opcjonalne w kodzie" jako nowy problem** — backlog (B-2/B-3) już to opisuje jako świadomy stan wyjściowy z planowanym nudge'em.
+- **reCAPTCHA v3 jako „nie jest tarciem"** — błędny wniosek: pusty/timeout token faktycznie daje twardy 422, to realne, ciche tarcie — wymaga osobnej korekty backendu, nie odrzucenia.
+- **„OwnerCallout brak w blogu = zasada HARD CTA niezrealizowana"** — nieprawda, linki tekstowe w artykułach istnieją; to tylko brak wspólnego komponentu (mniejszy refaktor, nie pilny problem).
+- **„2 artykuły klastra PODAŻ mają 0 wyświetleń przez brak w sitemapie/noindex"** — sprawdzone bezpośrednio: obie strony SĄ w sitemapie i mają poprawny prerender bez noindex. Zero wyświetleń to brak popytu na frazę, nie problem techniczny.
+- **„Duplikat www w GSC"** (dwa osobne findingi) — `.htaccess` ma już poprawną regułę 301 www→apex; to zaszłość historyczna w GSC, nie aktualny problem.
+- **„Jedyne CTA na końcu artykułu, brak śródtekstowego"** — nieprawda dla `jak-zarobic` (CTA jest już w środku, linia 95); generalizacja na 4 pliki była błędna.
+- **FAQ + luka deployowa dla ogrodzenie/elewacja** — duplikat już zapisanej pozycji A5 w `STRATEGY_LOG.md` („dług publikacyjny — czeka na deploy usera").
+- **„Brak linków przychodzących do ogrodzenie/elewacja"** — błędna kierunkowość dowodu; oba artykuły mają inbound link z silnych stron kategorii (`categoryGuides.ts`).
+- **Bannero.pl/ZnajdźReklamę.pl jako „nieznani konkurenci"** — ZnajdźReklamę.pl już figuruje w `STRATEGY_LOG.md`/`PRODUCT_BACKLOG.md`; Bannero.pl niezweryfikowane (strona niedostępna).
+- **„/dla-agencji brak w sitemapie"** — nieprawda, jest w `web.php` `$staticPages`.
+
+### Dodatkowe ustalenie (poza workflow, zweryfikowane bezpośrednio 2026-09-18)
+
+Podczas przeglądu wyniku weryfikator jednego ze znalezisk odrzucił twierdzenie „reCAPTCHA
+nie jest tarciem" jako błędne. Sprawdziłem to bezpośrednio w kodzie — to osobny, realny
+błąd, nie duplikat:
+
+**Cichy błąd formularza dodawania ogłoszenia przy niedostępnej reCAPTCHA.**
+`frontend/src/services/recaptchaService.ts`: `getRecaptchaToken()` ma twardy timeout 5 s
+i w `catch` zwraca `''` przy KAŻDYM niepowodzeniu (blokada przez ad-blocker/rozszerzenie
+prywatności, wolne łącze mobilne, `grecaptcha` niezaładowany). `AddAdPage.vue:1156-1159`
+wysyła wtedy puste `recaptcha_token`. `VerifyRecaptcha.php:15-20` (backend) na pusty token
+zwraca **od razu 422** „reCAPTCHA token is missing" — bez próby weryfikacji, bez fail-open
+(fail-open jest tylko dla wyjątku z zapytania do Google, `catch (\Exception $e)` linia ~40,
+NIE dla brakującego tokenu). Front (`AddAdPage.vue`, brak `recaptcha` w `fieldTranslations`)
+pokazuje wtedy użytkownikowi komunikat z surowym kluczem „recaptcha" zamiast czytelnego
+wyjaśnienia — właściciel ściany/płotu nie ma jak się domyślić, co poprawić, i najpewniej
+zamyka kartę.
+
+To realne ryzyko akurat na TYM formularzu: docelowa grupa (właściciel pojedynczej ściany,
+płotu, działki — często mniej techniczna niż typowy odwiedzający, częściej na wolniejszym
+łączu mobilnym) jest bardziej narażona na te 5 s timeoutu niż przeciętny użytkownik.
+Konwersje tego lejka są już skrajne rzadkie (11 `add_listing_success`/90 dni) — każda
+cicha strata waży więcej niż gdziekolwiek indziej w serwisie.
+
+**Rekomendacja:** w `VerifyRecaptcha.php` traktować brakujący token tak samo jak wyjątek
+z Google (fail-open z logiem ostrzegawczym), skoro drugą warstwą ochrony przed spamem
+jest już `throttle:10,60` na tej samej trasie. Wysiłek: XS. Priorytet: **wysoki** — naprawia
+istniejący, potwierdzony wyciek jedynej realnej konwersji podażowej, niezależnie od
+wniosku o zerowym popycie wyszukiwania.
+
+### Rekomendowana kolejność
+
+0. **(a) Napraw fail-open reCAPTCHA w `VerifyRecaptcha.php`** (dodatkowe ustalenie powyżej) — jedyna rekomendacja tego audytu, która naprawia istniejący wyciek konwersji, nie tylko higienę. Wysiłek XS.
+1. **(a) Techniczna higiena / cross-linking — rób teraz, tanie, nie zależy od popytu wyszukiwania.** Dopisz cross-sell CTA w 3 artykułach demand-side klastra „ile kosztuje" (finding #5) — to trafia w ruch, który już istnieje, koszt XS.
+2. **(a) Dodaj CTA podażowe na `AdDetailPage.vue`** (finding #1/#3) — najliczniejszy typ strony z ruchem (29,3%), dziś zero cross-sella. Wysiłek S.
+3. **(a) Napraw widoczność CTA na `ListingsPage.vue`** poza empty-state (finding #2) — wpina się w ruch kategorii miast. Wysiłek M, ale mechanizm wpływu na już istniejący ruch jest realny.
+4. **(a) Domknij linkowanie wewnętrzne klastra blogowego PODAŻ** (findingi #6, #7, #8) — kilka linków, XS każdy, porządkuje istniejącą strukturę bez tworzenia nowej treści.
+5. **(b) Treść/SEO pod nowe frazy podażowe — odłóż.** Weryfikacja keyword-reality nie znalazła realnego wolumenu wyszukiwania pod intencję „wystaw mój nośnik" (GSC: pojedyncze cyfry wyświetleń, brak trafionych fraz). Jedyny miękki sygnał (OLX, słownictwo „wynajmę powierzchnię") jest niepewny i niski koszt (finding #16) — traktować jako eksperyment przy najbliższym odświeżeniu treści, nie jako program. Nie zakładać nowego budżetu na artykuły pod frazy podażowe, dopóki nie pojawi się twardszy dowód popytu.
+
+---
+
 ## 2026-09-08 — inspekcja 1271 URL-i sitemapy przez URL Inspection API + luka „między deployami"
 
 **Metoda:** wszystkie adresy z żywej sitemapy (`api.reklamap.pl/sitemap.xml`, 1271) przepuszczone przez GSC URL Inspection API (skrypt `gsc_inspect.py`, ~2,5 h, 1 zapytanie/URL). Surowe werdykty: `reklamap-os/status/gsc-inspekcja-2026-09-08.csv`. Punkt wyjścia: raporty „Strona zawiera przekierowanie" (71), „Alternatywna strona z tagiem kanonicznym" (11), `noindex` (195, weryfikacja nieudana), „Duplikat, Google wybrał inny kanoniczny" (9).

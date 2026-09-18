@@ -30,10 +30,20 @@ class VerifyRecaptcha
         $token = $request->input('recaptcha_token') ?? $request->header('X-Recaptcha-Token');
 
         if (!$token) {
-            return response()->json([
-                'message' => 'reCAPTCHA token is missing',
-                'errors' => ['recaptcha' => ['reCAPTCHA verification failed']]
-            ], 422);
+            // Fail-open, tak samo jak przy wyjątku z zapytania do Google (niżej): pusty token
+            // najczęściej oznacza, że grecaptcha.execute() nie zdążył w 5 s (wolne łącze,
+            // ad-blocker/rozszerzenie prywatności blokujące recaptcha/api.js) — realny
+            // wystawca traci wtedy ogłoszenie bez żadnego jasnego komunikatu (audyt SEO
+            // 2026-09-18, SEO_TECH_AUDIT.md). Trasy z tym middlewarem mają już throttle
+            // (np. 'throttle:10,60') jako właściwą warstwę ochrony przed spamem — blokowanie
+            // TU tylko odcina realne zgłoszenia, nie boty (bot równie łatwo wyśle pusty token
+            // co żaden).
+            \Log::warning('reCAPTCHA token missing — przepuszczono (fail-open)', [
+                'path' => $request->path(),
+                'ip' => $request->ip(),
+            ]);
+
+            return $next($request);
         }
 
         // Verify token with Google

@@ -35,6 +35,7 @@ import SkeletonCard from '../components/SkeletonCard.vue'
 import AdCard from '../components/AdCard.vue'
 import RelatedSilos from '../components/RelatedSilos.vue'
 import CategoryGuides from '../components/CategoryGuides.vue'
+import SupplyCta from '../components/SupplyCta.vue'
 
 // Store and Routing
 const searchStore = useSearchStore()
@@ -119,6 +120,13 @@ const hasOnlyNearby = computed(() =>
 // nośnik w mieście" byłoby nieprawdą — miasto może mieć oferty innego typu).
 const showSupplyCta = computed(() =>
   !!route.params.city && !route.params.type && filteredListings.value.length === 0
+)
+
+// Wariant dla stron miasta, które MAJĄ już oferty — dziś showSupplyCta pokazuje się
+// wyłącznie w empty-state, czyli nigdy tam, gdzie realnie jest ruch (audyt SEO 2026-09-18,
+// SEO_TECH_AUDIT.md). Tylko 1. strona wyników, żeby nie powtarzać się przy paginacji.
+const showSupplyCtaInResults = computed(() =>
+  !!route.params.city && !route.params.type && filteredListings.value.length > 0 && currentPage.value === 1
 )
 
 const seoData = computed(() => {
@@ -1830,6 +1838,11 @@ const handleSearchAlertSubmit = () => { /* Alert logic */ }
               </svg>
             </button>
           </div>
+
+          <SupplyCta
+            v-if="showSupplyCtaInResults"
+            :city="cityDisplayName"
+          />
 
           <div
             v-if="!isLoading && (filteredListings.length > 0 || serverTotal > 0)"

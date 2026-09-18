@@ -24,6 +24,7 @@ import AdDetailsGrid from '../components/detail/AdDetailsGrid.vue'
 import AdContactForm from '../components/detail/AdContactForm.vue'
 import AdSidebar from '../components/detail/AdSidebar.vue'
 import AdSimilarListings from '../components/detail/AdSimilarListings.vue'
+import SupplyCta from '../components/SupplyCta.vue'
 import StreetViewSection from '../components/detail/StreetViewSection.vue'
 
 let L: any = null
@@ -828,10 +829,13 @@ defineExpose({
           </div>
 
           <!-- Similar Listings -->
-          <AdSimilarListings 
-            :similarAds="similarAds" 
-            :getTypeLabel="searchStore.getTypeLabel" 
+          <AdSimilarListings
+            :similarAds="similarAds"
+            :getTypeLabel="searchStore.getTypeLabel"
           />
+
+          <!-- CTA podażowe: oglądający ogłoszenie może sam mieć podobny nośnik (audyt SEO 2026-09-18) -->
+          <SupplyCta :city="ad.city" />
         </div>
 
         <!-- Desktop Sidebar -->

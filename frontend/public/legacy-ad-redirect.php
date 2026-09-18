@@ -35,7 +35,16 @@ if (!preg_match('#^powierzchnia-reklamowa/[^/]+/[^/]+/.+-(\d+)$#', $path, $m)) {
 }
 
 $adId = (int) $m[1];
-$ad   = fetchAd($adId);
+[$ad, $confirmedGone] = fetchAd($adId);
+
+// Ogłoszenie usunięte/nieindeksowalne — API potwierdziło 404 albo status spoza INDEXABLE_STATUSES.
+// Serwuj prawdziwe 404, nie 200+noindex: inaczej Google traktuje martwy URL jako żywą stronę
+// wykluczoną tagiem i wraca do niej w kółko (patrz SEO_TECH_AUDIT.md, ustalenie 2026-09-17).
+if ($confirmedGone) {
+    http_response_code(404);
+    serveFallback();
+    exit;
+}
 
 if ($ad !== null && !empty($ad['full_url']) && in_array($ad['status'] ?? '', INDEXABLE_STATUSES, true)) {
     $targetPath = ltrim((string) $ad['full_url'], '/');
@@ -61,8 +70,15 @@ exit;
 
 // ============================ FUNKCJE =========================================
 
-/** GET /listings/{id} z nagłówkiem X-App-Key. Null przy błędzie/timeout/404. */
-function fetchAd(int $id): ?array
+/**
+ * GET /listings/{id} z nagłówkiem X-App-Key.
+ * Zwraca [dane|null, $confirmedGone]. $confirmedGone=true TYLKO gdy API jednoznacznie
+ * potwierdziło, że ogłoszenia nie ma (HTTP 404) albo że ma status spoza INDEXABLE_STATUSES —
+ * NIGDY przy timeout/5xx/błędzie sieci, żeby chwilowa awaria API nie wykosiła żywego ogłoszenia.
+ *
+ * @return array{0: array|null, 1: bool}
+ */
+function fetchAd(int $id): array
 {
     $ch = curl_init();
     curl_setopt_array($ch, [
@@ -76,14 +92,22 @@ function fetchAd(int $id): ?array
     $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
+    if ($code === 404) {
+        return [null, true];
+    }
     if ($body === false || $code < 200 || $code >= 300) {
-        return null;
+        // Timeout, 5xx, błąd sieci — nieznany stan, NIE traktuj jako potwierdzone zniknięcie.
+        return [null, false];
     }
     $json = json_decode($body, true);
     if (!is_array($json)) {
-        return null;
+        return [null, false];
     }
-    return isset($json['data']) && is_array($json['data']) ? $json['data'] : $json;
+    $data = isset($json['data']) && is_array($json['data']) ? $json['data'] : $json;
+
+    $confirmedGone = !in_array($data['status'] ?? '', INDEXABLE_STATUSES, true);
+
+    return [$data, $confirmedGone];
 }
 
 /** Ogłoszenie nie istnieje/nieaktywne/API padło — ten sam noindex-owy szkielet co reszta SPA. */
